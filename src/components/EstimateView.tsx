@@ -7,6 +7,7 @@ import { MAX_MODELS } from '@/lib/url/scenario';
 import { MAX_PASTE_CHARS, type FieldKey, type useEstimator } from '@/state/useEstimator';
 import { AssumptionList, CostCards, InsightList, WarningList } from './CostCards';
 import { HelpTip, ReviewBadge } from './Disclosure';
+import { CountryTag } from './Flag';
 
 type Estimator = ReturnType<typeof useEstimator>;
 
@@ -141,7 +142,7 @@ export function EstimateView({
                   <div key={group.provider.id}>
                     <div className="model-group">
                       <span>{group.provider.name}</span>
-                      <span>{group.provider.country}</span>
+                      <CountryTag country={group.provider.country} />
                     </div>
                     {group.models.map((model) => {
                       const checked = scenario.modelIds.includes(model.id);

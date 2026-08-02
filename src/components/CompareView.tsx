@@ -3,6 +3,7 @@ import { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { formatContext, formatRate } from '@/lib/engine/format';
 import { HelpTip, ReviewBadge } from './Disclosure';
+import { CountryTag } from './Flag';
 
 interface CompareViewProps {
   catalog: Catalog;
@@ -347,7 +348,10 @@ function CatalogTable({ catalog, selectedIds, onToggle }: CompareViewProps) {
           </caption>
           <thead>
             <tr>
-              <th className="align-left">
+              {/* Not a sort button, so it needs the padding the other headers
+                  get from theirs — without it the label sat flush left while the
+                  checkboxes below were indented. */}
+              <th className="align-left col-use">
                 <span className="visually-hidden">In your estimate</span>
                 <span aria-hidden="true">Use</span>
               </th>
@@ -365,7 +369,7 @@ function CatalogTable({ catalog, selectedIds, onToggle }: CompareViewProps) {
               const sourceUrl = model.provenance.verifiedUrl ?? provider?.pricingUrl;
               return (
                 <tr key={model.id}>
-                  <td>
+                  <td className="align-left col-use">
                     {/* Selection from the table, not only from the chart: a plot
                         point is a poor control on a phone and unusable with a
                         screen reader alone. */}
@@ -389,7 +393,7 @@ function CatalogTable({ catalog, selectedIds, onToggle }: CompareViewProps) {
                     {model.provenance.stale && <span className="pill">unlisted</span>}
                   </td>
                   <td className="align-left">
-                    {catalog.providerName(model)} <span className="pill">{provider?.country}</span>
+                    {catalog.providerName(model)} <CountryTag country={provider?.country} />
                   </td>
                   <td className="mono">{formatRate(model.pricing.input)}</td>
                   <td className="mono">{formatRate(model.pricing.output)}</td>

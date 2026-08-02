@@ -108,7 +108,9 @@ textarea {
 .header__inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px;
+  /* Breathing room under the ticker: the two were flush against each other,
+   * which made a dark bar and a light bar read as one crowded block. */
+  padding: 12px 24px 10px;
   /* Wrapping is unconditional rather than switched on at a breakpoint.
    * Breakpoints are matched against the viewport *including* the scrollbar, so
    * a `max-width: 1020px` rule does not fire in a 1024px window whose content
@@ -119,6 +121,23 @@ textarea {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
+}
+
+/* The freshness line is the only thing allowed to wrap onto a second row.
+ *
+ * It carries two dates now, which is long enough to push the appearance and
+ * theme controls off the first line — and a control that moves depending on how
+ * long a date string is has effectively been hidden. Ordering it last, on its
+ * own full-width row, keeps every button in a fixed place. */
+.freshness {
+  order: 9;
+  flex: 1 1 100%;
+}
+.palette {
+  order: 7;
+}
+.header .icon-button {
+  order: 8;
 }
 .logo {
   display: flex;
@@ -1501,6 +1520,51 @@ table.catalog tbody tr:hover {
 
 /* ------------------------------------------------- new panels and states */
 
+/* ------------------------------------------------------------------ flags */
+
+.flag {
+  display: block;
+  flex: none;
+  border-radius: 2px;
+  /* Kept subtle. It is a wayfinding cue next to the code, not information in
+   * its own right — nothing depends on recognising it. */
+  opacity: 0.92;
+}
+.country-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: max(0.72rem, 12px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+/* Inside the catalog table the code sits in a pill, so the flag joins it there. */
+.catalog .country-tag {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 2px 8px 2px 5px;
+}
+
+/* The Use column is not a sort button, so it does not inherit the padding the
+   other headers get from theirs — set it explicitly on both cells so the label
+   and the checkboxes under it share an edge. */
+.catalog th.col-use,
+.catalog td.col-use {
+  padding-left: 16px;
+  padding-right: 8px;
+  width: 1%;
+  white-space: nowrap;
+}
+.catalog th.col-use {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
 .check-row--prominent {
   border: 1px solid var(--border);
   background: var(--surface-2);
@@ -1770,8 +1834,16 @@ code {
     padding: 8px 20px;
     min-height: 60px;
   }
-  .nav {
+  /* Same rule as on desktop: the appearance and theme controls stay beside the
+   * search button, and only the nav and the freshness line take their own rows. */
+  .palette {
+    order: 2;
+  }
+  .header .icon-button {
     order: 3;
+  }
+  .nav {
+    order: 5;
     flex: 1 1 100%;
     min-width: 0;
     margin-left: 0;
@@ -1785,8 +1857,6 @@ code {
     display: none;
   }
   .freshness {
-    order: 4;
-    flex: 1 1 100%;
     min-width: 0;
     /* Two dates on one line is wider than a phone. Wrapping is the whole point
      * of moving it onto its own row. */
