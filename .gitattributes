@@ -1,0 +1,17 @@
+# Line endings, decided once.
+#
+# Prettier checks against LF, and CI runs on Linux, so a Windows contributor
+# whose Git is configured with `core.autocrlf=true` gets a working tree full of
+# CRLF and a format check that fails on every file — while the same commit
+# passes in CI. Normalising here makes the checkout identical on every platform
+# and takes the contributor's local Git configuration out of the equation.
+* text=auto eol=lf
+
+# Binary, so Git never touches the bytes.
+*.woff binary
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.ico binary
+*.pdf binary
+*.docx binary
