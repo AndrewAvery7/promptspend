@@ -1,0 +1,61 @@
+name: Model request
+description: Ask for a model to be tracked, or report a price that looks wrong
+title: '[model] '
+labels: [pricing]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep the catalog honest. Most additions take one line
+        in `data/models-allowlist.json` — pull requests are very welcome too.
+
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: The provider's own name for it.
+      placeholder: e.g. Claude Sonnet 5, DeepSeek V4 Pro
+    validations:
+      required: true
+
+  - type: input
+    id: provider
+    attributes:
+      label: Provider
+      placeholder: e.g. Anthropic, DeepSeek, Moonshot AI
+    validations:
+      required: true
+
+  - type: input
+    id: pricing-url
+    attributes:
+      label: Link to the provider's pricing page
+      description: The source of record. Community catalogues are cross-checked against this.
+      placeholder: https://…
+    validations:
+      required: true
+
+  - type: input
+    id: rates
+    attributes:
+      label: Published rates, per 1M tokens
+      placeholder: e.g. $3 input / $15 output, cached input $0.30
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is this?
+      options:
+        - A model we do not track yet
+        - A price that looks wrong
+        - A model that should be marked legacy or removed
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Context window, promotional pricing, batch discounts, tokenizer quirks.

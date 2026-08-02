@@ -1,0 +1,65 @@
+name: Sync pricing
+
+# The feature this project exists for: prices refresh themselves.
+#
+#   clean diff        -> committed to main, which redeploys the site
+#   anything flagged  -> raised as a pull request for a human to look at
+on:
+  schedule:
+    # 06:00 America/Chicago, give or take daylight saving.
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Fetch, merge and validate pricing
+        id: sync
+        run: npm run sync:pricing
+
+      - name: Nothing changed
+        if: steps.sync.outputs.changed != 'true'
+        run: echo "Sources stable — no update needed."
+
+      - name: Commit clean updates
+        if: steps.sync.outputs.changed == 'true' && steps.sync.outputs.needs_review != 'true'
+        run: |
+          git config user.name "tokentally-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add public/data/pricing.json docs/pricing-changelog.md
+          git commit -m "data: ${{ steps.sync.outputs.summary }}"
+          git push
+
+      - name: Open a pull request when a human should look
+        if: steps.sync.outputs.changed == 'true' && steps.sync.outputs.needs_review == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: pricing-sync/${{ github.run_id }}
+          commit-message: 'data: ${{ steps.sync.outputs.summary }} (needs review)'
+          title: 'Pricing sync needs review: ${{ steps.sync.outputs.summary }}'
+          body: |
+            The daily sync found changes that tripped a sanity rule.
+
+            **Summary:** ${{ steps.sync.outputs.summary }}
+            **Models tracked:** ${{ steps.sync.outputs.model_count }}
+
+            A model is flagged when the two independent sources disagree by more
+            than 20%, or when a published price moved by more than 50% in a single
+            day. Check the flagged rows against the vendor's own pricing page
+            before merging; if the vendor number is authoritative, add it to
+            `data/pricing-overrides.json` instead of editing `pricing.json`.
+          labels: pricing, needs-review

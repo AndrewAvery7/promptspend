@@ -1,0 +1,5 @@
+dist
+coverage
+node_modules
+public/data/pricing.json
+docs/pricing-changelog.md

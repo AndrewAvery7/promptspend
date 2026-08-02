@@ -1,0 +1,220 @@
+{
+  "$comment": "Family-level capture rules. Patterns are deliberately version-agnostic so a newly released model is picked up by the next daily sync without a code change — it arrives flagged for review rather than published silently.",
+  "providers": [
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "country": "US",
+      "pricingUrl": "https://platform.claude.com/docs/en/pricing"
+    },
+    { "id": "openai", "name": "OpenAI", "country": "US", "pricingUrl": "https://openai.com/api/pricing/" },
+    { "id": "google", "name": "Google", "country": "US", "pricingUrl": "https://ai.google.dev/pricing" },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "country": "CN",
+      "pricingUrl": "https://api-docs.deepseek.com/quick_start/pricing"
+    },
+    {
+      "id": "moonshot",
+      "name": "Moonshot AI",
+      "country": "CN",
+      "pricingUrl": "https://platform.moonshot.ai/docs/pricing"
+    },
+    {
+      "id": "alibaba",
+      "name": "Alibaba (Qwen)",
+      "country": "CN",
+      "pricingUrl": "https://www.alibabacloud.com/help/en/model-studio/models"
+    },
+    {
+      "id": "zai",
+      "name": "Z.ai (GLM)",
+      "country": "CN",
+      "pricingUrl": "https://docs.z.ai/guides/overview/pricing"
+    },
+    {
+      "id": "minimax",
+      "name": "MiniMax",
+      "country": "CN",
+      "pricingUrl": "https://www.minimax.io/platform/document/pricing"
+    },
+    { "id": "xai", "name": "xAI", "country": "US", "pricingUrl": "https://docs.x.ai/docs/models" },
+    { "id": "mistral", "name": "Mistral AI", "country": "FR", "pricingUrl": "https://mistral.ai/pricing" },
+    { "id": "cohere", "name": "Cohere", "country": "CA", "pricingUrl": "https://cohere.com/pricing" },
+    {
+      "id": "amazon",
+      "name": "Amazon",
+      "country": "US",
+      "pricingUrl": "https://aws.amazon.com/bedrock/pricing/"
+    }
+  ],
+  "globalExclude": [
+    "\\d{8}$",
+    "-latest$",
+    "chat-latest",
+    "search-api",
+    ":free$",
+    "-lightning$",
+    "-live-",
+    "customtools",
+    "@"
+  ],
+  "families": [
+    {
+      "id": "anthropic-claude",
+      "providerId": "anthropic",
+      "include": ["^claude-(fable|opus|sonnet|haiku)-\\d+(-\\d+)?$"],
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.6,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — Anthropic's tokenizer is server-side; ratio calibrated on English prose"
+      },
+      "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "openai-gpt",
+      "providerId": "openai",
+      "include": ["^gpt-5(\\.\\d+)?(-mini|-nano|-terra|-luna|-sol)?$", "^o\\d+(-mini|-pro)?$"],
+      "tokenizer": { "kind": "tiktoken", "encoding": "o200k_base" },
+      "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "google-gemini",
+      "providerId": "google",
+      "include": [
+        "^gemini/gemini-3(\\.\\d+)?-(pro|flash)(-lite)?(-preview)?$",
+        "^gemini/gemini-2\\.5-(pro|flash)$"
+      ],
+      "stripPrefix": "gemini/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 4.0,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Gemini's tokenizer is server-side"
+      },
+      "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "deepseek",
+      "providerId": "deepseek",
+      "include": ["^deepseek/deepseek-(v\\d+(\\.\\d+)?(-pro|-flash)?|r\\d+)$"],
+      "stripPrefix": "deepseek/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.4,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — DeepSeek's tokenizer handles Chinese far more densely than English"
+      },
+      "capabilities": { "reasoning": true, "vision": false }
+    },
+    {
+      "id": "moonshot-kimi",
+      "providerId": "moonshot",
+      "include": ["^moonshot/kimi-k[\\d.]+(-thinking)?$"],
+      "stripPrefix": "moonshot/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.4,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Moonshot tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "alibaba-qwen",
+      "providerId": "alibaba",
+      "include": [
+        "^dashscope/qwen3\\.\\d+-(max|plus)$",
+        "^dashscope/qwen3-next-80b-a3b-(instruct|thinking)$",
+        "^dashscope/qwen3-vl-235b-a22b-instruct$"
+      ],
+      "stripPrefix": "dashscope/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — Qwen tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": { "reasoning": true, "vision": false }
+    },
+    {
+      "id": "zai-glm",
+      "providerId": "zai",
+      "include": ["^zai/glm-(5(\\.\\d+)?|4\\.[67])(-code)?$"],
+      "stripPrefix": "zai/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — GLM tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": { "reasoning": true, "vision": false }
+    },
+    {
+      "id": "minimax",
+      "providerId": "minimax",
+      "include": ["^minimax/MiniMax-M\\d+(\\.\\d+)?$"],
+      "stripPrefix": "minimax/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — MiniMax tokenizer"
+      },
+      "capabilities": { "reasoning": true, "vision": false }
+    },
+    {
+      "id": "xai-grok",
+      "providerId": "xai",
+      "include": ["^xai/grok-\\d+(\\.\\d+)?$", "^xai/grok-\\d+(-\\d+)?-fast$"],
+      "stripPrefix": "xai/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.7,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Grok tokenizer"
+      },
+      "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "mistral",
+      "providerId": "mistral",
+      "include": ["^mistral/mistral-(large|medium)-\\d(\\.\\d|-\\d)?$"],
+      "stripPrefix": "mistral/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.7,
+        "cjkCharsPerToken": 1.8,
+        "note": "Estimate — Mistral tokenizer"
+      },
+      "capabilities": { "reasoning": false, "vision": true }
+    },
+    {
+      "id": "cohere-command",
+      "providerId": "cohere",
+      "include": ["^command-a-\\d{2}-\\d{4}$"],
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.8,
+        "note": "Estimate — Cohere tokenizer"
+      },
+      "capabilities": { "reasoning": false, "vision": false }
+    },
+    {
+      "id": "amazon-nova",
+      "providerId": "amazon",
+      "include": ["^amazon\\.nova-2-(pro|lite)"],
+      "stripPrefix": "amazon.",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Nova tokenizer"
+      },
+      "capabilities": { "reasoning": true, "vision": true }
+    }
+  ]
+}
