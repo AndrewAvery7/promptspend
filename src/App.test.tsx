@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 import { SCHEMA_VERSION, type PricingCatalog } from '@/lib/pricing/types';
@@ -159,7 +159,7 @@ describe('App', () => {
     await renderApp();
 
     await user.click(screen.getByRole('button', { name: 'Compare' }));
-    expect(await screen.findByRole('img', { name: /Scatter plot/ })).toBeInTheDocument();
+    expect(await screen.findByRole('group', { name: /Scatter plot/ })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Learn' }));
     expect(await screen.findByText(/Seven lessons/)).toBeInTheDocument();
@@ -175,5 +175,157 @@ describe('App', () => {
     );
     render(<App />);
     expect(await screen.findByText(/Pricing data could not be loaded/)).toBeInTheDocument();
+  });
+});
+
+describe('honesty of the default estimate', () => {
+  it('starts with caching off, so the headline carries no unrequested discount', async () => {
+    await renderApp();
+    const cache = screen.getByLabelText(/Assume prompt caching/) as HTMLInputElement;
+    expect(cache.checked).toBe(false);
+    expect(window.location.search).toMatch(/cache=0\.00/);
+    // ...and it is on the panel, not hidden inside "Advanced".
+    expect(cache.closest('details')).toBeNull();
+  });
+
+  it('lists the cache assumptions only once caching is switched on', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    expect(screen.queryByText(/assumed to hit the cache/)).not.toBeInTheDocument();
+
+    await user.click(screen.getByLabelText(/Assume prompt caching/));
+    expect(await screen.findByText(/60% of input tokens assumed to hit the cache/)).toBeInTheDocument();
+    // DeepSeek in the fixture publishes no cached rate; the estimate says so
+    // rather than inventing a discount for it.
+    expect(screen.getByText(/publishes no cached-input rate/)).toBeInTheDocument();
+  });
+
+  it('always states what the prices do not cover', async () => {
+    await renderApp();
+    expect(screen.getByText(/Regional\/data-residency premiums/)).toBeInTheDocument();
+  });
+
+  it('warns when the scenario could not actually run', async () => {
+    // DeepSeek's window in the fixture is 163,840 tokens; 30 turns of this
+    // workload is far past it.
+    window.history.replaceState(null, '', '/?m=deepseek-deepseek-v3.2&t=200&sys=200000&usr=200000');
+    await renderApp();
+    expect(await screen.findByRole('alert')).toHaveTextContent(/context window/);
+  });
+
+  it('renders a permitted-but-extreme URL instead of blanking the page', async () => {
+    window.history.replaceState(
+      null,
+      '',
+      '/?m=claude-sonnet-5&sys=200000&usr=200000&out=200000&t=200&cpd=100000000&mau=100000000',
+    );
+    await renderApp();
+    expect(screen.getAllByRole('article').length).toBeGreaterThan(0);
+    expect(screen.getByText(/Know the tab/)).toBeInTheDocument();
+  });
+});
+
+describe('sharing a pasted prompt', () => {
+  it('puts the derived count in the URL and never the text', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+
+    await user.click(screen.getAllByRole('button', { name: 'Paste text' })[0]!);
+    const textarea = screen.getByPlaceholderText(/Paste your actual system prompt/);
+    await user.type(textarea, 'You are a helpful assistant.');
+
+    await waitFor(() => {
+      // The old behaviour left sys=800 in the URL while the screen showed ~8
+      // tokens, then told the user the link restored every input.
+      expect(window.location.search).not.toMatch(/sys=800/);
+      expect(window.location.search).toMatch(/px=system/);
+    });
+    expect(window.location.search).not.toMatch(/helpful/);
+  });
+
+  it('says so when a link restores counts that came from someone else’s prompt', async () => {
+    window.history.replaceState(null, '', '/?m=claude-sonnet-5&sys=94&px=system');
+    await renderApp();
+    expect(screen.getByText(/Restored from a shared link/)).toBeInTheDocument();
+  });
+});
+
+describe('keyboard and screen-reader access', () => {
+  it('makes every point on the value map focusable and operable', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByRole('button', { name: 'Compare' }));
+
+    // Previously: one circle per model, none of them reachable by anything but
+    // a mouse, and no way at all to select a model with the keyboard here.
+    const points = await screen.findAllByRole('button', { name: /per million tokens/ });
+    expect(points.length).toBe(2);
+
+    const point = points[0]!;
+    const wasSelected = point.getAttribute('aria-pressed');
+    // Focusing a point shows its tooltip, which is a state update.
+    act(() => point.focus());
+    expect(document.activeElement).toBe(point);
+
+    await user.keyboard('{Enter}');
+    await waitFor(() => expect(point.getAttribute('aria-pressed')).not.toBe(wasSelected));
+  });
+
+  it('lets the catalog table add a model without touching the chart', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByRole('button', { name: 'Compare' }));
+
+    const table = await screen.findByRole('table');
+    const box = within(table).getByRole('checkbox', { name: /Add DeepSeek V3.2/ }) as HTMLInputElement;
+    expect(box.checked).toBe(true);
+    await user.click(box);
+    await waitFor(() => expect(box.checked).toBe(false));
+  });
+
+  it('returns focus to where it came from when the palette closes', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+
+    const opener = screen.getByRole('button', { name: /Search & commands/ });
+    opener.focus();
+    await user.click(opener);
+    await screen.findByRole('dialog', { name: 'Command palette' });
+
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(document.activeElement).toBe(opener));
+  });
+
+  it('exposes help text as a control rather than a title attribute', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    const help = screen.getByRole('button', { name: /What does .Models. mean/ });
+    await user.click(help);
+    expect(await screen.findByRole('note')).toHaveTextContent(/highest-leverage cost decision/);
+  });
+});
+
+describe('claims the site makes about itself', () => {
+  it('separates when prices changed from when sources were checked', async () => {
+    await renderApp();
+    expect(screen.getAllByText(/prices last changed/i).length).toBeGreaterThan(0);
+  });
+
+  it('does not offer alert controls that do nothing', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByRole('button', { name: 'Data & Alerts' }));
+
+    expect(await screen.findByText(/Every number shows its work/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Enable push/ })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Email address for price alerts/)).not.toBeInTheDocument();
+    expect(screen.getAllByText(/PLANNED — NOT BUILT YET/).length).toBe(2);
+  });
+
+  it('describes the merge rule it actually uses for flagged rows', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByRole('button', { name: 'Data & Alerts' }));
+    expect(await screen.findByText(/the cross-check raises a hand, it never overwrites/)).toBeInTheDocument();
   });
 });

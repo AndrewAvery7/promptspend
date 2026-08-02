@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export interface TourStep {
   title: string;
@@ -52,12 +52,15 @@ interface GuidedTourProps {
  */
 export function GuidedTour({ step, onStep, onFinish }: GuidedTourProps) {
   const current = TOUR_STEPS[step];
+  const cardRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     document.body.classList.add('tour-active');
+    const opener = document.activeElement as HTMLElement | null;
     return () => {
       document.body.classList.remove('tour-active');
       document.querySelectorAll('.tour-highlight').forEach((el) => el.classList.remove('tour-highlight'));
+      opener?.focus?.();
     };
   }, []);
 
@@ -67,14 +70,32 @@ export function GuidedTour({ step, onStep, onFinish }: GuidedTourProps) {
     const target = document.getElementById(current.target);
     if (!target) return;
     target.classList.add('tour-highlight');
-    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // `prefers-reduced-motion` has to be honoured in JavaScript too: a CSS rule
+    // cannot reach a smooth scroll requested from script, and a full-page glide
+    // is exactly the motion the setting exists to prevent.
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
   }, [current]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onFinish();
+      if (event.key === 'Escape') {
+        onFinish();
+        return;
+      }
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      // Arrow keys belong to whatever has focus. Sliders, number inputs and
+      // text fields all use them, and stealing those made the tour actively
+      // hostile to the panel it was pointing at.
+      const active = document.activeElement;
+      const insideCard = cardRef.current?.contains(active) ?? false;
+      const onAControl =
+        active instanceof HTMLElement &&
+        (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+      if (onAControl && !insideCard) return;
+
       if (event.key === 'ArrowRight') onStep(Math.min(step + 1, TOUR_STEPS.length - 1));
-      if (event.key === 'ArrowLeft') onStep(Math.max(step - 1, 0));
+      else onStep(Math.max(step - 1, 0));
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -84,7 +105,7 @@ export function GuidedTour({ step, onStep, onFinish }: GuidedTourProps) {
   const isLast = step === TOUR_STEPS.length - 1;
 
   return (
-    <aside className="tour-card" role="status" aria-live="polite">
+    <aside className="tour-card" role="status" aria-live="polite" ref={cardRef}>
       <span className="tour-card__step">
         STEP {step + 1} / {TOUR_STEPS.length}
       </span>

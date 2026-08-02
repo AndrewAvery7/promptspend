@@ -2,9 +2,18 @@
  * Scenario <-> URL serialisation, so any estimate can be shared as a link.
  *
  * Pasted prompt text is deliberately *never* encoded: it is often proprietary,
- * URLs leak into logs and chat history, and the token counts alone reproduce
- * the numbers exactly. Only the derived counts travel.
+ * and URLs leak into logs, referrer headers and chat history. What travels is
+ * the token count the text produced.
+ *
+ * For that to be true rather than aspirational, the token fields have to hold
+ * the derived counts whenever a field is in paste mode — which is what
+ * `useEstimator` keeps in step. `pastedFields` records which numbers came from
+ * text so the restored page can say so instead of pretending a slider was
+ * moved there.
  */
+
+export type FieldKey = 'system' | 'user' | 'output';
+export const FIELD_KEYS: FieldKey[] = ['system', 'user', 'output'];
 
 export interface Scenario {
   modelIds: string[];
@@ -18,6 +27,8 @@ export interface Scenario {
   cachedInputShare: number;
   reasoningMultiplier: number;
   useBatchApi: boolean;
+  /** Fields whose token count was measured from pasted text, not chosen. */
+  pastedFields: FieldKey[];
 }
 
 export const DEFAULT_SCENARIO: Scenario = {
@@ -29,9 +40,11 @@ export const DEFAULT_SCENARIO: Scenario = {
   conversationsPerDay: 2500,
   monthlyActiveUsers: 1500,
   revenuePerUserPerMonth: 12,
-  cachedInputShare: 0.6,
+  // No caching until asked for: see DEFAULT_OPTIONS in the engine.
+  cachedInputShare: 0,
   reasoningMultiplier: 1,
   useBatchApi: false,
+  pastedFields: [],
 };
 
 export const LIMITS = {
@@ -64,6 +77,7 @@ const KEYS = {
   cachedInputShare: 'cache',
   reasoningMultiplier: 'rsn',
   useBatchApi: 'batch',
+  pastedFields: 'px',
 } as const;
 
 export function encodeScenario(scenario: Scenario): string {
@@ -81,6 +95,7 @@ export function encodeScenario(scenario: Scenario): string {
     params.set(KEYS.reasoningMultiplier, String(scenario.reasoningMultiplier));
   }
   if (scenario.useBatchApi) params.set(KEYS.useBatchApi, '1');
+  if (scenario.pastedFields.length > 0) params.set(KEYS.pastedFields, scenario.pastedFields.join(','));
   return params.toString();
 }
 
@@ -101,6 +116,11 @@ export function decodeScenario(search: string, base: Scenario = DEFAULT_SCENARIO
         .filter((id) => id.length > 0 && /^[\w.:-]+$/.test(id))
         .slice(0, MAX_MODELS)
     : base.modelIds;
+
+  const pastedRaw = params.get(KEYS.pastedFields);
+  const pastedFields: FieldKey[] = pastedRaw
+    ? FIELD_KEYS.filter((field) => pastedRaw.split(',').includes(field))
+    : base.pastedFields;
 
   return {
     modelIds,
@@ -126,6 +146,7 @@ export function decodeScenario(search: string, base: Scenario = DEFAULT_SCENARIO
       num(KEYS.reasoningMultiplier, base.reasoningMultiplier),
     ),
     useBatchApi: params.get(KEYS.useBatchApi) === '1' ? true : base.useBatchApi,
+    pastedFields: [...new Set(pastedFields)],
   };
 }
 

@@ -4,6 +4,16 @@
  *   2. the LiteLLM community catalogue  — the automated feed
  *   3. OpenRouter                       — cross-check only, never a source
  *   4. sanity rules                     — anything suspicious needs a human
+ *
+ * Two properties this file is responsible for:
+ *
+ *   Nothing vanishes quietly. A model that was published yesterday and is
+ *   missing from today's feed is kept and marked `stale`, not deleted. One
+ *   truncated upstream response must never be able to empty the catalog.
+ *
+ *   A flag is raised once. Review reasons are compared against what was
+ *   already recorded, so a long-standing disagreement does not re-open a pull
+ *   request every morning and drown the genuinely new ones.
  */
 import type { Model, PricingCatalog } from '../../src/lib/pricing/types';
 import { SCHEMA_VERSION } from '../../src/lib/pricing/types';
@@ -30,31 +40,63 @@ export interface MergeInput {
   generatedAt: Date;
 }
 
+export interface ReviewItem {
+  id: string;
+  reason: string;
+  /** False when the same reason was already recorded in the published catalog. */
+  isNew: boolean;
+}
+
 export interface MergeResult {
   catalog: PricingCatalog;
   /** Models whose numbers a human should look at before publishing. */
-  review: { id: string; reason: string }[];
+  review: ReviewItem[];
+  /** Ids that were published yesterday and are missing from today's feed. */
+  stale: string[];
 }
 
 export function mergeCatalog(input: MergeInput): MergeResult {
   const { litellm, openrouter, allowlist, overrides, previous, generatedAt } = input;
   const overrideById = new Map(overrides.map((o) => [o.id, o]));
   const previousById = new Map((previous?.models ?? []).map((m) => [m.id, m]));
-  const review: { id: string; reason: string }[] = [];
+  const feedById = new Map(litellm.map((r) => [r.id, r]));
+  const review: ReviewItem[] = [];
+  const staleIds: string[] = [];
   const models: Model[] = [];
   const isoDate = generatedAt.toISOString().slice(0, 10);
 
-  // Every id we should end up with: everything the feed matched, plus every
-  // override (so a hand-curated model survives even if upstream drops it).
-  const ids = new Set<string>([...litellm.map((r) => r.id), ...overrideById.keys()]);
+  // Every id we should end up with: everything the feed matched, every
+  // override (so a hand-curated model survives upstream dropping it) and
+  // everything already published (so a bad fetch cannot delete the catalog).
+  const ids = new Set<string>([...feedById.keys(), ...overrideById.keys(), ...previousById.keys()]);
+  for (const id of allowlist.retired ?? []) ids.delete(id);
 
   for (const id of [...ids].sort()) {
-    const feed = litellm.find((r) => r.id === id);
+    const feed = feedById.get(id);
     const override = overrideById.get(id);
-    if (!feed && !override?.pricing) continue;
+    const before = previousById.get(id);
+
+    // Missing upstream and not hand-curated: keep yesterday's row, mark it.
+    if (!feed && !override?.pricing) {
+      if (!before) continue;
+      const reason = 'no longer listed upstream — confirm retirement before removing';
+      const wasStale = before.provenance.stale === true;
+      staleIds.push(id);
+      models.push({
+        ...before,
+        provenance: {
+          ...before.provenance,
+          stale: true,
+          needsReview: true,
+          reviewNote: mergeNote(before.provenance.reviewNote, reason),
+        },
+      });
+      review.push({ id, reason, isNew: !wasStale });
+      continue;
+    }
 
     const family = feed ? matchFamily(feed.sourceKey, allowlist) : null;
-    const providerId = override?.providerId ?? feed?.providerId;
+    const providerId = override?.providerId ?? feed?.providerId ?? before?.providerId;
     if (!providerId) continue;
 
     const input_ = override?.pricing?.input ?? feed?.inputPerMillion;
@@ -86,7 +128,8 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     }
 
     // Rung 4: sanity rules against yesterday's published numbers.
-    const before = previousById.get(id);
+    const ratesMoved =
+      before !== undefined && (before.pricing.input !== input_ || before.pricing.output !== output);
     if (before) {
       const inputMove = relativeGap(before.pricing.input, input_);
       const outputMove = relativeGap(before.pricing.output, output);
@@ -103,19 +146,26 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     }
 
     const tokenizer = override?.tokenizer ??
-      family?.tokenizer ?? {
+      family?.tokenizer ??
+      before?.tokenizer ?? {
         kind: 'approx' as const,
         charsPerToken: 3.8,
         cjkCharsPerToken: 1.5,
       };
 
+    // "Last changed" is what the freshness badge should actually show: the day
+    // the numbers moved, not the day a job happened to run.
+    const lastChanged = !before ? isoDate : ratesMoved ? isoDate : (before.provenance.lastChanged ?? isoDate);
+
     const model: Model = {
       id,
       providerId,
       displayName:
-        override?.displayName ?? prettyName(feed?.sourceKey ?? id, family?.stripPrefix ?? undefined),
-      status: override?.status ?? 'current',
-      contextWindow: override?.contextWindow ?? feed?.contextWindow ?? 128_000,
+        override?.displayName ??
+        before?.displayName ??
+        prettyName(feed?.sourceKey ?? id, family?.stripPrefix ?? undefined),
+      status: override?.status ?? before?.status ?? 'current',
+      contextWindow: override?.contextWindow ?? feed?.contextWindow ?? before?.contextWindow ?? 128_000,
       pricing: {
         input: input_,
         output,
@@ -125,23 +175,31 @@ export function mergeCatalog(input: MergeInput): MergeResult {
           ? { batchDiscount: override.pricing.batchDiscount }
           : {}),
         ...(override?.pricing?.intro ? { intro: override.pricing.intro } : {}),
+        ...(override?.pricing?.longContext ? { longContext: override.pricing.longContext } : {}),
       },
       tokenizer,
-      capabilities: override?.capabilities ?? family?.capabilities ?? { reasoning: false, vision: false },
+      capabilities: override?.capabilities ??
+        family?.capabilities ??
+        before?.capabilities ?? { reasoning: false, vision: false },
       provenance: {
         source,
         lastVerified: override?.lastVerified ?? isoDate,
+        lastChanged,
+        ...(override?.verifiedUrl ? { verifiedUrl: override.verifiedUrl } : {}),
         ...(reasons.length > 0 ? { needsReview: true, reviewNote: reasons.join('; ') } : {}),
       },
+      ...(override?.aliasOf ? { aliasOf: override.aliasOf } : {}),
       ...(override?.releaseDate ? { releaseDate: override.releaseDate } : {}),
-      ...((override?.maxOutput ?? feed?.maxOutput)
-        ? { maxOutput: override?.maxOutput ?? feed?.maxOutput }
+      ...((override?.maxOutput ?? feed?.maxOutput ?? before?.maxOutput)
+        ? { maxOutput: override?.maxOutput ?? feed?.maxOutput ?? before?.maxOutput }
         : {}),
       ...(override?.capabilityIndex !== undefined ? { capabilityIndex: override.capabilityIndex } : {}),
     };
 
     models.push(model);
-    for (const reason of reasons) review.push({ id, reason });
+    for (const reason of reasons) {
+      review.push({ id, reason, isNew: !(before?.provenance.reviewNote ?? '').includes(reason) });
+    }
   }
 
   const usedProviders = new Set(models.map((m) => m.providerId));
@@ -152,7 +210,13 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     models: models.sort((a, b) => a.id.localeCompare(b.id)),
   };
 
-  return { catalog, review };
+  return { catalog, review, stale: staleIds };
+}
+
+/** Keep an existing note but do not repeat a reason already recorded in it. */
+function mergeNote(existing: string | undefined, reason: string): string {
+  if (!existing) return reason;
+  return existing.includes(reason) ? existing : `${existing}; ${reason}`;
 }
 
 export function relativeGap(a: number, b: number): number {

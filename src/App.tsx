@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Catalog, loadCatalog } from '@/lib/pricing/catalog';
-import { PRICING_URL, REPO_URL } from '@/config';
+import { HEALTH_URL, PRICING_URL, REPO_URL } from '@/config';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAppearance, ACCENTS } from '@/state/useAppearance';
 import { useEstimator } from '@/state/useEstimator';
 import { Header, VIEWS, type ViewId } from '@/components/Header';
@@ -20,7 +21,7 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    loadCatalog(PRICING_URL)
+    loadCatalog(PRICING_URL, HEALTH_URL)
       .then((loaded) => {
         if (!cancelled) setCatalog(loaded);
       })
@@ -53,7 +54,11 @@ export default function App() {
     );
   }
 
-  return <Workspace catalog={catalog} />;
+  return (
+    <ErrorBoundary>
+      <Workspace catalog={catalog} />
+    </ErrorBoundary>
+  );
 }
 
 function Workspace({ catalog }: { catalog: Catalog }) {
@@ -164,7 +169,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
       });
     }
 
-    for (const model of catalog.models) {
+    for (const model of catalog.primaryModels) {
       const selected = estimator.scenario.modelIds.includes(model.id);
       list.push({
         id: `model-${model.id}`,
@@ -187,7 +192,9 @@ function Workspace({ catalog }: { catalog: Catalog }) {
       <Header
         view={view}
         onView={setView}
-        syncedOn={catalog.generatedAt.toISOString().slice(0, 10)}
+        pricesChangedOn={catalog.pricesLastChanged()}
+        sourcesCheckedOn={catalog.sourcesLastChecked()}
+        degraded={catalog.health?.outcome === 'degraded'}
         tourActive={tourStep !== null}
         tourPulse={!welcomeDismissed && tourStep === null}
         onTour={() => (tourStep === null ? startTour() : stopTour())}
@@ -224,7 +231,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
           />
         )}
         {view === 'learn' && <LearnView catalog={catalog} />}
-        {view === 'data' && <DataView catalog={catalog} onToast={showToast} />}
+        {view === 'data' && <DataView catalog={catalog} />}
       </main>
 
       <footer className="footer">
@@ -234,7 +241,8 @@ function Workspace({ catalog }: { catalog: Catalog }) {
             <a href={REPO_URL}>star it on GitHub</a>
           </div>
           <div className="mono">
-            {catalog.models.length} models · prices synced {catalog.generatedAt.toISOString().slice(0, 10)}
+            {catalog.primaryModels.length} models · prices last changed {catalog.pricesLastChanged()}
+            {catalog.sourcesLastChecked() ? ` · sources checked ${catalog.sourcesLastChecked()}` : ''}
           </div>
         </div>
       </footer>

@@ -1,5 +1,5 @@
 import type { Model, Pricing } from '@/lib/pricing/types';
-import { costPico, picoToDollars } from './money';
+import { costPico, isExactCost, picoToDollars } from './money';
 
 /** One typical exchange, described in tokens. */
 export interface Workload {
@@ -21,19 +21,24 @@ export interface EngineOptions {
   asOf: Date;
 }
 
+/**
+ * No caching by default.
+ *
+ * A cache-hit rate is a property of someone's traffic, not of the model, and
+ * the first number a visitor sees should contain no discount they have not
+ * asked for. Assuming a healthy hit rate made the headline figure the best
+ * case rather than the expected one — the control is on the main panel, one
+ * click away, and every assumption it turns on is listed under the results.
+ */
 export const DEFAULT_OPTIONS: EngineOptions = {
-  cachedInputShare: 0.6,
+  cachedInputShare: 0,
   reasoningMultiplier: 1,
   useBatchApi: false,
   asOf: new Date(),
 };
 
-/**
- * Fallback discount applied to cached input when a provider advertises prompt
- * caching but we have no published cached rate. Roughly the industry norm
- * (~90% off). Always surfaced to the user as an assumption.
- */
-export const ASSUMED_CACHE_MULTIPLIER = 0.1;
+/** The cache share applied when the visitor switches caching on. */
+export const SUGGESTED_CACHE_SHARE = 0.6;
 
 export interface SessionTokens {
   /** Total input tokens billed across the whole conversation. */
@@ -42,6 +47,10 @@ export interface SessionTokens {
   outputTokens: number;
   /** The share of `inputTokens` that is re-sent conversation history. */
   historyTokens: number;
+  /** Input tokens in the single largest request — the last turn. This, not the
+   *  conversation total, is what a context window and a long-context price
+   *  tier are measured against. */
+  peakRequestTokens: number;
 }
 
 /**
@@ -68,6 +77,7 @@ export function sessionTokens(w: Workload): SessionTokens {
     inputTokens: turns * (system + user) + historyTokens,
     outputTokens: turns * output,
     historyTokens,
+    peakRequestTokens: system + user + (turns - 1) * (user + output),
   };
 }
 
@@ -77,7 +87,53 @@ export function effectivePricing(pricing: Pricing, asOf: Date): Pricing {
   if (!intro) return pricing;
   const until = Date.parse(intro.until);
   if (Number.isNaN(until) || asOf.getTime() > until) return pricing;
-  return { ...pricing, input: intro.input, output: intro.output };
+  return {
+    ...pricing,
+    input: intro.input,
+    output: intro.output,
+    // Cache rates are a multiple of the input rate, so a promotion moves them
+    // too. Only override where the vendor actually publishes the promoted
+    // figure — otherwise the standard rate stands, which errs high.
+    ...(intro.cachedInput !== undefined ? { cachedInput: intro.cachedInput } : {}),
+    ...(intro.cacheWrite !== undefined ? { cacheWrite: intro.cacheWrite } : {}),
+  };
+}
+
+/** The four rates one request is billed at, after every modifier. */
+interface RateSet {
+  input: number;
+  output: number;
+  cachedInput: number | undefined;
+  cacheWrite: number | undefined;
+}
+
+function baseRates(pricing: Pricing): RateSet {
+  return {
+    input: pricing.input,
+    output: pricing.output,
+    cachedInput: pricing.cachedInput,
+    cacheWrite: pricing.cacheWrite,
+  };
+}
+
+function longContextRates(pricing: Pricing): RateSet | null {
+  const tier = pricing.longContext;
+  if (!tier) return null;
+  return {
+    input: tier.input,
+    output: tier.output,
+    cachedInput: tier.cachedInput,
+    cacheWrite: tier.cacheWrite,
+  };
+}
+
+function discounted(rates: RateSet, multiplier: number): RateSet {
+  return {
+    input: rates.input * multiplier,
+    output: rates.output * multiplier,
+    cachedInput: rates.cachedInput === undefined ? undefined : rates.cachedInput * multiplier,
+    cacheWrite: rates.cacheWrite === undefined ? undefined : rates.cacheWrite * multiplier,
+  };
 }
 
 export interface CostBreakdown extends SessionTokens {
@@ -85,11 +141,22 @@ export interface CostBreakdown extends SessionTokens {
   inputCostUncached: number;
   /** What input actually costs after the cache assumption. */
   inputCost: number;
+  /** What it costs to *write* the cached prefix, where a rate is published. */
+  cacheWriteCost: number;
+  /** Net saving from caching: uncached input minus (cached input + writes). */
   cacheSavings: number;
   outputCost: number;
   total: number;
+  /** Requests in this conversation billed at the long-context tier. */
+  longContextTurns: number;
   /** Human-readable notes about every non-published number used. */
   assumptions: string[];
+  /** Things that make this scenario questionable rather than merely assumed —
+   *  a request that cannot fit, a response past the model's ceiling. */
+  warnings: string[];
+  /** False once the numbers are large enough that the last pico-dollars of the
+   *  integer arithmetic have been rounded. Never true for a real workload. */
+  exact: boolean;
 }
 
 /** Cost of one conversation on one model. */
@@ -101,61 +168,135 @@ export function conversationCost(
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const tokens = sessionTokens(workload);
   const assumptions: string[] = [];
+  const warnings: string[] = [];
 
-  let pricing = effectivePricing(model.pricing, opts.asOf);
+  const pricing = effectivePricing(model.pricing, opts.asOf);
   if (pricing !== model.pricing) {
     assumptions.push(`Promotional pricing applied (ends ${model.pricing.intro?.until}).`);
   }
 
+  let batchMultiplier = 1;
   if (opts.useBatchApi) {
-    const discount = pricing.batchDiscount;
-    if (discount !== undefined) {
-      pricing = { ...pricing, input: pricing.input * discount, output: pricing.output * discount };
-      assumptions.push(`Batch API discount of ${Math.round((1 - discount) * 100)}% applied.`);
+    if (pricing.batchDiscount !== undefined) {
+      batchMultiplier = pricing.batchDiscount;
+      assumptions.push(`Batch API discount of ${Math.round((1 - batchMultiplier) * 100)}% applied.`);
     } else {
       assumptions.push('This provider publishes no batch discount — full rates used.');
     }
   }
 
-  const cachedShare = clamp01(opts.cachedInputShare);
-  const cachedTokens = Math.round(tokens.inputTokens * cachedShare);
-  const freshTokens = tokens.inputTokens - cachedTokens;
+  const standard = discounted(baseRates(pricing), batchMultiplier);
+  const longTier = longContextRates(pricing);
+  const long = longTier ? discounted(longTier, batchMultiplier) : null;
+  const threshold = pricing.longContext?.thresholdTokens ?? Infinity;
 
-  let cachedRate: number;
-  if (pricing.cachedInput !== undefined) {
-    cachedRate = pricing.cachedInput;
-  } else {
-    cachedRate = pricing.input * ASSUMED_CACHE_MULTIPLIER;
-    if (cachedShare > 0) {
+  const cachedShare = clamp01(opts.cachedInputShare);
+  const reasoningMultiplier = Math.max(1, opts.reasoningMultiplier);
+
+  const turns = Math.max(1, Math.floor(workload.turns));
+  const system = Math.max(0, workload.systemTokens);
+  const user = Math.max(0, workload.userTokens);
+  const output = Math.max(0, workload.outputTokens);
+
+  let inputPico = 0;
+  let inputUncachedPico = 0;
+  let outputPico = 0;
+  let longContextTurns = 0;
+  let exact = true;
+
+  const charge = (count: number, rate: number): number => {
+    if (count <= 0) return 0;
+    if (exact && !isExactCost(count, rate)) exact = false;
+    return costPico(count, rate);
+  };
+
+  // Per turn rather than in aggregate: the long-context tier is a property of a
+  // single request, so a conversation can start on the standard rate and cross
+  // over partway through. Aggregating first would price every turn wrong.
+  for (let turn = 1; turn <= turns; turn += 1) {
+    const requestInput = system + user + (turn - 1) * (user + output);
+    const useLong = long !== null && requestInput > threshold;
+    if (useLong) longContextTurns += 1;
+    const rates = useLong ? long : standard;
+
+    const cachedTokens = Math.round(requestInput * cachedShare);
+    const freshTokens = requestInput - cachedTokens;
+    const cachedRate = rates.cachedInput ?? rates.input;
+
+    inputUncachedPico += charge(requestInput, rates.input);
+    inputPico += charge(freshTokens, rates.input) + charge(cachedTokens, cachedRate);
+    outputPico += charge(Math.round(output * reasoningMultiplier), rates.output);
+  }
+
+  // The cached prefix has to be written before it can be read. Both OpenAI and
+  // Anthropic charge 1.25x base input for that write. Modelled as one write per
+  // conversation: the prefix is stable within a session, which is the case the
+  // cache assumption is about.
+  let cacheWritePico = 0;
+  if (cachedShare > 0) {
+    const prefix = Math.round((system + user) * cachedShare);
+    if (standard.cacheWrite !== undefined) {
+      cacheWritePico = charge(prefix, standard.cacheWrite);
+      assumptions.push('One cache write per conversation, at the provider’s published write rate.');
+    } else if (prefix > 0) {
       assumptions.push(
-        `No published cached-input rate for this model; assumed ${Math.round(
-          ASSUMED_CACHE_MULTIPLIER * 100,
-        )}% of the input rate.`,
+        'Cache writes are not modelled for this model — no published write rate, so the real bill is a little higher.',
       );
     }
   }
+
   if (cachedShare > 0) {
     assumptions.push(`${Math.round(cachedShare * 100)}% of input tokens assumed to hit the cache.`);
+    if (pricing.cachedInput === undefined) {
+      // Inventing a discount here is what makes a calculator flattering rather
+      // than useful. If the provider does not publish a cached rate, the honest
+      // number is the full one.
+      assumptions.push(
+        `${model.displayName} publishes no cached-input rate — cached tokens are billed at the full input rate.`,
+      );
+    }
   }
-
-  const reasoningMultiplier = Math.max(1, opts.reasoningMultiplier);
-  const billedOutput = Math.round(tokens.outputTokens * reasoningMultiplier);
   if (reasoningMultiplier > 1) {
     assumptions.push(`Output billed at ${reasoningMultiplier}× to account for hidden reasoning tokens.`);
   }
+  if (longContextTurns > 0 && pricing.longContext) {
+    assumptions.push(
+      `${longContextTurns} of ${turns} turns exceed ${formatTokens(pricing.longContext.thresholdTokens)} input tokens and are billed at this model’s long-context rates.`,
+    );
+  } else if (long === null && tokens.peakRequestTokens > 272_000) {
+    assumptions.push(
+      'No long-context tier is published for this model — some providers bill large requests at a premium that this estimate does not include.',
+    );
+  }
 
-  const inputCostUncached = picoToDollars(costPico(tokens.inputTokens, pricing.input));
-  const inputCost = picoToDollars(costPico(freshTokens, pricing.input) + costPico(cachedTokens, cachedRate));
-  const outputCost = picoToDollars(costPico(billedOutput, pricing.output));
+  if (tokens.peakRequestTokens + output > model.contextWindow) {
+    warnings.push(
+      `The largest turn needs ${formatTokens(tokens.peakRequestTokens + output)} tokens, past ${model.displayName}’s ${formatTokens(model.contextWindow)} context window — this conversation could not actually run.`,
+    );
+  }
+  if (model.maxOutput !== undefined && output > model.maxOutput) {
+    warnings.push(
+      `A ${formatTokens(output)}-token response is past ${model.displayName}’s ${formatTokens(model.maxOutput)} output ceiling.`,
+    );
+  }
+
+  const inputCostUncached = picoToDollars(inputUncachedPico);
+  const inputCost = picoToDollars(inputPico);
+  const cacheWriteCost = picoToDollars(cacheWritePico);
+  const outputCost = picoToDollars(outputPico);
 
   return {
     ...tokens,
     inputCostUncached,
     inputCost,
-    cacheSavings: inputCostUncached - inputCost,
+    cacheWriteCost,
+    cacheSavings: inputCostUncached - inputCost - cacheWriteCost,
     outputCost,
-    total: inputCost + outputCost,
+    total: inputCost + cacheWriteCost + outputCost,
+    longContextTurns,
     assumptions,
+    warnings,
+    exact,
   };
 }
 
@@ -242,4 +383,10 @@ export function compareModels(
 function clamp01(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.min(1, Math.max(0, value));
+}
+
+function formatTokens(count: number): string {
+  if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(count >= 10_000_000 ? 0 : 1)}M`;
+  if (count >= 1_000) return `${Math.round(count / 1_000)}K`;
+  return String(Math.round(count));
 }

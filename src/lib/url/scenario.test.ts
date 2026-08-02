@@ -56,6 +56,48 @@ describe('encode/decode', () => {
   });
 });
 
+describe('pasted fields', () => {
+  it('records which counts came from text, and round-trips the marker', () => {
+    // Without this the shared link restored slider mode at whatever the slider
+    // last said, while claiming to restore the estimate on screen.
+    const scenario = { ...DEFAULT_SCENARIO, systemTokens: 94, pastedFields: ['system' as const] };
+    const encoded = encodeScenario(scenario);
+    expect(encoded).toMatch(/px=system/);
+    expect(encoded).toMatch(/sys=94/);
+
+    const decoded = decodeScenario(`?${encoded}`);
+    expect(decoded.pastedFields).toEqual(['system']);
+    expect(decoded.systemTokens).toBe(94);
+  });
+
+  it('still never puts the prompt itself in the URL', () => {
+    const encoded = encodeScenario({
+      ...DEFAULT_SCENARIO,
+      systemTokens: 94,
+      pastedFields: ['system', 'user'],
+    });
+    expect(encoded).not.toMatch(/text|prompt|paste/i);
+    expect(encoded).toMatch(/px=system%2Cuser/);
+  });
+
+  it('ignores field names it does not recognise', () => {
+    expect(decodeScenario('?px=system,../etc/passwd,user').pastedFields).toEqual(['system', 'user']);
+    expect(decodeScenario('?px=').pastedFields).toEqual([]);
+  });
+
+  it('defaults to no pasted fields', () => {
+    expect(DEFAULT_SCENARIO.pastedFields).toEqual([]);
+    expect(decodeScenario('?sys=100').pastedFields).toEqual([]);
+  });
+});
+
+describe('defaults', () => {
+  it('assumes no caching, so a first-time visitor sees no unrequested discount', () => {
+    expect(DEFAULT_SCENARIO.cachedInputShare).toBe(0);
+    expect(encodeScenario(DEFAULT_SCENARIO)).toMatch(/cache=0\.00/);
+  });
+});
+
 describe('clampField', () => {
   it('holds every field inside its documented range', () => {
     expect(clampField('turns', 0)).toBe(1);

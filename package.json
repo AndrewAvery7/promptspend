@@ -27,14 +27,20 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "validate:catalog": "tsx scripts/validate-catalog.ts",
+    "check:budget": "tsx scripts/check-bundle-budget.ts",
     "sync:pricing": "tsx scripts/sync-pricing.ts",
     "sync:pricing:dry": "tsx scripts/sync-pricing.ts --dry-run",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test:coverage && npm run build && npm run validate:catalog && npm run check:budget"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/space-grotesk": "^5.3.0",
     "js-tiktoken": "^1.0.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

@@ -13,7 +13,11 @@ export const VIEWS: { id: ViewId; label: string }[] = [
 interface HeaderProps {
   view: ViewId;
   onView: (view: ViewId) => void;
-  syncedOn: string;
+  /** The day a published rate last actually moved. */
+  pricesChangedOn: string;
+  /** The day the sources were last checked without a problem, if known. */
+  sourcesCheckedOn: string | null;
+  degraded: boolean;
   tourActive: boolean;
   tourPulse: boolean;
   onTour: () => void;
@@ -118,9 +122,23 @@ export function Header(props: HeaderProps) {
           Guided tour
         </button>
 
-        <div className="freshness" title="Pricing is re-synced every morning by a GitHub Action">
+        {/* Two different facts, deliberately shown as two.
+            "Prices last changed" is a property of the market; "sources checked"
+            is a property of our pipeline. A single "synced" date conflated them,
+            so a week of stable prices looked identical to a broken cron job. */}
+        <div className={`freshness${props.degraded ? ' freshness--degraded' : ''}`}>
           <span className="freshness__dot" />
-          prices synced {props.syncedOn}
+          <span className="freshness__text">
+            <b>prices last changed</b> {props.pricesChangedOn}
+            {props.sourcesCheckedOn && (
+              <>
+                {' · '}
+                <span className="freshness__checked">
+                  {props.degraded ? 'last clean check' : 'sources checked'} {props.sourcesCheckedOn}
+                </span>
+              </>
+            )}
+          </span>
         </div>
 
         <div className="palette" ref={paletteRef}>

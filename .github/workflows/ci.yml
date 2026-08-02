@@ -10,36 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # A single reusable gate. Both CI and the Pages deploy call this same job, so
+  # there is exactly one definition of "verified" and no way to ship past it.
   verify:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Format check
-        run: npm run format:check
-
-      # Includes the colour-vision palette guarantee and the pricing-pipeline
-      # rules, so a change that breaks either fails the build.
-      - name: Test
-        run: npm test
-
-      - name: Build
-        run: npm run build
-
-      # The published catalog must always satisfy the schema the app expects,
-      # even if someone edits it by hand.
-      - name: Validate published pricing data
-        run: npx tsx scripts/validate-catalog.ts
+    uses: ./.github/workflows/verify.yml

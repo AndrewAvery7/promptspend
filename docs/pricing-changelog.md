@@ -74,3 +74,150 @@ Every change the daily sync has published, newest last.
 - **Added** `zai-glm-5` — GLM-5 ($1 in / $3.2 out per 1M)
 - **Added** `zai-glm-5-code` — GLM-5 Code ($1.2 in / $5 out per 1M)
 - **Added** `zai-glm-5.1` — GLM-5.1 ($1.4 in / $4.4 out per 1M)
+
+## 2026-08-02
+
+- **Price** `claude-fable-5` — cacheWrite to — → 12.5
+- **Price** `claude-fable-5` — batchDiscount to — → 0.5
+- **Price** `claude-haiku-4-5` — cacheWrite to — → 1.25
+- **Price** `claude-haiku-4-5` — batchDiscount to — → 0.5
+- **Price** `claude-opus-4-8` — cacheWrite to — → 6.25
+- **Price** `claude-opus-4-8` — batchDiscount to — → 0.5
+- **Price** `claude-opus-5` — cacheWrite to — → 6.25
+- **Price** `claude-opus-5` — batchDiscount to — → 0.5
+- **Price** `claude-sonnet-5` — cacheWrite to — → 3.75
+- **Price** `claude-sonnet-5` — batchDiscount to — → 0.5
+- **Price** `gpt-5.4` — batchDiscount to — → 0.5
+- **Price** `gpt-5.4` — longContext.thresholdTokens to — → 272000
+- **Price** `gpt-5.4` — longContext.input to — → 5
+- **Price** `gpt-5.4` — longContext.output to — → 22.5
+- **Price** `gpt-5.4` — longContext.cachedInput to — → 0.5
+- **Price** `gpt-5.4-mini` — batchDiscount to — → 0.5
+- **Price** `gpt-5.4-nano` — batchDiscount to — → 0.5
+- **Price** `gpt-5.5` — batchDiscount to — → 0.5
+- **Price** `gpt-5.5` — longContext.thresholdTokens to — → 272000
+- **Price** `gpt-5.5` — longContext.input to — → 10
+- **Price** `gpt-5.5` — longContext.output to — → 45
+- **Price** `gpt-5.5` — longContext.cachedInput to — → 1
+- **Price** `gpt-5.6-luna` — cacheWrite to — → 0.25
+- **Price** `gpt-5.6-luna` — batchDiscount to — → 0.5
+- **Price** `gpt-5.6-luna` — longContext.thresholdTokens to — → 272000
+- **Price** `gpt-5.6-luna` — longContext.input to — → 0.4
+- **Price** `gpt-5.6-luna` — longContext.output to — → 1.8
+- **Price** `gpt-5.6-luna` — longContext.cachedInput to — → 0.04
+- **Price** `gpt-5.6-luna` — longContext.cacheWrite to — → 0.5
+- **Price** `gpt-5.6-sol` — cacheWrite to — → 6.25
+- **Price** `gpt-5.6-sol` — batchDiscount to — → 0.5
+- **Price** `gpt-5.6-sol` — longContext.thresholdTokens to — → 272000
+- **Price** `gpt-5.6-sol` — longContext.input to — → 10
+- **Price** `gpt-5.6-sol` — longContext.output to — → 45
+- **Price** `gpt-5.6-sol` — longContext.cachedInput to — → 1
+- **Price** `gpt-5.6-sol` — longContext.cacheWrite to — → 12.5
+- **Price** `gpt-5.6-terra` — cacheWrite to — → 2.5
+- **Price** `gpt-5.6-terra` — batchDiscount to — → 0.5
+- **Price** `gpt-5.6-terra` — longContext.thresholdTokens to — → 272000
+- **Price** `gpt-5.6-terra` — longContext.input to — → 4
+- **Price** `gpt-5.6-terra` — longContext.output to — → 18
+- **Price** `gpt-5.6-terra` — longContext.cachedInput to — → 0.4
+- **Price** `gpt-5.6-terra` — longContext.cacheWrite to — → 5
+- **Metadata** `gpt-5.5` — displayName: GPT 5.5 → GPT-5.5
+- **Metadata** `gpt-5.5` — capabilityIndex: — → 93
+- **Metadata** `gpt-5.6` — displayName: GPT-5.6 → GPT-5.6 (routes to Sol)
+- **Metadata** `gpt-5.6` — aliasOf: — → gpt-5.6-sol
+- **Metadata** `gpt-5.6` — capabilityIndex: 95 → —
+- **Metadata** `gpt-5.6-sol` — displayName: GPT 5.6 Sol → GPT-5.6 Sol
+- **Metadata** `gpt-5.6-sol` — capabilityIndex: — → 95
+- **Review** `amazon.nova-2-lite-v1-0` — provenance.lastChanged: — → 2026-08-02
+- **Review** `amazon.nova-2-pro-preview-20251202-v1-0` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-fable-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-fable-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-haiku-4-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-haiku-4-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-opus-4-1` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-opus-4-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-opus-4-6` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-opus-4-7` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-opus-4-8` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-opus-4-8` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-opus-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-opus-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-sonnet-4-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-sonnet-4-6` — provenance.lastChanged: — → 2026-08-02
+- **Review** `claude-sonnet-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-sonnet-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `command-a-03-2025` — provenance.lastChanged: — → 2026-08-02
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.lastChanged: — → 2026-08-02
+- **Review** `dashscope-qwen3-next-80b-a3b-thinking` — provenance.lastChanged: — → 2026-08-02
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.lastChanged: — → 2026-08-02
+- **Review** `dashscope-qwen3.7-max` — provenance.lastChanged: — → 2026-08-02
+- **Review** `deepseek-deepseek-r1` — provenance.lastChanged: — → 2026-08-02
+- **Review** `deepseek-deepseek-v3` — provenance.lastChanged: — → 2026-08-02
+- **Review** `deepseek-deepseek-v3.2` — provenance.lastChanged: — → 2026-08-02
+- **Review** `deepseek-deepseek-v4-flash` — provenance.lastChanged: — → 2026-08-02
+- **Review** `deepseek-deepseek-v4-pro` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-2.5-flash` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-2.5-pro` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-3-flash-preview` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-3-pro-preview` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-3.1-flash-lite` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-3.1-pro-preview` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-3.5-flash` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-3.5-flash-lite` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gemini-gemini-3.6-flash` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5-mini` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5-nano` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.1` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.2` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.4` — provenance.source: litellm → vendor
+- **Review** `gpt-5.4` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.4` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.4-mini` — provenance.source: litellm → vendor
+- **Review** `gpt-5.4-mini` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.4-mini` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.4-nano` — provenance.source: litellm → vendor
+- **Review** `gpt-5.4-nano` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.4-nano` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.5` — provenance.source: litellm → vendor
+- **Review** `gpt-5.5` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.6` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/models/gpt-5.6-sol
+- **Review** `gpt-5.6` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.6-luna` — provenance.source: litellm → vendor
+- **Review** `gpt-5.6-luna` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-luna` — provenance.reviewNote: OpenRouter disagrees (50%): $0.1/$0.6 vs $0.2/$1.2 → —
+- **Review** `gpt-5.6-luna` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.6-luna` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.6-sol` — provenance.source: litellm → vendor
+- **Review** `gpt-5.6-sol` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.6-sol` — provenance.lastChanged: — → 2026-08-02
+- **Review** `gpt-5.6-terra` — provenance.source: litellm → vendor
+- **Review** `gpt-5.6-terra` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-terra` — provenance.reviewNote: OpenRouter disagrees (50%): $1/$6 vs $2/$12 → —
+- **Review** `gpt-5.6-terra` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.6-terra` — provenance.lastChanged: — → 2026-08-02
+- **Review** `minimax-minimax-m2` — provenance.lastChanged: — → 2026-08-02
+- **Review** `minimax-minimax-m2.1` — provenance.lastChanged: — → 2026-08-02
+- **Review** `minimax-minimax-m2.5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `minimax-minimax-m3` — provenance.lastChanged: — → 2026-08-02
+- **Review** `mistral-mistral-large-3` — provenance.lastChanged: — → 2026-08-02
+- **Review** `mistral-mistral-medium-3-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `moonshot-kimi-k2-thinking` — provenance.lastChanged: — → 2026-08-02
+- **Review** `moonshot-kimi-k2.5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `moonshot-kimi-k2.6` — provenance.lastChanged: — → 2026-08-02
+- **Review** `o1` — provenance.lastChanged: — → 2026-08-02
+- **Review** `o3` — provenance.lastChanged: — → 2026-08-02
+- **Review** `o3-mini` — provenance.lastChanged: — → 2026-08-02
+- **Review** `o4-mini` — provenance.lastChanged: — → 2026-08-02
+- **Review** `xai-grok-2` — provenance.lastChanged: — → 2026-08-02
+- **Review** `xai-grok-3` — provenance.lastChanged: — → 2026-08-02
+- **Review** `xai-grok-4` — provenance.lastChanged: — → 2026-08-02
+- **Review** `xai-grok-4-1-fast` — provenance.lastChanged: — → 2026-08-02
+- **Review** `xai-grok-4.3` — provenance.lastChanged: — → 2026-08-02
+- **Review** `xai-grok-4.5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `zai-glm-4.6` — provenance.lastChanged: — → 2026-08-02
+- **Review** `zai-glm-4.7` — provenance.lastChanged: — → 2026-08-02
+- **Review** `zai-glm-5` — provenance.lastChanged: — → 2026-08-02
+- **Review** `zai-glm-5-code` — provenance.lastChanged: — → 2026-08-02
+- **Review** `zai-glm-5.1` — provenance.lastChanged: — → 2026-08-02

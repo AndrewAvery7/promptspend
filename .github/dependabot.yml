@@ -1,0 +1,28 @@
+# Dependency updates.
+#
+# Actions are pinned to commit SHAs so a tag cannot be moved under us. That is
+# only safe if something keeps the pins current, which is what this file is for:
+# Dependabot rewrites the SHA *and* the trailing `# v4` comment when a new
+# release lands, so the pin stays both immutable and readable.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'ci'
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'deps'
+    # Majors arrive as their own pull requests rather than in a weekly batch:
+    # a React or Vite major is a deliberate migration, not a routine bump.
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch

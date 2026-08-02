@@ -1,5 +1,8 @@
 {
-  "$comment": "Rung 1 of the trust ladder: hand-verified values that beat every automated source. Anthropic rates were checked against the official pricing reference on 2026-08-01. `capabilityIndex` is an illustrative 0-100 placeholder used only for the value map's Y axis — it is NOT a benchmark score, and the UI labels it as such.",
+  "$comment": "Rung 1 of the trust ladder: hand-verified values that beat every automated source. Every row with `vendorVerified` carries the `verifiedUrl` that was actually read, and the date it was read — that is what makes the claim checkable rather than merely asserted. Anthropic and OpenAI rows were reconciled against the first-party pricing pages on 2026-08-01; both matched what the automated feed already published, and the additions here are the modifiers the feed does not carry (cache-write rates, long-context tiers, batch discounts). `capabilityIndex` is an illustrative 0-100 placeholder used only for the value map's Y axis - it is NOT a benchmark score, models without one are simply not plotted, and the UI says so.",
+
+  "$scope": "These are standard-tier, global-endpoint list prices in USD. Not modelled: regional/data-residency premiums (OpenAI and Anthropic both charge 1.1x), fast/priority tiers, server-side tool call fees, fine-tuning, and negotiated volume discounts. The UI states this boundary rather than implying the figure is a whole invoice.",
+
   "models": [
     {
       "id": "claude-fable-5",
@@ -7,10 +10,11 @@
       "displayName": "Claude Fable 5",
       "vendorVerified": true,
       "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 100,
-      "pricing": { "input": 10, "output": 50, "cachedInput": 1 }
+      "pricing": { "input": 10, "output": 50, "cachedInput": 1, "cacheWrite": 12.5, "batchDiscount": 0.5 }
     },
     {
       "id": "claude-opus-5",
@@ -18,10 +22,11 @@
       "displayName": "Claude Opus 5",
       "vendorVerified": true,
       "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 96,
-      "pricing": { "input": 5, "output": 25, "cachedInput": 0.5 }
+      "pricing": { "input": 5, "output": 25, "cachedInput": 0.5, "cacheWrite": 6.25, "batchDiscount": 0.5 }
     },
     {
       "id": "claude-opus-4-8",
@@ -29,10 +34,11 @@
       "displayName": "Claude Opus 4.8",
       "vendorVerified": true,
       "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 94,
-      "pricing": { "input": 5, "output": 25, "cachedInput": 0.5 }
+      "pricing": { "input": 5, "output": 25, "cachedInput": 0.5, "cacheWrite": 6.25, "batchDiscount": 0.5 }
     },
     {
       "id": "claude-sonnet-5",
@@ -40,6 +46,7 @@
       "displayName": "Claude Sonnet 5",
       "vendorVerified": true,
       "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 90,
@@ -47,7 +54,15 @@
         "input": 3,
         "output": 15,
         "cachedInput": 0.3,
-        "intro": { "input": 2, "output": 10, "until": "2026-08-31" }
+        "cacheWrite": 3.75,
+        "batchDiscount": 0.5,
+        "intro": {
+          "input": 2,
+          "output": 10,
+          "cachedInput": 0.2,
+          "cacheWrite": 2.5,
+          "until": "2026-08-31"
+        }
       }
     },
     {
@@ -56,10 +71,11 @@
       "displayName": "Claude Haiku 4.5",
       "vendorVerified": true,
       "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 200000,
       "maxOutput": 64000,
       "capabilityIndex": 74,
-      "pricing": { "input": 1, "output": 5, "cachedInput": 0.1 }
+      "pricing": { "input": 1, "output": 5, "cachedInput": 0.1, "cacheWrite": 1.25, "batchDiscount": 0.5 }
     },
     { "id": "claude-opus-4-7", "displayName": "Claude Opus 4.7", "capabilityIndex": 92 },
     { "id": "claude-opus-4-6", "displayName": "Claude Opus 4.6", "capabilityIndex": 89 },
@@ -72,15 +88,139 @@
       "status": "legacy",
       "capabilityIndex": 78
     },
-    { "id": "gpt-5.6", "displayName": "GPT-5.6", "capabilityIndex": 95 },
-    { "id": "gpt-5.6-terra", "displayName": "GPT-5.6 Terra", "capabilityIndex": 86 },
-    { "id": "gpt-5.6-luna", "displayName": "GPT-5.6 Luna", "capabilityIndex": 72 },
-    { "id": "gpt-5.4", "displayName": "GPT-5.4", "capabilityIndex": 87 },
-    { "id": "gpt-5.4-mini", "displayName": "GPT-5.4 Mini", "capabilityIndex": 76 },
-    { "id": "gpt-5.4-nano", "displayName": "GPT-5.4 Nano", "capabilityIndex": 62 },
+
+    {
+      "$note": "OpenAI documents that the bare `gpt-5.6` id routes to GPT-5.6 Sol. Marking it an alias keeps one purchasable model from appearing twice in the picker and twice on the value map; the row stays in the catalog table so anyone searching for the id still finds it.",
+      "id": "gpt-5.6",
+      "displayName": "GPT-5.6 (routes to Sol)",
+      "aliasOf": "gpt-5.6-sol",
+      "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "providerId": "openai",
+      "displayName": "GPT-5.6 Sol",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "capabilityIndex": 95,
+      "pricing": {
+        "input": 5,
+        "output": 30,
+        "cachedInput": 0.5,
+        "cacheWrite": 6.25,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 10,
+          "output": 45,
+          "cachedInput": 1,
+          "cacheWrite": 12.5
+        }
+      }
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "providerId": "openai",
+      "displayName": "GPT-5.6 Terra",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "capabilityIndex": 86,
+      "pricing": {
+        "input": 2,
+        "output": 12,
+        "cachedInput": 0.2,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 4,
+          "output": 18,
+          "cachedInput": 0.4,
+          "cacheWrite": 5
+        }
+      }
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "providerId": "openai",
+      "displayName": "GPT-5.6 Luna",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "capabilityIndex": 72,
+      "pricing": {
+        "input": 0.2,
+        "output": 1.2,
+        "cachedInput": 0.02,
+        "cacheWrite": 0.25,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 0.4,
+          "output": 1.8,
+          "cachedInput": 0.04,
+          "cacheWrite": 0.5
+        }
+      }
+    },
+    {
+      "id": "gpt-5.5",
+      "providerId": "openai",
+      "displayName": "GPT-5.5",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "capabilityIndex": 93,
+      "pricing": {
+        "input": 5,
+        "output": 30,
+        "cachedInput": 0.5,
+        "batchDiscount": 0.5,
+        "longContext": { "thresholdTokens": 272000, "input": 10, "output": 45, "cachedInput": 1 }
+      }
+    },
+    {
+      "id": "gpt-5.4",
+      "providerId": "openai",
+      "displayName": "GPT-5.4",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "capabilityIndex": 87,
+      "pricing": {
+        "input": 2.5,
+        "output": 15,
+        "cachedInput": 0.25,
+        "batchDiscount": 0.5,
+        "longContext": { "thresholdTokens": 272000, "input": 5, "output": 22.5, "cachedInput": 0.5 }
+      }
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "providerId": "openai",
+      "displayName": "GPT-5.4 Mini",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "capabilityIndex": 76,
+      "pricing": { "input": 0.75, "output": 4.5, "cachedInput": 0.075, "batchDiscount": 0.5 }
+    },
+    {
+      "id": "gpt-5.4-nano",
+      "providerId": "openai",
+      "displayName": "GPT-5.4 Nano",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-01",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "capabilityIndex": 62,
+      "pricing": { "input": 0.2, "output": 1.25, "cachedInput": 0.02, "batchDiscount": 0.5 }
+    },
     { "id": "gpt-5.2", "displayName": "GPT-5.2", "capabilityIndex": 82 },
     { "id": "gpt-5.1", "displayName": "GPT-5.1", "capabilityIndex": 80 },
     { "id": "o4-mini", "displayName": "o4-mini", "capabilityIndex": 70 },
+
     { "id": "gemini-gemini-3.1-pro-preview", "displayName": "Gemini 3.1 Pro", "capabilityIndex": 88 },
     { "id": "gemini-gemini-3.6-flash", "displayName": "Gemini 3.6 Flash", "capabilityIndex": 82 },
     { "id": "gemini-gemini-3.5-flash-lite", "displayName": "Gemini 3.5 Flash-Lite", "capabilityIndex": 66 },

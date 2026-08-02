@@ -1,9 +1,10 @@
 import type { Catalog } from '@/lib/pricing/catalog';
-import { REPO_URL } from '@/config';
+import { PRICING_SCOPE, REPO_URL } from '@/config';
 
-export function DataView({ catalog, onToast }: { catalog: Catalog; onToast: (message: string) => void }) {
+export function DataView({ catalog }: { catalog: Catalog }) {
   const flagged = catalog.models.filter((model) => model.provenance.needsReview);
   const vendorVerified = catalog.models.filter((model) => model.provenance.source === 'vendor');
+  const health = catalog.health;
 
   return (
     <section aria-labelledby="data-heading">
@@ -12,52 +13,118 @@ export function DataView({ catalog, onToast }: { catalog: Catalog; onToast: (mes
         Every number shows its work.
       </h1>
       <p className="subhead">
-        A price you cannot trace is a price you cannot trust. Every model carries its source and the date it
-        was last confirmed, every change lands in a public changelog — and you can have that changelog come to
-        you.
+        A price you cannot trace is a price you cannot trust. Every model carries its source, a link to the
+        page that source came from, and the date it was last confirmed — and every change lands in a public
+        changelog.
       </p>
 
       <div className="data-grid">
-        <section className="panel span-2" aria-labelledby="alerts-title">
+        <section className="panel span-2" aria-labelledby="health-title">
           <div className="panel__head">
-            <h2 className="panel__title" id="alerts-title">
-              Price alerts — hear it first
+            <h2 className="panel__title" id="health-title">
+              Pipeline health
             </h2>
           </div>
           <div className="panel__body">
+            {/* Two dates, because they answer two questions. A single "synced"
+                date could not distinguish "prices are stable" from "the job
+                stopped running a fortnight ago". */}
+            <div className="health-grid">
+              <div>
+                <span className="health-grid__label">Prices last changed</span>
+                <span className="health-grid__value mono">{catalog.pricesLastChanged()}</span>
+              </div>
+              <div>
+                <span className="health-grid__label">Sources last checked cleanly</span>
+                <span className="health-grid__value mono">
+                  {catalog.sourcesLastChecked() ?? 'not published yet'}
+                </span>
+              </div>
+              <div>
+                <span className="health-grid__label">Last run</span>
+                <span className="health-grid__value mono">
+                  {health ? `${health.attemptedAt.slice(0, 10)} · ${health.outcome}` : 'unknown'}
+                </span>
+              </div>
+              <div>
+                <span className="health-grid__label">Models tracked</span>
+                <span className="health-grid__value mono">
+                  {catalog.primaryModels.length}
+                  {catalog.models.length !== catalog.primaryModels.length
+                    ? ` (+${catalog.models.length - catalog.primaryModels.length} aliases)`
+                    : ''}
+                </span>
+              </div>
+            </div>
+            {health?.outcome === 'degraded' && (
+              <p className="note note--warn" role="status">
+                <span>
+                  <b>The last run was degraded and published nothing.</b>{' '}
+                  {health.problems.join('; ') || 'A source was unavailable.'} The prices above are the last
+                  ones that passed every check.
+                </span>
+              </p>
+            )}
+            <p className="privacy-note">
+              The full manifest — source revisions, row counts, catalog fingerprint — is a plain JSON file at{' '}
+              <code>data/sync-status.json</code>, published on every run whether it succeeded or not.
+            </p>
+          </div>
+        </section>
+
+        <section className="panel span-2" aria-labelledby="alerts-title">
+          <div className="panel__head">
+            <h2 className="panel__title" id="alerts-title">
+              Price alerts
+            </h2>
+          </div>
+          <div className="panel__body">
+            {/* Two of these were enabled controls that did nothing but explain
+                they did nothing, and one of them collected an email address it
+                could not subscribe. A planned feature is described, not
+                simulated. */}
             <div className="alert-grid">
               <article className="alert-option">
                 <h4>
                   <FeedIcon />
-                  RSS / Atom feed
+                  Commit feed
                 </h4>
-                <p>Every price change and new model, in your reader the morning it lands.</p>
+                <p>
+                  Every change to the catalog is a commit to one file, and GitHub publishes an Atom feed of
+                  those. Point a reader at it and you hear about a price change the morning it lands.
+                </p>
                 <a className="alert-tag" href={`${REPO_URL}/commits/main/public/data/pricing.json.atom`}>
-                  LIVE AT LAUNCH
+                  AVAILABLE NOW ↗
                 </a>
               </article>
 
               <article className="alert-option">
                 <h4>
+                  <GitHubIcon />
+                  Watch the repository
+                </h4>
+                <p>
+                  Watch <code>token-tally</code> for pull requests and you will see every pricing change a
+                  human had to review before it went live.
+                </p>
+                <a className="alert-tag" href={REPO_URL}>
+                  AVAILABLE NOW ↗
+                </a>
+              </article>
+
+              <article className="alert-option alert-option--planned">
+                <h4>
                   <BellIcon />
                   Browser push
                 </h4>
                 <p>
-                  Watch specific models and get a push the moment one changes. No email, no phone number —
-                  nothing personal is stored.
+                  Watch specific models and get a push the moment one changes — no email, no phone number,
+                  nothing personal stored.
                 </p>
-                <button
-                  type="button"
-                  className="action-button"
-                  onClick={() =>
-                    onToast('Push alerts ship with the alerts milestone — the RSS feed works today')
-                  }
-                >
-                  Enable push
-                </button>
+                <span className="alert-tag alert-tag--planned">PLANNED — NOT BUILT YET</span>
               </article>
 
-              <article className="alert-option">
+              <article className="alert-option alert-option--planned">
                 <h4>
                   <MailIcon />
                   Email digest
@@ -66,41 +133,14 @@ export function DataView({ catalog, onToast }: { catalog: Catalog; onToast: (mes
                   A weekly “what changed in LLM pricing”, or instant alerts for the models you follow. Double
                   opt-in, one-click out.
                 </p>
-                <form
-                  className="email-row"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    onToast('Email alerts ship with the alerts milestone — subscribe to the feed meanwhile');
-                  }}
-                >
-                  <label className="visually-hidden" htmlFor="alert-email">
-                    Email address for price alerts
-                  </label>
-                  <input id="alert-email" type="email" placeholder="you@example.com" required />
-                  <button type="submit" className="action-button" style={{ marginTop: 0 }}>
-                    Notify me
-                  </button>
-                </form>
-              </article>
-
-              <article className="alert-option">
-                <h4>
-                  <GitHubIcon />
-                  GitHub Watch
-                </h4>
-                <p>
-                  Notable changes are published as releases — watch the repository and get notified where you
-                  already work.
-                </p>
-                <a className="alert-tag" href={REPO_URL}>
-                  LIVE AT LAUNCH
-                </a>
+                <span className="alert-tag alert-tag--planned">PLANNED — NOT BUILT YET</span>
               </article>
             </div>
             <p className="privacy-note">
-              No SMS: per-message costs and phone-number collection do not fit a free, privacy-first tool, and
-              browser push already covers “tell me instantly, on my phone”. The email list would store your
-              address and the models you follow, and nothing else. There is no analytics on this site.
+              The two planned options are described here so you know where this is going, and marked so you
+              are not invited to enter an address into a form that cannot subscribe it. No SMS is planned:
+              per-message costs and phone-number collection do not fit a free, privacy-first tool, and push
+              already covers “tell me instantly, on my phone”. There is no analytics on this site.
             </p>
           </div>
         </section>
@@ -128,17 +168,20 @@ export function DataView({ catalog, onToast }: { catalog: Catalog; onToast: (mes
               </li>
               <li>
                 <div>
-                  <b>OpenRouter</b> — an independent cross-check, never a source of record. A disagreement
-                  beyond 20% flags the model instead of publishing quietly.
+                  <b>OpenRouter</b> — an independent cross-check, never a source of record. It resells
+                  inference, so its prices legitimately differ from first-party list prices; a disagreement
+                  beyond 20% therefore <em>flags</em> the model rather than changing it.
                 </div>
               </li>
               <li>
                 <div>
-                  <b>Sanity rules</b> — schema validation, non-negative rates, and any single-day move beyond
-                  50% held back for a human to approve.
+                  <b>Sanity rules</b> — schema validation, non-negative rates, a single-day move beyond 50%
+                  held for a human, a floor on how many rows a source may return, and a cap on how much the
+                  catalog may shrink in one run. A run that trips any of them publishes nothing.
                 </div>
               </li>
             </ol>
+            <p className="privacy-note">{PRICING_SCOPE}</p>
           </div>
         </section>
 
@@ -156,9 +199,19 @@ export function DataView({ catalog, onToast }: { catalog: Catalog; onToast: (mes
                 <span className="sync-log__date">— {model.provenance.reviewNote}</span>
               </div>
             ))}
+            {/* This used to claim flagged rows were shown "with the more
+                conservative source", which was simply not what the merge does:
+                the primary feed's number stands unless a human overrides it.
+                Describing the actual rule is worth more than a comforting one. */}
             <p style={{ marginTop: 10 }}>
-              Flagged models are still shown with the more conservative source, and the badge follows them
-              everywhere. Missing a model?{' '}
+              A flagged row is still shown at <b>the primary feed&apos;s number</b> — the cross-check raises a
+              hand, it never overwrites. Both figures are in the note above, so you can see the range you are
+              choosing inside, and the CHECK badge follows the model everywhere it appears. Rows we have
+              confirmed against the vendor&apos;s own page are marked <code>vendor ✓</code> and are never
+              flagged by the cross-check.
+            </p>
+            <p>
+              Missing a model?{' '}
               <a href={`${REPO_URL}/issues/new?template=model-request.yml`}>Open a model request</a> — it
               takes about thirty seconds.
             </p>

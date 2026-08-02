@@ -1,0 +1,32 @@
+/*
+ * Self-hosted fonts.
+ *
+ * These used to come from Google Fonts. Two `<link>` tags is the cheapest way
+ * to load a typeface and the most expensive way to keep a privacy claim: every
+ * visitor's IP address and user agent reached a third party before the first
+ * cost card rendered, on a site whose footer says "no tracking". Serving the
+ * files ourselves makes that sentence true, removes two DNS lookups and two TLS
+ * handshakes from the critical path, and lets the page declare a Content
+ * Security Policy with no external font or style origins at all.
+ *
+ * Only the latin subsets and only the weights actually used are imported —
+ * eight files rather than the several dozen the full families ship.
+ *
+ * Space Grotesk, IBM Plex Sans and JetBrains Mono are all SIL Open Font
+ * License 1.1; the licences travel with the packages in node_modules and are
+ * reproduced in the build output's third-party notices.
+ */
+
+/* Display — headlines and the wordmark. */
+@import '@fontsource/space-grotesk/latin-500.css';
+@import '@fontsource/space-grotesk/latin-700.css';
+
+/* Body. */
+@import '@fontsource/ibm-plex-sans/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-500.css';
+@import '@fontsource/ibm-plex-sans/latin-600.css';
+
+/* Numbers, rates and anything that has to line up in a column. */
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/jetbrains-mono/latin-500.css';
+@import '@fontsource/jetbrains-mono/latin-700.css';

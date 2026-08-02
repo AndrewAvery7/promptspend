@@ -36,6 +36,13 @@ export interface Allowlist {
   families: FamilyRule[];
   /** Keys matching any of these are never captured, whatever the family says. */
   globalExclude: string[];
+  /**
+   * Catalog ids to drop for good. Because the merge keeps every previously
+   * published model (a missing upstream row marks it stale rather than
+   * deleting it), retiring a model has to be a deliberate, reviewable edit —
+   * and this list is where that decision is written down.
+   */
+  retired?: string[];
 }
 
 export function slugify(key: string): string {
@@ -164,6 +171,8 @@ export interface Override {
   providerId?: string;
   displayName?: string;
   status?: Model['status'];
+  /** Marks this id as a routing alias for another catalog entry. */
+  aliasOf?: string;
   releaseDate?: string;
   contextWindow?: number;
   maxOutput?: number;
@@ -174,4 +183,7 @@ export interface Override {
   /** When true, these prices come from the vendor's own page. */
   vendorVerified?: boolean;
   lastVerified?: string;
+  /** The vendor page that was read. Required in spirit whenever
+   *  `vendorVerified` is set — that is what makes the claim checkable. */
+  verifiedUrl?: string;
 }

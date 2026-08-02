@@ -4,6 +4,7 @@ import type { Model } from '@/lib/pricing/types';
 import { LEARN_MODULES } from '@/content/learn';
 import { countTokens, estimateForModel, type TokenCount } from '@/lib/tokenize';
 import { formatCount } from '@/lib/engine/format';
+import { MAX_PASTE_CHARS } from '@/state/useEstimator';
 
 const SAMPLE =
   'Compare the cost of running this prompt on GPT-5.4, Claude Sonnet 5, and DeepSeek V3.2 at one million requests per month.';
@@ -69,17 +70,21 @@ function TokenLab({ catalog }: { catalog: Catalog }) {
 
   useEffect(() => {
     let cancelled = false;
-    // Show a synchronous estimate immediately, then upgrade to the real count
-    // for any family whose tokenizer we can run in the browser.
+    // The synchronous estimate is cheap, so it lands on every keystroke and the
+    // number never stalls. The real tokenizer waits for a pause in typing —
+    // running it per character re-encoded the whole sample on every key.
     setCounts(Object.fromEntries(samples.map((model) => [model.id, estimateForModel(text, model)])));
-    void Promise.all(
-      samples.map(async (model) => {
-        const result = await countTokens(text, model);
-        if (!cancelled) setCounts((prev) => ({ ...prev, [model.id]: result }));
-      }),
-    );
+    const timer = window.setTimeout(() => {
+      void Promise.all(
+        samples.map(async (model) => {
+          const result = await countTokens(text, model);
+          if (!cancelled) setCounts((prev) => ({ ...prev, [model.id]: result }));
+        }),
+      );
+    }, 250);
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
     // `samples` is derived from the catalog and stable for a given catalog.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,7 +100,12 @@ function TokenLab({ catalog }: { catalog: Catalog }) {
       <label className="visually-hidden" htmlFor="token-lab-input">
         Sample text to tokenize
       </label>
-      <textarea id="token-lab-input" value={text} onChange={(event) => setText(event.target.value)} />
+      <textarea
+        id="token-lab-input"
+        value={text}
+        maxLength={MAX_PASTE_CHARS}
+        onChange={(event) => setText(event.target.value)}
+      />
       <div className="token-grid">
         {samples.map((model) => {
           const count = counts[model.id];

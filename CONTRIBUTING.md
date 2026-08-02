@@ -29,6 +29,10 @@ or provider shows up.
 npm run sync:pricing:dry
 ```
 
+If you are adding a hand-verified vendor rate to `data/pricing-overrides.json`, include `verifiedUrl` and
+`lastVerified`. A vendor claim with no link to the page it came from is not verifiable, and unverifiable is
+the state this project exists to get out of.
+
 4. Optionally add a display name and a hand-verified price in `data/pricing-overrides.json`.
 
 **Write patterns that survive the next release.** `^gpt-5(\.\d+)?$` keeps working when GPT-5.7 ships;
@@ -65,6 +69,13 @@ the same things CI runs.
 - The engine stays pure and free of React. If a calculation needs a component, it is in the wrong place.
 - Label estimates as estimates. An unmarked number implies precision we may not have, and that is the one
   thing this project cannot get wrong.
+- **Never invent a rate.** If a provider does not publish a number, charge the full price and say so. An
+  assumed discount is flattering, and flattering is the failure mode of every calculator on the web.
+- **A claim on screen must be true of the code.** If the copy says two sources are compared, two sources
+  are compared; if it says a link restores the estimate, it restores the estimate. When behaviour and copy
+  disagree, changing the copy is a legitimate fix — quietly leaving both is not.
+- **No enabled control that does nothing.** Describe a planned feature; do not simulate it, and never
+  accept an email address into a form that cannot subscribe it.
 - Comments explain _why_, not _what_. The code already says what.
 - New user-facing copy should read the way the rest of the site reads: plain sentences, no jargon without
   a definition, and no hype.

@@ -1,8 +1,12 @@
 import type { Catalog } from '@/lib/pricing/catalog';
+import { PRICING_SCOPE } from '@/config';
+import { csvDocument } from '@/lib/engine/csv';
 import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
+import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
 import { MAX_MODELS } from '@/lib/url/scenario';
-import { fieldTokenCount, type FieldKey, type useEstimator } from '@/state/useEstimator';
-import { AssumptionList, CostCards, InsightList } from './CostCards';
+import { MAX_PASTE_CHARS, type FieldKey, type useEstimator } from '@/state/useEstimator';
+import { AssumptionList, CostCards, InsightList, WarningList } from './CostCards';
+import { HelpTip, ReviewBadge } from './Disclosure';
 
 type Estimator = ReturnType<typeof useEstimator>;
 
@@ -33,7 +37,7 @@ const FIELD_COPY: Record<
     scenarioKey: 'systemTokens',
     max: 16000,
     step: 100,
-    note: 'Sent with every request. Keep it lean — or cache it (see Advanced).',
+    note: 'Sent with every request. Keep it lean — or cache it.',
     placeholder: 'Paste your actual system prompt — the token count updates live…',
   },
   user: {
@@ -66,17 +70,19 @@ export function EstimateView({
   const { scenario, fields, rows, insights } = estimator;
   const groups = catalog.byProvider(search);
   const primaryModel = catalog.get(scenario.modelIds[0] ?? '');
+  const primaryTokens = primaryModel ? estimator.tokensForModel(primaryModel) : null;
   const conversationsPerMonth = scenario.conversationsPerDay * 30;
+  const cacheOn = scenario.cachedInputShare > 0;
 
   return (
     <section aria-labelledby="estimate-heading">
-      <p className="eyebrow">Estimate · prices never stale</p>
+      <p className="eyebrow">Estimate</p>
       <h1 className="headline" id="estimate-heading">
         Know the tab <em>before</em> you build.
       </h1>
       <p className="subhead">
         Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s bill
-        side by side — at your scale, with prices synced daily.
+        side by side — at your scale, from prices re-checked every morning.
       </p>
 
       {showWelcome && (
@@ -99,19 +105,26 @@ export function EstimateView({
         </div>
       )}
 
+      {estimator.restoredFromPaste && (
+        <p className="note note--info" role="status">
+          <span>
+            <b>Restored from a shared link.</b> Some of these token counts were measured from a pasted prompt.
+            The counts travelled; the prompt text did not — it is never put in a URL.
+          </span>
+        </p>
+      )}
+
       <div className="workspace">
-        <div>
+        <div className="workspace__inputs">
           {/* 1 — models */}
           <section className="panel" id="panel-models" aria-labelledby="models-title">
             <div className="panel__head">
               <h2 className="panel__title" id="models-title">
                 1 · Models
-                <span
-                  className="hint"
-                  title="Same task, wildly different bills. Comparing before you build is the highest-leverage cost decision there is."
-                >
-                  ?
-                </span>
+                <HelpTip label="Models">
+                  Same task, wildly different bills. Comparing before you build is the highest-leverage cost
+                  decision there is.
+                </HelpTip>
               </h2>
             </div>
             <div className="panel__body">
@@ -119,7 +132,7 @@ export function EstimateView({
                 className="search-input"
                 type="search"
                 value={search}
-                placeholder={`Search ${catalog.models.length} models · ${catalog.providers.length} providers…`}
+                placeholder={`Search ${catalog.primaryModels.length} models · ${catalog.providers.length} providers…`}
                 aria-label="Search models"
                 onChange={(event) => onSearch(event.target.value)}
               />
@@ -133,26 +146,40 @@ export function EstimateView({
                     {group.models.map((model) => {
                       const checked = scenario.modelIds.includes(model.id);
                       return (
-                        <label className="model-row" key={model.id}>
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() => {
-                              const result = estimator.toggleModel(model.id);
-                              if (!result.ok && result.reason) onToast(result.reason);
-                            }}
-                          />
-                          <span className="model-row__name">{model.displayName}</span>
-                          {model.pricing.intro && <span className="badge badge--intro">INTRO</span>}
-                          {model.provenance.needsReview && (
-                            <span className="badge badge--review" title={model.provenance.reviewNote}>
-                              CHECK
+                        <div className="model-row" key={model.id}>
+                          <label className="model-row__main">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => {
+                                const result = estimator.toggleModel(model.id);
+                                if (!result.ok && result.reason) onToast(result.reason);
+                              }}
+                            />
+                            <span className="model-row__name">{model.displayName}</span>
+                          </label>
+                          <span className="model-row__tags">
+                            {model.pricing.intro && <span className="badge badge--intro">INTRO</span>}
+                            {/* Status belongs where the choice is made, not only in
+                                the catalog table — picking a retired model by
+                                accident is an expensive mistake to discover later. */}
+                            {model.status !== 'current' && (
+                              <span className="pill pill--status">{model.status}</span>
+                            )}
+                            {model.provenance.stale && <span className="pill pill--status">unlisted</span>}
+                            {model.provenance.needsReview && (
+                              <ReviewBadge
+                                note={model.provenance.reviewNote}
+                                verifiedUrl={
+                                  model.provenance.verifiedUrl ?? catalog.provider(model)?.pricingUrl
+                                }
+                              />
+                            )}
+                            <span className="model-row__rate mono">
+                              ${model.pricing.input} / ${model.pricing.output}
                             </span>
-                          )}
-                          <span className="model-row__rate">
-                            ${model.pricing.input} / ${model.pricing.output}
                           </span>
-                        </label>
+                        </div>
                       );
                     })}
                   </div>
@@ -171,12 +198,9 @@ export function EstimateView({
             <div className="panel__head">
               <h2 className="panel__title" id="workload-title">
                 2 · One interaction
-                <span
-                  className="hint"
-                  title="Describe a single typical exchange. Scale, comparison and margin all multiply out from this."
-                >
-                  ?
-                </span>
+                <HelpTip label="One interaction">
+                  Describe a single typical exchange. Scale, comparison and margin all multiply out from this.
+                </HelpTip>
               </h2>
             </div>
             <div className="panel__body">
@@ -197,25 +221,25 @@ export function EstimateView({
                 <span>
                   <b>Two ways to fill this in:</b> drag the <b>sliders</b> to sketch rough sizes, or switch a
                   field to <b>Paste text</b> and drop in your real prompt — the token count and every
-                  model&apos;s cost update live as you type.
+                  model&apos;s cost update live as you type. Pasted text stays in your browser.
                 </span>
               </p>
 
               {(Object.keys(FIELD_COPY) as FieldKey[]).map((key) => {
                 const copy = FIELD_COPY[key];
                 const state = fields[key];
-                const count = fieldTokenCount(state, scenario[copy.scenarioKey], primaryModel);
+                const pasted = state.mode === 'paste';
+                const tokens = pasted ? (primaryTokens?.[key] ?? 0) : scenario[copy.scenarioKey];
+                const estimated = pasted && primaryTokens?.method !== 'exact';
                 return (
                   <div className="field" key={key}>
                     <div className="field__label">
                       <label htmlFor={`field-${key}`}>{copy.label}</label>
                       <span className="field__controls">
-                        <span
-                          className={`field__value mono${count.estimated ? ' field__value--estimate' : ''}`}
-                        >
-                          {count.estimated ? '≈ ' : ''}
-                          {formatTokens(count.tokens)}
-                          {count.estimated ? ' · est' : ''}
+                        <span className={`field__value mono${estimated ? ' field__value--estimate' : ''}`}>
+                          {estimated ? '≈ ' : ''}
+                          {formatTokens(tokens)}
+                          {pasted ? (estimated ? ' · est' : ' · raw text') : ''}
                         </span>
                         <span className="mode-switch" role="group" aria-label={`${copy.label} input mode`}>
                           <button
@@ -227,7 +251,7 @@ export function EstimateView({
                           </button>
                           <button
                             type="button"
-                            aria-pressed={state.mode === 'paste'}
+                            aria-pressed={pasted}
                             onClick={() => estimator.setFieldMode(key, 'paste')}
                           >
                             Paste text
@@ -235,7 +259,7 @@ export function EstimateView({
                         </span>
                       </span>
                     </div>
-                    {state.mode === 'slider' ? (
+                    {!pasted ? (
                       <input
                         id={`field-${key}`}
                         type="range"
@@ -251,8 +275,12 @@ export function EstimateView({
                       <textarea
                         id={`field-${key}`}
                         value={state.text}
+                        maxLength={MAX_PASTE_CHARS}
                         placeholder={copy.placeholder}
-                        onChange={(event) => estimator.setFieldText(key, event.target.value)}
+                        onChange={(event) => {
+                          const result = estimator.setFieldText(key, event.target.value);
+                          if (!result.ok && result.reason) onToast(result.reason);
+                        }}
                       />
                     )}
                     {copy.note && <p className="field__note">{copy.note}</p>}
@@ -277,28 +305,58 @@ export function EstimateView({
                 <p className="field__note">Every turn re-sends the history — cost compounds.</p>
               </div>
 
+              {/* Caching is off by default and lives here, in plain sight, rather
+                  than switched on inside a collapsed "Advanced" section. A
+                  discount the visitor never agreed to does not belong in the
+                  first number they see. */}
+              <div className="check-row check-row--prominent">
+                <input
+                  id="cache-toggle"
+                  type="checkbox"
+                  checked={cacheOn}
+                  onChange={(event) =>
+                    estimator.updateNumber(
+                      'cachedInputShare',
+                      event.target.checked ? SUGGESTED_CACHE_SHARE : 0,
+                    )
+                  }
+                />
+                <div>
+                  <label htmlFor="cache-toggle">
+                    Assume prompt caching <span className="tag-assumption">OFF BY DEFAULT</span>
+                  </label>
+                  <p className="field__note">
+                    Turns on a {Math.round(SUGGESTED_CACHE_SHARE * 100)}% cache-hit assumption, uses each
+                    provider&apos;s published cached and cache-write rates, and charges full price where a
+                    provider publishes neither. Realistic for a chat app with a stable system prompt — but it
+                    is an assumption about <em>your</em> traffic, so you make it, not us.
+                  </p>
+                  {cacheOn && (
+                    <div className="field" style={{ marginTop: 10 }}>
+                      <div className="field__label">
+                        <label htmlFor="field-cache-share">Cache-hit share</label>
+                        <span className="field__value mono">
+                          {Math.round(scenario.cachedInputShare * 100)}%
+                        </span>
+                      </div>
+                      <input
+                        id="field-cache-share"
+                        type="range"
+                        min={0.05}
+                        max={1}
+                        step={0.05}
+                        value={scenario.cachedInputShare}
+                        onChange={(event) =>
+                          estimator.updateNumber('cachedInputShare', Number(event.target.value))
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <details className="advanced">
                 <summary>Advanced assumptions</summary>
-                <div className="check-row">
-                  <input
-                    id="cache-toggle"
-                    type="checkbox"
-                    checked={scenario.cachedInputShare > 0}
-                    onChange={(event) =>
-                      estimator.updateNumber('cachedInputShare', event.target.checked ? 0.6 : 0)
-                    }
-                  />
-                  <div>
-                    <label htmlFor="cache-toggle">
-                      Assume <b>60%</b> of input is served from prompt cache{' '}
-                      <span className="tag-assumption">ASSUMPTION</span>
-                    </label>
-                    <p className="field__note">
-                      Realistic for a chat app with a stable system prompt. Uses each provider&apos;s
-                      published cached rate where one exists.
-                    </p>
-                  </div>
-                </div>
                 <div className="check-row">
                   <input
                     id="batch-toggle"
@@ -338,12 +396,9 @@ export function EstimateView({
             <div className="panel__head">
               <h2 className="panel__title" id="scale-title">
                 3 · Scale &amp; revenue
-                <span
-                  className="hint"
-                  title="A cost that looks free per request can be a five-figure line item per month."
-                >
-                  ?
-                </span>
+                <HelpTip label="Scale and revenue">
+                  A cost that looks free per request can be a five-figure line item per month.
+                </HelpTip>
               </h2>
             </div>
             <div className="panel__body">
@@ -407,15 +462,13 @@ export function EstimateView({
             <div className="panel__head">
               <h2 className="panel__title" id="results-title">
                 Your models, side by side
-                <span className="sync-chip">
-                  PRICES SYNCED ✓ {catalog.generatedAt.toISOString().slice(0, 10)}
-                </span>
+                <span className="sync-chip">PRICES CHANGED {catalog.pricesLastChanged()}</span>
               </h2>
             </div>
             <CostCards
               rows={rows}
               catalog={catalog}
-              cacheEnabled={scenario.cachedInputShare > 0}
+              cacheEnabled={cacheOn}
               conversationsPerMonth={conversationsPerMonth}
             />
             {rows.length > 1 && <SavingsCallout rows={rows} />}
@@ -425,16 +478,14 @@ export function EstimateView({
             <div className="panel__head">
               <h2 className="panel__title" id="insights-title">
                 Why these numbers
-                <span
-                  className="hint"
-                  title="Live diagnosis of your scenario — which dial is actually driving the bill."
-                >
-                  ?
-                </span>
+                <HelpTip label="Why these numbers">
+                  Live diagnosis of your scenario — which dial is actually driving the bill.
+                </HelpTip>
               </h2>
             </div>
+            <WarningList rows={rows} />
             <InsightList insights={insights} />
-            <AssumptionList rows={rows} />
+            <AssumptionList rows={rows} scope={PRICING_SCOPE} />
           </section>
 
           <div className="actions">
@@ -444,13 +495,23 @@ export function EstimateView({
               onClick={() => {
                 void navigator.clipboard
                   ?.writeText(window.location.href)
-                  .then(() => onToast('Scenario link copied — it restores every input'))
+                  .then(() =>
+                    onToast(
+                      scenario.pastedFields.length > 0
+                        ? 'Link copied — token counts travel, your prompt text does not'
+                        : 'Scenario link copied',
+                    ),
+                  )
                   .catch(() => onToast('Copy the address bar to share this scenario'));
               }}
             >
               Share scenario
             </button>
-            <button type="button" className="button" onClick={() => downloadCsv(rows, onToast)}>
+            <button
+              type="button"
+              className="button"
+              onClick={() => downloadCsv(rows, catalog, scenario.cachedInputShare, onToast)}
+            >
               Export CSV
             </button>
             <button type="button" className="button" onClick={estimator.reset}>
@@ -494,38 +555,88 @@ function SavingsCallout({ rows }: { rows: ReturnType<typeof useEstimator>['rows'
   );
 }
 
-function downloadCsv(rows: ReturnType<typeof useEstimator>['rows'], onToast: (message: string) => void) {
+/**
+ * The export carries everything needed to reproduce the number, not just the
+ * number. A figure a colleague cannot re-derive is a figure they cannot argue
+ * with, which is worse than useless in a budget conversation.
+ */
+function downloadCsv(
+  rows: ReturnType<typeof useEstimator>['rows'],
+  catalog: Catalog,
+  cachedShare: number,
+  onToast: (message: string) => void,
+) {
   if (rows.length === 0) return;
+
+  const assumptions = [...new Set(rows.flatMap((row) => row.breakdown.assumptions))];
+  const warnings = [...new Set(rows.flatMap((row) => row.breakdown.warnings))];
+
+  const preamble: unknown[][] = [
+    ['TokenTally estimate'],
+    ['exported', new Date().toISOString()],
+    ['prices last changed', catalog.pricesLastChanged()],
+    ['sources last checked', catalog.sourcesLastChecked() ?? 'unknown'],
+    ['scope', PRICING_SCOPE],
+    ['cache-hit share assumed', `${Math.round(cachedShare * 100)}%`],
+    ...assumptions.map((text) => ['assumption', text]),
+    ...warnings.map((text) => ['warning', text]),
+    [],
+  ];
+
   const header = [
     'model',
-    'provider_id',
+    'model_id',
+    'provider',
+    'status',
+    'source',
+    'last_verified',
+    'vendor_url',
+    'flagged_for_review',
+    'tokenizer',
     'input_per_1m',
     'output_per_1m',
+    'cached_input_per_1m',
+    'cache_write_per_1m',
     'input_tokens_per_conversation',
     'output_tokens_per_conversation',
+    'peak_request_tokens',
+    'long_context_turns',
     'cost_per_conversation',
     'cost_per_month',
     'cost_per_year',
     'cost_per_user',
     'margin',
   ];
-  const lines = rows.map((row) =>
-    [
-      `"${row.model.displayName}"`,
-      row.model.providerId,
-      row.model.pricing.input,
-      row.model.pricing.output,
-      Math.round(row.breakdown.inputTokens),
-      Math.round(row.breakdown.outputTokens),
-      row.scaled.perConversation.toFixed(6),
-      row.scaled.perMonth.toFixed(2),
-      row.scaled.perYear.toFixed(2),
-      row.scaled.costPerUser.toFixed(4),
-      row.scaled.margin === null ? '' : row.scaled.margin.toFixed(4),
-    ].join(','),
-  );
 
-  const blob = new Blob([`${header.join(',')}\n${lines.join('\n')}\n`], {
+  const body = rows.map((row) => {
+    const { model, breakdown, scaled } = row;
+    return [
+      model.displayName,
+      model.id,
+      catalog.providerName(model),
+      model.status,
+      model.provenance.source,
+      model.provenance.lastVerified,
+      model.provenance.verifiedUrl ?? catalog.provider(model)?.pricingUrl ?? '',
+      model.provenance.needsReview ? 'yes' : 'no',
+      model.tokenizer.kind === 'tiktoken' ? `exact:${model.tokenizer.encoding}` : 'estimated:ratio',
+      model.pricing.input,
+      model.pricing.output,
+      model.pricing.cachedInput ?? '',
+      model.pricing.cacheWrite ?? '',
+      Math.round(breakdown.inputTokens),
+      Math.round(breakdown.outputTokens),
+      Math.round(breakdown.peakRequestTokens),
+      breakdown.longContextTurns,
+      scaled.perConversation.toFixed(6),
+      scaled.perMonth.toFixed(2),
+      scaled.perYear.toFixed(2),
+      scaled.costPerUser.toFixed(4),
+      scaled.margin === null ? '' : scaled.margin.toFixed(4),
+    ];
+  });
+
+  const blob = new Blob([csvDocument([...preamble, header, ...body])], {
     type: 'text/csv;charset=utf-8',
   });
   const url = URL.createObjectURL(blob);
@@ -534,5 +645,5 @@ function downloadCsv(rows: ReturnType<typeof useEstimator>['rows'], onToast: (me
   link.download = 'tokentally-estimate.csv';
   link.click();
   URL.revokeObjectURL(url);
-  onToast('CSV downloaded');
+  onToast('CSV downloaded — assumptions and sources included');
 }

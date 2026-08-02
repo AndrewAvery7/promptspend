@@ -24,6 +24,7 @@ export const LEARN_MODULES: LearnModule[] = [
     kind: 'interactive',
     body: [
       'Models do not read characters or words. They read tokens: chunks of text a tokenizer has learned to treat as single units. Common English words are usually one token; rarer words split into several.',
+      'One caveat about the counts on this site, and on every tool like it: a tokenizer counts the text you give it. A real API request also carries message framing, tool definitions and any images, and those are billed too. Treat an exact raw-text count as a floor, not an invoice.',
       'The rule of thumb everyone quotes — roughly four characters, or about 0.75 words, per token — holds for ordinary English prose and nothing else. Source code, with its punctuation and identifiers, runs closer to three characters per token. Chinese and Japanese are the extreme case: often one or two characters per token, so the same paragraph can cost twice as much to send.',
       'That matters the moment you serve a non-English audience. A support bot whose prompts are identical in English and Chinese does not have an identical bill.',
     ],
@@ -51,7 +52,7 @@ export const LEARN_MODULES: LearnModule[] = [
     minutes: 5,
     kind: 'value map',
     body: [
-      'The catalog on this site spans roughly two orders of magnitude between the cheapest input rate and the priciest output rate. No other line item in a software budget has that range.',
+      'On a like-for-like blended rate, the catalog on this site spans roughly two orders of magnitude between its cheapest and priciest model. No other line item in a software budget has that range. (Beware the bigger numbers you will see quoted elsewhere — they are usually the priciest *output* rate over the cheapest *input* rate, which compares two different goods.)',
       'The trap is treating that as a simple "use the cheap one" instruction. Frontier models earn their price on genuinely hard work — long autonomous tasks, subtle reasoning, code that has to be right the first time. Budget models are astonishing at classification, extraction, summarisation and routing.',
       'The useful move is routing: send the easy majority of traffic to a cheap model and escalate only what needs it. Model the two tiers separately here, then blend them by your expected split.',
     ],
@@ -65,9 +66,9 @@ export const LEARN_MODULES: LearnModule[] = [
     minutes: 4,
     kind: 'interactive',
     body: [
-      'The API is stateless. To continue a conversation you resend everything that came before, so the input side of turn N carries the whole transcript up to that point.',
-      'Total input across a conversation therefore grows with the square of the turn count, not linearly. Doubling the number of turns roughly quadruples the input tokens. Raise the turn slider on the Estimate tab and watch the curve.',
-      'Two defences: prompt caching, which makes the repeated prefix roughly ten times cheaper, and summarising older turns instead of resending them verbatim.',
+      'Continuing a conversation means the model sees everything that came before, so the input side of turn N carries the whole transcript up to that point. Classically your client resends it; several current APIs will instead hold the conversation server-side and let you reference it. Either way the prior context is normally reprocessed and billed — check your provider’s usage fields for the exact behaviour, because the transport and the billing are separate questions.',
+      'On the resend model — which is what this calculator uses, and the conservative case — total input across a conversation grows with the square of the turn count, not linearly. Doubling the number of turns roughly quadruples the input tokens. Raise the turn slider on the Estimate tab and watch the curve.',
+      'Two defences: prompt caching, which makes the repeated prefix roughly ten times cheaper to read (though the write costs more than a normal input token, so it pays off from the first hit and not before), and summarising older turns instead of resending them verbatim.',
     ],
   },
   {
@@ -93,9 +94,10 @@ export const LEARN_MODULES: LearnModule[] = [
     minutes: 5,
     kind: 'calculator',
     body: [
-      'Prompt caching stores the unchanging prefix of your request — the system prompt, the tool definitions, the retrieved documents — so subsequent calls pay a fraction of the input rate for it. For a chat product with a stable system prompt, that is close to free money.',
-      'Caching is a prefix match, which is the part people get wrong: any byte that changes early in the prompt invalidates everything after it. A timestamp at the top of a system prompt can silently disable caching entirely.',
-      'Batch APIs are the other underused discount: submit work asynchronously, get results within hours, pay about half. Anything not in front of a waiting user is a candidate.',
+      'Prompt caching stores the unchanging prefix of your request — the system prompt, the tool definitions, the retrieved documents — so subsequent calls pay a fraction of the input rate to read it. Reads are typically a tenth of the input rate.',
+      'The half nobody quotes: writing the cache costs more than sending the tokens normally. Both OpenAI and Anthropic charge 1.25× the input rate for a write (Anthropic charges 2× for a one-hour entry). So caching pays for itself after the first hit and is a loss if the prefix is never reused — which is why this calculator charges the write and defaults the whole assumption to off.',
+      'Caching is a prefix match, which is the other part people get wrong: any byte that changes early in the prompt invalidates everything after it. A timestamp at the top of a system prompt can silently disable caching entirely.',
+      'Batch APIs are the underused discount with no catch: submit work asynchronously, get results within hours, pay about half. Anything not in front of a waiting user is a candidate.',
     ],
   },
   {
@@ -108,7 +110,8 @@ export const LEARN_MODULES: LearnModule[] = [
     kind: 'architecture',
     body: [
       'Every morning a GitHub Action fetches a community pricing catalog and an independent second source, filters both through a family-level allowlist, and merges them under a fixed trust order: hand-verified vendor rates beat the automated feed, which beats nothing at all.',
-      'Sanity rules then decide what happens next. A clean diff is committed and deployed automatically. A price that moved more than half in one day, or where the two sources disagree by more than a fifth, is raised as a pull request for a human instead.',
+      'Sanity rules then decide what happens next. A clean diff is committed and deployed automatically. A price that moved more than half in one day, or where the two sources disagree by more than a fifth, is raised as a pull request for a human instead. A run that loses a source, gets a suspiciously small payload, or would shrink the catalog publishes nothing at all and fails loudly — the failure mode to design against is not "the data is late", it is "the data is confidently wrong".',
+      'Nothing is deleted on one bad morning either. A model that stops appearing upstream is kept and marked unlisted; removing it for good is a deliberate edit somebody has to make.',
       'Because the capture patterns are family-level rather than a fixed list, a brand-new model version is picked up by the next run without anyone touching code — which is exactly the failure this project was built to avoid.',
     ],
   },

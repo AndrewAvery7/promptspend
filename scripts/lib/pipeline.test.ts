@@ -10,7 +10,7 @@ import {
   type Allowlist,
 } from './normalize';
 import { CHANGE_REVIEW_THRESHOLD, DISAGREEMENT_THRESHOLD, mergeCatalog, relativeGap } from './merge';
-import { diffCatalogs, renderChangelogEntry, summarizeDiff } from './diff';
+import { catalogHash, diffCatalogs, diffToFeedItems, renderChangelogEntry, summarizeDiff } from './diff';
 
 const ALLOWLIST: Allowlist = {
   providers: [
@@ -243,6 +243,142 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(warm.review.map((item) => item.id)).toEqual(['moonshot-kimi-k2.6']);
   });
 
+  it('keeps a previously published model when the feed stops listing it', () => {
+    // One truncated upstream response used to be enough to delete most of the
+    // catalog — and because removals did not trip the review rule, the deletion
+    // would have been committed straight to main and deployed.
+    const cold = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt,
+    });
+    const empty = mergeCatalog({
+      litellm: [],
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: cold.catalog,
+      generatedAt,
+    });
+
+    expect(empty.catalog.models).toHaveLength(cold.catalog.models.length);
+    expect(empty.stale.sort()).toEqual(cold.catalog.models.map((m) => m.id).sort());
+    for (const model of empty.catalog.models) {
+      expect(model.provenance.stale).toBe(true);
+      expect(model.provenance.needsReview).toBe(true);
+    }
+    expect(empty.review.every((item) => item.isNew)).toBe(true);
+  });
+
+  it('does not re-raise a flag it already recorded', () => {
+    // A permanent disagreement must not open a fresh pull request every
+    // morning; only a reason that was not there yesterday should.
+    const openrouter = fromOpenRouter({
+      data: [{ id: 'anthropic/claude-sonnet-5', pricing: { prompt: '0.000006', completion: '0.00003' } }],
+    });
+    const first = mergeCatalog({
+      litellm,
+      openrouter,
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt,
+    });
+    expect(first.review.some((item) => item.isNew)).toBe(true);
+
+    const second = mergeCatalog({
+      litellm,
+      openrouter,
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: first.catalog,
+      generatedAt,
+    });
+    expect(second.review.length).toBeGreaterThan(0);
+    expect(second.review.every((item) => item.isNew)).toBe(false);
+  });
+
+  it('retires a model only when the allowlist says so', () => {
+    const cold = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt,
+    });
+    const retired = mergeCatalog({
+      litellm: [],
+      openrouter: new Map(),
+      allowlist: { ...ALLOWLIST, retired: ['claude-sonnet-5'] },
+      overrides: [],
+      previous: cold.catalog,
+      generatedAt,
+    });
+    expect(retired.catalog.models.map((m) => m.id)).not.toContain('claude-sonnet-5');
+  });
+
+  it('records when a price last changed, separately from when it was checked', () => {
+    const first = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt: new Date('2026-07-01T06:00:00.000Z'),
+    });
+    const laterSameNumbers = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: first.catalog,
+      generatedAt: new Date('2026-08-15T06:00:00.000Z'),
+    });
+    const sonnet = laterSameNumbers.catalog.models.find((m) => m.id === 'claude-sonnet-5')!;
+    expect(sonnet.provenance.lastVerified).toBe('2026-08-15');
+    expect(sonnet.provenance.lastChanged).toBe('2026-07-01');
+  });
+
+  it('carries cache writes, batch discounts and long-context tiers from an override', () => {
+    const { catalog } = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [
+        {
+          id: 'claude-sonnet-5',
+          vendorVerified: true,
+          verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+          pricing: {
+            input: 3,
+            output: 15,
+            cachedInput: 0.3,
+            cacheWrite: 3.75,
+            batchDiscount: 0.5,
+            longContext: { thresholdTokens: 272_000, input: 6, output: 22.5 },
+          },
+        },
+      ],
+      generatedAt,
+    });
+    const sonnet = catalog.models.find((m) => m.id === 'claude-sonnet-5')!;
+    expect(sonnet.pricing.cacheWrite).toBe(3.75);
+    expect(sonnet.pricing.batchDiscount).toBe(0.5);
+    expect(sonnet.pricing.longContext?.thresholdTokens).toBe(272_000);
+    expect(sonnet.provenance.verifiedUrl).toMatch(/^https:/);
+  });
+
+  it('marks an alias so it is not counted as a separate model', () => {
+    const { catalog } = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [{ id: 'claude-sonnet-5', aliasOf: 'moonshot-kimi-k2.6' }],
+      generatedAt,
+    });
+    expect(catalog.models.find((m) => m.id === 'claude-sonnet-5')!.aliasOf).toBe('moonshot-kimi-k2.6');
+  });
+
   it('keeps a hand-curated model even if the feed drops it', () => {
     const { catalog } = mergeCatalog({
       litellm: [],
@@ -310,8 +446,101 @@ describe('diffCatalogs', () => {
   it('reports nothing when nothing moved', () => {
     const diff = diffCatalogs(base, base);
     expect(diff.isEmpty).toBe(true);
-    expect(summarizeDiff(diff)).toBe('no pricing changes');
+    expect(summarizeDiff(diff)).toBe('no catalog changes');
     expect(renderChangelogEntry('2026-08-01', diff)).toMatch(/No changes/);
+  });
+
+  // The diff compared `pricing.input` and `pricing.output` and nothing else, so
+  // a run that changed a cache rate, a context window, a tokenizer or a review
+  // flag reported "no changes" — and the workflow discarded the file it had
+  // just produced. Each of these is that bug.
+  it.each([
+    ['a cached rate', { pricing: { input: 1, output: 2, cachedInput: 0.1 } }, 'changed'],
+    ['a cache-write rate', { pricing: { input: 1, output: 2, cacheWrite: 1.25 } }, 'changed'],
+    ['a batch discount', { pricing: { input: 1, output: 2, batchDiscount: 0.5 } }, 'changed'],
+    [
+      'promotional pricing',
+      { pricing: { input: 1, output: 2, intro: { input: 0.5, output: 1, until: '2026-12-31' } } },
+      'changed',
+    ],
+    [
+      'a long-context tier',
+      { pricing: { input: 1, output: 2, longContext: { thresholdTokens: 272_000, input: 2, output: 3 } } },
+      'changed',
+    ],
+    ['a context window', { contextWindow: 2000 }, 'metadata'],
+    ['a max output', { maxOutput: 500 }, 'metadata'],
+    ['a status', { status: 'legacy' as const }, 'metadata'],
+    ['a display name', { displayName: 'Model A (renamed)' }, 'metadata'],
+    ['a capability index', { capabilityIndex: 80 }, 'metadata'],
+    [
+      'a tokenizer',
+      { tokenizer: { kind: 'tiktoken' as const, encoding: 'o200k_base' as const } },
+      'metadata',
+    ],
+    ['a capability flag', { capabilities: { reasoning: true, vision: false } }, 'metadata'],
+  ])('notices %s changing', (_label, patch, bucket) => {
+    const next: PricingCatalog = { ...base, models: [{ ...base.models[0]!, ...patch }] };
+    const diff = diffCatalogs(base, next);
+    expect(diff.isEmpty).toBe(false);
+    expect(diff[bucket as 'changed' | 'metadata'].length).toBeGreaterThan(0);
+  });
+
+  it('notices a review flag being raised even when no price moved', () => {
+    // The case that mattered most: a model gets flagged, prices are unchanged,
+    // and the workflow used to see `changed=false` — so it neither committed
+    // the flag nor opened a pull request about it.
+    const next: PricingCatalog = {
+      ...base,
+      models: [
+        {
+          ...base.models[0]!,
+          provenance: {
+            source: 'litellm',
+            lastVerified: '2026-08-01',
+            needsReview: true,
+            reviewNote: 'OpenRouter disagrees',
+          },
+        },
+      ],
+    };
+    const diff = diffCatalogs(base, next);
+    expect(diff.isEmpty).toBe(false);
+    expect(diff.changed).toHaveLength(0);
+    expect(diff.reviewState.map((c) => c.field)).toContain('provenance.needsReview');
+    expect(diff.hasPriceChange).toBe(false);
+  });
+
+  it('ignores the two fields that move on every run', () => {
+    // `generatedAt` and `lastVerified` change whether or not anything happened.
+    // Counting them would make every diff non-empty and every day a commit.
+    const next: PricingCatalog = {
+      ...base,
+      generatedAt: '2026-08-01T06:00:00.000Z',
+      models: [
+        {
+          ...base.models[0]!,
+          provenance: { ...base.models[0]!.provenance, lastVerified: '2026-08-01' },
+        },
+      ],
+    };
+    expect(diffCatalogs(base, next).isEmpty).toBe(true);
+  });
+
+  it('fingerprints the catalog so two runs can be compared at a glance', () => {
+    const restamped: PricingCatalog = {
+      ...base,
+      generatedAt: '2026-08-01T06:00:00.000Z',
+      models: [
+        { ...base.models[0]!, provenance: { ...base.models[0]!.provenance, lastVerified: '2026-08-01' } },
+      ],
+    };
+    const moved: PricingCatalog = {
+      ...base,
+      models: [{ ...base.models[0]!, pricing: { input: 1, output: 9 } }],
+    };
+    expect(catalogHash(restamped)).toBe(catalogHash(base));
+    expect(catalogHash(moved)).not.toBe(catalogHash(base));
   });
 
   it('detects additions, removals and per-field price moves', () => {
@@ -340,6 +569,92 @@ describe('diffCatalogs', () => {
     };
     const entry = renderChangelogEntry('2026-08-01', diffCatalogs(base, next));
     expect(entry).toMatch(/## 2026-08-01/);
-    expect(entry).toMatch(/output price up \$2 → \$3/);
+    expect(entry).toMatch(/\*\*Price\*\* `a` — output up 2 → 3/);
+  });
+
+  it('notices a provider being added, changed or dropped', () => {
+    const added: PricingCatalog = {
+      ...base,
+      providers: [...base.providers, { id: 'openai', name: 'OpenAI', country: 'US' }],
+    };
+    expect(diffCatalogs(base, added).providers.map((c) => c.to)).toContain('added');
+
+    const renamed: PricingCatalog = {
+      ...base,
+      providers: base.providers.map((p) => ({ ...p, name: `${p.name} Inc.` })),
+    };
+    expect(diffCatalogs(base, renamed).providers.map((c) => c.field)).toContain('name');
+
+    const dropped: PricingCatalog = { ...base, providers: [base.providers[0]!] };
+    expect(diffCatalogs(base, dropped).providers.map((c) => c.to)).toContain('removed');
+  });
+
+  it('turns a diff into feed items a subscriber can read', () => {
+    const next: PricingCatalog = {
+      ...base,
+      models: [
+        { ...base.models[0]!, pricing: { input: 1, output: 3 } },
+        { ...base.models[0]!, id: 'b', displayName: 'Model B' },
+      ],
+    };
+    const items = diffToFeedItems('2026-08-01', diffCatalogs(base, next));
+    expect(items.map((i) => i.title)).toEqual(['New model: Model B', 'Model A: output increase']);
+    expect(items[1]!.body).toMatch(/moved from 2 to 3/);
+
+    const removedItems = diffToFeedItems('2026-08-01', diffCatalogs(base, { ...base, models: [] }));
+    expect(removedItems[0]!.title).toBe('Removed: Model A');
+  });
+
+  it('describes a price cut as a cut and a rise as an increase', () => {
+    const cheaper: PricingCatalog = {
+      ...base,
+      models: [{ ...base.models[0]!, pricing: { input: 1, output: 1 } }],
+    };
+    const entry = renderChangelogEntry('2026-08-01', diffCatalogs(base, cheaper));
+    expect(entry).toMatch(/output down 2 → 1/);
+    expect(diffToFeedItems('2026-08-01', diffCatalogs(base, cheaper))[0]!.title).toMatch(/cut/);
+  });
+
+  it('renders a value that appeared from nothing without printing "undefined"', () => {
+    const withCache: PricingCatalog = {
+      ...base,
+      models: [{ ...base.models[0]!, pricing: { input: 1, output: 2, cachedInput: 0.1 } }],
+    };
+    const entry = renderChangelogEntry('2026-08-01', diffCatalogs(base, withCache));
+    expect(entry).toMatch(/cachedInput to — → 0\.1/);
+    expect(entry).not.toMatch(/undefined/);
+  });
+
+  it('lists a removal and a review change in the changelog', () => {
+    const next: PricingCatalog = {
+      ...base,
+      models: [
+        {
+          ...base.models[0]!,
+          id: 'c',
+          provenance: {
+            source: 'litellm',
+            lastVerified: '2026-08-01',
+            stale: true,
+            needsReview: true,
+            reviewNote: 'gone upstream',
+          },
+        },
+      ],
+    };
+    const entry = renderChangelogEntry('2026-08-01', diffCatalogs(base, next));
+    expect(entry).toMatch(/\*\*Removed\*\* `a`/);
+    expect(summarizeDiff(diffCatalogs(base, next))).toMatch(/1 added, 1 removed/);
+  });
+
+  it('separates price changes from metadata in the changelog', () => {
+    const next: PricingCatalog = {
+      ...base,
+      models: [{ ...base.models[0]!, contextWindow: 2000 }],
+    };
+    const diff = diffCatalogs(base, next);
+    const entry = renderChangelogEntry('2026-08-01', diff);
+    expect(entry).toMatch(/\*\*Metadata\*\* `a` — contextWindow: 1000 → 2000/);
+    expect(diff.hasPriceChange).toBe(false);
   });
 });

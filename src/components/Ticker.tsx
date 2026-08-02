@@ -24,9 +24,9 @@ export function Ticker({ catalog }: { catalog: Catalog }) {
 
 function buildItems(catalog: Catalog): { key: string; node: React.ReactNode }[] {
   const items: { key: string; node: React.ReactNode }[] = [];
-  const spread = catalog.outputSpread();
+  const spread = catalog.rateSpread();
 
-  const cheapestInput = [...catalog.models]
+  const cheapestInput = [...catalog.primaryModels]
     .filter((m) => m.pricing.input > 0)
     .sort((a, b) => a.pricing.input - b.pricing.input)[0];
 
@@ -49,17 +49,16 @@ function buildItems(catalog: Catalog): { key: string; node: React.ReactNode }[] 
       key: 'spread',
       node: (
         <>
-          <span className="ticker__chg">PRICE SPREAD</span>{' '}
+          <span className="ticker__chg">BLENDED PRICE SPREAD</span>{' '}
           <span className="ticker__dim">
-            {Math.round(spread.multiple)}× ({spread.cheapest.displayName} input →{' '}
-            {spread.priciest.displayName} output)
+            {Math.round(spread.multiple)}× ({spread.cheapest.displayName} → {spread.priciest.displayName})
           </span>
         </>
       ),
     });
   }
 
-  const newest = [...catalog.models]
+  const newest = [...catalog.primaryModels]
     .filter((m) => m.releaseDate)
     .sort((a, b) => (b.releaseDate ?? '').localeCompare(a.releaseDate ?? ''))
     .slice(0, 2);
@@ -94,17 +93,19 @@ function buildItems(catalog: Catalog): { key: string; node: React.ReactNode }[] 
     key: 'coverage',
     node: (
       <>
-        {catalog.models.length} MODELS · {catalog.providers.length} PROVIDERS{' '}
-        <span className="ticker__dim">synced daily by GitHub Action</span>
+        {catalog.primaryModels.length} MODELS · {catalog.providers.length} PROVIDERS{' '}
+        <span className="ticker__dim">re-checked every morning by a GitHub Action</span>
       </>
     ),
   });
 
+  // Push and email are planned, not shipped. Advertising them here and marking
+  // them "planned" on the page they link to is a contradiction the ticker loses.
   items.push({
     key: 'alerts',
     node: (
       <>
-        GET PRICE ALERTS <span className="ticker__dim">RSS · push · email → Data &amp; Alerts</span>
+        FOLLOW PRICE CHANGES <span className="ticker__dim">commit feed → Data &amp; Alerts</span>
       </>
     ),
   });

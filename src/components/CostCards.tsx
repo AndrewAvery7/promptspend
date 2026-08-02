@@ -32,8 +32,9 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth }
             className={`cost-card${row.isCheapest && rows.length > 1 ? ' cost-card--cheapest' : ''}`}
           >
             {!row.isCheapest && (
-              <div className="cost-card__delta" title="Extra spend versus the cheapest option">
-                +{formatMoney(row.deltaPerMonth)}/mo
+              <div className="cost-card__delta">
+                <span className="visually-hidden">Extra spend versus the cheapest option: </span>+
+                {formatMoney(row.deltaPerMonth)}/mo
               </div>
             )}
             <div className="cost-card__head">
@@ -71,10 +72,16 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth }
                 <i style={{ background: 'var(--c-out)' }} />
                 OUT {formatMoney(breakdown.outputCost * conversationsPerMonth)}/mo
               </span>
-              {cacheEnabled && breakdown.cacheSavings > 0 && (
-                <span className="value--save">
-                  CACHE −{formatMoney(breakdown.cacheSavings * conversationsPerMonth)}/mo
+              {cacheEnabled && breakdown.cacheSavings !== 0 && (
+                <span className={breakdown.cacheSavings > 0 ? 'value--save' : 'value--cost'}>
+                  {/* Net of cache writes. Showing the read saving alone would
+                      report a discount the invoice does not contain. */}
+                  CACHE {breakdown.cacheSavings > 0 ? '−' : '+'}
+                  {formatMoney(Math.abs(breakdown.cacheSavings) * conversationsPerMonth)}/mo
                 </span>
+              )}
+              {breakdown.longContextTurns > 0 && (
+                <span className="value--cost">LONG CONTEXT {breakdown.longContextTurns} turns</span>
               )}
             </div>
 
@@ -124,15 +131,40 @@ export function InsightList({ insights }: { insights: Insight[] }) {
 }
 
 /** Every assumption baked into the numbers, listed where it cannot be missed. */
-export function AssumptionList({ rows }: { rows: ComparisonRow[] }) {
+export function AssumptionList({ rows, scope }: { rows: ComparisonRow[]; scope?: string }) {
   const assumptions = [...new Set(rows.flatMap((row) => row.breakdown.assumptions))];
-  if (assumptions.length === 0) return null;
+  if (assumptions.length === 0 && !scope) return null;
   return (
     <div className="panel__body assumption-list">
       <strong>Assumptions in these numbers</strong>
       <ul>
         {assumptions.map((assumption) => (
           <li key={assumption}>{assumption}</li>
+        ))}
+        {/* The edge of the model, stated in the same place as the assumptions
+            inside it. "What this does not cover" is part of what a number
+            means. */}
+        {scope && <li className="assumption-list__scope">{scope}</li>}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * Warnings are not assumptions. An assumption is a choice the estimate made; a
+ * warning is a sign the scenario itself could not happen — a request past the
+ * context window, a response past the output ceiling. Those need to interrupt,
+ * not sit in a list.
+ */
+export function WarningList({ rows }: { rows: ComparisonRow[] }) {
+  const warnings = [...new Set(rows.flatMap((row) => row.breakdown.warnings))];
+  if (warnings.length === 0) return null;
+  return (
+    <div className="panel__body warning-list" role="alert">
+      <strong>This scenario would not run as described</strong>
+      <ul>
+        {warnings.map((warning) => (
+          <li key={warning}>{warning}</li>
         ))}
       </ul>
     </div>

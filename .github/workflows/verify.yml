@@ -1,0 +1,40 @@
+name: Verify
+
+# The one gate. `npm run verify` is typecheck + lint + format + tests with
+# coverage thresholds + production build + catalog validation + bundle budget,
+# and it is identical to what a contributor runs locally.
+#
+# Called by ci.yml on every push and pull request, and by deploy.yml *before*
+# it publishes — a commit that fails any check cannot reach the live site.
+on:
+  workflow_call:
+    outputs:
+      artifact:
+        description: Name of the uploaded production build
+        value: site
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Includes the colour-vision palette guarantee and the pricing-pipeline
+      # rules, so a change that breaks either fails the build.
+      - name: Verify
+        run: npm run verify
+
+      # Reused by the deploy job rather than rebuilt, so what is verified is
+      # byte-for-byte what is published.
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: site
+          path: dist
+          retention-days: 1

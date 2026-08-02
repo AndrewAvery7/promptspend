@@ -1,3 +1,4 @@
+@import './fonts.css';
 @import './tokens.css';
 
 *,
@@ -108,10 +109,16 @@ textarea {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 24px;
-  height: 66px;
+  /* Wrapping is unconditional rather than switched on at a breakpoint.
+   * Breakpoints are matched against the viewport *including* the scrollbar, so
+   * a `max-width: 1020px` rule does not fire in a 1024px window whose content
+   * box is 1009px — which is exactly the gap the header used to overflow in. A
+   * header that can always wrap has no such gap. */
+  min-height: 66px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 8px 16px;
 }
 .logo {
   display: flex;
@@ -239,9 +246,9 @@ textarea {
   align-items: center;
   gap: 7px;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: max(0.7rem, 12px);
   color: var(--muted);
-  white-space: nowrap;
+  min-width: 0;
 }
 .freshness__dot {
   width: 7px;
@@ -370,6 +377,11 @@ body.tour-active .main {
   margin-top: 28px;
   align-items: start;
 }
+/* Grid items also default to `min-width: auto`. One unshrinkable descendant
+ * anywhere in either column would otherwise widen the whole page. */
+.workspace > * {
+  min-width: 0;
+}
 @media (min-width: 1021px) {
   .workspace__results {
     position: sticky;
@@ -480,35 +492,61 @@ body.tour-active .main {
   justify-content: space-between;
   z-index: 2;
 }
+/* The row that used to force the whole page wide.
+ *
+ * A flex item defaults to `min-width: auto`, which means it will not shrink
+ * below its content — `overflow: hidden` on the name did nothing, the row kept
+ * its full intrinsic width, and because the workspace is a grid the entire
+ * column inherited it. At 390px that produced a 437px document. `min-width: 0`
+ * is the actual fix; the rest is making the row degrade gracefully once it can. */
 .model-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding: 8px 12px;
   border-top: 1px solid var(--border);
-  cursor: pointer;
   transition: background 0.15s;
   font-size: 0.88rem;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 .model-row:hover {
   background: var(--surface-2);
 }
-.model-row input {
+.model-row__main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 12ch;
+  min-width: 0;
+  cursor: pointer;
+  /* A 15px checkbox is not a touch target; the label around it is. */
+  min-height: 30px;
+}
+.model-row__tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 1 auto;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.model-row input[type='checkbox'] {
   accent-color: var(--accent);
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
   flex: none;
 }
 .model-row__name {
   font-weight: 600;
-  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .model-row__rate {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -894,7 +932,7 @@ table.catalog {
 }
 table.catalog th {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: max(0.72rem, 12px);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--muted);
@@ -941,7 +979,7 @@ table.catalog tbody tr:hover {
 }
 .pill {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: max(0.72rem, 12px);
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 99px;
@@ -957,7 +995,7 @@ table.catalog tbody tr:hover {
 /* --------------------------------------------------------------- learn */
 .learn-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: 18px;
   margin-top: 26px;
 }
@@ -1131,7 +1169,7 @@ table.catalog tbody tr:hover {
 }
 .alert-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
   gap: 14px;
 }
 .alert-option {
@@ -1404,18 +1442,402 @@ table.catalog tbody tr:hover {
   color: var(--muted);
 }
 
+/* ---------------------------------------------------- disclosure & help */
+
+/* Replaces `title` attributes, which are invisible on touch, unfocusable by
+ * keyboard and inconsistently announced — i.e. available only to people using a
+ * mouse on a desktop. */
+.hint-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.hint {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.hint:hover,
+.hint[aria-expanded='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.badge--button {
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-mono);
+}
+.hint-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 40;
+  width: max-content;
+  max-width: min(320px, 78vw);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: normal;
+}
+.hint-pop a {
+  color: var(--accent);
+}
+
+/* ------------------------------------------------- new panels and states */
+
+.check-row--prominent {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-top: 14px;
+}
+.check-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  min-height: 34px;
+  cursor: pointer;
+}
+.check-inline input {
+  accent-color: var(--accent);
+  width: 17px;
+  height: 17px;
+}
+.table-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin: 14px 0 6px;
+}
+
+.warning-list {
+  border-left: 3px solid var(--cost);
+  background: var(--surface-2);
+}
+.warning-list strong {
+  display: block;
+  color: var(--cost);
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+.warning-list ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.82rem;
+  color: var(--ink);
+}
+.warning-list li + li {
+  margin-top: 4px;
+}
+.assumption-list__scope {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.note--info {
+  border-left: 3px solid var(--info);
+}
+.note--warn {
+  border-left: 3px solid var(--warn);
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.health-grid__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.health-grid__value {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.alert-option--planned {
+  opacity: 0.78;
+}
+.alert-tag--planned {
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px dashed var(--border);
+}
+
+.pill--status {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.source-cell__date {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.state-message__detail {
+  font-size: 0.8rem;
+  word-break: break-word;
+  max-width: 60ch;
+  margin: 12px auto;
+}
+
+.freshness__text b {
+  font-weight: 700;
+  color: var(--ink);
+}
+.freshness__checked {
+  color: var(--muted);
+}
+.freshness--degraded .freshness__dot {
+  background: var(--cost);
+  animation: none;
+}
+
+/* ----------------------------------------------------------- value map */
+
+/* A 860-unit chart rendered 300px wide is a poster, not a chart. Let it keep
+ * its own width and scroll inside its own box; on a narrow screen the sortable,
+ * selectable table underneath is the real interface. */
+.value-map__scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.value-map__scroll svg {
+  min-width: 640px;
+}
+.value-map__point {
+  cursor: pointer;
+  outline: none;
+}
+.value-map__point:focus-visible circle:last-of-type {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+.value-map__point:focus-visible::after {
+  content: '';
+}
+.value-map__point:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* --------------------------------------------------------- accessibility */
+
+/* WCAG 2.2 SC 2.5.8 asks for 24x24 on *every* pointer, not only touch, so the
+ * floor is unconditional and the roomier 44x44 comes in on coarse pointers.
+ * Applied through min-height/min-width rather than padding so a more specific
+ * rule further up cannot quietly undo it. */
+button,
+[role='button'],
+summary,
+input[type='checkbox'],
+input[type='radio'] {
+  min-height: 24px;
+  min-width: 24px;
+}
+.hint {
+  width: 24px;
+  height: 24px;
+}
+.model-row input[type='checkbox'],
+.check-inline input,
+.catalog input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+}
+/* A slider's target is its thumb, but a 16px-tall track leaves very little room
+ * for a finger or an imprecise mouse. The track itself is drawn by the browser
+ * and stays the same; only the grabbable area grows. */
+input[type='range'] {
+  min-height: 28px;
+}
+
+@media (pointer: coarse) {
+  button,
+  [role='button'],
+  input[type='checkbox'],
+  input[type='radio'],
+  .nav button,
+  .mode-switch button,
+  .catalog th button {
+    min-height: 44px;
+  }
+  button,
+  [role='button'] {
+    min-width: 44px;
+  }
+  .hint,
+  .badge--button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .swatch,
+  .canvas-chip {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .model-row__main {
+    min-height: 44px;
+  }
+}
+
+/* A floor on secondary text. Several labels computed under 10px, which is below
+ * the point at which most people can read them at arm's length on a phone —
+ * and every one of them was a label, a status or a price. */
+.badge,
+.pill,
+.tag-assumption,
+.model-group,
+.ticker,
+.ticker__item,
+.eyebrow,
+.panel__title,
+.mode-switch button,
+.cost-card__legend,
+.cost-card__provider,
+.cost-card__sub,
+.cost-card__foot,
+.sync-chip,
+.source-cell,
+.source-cell__date,
+.health-grid__label,
+.value-map__caption,
+.token-cell__method,
+.kbd-button kbd,
+.field__note,
+.footer__inner,
+.catalog th,
+.catalog th button,
+.catalog td,
+.alert-tag,
+.privacy-note,
+.learn-card__num,
+.learn-card__meta,
+.palette__label,
+.canvas-chip,
+.selection-count,
+.trust-list,
+.sync-log,
+code {
+  font-size: max(0.75rem, 12px);
+}
+
+/* Focus must always be visible, including on custom controls. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 900px) {
+  .headline {
+    font-size: clamp(1.75rem, 7vw, 2.4rem);
+  }
+}
+
+/* The header needs about 1000px to lay out in one row, so it wraps from the
+ * same breakpoint the workspace does. It used to scroll sideways instead, which
+ * put the theme and appearance controls off the edge of the screen with nothing
+ * to say they were there — and at tablet widths pushed the whole document wide. */
+@media (max-width: 1020px) {
+  .header__inner {
+    gap: 8px 10px;
+    padding: 8px 20px;
+    min-height: 60px;
+  }
+  .nav {
+    order: 3;
+    flex: 1 1 100%;
+    min-width: 0;
+    margin-left: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+  .tour-toggle {
+    display: none;
+  }
+  .freshness {
+    order: 4;
+    flex: 1 1 100%;
+    min-width: 0;
+    /* Two dates on one line is wider than a phone. Wrapping is the whole point
+     * of moving it onto its own row. */
+    white-space: normal;
+    align-items: flex-start;
+  }
+  .freshness__dot {
+    margin-top: 5px;
+    flex: none;
+  }
+}
+
 @media (max-width: 760px) {
   .header__inner {
-    gap: 8px;
-    padding: 0 14px;
-    overflow-x: auto;
+    padding: 8px 14px;
   }
-  .freshness,
   .kbd-button span {
     display: none;
   }
+  .freshness {
+    font-size: max(0.68rem, 12px);
+  }
   .main {
     padding: 22px 14px 60px;
+  }
+  .grid-2,
+  .card-grid,
+  .health-grid {
+    grid-template-columns: 1fr;
+  }
+  .actions {
+    flex-wrap: wrap;
+  }
+  .actions .button {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel__head,
+  .panel__body,
+  .card-grid {
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+  .cost-card__total {
+    font-size: 1.7rem;
+  }
+  .hint-pop {
+    left: auto;
+    right: 0;
   }
 }
 

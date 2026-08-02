@@ -11,13 +11,18 @@
  *     (`$0.435/M` -> `435000`), and
  *   - a cost is an integer number of pico-dollars (1e-12 USD).
  *
- * `tokens * microsPerMillion` is then exact: realistic per-request inputs stay
- * far below `Number.MAX_SAFE_INTEGER` (a 1M-token request against the priciest
- * model in the catalog is ~5e13, versus a 9e15 ceiling), so no rounding happens
- * until the value is deliberately converted for display or scaled up.
+ * `tokens * microsPerMillion` is exact for every realistic request: a
+ * 1M-token call against the priciest model in the catalog is ~5e13, against a
+ * 9e15 ceiling. Above that ceiling the product is finished in `BigInt` and
+ * converted back, which is lossy only in the last few pico-dollars of a figure
+ * already past $9,000 *per request* — twelve orders of magnitude below a cent,
+ * and reached only by deliberately extreme URL parameters.
+ *
+ * Throwing instead, as an earlier version did, turned those parameters into a
+ * blank page: `costPico` is called during render, and nothing caught it.
  *
  * Scaling to per-day/month/year multiplies the dollar value by plain integers;
- * that is ordinary floating-point but with ~15 significant digits of headroom
+ * that is ordinary floating point but with ~15 significant digits of headroom
  * against values that need at most 9, so it cannot move a displayed cent.
  */
 
@@ -44,12 +49,15 @@ export function costPico(tokens: number, dollarsPerMillion: number): number {
   const whole = Math.round(tokens);
   const micros = rateToMicros(dollarsPerMillion);
   const pico = whole * micros;
-  if (!Number.isSafeInteger(pico)) {
-    // Only reachable with inputs far outside anything a real workload produces;
-    // fail loudly rather than silently returning a lossy number.
-    throw new RangeError(`cost overflow: ${whole} tokens at $${dollarsPerMillion}/M exceeds exact range`);
-  }
-  return pico;
+  if (Number.isSafeInteger(pico)) return pico;
+  // Past the exact range. Finish in BigInt so the answer stays right to ~15
+  // significant figures instead of throwing mid-render.
+  return Number(BigInt(whole) * BigInt(micros));
+}
+
+/** True while `costPico` is still exact to the pico-dollar. */
+export function isExactCost(tokens: number, dollarsPerMillion: number): boolean {
+  return Number.isSafeInteger(Math.round(tokens) * rateToMicros(dollarsPerMillion));
 }
 
 export function picoToDollars(pico: number): number {

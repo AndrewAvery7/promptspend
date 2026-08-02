@@ -79,6 +79,18 @@ async function loadEncoder(encoding: 'o200k_base' | 'cl100k_base'): Promise<Tikt
 }
 
 /**
+ * What "exact" does and does not mean.
+ *
+ * The tokenizer is exact over *the string it is given*. A real API request
+ * carries more than that string: role and message framing, tool definitions,
+ * structured-output schemas, images. Those are billed too. Calling the result
+ * "exact" without saying so would overstate it, so the number is labelled
+ * exact **raw-text** tokens everywhere it appears.
+ */
+export const FRAMING_CAVEAT =
+  'Counts the text only. A real request also bills message framing, tool definitions and any images.';
+
+/**
  * Count tokens for a specific model, using the model's real tokenizer where we
  * have one and a clearly labelled estimate everywhere else.
  */
@@ -91,7 +103,7 @@ export async function countTokens(text: string, model: Model): Promise<TokenCoun
       return {
         tokens: encoder.encode(text).length,
         method: 'exact',
-        note: `Exact — ${model.tokenizer.encoding} tokenizer ran in your browser`,
+        note: `Exact raw-text count — the ${model.tokenizer.encoding} tokenizer ran in your browser. ${FRAMING_CAVEAT}`,
       };
     }
     return {

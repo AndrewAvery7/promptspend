@@ -8,7 +8,12 @@
  * Money semantics are deliberately NOT part of the accent system. Green always
  * means "you save", red always means "this costs more", and the chart pair is a
  * fixed blue/green validated for colour-vision deficiency in both themes
- * (see src/lib/__tests__/palette.test.ts). Re-branding must never repaint them.
+ * (see src/lib/palette.test.ts). Re-branding must never repaint them.
+ *
+ * Every accent here is checked against every surface it can appear on by
+ * src/lib/contrast.test.ts, which reads this file. Adding an accent without
+ * meeting 4.5:1 fails the build rather than shipping a colour that only some
+ * people can read.
  */
 
 :root,
@@ -67,9 +72,15 @@
   --shadow-lg: 0 16px 50px rgb(0 0 0 / 55%);
 }
 
-/* Alternate brand accents. */
+/* Alternate brand accents.
+ *
+ * The light emerald and teal were originally #059669 and #0891b2 — the shades
+ * everyone reaches for. Both fail AA for normal text (3.77:1 and 3.68:1 against
+ * white), and the accent is used for links and labels, not just for fills. They
+ * are darkened here to the nearest shade that clears 4.5:1 on every surface in
+ * the matrix, including the deepest canvas. */
 [data-theme='light'][data-accent='emerald'] {
-  --accent: #059669;
+  --accent: #047857;
   --accent-soft: #dff2ea;
   --accent-ink: #ffffff;
 }
@@ -79,8 +90,9 @@
   --accent-ink: #04241a;
 }
 [data-theme='light'][data-accent='teal'] {
-  --accent: #0891b2;
+  --accent: #0b6c85;
   --accent-soft: #dff2f7;
+  --accent-ink: #ffffff;
 }
 [data-theme='dark'][data-accent='teal'] {
   --accent: #41c6e0;
@@ -90,6 +102,7 @@
 [data-theme='light'][data-accent='violet'] {
   --accent: #6d28d9;
   --accent-soft: #ede7fb;
+  --accent-ink: #ffffff;
 }
 [data-theme='dark'][data-accent='violet'] {
   --accent: #a78bfa;

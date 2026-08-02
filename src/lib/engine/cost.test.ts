@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Model } from '@/lib/pricing/types';
 import {
-  ASSUMED_CACHE_MULTIPLIER,
+  DEFAULT_OPTIONS,
   compareModels,
   conversationCost,
   costAtScale,
@@ -72,7 +72,15 @@ describe('conversationCost', () => {
 
   it('parts always sum to the total', () => {
     const cost = conversationCost(SONNET, WORKLOAD, { cachedInputShare: 0.6 });
-    expect(cost.inputCost + cost.outputCost).toBe(cost.total);
+    expect(cost.inputCost + cost.cacheWriteCost + cost.outputCost).toBe(cost.total);
+  });
+
+  it('assumes no caching unless asked — the headline carries no unrequested discount', () => {
+    expect(DEFAULT_OPTIONS.cachedInputShare).toBe(0);
+    const asked = conversationCost(SONNET, WORKLOAD, { cachedInputShare: 0.6 });
+    const plain = conversationCost(SONNET, WORKLOAD);
+    expect(plain.total).toBeGreaterThan(asked.total);
+    expect(plain.cacheSavings).toBe(0);
   });
 
   it('applies the published cached rate to the cached share only', () => {
@@ -84,15 +92,41 @@ describe('conversationCost', () => {
     expect(cost.total).toBeCloseTo(0.117846, 6);
   });
 
-  it('falls back to an assumed cache discount and says so when none is published', () => {
+  it('invents no discount when a provider publishes no cached rate', () => {
+    // The old behaviour assumed 90% off, which is a real industry norm and an
+    // entirely made-up number for any specific model. Charging full price and
+    // saying so is the only defensible option.
     const cost = conversationCost(CHEAP, WORKLOAD, { cachedInputShare: 0.5 });
-    const cached = Math.round(26_700 * 0.5);
-    const fresh = 26_700 - cached;
-    expect(cost.inputCost).toBeCloseTo(
-      (fresh * 0.28) / 1e6 + (cached * 0.28 * ASSUMED_CACHE_MULTIPLIER) / 1e6,
-      10,
-    );
-    expect(cost.assumptions.join(' ')).toMatch(/No published cached-input rate/);
+    const uncached = conversationCost(CHEAP, WORKLOAD, NO_CACHE);
+    expect(cost.inputCost).toBeCloseTo(uncached.inputCost, 12);
+    expect(cost.cacheSavings).toBeCloseTo(0, 12);
+    expect(cost.assumptions.join(' ')).toMatch(/publishes no cached-input rate/);
+  });
+
+  it('bills the cache write, so caching is not free', () => {
+    // Both OpenAI and Anthropic charge 1.25x base input to write the cache.
+    // Counting only the cheaper reads reports a saving the invoice will not.
+    const withWrite = model({
+      id: 'writes',
+      pricing: { input: 3, output: 15, cachedInput: 0.3, cacheWrite: 3.75 },
+    });
+    const cost = conversationCost(withWrite, WORKLOAD, { cachedInputShare: 0.6 });
+    const prefix = Math.round((800 + 400) * 0.6);
+    expect(cost.cacheWriteCost).toBeCloseTo((prefix * 3.75) / 1e6, 12);
+    expect(cost.assumptions.join(' ')).toMatch(/One cache write per conversation/);
+
+    const noWriteRate = conversationCost(SONNET, WORKLOAD, { cachedInputShare: 0.6 });
+    expect(noWriteRate.cacheWriteCost).toBe(0);
+    expect(noWriteRate.assumptions.join(' ')).toMatch(/Cache writes are not modelled/);
+  });
+
+  it('reports cache savings net of the write, not gross of it', () => {
+    const withWrite = model({
+      id: 'writes',
+      pricing: { input: 3, output: 15, cachedInput: 0.3, cacheWrite: 3.75 },
+    });
+    const cost = conversationCost(withWrite, WORKLOAD, { cachedInputShare: 0.6 });
+    expect(cost.cacheSavings).toBeCloseTo(cost.inputCostUncached - cost.inputCost - cost.cacheWriteCost, 12);
   });
 
   it('never claims a cache assumption when caching is switched off', () => {
@@ -129,6 +163,112 @@ describe('conversationCost', () => {
       NO_CACHE,
     );
     expect(tiny.total).toBe(0.000028);
+    expect(tiny.exact).toBe(true);
+  });
+});
+
+describe('long-context tiers', () => {
+  // OpenAI's GPT-5.x families bill the entire request at 2x input / 1.5x output
+  // once it passes 272K input tokens. A flat rate understated those requests by
+  // a factor of two.
+  const TIERED = model({
+    id: 'tiered',
+    contextWindow: 1_050_000,
+    pricing: {
+      input: 5,
+      output: 30,
+      longContext: { thresholdTokens: 272_000, input: 10, output: 45 },
+    },
+  });
+
+  it('leaves short requests on the standard rate', () => {
+    const cost = conversationCost(TIERED, { ...WORKLOAD, turns: 1 }, NO_CACHE);
+    expect(cost.longContextTurns).toBe(0);
+    expect(cost.inputCost).toBeCloseTo((1200 * 5) / 1e6, 12);
+  });
+
+  it('switches the whole request to the tier once it crosses the threshold', () => {
+    const big: Workload = { systemTokens: 300_000, userTokens: 0, outputTokens: 100, turns: 1 };
+    const cost = conversationCost(TIERED, big, NO_CACHE);
+    expect(cost.longContextTurns).toBe(1);
+    expect(cost.inputCost).toBeCloseTo((300_000 * 10) / 1e6, 10);
+    expect(cost.outputCost).toBeCloseTo((100 * 45) / 1e6, 12);
+  });
+
+  it('prices turn by turn, so a conversation can cross over partway through', () => {
+    // Requests of 200k, 300k, 400k and 500k: only the first is under 272k.
+    // Aggregating the conversation first and applying one rate would price all
+    // four turns the same, which is wrong in both directions depending on size.
+    const growing: Workload = { systemTokens: 100_000, userTokens: 100_000, outputTokens: 0, turns: 4 };
+    const cost = conversationCost(TIERED, growing, NO_CACHE);
+    expect(cost.longContextTurns).toBe(3);
+    expect(cost.inputCost).toBeCloseTo((200_000 * 5 + (300_000 + 400_000 + 500_000) * 10) / 1e6, 8);
+    expect(cost.assumptions.join(' ')).toMatch(/3 of 4 turns exceed/);
+  });
+
+  it('says so when a request is large and no tier is published', () => {
+    const flat = model({ id: 'flat', contextWindow: 2_000_000, pricing: { input: 5, output: 30 } });
+    const big: Workload = { systemTokens: 400_000, userTokens: 0, outputTokens: 100, turns: 1 };
+    const cost = conversationCost(flat, big, NO_CACHE);
+    expect(cost.assumptions.join(' ')).toMatch(/No long-context tier is published/);
+  });
+});
+
+describe('scenarios that could not actually run', () => {
+  it('warns when the largest turn does not fit the context window', () => {
+    const small = model({ id: 'small', contextWindow: 8_000, pricing: { input: 1, output: 2 } });
+    const cost = conversationCost(small, { ...WORKLOAD, turns: 20 }, NO_CACHE);
+    expect(cost.warnings.join(' ')).toMatch(/context window/);
+  });
+
+  it('warns when the response exceeds the published output ceiling', () => {
+    const capped = model({
+      id: 'capped',
+      contextWindow: 200_000,
+      maxOutput: 4_000,
+      pricing: { input: 1, output: 2 },
+    });
+    const cost = conversationCost(capped, { ...WORKLOAD, outputTokens: 9_000 }, NO_CACHE);
+    expect(cost.warnings.join(' ')).toMatch(/output ceiling/);
+  });
+
+  it('stays silent for an ordinary scenario', () => {
+    expect(conversationCost(SONNET, WORKLOAD, NO_CACHE).warnings).toEqual([]);
+  });
+
+  it('survives the largest scenario the URL decoder will accept', () => {
+    // Every one of these is a value `decodeScenario` clamps to, so any shared
+    // link can produce it. This used to throw a RangeError mid-render — with no
+    // error boundary above it — and blank the whole application.
+    //
+    // Pricing per turn rather than in aggregate keeps even this inside the
+    // exact-integer range: the biggest single multiplication is now one turn's
+    // ~80M tokens, not the conversation's ~8 billion.
+    const extreme: Workload = {
+      systemTokens: 200_000,
+      userTokens: 200_000,
+      outputTokens: 200_000,
+      turns: 200,
+    };
+    const dear = model({ id: 'dear', contextWindow: 200_000, pricing: { input: 60, output: 180 } });
+    const cost = conversationCost(dear, extreme, NO_CACHE);
+    expect(Number.isFinite(cost.total)).toBe(true);
+    expect(cost.total).toBeGreaterThan(0);
+    expect(cost.exact).toBe(true);
+    // ...and it says the scenario is impossible rather than quietly pricing it.
+    expect(cost.warnings.length).toBeGreaterThan(0);
+  });
+
+  it('degrades to inexact rather than throwing if the numbers ever do overflow', () => {
+    const absurd: Workload = {
+      systemTokens: Number.MAX_SAFE_INTEGER,
+      userTokens: 0,
+      outputTokens: 0,
+      turns: 1,
+    };
+    const cost = conversationCost(SONNET, absurd, NO_CACHE);
+    expect(Number.isFinite(cost.total)).toBe(true);
+    expect(cost.exact).toBe(false);
   });
 });
 
@@ -156,6 +296,35 @@ describe('effectivePricing', () => {
       asOf: new Date('2026-08-01T00:00:00Z'),
     });
     expect(cost.assumptions.join(' ')).toMatch(/Promotional pricing/);
+  });
+
+  it('moves the cache rates with the promotion where the vendor publishes them', () => {
+    const promoted = model({
+      id: 'promoted',
+      pricing: {
+        input: 3,
+        output: 15,
+        cachedInput: 0.3,
+        cacheWrite: 3.75,
+        intro: { input: 2, output: 10, cachedInput: 0.2, cacheWrite: 2.5, until: '2026-08-31' },
+      },
+    });
+    const during = effectivePricing(promoted.pricing, new Date('2026-08-01T00:00:00Z'));
+    expect(during.cachedInput).toBe(0.2);
+    expect(during.cacheWrite).toBe(2.5);
+
+    const after = effectivePricing(promoted.pricing, new Date('2026-09-01T00:00:00Z'));
+    expect(after.cachedInput).toBe(0.3);
+    expect(after.cacheWrite).toBe(3.75);
+  });
+
+  it('leaves cache rates alone when the promotion does not mention them', () => {
+    const during = effectivePricing(
+      { input: 3, output: 15, cachedInput: 0.3, intro: { input: 2, output: 10, until: '2026-08-31' } },
+      new Date('2026-08-01T00:00:00Z'),
+    );
+    // Erring high beats inventing a promoted cache rate the vendor never published.
+    expect(during.cachedInput).toBe(0.3);
   });
 });
 

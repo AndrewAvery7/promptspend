@@ -1,7 +1,7 @@
 # TokenTally
 
-**Know the tab before you build.** Estimate, compare and understand what an AI feature will cost — with
-pricing that syncs itself every day, so the numbers are never a year out of date.
+**Know the tab before you build.** Estimate, compare and understand what an AI feature will cost — from a
+catalog that re-checks itself every morning, so the numbers are never a year out of date.
 
 [**→ Open TokenTally**](https://andrewavery7.github.io/token-tally/) · free · open source · no accounts,
 no tracking
@@ -24,24 +24,26 @@ automatically without anyone touching code.
 
 - **Estimate** — describe one interaction (paste your real prompt or move the sliders), set your scale,
   and see the monthly, yearly, per-user and margin numbers for up to four models side by side.
-- **Compare** — every tracked model on a price-versus-capability value map, plus a sortable catalog with
-  the source and verification date for every row.
+- **Compare** — every tracked model on a price-versus-capability value map, plus a sortable catalog you
+  can select from directly, with the source and verification date for every row.
 - **Learn** — seven short interactive lessons on tokens, why output costs more, compounding chat history,
   hidden reasoning tokens, caching and batching, and how the data pipeline works.
-- **Data & Alerts** — full provenance for every number, what is currently flagged, and how to subscribe
-  to pricing changes.
+- **Data & Alerts** — pipeline health, full provenance for every number with a link to the vendor page it
+  came from, and what is currently flagged.
 
 ## Things it does that most calculators get wrong
 
-|                                   |                                                                                                                                                                                               |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Output is priced separately**   | Output typically costs 3–5× input. Averaging the two, as many calculators do, understates most real workloads.                                                                                |
-| **Chat history compounds**        | Turn _N_ re-sends turns 1…*N*−1 as input, so conversation cost grows with the square of the turn count.                                                                                       |
-| **Tokenizers differ per family**  | The same pasted text is counted with each model's own tokenizer — exactly (js-tiktoken, run in your browser) for OpenAI-family models and with a clearly labelled calibrated ratio elsewhere. |
-| **Caching is modelled honestly**  | The published cached-input rate is used where a provider has one; where none exists, the assumed discount is stated on screen.                                                                |
-| **Reasoning tokens are billable** | A multiplier for hidden thinking tokens, because the visible answer is not what you pay for.                                                                                                  |
-| **Promotional pricing expires**   | Introductory rates apply only inside their window, and the engine takes a date.                                                                                                               |
-| **Assumptions are visible**       | Every non-published number used in a calculation is listed under the results, not buried.                                                                                                     |
+|                                    |                                                                                                                                                                                                |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Output is priced separately**    | Output typically costs 3–5× input. Averaging the two, as many calculators do, understates most real workloads.                                                                                 |
+| **Chat history compounds**         | Turn _N_ re-sends turns 1…*N*−1 as input, so conversation cost grows with the square of the turn count.                                                                                        |
+| **Tokenizers differ per family**   | The same pasted text is counted with each model's own tokenizer — exactly (js-tiktoken, run in your browser) for OpenAI-family models and with a clearly labelled calibrated ratio elsewhere.  |
+| **Caching is not free**            | Cache _writes_ cost 1.25× input at both OpenAI and Anthropic. Counting only the cheaper reads reports a saving your invoice will not have, so writes are billed and caching is off by default. |
+| **Long context costs more**        | Above 272K input tokens OpenAI bills the whole request at 2× input and 1.5× output. Tiers apply per request, so a conversation can cross over partway through.                                 |
+| **Reasoning tokens are billable**  | A multiplier for hidden thinking tokens, because the visible answer is not what you pay for.                                                                                                   |
+| **Promotional pricing expires**    | Introductory rates apply only inside their window, and the engine takes a date.                                                                                                                |
+| **Assumptions are visible**        | Every non-published number used in a calculation is listed under the results, not buried — and so is what the prices do not cover.                                                             |
+| **Impossible scenarios are named** | A request that will not fit the context window, or a response past the output ceiling, is flagged rather than priced as if it would work.                                                      |
 
 ## How the data stays current
 
@@ -63,11 +65,28 @@ automatically without anyone touching code.
 3. **The OpenRouter API** — an independent cross-check, never a source of record. Reseller pricing differs
    from first-party list pricing, so a disagreement of more than 20% _flags_ the model rather than
    changing it.
-4. **Sanity rules** — schema validation, non-negative rates, an implausibility check, and a hold on any
-   price that moved more than 50% in a single day.
+4. **Sanity rules** — schema validation, non-negative rates, implausibility checks, a hold on any price
+   that moved more than 50% in a single day, a floor on how many rows a source may return, and a cap on
+   how much the catalog may shrink in one run.
 
-A clean diff is committed and deployed automatically. Anything flagged becomes a pull request. Either way
-the change lands in [`docs/pricing-changelog.md`](docs/pricing-changelog.md).
+A clean diff is committed and deployed automatically. A **newly** raised flag becomes a pull request — a
+long-standing disagreement does not re-open one every morning. A run that loses a source or trips a size
+guard is **degraded**: it publishes nothing, records why in `public/data/sync-status.json`, and fails
+loudly. Either way the change lands in [`docs/pricing-changelog.md`](docs/pricing-changelog.md).
+
+**Nothing disappears on one bad morning.** A model missing from the feed is kept and marked `stale`, not
+deleted; retiring one for good is a deliberate edit to `data/models-allowlist.json`.
+
+### Two dates, not one
+
+The site shows **prices last changed** and **sources last checked** separately, because they answer
+different questions. A quiet week in the market makes the first date age while everything works
+perfectly; a broken scheduler looks exactly the same if you only publish one date. The second comes from
+a health manifest written on every run, successful or not:
+
+```
+https://andrewavery7.github.io/token-tally/data/sync-status.json
+```
 
 ## Use the data yourself
 
@@ -79,33 +98,55 @@ https://andrewavery7.github.io/token-tally/data/pricing.json
 
 ```jsonc
 {
-  "schemaVersion": 1,
-  "generatedAt": "2026-08-01T23:19:38.000Z",
-  "providers": [{ "id": "deepseek", "name": "DeepSeek", "country": "CN" }],
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-02T02:27:22.781Z",
+  "providers": [{ "id": "openai", "name": "OpenAI", "country": "US", "pricingUrl": "https://…" }],
   "models": [
     {
-      "id": "deepseek-deepseek-v3.2",
-      "providerId": "deepseek",
-      "displayName": "DeepSeek V3.2",
-      "pricing": { "input": 0.28, "output": 0.4 }, // USD per 1M tokens
-      "tokenizer": { "kind": "approx", "charsPerToken": 3.4, "cjkCharsPerToken": 1.7 },
-      "provenance": { "source": "litellm", "lastVerified": "2026-08-01" },
+      "id": "gpt-5.6-terra",
+      "providerId": "openai",
+      "displayName": "GPT-5.6 Terra",
+      "status": "current", // current | legacy | deprecated
+      "contextWindow": 1050000,
+      "pricing": {
+        "input": 2, // USD per 1M tokens
+        "output": 12,
+        "cachedInput": 0.2,
+        "cacheWrite": 2.5, // writing costs *more* than sending
+        "batchDiscount": 0.5,
+        "longContext": { "thresholdTokens": 272000, "input": 4, "output": 18 },
+      },
+      "tokenizer": { "kind": "tiktoken", "encoding": "o200k_base" },
+      "provenance": {
+        "source": "vendor", // vendor | litellm | openrouter
+        "lastVerified": "2026-08-01", // when it was checked
+        "lastChanged": "2026-08-01", // when the number last moved
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      },
     },
   ],
 }
 ```
 
+Optional fields worth knowing: `aliasOf` marks an id that routes to another model (so it is not counted
+twice), `provenance.stale` marks a row upstream has stopped listing, and `provenance.needsReview` plus
+`reviewNote` carry an unresolved disagreement and both numbers involved.
+
 ## Running it locally
 
 ```bash
-npm install
+npm ci                 # `ci`, not `install` — this repo has a lockfile and CI honours it
 npm run dev            # http://localhost:5173
 ```
 
 ```bash
-npm run verify         # typecheck + lint + tests + build, exactly what CI runs
+npm run verify             # exactly what CI runs, and what the deploy gate runs
 npm run sync:pricing:dry   # see what today's sync would change, without writing
 ```
+
+`verify` is typecheck, lint, format check, tests with coverage thresholds, a production build, catalog
+schema validation, and the bundle budget. The deploy workflow calls the same reusable workflow CI does
+and publishes the artifact it produced, so a commit that fails any of them cannot reach the live site.
 
 ## Project layout
 
@@ -124,8 +165,14 @@ public/data/        the published catalog the app reads
 Cobalt on a cool-paper canvas, with a distinct set of _money_ colours that never change with branding:
 green means savings, red means this option costs more. The input/output chart pair is validated for
 colour-vision deficiency **in CI** — `src/lib/palette.test.ts` simulates protanopia and deuteranopia and
-fails the build if the two marks stop being distinguishable. Light and dark themes, keyboard navigation
-throughout, `prefers-reduced-motion` respected, and a `Ctrl`/`Cmd`+`K` command palette.
+fails the build if the two marks stop being distinguishable.
+
+`src/lib/contrast.test.ts` reads `tokens.css` directly and fails the build if any accent, on any theme and
+any canvas, drops below 4.5:1 against a surface it can appear on. Every interactive target is at least
+24×24 (44×44 on touch), no text renders below 12px, and there is no horizontal page scroll from 320px up.
+Keyboard navigation throughout — including every point on the value map, which is a real button — focus is
+returned when a dialog closes, `prefers-reduced-motion` is respected in JavaScript as well as CSS, and
+there is a `Ctrl`/`Cmd`+`K` command palette.
 
 ## Contributing
 
@@ -134,15 +181,40 @@ Adding a model is usually a one-line change. See [CONTRIBUTING.md](CONTRIBUTING.
 
 ## Honest limitations
 
-- Token counts for non-OpenAI families are **estimates** from calibrated ratios, labelled as such
-  everywhere they appear. Those providers do not ship a browser-runnable tokenizer.
-- The capability axis on the value map is an **illustrative placeholder**, not a benchmark score. It is
-  labelled that way on the chart.
-- Prices are list prices in USD. Enterprise agreements, committed-use discounts and regional pricing are
-  not modelled.
-- Exact counting downloads a ~3 MB tokenizer chunk, and only when you paste text for an OpenAI-family
-  model. Nothing else on the site is anywhere near that size.
+The point of this section is that it is longer than it needs to be. An estimator that hides its edges is
+just a confident guess.
+
+- **Scope of the prices.** Standard-tier, global-endpoint list prices in USD. Not modelled: regional and
+  data-residency premiums (OpenAI and Anthropic both charge 1.1×), fast/priority tiers, server-side tool
+  call fees, fine-tuning, and negotiated or committed-use discounts. The site says this under every
+  estimate, not only here.
+- **"Exact" means exact raw text.** The tokenizer counts the string you give it. A real request also bills
+  message framing, tool definitions and any images. Treat an exact count as a floor.
+- **Token counts for non-OpenAI families are estimates** from calibrated characters-per-token ratios,
+  labelled as such everywhere they appear. Those providers do not ship a browser-runnable tokenizer.
+- **The capability axis on the value map is illustrative**, not a benchmark. Models without an estimate
+  are not plotted at all rather than being given a default, and the chart says how many that is.
+- **Caching is off by default** and the estimate charges cache writes where a provider publishes a rate.
+  Where one does not, cached tokens are billed at the full input rate rather than at an invented discount.
+- **Long-context tiers are modelled where they are published** (per request, not per conversation). Where
+  a provider has a tier we have not recorded, the estimate says so instead of quietly using the flat rate.
+- **Exact counting downloads a ~3 MB tokenizer chunk**, and only when you paste text for an OpenAI-family
+  model. The initial page is under 100 KB gzipped, and CI fails if that stops being true.
+
+## Privacy, precisely
+
+No accounts, no analytics, no cookies, no server that receives anything. Fonts are self-hosted, so the
+page makes no third-party requests at all and its Content Security Policy restricts `connect-src` to
+`'self'`. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable URL,
+held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds two things:
+whether you dismissed the welcome banner, and your theme choice.
+
+## Security
+
+See [SECURITY.md](SECURITY.md). Wrong prices are treated as the most serious class of bug this project
+can have, and are explicitly in scope for a report.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE). The self-hosted typefaces (Space Grotesk, IBM Plex Sans, JetBrains Mono)
+are SIL Open Font License 1.1.

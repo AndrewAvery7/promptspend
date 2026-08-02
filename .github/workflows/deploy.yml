@@ -1,5 +1,10 @@
 name: Deploy to GitHub Pages
 
+# Deployment depends on the same verify workflow CI runs, and publishes the
+# artifact that workflow produced. A commit whose tests, lint, catalog
+# validation or bundle budget fail cannot reach the live site — previously this
+# workflow ran only `npm run build`, so a red CI run and a green deploy could
+# happen from the same push.
 on:
   push:
     branches: [main]
@@ -15,27 +20,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  verify:
+    uses: ./.github/workflows/verify.yml
+
+  package:
+    needs: verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+          name: site
+          path: dist
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: dist
 
   deploy:
-    needs: build
+    needs: package
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

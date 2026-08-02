@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { costPico, dollarsToPico, picoToDollars, rateToMicros, toCents } from './money';
+import { costPico, dollarsToPico, isExactCost, picoToDollars, rateToMicros, toCents } from './money';
 
 describe('rateToMicros', () => {
   it('converts published rates to integer micro-dollars', () => {
@@ -35,14 +35,30 @@ describe('costPico', () => {
     expect(costPico(10.6, 1)).toBe(costPico(11, 1));
   });
 
-  it('throws rather than returning a lossy number on absurd inputs', () => {
-    expect(() => costPico(Number.MAX_SAFE_INTEGER, 50)).toThrow(RangeError);
+  it('rejects inputs that are meaningless rather than merely enormous', () => {
     expect(() => costPico(-5, 1)).toThrow(RangeError);
+    expect(() => costPico(Number.NaN, 1)).toThrow(RangeError);
+    expect(() => costPico(10, -1)).toThrow(RangeError);
+  });
+
+  it('degrades past the exact range instead of throwing', () => {
+    // This used to throw. `costPico` is called during render, nothing caught
+    // it, and the result was a blank page from a URL the app itself accepted.
+    // The answer is finite and correct to ~15 significant figures; only the
+    // last pico-dollars of a figure already past $9,000 per request are lost.
+    const huge = costPico(Number.MAX_SAFE_INTEGER, 50);
+    expect(Number.isFinite(huge)).toBe(true);
+    expect(huge).toBeGreaterThan(0);
+    expect(isExactCost(Number.MAX_SAFE_INTEGER, 50)).toBe(false);
   });
 
   it('stays exact across the whole realistic range', () => {
     // A million-token request against the priciest model in the catalog.
     expect(Number.isSafeInteger(costPico(1_000_000, 50))).toBe(true);
+    expect(isExactCost(1_000_000, 50)).toBe(true);
+    // And a single turn's input at the very top of what the URL decoder
+    // permits (~80M tokens), against a rate above anything in the catalog.
+    expect(isExactCost(80_000_000, 60)).toBe(true);
   });
 });
 
