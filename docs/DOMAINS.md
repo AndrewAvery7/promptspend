@@ -7,12 +7,22 @@ architecture, the cutover runbook, and the reasoning behind both.
 
 ## The architecture
 
-| Host                  | Serves                      | Why                                                                          |
-| --------------------- | --------------------------- | ---------------------------------------------------------------------------- |
-| `promptspend.com`     | The app                     | Canonical. Every link, every share, every search result points here.         |
-| `www.promptspend.com` | 301 → apex                  | One canonical host; two would split link equity.                             |
-| `api.promptspend.dev` | The alerts API (`worker/`)  | Keeps API traffic and its CORS surface off the marketing domain.             |
-| `promptspend.dev`     | Developer hub — **planned** | The public pricing API and its documentation. Until it exists, 301 → `.com`. |
+**Status: live since 2026-08-02.** The cutover below is done; it is kept as the
+record of how, and as the runbook for the next domain move.
+
+| Host                  | Serves                     | Why                                                                  |
+| --------------------- | -------------------------- | -------------------------------------------------------------------- |
+| `promptspend.com`     | The app                    | Canonical. Every link, every share, every search result points here. |
+| `www.promptspend.com` | 301 → apex                 | One canonical host; two would split link equity.                     |
+| `api.promptspend.dev` | The alerts API (`worker/`) | Keeps API traffic and its CORS surface off the marketing domain.     |
+| `promptspend.dev`     | 301 → `.com` for now       | Becomes the developer hub — public pricing API and docs.             |
+
+A note for whoever adds the developer hub: the `.dev` redirect is a Cloudflare
+Redirect Rule matching the hostname `promptspend.dev` **exactly**, so it does not
+catch `api.promptspend.dev`. Matching "all incoming requests" instead would take
+the API down. The apex has a single proxied A record to `192.0.2.1` — a reserved
+documentation address that goes nowhere on purpose — because a Redirect Rule
+needs _some_ proxied record to exist before traffic reaches Cloudflare at all.
 
 ### Why `.dev` is not simply a redirect
 
@@ -93,11 +103,16 @@ Repository → **Settings → Secrets and variables → Actions → Variables**:
 | `BASE_PATH` | `/`                       |
 
 Then **Settings → Pages → Custom domain** → `promptspend.com` → wait for the
-check → tick **Enforce HTTPS**.
+certificate check → tick **Enforce HTTPS**.
 
-The `CNAME` file Pages needs is emitted into the build artifact automatically
-once `SITE_URL` names a non-`github.io` host — see `seoAssets` in
-`vite.config.ts`. Nothing is committed by hand.
+> **With Actions-based deploys, GitHub ignores the `CNAME` file in the
+> artifact.** That is only honoured for branch-based Pages. The custom domain
+> has to be set in Settings (or via `PUT /repos/{owner}/{repo}/pages`), and
+> **then the deploy must be re-run** — the domain does not start serving from
+> the deployment that was already live. Skipping that second deploy leaves the
+> apex returning 404 with a valid certificate and correct DNS, which is a
+> thoroughly confusing place to end up. The artifact still emits a `CNAME`;
+> it just is not what does the work.
 
 Push anything to `main` (or re-run the deploy workflow) to rebuild with the new
 values. Confirm with:

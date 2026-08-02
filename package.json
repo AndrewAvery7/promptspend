@@ -5,7 +5,7 @@
   "description": "Estimate, compare and understand LLM API costs — with pricing that syncs itself daily.",
   "license": "MIT",
   "type": "module",
-  "homepage": "https://andrewavery7.github.io/promptspend/",
+  "homepage": "https://promptspend.com/",
   "repository": {
     "type": "git",
     "url": "https://github.com/AndrewAvery7/promptspend.git"
