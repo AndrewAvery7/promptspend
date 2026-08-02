@@ -17,10 +17,11 @@
  * invalidates every existing subscriber.
  */
 
+// Node's own WebCrypto types rather than the DOM ones: this script runs on
+// Node, and pulling `lib.dom` into its config to borrow three type names would
+// also hand it `window` and `document`.
 import { webcrypto } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
-
-const crypto = webcrypto as unknown as Crypto;
 
 function b64url(bytes: Uint8Array | ArrayBuffer): string {
   return Buffer.from(bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes))
@@ -30,15 +31,15 @@ function b64url(bytes: Uint8Array | ArrayBuffer): string {
     .replace(/=+$/, '');
 }
 
-const pair = (await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, [
+const pair = (await webcrypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, [
   'sign',
   'verify',
-])) as CryptoKeyPair;
+])) as webcrypto.CryptoKeyPair;
 
-const publicKey = b64url((await crypto.subtle.exportKey('raw', pair.publicKey)) as ArrayBuffer);
-const jwk = (await crypto.subtle.exportKey('jwk', pair.privateKey)) as JsonWebKey;
+const publicKey = b64url(await webcrypto.subtle.exportKey('raw', pair.publicKey));
+const jwk = (await webcrypto.subtle.exportKey('jwk', pair.privateKey)) as webcrypto.JsonWebKey;
 
-const random = (bytes: number) => b64url(crypto.getRandomValues(new Uint8Array(bytes)));
+const random = (bytes: number) => b64url(webcrypto.getRandomValues(new Uint8Array(bytes)));
 
 const secrets = {
   VAPID_PUBLIC_KEY: publicKey,

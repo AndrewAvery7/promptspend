@@ -1,0 +1,11 @@
+{
+  // Local tooling that runs on Node, not on workerd — currently just the secret
+  // generator. Kept out of the main config so that Worker source cannot quietly
+  // start using a Node API that will not exist when it is deployed.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["node"]
+  },
+  "include": ["scripts/**/*.ts"]
+}

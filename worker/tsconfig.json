@@ -1,4 +1,13 @@
 {
+  // Worker source and its tests. Deliberately has no Node types: this code runs
+  // on workerd, and reaching for `process`, `Buffer` or `node:fs` here should be
+  // a compile error rather than something discovered in production. The tooling
+  // under scripts/ genuinely is Node and is checked by tsconfig.scripts.json.
+  //
+  // This split was not cosmetic. With one config covering both, the Node script
+  // typechecked locally only because TypeScript walked up and found the *site's*
+  // @types/node in the parent directory — which CI, installing only this
+  // package, does not have. It passed here and failed there.
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022"],
@@ -21,11 +30,5 @@
     "resolveJsonModule": true,
     "noEmit": true
   },
-  "include": [
-    "src/**/*.ts",
-    "scripts/**/*.ts",
-    "test/**/*.ts",
-    "vitest.config.ts",
-    "worker-configuration.d.ts"
-  ]
+  "include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts", "worker-configuration.d.ts"]
 }
