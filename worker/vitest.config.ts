@@ -36,6 +36,12 @@ export default defineConfig({
           NOTIFY_SECRET: 'test-notify-secret-not-used-anywhere-real',
           VAPID_PUBLIC_KEY: TEST_VAPID_PUBLIC,
           VAPID_PRIVATE_KEY: TEST_VAPID_PRIVATE,
+          // Pinned, not inherited from wrangler.jsonc. Production sends through
+          // Cloudflare; a test run must never attempt a real delivery. Leaving
+          // this to the deployed value meant flipping the live transport turned
+          // eight passing tests into 503s — the suite was describing production
+          // configuration rather than behaviour.
+          EMAIL_TRANSPORT: 'console',
         },
       },
     }),
