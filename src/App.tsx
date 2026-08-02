@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Catalog, loadCatalog } from '@/lib/pricing/catalog';
-import { HEALTH_URL, PRICING_URL, REPO_URL } from '@/config';
+import { CONTACT_EMAIL, HEALTH_URL, PRICING_URL, REPO_URL } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAppearance, ACCENTS } from '@/state/useAppearance';
 import { useEstimator } from '@/state/useEstimator';
@@ -243,7 +243,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
         <div className="footer__inner">
           <div>
             <b>PromptSpend</b> · open source, MIT · no accounts, no tracking ·{' '}
-            <a href={REPO_URL}>star it on GitHub</a>
+            <a href={REPO_URL}>star it on GitHub</a> · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </div>
           <div className="mono">
             {catalog.primaryModels.length} models · prices last changed {catalog.pricesLastChanged()}

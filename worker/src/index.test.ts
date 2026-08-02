@@ -161,9 +161,7 @@ describe('email lifecycle', () => {
 
     expect(response.status).toBe(200);
     // Deleted, not flagged — which is what the unsubscribe page promises.
-    expect(
-      await env.DB.prepare('SELECT id FROM email_subscribers WHERE id = ?').bind(id).first(),
-    ).toBeNull();
+    expect(await env.DB.prepare('SELECT id FROM email_subscribers WHERE id = ?').bind(id).first()).toBeNull();
   });
 
   it('answers identically whether or not the address is already known', async () => {

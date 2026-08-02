@@ -15,10 +15,13 @@ back-ported fixes: `main` is the supported version.
 
 ## Reporting a vulnerability
 
-Please use GitHub's private vulnerability reporting — **Security → Report a
-vulnerability** on the repository — rather than opening a public issue. If that
-is unavailable to you, open an issue saying only that you have a security report
-and asking for a contact route; do not include details in it.
+Either route works, whichever you prefer:
+
+- **security@promptspend.com**
+- GitHub's private vulnerability reporting — **Security → Report a
+  vulnerability** on the repository
+
+Please do not open a public issue with details in it.
 
 Expect an acknowledgement within a few days. This is a small project maintained
 in spare time, so please allow a reasonable window before disclosing publicly.

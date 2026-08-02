@@ -1,6 +1,13 @@
 export const REPO_URL = 'https://github.com/AndrewAvery7/promptspend';
 
 /**
+ * Contact routes. Both are Cloudflare Email Routing aliases, so either can be
+ * retired without touching a real inbox address.
+ */
+export const CONTACT_EMAIL = 'hello@promptspend.com';
+export const SECURITY_EMAIL = 'security@promptspend.com';
+
+/**
  * Origin of the price-alerts API (the `worker/` project in this repository).
  *
  * Set at build time by `VITE_ALERTS_API`. Empty is a legitimate configuration
