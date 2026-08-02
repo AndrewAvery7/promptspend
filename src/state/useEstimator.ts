@@ -8,6 +8,7 @@ import {
   DEFAULT_SCENARIO,
   FIELD_KEYS,
   MAX_MODELS,
+  SCENARIO_PARAM_KEYS,
   clampField,
   decodeScenario,
   encodeScenario,
@@ -112,10 +113,18 @@ export function useEstimator(catalog: Catalog) {
   const models = useMemo(() => catalog.getAll(scenario.modelIds), [catalog, scenario.modelIds]);
 
   // Keep the address bar in step so any estimate is shareable by copying the URL.
+  //
+  // Only the parameters the scenario owns are rewritten. Rebuilding the whole
+  // query string was destroying anything else that happened to be there — which
+  // is how an emailed `?alerts=` preferences link arrived at a page that had
+  // already thrown the token away.
   useEffect(() => {
-    const query = encodeScenario(scenario);
-    const next = `${window.location.pathname}?${query}`;
-    window.history.replaceState(null, '', next);
+    const preserved = new URLSearchParams(window.location.search);
+    for (const key of SCENARIO_PARAM_KEYS) preserved.delete(key);
+
+    const extra = preserved.toString();
+    const query = `${encodeScenario(scenario)}${extra ? `&${extra}` : ''}`;
+    window.history.replaceState(null, '', `${window.location.pathname}?${query}`);
   }, [scenario]);
 
   // Real tokenizer counts for the models that have one we can run locally.

@@ -64,7 +64,12 @@ export default function App() {
 function Workspace({ catalog }: { catalog: Catalog }) {
   const appearance = useAppearance();
   const estimator = useEstimator(catalog);
-  const [view, setView] = useState<ViewId>('estimate');
+  // An emailed preferences link lands on `/?alerts=<token>`, and the panel that
+  // reads it lives in Data & Alerts. Landing on Estimate meant the link
+  // appeared to do nothing at all.
+  const [view, setView] = useState<ViewId>(() =>
+    new URLSearchParams(window.location.search).has('alerts') ? 'data' : 'estimate',
+  );
   const [search, setSearch] = useState('');
   const [toast, setToast] = useState<string | null>(null);
   const [tourStep, setTourStep] = useState<number | null>(null);

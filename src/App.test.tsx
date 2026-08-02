@@ -125,6 +125,21 @@ describe('App', () => {
     });
   });
 
+  /**
+   * The emailed preferences link is `/?alerts=<token>`, and it arrived at a page
+   * that had already destroyed it: the URL writer rebuilt the whole query string
+   * from the scenario, so every parameter it did not own was silently dropped.
+   * The link appeared to work — it just landed on the estimator with nothing
+   * selected and no way to tell why.
+   */
+  it('does not destroy query parameters the scenario does not own', async () => {
+    window.history.replaceState(null, '', '/?utm_source=newsletter');
+    await renderApp();
+
+    await waitFor(() => expect(window.location.search).toMatch(/sys=800/));
+    expect(window.location.search).toMatch(/utm_source=newsletter/);
+  });
+
   it('restores a scenario from the URL', async () => {
     window.history.replaceState(null, '', '/?m=claude-sonnet-5&t=12&sys=1500');
     await renderApp();
@@ -343,6 +358,20 @@ describe('claims the site makes about itself', () => {
     expect(screen.queryByRole('button', { name: /Turn on push alerts/ })).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/Email address/)).not.toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  /**
+   * The panel that reads the token lives in Data & Alerts. Landing on Estimate
+   * meant an emailed "manage your preferences" link did visibly nothing.
+   */
+  it('opens Data & Alerts when an emailed preferences link is followed', async () => {
+    window.history.replaceState(null, '', '/?alerts=token-abc');
+    // Deliberately not renderApp(): that waits for the Estimate headline, and
+    // the whole point is that this link does not land there.
+    render(<App />);
+
+    expect(await screen.findByText(/Every number shows its work/)).toBeInTheDocument();
+    expect(screen.queryByText(/Know the tab/)).not.toBeInTheDocument();
   });
 
   it('still offers the two options that need no infrastructure', async () => {

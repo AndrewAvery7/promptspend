@@ -373,6 +373,34 @@ describe('managing an existing subscription', () => {
     });
   });
 
+  /**
+   * The token is a bearer credential. Left in the address bar it ends up in
+   * browser history and in whatever URL the visitor copies to share their
+   * estimate — which would hand their subscription to whoever they sent it to.
+   */
+  it('removes the token from the address bar as soon as it is read', async () => {
+    window.history.replaceState(null, '', '/?alerts=token-abc&m=claude-sonnet-5');
+    handlers.push((url) =>
+      url.includes('/v1/preferences')
+        ? {
+            body: {
+              email: 'reader@example.com',
+              status: 'active',
+              cadence: 'weekly',
+              scope: 'all',
+              models: [],
+            },
+          }
+        : undefined,
+    );
+    renderPanel();
+
+    expect(await screen.findByText('reader@example.com')).toBeInTheDocument();
+    expect(window.location.search).not.toContain('alerts=');
+    // ...without taking anything else with it.
+    expect(window.location.search).toContain('m=claude-sonnet-5');
+  });
+
   it('explains an expired link instead of failing silently', async () => {
     window.history.replaceState(null, '', '/?alerts=stale-token');
     handlers.push((url) =>

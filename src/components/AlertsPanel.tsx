@@ -43,9 +43,21 @@ export function AlertsPanel({ catalog, theme, onToast }: AlertsPanelProps) {
   const [configError, setConfigError] = useState<string | null>(null);
   const [manageToken, setManageToken] = useState<string | null>(null);
 
+  /**
+   * Take the token out of the address bar the moment it is read.
+   *
+   * It is a bearer credential. Left in the URL it goes into browser history,
+   * into whatever the visitor copies to share their estimate, and into any
+   * referrer a future link might carry. Held in component state it does none of
+   * those things and works exactly as well.
+   */
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get(PREFERENCES_PARAM);
-    if (token) setManageToken(token);
+    if (!token) return;
+    setManageToken(token);
+    const url = new URL(window.location.href);
+    url.searchParams.delete(PREFERENCES_PARAM);
+    window.history.replaceState({}, '', url);
   }, []);
 
   useEffect(() => {
@@ -83,12 +95,7 @@ export function AlertsPanel({ catalog, theme, onToast }: AlertsPanelProps) {
           token={manageToken}
           catalog={catalog}
           onToast={onToast}
-          onDone={() => {
-            setManageToken(null);
-            const url = new URL(window.location.href);
-            url.searchParams.delete(PREFERENCES_PARAM);
-            window.history.replaceState({}, '', url);
-          }}
+          onDone={() => setManageToken(null)}
         />
       )}
       <div className="alert-grid alert-grid--live">

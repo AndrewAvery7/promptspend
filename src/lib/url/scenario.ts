@@ -80,6 +80,16 @@ const KEYS = {
   pastedFields: 'px',
 } as const;
 
+/**
+ * Every query parameter the scenario owns.
+ *
+ * Exported so the writer can clear exactly these and leave everything else
+ * alone. It used to rebuild the whole query string from the scenario, which
+ * silently destroyed any parameter the estimator did not know about — including
+ * the `?alerts=` token that an emailed preferences link arrives with.
+ */
+export const SCENARIO_PARAM_KEYS: readonly string[] = Object.values(KEYS);
+
 export function encodeScenario(scenario: Scenario): string {
   const params = new URLSearchParams();
   if (scenario.modelIds.length > 0) params.set(KEYS.modelIds, scenario.modelIds.join(','));
