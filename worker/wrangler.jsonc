@@ -15,8 +15,8 @@
   "vars": {
     // Where the browser app is served from. Confirmation and unsubscribe links
     // land back here, and it is the default CORS origin.
-    "SITE_ORIGIN": "https://andrewavery7.github.io",
-    "SITE_BASE_PATH": "/promptspend/",
+    "SITE_ORIGIN": "https://promptspend.com",
+    "SITE_BASE_PATH": "/",
     // Comma-separated. Only these origins may call the API from a browser.
     // github.io stays listed through the cutover: the site is still served from
     // there until SITE_URL flips, and an origin that disappears mid-move breaks
