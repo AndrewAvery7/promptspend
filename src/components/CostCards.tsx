@@ -31,7 +31,13 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth }
             key={model.id}
             className={`cost-card${row.isCheapest && rows.length > 1 ? ' cost-card--cheapest' : ''}`}
           >
-            {!row.isCheapest && (
+            {/* Both verdicts sit in the same corner. They are the same kind of
+                fact — how this card compares with the cheapest — so having one
+                float top-right and the other sit inline next to the name made
+                a row of cards read as two different layouts. */}
+            {row.isCheapest ? (
+              rows.length > 1 && <span className="badge badge--cheapest cost-card__flag">CHEAPEST</span>
+            ) : (
               <div className="cost-card__delta">
                 <span className="visually-hidden">Extra spend versus the cheapest option: </span>+
                 {formatMoney(row.deltaPerMonth)}/mo
@@ -39,7 +45,6 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth }
             )}
             <div className="cost-card__head">
               <span className="cost-card__name">{model.displayName}</span>
-              {row.isCheapest && rows.length > 1 && <span className="badge badge--cheapest">CHEAPEST</span>}
             </div>
             <div className="cost-card__provider">
               {catalog.providerName(model)} · {formatRate(model.pricing.input)}/M in ·{' '}

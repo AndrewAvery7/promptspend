@@ -175,7 +175,7 @@ ${rows}
           <a href="${siteOrigin}/">Calculator</a> &middot;
           <a href="/openapi.json">OpenAPI</a> &middot;
           <a href="https://github.com/AndrewAvery7/promptspend">Source</a> &middot;
-          <a href="mailto:hello@promptspend.com">hello@promptspend.com</a>
+          <a href="mailto:info@promptspend.com">info@promptspend.com</a>
         </p>
       </footer>
     </div>

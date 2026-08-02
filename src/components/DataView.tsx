@@ -88,9 +88,11 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
           <div className="panel__body">
             {/* The two zero-infrastructure options come first because they cost
                 a reader nothing to adopt and cost us nothing to run: no address
-                is stored and nothing can silently break. Push and email follow
-                for the people who want to be told rather than to go looking. */}
-            <div className="alert-grid">
+                is stored and nothing can silently break. They are passed into
+                the panel rather than placed beside it so all three short
+                options stack in one column against the email form, which is
+                three times their height on its own. */}
+            <AlertsPanel catalog={catalog} theme={theme} onToast={onToast}>
               <article className="alert-option">
                 <h4>
                   <FeedIcon />
@@ -100,8 +102,15 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   Every change to the catalog is a commit to one file, and GitHub publishes an Atom feed of
                   those. Point a reader at it and you hear about a price change the morning it lands.
                 </p>
-                <a className="alert-tag" href={`${REPO_URL}/commits/main/public/data/pricing.json.atom`}>
-                  AVAILABLE NOW ↗
+                {/* Opens raw Atom XML, which is a wall of text if you are not
+                    expecting it. Say so, and open it away from the app. */}
+                <a
+                  className="alert-tag"
+                  href={`${REPO_URL}/commits/main/public/data/pricing.json.atom`}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  ATOM FEED ↗
                 </a>
               </article>
 
@@ -114,19 +123,11 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   Watch <code>promptspend</code> for pull requests and you will see every pricing change a
                   human had to review before it went live.
                 </p>
-                <a className="alert-tag" href={REPO_URL}>
-                  AVAILABLE NOW ↗
+                <a className="alert-tag" href={REPO_URL} target="_blank" rel="noreferrer noopener">
+                  OPEN ON GITHUB ↗
                 </a>
               </article>
-            </div>
-
-            <AlertsPanel catalog={catalog} theme={theme} onToast={onToast} />
-
-            <p className="privacy-note">
-              No SMS is planned: per-message costs and phone-number collection do not fit a free,
-              privacy-first tool, and push already covers “tell me instantly, on my phone”. There is no
-              analytics on this site, and the alerts service stores no opens, no clicks and no IP addresses.
-            </p>
+            </AlertsPanel>
           </div>
         </section>
 

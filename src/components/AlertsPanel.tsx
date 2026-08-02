@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Catalog } from '@/lib/pricing/catalog';
 import {
   AlertsError,
@@ -36,9 +36,11 @@ interface AlertsPanelProps {
   catalog: Catalog;
   theme: 'light' | 'dark';
   onToast: (message: string) => void;
+  /** The zero-infrastructure options, stacked above the push card. */
+  children?: ReactNode;
 }
 
-export function AlertsPanel({ catalog, theme, onToast }: AlertsPanelProps) {
+export function AlertsPanel({ catalog, theme, onToast, children }: AlertsPanelProps) {
   const [config, setConfig] = useState<AlertsConfig | null>(null);
   const [configError, setConfigError] = useState<string | null>(null);
   const [manageToken, setManageToken] = useState<string | null>(null);
@@ -78,20 +80,43 @@ export function AlertsPanel({ catalog, theme, onToast }: AlertsPanelProps) {
     };
   }, []);
 
-  if (!alertsConfigured) return <NotLiveYet />;
+  /**
+   * Two columns, unevenly filled on purpose.
+   *
+   * The email card carries a form roughly three times the height of anything
+   * else here, so a four-up grid of equal cells left a column of white space
+   * beside it. The three short options stack into one column instead and the
+   * form takes the other, which makes the two sides about the same height.
+   *
+   * `children` is where the zero-infrastructure options arrive from the page.
+   * They belong in the stack, and they have to render on every path through
+   * this component — including the ones where the alerts service is absent,
+   * which is exactly when "the options that need nothing from us" matter most.
+   */
+  const layout = (leftLower: ReactNode, right: ReactNode = null) => (
+    <div className="alert-grid alert-grid--live">
+      <div className="alert-stack">
+        {children}
+        {leftLower}
+      </div>
+      {right}
+    </div>
+  );
+
+  if (!alertsConfigured) return layout(<NotLiveYet />);
 
   if (configError) {
-    return (
+    return layout(
       <p className="note note--warn" role="status">
         <span>
           <b>The alerts service is not responding.</b> {configError} The two options above still work — they
           need nothing from us.
         </span>
-      </p>
+      </p>,
     );
   }
 
-  if (!config) return <p className="privacy-note">Checking what the alerts service offers…</p>;
+  if (!config) return layout(<p className="privacy-note">Checking what the alerts service offers…</p>);
 
   return (
     <>
@@ -103,10 +128,10 @@ export function AlertsPanel({ catalog, theme, onToast }: AlertsPanelProps) {
           onDone={() => setManageToken(null)}
         />
       )}
-      <div className="alert-grid alert-grid--live">
-        <PushCard config={config} catalog={catalog} onToast={onToast} />
-        <EmailCard config={config} catalog={catalog} theme={theme} onToast={onToast} />
-      </div>
+      {layout(
+        <PushCard config={config} catalog={catalog} onToast={onToast} />,
+        <EmailCard config={config} catalog={catalog} theme={theme} onToast={onToast} />,
+      )}
     </>
   );
 }
@@ -378,8 +403,8 @@ function EmailCard({
         Email digest
       </h4>
       <p>
-        A weekly “what changed in LLM pricing”, or a mail the moment something moves. Double opt-in, one-click
-        out, and no tracking pixels.
+        A weekly “what changed in LLM pricing”, or an email the moment something moves. Double opt-in,
+        one-click out, and no tracking pixels.
       </p>
 
       <form onSubmit={submit}>

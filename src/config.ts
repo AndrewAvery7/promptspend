@@ -4,7 +4,7 @@ export const REPO_URL = 'https://github.com/AndrewAvery7/promptspend';
  * Contact routes. Both are Cloudflare Email Routing aliases, so either can be
  * retired without touching a real inbox address.
  */
-export const CONTACT_EMAIL = 'hello@promptspend.com';
+export const CONTACT_EMAIL = 'info@promptspend.com';
 export const SECURITY_EMAIL = 'security@promptspend.com';
 
 /**

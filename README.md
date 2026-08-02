@@ -247,7 +247,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 Adding a model is usually a one-line change. See [CONTRIBUTING.md](CONTRIBUTING.md), or open a
 [model request](../../issues/new?template=model-request.yml) and someone will pick it up.
 
-Not a code change? **hello@promptspend.com**. Security reports go to
+Not a code change? **info@promptspend.com**. Security reports go to
 **security@promptspend.com** or GitHub's private vulnerability reporting — see [SECURITY.md](SECURITY.md).
 
 The three rules that are not up for negotiation, because breaking any of them turns an estimator into a

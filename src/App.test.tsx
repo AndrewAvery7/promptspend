@@ -381,7 +381,17 @@ describe('claims the site makes about itself', () => {
 
     expect(await screen.findByText(/Commit feed/)).toBeInTheDocument();
     expect(screen.getByText(/Watch the repository/)).toBeInTheDocument();
-    expect(screen.getAllByText(/AVAILABLE NOW/).length).toBe(2);
+
+    // Both links say where they go and open away from the app. The Atom one
+    // used to read "AVAILABLE NOW" and open raw XML in the same tab, which is
+    // a wall of text arriving with no warning.
+    const feed = screen.getByRole('link', { name: /ATOM FEED/ });
+    const repo = screen.getByRole('link', { name: /OPEN ON GITHUB/ });
+    for (const link of [feed, repo]) {
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link.getAttribute('rel')).toMatch(/noopener/);
+    }
+    expect(feed).toHaveAttribute('href', expect.stringContaining('.atom'));
   });
 
   it('describes the merge rule it actually uses for flagged rows', async () => {

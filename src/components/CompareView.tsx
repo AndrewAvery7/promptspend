@@ -320,9 +320,16 @@ function CatalogTable({ catalog, selectedIds, onToggle }: CompareViewProps) {
       <button
         type="button"
         onClick={() => setSort((prev) => ({ key, asc: prev.key === key ? !prev.asc : true }))}
+        title={`Sort by ${label}`}
       >
         {label}
-        {sort.key === key ? (sort.asc ? ' ▲' : ' ▼') : ''}
+        {/* Every sortable column carries a marker, not just the active one.
+            With an arrow on the sorted column alone there was nothing to say
+            the other five could be clicked at all — the affordance only
+            appeared once you had already found it. */}
+        <span className={`sort-mark${sort.key === key ? ' is-active' : ''}`} aria-hidden="true">
+          {sort.key === key ? (sort.asc ? '▲' : '▼') : '⇅'}
+        </span>
       </button>
     </th>
   );
