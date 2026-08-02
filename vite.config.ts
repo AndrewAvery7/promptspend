@@ -58,10 +58,12 @@ function seoAssets(url: string): Plugin {
     name: 'promptspend-seo-assets',
     apply: 'build',
     generateBundle() {
+      // `llms.txt` has no robots.txt directive of its own, so it is named in a
+      // comment. Costs nothing, and it is where somebody looks first.
       this.emitFile({
         type: 'asset',
         fileName: 'robots.txt',
-        source: `# ${host}\nUser-agent: *\nAllow: /\n\nSitemap: ${url}/sitemap.xml\n`,
+        source: `# ${host}\n# Machine-readable index for assistants: ${url}/llms.txt\n\nUser-agent: *\nAllow: /\n\nSitemap: ${url}/sitemap.xml\n`,
       });
 
       if (isCustomDomain) {

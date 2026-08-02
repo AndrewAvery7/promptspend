@@ -169,6 +169,21 @@ async function main(): Promise<void> {
     problems.push(`dist/${INDEXNOW_KEY_FILE} is missing — IndexNow submissions would be refused`);
   }
 
+  if (!existsSync(resolve(DIST, 'llms.txt'))) {
+    problems.push('dist/llms.txt was not generated');
+  } else {
+    const llms = await readFile(resolve(DIST, 'llms.txt'), 'utf8');
+    // It is an index, so it is worth checking it actually indexes something —
+    // an empty catalog would still produce a well-formed but useless file.
+    if (!llms.startsWith('# PromptSpend')) problems.push('llms.txt does not start with an H1');
+    for (const path of ['/models/', '/compare/', '/data/pricing.json']) {
+      if (!llms.includes(path)) problems.push(`llms.txt does not link to ${path}`);
+    }
+    if (canonical && !llms.includes(new URL(canonical).origin)) {
+      problems.push('llms.txt does not use absolute URLs on the canonical host');
+    }
+  }
+
   // ------------------------------------------------------- generated pages
 
   const pages = await findPages();

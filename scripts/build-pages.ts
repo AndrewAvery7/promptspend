@@ -25,6 +25,7 @@ import type { PricingCatalog } from '@/lib/pricing/types';
 import { assertCatalog } from '@/lib/pricing/types';
 import { buildPages } from '@/lib/seo/pages';
 import { PAGE_CSS } from '@/lib/seo/css';
+import { renderLlmsTxt } from '@/lib/seo/llms';
 import {
   renderComparisonPage,
   renderComparisonsIndex,
@@ -135,6 +136,17 @@ async function main(): Promise<void> {
     ]),
   );
 
+  // An index written for the thing that reads it. Points at the pages and the
+  // API rather than inlining rates, which would be stale by morning.
+  await writeFileAt(
+    'llms.txt',
+    renderLlmsTxt(set, {
+      siteUrl,
+      apiUrl: (process.env.PRICING_API_URL ?? '').trim() || 'https://promptspend.dev',
+      generatedAt: catalog.generatedAt,
+    }),
+  );
+
   // Proof of control for IndexNow. Served as plain text at the site root; the
   // key is public by design — see scripts/lib/indexnow.ts.
   await writeFileAt(INDEXNOW_KEY_FILE, `${INDEXNOW_KEY}\n`);
@@ -145,6 +157,7 @@ async function main(): Promise<void> {
   );
   console.log(`  stylesheet ${cssName}`);
   console.log(`  sitemap    ${set.all.length + 1} URLs at ${siteUrl}/sitemap.xml`);
+  console.log(`  llms.txt   ${siteUrl}/llms.txt`);
   if (set.droppedComparisons > 0) {
     // Never silent. A capped page set that looks complete is how a coverage
     // regression hides for months.
