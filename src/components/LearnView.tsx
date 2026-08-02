@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { LEARN_MODULES } from '@/content/learn';
@@ -65,20 +65,41 @@ export function LearnView({ catalog }: { catalog: Catalog }) {
 function TokenLab({ catalog }: { catalog: Catalog }) {
   const [text, setText] = useState(SAMPLE);
 
-  const samples = pickSampleModels(catalog);
-  const [counts, setCounts] = useState<Record<string, TokenCount>>({});
+  const samples = useMemo(() => pickSampleModels(catalog), [catalog]);
+
+  /**
+   * Two counts per model, and only one of them is state.
+   *
+   * The estimate is cheap arithmetic, so it is *derived* on every keystroke and
+   * the number never stalls. The real tokenizer is expensive — running it per
+   * character re-encoded the whole sample on every key — so it waits for a
+   * pause in typing, and only its result needs to survive a render.
+   *
+   * The measurement carries the text it was taken from. Without that, a fresh
+   * keystroke would keep showing the previous text's exact count until the new
+   * one landed: a precise number for a string that is no longer on screen.
+   */
+  const estimates = useMemo(
+    () => Object.fromEntries(samples.map((model) => [model.id, estimateForModel(text, model)])),
+    [samples, text],
+  );
+  const [measured, setMeasured] = useState<{ text: string; counts: Record<string, TokenCount> }>({
+    text: '',
+    counts: {},
+  });
 
   useEffect(() => {
     let cancelled = false;
-    // The synchronous estimate is cheap, so it lands on every keystroke and the
-    // number never stalls. The real tokenizer waits for a pause in typing —
-    // running it per character re-encoded the whole sample on every key.
-    setCounts(Object.fromEntries(samples.map((model) => [model.id, estimateForModel(text, model)])));
     const timer = window.setTimeout(() => {
       void Promise.all(
         samples.map(async (model) => {
           const result = await countTokens(text, model);
-          if (!cancelled) setCounts((prev) => ({ ...prev, [model.id]: result }));
+          if (!cancelled) {
+            setMeasured((prev) => ({
+              text,
+              counts: { ...(prev.text === text ? prev.counts : {}), [model.id]: result },
+            }));
+          }
         }),
       );
     }, 250);
@@ -86,9 +107,7 @@ function TokenLab({ catalog }: { catalog: Catalog }) {
       cancelled = true;
       window.clearTimeout(timer);
     };
-    // `samples` is derived from the catalog and stable for a given catalog.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text, catalog]);
+  }, [text, samples]);
 
   return (
     <div className="token-lab">
@@ -108,7 +127,8 @@ function TokenLab({ catalog }: { catalog: Catalog }) {
       />
       <div className="token-grid">
         {samples.map((model) => {
-          const count = counts[model.id];
+          const count =
+            (measured.text === text ? measured.counts[model.id] : undefined) ?? estimates[model.id];
           const method = count?.method ?? 'estimate';
           return (
             <div className="token-cell" key={model.id}>

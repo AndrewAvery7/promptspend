@@ -63,9 +63,9 @@ export function CommandPalette({ commands, onClose }: CommandPaletteProps) {
     return () => document.removeEventListener('keydown', onTab);
   }, []);
 
-  useEffect(() => {
-    setSelected(0);
-  }, [query]);
+  // Resetting the highlight when the query changes used to be an effect on
+  // [query]. It is the same thing done a render later, and `query` has exactly
+  // one writer — so it belongs in that writer. See the input's onChange.
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -112,7 +112,12 @@ export function CommandPalette({ commands, onClose }: CommandPaletteProps) {
           placeholder="Type a command or model name…"
           aria-label="Search commands"
           autoComplete="off"
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            // A new query means a new result list; keeping the old index would
+            // leave the highlight on whatever happens to be in that position.
+            setSelected(0);
+          }}
         />
         <ul className="cmdk__list" role="listbox" aria-label="Commands">
           {results.length === 0 && (

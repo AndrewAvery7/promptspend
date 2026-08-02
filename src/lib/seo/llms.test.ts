@@ -98,4 +98,22 @@ describe('renderLlmsTxt', () => {
   it('carries the catalog timestamp, so staleness is visible', () => {
     expect(renderLlmsTxt(SET, INPUT)).toContain('2026-08-02T02:00:00.000Z');
   });
+
+  it('keeps unranked models out of the highlights', () => {
+    // Only current models are ranked. A legacy one still has a page — it is in
+    // the sitemap and reachable — but naming it as a "most-asked model" would
+    // point an assistant at something nobody should be told to buy today.
+    const set = buildPages(
+      catalog([
+        model('current-one', { pricing: { input: 1, output: 4 } }),
+        model('retired-one', { status: 'legacy', pricing: { input: 0.01, output: 0.04 } }),
+      ]),
+      { asOf: ASOF },
+    );
+    const text = renderLlmsTxt(set, INPUT);
+
+    // Cheapest by a distance, and still excluded.
+    expect(text).toContain('/models/current-one/');
+    expect(text).not.toContain('/models/retired-one/');
+  });
 });

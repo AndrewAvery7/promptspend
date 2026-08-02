@@ -54,6 +54,11 @@ export function AlertsPanel({ catalog, theme, onToast }: AlertsPanelProps) {
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get(PREFERENCES_PARAM);
     if (!token) return;
+    // Reading the URL and rewriting history is a side effect on an external
+    // system, which is exactly what an effect is for. The token cannot be
+    // derived during render, because the same pass has to strip it from the
+    // address bar — and it runs once, on mount, so nothing cascades.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see above
     setManageToken(token);
     const url = new URL(window.location.href);
     url.searchParams.delete(PREFERENCES_PARAM);
@@ -135,7 +140,10 @@ function PushCard({
   catalog: Catalog;
   onToast: (message: string) => void;
 }) {
-  const support = useMemo(detectPushSupport, []);
+  // Lazy `useState` rather than `useMemo`: browser capability is fixed for the
+  // life of the tab, and `useMemo` is a performance hint React is free to
+  // discard and recompute. This is a value that must be computed exactly once.
+  const [support] = useState(detectPushSupport);
   const [state, setState] = useState<PushState>('idle');
   const [scope, setScope] = useState<Scope>('all');
   const [models, setModels] = useState<string[]>([]);

@@ -194,6 +194,12 @@ export function useEstimator(catalog: Catalog) {
   useEffect(() => {
     const primary = models[0];
     const pasted = FIELD_KEYS.filter((field) => fields[field].mode === 'paste');
+    // Deliberate, and the updater returns `prev` unchanged when nothing moved,
+    // so it cannot cascade. The counts arrive from an async tokenizer and so
+    // cannot be derived during render; mirroring them into the scenario is what
+    // stops the share link describing a different estimate from the one on
+    // screen — which is a bug this code exists to have fixed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see above
     setScenario((prev) => {
       const next: Scenario = { ...prev };
       let changed = false;

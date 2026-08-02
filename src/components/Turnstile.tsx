@@ -74,11 +74,18 @@ export function Turnstile({ siteKey, theme, onToken }: TurnstileProps) {
   const container = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
 
-  // `onToken` is intentionally not a dependency: including it would re-render
-  // the widget on every parent state change, and Turnstile treats a re-render
-  // as a fresh challenge.
+  // `onToken` is intentionally not a dependency of the render effect below:
+  // including it would re-render the widget on every parent state change, and
+  // Turnstile treats a re-render as a fresh challenge.
+  //
+  // The assignment lives in its own effect rather than in the render body. A
+  // ref written during render is a rule React now enforces, and the effect is
+  // equivalent here: the ref is only ever read from Turnstile's own callbacks,
+  // which fire long after mount.
   const callback = useRef(onToken);
-  callback.current = onToken;
+  useEffect(() => {
+    callback.current = onToken;
+  }, [onToken]);
 
   useEffect(() => {
     let widgetId: string | null = null;
