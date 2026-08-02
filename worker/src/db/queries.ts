@@ -120,15 +120,29 @@ export async function activateEmail(db: D1Database, id: string): Promise<void> {
     .run();
 }
 
+/**
+ * Unsubscribe: delete the address, do not flag it.
+ *
+ * This used to set `status = 'unsubscribed'` and keep the row — while the
+ * unsubscribe page, the in-app panel and SECURITY.md all told the reader their
+ * address had been *deleted, not flagged*. The claim was false. On a site whose
+ * entire pitch is that its numbers can be checked, a false privacy claim is the
+ * worst kind of bug to ship.
+ *
+ * A suppression row is the conventional choice, and the right one when a list
+ * can be added to in bulk: it stops a re-import silently re-subscribing someone
+ * who opted out. There is no bulk path here — the only way onto this list is
+ * double opt-in by the owner of the address — so a suppression row would retain
+ * personal data against an explicit promise while protecting against nothing.
+ *
+ * Re-subscribing later therefore starts a genuinely fresh record, which is what
+ * the same copy already promises.
+ */
 export async function unsubscribeEmail(db: D1Database, id: string): Promise<void> {
-  await db
-    .prepare(`UPDATE email_subscribers SET status = 'unsubscribed', unsubscribed_at = ? WHERE id = ?`)
-    .bind(nowIso(), id)
-    .run();
-  await db
-    .prepare(`DELETE FROM follows WHERE subscriber_kind = 'email' AND subscriber_id = ?`)
-    .bind(id)
-    .run();
+  await db.batch([
+    db.prepare(`DELETE FROM follows WHERE subscriber_kind = 'email' AND subscriber_id = ?`).bind(id),
+    db.prepare('DELETE FROM email_subscribers WHERE id = ?').bind(id),
+  ]);
 }
 
 export async function updateEmailPreferences(

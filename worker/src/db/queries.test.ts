@@ -6,6 +6,7 @@ import {
   deletePushSubscription,
   emailRecipientsFor,
   findEmailByAddress,
+  findEmailById,
   getFollows,
   insertEvent,
   normaliseEmail,
@@ -57,13 +58,12 @@ describe('email subscribers', () => {
     expect(normaliseEmail(' A.B@example.com ')).toBe('a.b@example.com');
   });
 
-  it('re-subscribing does not create a second row and returns to pending', async () => {
+  it('submitting the form twice does not create a second row', async () => {
     const first = await subscribe('reader@example.com', 'all', []);
-    await unsubscribeEmail(db(), first.id);
 
     const second = await upsertPendingEmail(db(), {
       email: 'reader@example.com',
-      cadence: 'weekly',
+      cadence: 'instant',
       scope: 'all',
       consentIpHash: null,
     });
@@ -74,12 +74,38 @@ describe('email subscribers', () => {
     expect(results).toHaveLength(1);
   });
 
-  it('unsubscribing forgets the followed models too', async () => {
+  /**
+   * The unsubscribe copy promises the address is deleted and that subscribing
+   * again "starts fresh". Both halves are asserted here, because the code used
+   * to flag the row instead — which made the promise false and quietly kept an
+   * address someone had asked us to forget.
+   */
+  it('unsubscribing deletes the address rather than flagging it', async () => {
     const subscriber = await subscribe('reader@example.com', 'followed', ['gpt-5.6-sol', 'claude-sonnet-5']);
     expect(await getFollows(db(), 'email', subscriber.id)).toHaveLength(2);
 
     await unsubscribeEmail(db(), subscriber.id);
+
+    expect(await findEmailById(db(), subscriber.id)).toBeNull();
+    expect(await findEmailByAddress(db(), 'reader@example.com')).toBeNull();
     expect(await getFollows(db(), 'email', subscriber.id)).toEqual([]);
+  });
+
+  it('subscribing again after unsubscribing starts a fresh record', async () => {
+    const first = await subscribe('reader@example.com', 'all', []);
+    await unsubscribeEmail(db(), first.id);
+
+    const second = await upsertPendingEmail(db(), {
+      email: 'reader@example.com',
+      cadence: 'weekly',
+      scope: 'all',
+      consentIpHash: null,
+    });
+
+    expect(second.id).not.toBe(first.id);
+    expect(second.status).toBe('pending');
+    const { results } = await db().prepare('SELECT id FROM email_subscribers').all();
+    expect(results).toHaveLength(1);
   });
 
   it('deletes unconfirmed signups after a week', async () => {
