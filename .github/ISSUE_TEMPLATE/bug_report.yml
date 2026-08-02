@@ -1,0 +1,85 @@
+name: Bug report
+description: Something the estimator did, or failed to do
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If a **number** looks wrong, that is the most serious kind of bug this
+        project can have — please file it here rather than assuming it is your
+        setup. [docs/TROUBLESHOOTING.md](https://github.com/AndrewAvery7/token-tally/blob/main/docs/TROUBLESHOOTING.md)
+        covers the common cases first: caching, long-context tiers, and why two
+        models disagree about the same prompt.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did the site do, and what did you expect instead?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Which of these fits best?
+      options:
+        - A price is wrong
+        - The estimate does not match my real bill
+        - A model is missing, duplicated, or shown as the wrong thing
+        - The page broke, or would not load
+        - Something is unreachable by keyboard, screen reader, or on mobile
+        - The site claims something that is not true
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: The URL you were on
+      description: >
+        The whole scenario lives in the query string, so this reproduces your
+        estimate exactly. It never contains prompt text — only token counts.
+      placeholder: 'https://andrewavery7.github.io/token-tally/?m=gpt-5.4&sys=800&...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: numbers
+    attributes:
+      label: The numbers involved
+      description: >
+        For anything price-related: which model, what the site showed, what you
+        expected, and — if you have one — a link to the vendor page you are
+        comparing against. That last one turns a report into a fix.
+      placeholder: |
+        Model: GPT-5.6 Terra
+        Site showed: $2.00 in / $12.00 out per 1M
+        Vendor page says: ...
+        Link: https://...
+
+  - type: textarea
+    id: assumptions
+    attributes:
+      label: Assumptions shown under the results
+      description: >
+        Copy the "Assumptions in these numbers" list. Most estimate-versus-bill
+        gaps are explained by something in it — caching, batch, reasoning
+        multiplier, or a long-context tier that did or did not apply.
+      render: text
+
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, OS, and screen width
+      placeholder: 'Safari 18, iOS 26, iPhone 15 Pro (393px)'
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors
+      description: Anything in the browser console, if the page misbehaved.
+      render: shell

@@ -1,0 +1,61 @@
+name: Feature request
+description: Suggest an improvement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding a **model** does not need this template — use the
+        [model request](https://github.com/AndrewAvery7/token-tally/issues/new?template=model-request.yml)
+        form instead, it is about thirty seconds.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: >
+        Describe the situation you hit, not just the feature. The constraints in
+        CONTRIBUTING.md are deliberately tight — never invent a rate, label every
+        estimate, no enabled control that does nothing — so knowing the
+        underlying problem usually leads to a better fit than the first idea.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like it to do?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the project?
+      options:
+        - The cost model (a charge that is not modelled)
+        - The catalog (coverage, provenance, or how a model is described)
+        - The pipeline (how prices are fetched, checked, or published)
+        - The interface
+        - The Learn content
+        - Something to build on top — the data file, an API, a CLI
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: If this is about a charge we do not model, where is it documented?
+      description: >
+        Regional premiums, fast/priority tiers, tool-call fees and fine-tuning
+        are known gaps, listed in the README. A link to the vendor page that
+        defines the charge is what makes one of them buildable.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What did you try instead?
+      description: >
+        The advanced assumptions, the batch toggle, the reasoning multiplier and
+        the raw `pricing.json` cover more ground than they first appear to.

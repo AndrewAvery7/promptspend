@@ -1,10 +1,29 @@
-# TokenTally
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo.png" alt="TokenTally" width="540">
+  </picture>
+</p>
 
-**Know the tab before you build.** Estimate, compare and understand what an AI feature will cost — from a
-catalog that re-checks itself every morning, so the numbers are never a year out of date.
+<p align="center">
+  <b>Know the tab before you build.</b><br>
+  Estimate, compare and understand what an AI feature will cost &mdash; from a catalog that re-checks itself every morning, so the numbers are never a year out of date.
+</p>
 
-[**→ Open TokenTally**](https://andrewavery7.github.io/token-tally/) · free · open source · no accounts,
-no tracking
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/models-69-2456E6.svg" alt="69 models tracked">
+  <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
+  <img src="https://img.shields.io/badge/tests-242-blue.svg" alt="242 tests">
+  <img src="https://img.shields.io/badge/initial%20payload-74%20KB%20gzip-blue.svg" alt="74 KB gzip initial payload">
+  <a href="https://github.com/AndrewAvery7/token-tally/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/token-tally/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/AndrewAvery7/token-tally/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/token-tally/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
+</p>
+
+<p align="center">
+  <a href="https://andrewavery7.github.io/token-tally/"><b>&rarr; Open TokenTally</b></a>
+  &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no tracking
+</p>
 
 ---
 
@@ -174,10 +193,30 @@ Keyboard navigation throughout — including every point on the value map, which
 returned when a dialog closes, `prefers-reduced-motion` is respected in JavaScript as well as CSS, and
 there is a `Ctrl`/`Cmd`+`K` command palette.
 
+## Documentation
+
+| Document                                               | What is in it                                                                                            |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way               |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 242 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                |
+| [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                          |
+| [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                       |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                   |
+| [SECURITY.md](SECURITY.md)                             | What is in scope — including a wrong price, which is treated as the most serious class of bug            |
+
 ## Contributing
 
 Adding a model is usually a one-line change. See [CONTRIBUTING.md](CONTRIBUTING.md), or open a
 [model request](../../issues/new?template=model-request.yml) and someone will pick it up.
+
+The three rules that are not up for negotiation, because breaking any of them turns an estimator into a
+guess with good typography:
+
+1. **Never invent a rate.** If a provider does not publish a number, charge full price and say so.
+2. **A claim on screen must be true of the code.** When behaviour and copy disagree, fixing the copy is a
+   legitimate fix; leaving both is not.
+3. **No enabled control that does nothing.** Describe a planned feature — do not simulate it.
 
 ## Honest limitations
 

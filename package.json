@@ -1,6 +1,6 @@
 {
   "name": "token-tally",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "Estimate, compare and understand LLM API costs — with pricing that syncs itself daily.",
   "license": "MIT",
