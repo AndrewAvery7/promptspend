@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-02T02:27:22.781Z",
+  "generatedAt": "2026-08-02T21:11:36.950Z",
   "providers": [
     {
       "id": "anthropic",
@@ -536,7 +536,7 @@
     {
       "id": "dashscope-qwen3-next-80b-a3b-thinking",
       "providerId": "alibaba",
-      "displayName": "Qwen3 Next 80b A3b Thinking",
+      "displayName": "Qwen3 Next 80B Thinking",
       "status": "current",
       "contextWindow": 262144,
       "pricing": {
@@ -563,7 +563,7 @@
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "providerId": "alibaba",
-      "displayName": "Qwen3 Vl 235b A22b Instruct",
+      "displayName": "Qwen3 VL 235B",
       "status": "current",
       "contextWindow": 131072,
       "pricing": {
@@ -653,7 +653,7 @@
     {
       "id": "deepseek-deepseek-v3",
       "providerId": "deepseek",
-      "displayName": "Deepseek V3",
+      "displayName": "DeepSeek V3",
       "status": "current",
       "contextWindow": 65536,
       "pricing": {
@@ -1051,7 +1051,7 @@
     {
       "id": "gpt-5",
       "providerId": "openai",
-      "displayName": "GPT 5",
+      "displayName": "GPT-5",
       "status": "current",
       "contextWindow": 272000,
       "pricing": {
@@ -1077,7 +1077,7 @@
     {
       "id": "gpt-5-mini",
       "providerId": "openai",
-      "displayName": "GPT 5 Mini",
+      "displayName": "GPT-5 Mini",
       "status": "current",
       "contextWindow": 272000,
       "pricing": {
@@ -1103,7 +1103,7 @@
     {
       "id": "gpt-5-nano",
       "providerId": "openai",
-      "displayName": "GPT 5 Nano",
+      "displayName": "GPT-5 Nano",
       "status": "current",
       "contextWindow": 272000,
       "pricing": {
@@ -1709,7 +1709,7 @@
     {
       "id": "o1",
       "providerId": "openai",
-      "displayName": "O1",
+      "displayName": "o1",
       "status": "current",
       "contextWindow": 200000,
       "pricing": {
@@ -1735,7 +1735,7 @@
     {
       "id": "o3",
       "providerId": "openai",
-      "displayName": "O3",
+      "displayName": "o3",
       "status": "current",
       "contextWindow": 200000,
       "pricing": {
@@ -1761,7 +1761,7 @@
     {
       "id": "o3-mini",
       "providerId": "openai",
-      "displayName": "O3 Mini",
+      "displayName": "o3-mini",
       "status": "current",
       "contextWindow": 200000,
       "pricing": {

@@ -221,3 +221,15 @@ Every change the daily sync has published, newest last.
 - **Review** `zai-glm-5` — provenance.lastChanged: — → 2026-08-02
 - **Review** `zai-glm-5-code` — provenance.lastChanged: — → 2026-08-02
 - **Review** `zai-glm-5.1` — provenance.lastChanged: — → 2026-08-02
+
+## 2026-08-02
+
+- **Metadata** `dashscope-qwen3-next-80b-a3b-thinking` — displayName: Qwen3 Next 80b A3b Thinking → Qwen3 Next 80B Thinking
+- **Metadata** `dashscope-qwen3-vl-235b-a22b-instruct` — displayName: Qwen3 Vl 235b A22b Instruct → Qwen3 VL 235B
+- **Metadata** `deepseek-deepseek-v3` — displayName: Deepseek V3 → DeepSeek V3
+- **Metadata** `gpt-5` — displayName: GPT 5 → GPT-5
+- **Metadata** `gpt-5-mini` — displayName: GPT 5 Mini → GPT-5 Mini
+- **Metadata** `gpt-5-nano` — displayName: GPT 5 Nano → GPT-5 Nano
+- **Metadata** `o1` — displayName: O1 → o1
+- **Metadata** `o3` — displayName: O3 → o3
+- **Metadata** `o3-mini` — displayName: O3 Mini → o3-mini

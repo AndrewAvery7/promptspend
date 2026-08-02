@@ -1,6 +1,8 @@
 {
   "$comment": "Rung 1 of the trust ladder: hand-verified values that beat every automated source. Every row with `vendorVerified` carries the `verifiedUrl` that was actually read, and the date it was read — that is what makes the claim checkable rather than merely asserted. Anthropic and OpenAI rows were reconciled against the first-party pricing pages on 2026-08-01; both matched what the automated feed already published, and the additions here are the modifiers the feed does not carry (cache-write rates, long-context tiers, batch discounts). `capabilityIndex` is an illustrative 0-100 placeholder used only for the value map's Y axis - it is NOT a benchmark score, models without one are simply not plotted, and the UI says so.",
 
+  "$displayNames": "Some entries carry a `displayName` and nothing else. Those are NOT price claims — they deliberately omit `vendorVerified`, so the rate and its provenance keep coming from whichever source the trust ladder chose. They exist because upstream ids get title-cased into names like `GPT 5`, `O3 Mini` and `Qwen3 Vl 235b A22b Instruct`, and since every model now has a public page those strings are its <h1> and its search-result title. A name is presentation; correcting one must not quietly upgrade a price to `vendor`.",
+
   "$scope": "These are standard-tier, global-endpoint list prices in USD. Not modelled: regional/data-residency premiums (OpenAI and Anthropic both charge 1.1x), fast/priority tiers, server-side tool call fees, fine-tuning, and negotiated volume discounts. The UI states this boundary rather than implying the figure is a whole invoice.",
 
   "models": [
@@ -219,7 +221,13 @@
     },
     { "id": "gpt-5.2", "displayName": "GPT-5.2", "capabilityIndex": 82 },
     { "id": "gpt-5.1", "displayName": "GPT-5.1", "capabilityIndex": 80 },
+    { "id": "gpt-5", "displayName": "GPT-5" },
+    { "id": "gpt-5-mini", "displayName": "GPT-5 Mini" },
+    { "id": "gpt-5-nano", "displayName": "GPT-5 Nano" },
     { "id": "o4-mini", "displayName": "o4-mini", "capabilityIndex": 70 },
+    { "id": "o3", "displayName": "o3" },
+    { "id": "o3-mini", "displayName": "o3-mini" },
+    { "id": "o1", "displayName": "o1" },
 
     { "id": "gemini-gemini-3.1-pro-preview", "displayName": "Gemini 3.1 Pro", "capabilityIndex": 88 },
     { "id": "gemini-gemini-3.6-flash", "displayName": "Gemini 3.6 Flash", "capabilityIndex": 82 },
@@ -234,10 +242,13 @@
     { "id": "deepseek-deepseek-v4-flash", "displayName": "DeepSeek V4 Flash", "capabilityIndex": 68 },
     { "id": "deepseek-deepseek-v3.2", "displayName": "DeepSeek V3.2", "capabilityIndex": 74 },
     { "id": "deepseek-deepseek-r1", "displayName": "DeepSeek R1", "status": "legacy", "capabilityIndex": 70 },
+    { "id": "deepseek-deepseek-v3", "displayName": "DeepSeek V3" },
     { "id": "moonshot-kimi-k2.6", "displayName": "Kimi K2.6", "capabilityIndex": 82 },
     { "id": "moonshot-kimi-k2.5", "displayName": "Kimi K2.5", "capabilityIndex": 78 },
     { "id": "dashscope-qwen3.7-max", "displayName": "Qwen 3.7 Max", "capabilityIndex": 83 },
     { "id": "dashscope-qwen3-next-80b-a3b-instruct", "displayName": "Qwen3 Next 80B", "capabilityIndex": 70 },
+    { "id": "dashscope-qwen3-next-80b-a3b-thinking", "displayName": "Qwen3 Next 80B Thinking" },
+    { "id": "dashscope-qwen3-vl-235b-a22b-instruct", "displayName": "Qwen3 VL 235B" },
     { "id": "zai-glm-5.1", "displayName": "GLM-5.1", "capabilityIndex": 80 },
     { "id": "zai-glm-5", "displayName": "GLM-5", "capabilityIndex": 76 },
     { "id": "zai-glm-5-code", "displayName": "GLM-5 Code", "capabilityIndex": 78 },
