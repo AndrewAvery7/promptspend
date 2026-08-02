@@ -233,3 +233,22 @@ Every change the daily sync has published, newest last.
 - **Metadata** `o1` — displayName: O1 → o1
 - **Metadata** `o3` — displayName: O3 → o3
 - **Metadata** `o3-mini` — displayName: O3 Mini → o3-mini
+
+## 2026-08-02
+
+- **Metadata** `zai-glm-4.6` — displayName: GLM 4.6 → GLM-4.6
+- **Metadata** `zai-glm-4.7` — displayName: GLM 4.7 → GLM-4.7
+- **Review** `zai-glm-4.6` — provenance.source: litellm → vendor
+- **Review** `zai-glm-4.6` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing
+- **Review** `zai-glm-4.7` — provenance.source: litellm → vendor
+- **Review** `zai-glm-4.7` — provenance.needsReview: true → —
+- **Review** `zai-glm-4.7` — provenance.reviewNote: OpenRouter disagrees (33%): $0.4/$1.75 vs $0.6/$2.2 → —
+- **Review** `zai-glm-4.7` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing
+- **Review** `zai-glm-5` — provenance.source: litellm → vendor
+- **Review** `zai-glm-5` — provenance.needsReview: true → —
+- **Review** `zai-glm-5` — provenance.reviewNote: OpenRouter disagrees (20%): $0.95/$2.55 vs $1/$3.2 → —
+- **Review** `zai-glm-5` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing
+- **Review** `zai-glm-5.1` — provenance.source: litellm → vendor
+- **Review** `zai-glm-5.1` — provenance.needsReview: true → —
+- **Review** `zai-glm-5.1` — provenance.reviewNote: OpenRouter disagrees (31%): $0.966/$3.036 vs $1.4/$4.4 → —
+- **Review** `zai-glm-5.1` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing

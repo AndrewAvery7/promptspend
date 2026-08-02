@@ -249,8 +249,40 @@
     { "id": "dashscope-qwen3-next-80b-a3b-instruct", "displayName": "Qwen3 Next 80B", "capabilityIndex": 70 },
     { "id": "dashscope-qwen3-next-80b-a3b-thinking", "displayName": "Qwen3 Next 80B Thinking" },
     { "id": "dashscope-qwen3-vl-235b-a22b-instruct", "displayName": "Qwen3 VL 235B" },
-    { "id": "zai-glm-5.1", "displayName": "GLM-5.1", "capabilityIndex": 80 },
-    { "id": "zai-glm-5", "displayName": "GLM-5", "capabilityIndex": 76 },
+    {
+      "id": "zai-glm-5.1",
+      "displayName": "GLM-5.1",
+      "capabilityIndex": 80,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-02",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": { "input": 1.4, "output": 4.4, "cachedInput": 0.26 }
+    },
+    {
+      "id": "zai-glm-5",
+      "displayName": "GLM-5",
+      "capabilityIndex": 76,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-02",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": { "input": 1, "output": 3.2, "cachedInput": 0.2 }
+    },
+    {
+      "id": "zai-glm-4.7",
+      "displayName": "GLM-4.7",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-02",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": { "input": 0.6, "output": 2.2, "cachedInput": 0.11 }
+    },
+    {
+      "id": "zai-glm-4.6",
+      "displayName": "GLM-4.6",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-02",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": { "input": 0.6, "output": 2.2, "cachedInput": 0.11 }
+    },
     { "id": "zai-glm-5-code", "displayName": "GLM-5 Code", "capabilityIndex": 78 },
     { "id": "minimax-minimax-m3", "displayName": "MiniMax M3", "capabilityIndex": 72 },
     { "id": "xai-grok-4.5", "displayName": "Grok 4.5", "capabilityIndex": 84 },

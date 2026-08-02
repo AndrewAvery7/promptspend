@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-02T21:11:36.950Z",
+  "generatedAt": "2026-08-02T21:14:49.818Z",
   "providers": [
     {
       "id": "anthropic",
@@ -1983,7 +1983,7 @@
     {
       "id": "zai-glm-4.6",
       "providerId": "zai",
-      "displayName": "GLM 4.6",
+      "displayName": "GLM-4.6",
       "status": "current",
       "contextWindow": 200000,
       "pricing": {
@@ -2002,16 +2002,17 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-08-02",
-        "lastChanged": "2026-08-02"
+        "lastChanged": "2026-08-02",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
     },
     {
       "id": "zai-glm-4.7",
       "providerId": "zai",
-      "displayName": "GLM 4.7",
+      "displayName": "GLM-4.7",
       "status": "current",
       "contextWindow": 200000,
       "pricing": {
@@ -2030,11 +2031,10 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-08-02",
         "lastChanged": "2026-08-02",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (33%): $0.4/$1.75 vs $0.6/$2.2"
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
     },
@@ -2060,11 +2060,10 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-08-02",
         "lastChanged": "2026-08-02",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (20%): $0.95/$2.55 vs $1/$3.2"
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 76
@@ -2120,11 +2119,10 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-08-02",
         "lastChanged": "2026-08-02",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (31%): $0.966/$3.036 vs $1.4/$4.4"
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 80

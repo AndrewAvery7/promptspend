@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "attemptedAt": "2026-08-02T21:11:36.950Z",
-  "succeededAt": "2026-08-02T21:11:36.950Z",
+  "attemptedAt": "2026-08-02T21:14:49.818Z",
+  "succeededAt": "2026-08-02T21:14:49.818Z",
   "outcome": "ok",
   "problems": [],
   "sources": [
@@ -18,8 +18,8 @@
     }
   ],
   "modelCount": 70,
-  "flaggedCount": 9,
+  "flaggedCount": 6,
   "staleCount": 0,
-  "catalogHash": "8db2a56b16917f18",
+  "catalogHash": "4a97d95b2d1e26c0",
   "pricesLastChanged": "2026-08-02"
 }
