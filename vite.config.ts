@@ -37,11 +37,15 @@ const siteUrl = ((process.env.SITE_URL ?? '').trim() || 'https://andrewavery7.gi
 );
 
 /**
- * Crawl and social files, generated rather than committed.
+ * Crawl and hosting files, generated rather than committed.
  *
- * A committed `sitemap.xml` carrying the old domain is worse than none at all —
- * it actively tells Google to index somewhere the site no longer is. Generating
- * them from `siteUrl` makes that failure impossible.
+ * A committed `robots.txt` carrying the old domain is worse than none at all —
+ * it points crawlers at a sitemap that is not there. Generating it from
+ * `siteUrl` makes that failure impossible.
+ *
+ * `sitemap.xml` is **not** emitted here. It has to list the ~160 model,
+ * provider and comparison pages, and those are written after this build by
+ * `scripts/build-pages.ts`, which is also where the sitemap is produced.
  */
 function seoAssets(url: string): Plugin {
   const host = new URL(url).hostname;
@@ -58,23 +62,6 @@ function seoAssets(url: string): Plugin {
         type: 'asset',
         fileName: 'robots.txt',
         source: `# ${host}\nUser-agent: *\nAllow: /\n\nSitemap: ${url}/sitemap.xml\n`,
-      });
-
-      // One URL today: the app is a single page whose views are client state.
-      // Giving each view a real, crawlable URL is the next SEO change worth
-      // making, and this file is where the extra entries will go.
-      this.emitFile({
-        type: 'asset',
-        fileName: 'sitemap.xml',
-        source: `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${url}/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
-`,
       });
 
       if (isCustomDomain) {

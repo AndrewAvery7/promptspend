@@ -1,0 +1,29 @@
+{
+  // Worker source and its tests. No Node types: this runs on workerd, and
+  // reaching for `process` or `node:fs` here should be a compile error.
+  //
+  // `../src/lib/pricing/types.ts` is pulled in by import rather than listed.
+  // Sharing the catalog's own type definitions and validation rules with the
+  // site is the point — an API that describes a different shape from the file
+  // it serves is worse than no types at all.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["vitest/globals"],
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": false,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts", "worker-configuration.d.ts"]
+}

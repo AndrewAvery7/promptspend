@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Catalog, loadCatalog } from '@/lib/pricing/catalog';
-import { CONTACT_EMAIL, HEALTH_URL, PRICING_URL, REPO_URL } from '@/config';
+import {
+  COMPARE_INDEX_URL,
+  CONTACT_EMAIL,
+  DEVELOPER_HUB_URL,
+  HEALTH_URL,
+  MODELS_INDEX_URL,
+  PRICING_URL,
+  PROVIDERS_INDEX_URL,
+  REPO_URL,
+} from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAppearance, ACCENTS } from '@/state/useAppearance';
 import { useEstimator } from '@/state/useEstimator';
@@ -244,6 +253,13 @@ function Workspace({ catalog }: { catalog: Catalog }) {
           <div>
             <b>PromptSpend</b> · open source, MIT · no accounts, no tracking ·{' '}
             <a href={REPO_URL}>star it on GitHub</a> · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          </div>
+          {/* The generated pages. Every model has a permanent URL of its own —
+              useful to link to, and the route by which anything that does not
+              run JavaScript can read this catalog at all. */}
+          <div>
+            <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
+            <a href={COMPARE_INDEX_URL}>Comparisons</a> · <a href={DEVELOPER_HUB_URL}>Pricing API</a>
           </div>
           <div className="mono">
             {catalog.primaryModels.length} models · prices last changed {catalog.pricesLastChanged()}

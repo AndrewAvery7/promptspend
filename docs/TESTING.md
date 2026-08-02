@@ -14,22 +14,36 @@ is exactly one definition of "verified" and no way to publish past it.
 
 ## What the suite covers
 
-242 tests across 11 files. The distribution is deliberately uneven — depth
-follows the cost of being wrong, not the size of the file.
+317 tests across 17 files in this package, plus 84 in `worker/` and 24 in
+`api/` — 425 in all. The distribution is deliberately uneven: depth follows the
+cost of being wrong, not the size of the file.
 
-| Suite                               | Tests | Guards                                                                                                                                                                                      |
-| ----------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/lib/engine/cost.test.ts`       | 38    | Compounding history, per-turn long-context tiers, cache reads and writes, promotional windows, reasoning multipliers, margins, break-even, and the scenarios that cannot physically run.    |
-| `scripts/lib/pipeline.test.ts`      | 52    | The whole pipeline against fixtures: the trust ladder, both sanity thresholds, cold start, stale retention, flag-once semantics, full-field diffing, the content hash, changelog rendering. |
-| `src/App.test.tsx`                  | 26    | The views render, the URL round-trips, the tour and palette work — plus a named regression test for every defect the pre-publication audit found.                                           |
-| `src/lib/pricing/catalog.test.ts`   | 22    | Schema validation including every malformed case the pipeline could produce, alias handling, and the two freshness dates.                                                                   |
-| `src/lib/contrast.test.ts`          | 21    | Every accent × theme × canvas combination against every surface it can appear on.                                                                                                           |
-| `src/lib/url/scenario.test.ts`      | 17    | URL round-tripping, clamping, and that prompt text never appears in a link.                                                                                                                 |
-| `src/lib/engine/money.test.ts`      | 10    | Integer exactness across the realistic range, and graceful degradation past it.                                                                                                             |
-| `src/lib/tokenize/tokenize.test.ts` | 10    | That the real tokenizer runs, that estimates stay within a sane margin of it, and that CJK costs more.                                                                                      |
-| `src/lib/palette.test.ts`           | 10    | Colour-vision separation of the chart pair, simulated rather than assumed.                                                                                                                  |
-| `src/lib/engine/format.test.ts`     | 9     | Money, token and rate formatting at the boundaries.                                                                                                                                         |
-| `src/lib/engine/csv.test.ts`        | 8     | Quoting, escaping, and formula neutralisation for the export.                                                                                                                               |
+| Suite                                 | Tests | Guards                                                                                                                                                                                      |
+| ------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/lib/pipeline.test.ts`        | 52    | The whole pipeline against fixtures: the trust ladder, both sanity thresholds, cold start, stale retention, flag-once semantics, full-field diffing, the content hash, changelog rendering. |
+| `src/lib/contrast.test.ts`            | 41    | Every accent × theme × canvas combination against every surface it can appear on.                                                                                                           |
+| `src/lib/engine/cost.test.ts`         | 38    | Compounding history, per-turn long-context tiers, cache reads and writes, promotional windows, reasoning multipliers, margins, break-even, and the scenarios that cannot physically run.    |
+| `src/App.test.tsx`                    | 29    | The views render, the URL round-trips, the tour and palette work — plus a named regression test for every defect the pre-publication audit found.                                           |
+| `src/lib/pricing/catalog.test.ts`     | 23    | Schema validation including every malformed case the pipeline could produce, alias handling, and the two freshness dates.                                                                   |
+| `src/components/AlertsPanel.test.tsx` | 20    | Subscribing, confirming, the arrival path an emailed preferences link takes, and both halves of the unsubscribe confirmation.                                                               |
+| `src/lib/seo/pages.test.ts`           | 17    | Which models get a page, worked costs against hand arithmetic, ranking, the two kinds of “cheaper”, and the rules that keep the comparison set curated.                                     |
+| `src/lib/url/scenario.test.ts`        | 15    | URL round-tripping, clamping, and that prompt text never appears in a link.                                                                                                                 |
+| `src/lib/seo/render.test.ts`          | 13    | Escaping a hostile display name out of both the markup and the JSON-LD, the policy hash matching what is emitted, and no inline styles the policy would silently drop.                      |
+| `src/lib/palette.test.ts`             | 10    | Colour-vision separation of the chart pair, simulated rather than assumed.                                                                                                                  |
+| `src/lib/tokenize/tokenize.test.ts`   | 10    | That the real tokenizer runs, that estimates stay within a sane margin of it, and that CJK costs more.                                                                                      |
+| `src/lib/engine/money.test.ts`        | 10    | Integer exactness across the realistic range, and graceful degradation past it.                                                                                                             |
+| `src/lib/engine/format.test.ts`       | 9     | Money, token and rate formatting at the boundaries.                                                                                                                                         |
+| `src/lib/seo/slug.test.ts`            | 8     | That a URL is a permanent identifier: the transformation, and the collision that must fail the build rather than overwrite a page.                                                          |
+| `src/lib/engine/csv.test.ts`          | 8     | Quoting, escaping, and formula neutralisation for the export.                                                                                                                               |
+| `scripts/lib/indexnow.test.ts`        | 7     | The submission shape, the batch rules, and that a rejection is reported rather than thrown.                                                                                                 |
+| `scripts/lib/notify.test.ts`          | 7     | Which catalog changes are worth interrupting somebody for, and which are not.                                                                                                               |
+
+Two more packages, each with its own runtime, lockfile and CI job:
+
+| Package   | Tests | Guards                                                                                                                                                    |
+| --------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself. |
+| `api/`    | 24    | The public pricing API: filters, ETags, CORS, CSV quoting, and that a catalog failing validation is refused rather than passed through.                   |
 
 ## Coverage thresholds are uneven on purpose
 

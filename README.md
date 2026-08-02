@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-69-2456E6.svg" alt="69 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-242-blue.svg" alt="242 tests">
+  <img src="https://img.shields.io/badge/tests-425-blue.svg" alt="425 tests">
   <img src="https://img.shields.io/badge/initial%20payload-74%20KB%20gzip-blue.svg" alt="74 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -121,10 +121,23 @@ https://andrewavery7.github.io/promptspend/data/sync-status.json
 
 ## Use the data yourself
 
-The catalog is a plain, versioned JSON file with a stable shape — treat it as a small public dataset:
+There is a free, keyless, CORS-open API at **[promptspend.dev](https://promptspend.dev)** — no account, no
+rate limit, no logging of who calls it:
+
+```bash
+curl https://promptspend.dev/v1/prices          # flat rows: the numbers only
+curl https://promptspend.dev/v1/models/gpt-5    # one model, in full
+curl https://promptspend.dev/v1/prices.csv      # the same rows, for a spreadsheet
+```
+
+Filters: `?provider=`, `?status=`, `?aliases=include`. Every response carries
+`X-PromptSpend-Generated-At`, and OpenAPI 3.1 lives at
+[`/openapi.json`](https://promptspend.dev/openapi.json). See [docs/API.md](docs/API.md).
+
+Or read the file the API reads. The catalog is plain, versioned JSON with a stable shape:
 
 ```
-https://andrewavery7.github.io/promptspend/data/pricing.json
+https://promptspend.com/data/pricing.json
 ```
 
 ```jsonc
@@ -187,12 +200,18 @@ src/lib/tokenize/   exact tokenizer (lazy-loaded) + calibrated ratios
 src/lib/pricing/    catalog schema, validation, lookups
 src/lib/alerts/     browser-side push and alerts API client
 src/components/     the four views
+src/lib/seo/        the generated pages: slugs, page model, HTML renderer
 scripts/            the daily sync pipeline (scripts/lib is unit-tested)
 data/               capture patterns and hand-verified overrides
 public/data/        the published catalog the app reads
 public/sw.js        service worker — push display only, no offline cache
 worker/             the alerts API (Cloudflare Worker, own package and tests)
+api/                the public pricing API on promptspend.dev (own package and tests)
 ```
+
+Beyond the calculator, the build writes 159 crawlable pages — one per model, one per provider, and a
+curated set of head-to-heads — from the same catalog and the same cost engine. See
+[docs/PAGES.md](docs/PAGES.md).
 
 ## Design and accessibility
 
@@ -213,8 +232,11 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                            |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way               |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 242 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 425 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                |
+| [docs/PAGES.md](docs/PAGES.md)                         | The 159 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline     |
+| [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live  |
+| [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                 |
 | [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                          |
 | [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                       |
 | [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                   |

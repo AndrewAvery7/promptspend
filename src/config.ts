@@ -28,6 +28,22 @@ export const PRICING_URL = `${import.meta.env.BASE_URL}data/pricing.json`;
 export const HEALTH_URL = `${import.meta.env.BASE_URL}data/sync-status.json`;
 
 /**
+ * The generated, crawlable pages — one per model, provider and comparison.
+ *
+ * They are built by `scripts/build-pages.ts` after Vite finishes, and they are
+ * not part of this bundle. Linking to them from the app matters for two
+ * separate reasons: a visitor who wants a permanent URL for one model has one,
+ * and a crawler that arrives here can reach all ~160 of them without the
+ * sitemap being the only path in.
+ */
+export const MODELS_INDEX_URL = `${import.meta.env.BASE_URL}models/`;
+export const PROVIDERS_INDEX_URL = `${import.meta.env.BASE_URL}providers/`;
+export const COMPARE_INDEX_URL = `${import.meta.env.BASE_URL}compare/`;
+
+/** The public pricing API, served from the .dev developer hub. */
+export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
+
+/**
  * What these numbers cover, stated once and reused wherever the boundary
  * matters. Being specific about the edge of the model is the difference
  * between an estimate and a guess wearing an estimate's clothes.

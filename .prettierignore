@@ -10,3 +10,7 @@ docs/pricing-changelog.md
 worker/node_modules
 worker/dist
 worker/worker-configuration.d.ts
+api/node_modules
+api/dist
+api/worker-configuration.d.ts
+**/.wrangler

@@ -1,0 +1,5 @@
+node_modules
+dist
+.wrangler
+# Generated from wrangler.jsonc by `npm run typecheck` — always derivable, never edited.
+worker-configuration.d.ts

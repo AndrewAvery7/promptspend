@@ -1,0 +1,26 @@
+{
+  "name": "promptspend-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The public PromptSpend pricing API and developer hub, on Cloudflare Workers.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "wrangler types && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.20.1",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.118.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260730.1": true
+  }
+}

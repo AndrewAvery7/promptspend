@@ -1,0 +1,37 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "promptspend-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  "observability": { "enabled": true },
+
+  // The developer hub and the public pricing API, on the .dev apex.
+  //
+  // A Cloudflare Redirect Rule currently sends this hostname to promptspend.com
+  // — Rules run *before* Workers, so that rule has to be narrowed to
+  // `www.promptspend.dev` before this Worker ever sees a request. See
+  // docs/API.md, "Going live".
+  //
+  // Only the apex. Serving the same documents on `www` as well would put two
+  // hosts in competition for the same words, which is the one rule
+  // docs/DOMAINS.md says never to break.
+  "routes": [{ "pattern": "promptspend.dev", "custom_domain": true }],
+
+  "vars": {
+    // The catalog is read from the site at request time rather than bundled
+    // into this Worker. Bundling would be faster and would need a redeploy
+    // every morning to stay true — an API whose freshness depends on somebody
+    // remembering to deploy is an API that is quietly wrong. See src/catalog.ts.
+    "CATALOG_URL": "https://promptspend.com/data/pricing.json",
+    "SYNC_STATUS_URL": "https://promptspend.com/data/sync-status.json",
+    "SITE_ORIGIN": "https://promptspend.com",
+    // How long a fetched catalog is served without revalidating. The sync runs
+    // once a day, so five minutes is far tighter than it needs to be and keeps
+    // the worst-case staleness trivially small.
+    "FRESH_SECONDS": "300",
+  },
+
+  // No D1, no KV, no secrets, no bindings of any kind. This Worker reads one
+  // public file and serves it back in different shapes. Anything it cannot
+  // reach is something it cannot leak.
+}

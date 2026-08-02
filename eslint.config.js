@@ -11,10 +11,17 @@ export default tseslint.config(
       'node_modules',
       'worker/node_modules',
       'worker/dist',
+      'api/node_modules',
+      'api/dist',
+      // Wrangler's scratch directory. It holds the bundled output of the last
+      // `wrangler dev` — machine-generated, transient, and linting it produced
+      // a wall of errors about a file nobody wrote.
+      '**/.wrangler',
       // Regenerated from wrangler.jsonc by `wrangler types` on every worker
       // typecheck. Half a megabyte of machine-written declarations, and not
       // ours to lint or to fix.
       'worker/worker-configuration.d.ts',
+      'api/worker-configuration.d.ts',
     ],
   },
   js.configs.recommended,
@@ -52,7 +59,7 @@ export default tseslint.config(
     // The alerts worker runs on workerd. Its console output is not debug
     // clutter — logs are the only observability a Worker has, and the fan-out
     // counts printed after a notify run are how a delivery problem gets found.
-    files: ['worker/**/*.ts'],
+    files: ['worker/**/*.ts', 'api/**/*.ts'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: { ...globals.worker, ...globals.node },

@@ -10,19 +10,28 @@ architecture, the cutover runbook, and the reasoning behind both.
 **Status: live since 2026-08-02.** The cutover below is done; it is kept as the
 record of how, and as the runbook for the next domain move.
 
-| Host                  | Serves                     | Why                                                                  |
-| --------------------- | -------------------------- | -------------------------------------------------------------------- |
-| `promptspend.com`     | The app                    | Canonical. Every link, every share, every search result points here. |
-| `www.promptspend.com` | 301 → apex                 | One canonical host; two would split link equity.                     |
-| `api.promptspend.dev` | The alerts API (`worker/`) | Keeps API traffic and its CORS surface off the marketing domain.     |
-| `promptspend.dev`     | 301 → `.com` for now       | Becomes the developer hub — public pricing API and docs.             |
+| Host                  | Serves                        | Why                                                                  |
+| --------------------- | ----------------------------- | -------------------------------------------------------------------- |
+| `promptspend.com`     | The app + 159 generated pages | Canonical. Every link, every share, every search result points here. |
+| `www.promptspend.com` | 301 → apex                    | One canonical host; two would split link equity.                     |
+| `api.promptspend.dev` | The alerts API (`worker/`)    | Keeps API traffic and its CORS surface off the marketing domain.     |
+| `promptspend.dev`     | The developer hub (`api/`)    | The public pricing API and its documentation — see [API.md](API.md). |
+| `www.promptspend.dev` | 301 → `.dev` apex             | Same reasoning as `www` on the `.com` side.                          |
 
-A note for whoever adds the developer hub: the `.dev` redirect is a Cloudflare
-Redirect Rule matching the hostname `promptspend.dev` **exactly**, so it does not
-catch `api.promptspend.dev`. Matching "all incoming requests" instead would take
-the API down. The apex has a single proxied A record to `192.0.2.1` — a reserved
-documentation address that goes nowhere on purpose — because a Redirect Rule
-needs _some_ proxied record to exist before traffic reaches Cloudflare at all.
+The `.dev` apex was a Cloudflare Redirect Rule to `.com` until the developer hub
+existed. **Redirect Rules run before Workers**, so that rule had to be narrowed to
+`www.promptspend.dev` before the Worker could see a request — the runbook is in
+[API.md](API.md#going-live). The rule matched the hostname **exactly**, never
+"all incoming requests", which is what kept it from taking `api.promptspend.dev`
+down. The apex previously carried a single proxied A record to `192.0.2.1` — a
+reserved documentation address that goes nowhere on purpose — because a Redirect
+Rule needs _some_ proxied record before traffic reaches Cloudflare at all; the
+Worker's custom domain replaces it.
+
+The naming reads backwards — `api.promptspend.dev` is the private alerts API and
+`promptspend.dev` is the public one. It is not worth fixing: the first is baked
+into the deployed site's configuration, its Content Security Policy and every
+existing push subscription.
 
 ### Why `.dev` is not simply a redirect
 
@@ -143,12 +152,11 @@ Then set the repository variable `ALERTS_API` to `https://api.promptspend.dev`
 and redeploy the site. That value feeds both the client and the generated
 `connect-src`, so the Content Security Policy follows automatically.
 
-### 5. Redirect the `.dev` apex
+### 5. The `.dev` apex
 
-Until the developer hub exists, a bare `promptspend.dev` should not 404.
-Cloudflare → `promptspend.dev` → **Rules → Redirect Rules**: incoming requests
-matching hostname `promptspend.dev` → 301 → `https://promptspend.com` with path
-and query preserved. Free, and replaced later by the real thing.
+Originally a Redirect Rule to `.com`, so a bare `promptspend.dev` would not 404.
+That was always a placeholder; it is now the developer hub, and the rule has been
+narrowed to `www.promptspend.dev`. See [API.md](API.md#going-live).
 
 ### 6. Email
 
@@ -206,8 +214,11 @@ Everything currently naming a host, so nothing is missed:
 | Repo variable           | `ALERTS_API`                                                               |
 | `worker/wrangler.jsonc` | `routes`, `SITE_ORIGIN`, `SITE_BASE_PATH`, `ALLOWED_ORIGINS`, `EMAIL_FROM` |
 | `worker/src/fanout.ts`  | `List-Id` (`alerts.promptspend.com`)                                       |
+| `api/wrangler.jsonc`    | `routes`, `CATALOG_URL`, `SYNC_STATUS_URL`, `SITE_ORIGIN`                  |
+| `src/config.ts`         | `DEVELOPER_HUB_URL`, the footer link to `.dev`                             |
 | `.env.local`            | `VITE_ALERTS_API` for local development                                    |
 
 The site's canonical link, Open Graph tags, structured data, `robots.txt`,
-`sitemap.xml` and `CNAME` are all **generated** from `SITE_URL`. They are not in
-this table because they cannot drift.
+`sitemap.xml`, `CNAME`, the 159 generated pages and the IndexNow submissions are
+all **generated** from `SITE_URL`. They are not in this table because they cannot
+drift.

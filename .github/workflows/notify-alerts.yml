@@ -49,3 +49,16 @@ jobs:
           ALERTS_API: ${{ vars.ALERTS_API }}
           NOTIFY_SECRET: ${{ secrets.NOTIFY_SECRET }}
         run: npx tsx scripts/notify-alerts.ts
+
+      # Same trigger, different audience: subscribers hear about the change,
+      # and so do the search engines whose model pages just went out of date.
+      #
+      # `continue-on-error` because this is an optimisation on top of ordinary
+      # crawling. A refused submission must not turn a perfectly good pricing
+      # update into a red build — the script already downgrades its own failures
+      # to warnings, and this is the belt to that pair of braces.
+      - name: Submit the changed pages to IndexNow
+        continue-on-error: true
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: npx tsx scripts/ping-indexnow.ts

@@ -7,7 +7,45 @@ on their own schedule and are not releases.
 
 ## Unreleased
 
-Nothing yet.
+### Added
+
+- **159 crawlable pages**, built from the catalog after every deploy: one per
+  model, one per provider, a curated set of head-to-heads, and three index
+  tables. Each carries its own rate card, three monthly bills costed by the same
+  engine as the calculator, its rank in the catalog, cheaper alternatives and its
+  provenance. The app is one URL whose views are client state, which is right for
+  a tool and useless for search — nobody types "LLM cost estimator" into Google.
+  See [docs/PAGES.md](docs/PAGES.md).
+- **A public pricing API at `promptspend.dev`** — keyless, CORS-open, read-only,
+  OpenAPI 3.1 described, with a developer hub documenting it. JSON and CSV, edge
+  cached, freshness on every response. A separate Worker with **no database, no
+  KV and no secrets**: it reads one public file and serves it in several shapes.
+  See [docs/API.md](docs/API.md).
+- **IndexNow**, fired from the existing price-change workflow, submitting exactly
+  the pages a reader would now see differently. Bing, Yandex, Seznam and Naver
+  consume it; Google does not, which is stated rather than implied.
+
+### Changed
+
+- `check:seo` now covers every generated page: unique titles and descriptions,
+  a self-referencing absolute canonical, valid structured data, a policy with no
+  `unsafe-inline`, a sitemap entry, and that **every internal link resolves to a
+  file that exists**. That last one catches the failure with no symptom — the
+  page renders perfectly and the link is dead.
+- `sitemap.xml` moved out of `vite.config.ts` into `scripts/build-pages.ts`. It
+  has to list the generated pages, and the Vite config has no idea they exist.
+- The footer links to the model index, the provider index, the comparisons and
+  the pricing API, so nothing depends on the sitemap being the only way in.
+
+### Notes
+
+- The generated pages ship **no JavaScript**. The only `<script>` is the JSON-LD
+  data block, admitted to the policy by its exact SHA-256 rather than by
+  `'unsafe-inline'`, with the hash computed over the string actually emitted.
+- Comparison pages are curated, not combinatorial: 2,346 pairs exist, 75 are
+  worth a page. Both models current, different providers, within 3× on blended
+  rate. Reaching the ceiling is logged — a page set that quietly shrank looks
+  exactly like one that is complete.
 
 ## 0.4.0 - 2026-08-02
 
