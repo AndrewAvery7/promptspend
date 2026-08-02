@@ -61,9 +61,31 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
     case '/robots.txt':
       // The hub is worth indexing; the JSON is not, and letting crawlers grind
       // through 70 model documents would put pressure on the origin for nothing.
+      //
+      // The sitemap named here is **this host's own**. Pointing it at
+      // ${SITE_ORIGIN}/sitemap.xml was wrong: a cross-host sitemap reference is
+      // only honoured when both hosts are verified in the same search-console
+      // account, and it tells a crawler of .dev about pages that are not on it.
       return text(
-        `User-agent: *\nAllow: /$\nAllow: /llms.txt\nDisallow: /v1/\n\nSitemap: ${env.SITE_ORIGIN}/sitemap.xml\n`,
+        `User-agent: *\nAllow: /$\nAllow: /llms.txt\nDisallow: /v1/\n\nSitemap: ${url.origin}/sitemap.xml\n`,
         'text/plain; charset=utf-8',
+        { maxAge: 86_400 },
+      );
+    case '/sitemap.xml':
+      // One URL, and that is the honest answer: the hub is the only page here.
+      // Everything else this Worker serves is data, and `/v1/` is disallowed
+      // above precisely so it does not get crawled as content.
+      return text(
+        `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${url.origin}/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+`,
+        'application/xml; charset=utf-8',
         { maxAge: 86_400 },
       );
     default:

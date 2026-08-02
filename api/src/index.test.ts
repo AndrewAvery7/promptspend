@@ -127,7 +127,21 @@ describe('documents that do not need the catalog', () => {
   it('keeps crawlers out of the JSON but not the hub', async () => {
     const robots = await (await get('/robots.txt')).text();
     expect(robots).toContain('Disallow: /v1/');
-    expect(robots).toContain('Sitemap: https://promptspend.com/sitemap.xml');
+  });
+
+  it('names its own sitemap, not the other host’s', async () => {
+    // A cross-host sitemap reference is only honoured when both hosts are
+    // verified in the same search-console account, and it tells a crawler of
+    // .dev about pages that are not on .dev.
+    const robots = await (await get('/robots.txt')).text();
+    expect(robots).toContain(`Sitemap: ${API}/sitemap.xml`);
+    expect(robots).not.toContain('promptspend.com');
+
+    const sitemap = await (await get('/sitemap.xml')).text();
+    expect(sitemap).toContain(`<loc>${API}/</loc>`);
+    // One page. Everything else here is data, and /v1/ is disallowed above so
+    // it is not crawled as content.
+    expect(sitemap.match(/<loc>/g)).toHaveLength(1);
   });
 });
 
