@@ -401,6 +401,73 @@ describe('managing an existing subscription', () => {
     expect(window.location.search).toContain('m=claude-sonnet-5');
   });
 
+  describe('unsubscribing', () => {
+    const activePrefs: Handler = (url) =>
+      url.includes('/v1/preferences')
+        ? {
+            body: {
+              email: 'reader@example.com',
+              status: 'active',
+              cadence: 'weekly',
+              scope: 'all',
+              models: [],
+            },
+          }
+        : undefined;
+
+    /**
+     * It used to unsubscribe on a single click and then close the panel, so the
+     * only feedback was a toast on a screen that had just changed underneath
+     * you. For a destructive, immediate action sitting next to "Save
+     * preferences", that is not enough.
+     */
+    it('asks before unsubscribing, and does not call the API until confirmed', async () => {
+      const user = userEvent.setup();
+      window.history.replaceState(null, '', '/?alerts=token-abc');
+      handlers.push(activePrefs);
+      renderPanel();
+
+      const manage = await screen.findByLabelText('Your email alerts');
+      await user.click(within(manage).getByRole('button', { name: 'Unsubscribe' }));
+
+      expect(within(manage).getByText(/Stop sending price alerts/)).toBeInTheDocument();
+      expect(requests.filter((r) => r.body && 'unsubscribe' in (r.body as object))).toHaveLength(0);
+    });
+
+    it('can be backed out of', async () => {
+      const user = userEvent.setup();
+      window.history.replaceState(null, '', '/?alerts=token-abc');
+      handlers.push(activePrefs);
+      renderPanel();
+
+      const manage = await screen.findByLabelText('Your email alerts');
+      await user.click(within(manage).getByRole('button', { name: 'Unsubscribe' }));
+      await user.click(within(manage).getByRole('button', { name: /Keep my subscription/ }));
+
+      expect(within(manage).queryByText(/Stop sending price alerts/)).not.toBeInTheDocument();
+      expect(within(manage).getByRole('button', { name: 'Unsubscribe' })).toBeEnabled();
+    });
+
+    it('confirms afterwards instead of just vanishing', async () => {
+      const user = userEvent.setup();
+      window.history.replaceState(null, '', '/?alerts=token-abc');
+      handlers.push(activePrefs);
+      renderPanel();
+
+      const manage = await screen.findByLabelText('Your email alerts');
+      await user.click(within(manage).getByRole('button', { name: 'Unsubscribe' }));
+      await user.click(within(manage).getByRole('button', { name: /Yes, unsubscribe me/ }));
+
+      expect(await screen.findByText(/will not receive any more/)).toBeInTheDocument();
+      expect(screen.getByText(/deleted, not flagged/)).toBeInTheDocument();
+      // The panel stays on screen until the reader dismisses it.
+      expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+
+      const sent = requests.find((r) => r.body && 'unsubscribe' in (r.body as object));
+      expect(sent?.body).toEqual({ unsubscribe: true });
+    });
+  });
+
   it('explains an expired link instead of failing silently', async () => {
     window.history.replaceState(null, '', '/?alerts=stale-token');
     handlers.push((url) =>

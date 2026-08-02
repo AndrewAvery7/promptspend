@@ -474,6 +474,15 @@ function ManageSubscription({
   const [models, setModels] = useState<string[]>([]);
   const loaded = useRef(false);
 
+  /**
+   * Unsubscribing is destructive, immediate, and sat behind a single click next
+   * to "Save preferences" — then closed the panel, so the only feedback was a
+   * toast on a screen that had just changed under you. It now asks first and
+   * confirms afterwards, matching the page the emailed unsubscribe link serves.
+   */
+  const [phase, setPhase] = useState<'editing' | 'confirming' | 'unsubscribed'>('editing');
+  const [busy, setBusy] = useState(false);
+
   useEffect(() => {
     fetchPreferences(token)
       .then((result) => {
@@ -508,6 +517,35 @@ function ManageSubscription({
 
   if (!prefs) return null;
 
+  if (phase === 'unsubscribed') {
+    return (
+      <section className="panel span-2 alerts-manage" aria-labelledby="manage-title">
+        <div className="panel__head">
+          <h2 className="panel__title" id="manage-title">
+            You&apos;re unsubscribed
+          </h2>
+        </div>
+        <div className="panel__body">
+          <p role="status">
+            <b>
+              <span className="mono">{prefs.email}</span> will not receive any more PromptSpend price alerts.
+            </b>{' '}
+            It took effect immediately — there is no &ldquo;up to 10 days&rdquo; here.
+          </p>
+          <p className="alerts-hint">
+            Your address and the list of models you followed have been deleted, not flagged. If you subscribe
+            again later it starts fresh.
+          </p>
+          <div className="alerts-actions">
+            <button type="button" className="button button--primary" onClick={onDone}>
+              Close
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="panel span-2 alerts-manage" aria-labelledby="manage-title">
       <div className="panel__head">
@@ -520,6 +558,39 @@ function ManageSubscription({
           Managing <span className="mono">{prefs.email}</span>
           {prefs.status !== 'active' && <> — currently {prefs.status}</>}.
         </p>
+
+        {phase === 'confirming' && (
+          <div className="alerts-confirm" role="alertdialog" aria-label="Confirm unsubscribe">
+            <p>
+              <b>Stop sending price alerts to this address?</b> Your address and the models you follow are
+              deleted, not just switched off.
+            </p>
+            <div className="alerts-actions">
+              <button
+                type="button"
+                className="button button--danger"
+                disabled={busy}
+                onClick={async () => {
+                  setBusy(true);
+                  try {
+                    await unsubscribeByToken(token);
+                    setPhase('unsubscribed');
+                    onToast('Unsubscribed');
+                  } catch (cause) {
+                    setError(cause instanceof Error ? cause.message : 'Could not unsubscribe.');
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+              >
+                {busy ? 'Unsubscribing…' : 'Yes, unsubscribe me'}
+              </button>
+              <button type="button" className="button" disabled={busy} onClick={() => setPhase('editing')}>
+                Keep my subscription
+              </button>
+            </div>
+          </div>
+        )}
 
         <fieldset className="alerts-fieldset">
           <legend className="alerts-label">How often</legend>
@@ -572,14 +643,9 @@ function ManageSubscription({
           <button
             type="button"
             className="button"
-            onClick={async () => {
-              try {
-                await unsubscribeByToken(token);
-                onToast('Unsubscribed');
-                onDone();
-              } catch (cause) {
-                setError(cause instanceof Error ? cause.message : 'Could not unsubscribe.');
-              }
+            disabled={phase === 'confirming'}
+            onClick={() => {
+              setPhase('confirming');
             }}
           >
             Unsubscribe

@@ -1373,6 +1373,35 @@ table.catalog tbody tr:hover {
   color: var(--muted);
   margin-top: 9px;
 }
+/* The "are you sure" step before unsubscribing.
+   Amber, not money-red: red in this app means "this costs more", and a
+   destructive-action colour that also means a number is a colour doing two
+   jobs. The wording carries the warning; the fill only has to catch the eye. */
+.alerts-confirm {
+  margin: 14px 0 4px;
+  padding: 13px 15px;
+  border: 1px solid var(--warn);
+  background: var(--warn-soft);
+  border-radius: var(--radius-sm);
+}
+.alerts-confirm p {
+  margin: 0;
+  font-size: 0.83rem;
+}
+.alerts-confirm .alerts-actions {
+  margin-top: 12px;
+}
+/* --surface as the label colour flips with the theme, so the text stays
+   readable on both the dark amber (light mode) and the bright amber (dark). */
+.button--danger {
+  background: var(--warn);
+  border-color: var(--warn);
+  color: var(--surface);
+}
+.button--danger:hover {
+  border-color: var(--warn);
+  filter: brightness(1.08);
+}
 /* Money-red is reserved for cost. An input error is not a cost, but it does
    need to be unmistakable, so it borrows the warning pair instead. */
 .alerts-error {
