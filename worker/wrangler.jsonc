@@ -5,6 +5,10 @@
   "compatibility_date": "2026-08-01",
   "observability": { "enabled": true },
 
+  // The API lives on .dev; the app lives on .com. Keeping them apart means the
+  // marketing domain never carries API traffic or its CORS surface.
+  "routes": [{ "pattern": "api.promptspend.dev", "custom_domain": true }],
+
   // Every value below that mentions a hostname is part of the domain cutover.
   // `docs/ALERTS.md` lists them in one place; nothing else needs editing when
   // the custom domain arrives.
@@ -14,7 +18,10 @@
     "SITE_ORIGIN": "https://andrewavery7.github.io",
     "SITE_BASE_PATH": "/promptspend/",
     // Comma-separated. Only these origins may call the API from a browser.
-    "ALLOWED_ORIGINS": "https://andrewavery7.github.io,http://localhost:5173",
+    // github.io stays listed through the cutover: the site is still served from
+    // there until SITE_URL flips, and an origin that disappears mid-move breaks
+    // every alerts call with a CORS error that looks like an outage.
+    "ALLOWED_ORIGINS": "https://promptspend.com,https://www.promptspend.com,https://andrewavery7.github.io,http://localhost:5173",
     // "console" writes messages to the log instead of sending them, which is
     // what runs until a sending domain is onboarded. Switching to "cloudflare"
     // is the only code-side change needed to start delivering real mail.
