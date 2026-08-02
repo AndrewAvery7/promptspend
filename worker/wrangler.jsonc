@@ -37,7 +37,7 @@
     "VAPID_SUBJECT": "https://github.com/AndrewAvery7/promptspend",
     // Bot protection on the subscribe endpoints. Optional in development;
     // `TURNSTILE_SECRET_KEY` being set is what turns enforcement on.
-    "TURNSTILE_SITE_KEY": "",
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAEElIZdoZcZpxAjz",
   },
 
   "d1_databases": [
