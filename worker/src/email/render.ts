@@ -50,34 +50,34 @@ function layout({ title, preheader, body, footer }: LayoutOptions): string {
 <title>${escapeHtml(title)}</title>
 <style>
   @media (prefers-color-scheme: dark) {
-    .tt-canvas { background: #0b0e14 !important; }
-    .tt-card { background: #121722 !important; border-color: #27303f !important; }
-    .tt-ink { color: #e9ecf2 !important; }
-    .tt-muted { color: #93a0b4 !important; }
-    .tt-rule { border-color: #27303f !important; }
-    .tt-chip { background: #1a2130 !important; color: #93a0b4 !important; }
+    .ps-canvas { background: #0b0e14 !important; }
+    .ps-card { background: #121722 !important; border-color: #27303f !important; }
+    .ps-ink { color: #e9ecf2 !important; }
+    .ps-muted { color: #93a0b4 !important; }
+    .ps-rule { border-color: #27303f !important; }
+    .ps-chip { background: #1a2130 !important; color: #93a0b4 !important; }
   }
   @media (max-width: 620px) {
-    .tt-pad { padding: 24px !important; }
+    .ps-pad { padding: 24px !important; }
   }
 </style>
 </head>
-<body class="tt-canvas" style="margin:0;padding:0;background:${CANVAS};">
+<body class="ps-canvas" style="margin:0;padding:0;background:${CANVAS};">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(preheader)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="tt-canvas" style="background:${CANVAS};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="ps-canvas" style="background:${CANVAS};">
   <tr><td align="center" style="padding:32px 12px;">
     <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
       <tr><td style="padding:0 0 18px 4px;">
-        <span style="font:700 19px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${BRAND};letter-spacing:-0.02em;">TokenTally</span>
+        <span style="font:700 19px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${BRAND};letter-spacing:-0.02em;">PromptSpend</span>
       </td></tr>
-      <tr><td class="tt-card" style="background:${SURFACE};border:1px solid ${BORDER};border-radius:14px;">
+      <tr><td class="ps-card" style="background:${SURFACE};border:1px solid ${BORDER};border-radius:14px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr><td class="tt-pad" style="padding:34px 36px;font:400 15px/1.62 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};">
+          <tr><td class="ps-pad" style="padding:34px 36px;font:400 15px/1.62 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};">
 ${body}
           </td></tr>
         </table>
       </td></tr>
-      <tr><td class="tt-pad" style="padding:22px 36px 0;font:400 12.5px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${MUTED};" class="tt-muted">
+      <tr><td class="ps-pad" style="padding:22px 36px 0;font:400 12.5px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${MUTED};" class="ps-muted">
 ${footer}
       </td></tr>
     </table>
@@ -98,12 +98,12 @@ function button(href: string, label: string): string {
 function changeRow(change: PriceChange): string {
   const movement =
     change.kind === 'price' && change.before && change.after
-      ? `<span class="tt-muted" style="color:${MUTED};">${escapeHtml(formatRate(change.before.input))} → </span><b>${escapeHtml(formatRate(change.after.input))}</b><span class="tt-muted" style="color:${MUTED};"> in · ${escapeHtml(formatRate(change.before.output))} → </span><b>${escapeHtml(formatRate(change.after.output))}</b><span class="tt-muted" style="color:${MUTED};"> out</span>`
-      : `<span class="tt-muted" style="color:${MUTED};">${escapeHtml(describeChange(change))}</span>`;
+      ? `<span class="ps-muted" style="color:${MUTED};">${escapeHtml(formatRate(change.before.input))} → </span><b>${escapeHtml(formatRate(change.after.input))}</b><span class="ps-muted" style="color:${MUTED};"> in · ${escapeHtml(formatRate(change.before.output))} → </span><b>${escapeHtml(formatRate(change.after.output))}</b><span class="ps-muted" style="color:${MUTED};"> out</span>`
+      : `<span class="ps-muted" style="color:${MUTED};">${escapeHtml(describeChange(change))}</span>`;
 
-  return `<tr><td class="tt-rule" style="padding:13px 0;border-bottom:1px solid ${BORDER};">
-<div class="tt-ink" style="font-weight:600;color:${INK};">${escapeHtml(change.displayName)}
-<span class="tt-chip" style="display:inline-block;margin-left:7px;padding:2px 7px;border-radius:5px;background:#f1f4f9;font:500 11px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${MUTED};vertical-align:1px;">${escapeHtml(change.provider)}</span></div>
+  return `<tr><td class="ps-rule" style="padding:13px 0;border-bottom:1px solid ${BORDER};">
+<div class="ps-ink" style="font-weight:600;color:${INK};">${escapeHtml(change.displayName)}
+<span class="ps-chip" style="display:inline-block;margin-left:7px;padding:2px 7px;border-radius:5px;background:#f1f4f9;font:500 11px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${MUTED};vertical-align:1px;">${escapeHtml(change.provider)}</span></div>
 <div style="margin-top:3px;font-size:14px;">${movement}</div>
 </td></tr>`;
 }
@@ -115,7 +115,7 @@ function changeTable(changes: PriceChange[]): string {
 }
 
 function footerHtml(unsubscribeUrl: string, preferencesUrl: string, siteUrl: string): string {
-  return `<p style="margin:0 0 8px;">You are getting this because you asked TokenTally to tell you when LLM prices move.
+  return `<p style="margin:0 0 8px;">You are getting this because you asked PromptSpend to tell you when LLM prices move.
 <a href="${escapeHtml(preferencesUrl)}" style="color:${BRAND};">Change what you get</a> ·
 <a href="${escapeHtml(unsubscribeUrl)}" style="color:${BRAND};">Unsubscribe</a></p>
 <p style="margin:0;">No tracking pixels, no click tracking, no third parties. <a href="${escapeHtml(siteUrl)}" style="color:${BRAND};">${escapeHtml(siteUrl.replace(/^https:\/\//, ''))}</a></p>`;
@@ -123,7 +123,7 @@ function footerHtml(unsubscribeUrl: string, preferencesUrl: string, siteUrl: str
 
 function footerText(unsubscribeUrl: string, preferencesUrl: string, siteUrl: string): string {
   return `--
-You are getting this because you asked TokenTally to tell you when LLM prices move.
+You are getting this because you asked PromptSpend to tell you when LLM prices move.
 Change what you get: ${preferencesUrl}
 Unsubscribe:         ${unsubscribeUrl}
 
@@ -146,14 +146,14 @@ export interface RenderedEmail {
 
 /** Double opt-in. Nothing else is ever sent to an unconfirmed address. */
 export function renderConfirmation(links: Links & { confirmUrl: string }, scopeLabel: string): RenderedEmail {
-  const body = `<h1 class="tt-ink" style="margin:0 0 14px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">One click and you're set</h1>
-<p style="margin:0 0 4px;">Confirm this address and TokenTally will tell you when ${escapeHtml(scopeLabel)}.</p>
+  const body = `<h1 class="ps-ink" style="margin:0 0 14px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">One click and you're set</h1>
+<p style="margin:0 0 4px;">Confirm this address and PromptSpend will tell you when ${escapeHtml(scopeLabel)}.</p>
 ${button(links.confirmUrl, 'Confirm my subscription')}
-<p class="tt-muted" style="margin:14px 0 0;font-size:13.5px;color:${MUTED};">The link works for 48 hours. If you did not ask for this, ignore this message — nothing was subscribed and the address is deleted within a week.</p>`;
+<p class="ps-muted" style="margin:14px 0 0;font-size:13.5px;color:${MUTED};">The link works for 48 hours. If you did not ask for this, ignore this message — nothing was subscribed and the address is deleted within a week.</p>`;
 
   const text = `One click and you're set
 
-Confirm this address and TokenTally will tell you when ${scopeLabel}.
+Confirm this address and PromptSpend will tell you when ${scopeLabel}.
 
 ${links.confirmUrl}
 
@@ -164,9 +164,9 @@ message — nothing was subscribed and the address is deleted within a week.
 ${links.siteUrl}`;
 
   return {
-    subject: 'Confirm your TokenTally price alerts',
+    subject: 'Confirm your PromptSpend price alerts',
     html: layout({
-      title: 'Confirm your TokenTally price alerts',
+      title: 'Confirm your PromptSpend price alerts',
       preheader: 'One click to confirm — the link works for 48 hours.',
       body,
       // No unsubscribe footer here: there is nothing yet to unsubscribe from,
@@ -181,8 +181,8 @@ export function renderInstantAlert(set: ChangeSet, links: Links): RenderedEmail 
   const headline =
     set.changes.length === 1 ? '1 model just changed price' : `${set.changes.length} models just changed`;
 
-  const body = `<h1 class="tt-ink" style="margin:0 0 6px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">${escapeHtml(headline)}</h1>
-<p class="tt-muted" style="margin:0;font-size:13.5px;color:${MUTED};">Detected ${escapeHtml(formatWhen(set.generatedAt))} in the daily catalog sync.</p>
+  const body = `<h1 class="ps-ink" style="margin:0 0 6px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">${escapeHtml(headline)}</h1>
+<p class="ps-muted" style="margin:0;font-size:13.5px;color:${MUTED};">Detected ${escapeHtml(formatWhen(set.generatedAt))} in the daily catalog sync.</p>
 ${changeTable(set.changes)}
 ${button(links.siteUrl, 'Re-run your estimate')}`;
 
@@ -219,10 +219,10 @@ export function renderDigest(sets: ChangeSet[], links: Links): RenderedEmail {
       ? 'Nothing moved in the models you follow. The catalog was checked every morning and every source agreed.'
       : 'Here is everything that moved in the models you follow.';
 
-  const body = `<h1 class="tt-ink" style="margin:0 0 6px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">${escapeHtml(headline)}</h1>
+  const body = `<h1 class="ps-ink" style="margin:0 0 6px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">${escapeHtml(headline)}</h1>
 <p style="margin:0;">${escapeHtml(intro)}</p>
 ${changes.length > 0 ? changeTable(changes) : ''}
-${button(links.siteUrl, changes.length > 0 ? 'See what it costs you' : 'Open TokenTally')}`;
+${button(links.siteUrl, changes.length > 0 ? 'See what it costs you' : 'Open PromptSpend')}`;
 
   const text = `${headline}
 
@@ -250,7 +250,7 @@ ${footerText(links.unsubscribeUrl, links.preferencesUrl, links.siteUrl)}`;
 /**
  * Subject lines say what happened, not that something happened.
  *
- * "TokenTally update" is what a reader learns nothing from and eventually stops
+ * "PromptSpend update" is what a reader learns nothing from and eventually stops
  * opening; the model and the direction belong in the inbox list.
  */
 function subjectFor(set: ChangeSet): string {

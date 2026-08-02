@@ -30,7 +30,7 @@ commit history - and to anyone representing the project in public spaces.
 ## Enforcement
 
 Report unacceptable behaviour by opening a
-[private security advisory](https://github.com/AndrewAvery7/token-tally/security/advisories/new)
+[private security advisory](https://github.com/AndrewAvery7/promptspend/security/advisories/new)
 (it works fine for conduct reports too and stays confidential) or by contacting
 the maintainer through their GitHub profile.
 

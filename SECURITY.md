@@ -1,6 +1,6 @@
 # Security policy
 
-TokenTally is a static site with no accounts and no login. The calculator itself
+PromptSpend is a static site with no accounts and no login. The calculator itself
 sends nothing anywhere, which removes most of the usual attack surface.
 
 There is one server: the opt-in price-alerts API in [`worker/`](worker), a

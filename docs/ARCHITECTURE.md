@@ -1,6 +1,6 @@
 # Architecture
 
-TokenTally is a static site with a scheduled data pipeline. There is no server, no database and no
+PromptSpend is a static site with a scheduled data pipeline. There is no server, no database and no
 account system: the only moving part is a GitHub Action that regenerates one JSON file.
 
 ```

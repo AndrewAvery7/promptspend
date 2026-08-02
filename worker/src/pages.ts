@@ -55,12 +55,12 @@ export function page(options: { title: string; heading: string; body: string; st
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>${escapeHtml(options.title)} · TokenTally</title>
+<title>${escapeHtml(options.title)} · PromptSpend</title>
 <style>${STYLE}</style>
 </head>
 <body>
   <main class="card">
-    <p class="brand">TokenTally</p>
+    <p class="brand">PromptSpend</p>
     <h1>${escapeHtml(options.heading)}</h1>
     ${options.body}
   </main>
@@ -86,9 +86,9 @@ export function unsubscribedPage(siteUrl: string): Response {
   return page({
     title: 'Unsubscribed',
     heading: "You're unsubscribed",
-    body: `<p>That address will not receive any more TokenTally price alerts. It takes effect immediately — there is no "up to 10 days" here.</p>
+    body: `<p>That address will not receive any more PromptSpend price alerts. It takes effect immediately — there is no "up to 10 days" here.</p>
       <p class="muted">Your address and the list of models you followed have been deleted, not flagged. If you subscribe again later it starts fresh.</p>
-      <a class="btn" href="${escapeHtml(siteUrl)}">Back to TokenTally</a>`,
+      <a class="btn" href="${escapeHtml(siteUrl)}">Back to PromptSpend</a>`,
   });
 }
 
@@ -100,7 +100,7 @@ export function confirmUnsubscribePage(token: string): Response {
   return page({
     title: 'Unsubscribe',
     heading: 'Unsubscribe from price alerts?',
-    body: `<p>Confirm and TokenTally will stop emailing this address.</p>
+    body: `<p>Confirm and PromptSpend will stop emailing this address.</p>
       <form method="POST" action="/v1/email/unsubscribe">
         <input type="hidden" name="t" value="${escapeHtml(token)}">
         <button type="submit">Yes, unsubscribe me</button>

@@ -111,7 +111,7 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   Watch the repository
                 </h4>
                 <p>
-                  Watch <code>token-tally</code> for pull requests and you will see every pricing change a
+                  Watch <code>promptspend</code> for pull requests and you will see every pricing change a
                   human had to review before it went live.
                 </p>
                 <a className="alert-tag" href={REPO_URL}>

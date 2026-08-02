@@ -1,5 +1,5 @@
 /**
- * TokenTally alerts API.
+ * PromptSpend alerts API.
  *
  * Everything the browser and the pricing pipeline talk to. The routing is a
  * switch rather than a framework: there are a dozen endpoints, and a router
@@ -219,10 +219,10 @@ async function handlePushTest(request: Request, env: Env): Promise<Response> {
   const outcome = await sendPush(
     { endpoint, ...keys },
     buildNotificationPayload({
-      title: 'TokenTally alerts are on',
+      title: 'PromptSpend alerts are on',
       body: 'This is what a price change will look like.',
       url: siteUrl(env),
-      tag: 'tokentally-test',
+      tag: 'promptspend-test',
     }),
     {
       publicKey: env.VAPID_PUBLIC_KEY!,
@@ -315,7 +315,7 @@ async function handleEmailConfirm(request: Request, env: Env): Promise<Response>
   return page({
     title: 'Subscribed',
     heading: "You're on the list",
-    body: `<p>TokenTally will email this address ${
+    body: `<p>PromptSpend will email this address ${
       subscriber.cadence === 'weekly' ? 'once a week' : 'as soon as prices move'
     }.</p>
       <p class="muted">Every message carries a one-click unsubscribe. Nothing is tracked — no opens, no clicks, no third parties.</p>
@@ -405,8 +405,8 @@ async function handleNotify(request: Request, env: Env, ctx: ExecutionContext): 
 
   const check = await verifySignature(
     requireSecret(env, 'NOTIFY_SECRET'),
-    request.headers.get('X-TokenTally-Timestamp'),
-    request.headers.get('X-TokenTally-Signature'),
+    request.headers.get('X-PromptSpend-Timestamp'),
+    request.headers.get('X-PromptSpend-Signature'),
     raw,
   );
   if (!check.ok) throw unauthorized(`notify signature ${check.reason}`);

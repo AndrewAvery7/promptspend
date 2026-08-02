@@ -89,7 +89,7 @@ Rows marked `vendor ✓` were checked by hand against the vendor's own page and
 link to it. Those are never flagged by the cross-check.
 
 If you can confirm a flagged rate,
-[open a model request](https://github.com/AndrewAvery7/token-tally/issues/new?template=model-request.yml)
+[open a model request](https://github.com/AndrewAvery7/promptspend/issues/new?template=model-request.yml)
 with the vendor link — that is what turns a flag into a verified row.
 
 ---
@@ -97,7 +97,7 @@ with the vendor link — that is what turns a flag into a verified row.
 ## A model I use is missing
 
 Either it is outside the capture patterns, or its provider is not tracked yet.
-[Open a model request](https://github.com/AndrewAvery7/token-tally/issues/new?template=model-request.yml);
+[Open a model request](https://github.com/AndrewAvery7/promptspend/issues/new?template=model-request.yml);
 adding a family is usually a one-line change to `data/models-allowlist.json`.
 
 Two things that look like missing models but are not:
@@ -120,7 +120,7 @@ The header shows two dates, deliberately:
   one that indicates a problem if it stops moving.
 
 The full picture is at
-[`data/sync-status.json`](https://andrewavery7.github.io/token-tally/data/sync-status.json):
+[`data/sync-status.json`](https://andrewavery7.github.io/promptspend/data/sync-status.json):
 attempted and succeeded timestamps, per-source status, row counts and a catalog
 fingerprint. If a run was **degraded** — a source unavailable, a payload
 suspiciously small, the catalog about to shrink — it publishes nothing, records

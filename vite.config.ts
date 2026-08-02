@@ -11,12 +11,78 @@ import { fileURLToPath, URL } from 'node:url';
 // string, not as undefined, which would silently build every asset path
 // relative to nothing and produce a site that 404s its own JavaScript.
 const base =
-  (process.env.BASE_PATH ?? '').trim() || (process.env.NODE_ENV === 'production' ? '/token-tally/' : '/');
+  (process.env.BASE_PATH ?? '').trim() || (process.env.NODE_ENV === 'production' ? '/promptspend/' : '/');
 
 /** Turnstile's widget. The only third-party origin the site can ever load. */
 const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
 
 const CSP_PLACEHOLDER = '%CSP%';
+const SITE_URL_PLACEHOLDER = '%SITE_URL%';
+
+/**
+ * Where this build will actually be served from, with no trailing slash.
+ *
+ * Everything a search engine or a social card reads has to be an *absolute*
+ * URL, and there is no way to derive one at runtime from a static page. So it
+ * is declared once here and substituted into the canonical link, the Open Graph
+ * tags, the structured data, `robots.txt`, `sitemap.xml` and the Pages `CNAME`.
+ *
+ * Default is the GitHub Pages project URL. Set the repository variable
+ * `SITE_URL` to `https://promptspend.com` at the domain cutover and every one of
+ * those follows — see docs/DOMAINS.md.
+ */
+const siteUrl = ((process.env.SITE_URL ?? '').trim() || 'https://andrewavery7.github.io/promptspend').replace(
+  /\/+$/,
+  '',
+);
+
+/**
+ * Crawl and social files, generated rather than committed.
+ *
+ * A committed `sitemap.xml` carrying the old domain is worse than none at all —
+ * it actively tells Google to index somewhere the site no longer is. Generating
+ * them from `siteUrl` makes that failure impossible.
+ */
+function seoAssets(url: string): Plugin {
+  const host = new URL(url).hostname;
+  // GitHub Pages takes the custom domain from a CNAME file in the artifact.
+  // Emitting one while still deploying to github.io would break the live site,
+  // so it appears only once SITE_URL names a domain of our own.
+  const isCustomDomain = !host.endsWith('github.io');
+
+  return {
+    name: 'promptspend-seo-assets',
+    apply: 'build',
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'robots.txt',
+        source: `# ${host}\nUser-agent: *\nAllow: /\n\nSitemap: ${url}/sitemap.xml\n`,
+      });
+
+      // One URL today: the app is a single page whose views are client state.
+      // Giving each view a real, crawlable URL is the next SEO change worth
+      // making, and this file is where the extra entries will go.
+      this.emitFile({
+        type: 'asset',
+        fileName: 'sitemap.xml',
+        source: `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${url}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+`,
+      });
+
+      if (isCustomDomain) {
+        this.emitFile({ type: 'asset', fileName: 'CNAME', source: `${host}\n` });
+      }
+    },
+  };
+}
 
 /**
  * Build the Content Security Policy from the same configuration the app reads.
@@ -33,7 +99,7 @@ const CSP_PLACEHOLDER = '%CSP%';
  */
 function contentSecurityPolicy(alertsApi: string): Plugin {
   return {
-    name: 'tokentally-csp',
+    name: 'promptspend-csp',
     transformIndexHtml(html) {
       const api = alertsApi;
       const connect = ["'self'", api].filter(Boolean);
@@ -79,7 +145,12 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
           `index.html has no ${CSP_PLACEHOLDER} placeholder — the Content Security Policy would ship empty.`,
         );
       }
-      return html.replaceAll(CSP_PLACEHOLDER, policy);
+      if (!html.includes(SITE_URL_PLACEHOLDER)) {
+        throw new Error(
+          `index.html has no ${SITE_URL_PLACEHOLDER} placeholder — canonical and Open Graph URLs would ship relative.`,
+        );
+      }
+      return html.replaceAll(CSP_PLACEHOLDER, policy).replaceAll(SITE_URL_PLACEHOLDER, siteUrl);
     },
   };
 }
@@ -108,7 +179,7 @@ export default defineConfig(({ mode }) => {
     // Pin both to this file's directory for the same reason.
     root: projectRoot,
     envDir: projectRoot,
-    plugins: [react(), contentSecurityPolicy(alertsApi)],
+    plugins: [react(), contentSecurityPolicy(alertsApi), seoAssets(siteUrl)],
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },

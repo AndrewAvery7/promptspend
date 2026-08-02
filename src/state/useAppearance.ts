@@ -11,7 +11,38 @@ export const ACCENTS: { id: Accent; label: string; swatch: string }[] = [
   { id: 'violet', label: 'Violet', swatch: '#6D28D9' },
 ];
 
-const KEYS = { theme: 'tt.theme', accent: 'tt.accent', canvas: 'tt.canvas' } as const;
+const KEYS = { theme: 'ps.theme', accent: 'ps.accent', canvas: 'ps.canvas' } as const;
+
+/**
+ * The keys these replaced, when the site was called TokenTally.
+ *
+ * Renaming storage keys silently resets everyone's theme back to the default,
+ * which reads as a bug rather than a rebrand. Migrating costs a few lines and
+ * one pass on first load; the old keys are then removed so this can be deleted
+ * once nobody plausibly has them.
+ */
+const LEGACY_KEYS = { theme: 'tt.theme', accent: 'tt.accent', canvas: 'tt.canvas' } as const;
+
+function migrateLegacyKeys(): void {
+  try {
+    for (const field of ['theme', 'accent', 'canvas'] as const) {
+      const legacy = localStorage.getItem(LEGACY_KEYS[field]);
+      if (legacy !== null && localStorage.getItem(KEYS[field]) === null) {
+        localStorage.setItem(KEYS[field], legacy);
+      }
+      localStorage.removeItem(LEGACY_KEYS[field]);
+    }
+    const welcome = localStorage.getItem('tt.welcomeDismissed');
+    if (welcome !== null && localStorage.getItem('ps.welcomeDismissed') === null) {
+      localStorage.setItem('ps.welcomeDismissed', welcome);
+    }
+    localStorage.removeItem('tt.welcomeDismissed');
+  } catch {
+    /* private mode — the defaults are a perfectly good outcome */
+  }
+}
+
+migrateLegacyKeys();
 
 function read<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
   try {

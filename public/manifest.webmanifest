@@ -1,6 +1,6 @@
 {
-  "name": "TokenTally — LLM cost estimator",
-  "short_name": "TokenTally",
+  "name": "PromptSpend — LLM cost estimator",
+  "short_name": "PromptSpend",
   "description": "Estimate, compare and understand LLM API costs, from a catalog that re-checks itself every morning.",
   "start_url": "./",
   "scope": "./",

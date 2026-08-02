@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Adding a **model** does not need this template — use the
-        [model request](https://github.com/AndrewAvery7/token-tally/issues/new?template=model-request.yml)
+        [model request](https://github.com/AndrewAvery7/promptspend/issues/new?template=model-request.yml)
         form instead, it is about thirty seconds.
 
   - type: textarea

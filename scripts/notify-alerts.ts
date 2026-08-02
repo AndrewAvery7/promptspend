@@ -10,7 +10,7 @@
  *   npx tsx scripts/notify-alerts.ts [--dry-run]
  *
  * Environment:
- *   ALERTS_API      origin of the worker, e.g. https://alerts.tokentally.dev
+ *   ALERTS_API      origin of the worker, e.g. https://alerts.promptspend.dev
  *   NOTIFY_SECRET   shared HMAC secret, the same value the worker holds
  *
  * With either unset the script explains itself and exits 0. A repository that
@@ -84,8 +84,8 @@ async function main(): Promise<void> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-TokenTally-Timestamp': timestamp,
-      'X-TokenTally-Signature': `v1=${signature}`,
+      'X-PromptSpend-Timestamp': timestamp,
+      'X-PromptSpend-Signature': `v1=${signature}`,
     },
     body,
   });

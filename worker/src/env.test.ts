@@ -3,7 +3,7 @@ import { allowedOrigins, requireSecret, siteUrl, type Env } from './env';
 
 const base = {
   SITE_ORIGIN: 'https://andrewavery7.github.io',
-  SITE_BASE_PATH: '/token-tally/',
+  SITE_BASE_PATH: '/promptspend/',
   ALLOWED_ORIGINS: 'https://andrewavery7.github.io, http://localhost:5173 ,',
 } as unknown as Env;
 
@@ -14,20 +14,20 @@ describe('siteUrl', () => {
    * sends every confirmation link to a 404.
    */
   it('handles a project page served from a sub-path', () => {
-    expect(siteUrl(base)).toBe('https://andrewavery7.github.io/token-tally/');
-    expect(siteUrl(base, 'learn')).toBe('https://andrewavery7.github.io/token-tally/learn');
-    expect(siteUrl(base, '/learn')).toBe('https://andrewavery7.github.io/token-tally/learn');
+    expect(siteUrl(base)).toBe('https://andrewavery7.github.io/promptspend/');
+    expect(siteUrl(base, 'learn')).toBe('https://andrewavery7.github.io/promptspend/learn');
+    expect(siteUrl(base, '/learn')).toBe('https://andrewavery7.github.io/promptspend/learn');
   });
 
   it('handles a custom domain served from the root', () => {
-    const root = { ...base, SITE_ORIGIN: 'https://tokentally.dev', SITE_BASE_PATH: '/' } as Env;
-    expect(siteUrl(root)).toBe('https://tokentally.dev/');
-    expect(siteUrl(root, 'learn')).toBe('https://tokentally.dev/learn');
+    const root = { ...base, SITE_ORIGIN: 'https://promptspend.dev', SITE_BASE_PATH: '/' } as Env;
+    expect(siteUrl(root)).toBe('https://promptspend.dev/');
+    expect(siteUrl(root, 'learn')).toBe('https://promptspend.dev/learn');
   });
 
   it('tolerates sloppy trailing slashes in configuration', () => {
-    const sloppy = { ...base, SITE_ORIGIN: 'https://tokentally.dev/', SITE_BASE_PATH: 'app' } as Env;
-    expect(siteUrl(sloppy)).toBe('https://tokentally.dev/app/');
+    const sloppy = { ...base, SITE_ORIGIN: 'https://promptspend.dev/', SITE_BASE_PATH: 'app' } as Env;
+    expect(siteUrl(sloppy)).toBe('https://promptspend.dev/app/');
   });
 });
 

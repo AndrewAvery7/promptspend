@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
-    <img src="assets/logo.png" alt="TokenTally" width="540">
+    <img src="assets/logo.png" alt="PromptSpend" width="540">
   </picture>
 </p>
 
@@ -16,12 +16,12 @@
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
   <img src="https://img.shields.io/badge/tests-242-blue.svg" alt="242 tests">
   <img src="https://img.shields.io/badge/initial%20payload-74%20KB%20gzip-blue.svg" alt="74 KB gzip initial payload">
-  <a href="https://github.com/AndrewAvery7/token-tally/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/token-tally/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/AndrewAvery7/token-tally/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/token-tally/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
+  <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
 </p>
 
 <p align="center">
-  <a href="https://andrewavery7.github.io/token-tally/"><b>&rarr; Open TokenTally</b></a>
+  <a href="https://andrewavery7.github.io/promptspend/"><b>&rarr; Open PromptSpend</b></a>
   &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no tracking
 </p>
 
@@ -33,7 +33,7 @@ Every LLM cost calculator on the web has the same failure mode: it is a snapshot
 hard-codes a dozen model prices, and within a few months the entire premise is wrong — the models it
 compares have been superseded and the prices it quotes no longer exist.
 
-TokenTally is built the other way round. **The pricing pipeline is the product**; the calculator is what
+PromptSpend is built the other way round. **The pricing pipeline is the product**; the calculator is what
 sits on top of it. Every morning a GitHub Action re-fetches the catalog from independent sources, merges
 them under an explicit trust order, runs sanity checks, and either commits the result or opens a pull
 request for a human. Capture patterns are family-level, so a brand-new model version is picked up
@@ -116,7 +116,7 @@ perfectly; a broken scheduler looks exactly the same if you only publish one dat
 a health manifest written on every run, successful or not:
 
 ```
-https://andrewavery7.github.io/token-tally/data/sync-status.json
+https://andrewavery7.github.io/promptspend/data/sync-status.json
 ```
 
 ## Use the data yourself
@@ -124,7 +124,7 @@ https://andrewavery7.github.io/token-tally/data/sync-status.json
 The catalog is a plain, versioned JSON file with a stable shape — treat it as a small public dataset:
 
 ```
-https://andrewavery7.github.io/token-tally/data/pricing.json
+https://andrewavery7.github.io/promptspend/data/pricing.json
 ```
 
 ```jsonc

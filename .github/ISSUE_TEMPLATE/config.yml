@@ -1,11 +1,11 @@
 blank_issues_enabled: true
 contact_links:
   - name: Add or correct a model
-    url: https://github.com/AndrewAvery7/token-tally/issues/new?template=model-request.yml
+    url: https://github.com/AndrewAvery7/promptspend/issues/new?template=model-request.yml
     about: The fastest route for coverage gaps and wrong rates — about thirty seconds
   - name: Question or discussion
-    url: https://github.com/AndrewAvery7/token-tally/discussions
+    url: https://github.com/AndrewAvery7/promptspend/discussions
     about: For questions, methodology debates, and ideas that aren't yet concrete requests
   - name: Report a security issue privately
-    url: https://github.com/AndrewAvery7/token-tally/security/advisories/new
+    url: https://github.com/AndrewAvery7/promptspend/security/advisories/new
     about: Including any way to get a wrong price past the sanity rules — see SECURITY.md

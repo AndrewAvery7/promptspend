@@ -573,7 +573,7 @@ function downloadCsv(
   const warnings = [...new Set(rows.flatMap((row) => row.breakdown.warnings))];
 
   const preamble: unknown[][] = [
-    ['TokenTally estimate'],
+    ['PromptSpend estimate'],
     ['exported', new Date().toISOString()],
     ['prices last changed', catalog.pricesLastChanged()],
     ['sources last checked', catalog.sourcesLastChecked() ?? 'unknown'],
@@ -643,7 +643,7 @@ function downloadCsv(
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'tokentally-estimate.csv';
+  link.download = 'promptspend-estimate.csv';
   link.click();
   URL.revokeObjectURL(url);
   onToast('CSV downloaded — assumptions and sources included');

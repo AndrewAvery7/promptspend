@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, info: ErrorInfo): void {
-    console.error('TokenTally crashed while rendering', error, info.componentStack);
+    console.error('PromptSpend crashed while rendering', error, info.componentStack);
   }
 
   private readonly reset = () => {

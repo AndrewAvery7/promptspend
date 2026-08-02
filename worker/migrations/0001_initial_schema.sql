@@ -1,4 +1,4 @@
--- TokenTally alerts: initial schema.
+-- PromptSpend alerts: initial schema.
 --
 -- Two subscriber kinds share one follow table rather than each carrying its own
 -- model list, because the fan-out query — "who wants to hear about this model?"

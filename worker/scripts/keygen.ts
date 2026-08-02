@@ -73,7 +73,7 @@ Paste each of these into the matching prompt. Nothing here belongs in git.
   npx wrangler secret put NOTIFY_SECRET
   ${secrets.NOTIFY_SECRET}
 
-NOTIFY_SECRET also goes into the token-tally repository as an Actions secret of
+NOTIFY_SECRET also goes into the promptspend repository as an Actions secret of
 the same name, so the pricing pipeline can sign what it sends.
 
 VAPID_PUBLIC_KEY is served publicly by GET /v1/config — that is by design, the

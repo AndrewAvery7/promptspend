@@ -51,7 +51,7 @@ jobs:
       - name: Record a degraded run
         if: steps.sync.outputs.degraded == 'true'
         run: |
-          git config user.name "tokentally-bot"
+          git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
           git add public/data/sync-status.json
           git diff --staged --quiet || git commit -m "chore: record degraded pricing sync"
@@ -63,7 +63,7 @@ jobs:
           steps.sync.outputs.changed == 'true' &&
           steps.sync.outputs.needs_review != 'true'
         run: |
-          git config user.name "tokentally-bot"
+          git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
           git add public/data/pricing.json public/data/sync-status.json docs/pricing-changelog.md
           git commit -m "data: ${{ steps.sync.outputs.summary }}"

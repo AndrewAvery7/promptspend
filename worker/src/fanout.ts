@@ -136,7 +136,7 @@ export async function fanoutPush(env: Env, event: { id: string; set: ChangeSet }
     url: siteUrl(env),
     // Same tag replaces an unread notification rather than stacking a second
     // one on the lock screen for the same underlying event.
-    tag: `tokentally-${event.id.slice(0, 24)}`,
+    tag: `promptspend-${event.id.slice(0, 24)}`,
   });
 
   await mapWithConcurrency(batch, CONCURRENCY, async (subscription) => {
@@ -199,7 +199,9 @@ async function sendToSubscriber(
       // appear at all.
       'List-Unsubscribe': `<${links.unsubscribeUrl}>`,
       'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-      'List-Id': `TokenTally price alerts <alerts.tokentally>`,
+      // RFC 2919 wants a domain-scoped identifier, not a bare label — mail
+      // clients group and filter on this, so it has to be globally unique.
+      'List-Id': 'PromptSpend price alerts <alerts.promptspend.com>',
     },
   });
 

@@ -1,14 +1,14 @@
 {
-  "name": "token-tally",
-  "version": "0.3.0",
+  "name": "promptspend",
+  "version": "0.4.0",
   "private": false,
-  "description": "Estimate, compare and understand LLM API costs â€” with pricing that syncs itself daily.",
+  "description": "Estimate, compare and understand LLM API costs — with pricing that syncs itself daily.",
   "license": "MIT",
   "type": "module",
-  "homepage": "https://andrewavery7.github.io/token-tally/",
+  "homepage": "https://andrewavery7.github.io/promptspend/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AndrewAvery7/token-tally.git"
+    "url": "https://github.com/AndrewAvery7/promptspend.git"
   },
   "keywords": [
     "llm",
@@ -36,7 +36,8 @@
     "check:csp": "tsx scripts/check-csp.ts",
     "sync:pricing": "tsx scripts/sync-pricing.ts",
     "sync:pricing:dry": "tsx scripts/sync-pricing.ts --dry-run",
-    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test:coverage && npm run build && npm run validate:catalog && npm run check:budget && npm run check:csp"
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test:coverage && npm run build && npm run validate:catalog && npm run check:budget && npm run check:csp && npm run check:seo",
+    "check:seo": "tsx scripts/check-seo.ts"
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans": "^5.3.0",

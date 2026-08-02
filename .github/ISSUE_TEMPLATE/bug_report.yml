@@ -7,7 +7,7 @@ body:
       value: |
         If a **number** looks wrong, that is the most serious kind of bug this
         project can have — please file it here rather than assuming it is your
-        setup. [docs/TROUBLESHOOTING.md](https://github.com/AndrewAvery7/token-tally/blob/main/docs/TROUBLESHOOTING.md)
+        setup. [docs/TROUBLESHOOTING.md](https://github.com/AndrewAvery7/promptspend/blob/main/docs/TROUBLESHOOTING.md)
         covers the common cases first: caching, long-context tiers, and why two
         models disagree about the same prompt.
 
@@ -41,7 +41,7 @@ body:
       description: >
         The whole scenario lives in the query string, so this reproduces your
         estimate exactly. It never contains prompt text — only token counts.
-      placeholder: 'https://andrewavery7.github.io/token-tally/?m=gpt-5.4&sys=800&...'
+      placeholder: 'https://andrewavery7.github.io/promptspend/?m=gpt-5.4&sys=800&...'
     validations:
       required: true
 

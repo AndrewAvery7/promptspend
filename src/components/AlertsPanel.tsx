@@ -272,7 +272,7 @@ function PushCard({
 
 const PUSH_UNSUPPORTED: Record<'ios-needs-install' | 'unsupported' | 'insecure-context', string> = {
   'ios-needs-install':
-    'On iPhone and iPad, web push only works once a site is added to the Home Screen. Tap Share, then “Add to Home Screen”, and open TokenTally from there.',
+    'On iPhone and iPad, web push only works once a site is added to the Home Screen. Tap Share, then “Add to Home Screen”, and open PromptSpend from there.',
   unsupported:
     'This browser does not support the Web Push standard. The email digest covers the same ground.',
   'insecure-context': 'Push needs a secure (https) connection. This page is not being served over one.',

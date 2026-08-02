@@ -10,15 +10,18 @@ the custom domain on, and what to do when something misbehaves.
 
 | Piece           | Where                                               | Notes                                             |
 | --------------- | --------------------------------------------------- | ------------------------------------------------- |
-| Alerts API      | `worker/`                                           | Cloudflare Worker, `token-tally-alerts`           |
-| Subscriber data | D1 `token-tally-alerts`                             | `248409c8-32e5-4589-b0a8-a32cc62237a6`            |
-| Cache / scratch | KV `token-tally-alerts-cache`                       | `1b0c2aec558c4f009bd18dda74319273`                |
+| Alerts API      | `worker/`                                           | Cloudflare Worker, `promptspend-alerts`           |
+| Subscriber data | D1 `promptspend-alerts`                             | `5b28b2b1-1b5e-4209-a771-e5ec24ca32b1`            |
 | Browser client  | `src/lib/alerts/`, `src/components/AlertsPanel.tsx` |                                                   |
 | Service worker  | `public/sw.js`                                      | Push display only — deliberately no offline cache |
 | Change notifier | `scripts/notify-alerts.ts`                          | Runs on push to `main`                            |
 
-Live at `https://token-tally-alerts.crestwood.workers.dev` until the custom
-domain is attached.
+There is no KV binding. There was one, and nothing ever read it; an unused
+binding is a claim about what this Worker can reach, and that claim should be
+true.
+
+Live at `https://promptspend-alerts.crestwood.workers.dev` until
+`api.promptspend.dev` is attached — see [DOMAINS.md](DOMAINS.md).
 
 ### Endpoints
 
@@ -37,62 +40,30 @@ domain is attached.
 
 ---
 
-## Switching the custom domain on
+## Switching it on
 
-Everything that mentions a hostname is listed here. Nothing else needs editing.
+The domain cutover — nameservers, DNS records, Worker route, repository
+variables — is in **[DOMAINS.md](DOMAINS.md)**. The two steps below are
+alerts-specific and are the last things to happen.
 
-### 1. Point the domain at Cloudflare
+### Turn on email
 
-Email Sending requires the domain to use Cloudflare DNS. Four zones already do
-(`averyresume.com`, `crestwood.holdings`, `scotlandavery.com`,
-`wadeamarshall.com`); a new domain needs its nameservers moved.
-
-### 2. Give the Worker a route
-
-In `worker/wrangler.jsonc`, add:
-
-```jsonc
-"routes": [{ "pattern": "alerts.example.com", "custom_domain": true }]
-```
-
-and update the three origin vars in the same file:
-
-```jsonc
-"SITE_ORIGIN": "https://example.com",
-"SITE_BASE_PATH": "/",
-"ALLOWED_ORIGINS": "https://example.com,http://localhost:5173"
-```
-
-Then `cd worker && npx wrangler deploy`.
-
-### 3. Repoint the site
-
-Two repository settings under **Settings → Secrets and variables → Actions →
-Variables**:
-
-| Variable     | Value                                                    |
-| ------------ | -------------------------------------------------------- |
-| `ALERTS_API` | `https://alerts.example.com`                             |
-| `BASE_PATH`  | `/` — only when the site itself moves to the apex domain |
-
-`ALERTS_API` is the single source for both the client's API origin and the
-generated `connect-src` in the Content Security Policy. There is no second place
-to change.
-
-### 4. Turn on email
+Email Sending requires the sending domain to use Cloudflare DNS, which the
+cutover arranges.
 
 1. Cloudflare dashboard → **Compute → Email Service → Email Sending → Onboard
-   Domain**. This adds SPF, DKIM, DMARC and the `cf-bounce` MX records.
+   Domain** → `promptspend.com`. This adds SPF, DKIM, DMARC and the `cf-bounce`
+   MX records.
 2. Create an API token with **Email Sending: Edit**.
 3. `cd worker && npx wrangler secret put EMAIL_API_TOKEN`
 4. In `wrangler.jsonc` set `"EMAIL_TRANSPORT": "cloudflare"` and
-   `"EMAIL_FROM": "alerts@example.com"`, then deploy.
+   `"EMAIL_FROM": "alerts@promptspend.com"`, then deploy.
 
 Until step 4, `EMAIL_TRANSPORT` is `console`: the flows all run and the messages
 are logged rather than sent. `GET /v1/config` reports `emailEnabled` and the UI
 says so plainly rather than offering a form that cannot work.
 
-### 5. Turn on Turnstile
+### Turn on Turnstile
 
 Not optional in production. Without it, a script posting addresses to
 `/v1/email/subscribe` sends a confirmation email for each one — burning the free

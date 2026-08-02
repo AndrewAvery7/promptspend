@@ -2,7 +2,7 @@
 
 Everything is drawn from primitives and system fonts, so the assets are
 reproducible: re-running this regenerates them rather than depending on a design
-file nobody has. The mark is the same rounded square and three tally rules as
+file nobody has. The mark is the same rounded square and three ledger rules as
 the site favicon, and the colours are read from the same values as
 `src/styles/tokens.css` -- if the brand moves, both move together.
 
@@ -81,7 +81,7 @@ def find_font(kind, size):
 
 
 def draw_mark(draw, x, y, size, colour):
-    """The favicon mark: a rounded square with three tally rules inside it.
+    """The favicon mark: a rounded square with three ledger rules inside it.
 
     Drawn from the same geometry as the SVG in index.html (a 26-unit viewBox),
     so the README logo and the browser tab are the same shape.
@@ -118,12 +118,12 @@ def make_logo(theme, path):
 
     font = find_font("bold", 46 * SCALE)
     text_x = mark_x + mark + 18 * SCALE
-    # "Token" in ink, "Tally" in the accent -- exactly how the site header
+    # "Prompt" in ink, "Spend" in the accent -- exactly how the site header
     # renders the wordmark.
-    token_w = d.textlength("Token", font=font)
+    prompt_w = d.textlength("Prompt", font=font)
     baseline = (h - 52 * SCALE) // 2
-    d.text((text_x, baseline), "Token", font=font, fill=theme["ink"])
-    d.text((text_x + token_w, baseline), "Tally", font=font, fill=theme["accent"])
+    d.text((text_x, baseline), "Prompt", font=font, fill=theme["ink"])
+    d.text((text_x + prompt_w, baseline), "Spend", font=font, fill=theme["accent"])
 
     sub = find_font("medium", 17 * SCALE)
     d.text(
@@ -159,9 +159,9 @@ def make_social_card(path):
 
     wordmark = find_font("bold", 44 * SCALE)
     wx = inner + mark + 18 * SCALE
-    token_w = d.textlength("Token", font=wordmark)
-    d.text((wx, inner + 2 * SCALE), "Token", font=wordmark, fill=theme["ink"])
-    d.text((wx + token_w, inner + 2 * SCALE), "Tally", font=wordmark, fill=theme["accent"])
+    prompt_w = d.textlength("Prompt", font=wordmark)
+    d.text((wx, inner + 2 * SCALE), "Prompt", font=wordmark, fill=theme["ink"])
+    d.text((wx + prompt_w, inner + 2 * SCALE), "Spend", font=wordmark, fill=theme["accent"])
 
     headline = find_font("bold", 62 * SCALE)
     d.text((inner, inner + 108 * SCALE), "Know the tab", font=headline, fill=theme["ink"])
@@ -263,6 +263,10 @@ def main():
     make_logo(LIGHT, os.path.join(OUT, "logo.png"))
     make_logo(DARK, os.path.join(OUT, "logo-dark.png"))
     make_social_card(os.path.join(OUT, "social-card.png"))
+    # A second copy under public/, because `assets/` is repository documentation
+    # and is never served. og:image needs a URL that actually resolves — a card
+    # that only exists in the repo is a card no social preview will ever show.
+    make_social_card(os.path.join(PUBLIC, "social-card.png"))
 
     # Installing to the home screen is what unlocks web push on iOS, so these
     # are part of the alerts feature rather than decoration.

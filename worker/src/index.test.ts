@@ -266,8 +266,8 @@ describe('notify', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-TokenTally-Timestamp': stamp,
-        'X-TokenTally-Signature': `v1=${await signPayload(secret, stamp, raw)}`,
+        'X-PromptSpend-Timestamp': stamp,
+        'X-PromptSpend-Signature': `v1=${await signPayload(secret, stamp, raw)}`,
       },
       body: raw,
     });
@@ -304,8 +304,8 @@ describe('notify', () => {
     const response = await SELF.fetch(`${API}/v1/notify`, {
       method: 'POST',
       headers: {
-        'X-TokenTally-Timestamp': stamp,
-        'X-TokenTally-Signature': `v1=${await signPayload(env.NOTIFY_SECRET!, stamp, JSON.stringify(CHANGE_SET))}`,
+        'X-PromptSpend-Timestamp': stamp,
+        'X-PromptSpend-Signature': `v1=${await signPayload(env.NOTIFY_SECRET!, stamp, JSON.stringify(CHANGE_SET))}`,
       },
       body: JSON.stringify({ ...CHANGE_SET, changes: [] }),
     });

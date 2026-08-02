@@ -1,8 +1,8 @@
 {
-  "name": "token-tally-alerts",
+  "name": "promptspend-alerts",
   "version": "1.0.0",
   "private": true,
-  "description": "Price-alert delivery for TokenTally: Web Push and email digests, on Cloudflare Workers.",
+  "description": "Price-alert delivery for PromptSpend: Web Push and email digests, on Cloudflare Workers.",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -12,8 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "keygen": "tsx scripts/keygen.ts",
-    "migrate:local": "wrangler d1 migrations apply token-tally-alerts --local",
-    "migrate:remote": "wrangler d1 migrations apply token-tally-alerts --remote",
+    "migrate:local": "wrangler d1 migrations apply promptspend-alerts --local",
+    "migrate:remote": "wrangler d1 migrations apply promptspend-alerts --remote",
     "verify": "npm run typecheck && npm run test"
   },
   "devDependencies": {

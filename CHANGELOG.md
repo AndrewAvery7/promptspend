@@ -9,6 +9,52 @@ on their own schedule and are not releases.
 
 Nothing yet.
 
+## 0.4.0 - 2026-08-02
+
+**TokenTally is now PromptSpend**, on `promptspend.com`, with the developer
+surfaces on `promptspend.dev`. The rename is mechanical; the interesting part is
+that a domain move is the cheapest moment to fix discoverability, and the most
+expensive one to get wrong.
+
+### Changed
+
+- Renamed throughout: wordmark, package names, the repository
+  (`AndrewAvery7/promptspend` — GitHub redirects the old path), the Cloudflare
+  Worker, and the D1 database.
+- `localStorage` keys moved from `tt.*` to `ps.*`, **with a migration**. Renaming
+  them outright would silently reset everyone's theme, which reads as a bug
+  rather than a rebrand.
+- The `List-Id` header is now domain-scoped (`alerts.promptspend.com`) as RFC
+  2919 asks. Mail clients group and filter on it, so a bare label was wrong.
+
+### Added
+
+- **Open Graph images.** There were none, so every share of this site has
+  rendered as a bare link. The card also had to be copied into `public/` —
+  `assets/` is repository documentation and is never served, so the image
+  existed but no crawler could ever fetch it.
+- Canonical link, `og:url`, `twitter:image`, and `WebApplication` structured
+  data — all absolute, all generated from one `SITE_URL` value.
+- Generated `robots.txt`, `sitemap.xml` and the Pages `CNAME`. A committed
+  sitemap carrying a stale domain is worse than none: it actively tells Google
+  to index somewhere the site no longer is.
+- `npm run check:seo`, which asserts all of the above against the **built**
+  artifact. Everything it checks fails invisibly — the page still renders, the
+  build still passes, and the traffic simply never arrives.
+- [docs/DOMAINS.md](docs/DOMAINS.md): the architecture, the cutover runbook, the
+  rollback, and an inventory of every remaining place a hostname appears.
+
+### Removed
+
+- The KV binding. Nothing ever read it. An unused binding is a claim about what
+  the Worker can reach, and that claim should be true.
+
+### Fixed
+
+- The `package.json` description carried a double-encoded em-dash, from an
+  earlier edit made with PowerShell's `Get-Content`/`Set-Content` — which reads
+  as ANSI without an explicit encoding and re-encodes UTF-8 into mojibake.
+
 ## 0.3.0 - 2026-08-02
 
 Price alerts, in both the forms `0.2.0` described as planned. The Data & Alerts

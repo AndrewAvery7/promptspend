@@ -1,5 +1,5 @@
 /*
- * TokenTally service worker.
+ * PromptSpend service worker.
  *
  * Its entire job is push. There is no offline caching here on purpose: the
  * pricing catalog is the point of the site, and a service worker that served a
@@ -13,7 +13,7 @@
 
 const FALLBACK = {
   title: 'LLM pricing changed',
-  body: 'Open TokenTally to see what moved.',
+  body: 'Open PromptSpend to see what moved.',
 };
 
 self.addEventListener('install', () => {
@@ -45,7 +45,7 @@ self.addEventListener('push', (event) => {
       badge: new URL('badge-72.png', self.registration.scope).href,
       // Same tag replaces an unread notification for the same event instead of
       // stacking a second copy on the lock screen.
-      tag: payload.tag || 'tokentally',
+      tag: payload.tag || 'promptspend',
       renotify: false,
       requireInteraction: false,
       data: { url: payload.url || self.registration.scope },

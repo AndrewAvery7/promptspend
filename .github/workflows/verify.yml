@@ -36,8 +36,12 @@ jobs:
           # with — unset simply builds a site with alerts switched off.
           VITE_ALERTS_API: ${{ vars.ALERTS_API }}
           # Set the repository variable BASE_PATH to "/" when the site moves to
-          # a custom domain. Unset keeps the project-page default, /token-tally/.
+          # a custom domain. Unset keeps the project-page default, /promptspend/.
           BASE_PATH: ${{ vars.BASE_PATH }}
+          # Absolute origin the build is served from. Drives the canonical link,
+          # the Open Graph tags, the structured data, robots.txt, sitemap.xml and
+          # the Pages CNAME — so the domain cutover is this one value.
+          SITE_URL: ${{ vars.SITE_URL }}
         run: npm run verify
 
       # Reused by the deploy job rather than rebuilt, so what is verified is

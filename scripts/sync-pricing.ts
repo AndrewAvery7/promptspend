@@ -91,7 +91,7 @@ async function fetchJson(url: string, label: string): Promise<FetchResult> {
     const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
     try {
       const response = await fetch(url, {
-        headers: { 'user-agent': 'token-tally-sync', accept: 'application/json' },
+        headers: { 'user-agent': 'promptspend-sync', accept: 'application/json' },
         signal: controller.signal,
       });
       if (!response.ok) throw new Error(`${label} responded ${response.status}`);

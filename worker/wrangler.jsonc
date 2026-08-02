@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "token-tally-alerts",
+  "name": "promptspend-alerts",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-01",
   "observability": { "enabled": true },
@@ -12,7 +12,7 @@
     // Where the browser app is served from. Confirmation and unsubscribe links
     // land back here, and it is the default CORS origin.
     "SITE_ORIGIN": "https://andrewavery7.github.io",
-    "SITE_BASE_PATH": "/token-tally/",
+    "SITE_BASE_PATH": "/promptspend/",
     // Comma-separated. Only these origins may call the API from a browser.
     "ALLOWED_ORIGINS": "https://andrewavery7.github.io,http://localhost:5173",
     // "console" writes messages to the log instead of sending them, which is
@@ -20,12 +20,12 @@
     // is the only code-side change needed to start delivering real mail.
     "EMAIL_TRANSPORT": "console",
     "EMAIL_FROM": "alerts@example.invalid",
-    "EMAIL_FROM_NAME": "TokenTally",
+    "EMAIL_FROM_NAME": "PromptSpend",
     "EMAIL_REPLY_TO": "",
     "CLOUDFLARE_ACCOUNT_ID": "e2e63d45dcb042990aea10d4d55260fd",
     // RFC 8292 requires a contact the push service can reach if our traffic
     // misbehaves. Must be a mailto: or https: URL.
-    "VAPID_SUBJECT": "https://github.com/AndrewAvery7/token-tally",
+    "VAPID_SUBJECT": "https://github.com/AndrewAvery7/promptspend",
     // Bot protection on the subscribe endpoints. Optional in development;
     // `TURNSTILE_SECRET_KEY` being set is what turns enforcement on.
     "TURNSTILE_SITE_KEY": "",
@@ -34,13 +34,16 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "token-tally-alerts",
-      "database_id": "248409c8-32e5-4589-b0a8-a32cc62237a6",
+      "database_name": "promptspend-alerts",
+      "database_id": "5b28b2b1-1b5e-4209-a771-e5ec24ca32b1",
       "migrations_dir": "migrations",
     },
   ],
 
-  "kv_namespaces": [{ "binding": "CACHE", "id": "1b0c2aec558c4f009bd18dda74319273" }],
+  // No KV binding. There was one, and nothing ever read it — an unused binding
+  // is a claim about what this Worker can touch, and that claim should be true.
+  // The public pricing API on promptspend.dev will want a cache; it can have its
+  // own namespace then, rather than inheriting an empty one from here.
 
   // Weekly digest. Monday 14:00 UTC is mid-morning in the US and late afternoon
   // in Europe — the compromise that puts it in a working day for most readers.

@@ -74,7 +74,7 @@ export function Header(props: HeaderProps) {
             />
           </svg>
           <span>
-            Token<span className="logo__mark">Tally</span>
+            Prompt<span className="logo__mark">Spend</span>
           </span>
         </div>
 

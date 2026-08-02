@@ -13,7 +13,7 @@ import { DataView } from '@/components/DataView';
 import { GuidedTour, TOUR_STEPS } from '@/components/GuidedTour';
 import { CommandPalette, type Command } from '@/components/CommandPalette';
 
-const WELCOME_KEY = 'tt.welcomeDismissed';
+const WELCOME_KEY = 'ps.welcomeDismissed';
 
 export default function App() {
   const [catalog, setCatalog] = useState<Catalog | null>(null);
@@ -237,7 +237,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
       <footer className="footer">
         <div className="footer__inner">
           <div>
-            <b>TokenTally</b> · open source, MIT · no accounts, no tracking ·{' '}
+            <b>PromptSpend</b> · open source, MIT · no accounts, no tracking ·{' '}
             <a href={REPO_URL}>star it on GitHub</a>
           </div>
           <div className="mono">

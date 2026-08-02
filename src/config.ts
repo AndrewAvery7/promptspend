@@ -1,4 +1,4 @@
-export const REPO_URL = 'https://github.com/AndrewAvery7/token-tally';
+export const REPO_URL = 'https://github.com/AndrewAvery7/promptspend';
 
 /**
  * Origin of the price-alerts API (the `worker/` project in this repository).

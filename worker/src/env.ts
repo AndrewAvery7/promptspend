@@ -8,7 +8,6 @@
 
 export interface Env {
   DB: D1Database;
-  CACHE: KVNamespace;
 
   // ---- vars (wrangler.jsonc, non-secret) ----
   SITE_ORIGIN: string;
@@ -38,7 +37,7 @@ export interface Env {
  * The URL of the deployed app, with the base path applied.
  *
  * Has to be right for both shapes the site can take: a project page under
- * `/token-tally/`, and a custom domain serving from `/`.
+ * `/promptspend/`, and a custom domain serving from `/`.
  */
 export function siteUrl(env: Env, path = ''): string {
   const origin = env.SITE_ORIGIN.replace(/\/+$/, '');
