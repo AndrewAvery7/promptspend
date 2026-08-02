@@ -28,6 +28,24 @@ const CACHE_SECONDS = 86_400;
 /** Header carrying the moment the cached body was fetched from the origin. */
 const FETCHED_AT = 'X-PromptSpend-Fetched-At';
 
+/**
+ * A synthetic key, on a host that is never actually requested.
+ *
+ * This must NOT be `CATALOG_URL`, and the reason is subtle enough to have
+ * shipped: in Workers, `caches.default` and the cache behind `fetch()` are the
+ * same cache, keyed by URL. Storing under the catalog's own URL meant every
+ * `cache.put` overwrote the entry `fetch()` reads from — with our own
+ * `max-age=86400` on it. The Worker then "revalidated" every five minutes by
+ * reading back its own day-old copy, stamped it with a new `fetchedAt`, and
+ * reported `stale: false`. Freshness looked perfect and the body never moved.
+ *
+ * In production it served a catalog eighteen minutes out of date while the site
+ * had the new one. The tests missed it because they stub `fetch`, so no
+ * subrequest ever touched the cache — which is exactly the class of bug a stub
+ * hides.
+ */
+export const CACHE_KEY = 'https://catalog.promptspend.dev/__cache/pricing/v1';
+
 export interface CatalogRead {
   catalog: PricingCatalog;
   /** When this copy was pulled from the site. */
@@ -51,7 +69,7 @@ function freshSeconds(env: Env): number {
  * the behaviour wanted from a file that changes once a day.
  */
 export async function readCatalog(env: Env, ctx?: ExecutionContext): Promise<CatalogRead> {
-  const key = new Request(env.CATALOG_URL, { method: 'GET' });
+  const key = new Request(CACHE_KEY, { method: 'GET' });
   const cache = caches.default;
   const cached = await cache.match(key);
 
@@ -80,7 +98,17 @@ async function fetchAndStore(
   cache: Cache,
   ctx?: ExecutionContext,
 ): Promise<CatalogRead> {
-  const response = await fetch(env.CATALOG_URL, { cf: { cacheTtl: 60 } });
+  // `no-store`: this subrequest must never be served from, or written to,
+  // Cloudflare's cache. Caching is what the layer above already does, with a
+  // freshness window we control and a `fetchedAt` stamp we can reason about.
+  //
+  // Two caching layers is one too many, and the second one bit: the previous
+  // version stored under the catalog's own URL, which is the same key
+  // `fetch()` reads from, and tagged it `max-age=86400`. Every revalidation
+  // then read back our own day-old copy. Worse, fixing the key alone was not
+  // enough — the poisoned entry outlives the deploy that created it, so the
+  // only reliable repair is to stop consulting that cache.
+  const response = await fetch(env.CATALOG_URL, { cache: 'no-store' });
   if (!response.ok) {
     throw new Error(`catalog origin returned HTTP ${response.status}`);
   }

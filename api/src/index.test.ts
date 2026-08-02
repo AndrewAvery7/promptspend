@@ -1,6 +1,7 @@
 import { SELF, env } from 'cloudflare:test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PricingCatalog } from '../../src/lib/pricing/types';
+import { CACHE_KEY } from './catalog';
 
 const API = 'https://promptspend.dev';
 
@@ -80,7 +81,7 @@ beforeEach(async () => {
   originUnreachable();
   // The Cache API is shared across a test file, and caching is most of what
   // this Worker does. Clearing it makes every test start from the same place.
-  await caches.default.delete(new Request(env.CATALOG_URL));
+  await caches.default.delete(new Request(CACHE_KEY));
 
   // The Worker runs in this isolate, so replacing the global reaches it.
   // Nothing here may touch the real network: a test that quietly passed
@@ -278,6 +279,37 @@ describe('when the catalog cannot be trusted', () => {
     });
 
     expect((await get('/v1/models')).status).toBe(503);
+  });
+
+  it('caches under a key of its own, never the catalog URL', async () => {
+    // `caches.default` and the cache behind `fetch()` are the same cache, keyed
+    // by URL. Storing under CATALOG_URL meant every `cache.put` overwrote the
+    // entry `fetch()` reads from, so the Worker "revalidated" by reading back
+    // its own day-old copy — new `fetchedAt`, `stale: false`, and a body that
+    // never moved. It served an eighteen-minute-old catalog in production.
+    expect(CACHE_KEY).not.toBe(env.CATALOG_URL);
+    expect(new URL(CACHE_KEY).host).not.toBe(new URL(env.CATALOG_URL).host);
+  });
+
+  it('serves the new body once the freshness window has passed', async () => {
+    const vars = env as unknown as Record<string, string>;
+    const configured = vars.FRESH_SECONDS!;
+    vars.FRESH_SECONDS = '0';
+    try {
+      serveCatalog();
+      expect(((await (await get('/v1/models')).json()) as { count: number }).count).toBe(2);
+
+      // The catalog moves, as it does every morning.
+      serveCatalog({ ...CATALOG, models: [CATALOG.models[0]!], generatedAt: '2026-08-03T02:00:00.000Z' });
+      const response = await get('/v1/models');
+      const body = (await response.json()) as { count: number; generatedAt: string };
+
+      expect(body.count).toBe(1);
+      expect(body.generatedAt).toBe('2026-08-03T02:00:00.000Z');
+      expect(response.headers.get('X-PromptSpend-Generated-At')).toBe('2026-08-03T02:00:00.000Z');
+    } finally {
+      vars.FRESH_SECONDS = configured;
+    }
   });
 
   it('serves a retained copy, labelled, rather than nothing at all', async () => {
