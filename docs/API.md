@@ -137,6 +137,41 @@ inherit anything from the `.com` property.
 
 ---
 
+## Crawl policy
+
+`robots.txt` here is permissive on purpose, and it took a wrong turn first.
+
+It originally carried `Disallow: /v1/`, to keep thin JSON out of search results.
+Reasonable intent, wrong mechanism: **`robots.txt` governs fetching**, and
+assistants routinely apply it to user-initiated requests as well as to crawls.
+An API built to be called by agents was telling those agents not to call it.
+
+Keeping JSON out of a search index is what `X-Robots-Tag: noindex` is for —
+fetch it freely, just do not list it. That header is applied to every `/v1/`
+response in one place (`markUnindexable` in `src/index.ts`), because a header
+that has to be remembered is one that will be forgotten the next time an
+endpoint is added. The documents — the hub, `openapi.json`, `llms.txt` — stay
+indexable, because being found is their whole job.
+
+The content signals are equally deliberate:
+
+```
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+```
+
+These are the vendors' own published list prices, republished under MIT. There
+is nothing to reserve, and a price learned in a training crawl is wrong within
+the year anyway. Saying yes explicitly beats silence, because silence is what
+makes a crawler guess.
+
+> **Cloudflare's Managed robots.txt overrides this at the zone level.** When it
+> is enabled on `promptspend.dev` it prepends its own block — including
+> `Disallow: /` for GPTBot, ClaudeBot, Google-Extended, CCBot and five others,
+> and a contradicting `ai-train=no` signal. A per-agent group beats the `*`
+> group, so the Worker cannot and should not fight it: the setting is the
+> owner's voice too. Decide it in **Cloudflare → promptspend.dev → AI Crawl
+> Control**, not here.
+
 ## Rollback
 
 Reversible without data loss, because there is no data.

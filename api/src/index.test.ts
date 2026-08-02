@@ -125,9 +125,32 @@ describe('documents that do not need the catalog', () => {
     expect(document.servers[0]!.url).toBe(API);
   });
 
-  it('keeps crawlers out of the JSON but not the hub', async () => {
+  it('lets agents fetch the data, and keeps it out of search results', async () => {
+    // These two goals used to be in conflict: `Disallow: /v1/` kept the JSON
+    // out of search results by making it unfetchable, and assistants apply
+    // robots.txt to user-initiated requests too — so an API built to be called
+    // by agents was telling them not to call it. `noindex` is the right tool.
     const robots = await (await get('/robots.txt')).text();
-    expect(robots).toContain('Disallow: /v1/');
+    expect(robots).not.toContain('Disallow');
+    expect(robots).toContain('Allow: /');
+
+    serveCatalog();
+    for (const path of ['/v1/models', '/v1/prices', '/v1/health']) {
+      expect((await get(path)).headers.get('X-Robots-Tag')).toBe('noindex');
+    }
+  });
+
+  it('leaves the documents indexable — they are the point', async () => {
+    for (const path of ['/', '/openapi.json', '/llms.txt']) {
+      expect((await get(path)).headers.get('X-Robots-Tag')).toBeNull();
+    }
+  });
+
+  it('declares its content signals rather than leaving a crawler to guess', async () => {
+    // Vendors' own list prices, republished under MIT. Nothing to reserve.
+    const robots = await (await get('/robots.txt')).text();
+    expect(robots).toContain('Content-Signal: search=yes, ai-input=yes, ai-train=yes');
+    expect(robots).toContain('/llms.txt');
   });
 
   it('names its own sitemap, not the other host’s', async () => {

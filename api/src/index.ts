@@ -21,10 +21,65 @@ import { openApiDocument } from './openapi';
 
 const STATUSES = new Set(['current', 'legacy', 'deprecated']);
 
+/**
+ * Crawl policy, stated deliberately rather than left to a default.
+ *
+ * This file used to carry `Disallow: /v1/`. The intent was reasonable — thin
+ * JSON has no business in a search result — but the mechanism was wrong, and
+ * wrong in a way that defeated the point of the whole service. `robots.txt`
+ * governs **fetching**, and assistants routinely apply it to user-initiated
+ * requests as well as to crawls. An API built to be called by agents was
+ * telling those agents not to call it.
+ *
+ * Keeping JSON out of a search index is what `X-Robots-Tag: noindex` is for:
+ * fetch it freely, just do not list it. That header is applied to every `/v1/`
+ * response (see the wrapper in `fetch`), and this file now says yes.
+ *
+ * The content signals are equally deliberate. These are the vendors' own
+ * published list prices, republished under MIT. There is nothing here to
+ * reserve: search it, ground on it, train on it. Saying so explicitly is worth
+ * more than silence, because silence is what makes a crawler guess.
+ */
+function robotsTxt(origin: string): string {
+  return `# PromptSpend developer hub.
+#
+# Public, MIT-licensed pricing data that exists to be used. Crawl it, retrieve
+# it, ground on it, train on it — the licence already permits all four, and this
+# file says so rather than leaving a crawler to infer it.
+#
+# Machine-readable index of what is here: ${origin}/llms.txt
+
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+
+# The JSON endpoints are data, not documents. They are yours to fetch; every
+# one of them answers with X-Robots-Tag: noindex so it stays out of search
+# results without being made unfetchable.
+
+Sitemap: ${origin}/sitemap.xml
+`;
+}
+
+/**
+ * Data endpoints are fetchable but not listable.
+ *
+ * Applied here, once, rather than at each of the six places a `/v1/` response
+ * is constructed — a header that has to be remembered is a header that will be
+ * forgotten the next time an endpoint is added.
+ */
+function markUnindexable(response: Response): Response {
+  const copy = new Response(response.body, response);
+  copy.headers.set('X-Robots-Tag', 'noindex');
+  return copy;
+}
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const isData = new URL(request.url).pathname.startsWith('/v1/');
     try {
-      return await route(request, env, ctx);
+      const response = await route(request, env, ctx);
+      return isData ? markUnindexable(response) : response;
     } catch (cause) {
       if (cause instanceof ApiError) {
         if (cause.detail) console.warn(`${cause.status} ${cause.message} — ${cause.detail}`);
@@ -59,18 +114,7 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
     case '/llms.txt':
       return text(llmsTxt(url.origin, env.SITE_ORIGIN), 'text/plain; charset=utf-8', { maxAge: 3600 });
     case '/robots.txt':
-      // The hub is worth indexing; the JSON is not, and letting crawlers grind
-      // through 70 model documents would put pressure on the origin for nothing.
-      //
-      // The sitemap named here is **this host's own**. Pointing it at
-      // ${SITE_ORIGIN}/sitemap.xml was wrong: a cross-host sitemap reference is
-      // only honoured when both hosts are verified in the same search-console
-      // account, and it tells a crawler of .dev about pages that are not on it.
-      return text(
-        `User-agent: *\nAllow: /$\nAllow: /llms.txt\nDisallow: /v1/\n\nSitemap: ${url.origin}/sitemap.xml\n`,
-        'text/plain; charset=utf-8',
-        { maxAge: 86_400 },
-      );
+      return text(robotsTxt(url.origin), 'text/plain; charset=utf-8', { maxAge: 86_400 });
     case '/sitemap.xml':
       // One URL, and that is the honest answer: the hub is the only page here.
       // Everything else this Worker serves is data, and `/v1/` is disallowed
