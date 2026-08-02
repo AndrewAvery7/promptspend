@@ -1228,31 +1228,177 @@ table.catalog tbody tr:hover {
   color: var(--warn);
   background: var(--warn-soft);
 }
-.email-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
+/* ---------------------------------------------------------- live alerts */
+
+/* Push and email get more room than the two link-only options: they carry a
+   form each, and squeezing a model picker into a 230px column helps nobody. */
+.alert-grid--live {
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+  margin-top: 14px;
 }
-.email-row input {
-  flex: 1;
+.alert-option--live {
   background: var(--surface-2);
+}
+.alerts-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.alerts-input {
+  width: 100%;
+  margin-bottom: 14px;
+}
+.alerts-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 14px;
+}
+.alerts-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  gap: 8px;
+}
+.alerts-choice {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  font-size: 0.84rem;
-  min-width: 0;
+  background: var(--surface);
+  cursor: pointer;
+  /* 44px keeps the whole row a comfortable target on a touch screen, where the
+     radio itself is nowhere near big enough to aim at. */
+  min-height: 44px;
+  transition: border-color 0.16s;
 }
-.action-button {
-  background: var(--accent);
-  color: var(--accent-ink);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
+.alerts-choice:hover {
+  border-color: var(--muted);
+}
+.alerts-choice.is-selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.alerts-choice input {
+  margin-top: 2px;
+  accent-color: var(--accent);
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+.alerts-choice b {
+  display: block;
   font-size: 0.82rem;
   font-weight: 600;
-  white-space: nowrap;
-  margin-top: 8px;
 }
+.alerts-choice small {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.alerts-picker {
+  margin-top: 12px;
+}
+.alerts-picker__list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 232px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.alerts-picker__list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 34px;
+  font-size: 0.8rem;
+}
+.alerts-picker__list label:hover {
+  background: var(--surface-2);
+}
+.alerts-picker__list label.is-selected {
+  background: var(--accent-soft);
+}
+.alerts-picker__list input {
+  accent-color: var(--accent);
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+.alerts-picker__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.alerts-picker__provider {
+  font-size: 0.7rem;
+  color: var(--muted);
+  flex: none;
+}
+.alerts-picker__empty {
+  padding: 12px 10px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.alerts-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.alerts-actions .button {
+  font-size: 0.82rem;
+  padding: 9px 14px;
+  min-height: 40px;
+}
+.alerts-actions .button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.alerts-hint {
+  font-size: 0.73rem;
+  color: var(--muted);
+  margin-top: 9px;
+}
+/* Money-red is reserved for cost. An input error is not a cost, but it does
+   need to be unmistakable, so it borrows the warning pair instead. */
+.alerts-error {
+  font-size: 0.78rem;
+  color: var(--warn);
+  background: var(--warn-soft);
+  border: 1px solid var(--warn);
+  border-radius: var(--radius-sm);
+  padding: 8px 11px;
+  margin-top: 10px;
+}
+.alerts-manage {
+  margin-bottom: 14px;
+  border-color: var(--accent);
+}
+.turnstile {
+  margin: 12px 0 4px;
+  min-height: 65px;
+}
+
+@media (pointer: coarse) {
+  .alerts-picker__list label {
+    min-height: 44px;
+  }
+}
+
 .privacy-note {
   font-size: 0.74rem;
   color: var(--muted);

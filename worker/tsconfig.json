@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    // Runtime types come from `wrangler types`, which generates
+    // worker-configuration.d.ts from wrangler.jsonc and supersedes
+    // @cloudflare/workers-types. `npm run typecheck` regenerates it first, so
+    // the types can never describe a binding set the config no longer has.
+    "types": ["vitest/globals"],
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": false,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "test/**/*.ts",
+    "vitest.config.ts",
+    "worker-configuration.d.ts"
+  ]
+}

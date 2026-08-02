@@ -1,7 +1,14 @@
 import type { Catalog } from '@/lib/pricing/catalog';
 import { PRICING_SCOPE, REPO_URL } from '@/config';
+import { AlertsPanel } from '@/components/AlertsPanel';
 
-export function DataView({ catalog }: { catalog: Catalog }) {
+interface DataViewProps {
+  catalog: Catalog;
+  theme: 'light' | 'dark';
+  onToast: (message: string) => void;
+}
+
+export function DataView({ catalog, theme, onToast }: DataViewProps) {
   const flagged = catalog.models.filter((model) => model.provenance.needsReview);
   const vendorVerified = catalog.models.filter((model) => model.provenance.source === 'vendor');
   const health = catalog.health;
@@ -79,10 +86,10 @@ export function DataView({ catalog }: { catalog: Catalog }) {
             </h2>
           </div>
           <div className="panel__body">
-            {/* Two of these were enabled controls that did nothing but explain
-                they did nothing, and one of them collected an email address it
-                could not subscribe. A planned feature is described, not
-                simulated. */}
+            {/* The two zero-infrastructure options come first because they cost
+                a reader nothing to adopt and cost us nothing to run: no address
+                is stored and nothing can silently break. Push and email follow
+                for the people who want to be told rather than to go looking. */}
             <div className="alert-grid">
               <article className="alert-option">
                 <h4>
@@ -111,36 +118,14 @@ export function DataView({ catalog }: { catalog: Catalog }) {
                   AVAILABLE NOW ↗
                 </a>
               </article>
-
-              <article className="alert-option alert-option--planned">
-                <h4>
-                  <BellIcon />
-                  Browser push
-                </h4>
-                <p>
-                  Watch specific models and get a push the moment one changes — no email, no phone number,
-                  nothing personal stored.
-                </p>
-                <span className="alert-tag alert-tag--planned">PLANNED — NOT BUILT YET</span>
-              </article>
-
-              <article className="alert-option alert-option--planned">
-                <h4>
-                  <MailIcon />
-                  Email digest
-                </h4>
-                <p>
-                  A weekly “what changed in LLM pricing”, or instant alerts for the models you follow. Double
-                  opt-in, one-click out.
-                </p>
-                <span className="alert-tag alert-tag--planned">PLANNED — NOT BUILT YET</span>
-              </article>
             </div>
+
+            <AlertsPanel catalog={catalog} theme={theme} onToast={onToast} />
+
             <p className="privacy-note">
-              The two planned options are described here so you know where this is going, and marked so you
-              are not invited to enter an address into a form that cannot subscribe it. No SMS is planned:
-              per-message costs and phone-number collection do not fit a free, privacy-first tool, and push
-              already covers “tell me instantly, on my phone”. There is no analytics on this site.
+              No SMS is planned: per-message costs and phone-number collection do not fit a free,
+              privacy-first tool, and push already covers “tell me instantly, on my phone”. There is no
+              analytics on this site, and the alerts service stores no opens, no clicks and no IP addresses.
             </p>
           </div>
         </section>
@@ -236,41 +221,6 @@ function FeedIcon() {
     >
       <path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16" />
       <circle cx="5" cy="19" r="1.5" fill="currentColor" />
-    </svg>
-  );
-}
-function BellIcon() {
-  return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 2a7 7 0 0 0-7 7c0 5-2 6-2 6h18s-2-1-2-6a7 7 0 0 0-7-7zM10.5 20a1.5 1.5 0 0 0 3 0" />
-    </svg>
-  );
-}
-function MailIcon() {
-  return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="M22 7l-10 6L2 7" />
     </svg>
   );
 }

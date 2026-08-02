@@ -231,7 +231,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
           />
         )}
         {view === 'learn' && <LearnView catalog={catalog} />}
-        {view === 'data' && <DataView catalog={catalog} />}
+        {view === 'data' && <DataView catalog={catalog} theme={appearance.theme} onToast={showToast} />}
       </main>
 
       <footer className="footer">

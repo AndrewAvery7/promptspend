@@ -1,8 +1,12 @@
 # Security policy
 
-TokenTally is a static site with no backend, no accounts and no database. That
-removes most of the usual attack surface, but two things are still worth
-reporting carefully.
+TokenTally is a static site with no accounts and no login. The calculator itself
+sends nothing anywhere, which removes most of the usual attack surface.
+
+There is one server: the opt-in price-alerts API in [`worker/`](worker), a
+Cloudflare Worker with a D1 database holding email subscribers and push
+subscriptions. It is small and deliberately boring, but it is a backend that
+stores personal data and can send mail, so it is squarely in scope.
 
 ## Supported versions
 
@@ -27,9 +31,17 @@ in spare time, so please allow a reasonable window before disclosing publicly.
   bug this project has, even though it is not a "vulnerability" in the usual
   sense.
 - **Anything that could transmit a pasted prompt.** Prompt text is the only
-  sensitive data the page ever holds. It is never sent anywhere, and the
-  Content Security Policy in `index.html` restricts `connect-src` to `'self'`
-  to keep that true even if a dependency is compromised.
+  sensitive data the page ever holds. It is never sent anywhere. The Content
+  Security Policy is generated at build time (`vite.config.ts`) and opens
+  `connect-src` for the alerts API origin and nothing else, so a compromised
+  dependency still has nowhere to send it.
+- **The alerts API.** Specifically: forging or replaying a `/v1/notify` call;
+  using a confirm, unsubscribe or preferences token for a purpose or a
+  subscriber it was not issued for; subscribing an address somebody does not
+  control; reading another subscriber's address or followed models; getting the
+  worker to make a request to a host that is not a real push service; and any
+  way to make it send mail beyond the rate limit and Turnstile check. Details
+  and rationale are in [docs/ALERTS.md](docs/ALERTS.md).
 - **Supply chain**: a dependency, a GitHub Action, or the LiteLLM/OpenRouter
   feeds being used to reach the deployed site. Actions are pinned to commit
   SHAs; the pricing feeds are treated as untrusted input and cannot publish
@@ -49,9 +61,19 @@ in spare time, so please allow a reasonable window before disclosing publicly.
 
 ## Data handling
 
-There is no analytics, no cookie, no account and no server that receives
-anything. Pasted prompt text stays in the tab: it is tokenised locally, is
-deliberately excluded from the shareable URL, and is held in a bounded in-memory
-cache that is cleared when the scenario is reset and discarded when the tab
-closes. `localStorage` holds two things: whether the welcome banner was
-dismissed, and your theme and accent choice.
+There is no analytics and no cookie. Pasted prompt text stays in the tab: it is
+tokenised locally, is deliberately excluded from the shareable URL, and is held
+in a bounded in-memory cache that is cleared when the scenario is reset and
+discarded when the tab closes. `localStorage` holds two things: whether the
+welcome banner was dismissed, and your theme and accent choice.
+
+If — and only if — you subscribe to price alerts, the alerts database holds:
+
+- **Browser push:** the opaque endpoint URL the browser issued and its two
+  encryption keys, plus the models you follow. Nothing that identifies a person.
+- **Email:** your address, the models you follow, your cadence, and the date you
+  subscribed. Consent is recorded as a salted hash of the IP, never the address
+  itself. No name, no opens, no clicks, no third-party processor.
+
+Unsubscribing deletes the row and the follow list rather than flagging them.
+Addresses that never confirm are deleted within a week.

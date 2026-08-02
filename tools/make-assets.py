@@ -8,7 +8,8 @@ the site favicon, and the colours are read from the same values as
 
     python tools/make-assets.py
 
-Outputs assets/logo.png, assets/logo-dark.png and assets/social-card.png.
+Outputs assets/logo.png, assets/logo-dark.png and assets/social-card.png, plus
+the installable-app and notification icons in public/.
 """
 
 import os
@@ -19,6 +20,7 @@ from PIL import Image, ImageDraw, ImageFont
 SCALE = 4  # render large, downsample once, for clean antialiasing
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "assets")
+PUBLIC = os.path.join(ROOT, "public")
 
 FONT_DIRS = [
     os.path.join(os.environ.get("LOCALAPPDATA", ""), "Microsoft", "Windows", "Fonts"),
@@ -45,7 +47,7 @@ LIGHT = {
     "muted": (0x5F, 0x6B, 0x78),    # --muted
     "bg": (0xEB, 0xEF, 0xF5),       # --bg      cool paper
     "surface": (0xFF, 0xFF, 0xFF),  # --surface
-    "surface2": (0xF4, 0xF6, 0xFA), # --surface-2
+    "surface2": (0xFA, 0xFB, 0xFD), # --surface-2
     "border": (0xDC, 0xE2, 0xEB),   # --border
     "save": (0x0E, 0x7B, 0x43),     # --save    green means you save
     "cost": (0xC6, 0x28, 0x28),     # --cost    red means this costs more
@@ -217,11 +219,57 @@ def make_social_card(path):
     print(f"wrote {path}")
 
 
+def make_app_icon(size, path):
+    """A square app icon: the mark on the brand colour.
+
+    Sized with the mark at 60% of the canvas so it survives the circular crop
+    Android applies to a maskable icon -- anything closer to the edge loses its
+    corners on the devices that mask hardest.
+    """
+    px = size * SCALE
+    img = Image.new("RGBA", (px, px), LIGHT["accent"] + (255,))
+    d = ImageDraw.Draw(img)
+
+    mark = int(px * 0.60)
+    offset = (px - mark) // 2
+    draw_mark(d, offset, offset, mark, (0xFF, 0xFF, 0xFF))
+
+    img.resize((size, size), Image.LANCZOS).save(path)
+    print(f"wrote {path}")
+
+
+def make_badge(size, path):
+    """The small monochrome glyph Android shows in the status bar.
+
+    It is used as a mask: every non-transparent pixel is repainted a flat
+    colour by the system, so the artwork has to be a silhouette. Drawing it in
+    any brand colour would look correct here and arrive as a white blob.
+    """
+    px = size * SCALE
+    img = Image.new("RGBA", (px, px), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+
+    mark = int(px * 0.86)
+    offset = (px - mark) // 2
+    draw_mark(d, offset, offset, mark, (0xFF, 0xFF, 0xFF))
+
+    img.resize((size, size), Image.LANCZOS).save(path)
+    print(f"wrote {path}")
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
+    os.makedirs(PUBLIC, exist_ok=True)
     make_logo(LIGHT, os.path.join(OUT, "logo.png"))
     make_logo(DARK, os.path.join(OUT, "logo-dark.png"))
     make_social_card(os.path.join(OUT, "social-card.png"))
+
+    # Installing to the home screen is what unlocks web push on iOS, so these
+    # are part of the alerts feature rather than decoration.
+    make_app_icon(192, os.path.join(PUBLIC, "icon-192.png"))
+    make_app_icon(512, os.path.join(PUBLIC, "icon-512.png"))
+    make_app_icon(180, os.path.join(PUBLIC, "apple-touch-icon.png"))
+    make_badge(72, os.path.join(PUBLIC, "badge-72.png"))
 
 
 if __name__ == "__main__":

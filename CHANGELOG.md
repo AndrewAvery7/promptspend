@@ -9,6 +9,76 @@ on their own schedule and are not releases.
 
 Nothing yet.
 
+## 0.3.0 - 2026-08-02
+
+Price alerts, in both the forms `0.2.0` described as planned. The Data & Alerts
+view previously carried two cards reading "PLANNED — NOT BUILT YET"; they are
+now working features, and the rule that put those labels there — never render a
+control that cannot do what it appears to offer — is what governs their
+behaviour when a deployment has no API configured.
+
+This adds a server to a project that did not have one. That is a real change to
+what the site is, so the privacy and security documents were rewritten rather
+than appended to.
+
+### Added
+
+- **Browser push.** A notification when a price moves, for the whole catalog or
+  just the models you follow. Nothing personal is stored: a push subscription is
+  an opaque URL the browser issues.
+- **Email alerts**, weekly digest or instant, with double opt-in, RFC 8058
+  one-click unsubscribe, and preference management from a signed link.
+- **The alerts API** (`worker/`) — a Cloudflare Worker on D1 and KV, deployed
+  separately from the site with its own tests and its own package.
+- **RFC 8291 push encryption, written out** rather than imported. The mainstream
+  library targets Node's crypto module and will not run unmodified on Workers,
+  and a dependency that can read every notification body is one worth not
+  having. Verified byte for byte against the worked example in RFC 8291 §5 —
+  the only test here measured against an external authority instead of our own
+  expectations, because a round-trip test passes just as happily when both
+  halves share a misreading of the spec.
+- **A generated Content Security Policy.** The API origin now appears in
+  `connect-src`, so the policy is built from the same configured value the
+  client reads. A hand-maintained meta tag would have drifted the first time
+  either moved, producing a site that silently could not reach its own backend.
+- **A weekly digest that sends even in a quiet week**, because a digest which
+  only arrives when something happened is indistinguishable from one that has
+  quietly broken.
+- Installable-app manifest and icons — on iOS, web push only works for a site
+  added to the Home Screen, so this is part of the feature rather than polish.
+
+### Changed
+
+- **README and SECURITY.md now describe a project with a backend.** Both stated
+  "no server that receives anything", which stopped being true. Rule two of this
+  project is that a claim must be true of the code; correcting the claim is the
+  fix.
+- Notification is triggered by a push to `main` that changes the published
+  catalog, not by the sync job. A change that trips a sanity rule goes to a pull
+  request first, so notifying from the sync job would have announced numbers
+  that were still unmerged — and missed the ones a human reviewed and merged.
+- `BASE_PATH` handling no longer treats an empty string as unset. GitHub Actions
+  passes an undefined variable as `""`, which `??` does not catch, and which
+  would have built every asset path relative to nothing.
+
+### Security
+
+- Push endpoints are restricted to the hosts that actually issue them. Without
+  that allowlist the endpoint field is a server-side request forgery primitive:
+  an attacker registers an internal URL and the worker POSTs to it, from
+  Cloudflare's network, on every price change.
+- Email link tokens are scoped to one purpose each. An unsubscribe link travels
+  through forwards, archives and mail scanners; if it also authorised preference
+  changes, every one of those copies would be a credential.
+- `GET /v1/email/unsubscribe` asks rather than acts, because scanners prefetch
+  links. One-click unsubscribe from a mail client is unaffected — RFC 8058 sends
+  a POST.
+- `/v1/notify` is authenticated by an HMAC over the exact body plus a timestamp,
+  so a captured call is useless after five minutes and useless for any other
+  payload.
+- Deliveries are claimed by primary key before anything is sent, so two
+  concurrent fan-outs cannot both notify the same subscriber.
+
 ## 0.2.0 - 2026-08-02
 
 A pre-publication audit of `0.1.0` produced 29 findings. Twenty-seven were real

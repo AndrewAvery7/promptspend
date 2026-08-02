@@ -1,0 +1,48 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "token-tally-alerts",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  "observability": { "enabled": true },
+
+  // Every value below that mentions a hostname is part of the domain cutover.
+  // `docs/ALERTS.md` lists them in one place; nothing else needs editing when
+  // the custom domain arrives.
+  "vars": {
+    // Where the browser app is served from. Confirmation and unsubscribe links
+    // land back here, and it is the default CORS origin.
+    "SITE_ORIGIN": "https://andrewavery7.github.io",
+    "SITE_BASE_PATH": "/token-tally/",
+    // Comma-separated. Only these origins may call the API from a browser.
+    "ALLOWED_ORIGINS": "https://andrewavery7.github.io,http://localhost:5173",
+    // "console" writes messages to the log instead of sending them, which is
+    // what runs until a sending domain is onboarded. Switching to "cloudflare"
+    // is the only code-side change needed to start delivering real mail.
+    "EMAIL_TRANSPORT": "console",
+    "EMAIL_FROM": "alerts@example.invalid",
+    "EMAIL_FROM_NAME": "TokenTally",
+    "EMAIL_REPLY_TO": "",
+    "CLOUDFLARE_ACCOUNT_ID": "e2e63d45dcb042990aea10d4d55260fd",
+    // RFC 8292 requires a contact the push service can reach if our traffic
+    // misbehaves. Must be a mailto: or https: URL.
+    "VAPID_SUBJECT": "https://github.com/AndrewAvery7/token-tally",
+    // Bot protection on the subscribe endpoints. Optional in development;
+    // `TURNSTILE_SECRET_KEY` being set is what turns enforcement on.
+    "TURNSTILE_SITE_KEY": "",
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "token-tally-alerts",
+      "database_id": "248409c8-32e5-4589-b0a8-a32cc62237a6",
+      "migrations_dir": "migrations",
+    },
+  ],
+
+  "kv_namespaces": [{ "binding": "CACHE", "id": "1b0c2aec558c4f009bd18dda74319273" }],
+
+  // Weekly digest. Monday 14:00 UTC is mid-morning in the US and late afternoon
+  // in Europe — the compromise that puts it in a working day for most readers.
+  "triggers": { "crons": ["0 14 * * 1"] },
+}

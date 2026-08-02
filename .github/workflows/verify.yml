@@ -29,6 +29,15 @@ jobs:
       # Includes the colour-vision palette guarantee and the pricing-pipeline
       # rules, so a change that breaks either fails the build.
       - name: Verify
+        env:
+          # The single source of the alerts API origin. It feeds the client and
+          # the generated Content Security Policy, so the built artifact is
+          # already correct for whichever origin this repository is configured
+          # with — unset simply builds a site with alerts switched off.
+          VITE_ALERTS_API: ${{ vars.ALERTS_API }}
+          # Set the repository variable BASE_PATH to "/" when the site moves to
+          # a custom domain. Unset keeps the project-page default, /token-tally/.
+          BASE_PATH: ${{ vars.BASE_PATH }}
         run: npm run verify
 
       # Reused by the deploy job rather than rebuilt, so what is verified is
@@ -38,3 +47,25 @@ jobs:
           name: site
           path: dist
           retention-days: 1
+
+  # The alerts worker is a separate package with its own runtime, so it gets its
+  # own job rather than being bolted onto `npm run verify`. Its tests run inside
+  # workerd against a real D1, which is slower to start and worth isolating.
+  worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+
+      - run: npm ci
+
+      - name: Verify the alerts worker
+        run: npm run verify

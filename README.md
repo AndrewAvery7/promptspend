@@ -48,7 +48,19 @@ automatically without anyone touching code.
 - **Learn** — seven short interactive lessons on tokens, why output costs more, compounding chat history,
   hidden reasoning tokens, caching and batching, and how the data pipeline works.
 - **Data & Alerts** — pipeline health, full provenance for every number with a link to the vendor page it
-  came from, and what is currently flagged.
+  came from, what is currently flagged, and four ways to hear about a price change: an Atom feed, the
+  repository's own pull requests, browser push, and an email digest.
+
+### Price alerts
+
+Opt-in, and off unless a deployment is configured for them. Browser push stores nothing personal — a push
+subscription is an opaque URL the browser issues. Email is double opt-in with one-click unsubscribe, and
+stores your address, the models you follow, and the date you asked; nothing else. Either channel can watch
+the whole catalog or just the models you pick.
+
+The delivery service is a Cloudflare Worker in [`worker/`](worker), with the push payload encryption
+written out against RFC 8291 and checked byte for byte against the RFC's own worked example.
+[docs/ALERTS.md](docs/ALERTS.md) has the architecture, the cost model and the domain cutover.
 
 ## Things it does that most calculators get wrong
 
@@ -173,10 +185,13 @@ and publishes the artifact it produced, so a commit that fails any of them canno
 src/lib/engine/     the cost engine — pure functions, no React, heavily tested
 src/lib/tokenize/   exact tokenizer (lazy-loaded) + calibrated ratios
 src/lib/pricing/    catalog schema, validation, lookups
+src/lib/alerts/     browser-side push and alerts API client
 src/components/     the four views
 scripts/            the daily sync pipeline (scripts/lib is unit-tested)
 data/               capture patterns and hand-verified overrides
 public/data/        the published catalog the app reads
+public/sw.js        service worker — push display only, no offline cache
+worker/             the alerts API (Cloudflare Worker, own package and tests)
 ```
 
 ## Design and accessibility
@@ -242,11 +257,30 @@ just a confident guess.
 
 ## Privacy, precisely
 
-No accounts, no analytics, no cookies, no server that receives anything. Fonts are self-hosted, so the
-page makes no third-party requests at all and its Content Security Policy restricts `connect-src` to
-`'self'`. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable URL,
-held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds two things:
+**The estimator itself sends nothing anywhere.** No accounts, no analytics, no cookies. Fonts are
+self-hosted. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable
+URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds two things:
 whether you dismissed the welcome banner, and your theme choice.
+
+**Price alerts are the one exception, and only if you opt in.** They are a feature you have to switch on,
+and they are the only reason this project has a server at all
+(a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)). Precisely what changes:
+
+- The Content Security Policy opens `connect-src` for that one API origin, and — only where Turnstile is
+  configured — `script-src` and `frame-src` for `challenges.cloudflare.com`. Nothing else, ever. That
+  `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is
+  generated from one configured value rather than hand-maintained.
+- **Browser push stores nothing personal.** A push subscription is an opaque URL the browser issues. No
+  address, no name, nothing that identifies you.
+- **Email stores your address**, the models you follow, and the date you asked. That is the whole record.
+  No name, no raw IP (consent is recorded as a salted hash), no opens, no clicks, no third-party
+  processor. Double opt-in, one-click unsubscribe, and unconfirmed addresses are deleted within a week.
+- The alerts form never sees anything you paste into the estimator. Those are different parts of the page
+  and the prompt text never leaves the browser.
+
+A deployment with no API configured — which is what this repository builds by default — keeps a strictly
+self-only policy and says on screen that alerts are not switched on, rather than rendering a form that
+cannot work.
 
 ## Security
 

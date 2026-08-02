@@ -12,17 +12,20 @@
 
     <!--
       GitHub Pages cannot set response headers, so the policy is declared here.
-      It is worth stating even in a meta tag: the app has no external origins at
-      all now that the fonts are self-hosted, so anything trying to reach one is
-      by definition not ours. `connect-src 'self'` is what stops a compromised
-      dependency exfiltrating a pasted prompt, which is the one piece of
-      genuinely sensitive data this page ever holds.
+      The placeholder below is filled in at build time by the `tokentally-csp`
+      plugin in vite.config.ts, from the same VITE_ALERTS_API value the app
+      itself reads — a hand-written policy here would drift from the API origin
+      the moment one of them moved. With no API configured it resolves to a
+      strictly self-only policy; `connect-src` is what stops a compromised
+      dependency exfiltrating a pasted prompt, which is the one genuinely
+      sensitive thing this page holds. (Do not write the placeholder token
+      anywhere above this tag: the build fills every occurrence.)
     -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; object-src 'none'"
-    />
+    <meta http-equiv="Content-Security-Policy" content="%CSP%" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <meta name="theme-color" content="#2456e6" />
 
     <link
       rel="icon"

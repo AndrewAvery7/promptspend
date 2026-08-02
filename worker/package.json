@@ -1,0 +1,30 @@
+{
+  "name": "token-tally-alerts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Price-alert delivery for TokenTally: Web Push and email digests, on Cloudflare Workers.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "wrangler types && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "keygen": "tsx scripts/keygen.ts",
+    "migrate:local": "wrangler d1 migrations apply token-tally-alerts --local",
+    "migrate:remote": "wrangler d1 migrations apply token-tally-alerts --remote",
+    "verify": "npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.20.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.118.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260730.1": true
+  }
+}

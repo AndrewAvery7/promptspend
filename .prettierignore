@@ -3,3 +3,10 @@ coverage
 node_modules
 public/data/pricing.json
 docs/pricing-changelog.md
+
+# Generated: the daily pipeline writes these, and `wrangler types` rewrites the
+# last one on every worker typecheck. Reformatting machine output only creates
+# diffs nobody asked for.
+worker/node_modules
+worker/dist
+worker/worker-configuration.d.ts

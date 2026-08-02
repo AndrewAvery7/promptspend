@@ -1,0 +1,16 @@
+{
+  "name": "TokenTally — LLM cost estimator",
+  "short_name": "TokenTally",
+  "description": "Estimate, compare and understand LLM API costs, from a catalog that re-checks itself every morning.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ebeff5",
+  "theme_color": "#2456e6",
+  "categories": ["developer", "productivity", "utilities"],
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -4,6 +4,19 @@ import userEvent from '@testing-library/user-event';
 import App from './App';
 import { SCHEMA_VERSION, type PricingCatalog } from '@/lib/pricing/types';
 
+/**
+ * Pin the alerts API to "not configured" for this suite.
+ *
+ * Without this the branch under test depends on whether a developer happens to
+ * have a `.env.local` — the assertion below would pass on CI and fail on the
+ * machine of anyone pointing a local build at a real worker. The configured
+ * branch is covered in AlertsPanel.test.tsx, which mocks the opposite value.
+ */
+vi.mock('@/config', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/config')>()),
+  ALERTS_API: '',
+}));
+
 const CATALOG: PricingCatalog = {
   schemaVersion: SCHEMA_VERSION,
   generatedAt: '2026-08-01T06:00:00.000Z',
@@ -311,15 +324,35 @@ describe('claims the site makes about itself', () => {
     expect(screen.getAllByText(/prices last changed/i).length).toBeGreaterThan(0);
   });
 
-  it('does not offer alert controls that do nothing', async () => {
+  /**
+   * Push and email are built, but a build with no `VITE_ALERTS_API` — which is
+   * what the test environment is, and what the site ships as until the API has
+   * a domain — has nowhere to send a subscription. The rule being defended is
+   * the same one as before the feature existed: never render a control that
+   * cannot do what it appears to offer. What satisfies it has changed from
+   * "say PLANNED" to "detect the missing origin and say so".
+   */
+  it('does not offer alert controls that cannot work', async () => {
     const user = userEvent.setup();
     await renderApp();
     await user.click(screen.getByRole('button', { name: 'Data & Alerts' }));
 
     expect(await screen.findByText(/Every number shows its work/)).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Enable push/ })).not.toBeInTheDocument();
-    expect(screen.queryByLabelText(/Email address for price alerts/)).not.toBeInTheDocument();
-    expect(screen.getAllByText(/PLANNED — NOT BUILT YET/).length).toBe(2);
+    expect(screen.getByText(/built but not switched on for this deployment/)).toBeInTheDocument();
+
+    expect(screen.queryByRole('button', { name: /Turn on push alerts/ })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Email address/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  it('still offers the two options that need no infrastructure', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByRole('button', { name: 'Data & Alerts' }));
+
+    expect(await screen.findByText(/Commit feed/)).toBeInTheDocument();
+    expect(screen.getByText(/Watch the repository/)).toBeInTheDocument();
+    expect(screen.getAllByText(/AVAILABLE NOW/).length).toBe(2);
   });
 
   it('describes the merge rule it actually uses for flagged rows', async () => {
