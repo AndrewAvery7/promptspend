@@ -52,7 +52,10 @@ function seoAssets(url: string): Plugin {
   // GitHub Pages takes the custom domain from a CNAME file in the artifact.
   // Emitting one while still deploying to github.io would break the live site,
   // so it appears only once SITE_URL names a domain of our own.
-  const isCustomDomain = !host.endsWith('github.io');
+  // Matched as a domain, not a suffix. `endsWith('github.io')` is also true of
+  // `notgithub.io`, which is a different owner entirely — the check has to be
+  // the host itself or something below it.
+  const isCustomDomain = !(host === 'github.io' || host.endsWith('.github.io'));
 
   return {
     name: 'promptspend-seo-assets',

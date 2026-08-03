@@ -87,7 +87,9 @@ async function main(): Promise<void> {
   }
 
   const host = new URL(siteUrl).host;
-  if (host.endsWith('github.io')) {
+  // The host itself or something below it — `endsWith` alone would also match
+  // `notgithub.io`, a domain someone else owns.
+  if (host === 'github.io' || host.endsWith('.github.io')) {
     // The protocol proves control of a host by serving a key file at its root.
     // We do not control github.io, so a submission for it would be refused —
     // correctly.

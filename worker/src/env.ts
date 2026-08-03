@@ -39,11 +39,29 @@ export interface Env {
  * Has to be right for both shapes the site can take: a project page under
  * `/promptspend/`, and a custom domain serving from `/`.
  */
+/**
+ * Strip leading and/or trailing `/` without a regular expression.
+ *
+ * `/\/+$/` is a polynomial-backtracking pattern: an unanchored run of `+`
+ * against a long sequence of slashes costs quadratic time when the match
+ * ultimately fails. Nothing hostile reaches this — these are deployment
+ * variables we set ourselves, not request input — but two index walks are
+ * simpler than the regex they replace and cannot degrade at all, which is a
+ * better trade than a comment explaining why the risk is theoretical.
+ */
+function trimSlashes(value: string, { start = false, end = false }): string {
+  let from = 0;
+  let to = value.length;
+  if (start) while (from < to && value.charCodeAt(from) === 47) from += 1;
+  if (end) while (to > from && value.charCodeAt(to - 1) === 47) to -= 1;
+  return value.slice(from, to);
+}
+
 export function siteUrl(env: Env, path = ''): string {
-  const origin = env.SITE_ORIGIN.replace(/\/+$/, '');
-  const base = env.SITE_BASE_PATH.replace(/^\/+|\/+$/g, '');
+  const origin = trimSlashes(env.SITE_ORIGIN, { end: true });
+  const base = trimSlashes(env.SITE_BASE_PATH, { start: true, end: true });
   const root = base ? `${origin}/${base}` : origin;
-  return path ? `${root}/${path.replace(/^\/+/, '')}` : `${root}/`;
+  return path ? `${root}/${trimSlashes(path, { start: true })}` : `${root}/`;
 }
 
 export function allowedOrigins(env: Env): string[] {
