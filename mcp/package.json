@@ -32,7 +32,9 @@
     "test:watch": "vitest",
     "check:footprint": "tsx tools/check-footprint.ts",
     "verify": "npm run typecheck && npm run test && npm run check:footprint && npm run build && npm run check:startup",
-    "check:startup": "tsx tools/check-startup.ts"
+    "check:startup": "tsx tools/check-startup.ts",
+    "prepublishOnly": "npm run verify",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
