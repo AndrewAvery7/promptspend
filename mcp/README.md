@@ -22,6 +22,7 @@ No API key. No account. MIT.
 **Every price comes with its paperwork.**
 
 ```jsonc
+// Real output, not an illustration: `get_price` for gpt-5 on 2026-08-03.
 {
   "model": "gpt-5",
   "input_per_million_usd": 1.25,
@@ -29,13 +30,18 @@ No API key. No account. MIT.
   "provenance": {
     "source": "vendor",
     "source_description": "Hand-verified against the provider's own published pricing page.",
-    "last_verified": "2026-08-01",
-    "verified_url": "https://developers.openai.com/api/docs/pricing",
+    "last_verified": "2026-08-03",
     "disputed": false,
-    "confidence": "Confirmed against the provider's own pricing page on 2026-08-01.",
+    "upstream_stale": false,
+    "confidence": "Confirmed against the provider's own pricing page on 2026-08-03.",
+    "verified_url": "https://developers.openai.com/api/docs/pricing",
   },
 }
 ```
+
+`last_verified` moves as rows are re-read, so the date here will age; the shape
+will not. What is worth checking is that the block is present at all — a price
+without one is a price you cannot audit.
 
 That matters more to an agent than to a person. Someone reading a web page sees
 the interface around the number and forms their own view of how much to trust it.
