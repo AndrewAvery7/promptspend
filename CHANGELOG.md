@@ -104,6 +104,29 @@ shipping a package next week.
   end of the line. Adding it moved the initial payload from 81 KB gzip to 82, and
   `check:budget` refused the build until the README badge said so.
 
+  Under the copy sit four figures — models, providers, rows read against a
+  vendor's own page, and a zero for accounts, trackers and cookies. Each is
+  **derived from the catalog being displayed**, including the vendor count,
+  which is now `Catalog.vendorVerifiedCount()` rather than a literal. It is the
+  number this project is really selling, so it is precisely the one that must
+  not be a figure somebody forgot to raise after a verification pass.
+
+- **Both install commands gained a copy button.** They sit in boxes that scroll
+  sideways, because the command does not fit a phone and shrinking it below 12px
+  is not allowed — which makes selecting one by hand genuinely awkward, since the
+  text moves under your finger. The button is the realistic way to get it.
+
+  Laid out with flex rather than an overlay: an absolutely-positioned button
+  sits on top of text that then scrolls underneath it. The first attempt used
+  `align-self: stretch` and produced a control 78px tall and 60px wide, shaped
+  by the height of a scrollbar rather than by what it does.
+
+  A failed write is reported rather than swallowed, because silence is
+  indistinguishable from success and the user would paste whatever was on the
+  clipboard already. There is a browser test for it, and it has to be a browser
+  test: `clipboard.writeText` requires transient user activation, so a
+  programmatic click is refused and only a trusted event proves the thing works.
+
 - The promo video gains a scene for it and runs 1:53. Same rules as the rest of
   the film: real figures, the site's own typefaces, no mockups, and the honest
   comparison is a price beside a price-with-its-paperwork rather than a

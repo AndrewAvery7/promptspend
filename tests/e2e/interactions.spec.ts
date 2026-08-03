@@ -75,3 +75,26 @@ test('the ticker leaves room under itself at every width', async ({ page }) => {
   expect(gap, 'the header must not sit flush against the ticker').not.toBeNull();
   expect(gap!).toBeGreaterThanOrEqual(8);
 });
+
+/**
+ * The copy button actually puts the command on the clipboard.
+ *
+ * `navigator.clipboard.writeText` needs a secure context AND transient user
+ * activation, so this cannot be checked by calling `.click()` from a console:
+ * a synthetic click has no activation and the write is refused. Only a trusted
+ * event proves the thing works, which is exactly what Playwright produces.
+ *
+ * Worth a test rather than a look because the failure is quiet — the button
+ * still depresses, and a user pastes whatever was on the clipboard before.
+ */
+test('the install command copy button writes to the clipboard', async ({ page, context, browserName }) => {
+  test.skip(browserName !== 'chromium', 'clipboard permissions are chromium-specific here');
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/');
+
+  await page.locator('.hero__aside .copy-button').click();
+
+  await expect(page.locator('.toast')).toContainText('Install command copied');
+  const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+  expect(clipboard).toBe('claude mcp add promptspend -- npx -y @promptspend/mcp');
+});

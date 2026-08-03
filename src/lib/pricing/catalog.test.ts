@@ -250,6 +250,21 @@ describe('Catalog', () => {
     expect(dated.sourcesLastChecked()).toBeNull();
   });
 
+  // The landing page shows this figure, and it is the one the whole project is
+  // selling. Counting aliases would inflate it, and counting anything but a
+  // vendor-sourced row would make it a different claim entirely.
+  it('counts only primary rows read against a vendor page', () => {
+    const mixed = new Catalog({
+      ...CATALOG,
+      models: CATALOG.models.map((m, index) => ({
+        ...m,
+        provenance: { ...m.provenance, source: index === 0 ? ('vendor' as const) : ('litellm' as const) },
+      })),
+    });
+    expect(mixed.vendorVerifiedCount()).toBe(1);
+    expect(mixed.vendorVerifiedCount()).toBeLessThanOrEqual(mixed.primaryModels.length);
+  });
+
   // This used to fall back to `generatedAt`. A catalog carrying no change
   // history therefore reported the build date, so the site announced a price
   // change every morning it was rebuilt and looked plausible doing it.

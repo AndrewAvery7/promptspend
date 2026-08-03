@@ -1,5 +1,6 @@
 import type { Catalog } from '@/lib/pricing/catalog';
-import { PRICING_SCOPE } from '@/config';
+import { MCP_INSTALL_COMMAND, PRICING_SCOPE } from '@/config';
+import { CopyButton } from './CopyButton';
 import { csvDocument } from '@/lib/engine/csv';
 import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
 import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
@@ -94,9 +95,30 @@ export function EstimateView({
             Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s
             bill side by side — at your scale, from prices re-checked every morning.
           </p>
+          {/* Every figure here is derived from the catalog being displayed, not
+              written down beside it. A hand-typed count is the thing that goes
+              quietly wrong the morning after a sync adds a row. */}
+          <dl className="hero__stats">
+            <div>
+              <dt>{catalog.primaryModels.length}</dt>
+              <dd>models tracked</dd>
+            </div>
+            <div>
+              <dt>{catalog.providers.length}</dt>
+              <dd>providers</dd>
+            </div>
+            <div>
+              <dt>{catalog.vendorVerifiedCount()}</dt>
+              <dd>read against the vendor&apos;s own page</dd>
+            </div>
+            <div>
+              <dt>0</dt>
+              <dd>accounts, trackers or cookies</dd>
+            </div>
+          </dl>
         </div>
         <aside className="hero__aside" aria-labelledby="hero-mcp-title">
-          <p className="hero__aside-eyebrow">Also in your editor</p>
+          <p className="hero__aside-eyebrow">MCP Server Available</p>
           <h2 className="hero__aside-title" id="hero-mcp-title">
             The same numbers, inside a coding agent
           </h2>
@@ -106,9 +128,12 @@ export function EstimateView({
           </p>
           {/* Scrollable, so focusable: `overflow-x: auto` without a tab stop is
               a box a keyboard user cannot reach the end of. */}
-          <pre className="mono" tabIndex={0}>
-            <code>claude mcp add promptspend -- npx -y @promptspend/mcp</code>
-          </pre>
+          <div className="codeblock">
+            <pre className="mono" tabIndex={0}>
+              <code>{MCP_INSTALL_COMMAND}</code>
+            </pre>
+            <CopyButton value={MCP_INSTALL_COMMAND} label="install command" onToast={onToast} />
+          </div>
           <p className="hero__aside-note">
             ~700 tokens per turn, measured ·{' '}
             <button type="button" className="linklike" onClick={onOpenData}>

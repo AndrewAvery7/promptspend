@@ -1,6 +1,7 @@
 import type { Catalog } from '@/lib/pricing/catalog';
-import { DEVELOPER_HUB_URL, PRICING_SCOPE, REPO_URL } from '@/config';
+import { DEVELOPER_HUB_URL, MCP_INSTALL_COMMAND, PRICING_SCOPE, REPO_URL } from '@/config';
 import { AlertsPanel } from '@/components/AlertsPanel';
+import { CopyButton } from './CopyButton';
 
 /** GitHub's Atom feed of commits touching the published catalog. */
 const FEED_URL = `${REPO_URL}/commits/main/public/data/pricing.json.atom`;
@@ -186,9 +187,12 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                     `overflow-x: auto`, and a scrollable box that cannot take
                     focus is one a keyboard user cannot scroll — the end of the
                     command is simply unreachable without a mouse. */}
-                <pre className="mono" tabIndex={0}>
-                  <code>claude mcp add promptspend -- npx -y @promptspend/mcp</code>
-                </pre>
+                <div className="codeblock">
+                  <pre className="mono" tabIndex={0}>
+                    <code>{MCP_INSTALL_COMMAND}</code>
+                  </pre>
+                  <CopyButton value={MCP_INSTALL_COMMAND} label="install command" onToast={onToast} />
+                </div>
                 <p className="privacy-note">
                   Adds ~700 tokens of context per turn — measured, budgeted and published, because a pricing
                   tool that quietly taxes every message would be a poor joke.
@@ -204,9 +208,18 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                     `overflow-x: auto`, and a scrollable box that cannot take
                     focus is one a keyboard user cannot scroll — the end of the
                     command is simply unreachable without a mouse. */}
-                <pre className="mono" tabIndex={0}>
-                  <code>curl {DEVELOPER_HUB_URL}/v1/prices</code>
-                </pre>
+                <div className="codeblock">
+                  <pre className="mono" tabIndex={0}>
+                    <code>curl {DEVELOPER_HUB_URL}/v1/prices</code>
+                  </pre>
+                  {/* The sibling command gets one too. A copy button on one box
+                      and not the box beside it reads as an oversight. */}
+                  <CopyButton
+                    value={`curl ${DEVELOPER_HUB_URL}/v1/prices`}
+                    label="API command"
+                    onToast={onToast}
+                  />
+                </div>
                 <p className="privacy-note">
                   <a href={DEVELOPER_HUB_URL} target="_blank" rel="noreferrer noopener">
                     Developer hub →

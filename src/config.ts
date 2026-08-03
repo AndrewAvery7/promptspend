@@ -44,6 +44,13 @@ export const COMPARE_INDEX_URL = `${import.meta.env.BASE_URL}compare/`;
 export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
 
 /**
+ * The MCP install command, in one place because it is shown in two — the
+ * landing view and the Data & Alerts panel — and a command that differs
+ * between them is one that is wrong in at least one of them.
+ */
+export const MCP_INSTALL_COMMAND = 'claude mcp add promptspend -- npx -y @promptspend/mcp';
+
+/**
  * What these numbers cover, stated once and reused wherever the boundary
  * matters. Being specific about the edge of the model is the difference
  * between an estimate and a guess wearing an estimate's clothes.

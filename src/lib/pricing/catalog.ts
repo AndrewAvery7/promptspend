@@ -67,6 +67,17 @@ export class Catalog {
     return dates.sort().at(-1) ?? null;
   }
 
+  /**
+   * How many primary rows were read against the vendor's own pricing page.
+   *
+   * Derived rather than written down. It is the number this project is really
+   * selling, so it is exactly the number that must not be a stale literal
+   * somebody forgot to raise after a verification pass.
+   */
+  vendorVerifiedCount(): number {
+    return this.primaryModels.filter((model) => model.provenance.source === 'vendor').length;
+  }
+
   /** The date the sources were last successfully checked, if we know it. */
   sourcesLastChecked(): string | null {
     return this.health?.succeededAt?.slice(0, 10) ?? null;

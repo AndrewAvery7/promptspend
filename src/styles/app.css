@@ -414,6 +414,90 @@ body.tour-active .main {
     gap: 18px;
   }
 }
+/* Four figures under the hero copy, filling the column the card sits beside.
+ * Wraps rather than shrinking, so a long label never forces the row narrow. */
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 30px;
+  margin-top: 22px;
+}
+.hero__stats div {
+  min-width: 0;
+}
+.hero__stats dt {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.hero__stats dd {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin: 2px 0 0;
+  max-width: 15ch;
+}
+@media (max-width: 560px) {
+  .hero__stats {
+    gap: 12px 20px;
+  }
+  .hero__stats dt {
+    font-size: 1.3rem;
+  }
+}
+
+/* A scrolling command and its copy button, side by side. Flex rather than an
+ * overlay: an absolutely-positioned button sits on top of text that then
+ * scrolls underneath it, which looks broken the moment the box is used. */
+.codeblock {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin: 10px 0 8px;
+}
+.codeblock pre {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.copy-button {
+  flex: none;
+  /* Top-aligned, not stretched. The `<pre>` beside it is as tall as its text
+   * plus a horizontal scrollbar, and stretching to match produced a 78px-tall
+   * button 60px wide — a control shaped by a scrollbar rather than by what it
+   * does. */
+  align-self: flex-start;
+  padding: 0 12px;
+  min-height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  /* 0.78rem, not 0.72. This project's floor is 12px and 0.72rem lands at 11.5 —
+   * the browser suite has now caught that exact value twice, in the install
+   * command and again in this button beside it. Small uppercase mono is the
+   * style that invites it. */
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+.copy-button:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+/* A thumb needs 44px; a mouse does not. The narrow rule would fail the touch
+ * target check at exactly the widths where the command is hardest to select
+ * by hand. */
+@media (pointer: coarse) {
+  .copy-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
 .hero__aside {
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -447,7 +531,9 @@ body.tour-active .main {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 9px 11px;
-  margin: 10px 0 8px;
+  /* No margin: the `.codeblock` wrapper owns the spacing now. Leaving it here
+   * pushed the box 10px below the button beside it. */
+  margin: 0;
 }
 /* 0.78rem, matching `.build-grid code`. An earlier 0.72rem rendered at 11.5px
  * and the browser suite failed it at every viewport: nothing here may render
@@ -850,7 +936,7 @@ body.tour-active .main {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
-  margin: 0 0 8px;
+  margin: 0;
   overflow-x: auto;
 }
 .build-grid code {
