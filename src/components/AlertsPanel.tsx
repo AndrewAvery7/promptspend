@@ -469,7 +469,10 @@ function EmailCard({
           </p>
         )}
 
-        <div className="alerts-actions">
+        {/* The note sits beside the button rather than under it. Stacked, it
+            added two lines to the tallest card on the panel and left the column
+            opposite short by exactly that much. */}
+        <div className="alerts-actions alerts-actions--noted">
           <button
             type="submit"
             className="button button--primary"
@@ -477,11 +480,11 @@ function EmailCard({
           >
             {busy ? 'Sending…' : 'Send me the confirmation'}
           </button>
+          <p className="alerts-hint alerts-hint--beside">
+            We store your address, what you follow, and the date you asked. Nothing else — no name, no IP, no
+            opens, no clicks.
+          </p>
         </div>
-        <p className="alerts-hint">
-          We store your address, what you follow, and the date you asked. Nothing else — no name, no IP, no
-          opens, no clicks.
-        </p>
       </form>
     </article>
   );

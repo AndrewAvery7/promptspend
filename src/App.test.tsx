@@ -382,16 +382,21 @@ describe('claims the site makes about itself', () => {
     expect(await screen.findByText(/Commit feed/)).toBeInTheDocument();
     expect(screen.getByText(/Watch the repository/)).toBeInTheDocument();
 
-    // Both links say where they go and open away from the app. The Atom one
-    // used to read "AVAILABLE NOW" and open raw XML in the same tab, which is
-    // a wall of text arriving with no warning.
-    const feed = screen.getByRole('link', { name: /ATOM FEED/ });
+    // The feed's primary action copies the address rather than opening it.
+    // Opening an Atom feed in a browser shows raw XML — a page of rubbish, and
+    // never what anyone wanted. It used to read "AVAILABLE NOW" and open in the
+    // same tab, which is how it got clicked.
+    expect(screen.getByRole('button', { name: /COPY FEED ADDRESS/ })).toBeInTheDocument();
+
+    const raw = screen.getByRole('link', { name: /view raw XML/ });
     const repo = screen.getByRole('link', { name: /OPEN ON GITHUB/ });
-    for (const link of [feed, repo]) {
+    for (const link of [raw, repo]) {
       expect(link).toHaveAttribute('target', '_blank');
       expect(link.getAttribute('rel')).toMatch(/noopener/);
     }
-    expect(feed).toHaveAttribute('href', expect.stringContaining('.atom'));
+    expect(raw).toHaveAttribute('href', expect.stringContaining('.atom'));
+    // The copy in the card points at readers, not at the link.
+    expect(screen.getByText(/Paste this address into a feed reader/)).toBeInTheDocument();
   });
 
   it('describes the merge rule it actually uses for flagged rows', async () => {

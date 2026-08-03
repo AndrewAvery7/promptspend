@@ -111,8 +111,9 @@ textarea {
   max-width: 1280px;
   margin: 0 auto;
   /* Breathing room under the ticker: the two were flush against each other,
-   * which made a dark bar and a light bar read as one crowded block. */
-  padding: 12px 24px 10px;
+   * which made a dark bar and a light bar read as one crowded block. 12px was
+   * still tight enough that the logo looked stuck to the tape. */
+  padding: 22px 24px 12px;
   /* Wrapping is unconditional rather than switched on at a breakpoint.
    * Breakpoints are matched against the viewport *including* the scrollbar, so
    * a `max-width: 1020px` rule does not fire in a 1024px window whose content
@@ -1407,6 +1408,38 @@ table.catalog tbody tr:hover {
   font-size: 0.73rem;
   color: var(--muted);
   margin-top: 9px;
+}
+/* The privacy note beside the submit button rather than under it. Stacked, it
+   added two lines to the tallest card on the panel and left the column opposite
+   short by exactly that much. It still wraps below on a narrow screen. */
+.alerts-actions--noted {
+  align-items: center;
+}
+.alerts-hint--beside {
+  margin-top: 0;
+  flex: 1 1 14rem;
+  min-width: 0;
+  line-height: 1.4;
+}
+/* Copy-the-address, not open-the-address: an Atom feed opened in a browser is
+   raw XML, which reads as a page of rubbish. The address is for a reader. */
+.alert-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.alert-tag--button {
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+.alert-tag--button:hover {
+  filter: brightness(0.95);
+}
+.alert-link {
+  font-size: 0.72rem;
+  color: var(--muted);
 }
 /* The "are you sure" step before unsubscribing.
    Amber, not money-red: red in this app means "this costs more", and a

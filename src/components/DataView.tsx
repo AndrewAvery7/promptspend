@@ -2,6 +2,9 @@ import type { Catalog } from '@/lib/pricing/catalog';
 import { PRICING_SCOPE, REPO_URL } from '@/config';
 import { AlertsPanel } from '@/components/AlertsPanel';
 
+/** GitHub's Atom feed of commits touching the published catalog. */
+const FEED_URL = `${REPO_URL}/commits/main/public/data/pricing.json.atom`;
+
 interface DataViewProps {
   catalog: Catalog;
   theme: 'light' | 'dark';
@@ -100,18 +103,37 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                 </h4>
                 <p>
                   Every change to the catalog is a commit to one file, and GitHub publishes an Atom feed of
-                  those. Point a reader at it and you hear about a price change the morning it lands.
+                  those. Paste this address into a feed reader — Feedly, NetNewsWire, Thunderbird, Inoreader —
+                  and you hear about a price change the morning it lands.
                 </p>
-                {/* Opens raw Atom XML, which is a wall of text if you are not
-                    expecting it. Say so, and open it away from the app. */}
-                <a
-                  className="alert-tag"
-                  href={`${REPO_URL}/commits/main/public/data/pricing.json.atom`}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  ATOM FEED ↗
-                </a>
+                {/* Copy, not open. Opening an Atom feed in a browser shows raw
+                    XML, which reads as a page of rubbish and is nobody's goal:
+                    the address is meant to be pasted into a reader. The link
+                    survives for anyone who does want to look, labelled as what
+                    it is rather than as an invitation. */}
+                <div className="alert-actions">
+                  <button
+                    type="button"
+                    className="alert-tag alert-tag--button"
+                    onClick={() => {
+                      void navigator.clipboard
+                        .writeText(FEED_URL)
+                        .then(() => onToast('Feed address copied'))
+                        .catch(() => onToast('Could not copy — the address is in the link beside this'));
+                    }}
+                  >
+                    COPY FEED ADDRESS
+                  </button>
+                  <a
+                    className="alert-link"
+                    href={FEED_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    title="Opens raw XML — this is for a feed reader, not for reading in a browser"
+                  >
+                    view raw XML ↗
+                  </a>
+                </div>
               </article>
 
               <article className="alert-option">
