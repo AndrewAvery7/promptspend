@@ -1262,15 +1262,19 @@ table.catalog tbody tr:hover {
    column and the form takes the other, which brings the two sides level. */
 .alert-grid--live {
   grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
-  align-items: start;
+  /* `stretch` is the grid default and is deliberately not overridden: it makes
+     both columns end on the same line whichever one happens to be taller. */
 }
 .alert-stack {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  /* Without this the stack stretches its children to equal heights and the
-     column of short cards grows to match the form beside it. */
-  align-self: start;
+  height: 100%;
+}
+/* Whichever column is shorter absorbs the difference in its last card, so the
+   two sides finish level without either growing a gap below it. */
+.alert-stack > :last-child {
+  flex: 1 1 auto;
 }
 .alert-option--live {
   background: var(--surface-2);
