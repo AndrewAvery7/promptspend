@@ -59,7 +59,7 @@ shipping a package next week.
   **~700 tokens**. The README figure is asserted against the actual manifest.
   See [mcp/README.md](mcp/README.md).
 
-- **`verify / mcp`** in CI: typecheck, 21 tests, the footprint budget, a bundle,
+- **`verify / mcp`** in CI: typecheck, 22 tests, the footprint budget, a bundle,
   and a startup gate that spawns the built binary and speaks MCP to it. That last
   one exists because it caught three faults everything upstream called fine —
   `tsc` does not rewrite `paths`, Node's ESM loader needs the `.js` extensions
