@@ -97,6 +97,24 @@ shipping a package next week.
 
 ### Fixed
 
+- **Every model in the published catalog claimed its price changed the same
+  morning.** All 70 rows carried `provenance.lastChanged: 2026-08-02`, including
+  the twelve whose `lastVerified` is pinned by a hand-written override to the
+  day before, and including models the pricing changelog records no 08-02 change
+  for at all. Two faults, one visible symptom. `mergeCatalog` fell back to
+  today's date whenever the published row carried no `lastChanged` — which was
+  every row, the first time the run met a catalog written before the field
+  existed — so the migration stamped the entire catalog instead of leaving the
+  history it did not know. And it decided "changed" with its own comparison of
+  `input` and `output`, while the changelog compared all thirteen pricing
+  fields: a cached-input or long-context move was reported as a **Price** change
+  and simultaneously left `lastChanged` on the old date. The date is now carried
+  forward untouched unless `pricingChanged` — the changelog's own comparison,
+  exported from `scripts/lib/diff.ts` so a second opinion cannot form — says the
+  model's rates moved, and a row published without the field keeps none rather
+  than being given a date that asserts a change nobody made. This is the field
+  the whole project rests on: one that reads "changed today" for everything
+  carries less information than an empty column, and it reads as confidence.
 - **A long install command in the new panel pushed the page sideways at 320px.**
   Grid children default to `min-width: auto`, so the column refused to shrink
   below one unbreakable token and widened the whole data grid. The browser suite

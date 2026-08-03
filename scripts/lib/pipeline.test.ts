@@ -339,6 +339,122 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(sonnet.provenance.lastChanged).toBe('2026-07-01');
   });
 
+  // The bug this guards: `lastChanged` was stamped with today for every model
+  // on every run, so the published catalog claimed all 70 rows moved the same
+  // morning. Provenance is the whole point of this project — a freshness date
+  // that is true of everything is true of nothing.
+  it('leaves every other model alone when a single price moves', () => {
+    const cold = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt: new Date('2026-07-01T06:00:00.000Z'),
+    });
+
+    // Distinct, hand-written dates, so "untouched" has to mean these exact
+    // values — not a date today's run happens to regenerate for everyone.
+    const published: PricingCatalog = {
+      ...cold.catalog,
+      models: cold.catalog.models.map((m) => ({
+        ...m,
+        provenance: {
+          ...m.provenance,
+          lastVerified: '2026-07-31',
+          lastChanged: m.id === 'claude-sonnet-5' ? '2026-03-04' : '2026-05-20',
+        },
+      })),
+    };
+
+    // Exactly one model's output rate moves. Nothing else about the run differs.
+    const oneMoved = litellm.map((rate) =>
+      rate.id === 'claude-sonnet-5' ? { ...rate, outputPerMillion: 18 } : rate,
+    );
+    const { catalog } = mergeCatalog({
+      litellm: oneMoved,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: published,
+      generatedAt: new Date('2026-08-15T06:00:00.000Z'),
+    });
+
+    for (const model of catalog.models) {
+      // Every model was re-checked today; only one of them moved.
+      expect(model.provenance.lastVerified).toBe('2026-08-15');
+      expect(model.provenance.lastChanged).toBe(model.id === 'claude-sonnet-5' ? '2026-08-15' : '2026-05-20');
+    }
+  });
+
+  it('counts a cache rate moving as a change, exactly as the changelog does', () => {
+    // `lastChanged` used to be decided by its own comparison of `input` and
+    // `output` only. A cached-input move was reported as a **Price** change in
+    // the changelog and simultaneously left `lastChanged` on the old date. Both
+    // now read the same field list.
+    const first = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt: new Date('2026-07-01T06:00:00.000Z'),
+    });
+    const cacheMoved = litellm.map((rate) =>
+      rate.id === 'moonshot-kimi-k2.6' ? { ...rate, cachedInputPerMillion: 0.2 } : rate,
+    );
+    const second = mergeCatalog({
+      litellm: cacheMoved,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: first.catalog,
+      generatedAt: new Date('2026-08-15T06:00:00.000Z'),
+    });
+
+    const kimi = second.catalog.models.find((m) => m.id === 'moonshot-kimi-k2.6')!;
+    expect(diffCatalogs(first.catalog, second.catalog).changed.map((c) => c.field)).toEqual(['cachedInput']);
+    expect(kimi.provenance.lastChanged).toBe('2026-08-15');
+    expect(second.catalog.models.find((m) => m.id === 'claude-sonnet-5')!.provenance.lastChanged).toBe(
+      '2026-07-01',
+    );
+  });
+
+  it('does not invent a lastChanged for a row published without one', () => {
+    // Rows written before the field existed carry no date. Filling one in with
+    // today would assert a change that never happened — the exact way the
+    // published catalog came to claim all 70 models moved on the same day.
+    const previous: PricingCatalog = {
+      schemaVersion: SCHEMA_VERSION,
+      generatedAt: '2026-07-31T06:00:00.000Z',
+      providers: ALLOWLIST.providers,
+      models: [
+        {
+          id: 'claude-sonnet-5',
+          providerId: 'anthropic',
+          displayName: 'Claude Sonnet 5',
+          status: 'current',
+          contextWindow: 1_000_000,
+          pricing: { input: 3, output: 15 },
+          tokenizer: { kind: 'approx', charsPerToken: 3.6, cjkCharsPerToken: 1.5 },
+          capabilities: { reasoning: true, vision: true },
+          provenance: { source: 'litellm', lastVerified: '2026-07-31' },
+        },
+      ],
+    };
+    const { catalog } = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous,
+      generatedAt: new Date('2026-08-15T06:00:00.000Z'),
+    });
+
+    const sonnet = catalog.models.find((m) => m.id === 'claude-sonnet-5')!;
+    expect(sonnet.provenance.lastVerified).toBe('2026-08-15');
+    expect(sonnet.provenance.lastChanged).toBeUndefined();
+    expect(validateCatalog(catalog)).toEqual([]);
+  });
+
   it('carries cache writes, batch discounts and long-context tiers from an override', () => {
     const { catalog } = mergeCatalog({
       litellm,

@@ -100,6 +100,18 @@ function at(value: unknown, path: string): unknown {
   }, value);
 }
 
+/**
+ * Did a published rate actually move? This is the same comparison the changelog
+ * makes, exported so `mergeCatalog` can stamp `provenance.lastChanged` from it
+ * rather than keeping a second opinion about what "changed" means. A narrower
+ * copy in the merge (it compared `input` and `output` only) meant a cache rate
+ * or a long-context tier could move, be reported as a **Price** change in the
+ * changelog, and still leave `lastChanged` sitting on an older date.
+ */
+export function pricingChanged(before: Model['pricing'], after: Model['pricing']): boolean {
+  return PRICING_FIELDS.some((path) => !Object.is(at(before, path), at(after, path)));
+}
+
 export function diffCatalogs(previous: PricingCatalog | undefined, next: PricingCatalog): CatalogDiff {
   const before = new Map((previous?.models ?? []).map((m) => [m.id, m]));
   const after = new Map(next.models.map((m) => [m.id, m]));

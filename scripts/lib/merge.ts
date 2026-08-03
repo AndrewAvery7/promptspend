@@ -17,6 +17,7 @@
  */
 import type { Model, PricingCatalog } from '../../src/lib/pricing/types';
 import { SCHEMA_VERSION } from '../../src/lib/pricing/types';
+import { pricingChanged } from './diff';
 import {
   comparisonKey,
   matchFamily,
@@ -128,8 +129,6 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     }
 
     // Rung 4: sanity rules against yesterday's published numbers.
-    const ratesMoved =
-      before !== undefined && (before.pricing.input !== input_ || before.pricing.output !== output);
     if (before) {
       const inputMove = relativeGap(before.pricing.input, input_);
       const outputMove = relativeGap(before.pricing.output, output);
@@ -153,9 +152,34 @@ export function mergeCatalog(input: MergeInput): MergeResult {
         cjkCharsPerToken: 1.5,
       };
 
+    const pricing: Model['pricing'] = {
+      input: input_,
+      output,
+      ...(cachedInput !== undefined ? { cachedInput } : {}),
+      ...(override?.pricing?.cacheWrite !== undefined ? { cacheWrite: override.pricing.cacheWrite } : {}),
+      ...(override?.pricing?.batchDiscount !== undefined
+        ? { batchDiscount: override.pricing.batchDiscount }
+        : {}),
+      ...(override?.pricing?.intro ? { intro: override.pricing.intro } : {}),
+      ...(override?.pricing?.longContext ? { longContext: override.pricing.longContext } : {}),
+    };
+
     // "Last changed" is what the freshness badge should actually show: the day
-    // the numbers moved, not the day a job happened to run.
-    const lastChanged = !before ? isoDate : ratesMoved ? isoDate : (before.provenance.lastChanged ?? isoDate);
+    // the numbers moved, not the day a job happened to run. So it is carried
+    // forward untouched unless this model's own pricing differs from what is
+    // published — and "differs" is `pricingChanged`, the same comparison the
+    // changelog uses, so the two cannot drift apart.
+    //
+    // Note what is deliberately absent: a `?? isoDate` fallback. A published
+    // row that carries no `lastChanged` (one written before the field existed,
+    // say) keeps none. Stamping today on it would assert a change that did not
+    // happen, and a date that claims everything moved this morning is worth
+    // less than an empty field.
+    const lastChanged = !before
+      ? isoDate
+      : pricingChanged(before.pricing, pricing)
+        ? isoDate
+        : before.provenance.lastChanged;
 
     const model: Model = {
       id,
@@ -166,17 +190,7 @@ export function mergeCatalog(input: MergeInput): MergeResult {
         prettyName(feed?.sourceKey ?? id, family?.stripPrefix ?? undefined),
       status: override?.status ?? before?.status ?? 'current',
       contextWindow: override?.contextWindow ?? feed?.contextWindow ?? before?.contextWindow ?? 128_000,
-      pricing: {
-        input: input_,
-        output,
-        ...(cachedInput !== undefined ? { cachedInput } : {}),
-        ...(override?.pricing?.cacheWrite !== undefined ? { cacheWrite: override.pricing.cacheWrite } : {}),
-        ...(override?.pricing?.batchDiscount !== undefined
-          ? { batchDiscount: override.pricing.batchDiscount }
-          : {}),
-        ...(override?.pricing?.intro ? { intro: override.pricing.intro } : {}),
-        ...(override?.pricing?.longContext ? { longContext: override.pricing.longContext } : {}),
-      },
+      pricing,
       tokenizer,
       capabilities: override?.capabilities ??
         family?.capabilities ??
@@ -184,7 +198,7 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       provenance: {
         source,
         lastVerified: override?.lastVerified ?? isoDate,
-        lastChanged,
+        ...(lastChanged ? { lastChanged } : {}),
         ...(override?.verifiedUrl ? { verifiedUrl: override.verifiedUrl } : {}),
         ...(reasons.length > 0 ? { needsReview: true, reviewNote: reasons.join('; ') } : {}),
       },
