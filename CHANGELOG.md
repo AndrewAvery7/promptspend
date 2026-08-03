@@ -219,6 +219,24 @@ shipping a package next week.
   client that trusts `serverInfo` has no way to notice. **0.1.3** corrects it and
   adds the test that makes the drift impossible, verified by reinstating the
   mismatch and confirming a red suite.
+- **Ten `undici` advisories, pinned open by the test toolchain.** Two high and
+  eight medium, in `worker/` and `api/`, all fixed upstream in undici 7.29.0 —
+  which nothing could install, because `@cloudflare/vitest-pool-workers` pulls
+  `miniflare`, and miniflare pins undici to exactly `7.28.0`. Every package
+  involved was already on its latest published version, so there was no upgrade
+  to take and Dependabot's security job was failing rather than opening a pull
+  request: it was correctly reporting that it could not construct a fix.
+
+  Worth stating precisely, because the severity reads worse than the exposure:
+  `npm ls undici --omit=dev` is **empty in both packages**. It reaches the tree
+  only through the local test runner, never the deployed Worker, which uses the
+  Cloudflare runtime's own fetch. Nothing vulnerable was ever served.
+
+  Resolved with an `overrides` entry forcing 7.29.0 in both. The exact pin
+  suggested miniflare wanted that version specifically, so this was tested
+  rather than assumed: 84 worker tests and 29 API tests pass unchanged against
+  the newer undici. Remove the override once miniflare relaxes the pin.
+
 - ESLint no longer walks `.claude`. A git worktree lands there as a complete
   second copy of the repository, and the path-scoped override that gives the
   service worker its globals matches `public/sw.js` but not
