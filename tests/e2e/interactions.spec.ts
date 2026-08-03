@@ -247,3 +247,46 @@ test('the Compare shortlist and the Estimate cards report the same monthly cost'
     expect(card!.total.replace(/\s+/g, ''), `${row.name} disagrees between the two pages`).toContain(figure);
   }
 });
+
+/**
+ * The shortlist has to be on screen while the chart is being used.
+ *
+ * It was added to the hero, above the chart, which meant clicking a dot changed
+ * a panel that had already scrolled out of the window: the reader made a choice
+ * and saw no consequence, which is the exact failure the panel was added to
+ * fix. The two now share a row and the panel is sticky.
+ *
+ * Asserted at the moment it matters — scrolled to the bottom of the plot, where
+ * the cheap models are and where the panel had furthest to fall.
+ */
+test('the shortlist stays on screen, and updates, while the chart is in use', async ({ page, viewport }) => {
+  // Only where the two-column layout applies. Under 1080px the panel is meant
+  // to stack below the chart, and asserting otherwise would be asserting the
+  // opposite of the design at three of the four viewports.
+  test.skip((viewport?.width ?? 0) < 1080, 'single column below 1080px, by design');
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Compare', exact: true }).click();
+
+  const side = page.locator('.compare-layout__side');
+  const map = page.locator('.value-map');
+  await expect(side).toBeVisible();
+
+  // Side by side, not stacked, at this width.
+  const sideBox = (await side.boundingBox())!;
+  const mapBox = (await map.boundingBox())!;
+  expect(sideBox.x, 'the shortlist should sit beside the chart').toBeGreaterThanOrEqual(
+    mapBox.x + mapBox.width - 2,
+  );
+
+  // Scroll to the bottom of the plot and confirm the panel came along.
+  await map.evaluate((el) => {
+    window.scrollTo({ top: el.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 40 });
+  });
+  await expect(side, 'the shortlist must stay visible while the chart is').toBeInViewport();
+
+  // Toggling a dot from down here must change the list, in view.
+  const before = await page.locator('.shortlist li').count();
+  await page.locator('.value-map svg g[aria-label*="In your estimate"]').first().click();
+  await expect(page.locator('.shortlist li')).toHaveCount(before - 1);
+  await expect(side).toBeInViewport();
+});

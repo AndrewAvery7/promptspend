@@ -32,35 +32,38 @@ export function CompareView({
 
   return (
     <section aria-labelledby="compare-heading">
-      {/* This page let you assemble a shortlist and then showed you none of its
-          money — the numbers were a tab away, on Estimate. The chart says where
-          a model sits against the field; this panel says what the ones you
-          picked actually cost, at the scale already set. */}
-      <div className="hero">
-        <div className="hero__copy">
-          <p className="eyebrow">Compare</p>
-          <h1 className="headline" id="compare-heading">
-            Price is a <em>{spread ? `${Math.round(spread.multiple)}×` : 'big'}</em> decision.
-          </h1>
-          {/* The multiple used to divide the priciest *output* rate by the cheapest
+      <p className="eyebrow">Compare</p>
+      <h1 className="headline" id="compare-heading">
+        Price is a <em>{spread ? `${Math.round(spread.multiple)}×` : 'big'}</em> decision.
+      </h1>
+      {/* The multiple used to divide the priciest *output* rate by the cheapest
           *input* rate, which produced a far larger and entirely meaningless
           number — nobody ever chooses between input and output. Both sides are
           now the same measure, and both are printed, so the arithmetic can be
           checked against the table below. */}
-          {spread && (
-            <p className="subhead">
-              On a blended rate — input weighted 75%, output 25% — <b>{spread.priciest.displayName}</b> costs{' '}
-              {formatRate(spread.priciestRate)}/M against <b>{spread.cheapest.displayName}</b> at{' '}
-              {formatRate(spread.cheapestRate)}/M. The same measure on both sides, so the multiple means
-              something.
-            </p>
-          )}
-          <p className="subhead">
-            Every model we track, mapped by what it costs. Choose a dot or a table row to add it to your
-            estimate, and sort the table on any column.
-          </p>
+      {spread && (
+        <p className="subhead">
+          On a blended rate — input weighted 75%, output 25% — <b>{spread.priciest.displayName}</b> costs{' '}
+          {formatRate(spread.priciestRate)}/M against <b>{spread.cheapest.displayName}</b> at{' '}
+          {formatRate(spread.cheapestRate)}/M. The same measure on both sides, so the multiple means
+          something.
+        </p>
+      )}
+      <p className="subhead">
+        Every model we track, mapped by what it costs. Choose a dot or a table row to add it to your estimate,
+        and sort the table on any column.
+      </p>
+      {/* The chart and the shortlist share a row, and the shortlist is sticky.
+          They were stacked: the panel sat in the hero and the chart below it,
+          so by the time you were clicking dots the numbers you were changing
+          had scrolled off the top of the window. Selecting a model and not
+          seeing what it costs is the whole failure this panel was added to
+          fix, reintroduced by where it was put. */}
+      <div className="compare-layout">
+        <div className="compare-layout__main">
+          <ValueMap catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} />
         </div>
-        <aside className="hero__aside" aria-labelledby="shortlist-title">
+        <aside className="hero__aside compare-layout__side" aria-labelledby="shortlist-title">
           <p className="hero__aside-eyebrow">Your shortlist</p>
           <h2 className="hero__aside-title" id="shortlist-title">
             {rows.length > 0 ? 'What your picks cost' : 'Nothing picked yet'}
@@ -100,7 +103,6 @@ export function CompareView({
         </aside>
       </div>
 
-      <ValueMap catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} />
       <CatalogTable catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} />
     </section>
   );

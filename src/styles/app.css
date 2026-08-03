@@ -553,6 +553,41 @@ body.tour-active .main {
   font-size: 0.76rem;
 }
 
+/* Compare's working row: the chart on the left, the shortlist beside it.
+ *
+ * They used to be stacked, which meant clicking a dot changed a panel that had
+ * already scrolled off the top of the window — the reader made a choice and saw
+ * no consequence. Side by side, the cause and the effect are in one view. */
+.compare-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 22px;
+  align-items: start;
+}
+.compare-layout > * {
+  min-width: 0;
+}
+.compare-layout__side {
+  /* Matches `.value-map`'s own margin so the two tops line up. */
+  margin-top: 26px;
+  /* Sticky, because the chart is taller than the panel: without this the
+   * shortlist scrolls away again as soon as you reach the lower half of the
+   * plot, which is where the cheap models are. 84px clears the sticky header. */
+  position: sticky;
+  top: 84px;
+}
+@media (max-width: 1080px) {
+  .compare-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  /* Stacked, sticky would pin the panel over the chart it belongs to. */
+  .compare-layout__side {
+    position: static;
+    margin-top: 18px;
+  }
+}
+
 /* The shortlist on Compare: name left, monthly cost right, cheapest first —
  * the same order the cost cards use, so the two pages agree at a glance. */
 .shortlist {
