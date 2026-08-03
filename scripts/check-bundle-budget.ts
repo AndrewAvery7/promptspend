@@ -20,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ASSETS = resolve(ROOT, 'dist/assets');
+const README = resolve(ROOT, 'README.md');
 
 /** Gzipped kilobytes. Raise deliberately, with a note about what bought it. */
 const BUDGETS = {
@@ -72,6 +73,30 @@ async function main(): Promise<void> {
     console.error('✗ no tokenizer chunk found — it may have been inlined into the initial bundle');
     failed = true;
   }
+
+  /**
+   * The README badge has to match what was just measured.
+   *
+   * It claimed 74 KB while the real payload was 80.8 — stale since some commit
+   * nobody can name, because a hand-written number in a README has nothing
+   * checking it. That is the same failure as the test count badge and the
+   * `docs/` totals: a figure that was true once and quietly stopped being so.
+   * The script holding the measurement is the only thing that can keep it
+   * honest, so it does.
+   */
+  const badge = /initial%20payload-(\d+)%20KB%20gzip/.exec(await readFile(README, 'utf8'));
+  const claimed = badge ? Number(badge[1]) : null;
+  const measured = Math.round(initialJs);
+  if (claimed === null) {
+    console.error('✗ the README has no initial-payload badge to check');
+    failed = true;
+  } else if (claimed !== measured) {
+    console.error(`✗ README badge says ${claimed} KB, the build measures ${measured} KB — update the badge`);
+    failed = true;
+  } else {
+    console.log(`✓ README badge      ${claimed} KB, matching the build`);
+  }
+
   if (failed) process.exitCode = 1;
 }
 
