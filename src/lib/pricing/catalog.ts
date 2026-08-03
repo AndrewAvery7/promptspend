@@ -49,12 +49,22 @@ export class Catalog {
     return this.models.filter((m) => m.aliasOf === id);
   }
 
-  /** The date the published rates last actually moved. */
-  pricesLastChanged(): string {
+  /**
+   * The date the published rates last actually moved, or null while no move
+   * has been recorded.
+   *
+   * Null is a real answer, not a missing one. This used to fall back to
+   * `generatedAt`, which meant a catalog carrying no change history displayed
+   * the build date — the header announced a price change every morning the
+   * site was rebuilt, and it was never wrong-looking enough for anyone to
+   * check. Between a date that is always today and an admission that nothing
+   * has moved yet, only one of them tells the reader anything.
+   */
+  pricesLastChanged(): string | null {
     const dates = this.models
       .map((m) => m.provenance.lastChanged)
       .filter((d): d is string => typeof d === 'string');
-    return dates.sort().at(-1) ?? this.generatedAt.toISOString().slice(0, 10);
+    return dates.sort().at(-1) ?? null;
   }
 
   /** The date the sources were last successfully checked, if we know it. */

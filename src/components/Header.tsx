@@ -14,7 +14,7 @@ interface HeaderProps {
   view: ViewId;
   onView: (view: ViewId) => void;
   /** The day a published rate last actually moved. */
-  pricesChangedOn: string;
+  pricesChangedOn: string | null;
   /** The day the sources were last checked without a problem, if known. */
   sourcesCheckedOn: string | null;
   degraded: boolean;
@@ -129,7 +129,7 @@ export function Header(props: HeaderProps) {
         <div className={`freshness${props.degraded ? ' freshness--degraded' : ''}`}>
           <span className="freshness__dot" />
           <span className="freshness__text">
-            <b>prices last changed</b> {props.pricesChangedOn}
+            <b>prices last changed</b> {props.pricesChangedOn ?? 'not yet recorded'}
             {props.sourcesCheckedOn && (
               <>
                 {' · '}

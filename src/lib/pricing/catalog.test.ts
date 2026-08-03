@@ -250,6 +250,21 @@ describe('Catalog', () => {
     expect(dated.sourcesLastChecked()).toBeNull();
   });
 
+  // This used to fall back to `generatedAt`. A catalog carrying no change
+  // history therefore reported the build date, so the site announced a price
+  // change every morning it was rebuilt and looked plausible doing it.
+  it('says nothing rather than today when no change has been recorded', () => {
+    const undated = new Catalog({
+      ...CATALOG,
+      generatedAt: '2026-09-30T06:00:00.000Z',
+      models: CATALOG.models.map(({ provenance: { lastChanged: _unknown, ...provenance }, ...m }) => ({
+        ...m,
+        provenance,
+      })),
+    });
+    expect(undated.pricesLastChanged()).toBeNull();
+  });
+
   it('reads the sync manifest when one is supplied', () => {
     const withHealth = new Catalog(CATALOG, {
       schemaVersion: 1,

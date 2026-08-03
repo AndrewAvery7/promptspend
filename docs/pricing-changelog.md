@@ -252,3 +252,17 @@ Every change the daily sync has published, newest last.
 - **Review** `zai-glm-5.1` — provenance.needsReview: true → —
 - **Review** `zai-glm-5.1` — provenance.reviewNote: OpenRouter disagrees (31%): $0.966/$3.036 vs $1.4/$4.4 → —
 - **Review** `zai-glm-5.1` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing
+
+## 2026-08-03
+
+_Manual correction, not a sync run._
+
+- **Corrected** `provenance.lastChanged` removed from all 70 models. Every row
+  carried `2026-08-02`, which was the date a migration ran rather than a date
+  any rate moved. This log is the evidence: of the 43 **Price** lines recorded
+  to that point, all 43 are a field going from absent to a value — a rate
+  gaining coverage, not a vendor changing one — and the 70 **Added** lines are
+  the cold start. No genuine price movement has been observed yet, so the field
+  is now empty rather than asserting a change nobody made. It will begin
+  accumulating from the next real move. No price, no source and no verification
+  date was altered; the catalog fingerprint is unchanged at `4a97d95b2d1e26c0`.

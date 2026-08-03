@@ -27,6 +27,14 @@ export default tseslint.config(
       // Playwright's own output: traces, screenshots and a static HTML report.
       'test-results',
       'playwright-report',
+      // Git worktrees, which land here as a complete second copy of the
+      // repository nested inside the first. Linting it reports every problem
+      // twice and, worse, reports false ones: the path-scoped override that
+      // gives the service worker its globals matches `public/sw.js` and not
+      // `.claude/worktrees/<branch>/public/sw.js`, so a checked-out branch
+      // failed the lint with twenty-one undefined-global errors in a file that
+      // is perfectly fine where it actually lives.
+      '.claude',
     ],
   },
   js.configs.recommended,

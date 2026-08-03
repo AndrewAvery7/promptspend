@@ -115,6 +115,40 @@ shipping a package next week.
   than being given a date that asserts a change nobody made. This is the field
   the whole project rests on: one that reads "changed today" for everything
   carries less information than an empty column, and it reads as confidence.
+- **The published catalog still carried those dates, and the fix would have
+  preserved them forever.** Stamping correctly from now on does not unstamp what
+  already shipped: `mergeCatalog` carries `lastChanged` forward untouched when
+  rates hold, so all 70 fabricated dates would have persisted until each model
+  independently moved. `provenance.lastChanged` is therefore removed from every
+  published row. The pricing changelog is the evidence, and it is unambiguous:
+  of the 43 **Price** lines recorded to date, all 43 are a field going from
+  absent to a value — a rate gaining coverage, not a vendor changing one — and
+  the 70 **Added** lines are the cold start. No genuine price movement has ever
+  been observed, so no date can honestly be backfilled; the field starts
+  accumulating from the next real move. The catalog fingerprint is unchanged at
+  `4a97d95b2d1e26c0`, which is the proof that no price, source or verification
+  date was touched — `catalogHash` deliberately excludes `lastChanged`.
+- **`pricesLastChanged()` fell back to the build date, so the display layer told
+  the same lie independently.** With no model carrying a date it returned
+  `generatedAt` — meaning the header, the footer, the Data & Alerts panel and
+  the `PRICES CHANGED` pill on the results panel would have announced a fresh
+  price change every morning the site was rebuilt, regardless of the catalog.
+  Removing the bad data alone would not have fixed it; it would have moved it.
+  The method now returns `null`, and each of the five surfaces states plainly
+  that no change has been recorded, in the register that surface uses.
+- **Nothing was checking that the provenance dates were possible.** `lastChanged`
+  after `lastVerified` says a price moved after the last time anyone looked at
+  it. Twelve rows shipped in exactly that state. The schema validator could not
+  catch it — both fields are individually valid dates and only their
+  relationship is impossible — so `validate:catalog` now asserts it directly and
+  fails the build with the offending ids. Verified by reinstating the shipped
+  contradiction and confirming a non-zero exit.
+- ESLint no longer walks `.claude`. A git worktree lands there as a complete
+  second copy of the repository, and the path-scoped override that gives the
+  service worker its globals matches `public/sw.js` but not
+  `.claude/worktrees/<branch>/public/sw.js` — so a checked-out branch failed the
+  lint with twenty-one undefined-global errors in a file that is fine where it
+  actually lives.
 - **A long install command in the new panel pushed the page sideways at 320px.**
   Grid children default to `min-width: auto`, so the column refused to shrink
   below one unbreakable token and widened the whole data grid. The browser suite

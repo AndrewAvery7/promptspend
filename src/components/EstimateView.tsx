@@ -474,7 +474,15 @@ export function EstimateView({
             <div className="panel__head">
               <h2 className="panel__title" id="results-title">
                 Your models, side by side
-                <span className="sync-chip">PRICES CHANGED {catalog.pricesLastChanged()}</span>
+                {/* The chip states a change or states that there has not been
+                    one. What it must never do is name a date to fill the space:
+                    "PRICES CHANGED <today>" on every build is the loudest way
+                    to be wrong on the busiest panel of the site. */}
+                <span className="sync-chip">
+                  {catalog.pricesLastChanged()
+                    ? `PRICES CHANGED ${catalog.pricesLastChanged()}`
+                    : 'NO PRICE CHANGE RECORDED'}
+                </span>
               </h2>
             </div>
             <CostCards
@@ -586,7 +594,7 @@ function downloadCsv(
   const preamble: unknown[][] = [
     ['PromptSpend estimate'],
     ['exported', new Date().toISOString()],
-    ['prices last changed', catalog.pricesLastChanged()],
+    ['prices last changed', catalog.pricesLastChanged() ?? 'none recorded'],
     ['sources last checked', catalog.sourcesLastChecked() ?? 'unknown'],
     ['scope', PRICING_SCOPE],
     ['cache-hit share assumed', `${Math.round(cachedShare * 100)}%`],

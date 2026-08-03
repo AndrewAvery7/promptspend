@@ -31,3 +31,8 @@ assets/.bed-looped.mp3
 # The MCP server's bundle. Built by `npm run build` in mcp/ and published to
 # npm from CI; committing it would put a generated 37 KB file in every diff.
 mcp/dist/
+
+# Claude Code's working directory. Git worktrees are created under
+# .claude/worktrees/<branch>, so this is a complete second copy of the
+# repository nested inside the first — never something to commit.
+.claude/

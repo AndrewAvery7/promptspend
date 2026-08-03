@@ -19,6 +19,34 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
+/**
+ * A price cannot change on a day nobody checked it.
+ *
+ * `lastVerified` is the day we last read the vendor's own page; `lastChanged`
+ * is the day the published rate moved. A row where the second is later than
+ * the first is not a judgement call about freshness — it is a contradiction,
+ * and it says the number moved after the last time anyone looked at it.
+ *
+ * Twelve rows shipped in exactly that state, because nothing here was checking.
+ * The schema validator cannot catch it: both fields are individually valid
+ * dates, and only their relationship is impossible.
+ */
+const contradictory = catalog.models
+  .filter((model) => {
+    const { lastChanged, lastVerified } = model.provenance;
+    return lastChanged !== undefined && lastChanged > lastVerified;
+  })
+  .map(
+    (model) =>
+      `${model.id}: changed ${model.provenance.lastChanged} but last verified ${model.provenance.lastVerified}`,
+  );
+
+if (contradictory.length > 0) {
+  console.error(`✗ ${contradictory.length} model(s) claim a price change after the last verification:`);
+  for (const problem of contradictory) console.error(`  - ${problem}`);
+  process.exit(1);
+}
+
 const flagged = catalog.models.filter((model) => model.provenance.needsReview).length;
 console.log(
   `✓ catalog valid — ${catalog.models.length} models, ${catalog.providers.length} providers, ` +

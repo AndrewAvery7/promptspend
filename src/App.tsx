@@ -262,7 +262,8 @@ function Workspace({ catalog }: { catalog: Catalog }) {
             <a href={COMPARE_INDEX_URL}>Comparisons</a> · <a href={DEVELOPER_HUB_URL}>Pricing API</a>
           </div>
           <div className="mono">
-            {catalog.primaryModels.length} models · prices last changed {catalog.pricesLastChanged()}
+            {catalog.primaryModels.length} models · prices last changed{' '}
+            {catalog.pricesLastChanged() ?? 'not yet recorded'}
             {catalog.sourcesLastChecked() ? ` · sources checked ${catalog.sourcesLastChecked()}` : ''}
           </div>
         </div>
