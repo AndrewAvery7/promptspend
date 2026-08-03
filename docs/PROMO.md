@@ -49,6 +49,23 @@ draw their whole core in PIL, because they are command-line tools and there was
 nothing to film. That is the difference worth understanding before copying their
 approach here.
 
+### The published cut shows a freshness date the site no longer displays
+
+Not a bug, and a deliberate decision not to re-cut. The film was captured on
+2026-08-02, when the catalog carried a fabricated `provenance.lastChanged` on
+every model, so three frames show it: the header (`prices last changed
+2026-08-02`), the results pill (`PRICES CHANGED 2026-08-02`) and the pipeline
+health panel. The data was corrected the next day — see the **Fixed** entries in
+`CHANGELOG.md` — and the site now reads `not yet recorded` until a rate actually
+moves.
+
+Every price in the video is still correct; only the provenance dates aged. The
+judgement was that a period artifact is not worth re-cutting and re-uploading,
+since GitHub's `user-attachments` URLs are immutable and re-embedding is manual.
+Worth knowing before the next rebuild: **re-capturing is enough to fix it** —
+`capture-ui.ts` reads the live built site, so the frames come back correct on
+their own with no edit to the video pipeline.
+
 ## Rebuilding it
 
 The order matters: the captions are checked against the catalog, and the catalog
