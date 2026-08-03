@@ -69,7 +69,12 @@ export const TOOLS = [
 
 export const SERVER_INFO = {
   name: 'promptspend',
-  version: '0.1.1',
+  // Kept in step with package.json by a test, because nothing else does it.
+  // 0.1.2 shipped reporting 0.1.1 from both `--version` and the MCP handshake:
+  // the package version was bumped and this literal was not, and every gate
+  // passed because none of them compared the two. A server that misreports its
+  // own version is the same defect this project exists to catch, one level up.
+  version: '0.1.3',
 } as const;
 
 export const INSTRUCTIONS =

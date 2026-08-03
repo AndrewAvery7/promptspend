@@ -1,5 +1,7 @@
+import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 import { Catalog } from '@/lib/pricing/catalog';
+import { SERVER_INFO } from './schema';
 import { compareModels } from '@/lib/engine/cost';
 import type { PricingCatalog } from '@/lib/pricing/types';
 import { estimateCost, findCheaper, getPrice, resolveModel } from './tools';
@@ -274,5 +276,19 @@ describe('the caveats the site publishes travel with the numbers', () => {
     ] as Record<string, unknown>[]) {
       expect(r.catalog_generated_at).toBe(AT);
     }
+  });
+});
+
+describe('the server describes itself accurately', () => {
+  // 0.1.2 shipped announcing 0.1.1, from `--version` and from the MCP
+  // handshake's serverInfo. The package version had been bumped and the
+  // literal in schema.ts had not, and every gate passed because not one of
+  // them compared the two. A client that trusts serverInfo has no way to
+  // notice, which is what makes it worth a test rather than a convention.
+  it('reports the version it was actually published as', async () => {
+    const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')) as {
+      version: string;
+    };
+    expect(SERVER_INFO.version).toBe(pkg.version);
   });
 });

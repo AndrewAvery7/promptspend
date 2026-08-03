@@ -207,10 +207,18 @@ shipping a package next week.
   become correct. It is now pasted from a live `get_price` call against the
   published package, including the `upstream_stale` field the hand-written
   version omitted, with a line noting that the date will age and the shape will
-  not. Same defect and same fix as the developer hub. Released as
-  **`@promptspend/mcp` 0.1.2** so the package page carries it too; the npm
-  readme is only replaced on publish, so until then the old example stands
-  there regardless of what the repository says.
+  not. Same defect and same fix as the developer hub. The npm readme is only
+  replaced on publish, so the corrected example needed a release to reach the
+  package page at all.
+- **0.1.2 shipped announcing itself as 0.1.1.** `SERVER_INFO.version` in
+  `schema.ts` is a literal and nothing read `package.json`, so bumping the
+  package left it behind — and `--version`, plus the `serverInfo` an MCP client
+  reads during the handshake, both reported the older number. Every gate passed,
+  because not one of them compared the two. A server misreporting its own
+  version is the same defect this project exists to catch, one level up, and a
+  client that trusts `serverInfo` has no way to notice. **0.1.3** corrects it and
+  adds the test that makes the drift impossible, verified by reinstating the
+  mismatch and confirming a red suite.
 - ESLint no longer walks `.claude`. A git worktree lands there as a complete
   second copy of the repository, and the path-scoped override that gives the
   service worker its globals matches `public/sw.js` but not
