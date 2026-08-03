@@ -118,14 +118,14 @@ were tests:
 
 The component tests run in **jsdom, which has no layout engine**. It cannot
 measure an element, so it cannot tell you whether the page scrolls sideways on a
-phone or whether a button is large enough to press. Those guarantees —
-no horizontal overflow from 320px, 24 × 24 minimum targets, no text below 12px —
-were verified by hand in a real browser at 320, 360, 390, 430, 768, 1024 and
-1280 px, and are **not** currently held by a test.
+phone or whether a button is large enough to press.
 
-Playwright plus axe would fix that and is the next investment. Until it exists,
-treat any layout or accessibility change as something to check in a browser
-rather than something CI will catch.
+Those particular guarantees are now held by the Playwright suite above, which is
+why layout regressions get caught rather than shipped. **Accessibility is the
+gap that remains**: nothing here runs axe, so contrast, focus order, ARIA
+correctness and screen-reader behaviour are not tested by anything. Treat an
+accessibility change as something to verify by hand, not something CI will
+catch — that is the next investment.
 
 ## CI
 

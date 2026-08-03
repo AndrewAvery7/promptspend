@@ -138,6 +138,11 @@ a health manifest written on every run, successful or not:
 https://promptspend.com/data/sync-status.json
 ```
 
+Right now the first of those reads **not yet recorded**, and that is correct rather than broken. No
+vendor has moved a price since this catalog's history began on 2026-08-01, so there is no date to show —
+and the alternative, quietly displaying the last build date, would announce a price change every morning
+nothing happened. An empty field you can trust beats a populated one you cannot.
+
 ## Use the data yourself
 
 There is a free, keyless, CORS-open API at **[promptspend.dev](https://promptspend.dev)** — no account, no
@@ -207,8 +212,8 @@ https://promptspend.com/data/pricing.json
       "tokenizer": { "kind": "tiktoken", "encoding": "o200k_base" },
       "provenance": {
         "source": "vendor", // vendor | litellm | openrouter
-        "lastVerified": "2026-08-01", // when it was checked
-        "lastChanged": "2026-08-01", // when the number last moved
+        "lastVerified": "2026-08-01", // when it was checked — always present
+        "lastChanged": "2026-08-01", // optional: when the number last moved
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       },
     },
@@ -219,6 +224,13 @@ https://promptspend.com/data/pricing.json
 Optional fields worth knowing: `aliasOf` marks an id that routes to another model (so it is not counted
 twice), `provenance.stale` marks a row upstream has stopped listing, and `provenance.needsReview` plus
 `reviewNote` carry an unresolved disagreement and both numbers involved.
+
+`provenance.lastChanged` is optional too, and **absent on every model today** — this catalog's recorded
+history starts on 2026-08-01 and no vendor has moved a price since, so there is no date to report. Read
+its absence as "no change on record", never as "unknown freshness": `lastVerified` answers that, and it
+is always there. A field that reported the last sync instead would read "changed today" every morning,
+which is the one failure a provenance catalog cannot afford — so it stays empty until a rate actually
+moves.
 
 ## Running it locally
 

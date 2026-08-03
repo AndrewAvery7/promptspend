@@ -115,7 +115,12 @@ Two things that look like missing models but are not:
 The header shows two dates, deliberately:
 
 - **Prices last changed** — the day a published rate actually moved. On a quiet
-  week this is _supposed_ to age.
+  week this is _supposed_ to age, and it currently reads **not yet recorded**,
+  which is also correct: no vendor has moved a price since this catalog's
+  history began on 2026-08-01, so there is no date to show. It stays empty until
+  one does. The field used to fall back to the build date, which meant the
+  header announced a price change every morning the site was rebuilt — an empty
+  field you can trust is worth more than a populated one you cannot.
 - **Sources last checked** — the last time the pipeline ran cleanly. This is the
   one that indicates a problem if it stops moving.
 

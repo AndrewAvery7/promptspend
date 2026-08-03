@@ -52,6 +52,23 @@ Retiring a model for good means adding its id to `retired` in the allowlist: a d
 shows both because "prices are stable" and "the job stopped running" are indistinguishable from a single
 date, and the second one is the failure worth catching.
 
+**`lastChanged` is optional, and absent is a real answer.** It is written only when `pricingChanged`
+— the same comparison the changelog uses, exported from `scripts/lib/diff.ts` so the two cannot form a
+second opinion — says that model's rates moved. A row published without it keeps none: there is
+deliberately no `?? today` fallback in `mergeCatalog`, and none in `Catalog.pricesLastChanged()`, which
+returns `null` rather than reaching for `generatedAt`.
+
+Both of those fallbacks existed, and together they put a fabricated `2026-08-02` on all 70 models — with
+twelve claiming a change one day _after_ their own `lastVerified`, which says the number moved after the
+last time anyone looked at it. Two invariants came out of it:
+
+- **A generator fix does not repair what it already published.** `lastChanged` is carried forward
+  untouched when rates hold, so correcting the stamping logic would have preserved every bad date
+  indefinitely. The published catalog had to be repaired separately.
+- **`validate:catalog` now fails the build when `lastChanged > lastVerified`**, naming the offending ids.
+  The schema validator cannot catch this — both fields are individually valid dates, and only their
+  relationship is impossible.
+
 ## The cost engine (`src/lib/engine/`)
 
 Pure TypeScript, no React, and the most heavily tested code in the repository. It is where a silent error

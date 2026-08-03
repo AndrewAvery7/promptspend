@@ -143,6 +143,22 @@ shipping a package next week.
   relationship is impossible — so `validate:catalog` now asserts it directly and
   fails the build with the offending ids. Verified by reinstating the shipped
   contradiction and confirming a non-zero exit.
+- **The documentation described a field that no longer appears.** The README's
+  catalog example, the developer hub's worked `curl` and its prose all presented
+  `provenance.lastChanged` as something a reader would get back — the hub going
+  as far as printing an example response, directly under the command that
+  returns something different. All three now mark it optional and say what its
+  absence means: no change on record, never unknown freshness, since
+  `lastVerified` answers that and is always present. `docs/ARCHITECTURE.md`
+  records the invariant and both lessons; `docs/TROUBLESHOOTING.md` explains the
+  empty field to anyone who lands there thinking it is broken. The OpenAPI
+  schema needed nothing — it already required only `source` and `lastVerified`.
+- **`docs/TESTING.md` contradicted itself about browser coverage.** One section
+  documents the Playwright suite in detail; another still said those same
+  guarantees were "not currently held by a test" and that Playwright "is the
+  next investment". The second was written before the suite landed and was never
+  revisited. Accessibility is the gap that actually remains — nothing runs axe —
+  and the section now says that instead.
 - ESLint no longer walks `.claude`. A git worktree lands there as a complete
   second copy of the repository, and the path-scoped override that gives the
   service worker its globals matches `public/sw.js` but not
