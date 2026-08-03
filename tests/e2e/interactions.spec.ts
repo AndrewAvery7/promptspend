@@ -205,3 +205,45 @@ test('a dot shows its details on hover and on keyboard focus', async ({ page }) 
   const name = ((await dot.getAttribute('aria-label')) ?? '').split(',')[0]!;
   expect(await tip.innerText()).toContain(name);
 });
+
+/**
+ * The shortlist on Compare must agree with the cost cards on Estimate.
+ *
+ * Compare used to let you assemble a selection and then show you none of its
+ * money, so the panel exists to answer "what do these cost" without changing
+ * page. It reads the same `estimator.rows` the cards do, and that is the point
+ * — two different numbers for the same model on two tabs of one site is the
+ * failure this whole project argues against, and it would look like a pricing
+ * error rather than a plumbing one.
+ */
+test('the Compare shortlist and the Estimate cards report the same monthly cost', async ({ page }) => {
+  await page.goto('/');
+
+  await page.getByRole('button', { name: 'Compare', exact: true }).click();
+  const items = page.locator('.shortlist li');
+  await expect(items.first()).toBeVisible();
+  const shortlist = await items.evaluateAll((nodes) =>
+    nodes.map((n) => ({
+      name: n.querySelector('.shortlist__name')?.textContent?.replace('CHEAPEST', '').trim() ?? '',
+      cost: n.querySelector('.shortlist__cost')?.textContent?.trim() ?? '',
+    })),
+  );
+  expect(shortlist.length, 'the default selection should populate the shortlist').toBeGreaterThan(1);
+
+  await page.getByRole('button', { name: 'Estimate', exact: true }).click();
+  await expect(page.locator('.cost-card__total').first()).toBeVisible();
+  const cards = await page.locator('.card-grid > *').evaluateAll((nodes) =>
+    nodes.map((n) => ({
+      name: n.querySelector('.cost-card__name')?.textContent?.trim() ?? '',
+      total: n.querySelector('.cost-card__total')?.textContent?.trim() ?? '',
+    })),
+  );
+
+  for (const row of shortlist) {
+    const card = cards.find((c) => c.name === row.name);
+    expect(card, `${row.name} is on Compare but not on Estimate`).toBeTruthy();
+    // The card prints "$723/mo" with the unit in a child; compare the figure.
+    const figure = row.cost.replace('/mo', '').trim();
+    expect(card!.total.replace(/\s+/g, ''), `${row.name} disagrees between the two pages`).toContain(figure);
+  }
+});

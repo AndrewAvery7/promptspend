@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
-import { formatContext, formatRate } from '@/lib/engine/format';
+import { formatContext, formatCount, formatMoney, formatRate } from '@/lib/engine/format';
+import type { ComparisonRow } from '@/lib/engine/cost';
 import { HelpTip, ReviewBadge } from './Disclosure';
 import { CountryTag } from './Flag';
 
@@ -11,32 +12,93 @@ interface CompareViewProps {
   onToggle: (id: string) => void;
 }
 
-export function CompareView({ catalog, selectedIds, onToggle }: CompareViewProps) {
+/** What the shortlist panel needs, on top of what the chart already takes. */
+interface ComparePageProps extends CompareViewProps {
+  rows: ComparisonRow[];
+  conversationsPerDay: number;
+  onOpenEstimate: () => void;
+}
+
+export function CompareView({
+  catalog,
+  selectedIds,
+  rows,
+  conversationsPerDay,
+  onOpenEstimate,
+  onToggle,
+}: ComparePageProps) {
   const spread = catalog.rateSpread();
+  const priciest = rows.length > 1 ? rows[rows.length - 1] : undefined;
 
   return (
     <section aria-labelledby="compare-heading">
-      <p className="eyebrow">Compare</p>
-      <h1 className="headline" id="compare-heading">
-        Price is a <em>{spread ? `${Math.round(spread.multiple)}×` : 'big'}</em> decision.
-      </h1>
-      {/* The multiple used to divide the priciest *output* rate by the cheapest
+      {/* This page let you assemble a shortlist and then showed you none of its
+          money — the numbers were a tab away, on Estimate. The chart says where
+          a model sits against the field; this panel says what the ones you
+          picked actually cost, at the scale already set. */}
+      <div className="hero">
+        <div className="hero__copy">
+          <p className="eyebrow">Compare</p>
+          <h1 className="headline" id="compare-heading">
+            Price is a <em>{spread ? `${Math.round(spread.multiple)}×` : 'big'}</em> decision.
+          </h1>
+          {/* The multiple used to divide the priciest *output* rate by the cheapest
           *input* rate, which produced a far larger and entirely meaningless
           number — nobody ever chooses between input and output. Both sides are
           now the same measure, and both are printed, so the arithmetic can be
           checked against the table below. */}
-      {spread && (
-        <p className="subhead">
-          On a blended rate — input weighted 75%, output 25% — <b>{spread.priciest.displayName}</b> costs{' '}
-          {formatRate(spread.priciestRate)}/M against <b>{spread.cheapest.displayName}</b> at{' '}
-          {formatRate(spread.cheapestRate)}/M. The same measure on both sides, so the multiple means
-          something.
-        </p>
-      )}
-      <p className="subhead">
-        Every model we track, mapped by what it costs. Choose a dot or a table row to add it to your estimate,
-        and sort the table on any column.
-      </p>
+          {spread && (
+            <p className="subhead">
+              On a blended rate — input weighted 75%, output 25% — <b>{spread.priciest.displayName}</b> costs{' '}
+              {formatRate(spread.priciestRate)}/M against <b>{spread.cheapest.displayName}</b> at{' '}
+              {formatRate(spread.cheapestRate)}/M. The same measure on both sides, so the multiple means
+              something.
+            </p>
+          )}
+          <p className="subhead">
+            Every model we track, mapped by what it costs. Choose a dot or a table row to add it to your
+            estimate, and sort the table on any column.
+          </p>
+        </div>
+        <aside className="hero__aside" aria-labelledby="shortlist-title">
+          <p className="hero__aside-eyebrow">Your shortlist</p>
+          <h2 className="hero__aside-title" id="shortlist-title">
+            {rows.length > 0 ? 'What your picks cost' : 'Nothing picked yet'}
+          </h2>
+          {rows.length === 0 ? (
+            <p>
+              Choose a dot on the chart, or a row in the table, and its monthly bill appears here — priced at
+              the workload already set on Estimate.
+            </p>
+          ) : (
+            <>
+              <ol className="shortlist">
+                {rows.map((row) => (
+                  <li key={row.model.id}>
+                    <span className="shortlist__name">
+                      {row.model.displayName}
+                      {row.isCheapest && <b className="shortlist__tag">CHEAPEST</b>}
+                    </span>
+                    <span className="shortlist__cost mono">{formatMoney(row.scaled.perMonth)}/mo</span>
+                  </li>
+                ))}
+              </ol>
+              {priciest && priciest.multipleOfCheapest > 1 && (
+                <p className="hero__aside-note">
+                  <b>{priciest.model.displayName}</b> costs {Math.round(priciest.multipleOfCheapest)}× the
+                  cheapest here — {formatMoney(priciest.deltaPerMonth)} more a month.
+                </p>
+              )}
+              <p className="hero__aside-note">
+                At {formatCount(conversationsPerDay)} conversations a day ·{' '}
+                <button type="button" className="linklike" onClick={onOpenEstimate}>
+                  Change the workload
+                </button>
+              </p>
+            </>
+          )}
+        </aside>
+      </div>
 
       <ValueMap catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} />
       <CatalogTable catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} />

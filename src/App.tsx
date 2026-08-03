@@ -239,6 +239,9 @@ function Workspace({ catalog }: { catalog: Catalog }) {
           <CompareView
             catalog={catalog}
             selectedIds={estimator.scenario.modelIds}
+            rows={estimator.rows}
+            conversationsPerDay={estimator.scenario.conversationsPerDay}
+            onOpenEstimate={() => setView('estimate')}
             onToggle={(id) => {
               const result = estimator.toggleModel(id);
               if (!result.ok && result.reason) showToast(result.reason);

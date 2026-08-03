@@ -14,8 +14,8 @@ is exactly one definition of "verified" and no way to publish past it.
 
 ## What the suite covers
 
-**572 tests in all**: 333 unit and integration tests in this package, 84 in
-`worker/`, 29 in `api/`, 22 in `mcp/`, and 104 browser tests across four
+**576 tests in all**: 333 unit and integration tests in this package, 84 in
+`worker/`, 29 in `api/`, 22 in `mcp/`, and 108 browser tests across four
 viewports. Those five figures are the whole suite and they sum to the total —
 an earlier revision claimed 533, which was neither the sum of its own list nor
 inclusive of `mcp/` at all. The
@@ -53,7 +53,7 @@ Two more packages, each with its own runtime, lockfile and CI job:
 | `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself.                |
 | `api/`    | 29    | The public pricing API: filters, ETags, CORS, CSV quoting, and that a catalog failing validation is refused rather than passed through.                                  |
 | `mcp/`    | 22    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, and that the server reports the version it was published as. |
-| Browser   | 104   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA. See below.                    |
+| Browser   | 108   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA. See below.                    |
 
 ## Layout is checked in a real browser
 
