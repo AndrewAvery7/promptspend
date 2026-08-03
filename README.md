@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
-    <img src="assets/logo.png" alt="PromptSpend" width="540">
+    <img src="assets/logo.png" alt="PromptSpend" width="417">
   </picture>
 </p>
 
@@ -28,7 +28,7 @@
 <!-- PROMO-VIDEO -->
 
 <p align="center">
-  <i>69 seconds &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
+  <i>1 minute 38 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
   &nbsp;·&nbsp;
   <a href="https://github.com/AndrewAvery7/promptspend/releases/latest/download/promptspend-promo.mp4">Download the MP4</a>
 </p>

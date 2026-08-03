@@ -1,12 +1,26 @@
 # The promo video
 
-`promptspend-promo.mp4` — 69 seconds, 1920×1080, shipped as a **release asset**
-rather than committed. At ~21 MB it would otherwise be by far the heaviest thing
+`promptspend-promo.mp4` — 1 minute 38, 1920×1080, shipped as a **release asset**
+rather than committed. At ~22 MB it would otherwise be by far the heaviest thing
 in the repository, and every rebuild would add another copy to history forever.
 
 ```
-[ AI hero shot 6.4s ] → [ real-UI core 60s ] → [ AI end card 3.6s ]
+[ AI hero shot 6.4s ] → [ real-UI core 89s ] → [ AI end card 3.6s ]
 ```
+
+## Reading time
+
+The first cut held each finished frame for about a second — enough to see a
+composition, not enough to read one. `HOLD` in `make-promo.py` now sets the
+settled time per scene, and it is deliberately uneven: the estimate and trust
+scenes carry several times more to read than the call to action, so a flat
+addition would have left the dense frames rushed and the sparse ones dawdling.
+
+The working figure is roughly 180 words per minute — the rate subtitle standards
+use for text the viewer has not seen before — discounted for the fact that most
+of each composition has already faded in and been read during the animated
+portion. Screenshots count as scanning rather than reading, but four cost cards
+still take longer to absorb than one headline.
 
 ## The rule that shapes it
 
@@ -40,7 +54,7 @@ npx vite preview --port 4173 --strictPort --host 127.0.0.1
 # 2. Capture the real interface (writes assets/promo-frames/)
 npx tsx tools/capture-ui.ts
 
-# 3. Render the 60s core (also checks the figures, and writes the overlays)
+# 3. Render the 89s core (also checks the figures, and writes the overlays)
 python tools/make-promo.py
 
 # 4. Stitch, with the two generative bookends and the music bed
@@ -85,6 +99,21 @@ generative is ever asked to render a figure, a word or an interface.
   the P off "PRICES LAST CHANGED". Capture `.panel:has(.health-grid)` instead.
 - **The lower third needs a scrim.** The hero clip is bright, busy particle
   motion; the tagline was legible in a still frame and lost in motion.
+- **A generated bed is shaped like music**, so it cannot simply be looped. This
+  one builds for 14s, holds flat to 62s, then resolves to silence. Crossfading
+  end onto start therefore joins the fade-out to the fade-in and drops 14 dB —
+  audible, and no crossfade curve rescues it, because the source really is quiet
+  at both ends. `stitch-promo.sh` scans the level in 4s windows, loops only the
+  steady middle, and uses `acrossfade` with the equal-power `qsin` curve rather
+  than the linear `tri` default. Two failures on the way: `-v error` suppresses
+  `volumedetect`'s output, so the scan silently found every window equally loud
+  and failed _open_; and fixing only the tail still crossfaded into the intro.
+- **A fixed canvas is a guess about text metrics.** `assets/logo.png` had 9px of
+  padding on the left and 167 on the right, so `align="center"` centred the
+  canvas and left the logo visibly off to one side. Both the README logo and the
+  end-card logo are now cropped to what was actually drawn and padded evenly, so
+  they centre wherever they are placed and on whichever font a machine falls
+  back to.
 - **The spread must be computed the site's way.** `Catalog.rateSpread` uses
   primary, non-stale, priced models — _not_ `status === 'current'`. Filtering on
   status gives 191× against the 218× the site's own Compare headline shows, in a

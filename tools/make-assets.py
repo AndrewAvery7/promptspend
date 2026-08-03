@@ -107,8 +107,32 @@ def draw_mark(draw, x, y, size, colour):
             draw.ellipse([cx - r, y + y_off * u - r, cx + r, y + y_off * u + r], fill=colour)
 
 
+def trim_to_content(img, pad):
+    """Crop to the drawn artwork, then pad it back symmetrically.
+
+    The canvas size was fixed while the artwork's width is not: `find_font`
+    walks a candidate list, so the wordmark is a different width on a machine
+    that has Poppins than on one falling back to Segoe UI or DejaVu. Here the
+    logo ended up 406px of artwork on a 582px canvas - 9px of padding on the
+    left and 167px on the right - so `<p align="center">` centred the canvas
+    and left the logo visibly off to one side in the README.
+
+    Cropping to what was actually drawn makes the file centre itself wherever
+    it is placed, on any machine, instead of depending on a guess about metrics.
+    """
+    bbox = img.getbbox()
+    if bbox is None:
+        return img
+    cropped = img.crop(bbox)
+    out = Image.new("RGBA", (cropped.width + pad * 2, cropped.height + pad * 2), (0, 0, 0, 0))
+    out.paste(cropped, (pad, pad))
+    return out
+
+
 def make_logo(theme, path):
-    w, h = 582 * SCALE, 120 * SCALE
+    # Generous canvas: it is cropped to the artwork below, so this only has to
+    # be large enough that nothing is clipped.
+    w, h = 720 * SCALE, 140 * SCALE
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
 
@@ -133,8 +157,14 @@ def make_logo(theme, path):
         fill=theme["muted"],
     )
 
-    img.resize((582, 120), Image.LANCZOS).save(path)
-    print(f"wrote {path}")
+    # Emitted at 2x the size it is displayed at, so it stays sharp on a HiDPI
+    # screen. The README sets the width to half of this; cropping to the artwork
+    # made the file smaller than the width it used to be given, and serving a
+    # 417px image at 540 would have traded one visible fault for another.
+    trimmed = trim_to_content(img, 8 * SCALE)
+    retina = (trimmed.width // (SCALE // 2), trimmed.height // (SCALE // 2))
+    trimmed.resize(retina, Image.LANCZOS).save(path)
+    print(f"wrote {path} ({retina[0]}x{retina[1]}, display at {retina[0] // 2}px)")
 
 
 def make_social_card(path):

@@ -59,14 +59,111 @@ BED_LEN=$(calc "$TOTAL - $MUSIC_START")
 
 echo "core=${CORE_LEN}s  xfade1@${OFF1}s  xfade2@${OFF2}s  music@${MUSIC_START}s  total=${TOTAL}s"
 
-# A bed shorter than the stretch it has to cover does not error: atrim just
-# yields what exists and the piece ends in silence. Fail loudly instead - a
-# quiet ending is exactly the kind of defect nobody notices until it ships.
+# A bed shorter than the stretch it has to cover does not error on its own:
+# atrim just yields what exists and the piece ends in silence. That is exactly
+# the kind of defect nobody notices until it ships, so it is handled here rather
+# than left to chance.
+#
+# Extending the scene holds so the text can actually be read pushed the run time
+# past the generated bed, which is the normal way this happens - the edit grows
+# after the music is bought. Rather than re-buy, the bed is crossfaded onto
+# itself. On a sustained ambient pad with no strong downbeat a 4s crossfade is
+# inaudible; on a track with a clear rhythmic pulse it would not be, so listen
+# to the join before trusting it.
+#
+# The curve is qsin (quarter sine), NOT the tri default. The two halves of a
+# loop join are uncorrelated audio, and a linear-amplitude fade sums them to
+# less than either - measured as a 4.5 dB dip in the middle of the join, which
+# is plainly audible as the music ducking. qsin is the equal-power curve and
+# holds the level flat across the same four seconds.
+XFADE_LOOP=4
+WINDOW=4       # level-scan resolution, seconds
+BODY_FLOOR=6   # a window is "steady" if within this many dB of the loudest
+
+# Measure mean level in WINDOW-second slices, and report the steady middle.
+#
+# This matters more than it looks. A generated track is shaped like a piece of
+# music: it builds at the start and settles at the end. Measured on this bed,
+# 0-14s runs 10 dB down while it builds, 16-62s is flat, and the last twelve
+# seconds fall away to nothing. Looping the whole file therefore crossfades the
+# fade-out onto the fade-in and drops 14 dB in the join - clearly audible, and
+# no crossfade curve can fix it, because the source really is quiet at both
+# ends. Only the steady middle is safe to repeat.
+#
+# Scanned rather than hard-coded so a different bed does not silently reintroduce
+# the dip: the numbers above are true of this track, not of music in general.
+steady_region() {
+  local file="$1" dur="$2" t max="" best
+  local -a starts levels
+  t=0
+  while awk "BEGIN{exit !($t < $dur - 1)}"; do
+    # NOT -v error: volumedetect prints its summary at info level, so quieting
+    # ffmpeg silently yields nothing and every window looks equally loud. That
+    # failed *open* - the scan reported the whole track as steady and put the
+    # join straight back into the fade. An unreadable window is now fatal.
+    best=$(ffmpeg -hide_banner -nostats -ss "$t" -t "$WINDOW" -i "$file" \
+             -af volumedetect -f null - 2>&1 |
+           sed -n 's/.*mean_volume: *\(-*[0-9.]*\) dB.*/\1/p' | tail -1)
+    if [ -z "$best" ]; then
+      echo "ERROR: could not measure the bed's level at ${t}s" >&2
+      exit 1
+    fi
+    starts+=("$t"); levels+=("$best")
+    if [ -z "$max" ] || awk "BEGIN{exit !($best > $max)}"; then max="$best"; fi
+    t=$(calc "$t + $WINDOW")
+  done
+  local threshold first="" last="" i
+  threshold=$(calc "$max - $BODY_FLOOR")
+  for i in "${!starts[@]}"; do
+    if awk "BEGIN{exit !(${levels[$i]} >= $threshold)}"; then
+      [ -z "$first" ] && first="${starts[$i]}"
+      last="${starts[$i]}"
+    fi
+  done
+  [ -z "$first" ] && { echo "0 $dur"; return; }
+  echo "$first $(calc "$last + $WINDOW")"
+}
+
 BED_HAVE=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$BED")
 if awk "BEGIN{exit !($BED_HAVE < $BED_LEN)}"; then
-  echo "ERROR: music bed is ${BED_HAVE}s but ${BED_LEN}s is needed" >&2
-  echo "       (total ${TOTAL}s minus music start ${MUSIC_START}s)" >&2
-  exit 1
+  read -r BODY_IN BODY_OUT <<<"$(steady_region "$BED" "$BED_HAVE")"
+  awk "BEGIN{exit !($BODY_OUT > $BED_HAVE)}" && BODY_OUT="$BED_HAVE"
+  BODY=$(calc "$BODY_OUT - $BODY_IN")
+  if awk "BEGIN{exit !($BODY <= $XFADE_LOOP * 2)}"; then
+    echo "ERROR: bed has no steady stretch longer than ${XFADE_LOOP}s to loop" >&2
+    exit 1
+  fi
+
+  # The FIRST segment keeps the natural intro - the bed is entering under a
+  # crossfade there anyway, and the build is exactly what that wants. Only the
+  # repeats start at the steady point.
+  LOOPED="$(dirname "$OUT")/.bed-looped.mp3"
+  COPIES=1
+  HAVE="$BODY_OUT"
+  while awk "BEGIN{exit !($HAVE < $BED_LEN)}"; do
+    COPIES=$((COPIES + 1))
+    HAVE=$(calc "$BODY_OUT + ($BODY - $XFADE_LOOP) * ($COPIES - 1)")
+  done
+  echo "bed is ${BED_HAVE}s, need ${BED_LEN}s - steady body ${BODY_IN}s..${BODY_OUT}s, looping ${COPIES}x"
+
+  INPUTS=""; FILTER=""; PREV="t0"
+  for i in $(seq 0 $((COPIES - 1))); do
+    INPUTS="$INPUTS -i $BED"
+    if [ "$i" = 0 ]; then
+      FILTER="${FILTER}[0:a]atrim=0:${BODY_OUT},asetpts=N/SR/TB[t0];"
+    else
+      FILTER="${FILTER}[${i}:a]atrim=${BODY_IN}:${BODY_OUT},asetpts=N/SR/TB[t${i}];"
+    fi
+  done
+  for i in $(seq 1 $((COPIES - 1))); do
+    FILTER="${FILTER}[${PREV}][t${i}]acrossfade=d=${XFADE_LOOP}:c1=qsin:c2=qsin[x${i}];"
+    PREV="x${i}"
+  done
+  # shellcheck disable=SC2086
+  ffmpeg -y -v error $INPUTS -filter_complex "${FILTER%;}" -map "[${PREV}]" \
+         -c:a libmp3lame -b:a 192k "$LOOPED"
+  BED="$LOOPED"
+  BED_HAVE=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$BED")
 fi
 echo "bed=${BED_HAVE}s covers ${BED_LEN}s needed"
 

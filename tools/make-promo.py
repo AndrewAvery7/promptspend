@@ -566,17 +566,47 @@ def scene_cta(fr, n):
 # past the animated length persists the final state while the real frame index
 # keeps advancing.
 #
-# Hold time follows reading burden: the pipeline and trust scenes carry the most
-# text, the saving scene the least - it is one number and wants to land, not
-# linger.
+# HOLD TIME
+#
+# The first cut held each finished frame for barely a second, which is enough to
+# see a composition and not enough to read one. These holds are set from what is
+# actually on each frame rather than by adding a flat amount to every scene,
+# because the burden is wildly uneven: the trust scene carries a hundred-odd
+# words across two panels, the call to action carries sixteen.
+#
+# The working figure is roughly 180 words per minute for comfortable reading of
+# text you have not seen before - the rate subtitle standards use - discounted
+# for the fact that most of each composition has already faded in and been read
+# during the animated portion. The hold is the settled time on top of that, so
+# a viewer can re-scan the whole frame once without racing.
+#
+# Screenshots count as scanning rather than reading: nobody reads a cost card
+# top to bottom, they look for the number. But four of them still take longer
+# to take in than one headline, which is why the estimate scene holds longest
+# alongside the trust scene.
+HOLD = {  # seconds of settled time after everything has appeared
+    "problem": 4.0,    # 39 words, mostly large type
+    "spread": 5.0,     # short copy, but a 69-point scatter plot to take in
+    "estimate": 6.5,   # four cost cards, ~15 figures each - the densest frame
+    "saving": 5.0,     # one big number lands fast, then a two-line callout
+    "trust": 6.3,      # two panels plus three lines; the heaviest for text
+    "pipeline": 6.0,   # a three-step ladder, two counters, a closing line
+    "cta": 4.5,        # light, but it is the address and it should linger
+}
+
+
+def _frames(seconds):
+    return int(round(seconds * FPS))
+
+
 SCENES = [
-    (scene_problem, 205, 180),    # 8.54s  the snapshot problem
-    (scene_spread, 190, 165),     # 7.92s  the size of the decision
-    (scene_estimate, 240, 205),   # 10.00s the product working
-    (scene_saving, 175, 150),     # 7.29s  the payoff
-    (scene_trust, 225, 195),      # 9.38s  provenance and flags
-    (scene_pipeline, 235, 200),   # 9.79s  the daily sync
-    (scene_cta, 170, 145),        # 7.08s  where to go
+    (scene_problem, 180 + _frames(HOLD["problem"]), 180),      # the snapshot problem
+    (scene_spread, 165 + _frames(HOLD["spread"]), 165),        # the size of the decision
+    (scene_estimate, 205 + _frames(HOLD["estimate"]), 205),    # the product working
+    (scene_saving, 150 + _frames(HOLD["saving"]), 150),        # the payoff
+    (scene_trust, 195 + _frames(HOLD["trust"]), 195),          # provenance and flags
+    (scene_pipeline, 200 + _frames(HOLD["pipeline"]), 200),    # the daily sync
+    (scene_cta, 145 + _frames(HOLD["cta"]), 145),              # where to go
 ]
 
 
@@ -700,14 +730,25 @@ def make_overlays(out):
     d.line([x, y + 160, x + 140 + width, y + 160], fill=ACCENT + (140,), width=3)
     title.save(out / "title-overlay.png")
 
-    # End card: the wordmark alone, sized to be dropped in centred.
-    card = Image.new("RGBA", (1164, 240), (0, 0, 0, 0))
+    # End card: the wordmark alone, dropped in centred by the stitch script.
+    #
+    # Drawn on a deliberately oversized canvas and then cropped to what was
+    # actually drawn. A fixed canvas is a guess about text metrics, and when the
+    # guess is wrong the artwork sits off-centre while the file looks fine — the
+    # README logo had exactly that fault, 9px of padding on one side and 167 on
+    # the other.
+    card = Image.new("RGBA", (1600, 300), (0, 0, 0, 0))
     d = ImageDraw.Draw(card)
     draw_mark(d, 20, 56, 128, ACCENT + (255,))
     wordmark(d, 190, 44, 104, INK + (255,), ACCENT + (255,))
     d.text((196, 168), "promptspend.com", font=F("mono-bold", 38), fill=MUTED + (235,))
-    card.save(out / "endcard-logo.png")
-    print("wrote title-overlay.png and endcard-logo.png")
+    bbox = card.getbbox()
+    card = card.crop(bbox)
+    padded = Image.new("RGBA", (card.width + 24, card.height + 24), (0, 0, 0, 0))
+    padded.paste(card, (12, 12))
+    padded.save(out / "endcard-logo.png")
+    print("wrote title-overlay.png and endcard-logo.png ({}x{})".format(
+        padded.width, padded.height))
 
 
 def main():
