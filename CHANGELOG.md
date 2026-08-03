@@ -5,7 +5,10 @@ models arriving, rows being flagged — are recorded separately and automaticall
 in [docs/pricing-changelog.md](docs/pricing-changelog.md), because they happen
 on their own schedule and are not releases.
 
-## Unreleased
+## 0.5.0 - 2026-08-02
+
+The catalog stops being only a calculator and becomes something other software
+can depend on: 159 pages a search engine can read, and an API a program can call.
 
 ### Added
 
@@ -36,6 +39,37 @@ on their own schedule and are not releases.
   has to list the generated pages, and the Vite config has no idea they exist.
 - The footer links to the model index, the provider index, the comparisons and
   the pricing API, so nothing depends on the sitemap being the only way in.
+
+- Contact address is `info@promptspend.com`; `hello@` has been retired.
+- Five major dependency bumps, including vitest 3 → 4 — the repository had been
+  running two majors of one test runner. The React Compiler rules that arrived
+  with `eslint-plugin-react-hooks` 7 found four real problems, all fixed.
+- `main` is protected against force-pushes and deletion, configured so the daily
+  pricing sync can still commit.
+- The catalog stays feed-driven by decision: a model the feed does not carry is
+  not hand-added, because that price would freeze with nothing able to correct
+  it. See `$coverage` in `data/pricing-overrides.json`.
+
+### Fixed
+
+- **The pricing API served its own stale copy back to itself.** `caches.default`
+  and the cache behind `fetch()` are the same cache, keyed by URL, so storing the
+  catalog under its own origin URL overwrote the entry the next fetch would read.
+  It "revalidated" every five minutes by re-reading its own day-old copy and
+  re-stamping the timestamp — freshness looked perfect and the body never moved.
+  Found in production, eighteen minutes adrift.
+- **`robots.txt` on the hub told agents not to call the API it documents.**
+  `Disallow: /v1/` was meant to keep thin JSON out of search results, but
+  robots.txt governs _fetching_ and assistants apply it to user-initiated
+  requests. `X-Robots-Tag: noindex` does that job without making the data
+  unfetchable.
+- Twelve fixes found by clicking through the live site: the CHECK popover was
+  clipped by its scrolling container _and_ dismissed by reaching for that
+  container's scrollbar; the Atom feed link opened raw XML in the same tab and
+  now copies the address instead; nine display names that had become page
+  titles; ticker spacing; the CHEAPEST flag now shares the corner the price
+  delta uses; every sortable column carries a marker, not just the sorted one;
+  the alerts panel is two evenly-weighted columns.
 
 ### Notes
 
