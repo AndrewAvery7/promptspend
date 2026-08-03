@@ -36,7 +36,7 @@
      committing - a live attachment answers an unsigned request with 302 or 403,
      never 404. See docs/PROMO.md. -->
 
-https://github.com/user-attachments/assets/36fcd57f-3cfb-43d8-919d-77ecdfa377d9
+https://github.com/user-attachments/assets/1567b20a-7d55-4199-a328-d6e7366e73db
 
 <p align="center">
   <i>1 minute 38 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
