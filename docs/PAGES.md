@@ -124,3 +124,42 @@ only sign is a 403 in a job nobody reads.
 A rejected submission is a warning, never a failed build. IndexNow is an
 optimisation on top of ordinary crawling, and it must not be able to turn a
 perfectly good pricing update into a red deploy.
+
+---
+
+## Search Console will report structured data "issues" that must not be fixed
+
+Google emails two recurring warnings about the model pages. Both are expected,
+and four of the five suggested fixes would require publishing something untrue.
+Read this before acting on one.
+
+**Product snippets — missing `aggregateRating`, missing `review`.** These pages
+carry `name` and `offers`, which is valid: Google requires only `name` plus one
+of `review`, `aggregateRating` or `offers`. The warning is documented behaviour
+for supplying `offers` alone — its own reference says the test "may report a
+warning if you provide `offers` without `review` or `aggregateRating`".
+
+There are no reviews and no ratings, because nobody reviews or rates a price
+list. Inventing them is not a shortcut, it is the one thing Google names a
+manual-action offence: _"reviews or ratings not by actual users may result in
+manual action"_, alongside _"don't mark up irrelevant or misleading content,
+such as fake reviews"_. **These two warnings are permanent. Leave them.**
+
+**Merchant listings — missing `image`, `shippingDetails`,
+`hasMerchantReturnPolicy`.** Merchant listings are for pages "where customers
+can purchase products from you". Nothing is sold here; the rates belong to the
+vendors and every page links to the vendor's own page to prove it. There is no
+shipping and there is no returns policy, so both fields would be fabrications,
+and the `image` — an API endpoint has no photograph — would mean attaching a
+picture of something else to satisfy a validator. The `image` issue is flagged
+**critical**, which means only that it blocks a merchant-listing rich result
+these pages should never earn.
+
+What _was_ wrong: the offers carried `availability: https://schema.org/InStock`,
+asserting stock held for sale. That has been removed. It was false on its own
+terms, and it was the strongest signal inviting Google to grade a price
+reference as a shop.
+
+> Whether removing it stops the merchant-listing mail is unverified — Google
+> decides what to evaluate, and the warning may persist. The reason to remove it
+> was that it was untrue, not that it was noisy.

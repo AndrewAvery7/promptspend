@@ -423,6 +423,20 @@ ${specRows.map(([label, value]) => `            <tr><th scope="row">${escapeHtml
   });
 }
 
+/**
+ * The rate as an `Offer`, which is what lets the price appear in a product
+ * snippet. Google supports this on pages that do not sell the thing — its own
+ * guidance splits "product snippets" (editorial pages "where people can't
+ * directly purchase the product") from "merchant listings" (pages "where
+ * customers can purchase products from you"). These are the first kind.
+ *
+ * Note what is deliberately absent: `availability`. It read
+ * `https://schema.org/InStock`, which is a claim to hold stock and sell it —
+ * false in every particular. Nobody buys tokens here; the rate belongs to the
+ * vendor and the page links to their page to prove it. It was also the loudest
+ * signal telling Google to grade these as merchant listings, which is how a
+ * catalogue that sells nothing came to be asked for a shipping policy.
+ */
 function offer(name: string, dollarsPerMillion: number, ctx: RenderContext, page: ModelPage): unknown {
   return {
     '@type': 'Offer',
@@ -430,7 +444,6 @@ function offer(name: string, dollarsPerMillion: number, ctx: RenderContext, page
     url: absolute(ctx, page.path),
     price: dollarsPerMillion,
     priceCurrency: 'USD',
-    availability: 'https://schema.org/InStock',
     priceSpecification: {
       '@type': 'UnitPriceSpecification',
       price: dollarsPerMillion,
