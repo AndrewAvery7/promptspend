@@ -52,10 +52,12 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 
 ## Genuinely not started
 
-**Playwright, axe and visual-regression tests** — the deferred half of audit
-finding TT-28. The unit suite covers behaviour well; what it cannot catch is a
-layout that breaks at a viewport nobody tested, or a contrast regression in a
-state no test renders. Both have happened.
+**axe and visual-regression tests** — the remaining half of audit finding TT-28.
+Playwright landed on 2026-08-02 and covers layout at four viewports; what is
+still uncovered is automated accessibility auditing (axe) and screenshot
+diffing. The colour-contrast side is partly handled already by
+`src/lib/contrast.test.ts`, which checks every accent against every surface, so
+axe would mostly add ARIA and landmark checks.
 
 **Launch marketing.** Show HN, the developer communities, the newsletters that
 cover LLM tooling. Now genuinely ready, which it was not before the pages and

@@ -45,6 +45,36 @@ Two more packages, each with its own runtime, lockfile and CI job:
 | `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself. |
 | `api/`    | 24    | The public pricing API: filters, ETags, CORS, CSV quoting, and that a catalog failing validation is refused rather than passed through.                   |
 
+## Layout is checked in a real browser
+
+`npm run test:e2e` runs Playwright against the **built** site at four viewports
+— 320, 390, 768 and 1280 — with touch emulation on the first three, because the
+44px target rules live behind `@media (pointer: coarse)` and without `hasTouch`
+the run checks the desktop stylesheet on a narrow screen.
+
+It exists because the unit suite runs in jsdom, which has no layout engine at
+all. It cannot see a table pushing the page sideways at 320px, or a control too
+small for a thumb — and both of those shipped.
+
+| Check               | Catches                                                                           |
+| ------------------- | --------------------------------------------------------------------------------- |
+| Horizontal overflow | Anything widening the document, unless it sits in a container that scrolls itself |
+| Touch targets       | Controls under 44x44, measured as the union of the control and its label          |
+| Text size           | Anything rendering below 12px                                                     |
+| Table scrolling     | A wide table scrolling the page instead of its own container                      |
+
+Each returns the offending elements, not a boolean: "the page has horizontal
+scroll" is not a bug report, "table.catalog is 512px wide in a 320px viewport"
+is.
+
+It runs against the built site rather than the dev server because the 159
+generated pages only exist after `build:pages`, and one test loads a model page
+with JavaScript disabled — those pages ship none, and that is the point.
+
+On its first honest run it found four touch targets under 44px, three of them
+caused by the same trap: a more specific selector elsewhere in the stylesheet
+beating the rule meant to cover it, since a media query adds no specificity.
+
 ## Coverage thresholds are uneven on purpose
 
 Enforced in CI, and the numbers are set to today's level so they can only go up:
