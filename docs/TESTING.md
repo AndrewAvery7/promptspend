@@ -14,9 +14,14 @@ is exactly one definition of "verified" and no way to publish past it.
 
 ## What the suite covers
 
-317 tests across 17 files in this package, plus 84 in `worker/` and 24 in
-`api/` — 425 in all. The distribution is deliberately uneven: depth follows the
-cost of being wrong, not the size of the file.
+**501 tests in all**: 328 unit and integration tests in this package, 84 in
+`worker/`, 29 in `api/`, and 60 browser tests across four viewports. The
+distribution is deliberately uneven: depth follows the cost of being wrong, not
+the size of the file.
+
+The per-file counts below drift by one or two as tests are added; the totals
+above come from actually running the suites. If a number here matters to you,
+run `npm test` rather than trusting the table.
 
 | Suite                                 | Tests | Guards                                                                                                                                                                                      |
 | ------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -43,7 +48,8 @@ Two more packages, each with its own runtime, lockfile and CI job:
 | Package   | Tests | Guards                                                                                                                                                    |
 | --------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself. |
-| `api/`    | 24    | The public pricing API: filters, ETags, CORS, CSV quoting, and that a catalog failing validation is refused rather than passed through.                   |
+| `api/`    | 29    | The public pricing API: filters, ETags, CORS, CSV quoting, and that a catalog failing validation is refused rather than passed through.                   |
+| Browser   | 60    | Layout at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling. See below.                                             |
 
 ## Layout is checked in a real browser
 
