@@ -697,6 +697,46 @@ def wordmark(d, x, y, size, ink, accent):
     return first + d.textlength("Spend", font=f)
 
 
+def make_poster(out):
+    """The video's first frame, which is also its thumbnail.
+
+    GitHub's inline player is generated from a bare attachment URL and its
+    markdown sanitiser strips author-written <video>, so there is no `poster`
+    attribute to set — the browser simply shows frame 0. The hero clip opens on
+    a near-black frame while the light builds, so the README showed a blank
+    rectangle until someone pressed play.
+
+    A still card at the head of the edit fixes that and reads as a title rather
+    than as a workaround: whoever lands on the repository can see what the video
+    is before deciding to watch it.
+    """
+    im = base()
+    d = ImageDraw.Draw(im)
+
+    fw = F("display", 128)
+    tagline = "Know the tab before you build."
+    ft = F("display-mid", 46)
+    fs = F("mono-bold", 30)
+    stat = "{} MODELS  ·  {} PROVIDERS  ·  RE-CHECKED EVERY MORNING".format(N_MODELS, N_PROVIDERS)
+
+    mark = 150
+    gap = 40
+    word_w = tw("Prompt", fw) + tw("Spend", fw)
+    total = mark + gap + word_w
+    x = (W - total) / 2
+    y = 372
+
+    draw_mark(d, x, y, mark, ACCENT)
+    wordmark(d, x + mark + gap, y + 6, 128, INK, ACCENT)
+
+    d.text((W / 2 - tw(tagline, ft) / 2, y + mark + 56), tagline, font=ft, fill=MUTED)
+    rule(im, y + mark + 140, 1.0, width=620)
+    d.text((W / 2 - tw(stat, fs) / 2, y + mark + 186), stat, font=fs, fill=fade(MUTED, 0.85))
+
+    im.save(out / "poster.png")
+    print("wrote poster.png (the video's first frame, and its README thumbnail)")
+
+
 def make_overlays(out):
     """The lower-third and end-card logo the stitch script composites.
 
@@ -768,6 +808,7 @@ def main():
 
     out = Path(args.outdir)
     out.mkdir(parents=True, exist_ok=True)
+    make_poster(out)
     make_overlays(out)
     tmp = Path(tempfile.mkdtemp(prefix="ps-promo-"))
     idx = 0

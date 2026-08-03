@@ -5,6 +5,59 @@ models arriving, rows being flagged — are recorded separately and automaticall
 in [docs/pricing-changelog.md](docs/pricing-changelog.md), because they happen
 on their own schedule and are not releases.
 
+## Unreleased
+
+No change to what the application does. Everything here is about the repository
+being honest about itself — a corrupted README that had already shipped, a promo
+that could have drifted from the product, and two numbers that were wrong on the
+page while being right in the code.
+
+### Added
+
+- **A promo video, built from the real interface.** The two sibling repositories
+  draw their promos in PIL because they are command-line tools with nothing to
+  film. This one has an interface, and the rule here is that a claim on screen
+  must be true of the code — so every screen in the video is a genuine Playwright
+  screenshot of the built site, showing real prices from the committed catalog,
+  in the site's own three typefaces. `tools/make-promo.py --check` fails if a
+  captured model has been renamed or retired, or if rates have moved far enough
+  that the saving shown on screen is no longer what the engine would compute:
+  the screenshots stay current because they are captured, so the risk is the
+  hand-written captions rotting around them. See [docs/PROMO.md](docs/PROMO.md).
+  It opens on a title card because GitHub's inline player takes its thumbnail
+  from frame 0 and offers no `poster` a README can set — the hero clip begins
+  near-black, so the front page showed an empty rectangle until someone pressed
+  play.
+- **`npm run check:encoding`**, in `verify`. Fails on a UTF-8 BOM, on invalid
+  UTF-8, and on double-encoding. Detection is a round-trip rather than a list of
+  suspicious characters, because a pattern list both misses real cases and flags
+  innocent text.
+
+### Fixed
+
+- **README.md was mojibake on the public repository page.** A Windows read/write
+  pair that disagreed about encoding: PowerShell 5.1 reads an un-BOMed file as
+  the system ANSI codepage while `Out-File` writes UTF-8 with a BOM, so every
+  non-ASCII character went one layer deep and the pipeline diagram became noise.
+  Nothing caught it — the result is valid UTF-8 and valid markdown, and Prettier
+  obligingly re-padded the tables around the now-wider cells.
+- **The logo sat off-centre.** `assets/logo.png` had 9px of padding on the left
+  and 167 on the right, so `align="center"` centred a canvas whose artwork did
+  not fill it. A fixed canvas is a guess about text metrics, and the font lookup
+  walks a fallback list, so the error differed per machine. Both the README logo
+  and the video's end card are now cropped to what was actually drawn.
+- The README's call to action pointed at the `github.io` address, which 301s to
+  `promptspend.com`. Three such links now go direct.
+
+### Removed
+
+- The pre-publication audit report, its `.docx` duplicate and the response to it.
+  Three files under the project's former name describing a state it has left,
+  linked from nowhere. The one claim in them not recorded elsewhere — three
+  OpenAI prices verified against the vendor page — is already in the catalog as
+  `source: vendor` with the date and the URL, which is where the API serves it
+  from. Git history keeps the documents.
+
 ## 0.5.0 - 2026-08-02
 
 The catalog stops being only a calculator and becomes something other software

@@ -17,7 +17,7 @@
 # that appears to "kick in" halfway through.
 #
 # Usage:
-#   tools/stitch-promo.sh HERO.mp4 CORE.mp4 ENDCARD.mp4 OVERLAY.png LOGO.png BED.mp3 OUT.mp4
+#   tools/stitch-promo.sh HERO.mp4 CORE.mp4 ENDCARD.mp4 OVERLAY.png LOGO.png BED.mp3 POSTER.png OUT.mp4
 set -euo pipefail
 
 HERO="${1:?hero clip}"
@@ -26,7 +26,18 @@ END="${3:?end card clip}"
 OVERLAY="${4:?lower-third png}"
 LOGO="${5:?logo png for the end card}"
 BED="${6:?music bed}"
-OUT="${7:?output path}"
+POSTER="${7:?title card png - becomes frame 0, and so the README thumbnail}"
+OUT="${8:?output path}"
+
+# The still title card at the head of the edit.
+#
+# This is not decoration. GitHub's inline player has no poster attribute a
+# README can set - the player is generated from a bare attachment URL and
+# author-written <video> is stripped by the markdown sanitiser - so the browser
+# shows frame 0. The hero clip opens near-black while the light builds, which
+# rendered as an empty rectangle on the repository front page.
+CARD_LEN=1.7      # seconds the title card holds before the hero
+XF0=0.5           # title card -> hero crossfade
 
 HERO_LEN=6.4      # seconds of the hero shot to keep
 END_LEN=3.6       # seconds of the end card to keep
@@ -50,14 +61,20 @@ END_CROP="crop=1458:820:231:130"
 calc() { awk "BEGIN{printf \"%.3f\", $1}"; }
 
 CORE_LEN=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$CORE")
-OFF1=$(calc "$HERO_LEN - $XF1")
-MID_LEN=$(calc "$HERO_LEN + $CORE_LEN - $XF1")
+# Everything downstream of the card shifts by the time it occupies. Computed
+# from one offset rather than by adding CARD_LEN in several places, because a
+# missed one desynchronises the audio from the picture and that is not obvious
+# until you watch the whole thing.
+SHIFT=$(calc "$CARD_LEN - $XF0")
+OFF0=$(calc "$CARD_LEN - $XF0")
+OFF1=$(calc "$SHIFT + $HERO_LEN - $XF1")
+MID_LEN=$(calc "$SHIFT + $HERO_LEN + $CORE_LEN - $XF1")
 OFF2=$(calc "$MID_LEN - $XF2")
 TOTAL=$(calc "$MID_LEN + $END_LEN - $XF2")
 MUSIC_START="$OFF1"   # bed enters exactly as the opening starts crossfading out
 BED_LEN=$(calc "$TOTAL - $MUSIC_START")
 
-echo "core=${CORE_LEN}s  xfade1@${OFF1}s  xfade2@${OFF2}s  music@${MUSIC_START}s  total=${TOTAL}s"
+echo "card=${CARD_LEN}s  core=${CORE_LEN}s  xfades@${OFF0}s ${OFF1}s ${OFF2}s  music@${MUSIC_START}s  total=${TOTAL}s"
 
 # A bed shorter than the stretch it has to cover does not error on its own:
 # atrim just yields what exists and the piece ends in silence. That is exactly
@@ -168,7 +185,9 @@ fi
 echo "bed=${BED_HAVE}s covers ${BED_LEN}s needed"
 
 ffmpeg -y -i "$HERO" -i "$CORE" -i "$END" \
-       -loop 1 -i "$OVERLAY" -loop 1 -i "$LOGO" -i "$BED" -filter_complex "
+       -loop 1 -i "$OVERLAY" -loop 1 -i "$LOGO" -i "$BED" \
+       -loop 1 -i "$POSTER" -filter_complex "
+[6:v]trim=0:${CARD_LEN},setpts=PTS-STARTPTS,scale=1920:1080,fps=24,format=yuv420p[vc];
 [0:v]trim=0:${HERO_LEN},setpts=PTS-STARTPTS,scale=1920:1080,fps=24,format=yuva420p[hv];
 [3:v]trim=0:${HERO_LEN},setpts=PTS-STARTPTS,scale=1920:1080,fps=24,format=yuva420p,
      fade=t=in:st=${TITLE_IN}:d=0.8:alpha=1,fade=t=out:st=${TITLE_OUT}:d=0.8:alpha=1[ov];
@@ -179,10 +198,12 @@ ffmpeg -y -i "$HERO" -i "$CORE" -i "$END" \
 [4:v]trim=0:${END_LEN},setpts=PTS-STARTPTS,scale=1040:-1,fps=24,format=yuva420p,
      fade=t=in:st=${LOGO_IN}:d=0.9:alpha=1[lg];
 [ev][lg]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p[v2];
-[v0][v1]xfade=transition=fade:duration=${XF1}:offset=${OFF1}[x1];
+[vc][v0]xfade=transition=fade:duration=${XF0}:offset=${OFF0}[x0];
+[x0][v1]xfade=transition=fade:duration=${XF1}:offset=${OFF1}[x1];
 [x1][v2]xfade=transition=fade:duration=${XF2}:offset=${OFF2}[vout];
 [0:a]atrim=0:${HERO_LEN},asetpts=N/SR/TB,volume=${HERO_VOL},
-     afade=t=out:st=$(calc "$HERO_LEN - 0.9"):d=0.9,aresample=48000,apad[ha];
+     afade=t=out:st=$(calc "$HERO_LEN - 0.9"):d=0.9,aresample=48000,
+     adelay=$(calc "$SHIFT * 1000")|$(calc "$SHIFT * 1000"),apad[ha];
 [5:a]atrim=0:${BED_LEN},asetpts=N/SR/TB,
      acompressor=threshold=0.15:ratio=4:attack=20:release=250:makeup=2,
      loudnorm=I=-15:TP=-1.2:LRA=6,dynaudnorm=f=200:g=13:p=0.9:m=8,

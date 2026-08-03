@@ -5,8 +5,16 @@ rather than committed. At ~22 MB it would otherwise be by far the heaviest thing
 in the repository, and every rebuild would add another copy to history forever.
 
 ```
-[ AI hero shot 6.4s ] → [ real-UI core 89s ] → [ AI end card 3.6s ]
+[ title card 1.7s ] → [ AI hero shot 6.4s ] → [ real-UI core 89s ] → [ AI end card 3.6s ]
 ```
+
+The title card is frame 0, and frame 0 is the thumbnail. GitHub's inline player
+is generated from a bare attachment URL and its markdown sanitiser strips
+author-written `<video>`, so there is no `poster` attribute a README can set —
+the browser just shows the first frame. The hero clip opens near-black while the
+light builds, which rendered as an empty rectangle on the repository front page.
+Putting a designed card at the head fixes the thumbnail and reads as a title
+rather than as a workaround.
 
 ## Reading time
 
@@ -60,8 +68,13 @@ python tools/make-promo.py
 # 4. Stitch, with the two generative bookends and the music bed
 bash tools/stitch-promo.sh HERO.mp4 assets/core.mp4 ENDCARD.mp4 \
   assets/title-overlay.png assets/endcard-logo.png BED.mp3 \
-  assets/promptspend-promo.mp4
+  assets/poster.png assets/promptspend-promo.mp4
 ```
+
+**Re-uploading matters.** Changing the video changes the file, so the existing
+`user-attachments` URL still serves the old cut — it is immutable. A rebuild
+needs a fresh drag-and-drop and a new URL in the README, as well as
+`gh release upload --clobber`.
 
 `python tools/make-promo.py --check` runs step 3's verification alone. It fails
 if a model in the captured estimate has been renamed or retired, or if the rates
