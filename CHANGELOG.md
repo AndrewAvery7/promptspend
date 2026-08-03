@@ -159,6 +159,24 @@ shipping a package next week.
   next investment". The second was written before the suite landed and was never
   revisited. Accessibility is the gap that actually remains — nothing runs axe —
   and the section now says that instead.
+- **The model pages claimed the tokens were in stock.** Every generated `Offer`
+  carried `availability: https://schema.org/InStock`, which asserts holding
+  stock for sale — false in every particular, since the rate is the vendor's and
+  the page links to the vendor's own page to prove it. Removed. It was also the
+  strongest signal inviting Google to grade a price reference as a shop, which
+  is how a catalogue that sells nothing came to be sent a Search Console report
+  asking for a shipping policy and a returns policy.
+
+  Four of the five fields those reports asked for stay missing on purpose.
+  `aggregateRating` and `review` do not exist because nobody rates a price list,
+  and inventing them is the specific thing Google calls a manual-action offence.
+  `shippingDetails` and `hasMerchantReturnPolicy` describe a transaction that
+  never happens. `image` would mean attaching a photograph of something else to
+  an API endpoint. The markup is already valid for what these pages are —
+  Google's own split puts editorial pages "where people can't directly purchase
+  the product" under product snippets, which need only `name` plus one of
+  `review`, `aggregateRating` or `offers`. `docs/PAGES.md` records which
+  warnings are permanent so the next person to receive one does not "fix" it.
 - ESLint no longer walks `.claude`. A git worktree lands there as a complete
   second copy of the repository, and the path-scoped override that gives the
   service worker its globals matches `public/sw.js` but not
