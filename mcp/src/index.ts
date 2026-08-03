@@ -29,7 +29,43 @@ export async function dispatch(name: string, args: Record<string, unknown>): Pro
   }
 }
 
+/**
+ * `--help` and `--version`, because the first thing anyone does after installing
+ * a binary is run one of them.
+ *
+ * Without this the server does the technically correct thing — starts a stdio
+ * session and waits for a client that is never coming — which reads as a hang.
+ * A pricing tool whose first impression is an unresponsive terminal has lost the
+ * argument before it starts.
+ */
+function handleFlags(argv: string[]): boolean {
+  if (argv.includes('--version') || argv.includes('-v')) {
+    console.log(SERVER_INFO.version);
+    return true;
+  }
+  if (argv.includes('--help') || argv.includes('-h')) {
+    console.log(
+      `promptspend-mcp ${SERVER_INFO.version}\n\n` +
+        `LLM pricing for coding agents. Every price carries its source and the\n` +
+        `date it was last confirmed; disputed prices are marked.\n\n` +
+        `This is an MCP server. It speaks JSON-RPC over stdio and is not meant to\n` +
+        `be run directly — your editor starts it. To install:\n\n` +
+        `  claude mcp add promptspend -- npx -y @promptspend/mcp\n\n` +
+        `Or in mcp.json:\n` +
+        `  { "mcpServers": { "promptspend": {\n` +
+        `      "command": "npx", "args": ["-y", "@promptspend/mcp"] } } }\n\n` +
+        `Tools: ${TOOLS.map((t) => t.name).join(', ')}\n` +
+        `Context cost: ~700 tokens per turn, measured and budgeted.\n` +
+        `Docs: https://github.com/AndrewAvery7/promptspend/tree/main/mcp`,
+    );
+    return true;
+  }
+  return false;
+}
+
 async function main(): Promise<void> {
+  if (handleFlags(process.argv.slice(2))) return;
+
   const server = new Server(SERVER_INFO, {
     capabilities: { tools: {} },
     instructions: INSTRUCTIONS,

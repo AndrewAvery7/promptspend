@@ -69,7 +69,7 @@ export const TOOLS = [
 
 export const SERVER_INFO = {
   name: 'promptspend',
-  version: '0.1.0',
+  version: '0.1.1',
 } as const;
 
 export const INSTRUCTIONS =
