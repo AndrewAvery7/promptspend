@@ -52,13 +52,18 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 
 ## Genuinely not started
 
-**axe and visual-regression tests** — the remaining half of a pre-publication
-audit finding that asked for automated accessibility and visual coverage.
-Playwright landed on 2026-08-02 and covers layout at four viewports; what is
-still uncovered is automated accessibility auditing (axe) and screenshot
-diffing. The colour-contrast side is partly handled already by
-`src/lib/contrast.test.ts`, which checks every accent against every surface, so
-axe would mostly add ARIA and landmark checks.
+**Visual-regression tests** — the last quarter of a pre-publication audit
+finding that asked for automated accessibility and visual coverage. Playwright
+landed 2026-08-02 and covers layout at four viewports; axe landed 2026-08-03 at
+WCAG 2.1 A/AA and immediately found two real defects, both scrollable regions
+no keyboard could reach. What remains is screenshot diffing — the class of
+change that leaves a page accessible, correctly sized and semantically valid
+while making it look wrong.
+
+Deferred rather than done because a screenshot suite has a real running cost:
+every intended visual change becomes a diff to review and a baseline to
+re-approve, across four viewports and two themes. That is worth paying once the
+design stops moving, and it has been moving weekly.
 
 **Launch marketing.** Show HN, the developer communities, the newsletters that
 cover LLM tooling. Now genuinely ready, which it was not before the pages and

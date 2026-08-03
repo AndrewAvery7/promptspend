@@ -13,6 +13,16 @@ on:
         description: Name of the uploaded production build
         value: site
 
+# Least privilege for GITHUB_TOKEN, applied to all five jobs below. They check
+# out the code, install, test and build; not one of them writes anything back.
+# The e2e job uploads an artifact, which does not need repository write.
+#
+# Declared here rather than per job so a sixth job cannot be added and quietly
+# inherit the repository default. Both callers already grant at least this much
+# — a called workflow's permissions are capped by its caller, never raised.
+permissions:
+  contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest

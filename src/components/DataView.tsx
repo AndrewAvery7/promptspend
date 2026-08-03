@@ -182,7 +182,11 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   runs <em>this</em> engine, so it cannot report a number that disagrees with the one above
                   it.
                 </p>
-                <pre className="mono">
+                {/* `tabIndex` because this scrolls: `.build-grid pre` is
+                    `overflow-x: auto`, and a scrollable box that cannot take
+                    focus is one a keyboard user cannot scroll — the end of the
+                    command is simply unreachable without a mouse. */}
+                <pre className="mono" tabIndex={0}>
                   <code>claude mcp add promptspend -- npx -y @promptspend/mcp</code>
                 </pre>
                 <p className="privacy-note">
@@ -196,7 +200,11 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   A free, keyless, CORS-open API. No account, no rate limit, no logging of who calls it. JSON,
                   CSV and OpenAPI 3.1.
                 </p>
-                <pre className="mono">
+                {/* `tabIndex` because this scrolls: `.build-grid pre` is
+                    `overflow-x: auto`, and a scrollable box that cannot take
+                    focus is one a keyboard user cannot scroll — the end of the
+                    command is simply unreachable without a mouse. */}
+                <pre className="mono" tabIndex={0}>
                   <code>curl {DEVELOPER_HUB_URL}/v1/prices</code>
                 </pre>
                 <p className="privacy-note">

@@ -14,8 +14,8 @@ is exactly one definition of "verified" and no way to publish past it.
 
 ## What the suite covers
 
-**501 tests in all**: 328 unit and integration tests in this package, 84 in
-`worker/`, 29 in `api/`, and 60 browser tests across four viewports. The
+**533 tests in all**: 332 unit and integration tests in this package, 84 in
+`worker/`, 29 in `api/`, and 92 browser tests across four viewports. The
 distribution is deliberately uneven: depth follows the cost of being wrong, not
 the size of the file.
 
@@ -49,7 +49,7 @@ Two more packages, each with its own runtime, lockfile and CI job:
 | --------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself. |
 | `api/`    | 29    | The public pricing API: filters, ETags, CORS, CSV quoting, and that a catalog failing validation is refused rather than passed through.                   |
-| Browser   | 60    | Layout at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling. See below.                                             |
+| Browser   | 92    | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA. See below.     |
 
 ## Layout is checked in a real browser
 
@@ -68,6 +68,7 @@ small for a thumb — and both of those shipped.
 | Touch targets       | Controls under 44x44, measured as the union of the control and its label          |
 | Text size           | Anything rendering below 12px                                                     |
 | Table scrolling     | A wide table scrolling the page instead of its own container                      |
+| Accessibility       | axe at WCAG 2.1 A/AA: landmarks, roles, accessible names, heading order           |
 
 Each returns the offending elements, not a boolean: "the page has horizontal
 scroll" is not a bug report, "table.catalog is 512px wide in a 320px viewport"
@@ -121,11 +122,15 @@ measure an element, so it cannot tell you whether the page scrolls sideways on a
 phone or whether a button is large enough to press.
 
 Those particular guarantees are now held by the Playwright suite above, which is
-why layout regressions get caught rather than shipped. **Accessibility is the
-gap that remains**: nothing here runs axe, so contrast, focus order, ARIA
-correctness and screen-reader behaviour are not tested by anything. Treat an
-accessibility change as something to verify by hand, not something CI will
-catch — that is the next investment.
+why layout regressions get caught rather than shipped. Accessibility is held by
+`tests/e2e/a11y.spec.ts` — axe at WCAG 2.1 A and AA, on every viewport, over
+the four app views and four generated pages.
+
+**Visual regression is the gap that remains.** Nothing diffs screenshots, so a
+change that leaves the page accessible, correctly sized and semantically valid
+while making it _ugly_ — a colour that no longer matches, a broken alignment,
+an overlapping label — will not be caught by anything here. Treat a purely
+visual change as something to look at.
 
 ## CI
 

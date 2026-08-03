@@ -5,6 +5,16 @@ on:
     branches: [main]
   pull_request:
 
+# Least privilege for GITHUB_TOKEN. Without this block a job inherits the
+# repository default, which is broader than anything here needs — nothing in the
+# verify gate writes to the repository, opens a pull request or publishes.
+#
+# CodeQL's hint for this file is an empty block, and that is one step too far: a
+# reusable workflow's permissions are capped by its caller, so granting nothing
+# here would leave `verify.yml` unable to check out the code it exists to test.
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true

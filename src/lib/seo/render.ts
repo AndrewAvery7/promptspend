@@ -261,7 +261,7 @@ export function renderModelPage(page: ModelPage, ctx: RenderContext): string {
   const alternatives =
     page.alternatives.length === 0
       ? `<p class="muted">Nothing in the catalog is cheaper — on a blended rate, this is the least expensive model tracked.</p>`
-      : `<div class="tablewrap"><table>
+      : `<div class="tablewrap" tabindex="0"><table>
           <thead><tr><th>Model</th><th class="num">Input</th><th class="num">Output</th><th class="num">Blended saving</th><th></th></tr></thead>
           <tbody>
 ${page.alternatives
@@ -339,7 +339,7 @@ ${page.alternatives
         ${model.provenance.needsReview ? `<p class="note">This row is flagged for review: ${escapeHtml(model.provenance.reviewNote ?? 'sources disagree')}. Check the vendor&rsquo;s own page before relying on it.</p>` : ''}
 
         <h2>What ${escapeHtml(model.displayName)} costs</h2>
-        <div class="card tablewrap">
+        <div class="card tablewrap" tabindex="0">
           <table>
             <caption class="unit cap">USD, standard tier, global endpoint</caption>
             <thead><tr><th>Rate</th><th class="num">Per 1M tokens</th><th class="num">Per 1K tokens</th><th>What it covers</th></tr></thead>
@@ -370,7 +370,7 @@ ${page.comparisons.map((link) => `          <li><a href="${escapeHtml(href(ctx, 
         }
 
         <h2>Specification</h2>
-        <div class="card tablewrap">
+        <div class="card tablewrap" tabindex="0">
           <table><tbody>
 ${specRows.map(([label, value]) => `            <tr><th scope="row">${escapeHtml(label)}</th><td>${value}</td></tr>`).join('\n')}
           </tbody></table>
@@ -512,7 +512,7 @@ export function renderProviderPage(page: ProviderPage, ctx: RenderContext): stri
           headquartered in ${escapeHtml(page.provider.country)}
           ${page.provider.pricingUrl ? ` &middot; <a href="${escapeHtml(page.provider.pricingUrl)}" rel="nofollow noopener">official pricing</a>` : ''}
         </p>
-        <div class="card tablewrap">
+        <div class="card tablewrap" tabindex="0">
           <table>
             <caption class="unit cap">USD per 1M tokens, cheapest first by blended rate</caption>
             <thead><tr><th>Model</th><th class="num">Input</th><th class="num">Output</th><th class="num">Context</th><th></th></tr></thead>
@@ -600,7 +600,7 @@ export function renderComparisonPage(page: ComparisonPage, ctx: RenderContext): 
         </p>
 
         <h2>Monthly bill, side by side</h2>
-        <div class="card tablewrap">
+        <div class="card tablewrap" tabindex="0">
           <table>
             <thead><tr><th>Workload</th><th class="num">${escapeHtml(page.left.displayName)}</th><th class="num">${escapeHtml(page.right.displayName)}</th><th class="num">Difference</th></tr></thead>
             <tbody>
@@ -611,7 +611,7 @@ ${workloadRows}
         <p class="muted">No prompt caching and no batch discount on either side, so the comparison is like for like. Both figures assume 30 days a month.</p>
 
         <h2>The rate cards</h2>
-        <div class="card tablewrap">
+        <div class="card tablewrap" tabindex="0">
           <table>
             <thead><tr><th></th><th class="num">${escapeHtml(page.left.displayName)}</th><th class="num">${escapeHtml(page.right.displayName)}</th></tr></thead>
             <tbody>
@@ -704,7 +704,7 @@ export function renderModelsIndex(set: PageSet, ctx: RenderContext): string {
           (75% input, 25% output). The last column is what a support chatbot handling 2,500 six-turn
           conversations a day would cost on each — the same workload, every row.
         </p>
-        <div class="card tablewrap">
+        <div class="card tablewrap" tabindex="0">
           <table>
             <caption class="unit cap">USD per 1M tokens</caption>
             <thead><tr><th>Model</th><th>Provider</th><th class="num">Input</th><th class="num">Output</th><th class="num">Context</th><th class="num">Chatbot / month</th></tr></thead>
@@ -766,7 +766,7 @@ export function renderProvidersIndex(set: PageSet, ctx: RenderContext): string {
       <main id="main">
         <h1>${escapeHtml(page.heading)}</h1>
         <p class="lede">${set.providers.length} providers tracked. &ldquo;Cheapest model&rdquo; is by blended rate, not by input price alone — a model with cheap input and expensive output is not a cheap model.</p>
-        <div class="card tablewrap">
+        <div class="card tablewrap" tabindex="0">
           <table>
             <thead><tr><th>Provider</th><th>Country</th><th class="num">Models</th><th>Cheapest model</th><th class="num">Its input rate</th></tr></thead>
             <tbody>
