@@ -917,6 +917,11 @@ body.tour-active .main {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
+  /* The panel's intro sentence sat directly on top of the two column headings,
+   * so a line of body copy and a heading of the same weight read as one block.
+   * The gap is what separates "here is the claim" from "here are the two ways
+   * to use it". */
+  margin-top: 20px;
 }
 /* Grid children default to `min-width: auto`, which refuses to shrink below
    their content. The install command is one long unbreakable token, so without

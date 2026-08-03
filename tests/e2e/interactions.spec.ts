@@ -98,3 +98,61 @@ test('the install command copy button writes to the clipboard', async ({ page, c
   const clipboard = await page.evaluate(() => navigator.clipboard.readText());
   expect(clipboard).toBe('claude mcp add promptspend -- npx -y @promptspend/mcp');
 });
+
+/**
+ * No two labels on the value map may overlap.
+ *
+ * They did: the frontier models sit within a few capability points and a couple
+ * of dollars of each other, and every label was drawn 15px above its dot with
+ * no regard for what was already there, so four names printed through one
+ * another. Placement now tries four positions and drops a label that fits
+ * nowhere.
+ *
+ * Measured with `getBBox`, not estimated, because the placement code estimates
+ * — if that estimate drifts from what the font actually does, this is the thing
+ * that notices. It regresses quietly the next time a model lands near a crowded
+ * corner, which is why it is a test rather than a look.
+ */
+test('the value map never prints one model label through another', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Compare', exact: true }).click();
+  // Wait for the labels themselves, not just the frame around them. An earlier
+  // version of this test asserted the svg was visible and then measured before
+  // the catalog had loaded: it found zero labels, zero pairs, and passed while
+  // the built site had four clashes. The count assertion is what stops a green
+  // result meaning nothing was looked at.
+  const labels = page.locator('.value-map svg text[font-weight="600"]');
+  await expect(labels.first()).toBeVisible();
+  expect(await labels.count(), 'no labels were drawn, so nothing was checked').toBeGreaterThan(4);
+
+  const overlaps = await page.evaluate(() => {
+    // Read the rect properties explicitly. `SVGRect` exposes x/y/width/height as
+    // prototype accessors, not own enumerable properties, so spreading getBBox()
+    // copies nothing and every comparison silently comes out false. That is how
+    // the first version of this test passed against a chart with four visible
+    // collisions on screen.
+    const boxes = [...document.querySelectorAll('.value-map svg text')]
+      .filter((t) => t.getAttribute('font-weight') === '600')
+      .map((t) => {
+        const r = (t as SVGGraphicsElement).getBBox();
+        return { name: t.textContent ?? '', x: r.x, y: r.y, w: r.width, h: r.height };
+      });
+    const clashes: string[] = [];
+    for (let i = 0; i < boxes.length; i += 1) {
+      for (let j = i + 1; j < boxes.length; j += 1) {
+        const a = boxes[i]!;
+        const b = boxes[j]!;
+        if (!Number.isFinite(a.x) || !Number.isFinite(b.x)) {
+          clashes.push('a label could not be measured');
+          continue;
+        }
+        if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) {
+          clashes.push(a.name + ' over ' + b.name);
+        }
+      }
+    }
+    return clashes;
+  });
+
+  expect(overlaps, `overlapping labels: ${overlaps.join(', ')}`).toEqual([]);
+});

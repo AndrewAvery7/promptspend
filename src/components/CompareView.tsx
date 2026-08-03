@@ -48,6 +48,21 @@ const WIDTH = 860;
 const HEIGHT = 430;
 const PAD = { left: 64, right: 24, top: 20, bottom: 48 };
 
+/** Rough advance width per character at 13px / 600 weight in the display face.
+ *  Estimated, not measured — see `labelled` for why. Erring high is the safe
+ *  direction: it drops a borderline label rather than printing an overlap. */
+const LABEL_CHAR_W = 7.1;
+const LABEL_H = 13;
+
+/** Tried in order. Above the dot reads best; the rest are fallbacks so a
+ *  crowded cluster degrades to "moved" before it degrades to "missing". */
+const LABEL_SPOTS = [
+  { dx: 0, dy: -15, anchor: 'middle' as const },
+  { dx: 0, dy: 24, anchor: 'middle' as const },
+  { dx: 12, dy: 5, anchor: 'start' as const },
+  { dx: -12, dy: 5, anchor: 'end' as const },
+];
+
 function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
   const [hover, setHover] = useState<{ model: Model; x: number; y: number } | null>(null);
 
@@ -90,22 +105,69 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
     };
   }, [catalog]);
 
-  // Label only the models a reader is likely to be looking for: the extremes of
-  // each axis plus anything currently selected. Labelling all of them is unreadable.
+  /**
+   * Where each label goes, or whether it goes at all.
+   *
+   * Choosing *which* models to label was never the problem — the extremes of
+   * each axis plus the current selection is the right set. The problem is that
+   * they were all drawn 15px above their dot regardless of what was already
+   * there, and the top-right of this chart is a cluster: four frontier models
+   * within a few points of capability and a couple of dollars of each other,
+   * whose names then printed straight through one another.
+   *
+   * So each label is placed by trying four positions in order and taking the
+   * first that hits nothing already placed. A label that fits nowhere is
+   * dropped rather than overlapped — it is still in the tooltip on hover and
+   * in the table below, which is where the precise reading happens anyway. An
+   * unreadable label is worse than no label: it damages its neighbour too.
+   *
+   * Widths are estimated from character count rather than measured. Measuring
+   * needs a laid-out DOM, which would move this into an effect and a second
+   * render pass for a chart that is decoration around a table.
+   */
   const labelled = useMemo(() => {
-    if (!points) return new Set<string>();
+    const placements = new Map<string, { x: number; y: number; anchor: 'middle' | 'start' | 'end' }>();
+    if (!points) return placements;
+
     const byPrice = [...points.models].sort(
       (a, b) => Catalog.blendedRate(a.model) - Catalog.blendedRate(b.model),
     );
     const byCapability = [...points.models].sort(
       (a, b) => (b.model.capabilityIndex ?? 0) - (a.model.capabilityIndex ?? 0),
     );
-    return new Set([
+
+    // Selected models are labelled first, so a crowded corner drops a
+    // background model rather than the one the reader just picked.
+    const wanted = [
+      ...selectedIds,
+      ...byCapability.slice(0, 4).map((p) => p.model.id),
       ...byPrice.slice(0, 3).map((p) => p.model.id),
       ...byPrice.slice(-3).map((p) => p.model.id),
-      ...byCapability.slice(0, 4).map((p) => p.model.id),
-      ...selectedIds,
-    ]);
+    ];
+
+    const taken: { x1: number; y1: number; x2: number; y2: number }[] = [];
+    const hits = (box: (typeof taken)[number]) =>
+      taken.some((t) => box.x1 < t.x2 && box.x2 > t.x1 && box.y1 < t.y2 && box.y2 > t.y1);
+
+    for (const id of new Set(wanted)) {
+      const point = points.models.find((p) => p.model.id === id);
+      if (!point) continue;
+      const width = point.model.displayName.length * LABEL_CHAR_W;
+
+      for (const spot of LABEL_SPOTS) {
+        const x = point.cx + spot.dx;
+        const y = point.cy + spot.dy;
+        const x1 = spot.anchor === 'middle' ? x - width / 2 : spot.anchor === 'start' ? x : x - width;
+        const box = { x1, y1: y - LABEL_H, x2: x1 + width, y2: y + 3 };
+        // Outside the plot is as unusable as overlapped — it clips at the edge.
+        if (box.x1 < 2 || box.x2 > WIDTH - 2 || box.y1 < 2 || box.y2 > HEIGHT - PAD.bottom) continue;
+        if (hits(box)) continue;
+        taken.push(box);
+        placements.set(id, { x, y, anchor: spot.anchor });
+        break;
+      }
+    }
+    return placements;
   }, [points, selectedIds]);
 
   if (!points) return null;
@@ -236,11 +298,11 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
                     strokeWidth="2"
                   />
                 </g>
-                {labelled.has(model.id) && (
+                {labelled.get(model.id) && (
                   <text
-                    x={cx}
-                    y={cy - 15}
-                    textAnchor="middle"
+                    x={labelled.get(model.id)!.x}
+                    y={labelled.get(model.id)!.y}
+                    textAnchor={labelled.get(model.id)!.anchor}
                     fontSize="13"
                     fontWeight="600"
                     fill="var(--ink)"
