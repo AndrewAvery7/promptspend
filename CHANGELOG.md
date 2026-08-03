@@ -94,6 +94,27 @@ shipping a package next week.
   the film: real figures, the site's own typefaces, no mockups, and the honest
   comparison is a price beside a price-with-its-paperwork rather than a
   competitor's name.
+- **A vendor-verification pass, taking first-party coverage from 16 of 70 rows
+  to 43.** `verifiedUrl` — the link to the page that was actually read — goes
+  from 17 rows to 44. Anthropic's, OpenAI's, Google's, xAI's and DeepSeek's own
+  pricing pages were read on 2026-08-03 and compared against the published
+  catalog; **all 27 figures matched the feed exactly**, which is worth stating
+  rather than burying, since it is evidence the automated source has been
+  accurate for these models.
+
+  The entries record **provenance only — no `pricing` block**. That is the
+  point: a hand-written price wins every future conflict and therefore freezes,
+  so writing one down when nothing needed changing would trade a
+  self-correcting number for a stale one. The rate keeps flowing from the feed;
+  what is added is the evidence.
+
+  What could not be verified is named rather than quietly rounded up. Mistral
+  Large 3 and Medium 3.5, Command A, every Kimi and MiniMax row and GLM-5-Code
+  do not appear on their vendors' own pricing pages at all; Gemini 3 Pro
+  Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are missing from the
+  pages that carry their siblings. Aggregators have numbers for all of them,
+  which is exactly the source this catalog refuses. Those rows stay labelled
+  `litellm`. See [docs/DEFERRED.md](docs/DEFERRED.md).
 
 ### Fixed
 

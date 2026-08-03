@@ -1,12 +1,8 @@
 {
   "$comment": "Rung 1 of the trust ladder: hand-verified values that beat every automated source. Every row with `vendorVerified` carries the `verifiedUrl` that was actually read, and the date it was read — that is what makes the claim checkable rather than merely asserted. Anthropic and OpenAI rows were reconciled against the first-party pricing pages on 2026-08-01; both matched what the automated feed already published, and the additions here are the modifiers the feed does not carry (cache-write rates, long-context tiers, batch discounts). `capabilityIndex` is an illustrative 0-100 placeholder used only for the value map's Y axis - it is NOT a benchmark score, models without one are simply not plotted, and the UI says so.",
-
   "$displayNames": "Some entries carry a `displayName` and nothing else. Those are NOT price claims — they deliberately omit `vendorVerified`, so the rate and its provenance keep coming from whichever source the trust ladder chose. They exist because upstream ids get title-cased into names like `GPT 5`, `O3 Mini` and `Qwen3 Vl 235b A22b Instruct`, and since every model now has a public page those strings are its <h1> and its search-result title. A name is presentation; correcting one must not quietly upgrade a price to `vendor`.",
-
   "$coverage": "The catalog tracks what the automated feed carries. Vendors ship models before LiteLLM catalogues them — Z.ai published GLM-5.2 and GLM-5-Turbo on 2026-08-02 while the feed had neither — and the deliberate answer is to wait rather than hand-add. An override with a full `pricing` block CAN create a model the feed lacks, but that price is then frozen: no feed row exists to correct it, so it silently rots. Seeding from OpenRouter instead would publish a reseller's price as the vendor's, which for these providers runs 20-50% adrift. Missing a model for a few days costs less than publishing a number that is wrong and cannot self-correct. New models arrive on their own the morning the feed catches up.",
-
   "$scope": "These are standard-tier, global-endpoint list prices in USD. Not modelled: regional/data-residency premiums (OpenAI and Anthropic both charge 1.1x), fast/priority tiers, server-side tool call fees, fine-tuning, and negotiated volume discounts. The UI states this boundary rather than implying the figure is a whole invoice.",
-
   "models": [
     {
       "id": "claude-fable-5",
@@ -18,7 +14,13 @@
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 100,
-      "pricing": { "input": 10, "output": 50, "cachedInput": 1, "cacheWrite": 12.5, "batchDiscount": 0.5 }
+      "pricing": {
+        "input": 10,
+        "output": 50,
+        "cachedInput": 1,
+        "cacheWrite": 12.5,
+        "batchDiscount": 0.5
+      }
     },
     {
       "id": "claude-opus-5",
@@ -30,7 +32,13 @@
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 96,
-      "pricing": { "input": 5, "output": 25, "cachedInput": 0.5, "cacheWrite": 6.25, "batchDiscount": 0.5 }
+      "pricing": {
+        "input": 5,
+        "output": 25,
+        "cachedInput": 0.5,
+        "cacheWrite": 6.25,
+        "batchDiscount": 0.5
+      }
     },
     {
       "id": "claude-opus-4-8",
@@ -42,7 +50,13 @@
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 94,
-      "pricing": { "input": 5, "output": 25, "cachedInput": 0.5, "cacheWrite": 6.25, "batchDiscount": 0.5 }
+      "pricing": {
+        "input": 5,
+        "output": 25,
+        "cachedInput": 0.5,
+        "cacheWrite": 6.25,
+        "batchDiscount": 0.5
+      }
     },
     {
       "id": "claude-sonnet-5",
@@ -79,20 +93,65 @@
       "contextWindow": 200000,
       "maxOutput": 64000,
       "capabilityIndex": 74,
-      "pricing": { "input": 1, "output": 5, "cachedInput": 0.1, "cacheWrite": 1.25, "batchDiscount": 0.5 }
+      "pricing": {
+        "input": 1,
+        "output": 5,
+        "cachedInput": 0.1,
+        "cacheWrite": 1.25,
+        "batchDiscount": 0.5
+      }
     },
-    { "id": "claude-opus-4-7", "displayName": "Claude Opus 4.7", "capabilityIndex": 92 },
-    { "id": "claude-opus-4-6", "displayName": "Claude Opus 4.6", "capabilityIndex": 89 },
-    { "id": "claude-opus-4-5", "displayName": "Claude Opus 4.5", "status": "legacy", "capabilityIndex": 86 },
-    { "id": "claude-opus-4-1", "displayName": "Claude Opus 4.1", "status": "legacy", "capabilityIndex": 80 },
-    { "id": "claude-sonnet-4-6", "displayName": "Claude Sonnet 4.6", "capabilityIndex": 85 },
+    {
+      "id": "claude-opus-4-7",
+      "displayName": "Claude Opus 4.7",
+      "capabilityIndex": 92,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "id": "claude-opus-4-6",
+      "displayName": "Claude Opus 4.6",
+      "capabilityIndex": 89,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "id": "claude-opus-4-5",
+      "displayName": "Claude Opus 4.5",
+      "status": "legacy",
+      "capabilityIndex": 86,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "id": "claude-opus-4-1",
+      "displayName": "Claude Opus 4.1",
+      "status": "legacy",
+      "capabilityIndex": 80,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "displayName": "Claude Sonnet 4.6",
+      "capabilityIndex": 85,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
     {
       "id": "claude-sonnet-4-5",
       "displayName": "Claude Sonnet 4.5",
       "status": "legacy",
-      "capabilityIndex": 78
+      "capabilityIndex": 78,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
-
     {
       "$note": "OpenAI documents that the bare `gpt-5.6` id routes to GPT-5.6 Sol. Marking it an alias keeps one purchasable model from appearing twice in the picker and twice on the value map; the row stays in the catalog table so anyone searching for the id still finds it.",
       "id": "gpt-5.6",
@@ -182,7 +241,12 @@
         "output": 30,
         "cachedInput": 0.5,
         "batchDiscount": 0.5,
-        "longContext": { "thresholdTokens": 272000, "input": 10, "output": 45, "cachedInput": 1 }
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 10,
+          "output": 45,
+          "cachedInput": 1
+        }
       }
     },
     {
@@ -198,7 +262,12 @@
         "output": 15,
         "cachedInput": 0.25,
         "batchDiscount": 0.5,
-        "longContext": { "thresholdTokens": 272000, "input": 5, "output": 22.5, "cachedInput": 0.5 }
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 5,
+          "output": 22.5,
+          "cachedInput": 0.5
+        }
       }
     },
     {
@@ -209,7 +278,12 @@
       "lastVerified": "2026-08-01",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 76,
-      "pricing": { "input": 0.75, "output": 4.5, "cachedInput": 0.075, "batchDiscount": 0.5 }
+      "pricing": {
+        "input": 0.75,
+        "output": 4.5,
+        "cachedInput": 0.075,
+        "batchDiscount": 0.5
+      }
     },
     {
       "id": "gpt-5.4-nano",
@@ -219,38 +293,171 @@
       "lastVerified": "2026-08-01",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 62,
-      "pricing": { "input": 0.2, "output": 1.25, "cachedInput": 0.02, "batchDiscount": 0.5 }
+      "pricing": {
+        "input": 0.2,
+        "output": 1.25,
+        "cachedInput": 0.02,
+        "batchDiscount": 0.5
+      }
     },
-    { "id": "gpt-5.2", "displayName": "GPT-5.2", "capabilityIndex": 82 },
-    { "id": "gpt-5.1", "displayName": "GPT-5.1", "capabilityIndex": 80 },
-    { "id": "gpt-5", "displayName": "GPT-5" },
-    { "id": "gpt-5-mini", "displayName": "GPT-5 Mini" },
-    { "id": "gpt-5-nano", "displayName": "GPT-5 Nano" },
-    { "id": "o4-mini", "displayName": "o4-mini", "capabilityIndex": 70 },
-    { "id": "o3", "displayName": "o3" },
-    { "id": "o3-mini", "displayName": "o3-mini" },
-    { "id": "o1", "displayName": "o1" },
-
-    { "id": "gemini-gemini-3.1-pro-preview", "displayName": "Gemini 3.1 Pro", "capabilityIndex": 88 },
-    { "id": "gemini-gemini-3.6-flash", "displayName": "Gemini 3.6 Flash", "capabilityIndex": 82 },
-    { "id": "gemini-gemini-3.5-flash-lite", "displayName": "Gemini 3.5 Flash-Lite", "capabilityIndex": 66 },
+    {
+      "id": "gpt-5.2",
+      "displayName": "GPT-5.2",
+      "capabilityIndex": 82,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "gpt-5.1",
+      "displayName": "GPT-5.1",
+      "capabilityIndex": 80,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "gpt-5",
+      "displayName": "GPT-5",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "gpt-5-mini",
+      "displayName": "GPT-5 Mini",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "gpt-5-nano",
+      "displayName": "GPT-5 Nano",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "o4-mini",
+      "displayName": "o4-mini",
+      "capabilityIndex": 70,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "o3",
+      "displayName": "o3",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "o3-mini",
+      "displayName": "o3-mini",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "o1",
+      "displayName": "o1",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "gemini-gemini-3.1-pro-preview",
+      "displayName": "Gemini 3.1 Pro",
+      "capabilityIndex": 88,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "id": "gemini-gemini-3.6-flash",
+      "displayName": "Gemini 3.6 Flash",
+      "capabilityIndex": 82,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "id": "gemini-gemini-3.5-flash-lite",
+      "displayName": "Gemini 3.5 Flash-Lite",
+      "capabilityIndex": 66,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
     {
       "id": "gemini-gemini-2.5-pro",
       "displayName": "Gemini 2.5 Pro",
       "status": "legacy",
+      "capabilityIndex": 74,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "id": "deepseek-deepseek-v4-pro",
+      "displayName": "DeepSeek V4 Pro",
+      "capabilityIndex": 79,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
+    },
+    {
+      "id": "deepseek-deepseek-v4-flash",
+      "displayName": "DeepSeek V4 Flash",
+      "capabilityIndex": 68,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
+    },
+    {
+      "id": "deepseek-deepseek-v3.2",
+      "displayName": "DeepSeek V3.2",
       "capabilityIndex": 74
     },
-    { "id": "deepseek-deepseek-v4-pro", "displayName": "DeepSeek V4 Pro", "capabilityIndex": 79 },
-    { "id": "deepseek-deepseek-v4-flash", "displayName": "DeepSeek V4 Flash", "capabilityIndex": 68 },
-    { "id": "deepseek-deepseek-v3.2", "displayName": "DeepSeek V3.2", "capabilityIndex": 74 },
-    { "id": "deepseek-deepseek-r1", "displayName": "DeepSeek R1", "status": "legacy", "capabilityIndex": 70 },
-    { "id": "deepseek-deepseek-v3", "displayName": "DeepSeek V3" },
-    { "id": "moonshot-kimi-k2.6", "displayName": "Kimi K2.6", "capabilityIndex": 82 },
-    { "id": "moonshot-kimi-k2.5", "displayName": "Kimi K2.5", "capabilityIndex": 78 },
-    { "id": "dashscope-qwen3.7-max", "displayName": "Qwen 3.7 Max", "capabilityIndex": 83 },
-    { "id": "dashscope-qwen3-next-80b-a3b-instruct", "displayName": "Qwen3 Next 80B", "capabilityIndex": 70 },
-    { "id": "dashscope-qwen3-next-80b-a3b-thinking", "displayName": "Qwen3 Next 80B Thinking" },
-    { "id": "dashscope-qwen3-vl-235b-a22b-instruct", "displayName": "Qwen3 VL 235B" },
+    {
+      "id": "deepseek-deepseek-r1",
+      "displayName": "DeepSeek R1",
+      "status": "legacy",
+      "capabilityIndex": 70
+    },
+    {
+      "id": "deepseek-deepseek-v3",
+      "displayName": "DeepSeek V3"
+    },
+    {
+      "id": "moonshot-kimi-k2.6",
+      "displayName": "Kimi K2.6",
+      "capabilityIndex": 82
+    },
+    {
+      "id": "moonshot-kimi-k2.5",
+      "displayName": "Kimi K2.5",
+      "capabilityIndex": 78
+    },
+    {
+      "id": "dashscope-qwen3.7-max",
+      "displayName": "Qwen 3.7 Max",
+      "capabilityIndex": 83
+    },
+    {
+      "id": "dashscope-qwen3-next-80b-a3b-instruct",
+      "displayName": "Qwen3 Next 80B",
+      "capabilityIndex": 70
+    },
+    {
+      "id": "dashscope-qwen3-next-80b-a3b-thinking",
+      "displayName": "Qwen3 Next 80B Thinking"
+    },
+    {
+      "id": "dashscope-qwen3-vl-235b-a22b-instruct",
+      "displayName": "Qwen3 VL 235B"
+    },
     {
       "id": "zai-glm-5.1",
       "displayName": "GLM-5.1",
@@ -258,7 +465,11 @@
       "vendorVerified": true,
       "lastVerified": "2026-08-02",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
-      "pricing": { "input": 1.4, "output": 4.4, "cachedInput": 0.26 }
+      "pricing": {
+        "input": 1.4,
+        "output": 4.4,
+        "cachedInput": 0.26
+      }
     },
     {
       "id": "zai-glm-5",
@@ -267,7 +478,11 @@
       "vendorVerified": true,
       "lastVerified": "2026-08-02",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
-      "pricing": { "input": 1, "output": 3.2, "cachedInput": 0.2 }
+      "pricing": {
+        "input": 1,
+        "output": 3.2,
+        "cachedInput": 0.2
+      }
     },
     {
       "id": "zai-glm-4.7",
@@ -275,7 +490,11 @@
       "vendorVerified": true,
       "lastVerified": "2026-08-02",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
-      "pricing": { "input": 0.6, "output": 2.2, "cachedInput": 0.11 }
+      "pricing": {
+        "input": 0.6,
+        "output": 2.2,
+        "cachedInput": 0.11
+      }
     },
     {
       "id": "zai-glm-4.6",
@@ -283,17 +502,100 @@
       "vendorVerified": true,
       "lastVerified": "2026-08-02",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
-      "pricing": { "input": 0.6, "output": 2.2, "cachedInput": 0.11 }
+      "pricing": {
+        "input": 0.6,
+        "output": 2.2,
+        "cachedInput": 0.11
+      }
     },
-    { "id": "zai-glm-5-code", "displayName": "GLM-5 Code", "capabilityIndex": 78 },
-    { "id": "minimax-minimax-m3", "displayName": "MiniMax M3", "capabilityIndex": 72 },
-    { "id": "xai-grok-4.5", "displayName": "Grok 4.5", "capabilityIndex": 84 },
-    { "id": "xai-grok-4.3", "displayName": "Grok 4.3", "capabilityIndex": 80 },
-    { "id": "xai-grok-4-1-fast", "displayName": "Grok 4.1 Fast", "capabilityIndex": 66 },
-    { "id": "mistral-mistral-large-3", "displayName": "Mistral Large 3", "capabilityIndex": 71 },
-    { "id": "mistral-mistral-medium-3-5", "displayName": "Mistral Medium 3.5", "capabilityIndex": 68 },
-    { "id": "command-a-03-2025", "displayName": "Command A", "capabilityIndex": 75 },
-    { "id": "amazon.nova-2-pro-preview-20251202-v1-0", "displayName": "Nova 2 Pro", "capabilityIndex": 80 },
-    { "id": "amazon.nova-2-lite-v1-0", "displayName": "Nova 2 Lite", "capabilityIndex": 64 }
-  ]
+    {
+      "id": "zai-glm-5-code",
+      "displayName": "GLM-5 Code",
+      "capabilityIndex": 78
+    },
+    {
+      "id": "minimax-minimax-m3",
+      "displayName": "MiniMax M3",
+      "capabilityIndex": 72
+    },
+    {
+      "id": "xai-grok-4.5",
+      "displayName": "Grok 4.5",
+      "capabilityIndex": 84,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://docs.x.ai/docs/models"
+    },
+    {
+      "id": "xai-grok-4.3",
+      "displayName": "Grok 4.3",
+      "capabilityIndex": 80,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://docs.x.ai/docs/models"
+    },
+    {
+      "id": "xai-grok-4-1-fast",
+      "displayName": "Grok 4.1 Fast",
+      "capabilityIndex": 66
+    },
+    {
+      "id": "mistral-mistral-large-3",
+      "displayName": "Mistral Large 3",
+      "capabilityIndex": 71
+    },
+    {
+      "id": "mistral-mistral-medium-3-5",
+      "displayName": "Mistral Medium 3.5",
+      "capabilityIndex": 68
+    },
+    {
+      "id": "command-a-03-2025",
+      "displayName": "Command A",
+      "capabilityIndex": 75
+    },
+    {
+      "id": "amazon.nova-2-pro-preview-20251202-v1-0",
+      "displayName": "Nova 2 Pro",
+      "capabilityIndex": 80
+    },
+    {
+      "id": "amazon.nova-2-lite-v1-0",
+      "displayName": "Nova 2 Lite",
+      "capabilityIndex": 64
+    },
+    {
+      "id": "gemini-gemini-2.5-flash",
+      "providerId": "google",
+      "displayName": "Gemini 2.5 Flash",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "id": "gemini-gemini-3-flash-preview",
+      "providerId": "google",
+      "displayName": "Gemini 3 Flash Preview",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "id": "gemini-gemini-3.1-flash-lite",
+      "providerId": "google",
+      "displayName": "Gemini 3.1 Flash Lite",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "id": "gemini-gemini-3.5-flash",
+      "providerId": "google",
+      "displayName": "Gemini 3.5 Flash",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-03",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    }
+  ],
+  "$verificationPasses": "2026-08-01: Anthropic and OpenAI flagship rows read against the first-party pricing pages; all matched the automated feed, and the additions were the modifiers the feed does not carry (cache writes, long-context tiers, batch discounts). 2026-08-03: a second pass covering 27 more rows across Anthropic, OpenAI, Google, xAI and DeepSeek. Every one of the 27 matched the feed exactly, so these entries record provenance ONLY — no `pricing` block — which leaves the rate flowing from the feed and self-correcting. Recording a price we did not need to change would freeze it for no reason. NOT verifiable on 2026-08-03, and deliberately left as `litellm`: Mistral Large 3 and Medium 3.5, Command A, all four Kimi rows, all four MiniMax rows and GLM-5-Code are absent from their vendors' own pricing pages; Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are not listed on the pages that carry their siblings. An aggregator would have numbers for all of them, which is exactly why this catalog does not accept one."
 }

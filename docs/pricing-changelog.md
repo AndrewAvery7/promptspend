@@ -266,3 +266,60 @@ _Manual correction, not a sync run._
   is now empty rather than asserting a change nobody made. It will begin
   accumulating from the next real move. No price, no source and no verification
   date was altered; the catalog fingerprint is unchanged at `4a97d95b2d1e26c0`.
+
+## 2026-08-03
+
+- **Review** `claude-opus-4-1` — provenance.source: litellm → vendor
+- **Review** `claude-opus-4-1` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-opus-4-5` — provenance.source: litellm → vendor
+- **Review** `claude-opus-4-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-opus-4-6` — provenance.source: litellm → vendor
+- **Review** `claude-opus-4-6` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-opus-4-7` — provenance.source: litellm → vendor
+- **Review** `claude-opus-4-7` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-sonnet-4-5` — provenance.source: litellm → vendor
+- **Review** `claude-sonnet-4-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-sonnet-4-6` — provenance.source: litellm → vendor
+- **Review** `claude-sonnet-4-6` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `deepseek-deepseek-v4-flash` — provenance.source: litellm → vendor
+- **Review** `deepseek-deepseek-v4-flash` — provenance.verifiedUrl: — → https://api-docs.deepseek.com/quick_start/pricing
+- **Review** `deepseek-deepseek-v4-pro` — provenance.source: litellm → vendor
+- **Review** `deepseek-deepseek-v4-pro` — provenance.verifiedUrl: — → https://api-docs.deepseek.com/quick_start/pricing
+- **Review** `gemini-gemini-2.5-flash` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-2.5-flash` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `gemini-gemini-2.5-pro` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-2.5-pro` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `gemini-gemini-3-flash-preview` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-3-flash-preview` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `gemini-gemini-3.1-flash-lite` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-3.1-flash-lite` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `gemini-gemini-3.1-pro-preview` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-3.1-pro-preview` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `gemini-gemini-3.5-flash` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-3.5-flash` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `gemini-gemini-3.5-flash-lite` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-3.5-flash-lite` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `gemini-gemini-3.6-flash` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-3.6-flash` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `gpt-5` — provenance.source: litellm → vendor
+- **Review** `gpt-5` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5-mini` — provenance.source: litellm → vendor
+- **Review** `gpt-5-mini` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5-nano` — provenance.source: litellm → vendor
+- **Review** `gpt-5-nano` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.1` — provenance.source: litellm → vendor
+- **Review** `gpt-5.1` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.2` — provenance.source: litellm → vendor
+- **Review** `gpt-5.2` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `o1` — provenance.source: litellm → vendor
+- **Review** `o1` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `o3` — provenance.source: litellm → vendor
+- **Review** `o3` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `o3-mini` — provenance.source: litellm → vendor
+- **Review** `o3-mini` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `o4-mini` — provenance.source: litellm → vendor
+- **Review** `o4-mini` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `xai-grok-4.3` — provenance.source: litellm → vendor
+- **Review** `xai-grok-4.3` — provenance.verifiedUrl: — → https://docs.x.ai/docs/models
+- **Review** `xai-grok-4.5` — provenance.source: litellm → vendor
+- **Review** `xai-grok-4.5` — provenance.verifiedUrl: — → https://docs.x.ai/docs/models

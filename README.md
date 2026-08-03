@@ -127,6 +127,14 @@ loudly. Either way the change lands in [`docs/pricing-changelog.md`](docs/pricin
 **Nothing disappears on one bad morning.** A model missing from the feed is kept and marked `stale`, not
 deleted; retiring one for good is a deliberate edit to `data/models-allowlist.json`.
 
+**Rung 1 is worked by hand, and the split is published rather than blurred.** Every row says which rung it
+came from, and rows read against a vendor's own page carry the URL that was read and the date it was read.
+Most of the catalog is now vendor-sourced — but not all of it, because some vendors do not publish a
+pricing page that lists their own models, and the honest answer there is to leave the row labelled
+`litellm` rather than launder an aggregator's number into a first-party claim. The models this currently
+affects are named in [docs/DEFERRED.md](docs/DEFERRED.md). A number is only worth what its worst source is,
+so the site shows you the source per row instead of an average you cannot inspect.
+
 ### Two dates, not one
 
 The site shows **prices last changed** and **sources last checked** separately, because they answer

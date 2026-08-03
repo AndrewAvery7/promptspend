@@ -69,6 +69,19 @@ design stops moving, and it has been moving weekly.
 cover LLM tooling. Now genuinely ready, which it was not before the pages and
 the API existed.
 
+**The 27 rows still sourced from LiteLLM.** A verification pass on 2026-08-03
+took vendor-sourced coverage from 16 of 70 to 43, and `verifiedUrl` from 17 to
+44, by reading Anthropic's, OpenAI's, Google's, xAI's and DeepSeek's own pricing
+pages. All 27 figures matched the feed exactly.
+
+What remains is not laziness but absence: Mistral Large 3 and Medium 3.5,
+Command A, every Kimi and MiniMax row, and GLM-5-Code **do not appear on their
+vendors' own pricing pages at all**. Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast
+and DeepSeek R1/V3/V3.2 are missing from the pages that carry their siblings.
+Aggregator sites have numbers for all of them, and that is precisely the source
+this catalog refuses. These rows stay honestly labelled `litellm` until a
+first-party page carries them.
+
 **Six standing price flags.** DeepSeek R1 (gone from DeepSeek's current pricing
 page, consistent with it being marked legacy here), MiniMax M2.5, Kimi K2.6 and
 three DashScope rows. Their first-party pricing pages defeated an initial
