@@ -1,5 +1,5 @@
 import type { Catalog } from '@/lib/pricing/catalog';
-import { PRICING_SCOPE, REPO_URL } from '@/config';
+import { DEVELOPER_HUB_URL, PRICING_SCOPE, REPO_URL } from '@/config';
 import { AlertsPanel } from '@/components/AlertsPanel';
 
 /** GitHub's Atom feed of commits touching the published catalog. */
@@ -150,6 +150,60 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                 </a>
               </article>
             </AlertsPanel>
+          </div>
+        </section>
+
+        {/*
+          The build-on-it panel.
+
+          It sits above the trust ladder deliberately: the ladder explains why
+          the numbers are believable, and this is the payoff — the same numbers,
+          with the same paperwork, wherever you actually work. A price is only
+          worth carrying provenance if the provenance travels with it.
+        */}
+        <section className="panel span-2" aria-labelledby="build-title">
+          <div className="panel__head">
+            <h2 className="panel__title" id="build-title">
+              Use it where you work
+            </h2>
+          </div>
+          <div className="panel__body">
+            <p>
+              Every price here carries its source and the date it was last confirmed. That does not stop at
+              this page — the same record travels through the API and into your editor.
+            </p>
+            <div className="build-grid">
+              <article>
+                <h3>In a coding agent</h3>
+                <p>
+                  An MCP server for Claude Code, Cursor and Windsurf. Three tools; <code>estimate_cost</code>{' '}
+                  runs <em>this</em> engine, so it cannot report a number that disagrees with the one above
+                  it.
+                </p>
+                <pre className="mono">
+                  <code>claude mcp add promptspend -- npx -y @promptspend/mcp</code>
+                </pre>
+                <p className="privacy-note">
+                  Adds ~700 tokens of context per turn — measured, budgeted and published, because a pricing
+                  tool that quietly taxes every message would be a poor joke.
+                </p>
+              </article>
+              <article>
+                <h3>In your own code</h3>
+                <p>
+                  A free, keyless, CORS-open API. No account, no rate limit, no logging of who calls it. JSON,
+                  CSV and OpenAPI 3.1.
+                </p>
+                <pre className="mono">
+                  <code>curl {DEVELOPER_HUB_URL}/v1/prices</code>
+                </pre>
+                <p className="privacy-note">
+                  <a href={DEVELOPER_HUB_URL} target="_blank" rel="noreferrer noopener">
+                    Developer hub →
+                  </a>
+                </p>
+              </article>
+            </div>
           </div>
         </section>
 

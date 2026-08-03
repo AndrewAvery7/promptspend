@@ -1,11 +1,11 @@
 # The promo video
 
-`promptspend-promo.mp4` — 1 minute 38, 1920×1080, shipped as a **release asset**
-rather than committed. At ~22 MB it would otherwise be by far the heaviest thing
+`promptspend-promo.mp4` — 1 minute 53, 1920×1080, shipped as a **release asset**
+rather than committed. At ~23 MB it would otherwise be by far the heaviest thing
 in the repository, and every rebuild would add another copy to history forever.
 
 ```
-[ title card 1.7s ] → [ AI hero shot 6.4s ] → [ real-UI core 89s ] → [ AI end card 3.6s ]
+[ title card 1.7s ] → [ AI hero shot 6.4s ] → [ real-UI core 103s ] → [ AI end card 3.6s ]
 ```
 
 The title card is frame 0, and frame 0 is the thumbnail. GitHub's inline player
@@ -62,7 +62,7 @@ npx vite preview --port 4173 --strictPort --host 127.0.0.1
 # 2. Capture the real interface (writes assets/promo-frames/)
 npx tsx tools/capture-ui.ts
 
-# 3. Render the 89s core (also checks the figures, and writes the overlays)
+# 3. Render the 103s core (also checks the figures, and writes the overlays)
 python tools/make-promo.py
 
 # 4. Stitch, with the two generative bookends and the music bed

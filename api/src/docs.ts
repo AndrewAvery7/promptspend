@@ -152,6 +152,29 @@ ${rows}
   }
 }</code></pre>
 
+        <h2>Inside a coding agent</h2>
+        <p>
+          The same data, as an MCP server. Every price it returns carries the source and the date it
+          was last confirmed, and disputed prices are marked rather than quietly resolved &mdash;
+          which matters more to a model than to a person. Someone reading this page can see the
+          interface around a number and judge it. A model handed a bare figure repeats it with
+          whatever confidence the sentence implies.
+        </p>
+        <pre><code>$ claude mcp add promptspend -- npx -y @promptspend/mcp</code></pre>
+        <p>
+          Three tools, deliberately. <code>estimate_cost</code> is the one a price lookup cannot
+          provide: it runs this site's own cost engine, so it accounts for conversation history
+          compounding, cache writes costing more than input, long-context tiers and reasoning
+          tokens &mdash; and cannot report a number that disagrees with
+          <a href="${siteOrigin}/">the calculator</a>, because it is the same code.
+        </p>
+        <p>
+          <strong>It adds about 700 tokens to your context per turn.</strong> Tool definitions load
+          into every message for as long as a server is connected, so that figure is budgeted,
+          checked in CI, and published here rather than left for you to discover.
+          <a href="https://github.com/AndrewAvery7/promptspend/tree/main/mcp">Source and the measurement.</a>
+        </p>
+
         <h2>Terms, such as they are</h2>
         <ul>
           <li>MIT licensed, like the project. Use it in anything, including commercially.</li>
@@ -217,10 +240,20 @@ excluded by default so one purchasable model is not counted twice.
   do not substitute a number.
 - No SLA, MIT licensed, attribution appreciated.
 
+## MCP server
+
+\`npx -y @promptspend/mcp\` exposes this catalog to Claude Code, Cursor and
+Windsurf. Three tools; every price carries its source and confirmation date, and
+disputed prices are marked. \`estimate_cost\` runs the calculator's own engine, so
+it accounts for compounding conversation history, cache writes and long-context
+tiers rather than returning a rate to multiply by hand. Adds ~700 tokens of
+context per turn, measured and budgeted.
+
 ## Related
 
 - [Calculator](${siteOrigin}/): cost a real workload across the whole catalog
 - [Per-model pricing pages](${siteOrigin}/models/)
+- [MCP server](https://github.com/AndrewAvery7/promptspend/tree/main/mcp)
 - [Source](https://github.com/AndrewAvery7/promptspend)
 `;
 }

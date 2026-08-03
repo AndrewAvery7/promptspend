@@ -39,7 +39,7 @@
 https://github.com/user-attachments/assets/1567b20a-7d55-4199-a328-d6e7366e73db
 
 <p align="center">
-  <i>1 minute 38 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
+  <i>1 minute 53 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
   &nbsp;·&nbsp;
   <a href="https://github.com/AndrewAvery7/promptspend/releases/latest/download/promptspend-promo.mp4">Download the MP4</a>
 </p>
@@ -152,6 +152,31 @@ curl https://promptspend.dev/v1/prices.csv      # the same rows, for a spreadshe
 Filters: `?provider=`, `?status=`, `?aliases=include`. Every response carries
 `X-PromptSpend-Generated-At`, and OpenAPI 3.1 lives at
 [`/openapi.json`](https://promptspend.dev/openapi.json). See [docs/API.md](docs/API.md).
+
+### Or inside your coding agent
+
+```bash
+claude mcp add promptspend -- npx -y @promptspend/mcp
+```
+
+Other pricing MCP servers exist and index more models than this one. What none of them do is
+tell you **where a number came from and when it was last confirmed** — the competing server's own
+documentation says only that pricing "is updated regularly", with no verification date per price.
+That gap is the reason this exists.
+
+It matters more to a model than to a person. Someone reading a web page sees the interface around a
+figure and calibrates. A model handed a bare number repeats it with whatever confidence the sentence
+implies. Given the source and the date it can say _"as of 1 August, per OpenAI's pricing page"_ —
+and when two sources disagree it is told so, rather than being handed a number somebody picked.
+
+Three tools, deliberately. `estimate_cost` is the one a price lookup cannot provide: it runs **this
+repository's cost engine**, imported rather than reimplemented, so it accounts for compounding
+conversation history, cache writes, long-context tiers and reasoning tokens — and cannot report a
+figure that disagrees with the calculator, because it is the same code. A test asserts that.
+
+And because MCP tool definitions load into your context on _every_ turn, the server's own overhead is
+measured, budgeted at 900, checked in CI and published: **~700 tokens**. Nothing else in the
+ecosystem appears to publish its own footprint. See [mcp/README.md](mcp/README.md).
 
 Or read the file the API reads. The catalog is plain, versioned JSON with a stable shape:
 

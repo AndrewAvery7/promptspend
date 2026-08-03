@@ -736,6 +736,41 @@ body.tour-active .main {
   white-space: nowrap;
 }
 
+/* ------------------------------------------------- build-on-it (Data view) */
+/* Two equal columns that collapse at the same breakpoint as the cost cards,
+   so the Data view never has one grid stacking while another does not. */
+.build-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.build-grid h3 {
+  font-size: 0.95rem;
+  margin: 0 0 6px;
+}
+.build-grid p {
+  font-size: 0.88rem;
+  margin: 0 0 10px;
+}
+.build-grid pre {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0 0 8px;
+  overflow-x: auto;
+}
+.build-grid code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  white-space: pre;
+}
+@media (max-width: 640px) {
+  .build-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ----------------------------------------------------------- model cards */
 .card-grid {
   display: grid;

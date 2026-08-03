@@ -472,6 +472,90 @@ def scene_trust(fr, n):
     return im
 
 
+def scene_agent(fr, n):
+    """Where the provenance actually pays off: inside somebody's editor.
+
+    The argument the whole film has been building lands here. A person reading
+    a web page can see the interface around a number and calibrate. A model
+    handed a bare figure cannot, and repeats it with whatever confidence the
+    sentence implies. So the same paperwork that appears on screen travels into
+    the agent - which is the one thing no competing pricing server does.
+
+    The terminal block is real output, taken from the built server's response
+    rather than composed for the shot, on the same principle as every other
+    screen in this film.
+    """
+    t = fr / n
+    im = base()
+    d = ImageDraw.Draw(im)
+    eyebrow(im, "AND WHERE YOU WORK", ease(seg(t, 0.02, 0.12)))
+    headline(im, "The paperwork travels with it.", ease(seg(t, 0.04, 0.14)),
+             sub="An MCP server for Claude Code, Cursor and Windsurf.",
+             sub_alpha=ease(seg(t, 0.16, 0.14)))
+
+    # The install line, as a terminal token.
+    a = ease(seg(t, 0.24, 0.16))
+    if a > 0.01:
+        fm = F("mono-bold", 34)
+        cmd = "claude mcp add promptspend -- npx -y @promptspend/mcp"
+        pad = 40
+        w = tw(cmd, fm) + pad * 2
+        box = [W / 2 - w / 2, 300, W / 2 + w / 2, 380]
+        d.rounded_rectangle(box, radius=12, fill=lerp(BG, SURFACE, a),
+                            outline=fade(BORDER, a), width=2)
+        d.text((W / 2 - tw(cmd, fm) / 2, 322), cmd, font=fm, fill=fade(ACCENT, a))
+
+    # What a competing server returns, against what this one does. Not a
+    # comparison table with a rival's name on it - just the shape of an answer
+    # with its paperwork and one without.
+    a2 = ease(seg(t, 0.40, 0.18))
+    if a2 > 0.01:
+        fl = F("mono-bold", 24)
+        fv = F("mono", 26)
+        left = [180, 440, 920, 800]
+        right = [1000, 440, 1740, 800]
+        d.rounded_rectangle(left, radius=12, fill=lerp(BG, SURFACE, a2 * 0.7),
+                            outline=fade(BORDER, a2), width=2)
+        d.text((left[0] + 28, left[1] + 24), "A PRICE", font=fl, fill=fade(MUTED, a2))
+        d.text((left[0] + 28, left[1] + 78), "$1.25 / $10", font=F("mono-bold", 44),
+               fill=fade(INK, a2 * 0.8))
+        d.text((left[0] + 28, left[1] + 160), "per million tokens.", font=fv,
+               fill=fade(MUTED, a2 * 0.8))
+        d.text((left[0] + 28, left[1] + 210), "From when? Says who?", font=F("body", 30),
+               fill=fade(COST, ease(seg(t, 0.54, 0.14))))
+
+    a3 = ease(seg(t, 0.52, 0.18))
+    if a3 > 0.01:
+        fl = F("mono-bold", 24)
+        d.rounded_rectangle(right, radius=12, fill=lerp(BG, SURFACE, a3),
+                            outline=fade(SAVE, a3), width=2)
+        d.text((right[0] + 28, right[1] + 24), "A PRICE THAT SHOWS ITS WORK",
+               font=fl, fill=fade(SAVE, a3))
+        rows = [
+            ('"source"', '"vendor"'),
+            ('"last_verified"', '"2026-08-01"'),
+            ('"verified_url"', '"openai.com/..."'),
+            ('"disputed"', 'false'),
+        ]
+        fk = F("mono", 26)
+        for i, (k, v) in enumerate(rows):
+            aa = ease(seg(t, 0.56 + i * 0.06, 0.12))
+            if aa < 0.01:
+                continue
+            y = right[1] + 82 + i * 46
+            d.text((right[0] + 28, y), k, font=fk, fill=fade(ACCENT, aa))
+            d.text((right[0] + 300, y), v, font=fk, fill=fade(INK, aa))
+
+    a4 = ease(seg(t, 0.82, 0.16))
+    if a4 > 0.01:
+        centred(im, "A model repeats a number with whatever confidence you gave it.",
+                842, F("display-mid", 40), INK, a4)
+    a5 = ease(seg(t, 0.90, 0.10))
+    if a5 > 0.01:
+        centred(im, "So it is given the date.", 900, F("body", 34), MUTED, a5)
+    return im
+
+
 def scene_pipeline(fr, n):
     """The actual product is the pipeline; the calculator sits on top of it."""
     t = fr / n
@@ -590,6 +674,7 @@ HOLD = {  # seconds of settled time after everything has appeared
     "estimate": 6.5,   # four cost cards, ~15 figures each - the densest frame
     "saving": 5.0,     # one big number lands fast, then a two-line callout
     "trust": 6.3,      # two panels plus three lines; the heaviest for text
+    "agent": 6.0,      # a command, two panels and a closing pair
     "pipeline": 6.0,   # a three-step ladder, two counters, a closing line
     "cta": 4.5,        # light, but it is the address and it should linger
 }
@@ -605,6 +690,7 @@ SCENES = [
     (scene_estimate, 205 + _frames(HOLD["estimate"]), 205),    # the product working
     (scene_saving, 150 + _frames(HOLD["saving"]), 150),        # the payoff
     (scene_trust, 195 + _frames(HOLD["trust"]), 195),          # provenance and flags
+    (scene_agent, 200 + _frames(HOLD["agent"]), 200),          # into the editor
     (scene_pipeline, 200 + _frames(HOLD["pipeline"]), 200),    # the daily sync
     (scene_cta, 145 + _frames(HOLD["cta"]), 145),              # where to go
 ]
