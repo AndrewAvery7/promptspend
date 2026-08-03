@@ -744,6 +744,15 @@ body.tour-active .main {
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
 }
+/* Grid children default to `min-width: auto`, which refuses to shrink below
+   their content. The install command is one long unbreakable token, so without
+   this the column widened the whole data grid and pushed every OTHER panel off
+   the screen at 320px — the e2e report blamed the health panel, which was
+   merely a victim. `min-width: 0` lets the column shrink and hands the
+   scrolling to the `pre` below, where it belongs. */
+.build-grid > article {
+  min-width: 0;
+}
 .build-grid h3 {
   font-size: 0.95rem;
   margin: 0 0 6px;
@@ -753,6 +762,7 @@ body.tour-active .main {
   margin: 0 0 10px;
 }
 .build-grid pre {
+  max-width: 100%;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
