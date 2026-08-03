@@ -132,3 +132,16 @@ generative is ever asked to render a figure, a word or an interface.
    issue or pull-request comment in the web UI to get a `user-attachments` URL,
    which then replaces the `<!-- PROMO-VIDEO -->` marker. There is no API for
    this; a release-asset URL downloads instead of playing.
+
+   **Submit the comment.** Dragging the file uploads it and GitHub inserts the
+   URL straight away, which makes it look finished — but an abandoned draft does
+   not retain the attachment and the URL then 404s. Post the issue (closing it
+   afterwards is fine) or add the video as a comment on the release.
+
+   Check the URL before committing it, because a broken embed on the front page
+   is worse than no embed. An unsigned request to a live attachment answers
+   **403 or 302**; a dead one answers **404**:
+
+   ```bash
+   curl -sS -o /dev/null -w '%{http_code}\n' -I https://github.com/user-attachments/assets/<uuid>
+   ```

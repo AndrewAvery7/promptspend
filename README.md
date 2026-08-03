@@ -25,7 +25,14 @@
   &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no tracking
 </p>
 
-<!-- PROMO-VIDEO -->
+<!-- PROMO-VIDEO: replace this comment with a bare user-attachments URL on its own
+     line, which GitHub turns into an inline player. Markdown image or link syntax
+     does NOT work, and a release-asset URL downloads instead of playing.
+
+     The URL only exists after the file is dragged into a comment box in the web
+     UI AND that comment is submitted: an abandoned draft uploads the file but
+     does not retain it, and the URL 404s. Verify before committing - a live
+     attachment answers an unsigned request with 403 or 302, never 404. -->
 
 <p align="center">
   <i>1 minute 38 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
