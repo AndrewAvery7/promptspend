@@ -27,3 +27,7 @@ assets/core.mp4
 assets/*-promo.mp4
 assets/.bed-looped.mp3
 .promo-fonts/
+
+# The MCP server's bundle. Built by `npm run build` in mcp/ and published to
+# npm from CI; committing it would put a generated 37 KB file in every diff.
+mcp/dist/

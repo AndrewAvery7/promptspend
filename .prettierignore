@@ -13,6 +13,11 @@ worker/worker-configuration.d.ts
 api/node_modules
 api/dist
 api/worker-configuration.d.ts
+mcp/node_modules
+mcp/dist
+# npm writes this; reformatting a lockfile is churn at best and confuses npm
+# at worst. The same reasoning as the generated worker types above.
+mcp/package-lock.json
 **/.wrangler
 test-results
 playwright-report

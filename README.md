@@ -226,6 +226,7 @@ public/data/        the published catalog the app reads
 public/sw.js        service worker — push display only, no offline cache
 worker/             the alerts API (Cloudflare Worker, own package and tests)
 api/                the public pricing API on promptspend.dev (own package and tests)
+mcp/                the MCP server — imports the engine above, so it cannot disagree with it
 ```
 
 Beyond the calculator, the build writes 159 crawlable pages — one per model, one per provider, and a
@@ -260,6 +261,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                       |
 | [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                     |
 | [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                |
+| [mcp/README.md](mcp/README.md)                         | The MCP server — pricing for coding agents, with the source and date on every number                     |
 | [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                   |
 | [SECURITY.md](SECURITY.md)                             | What is in scope — including a wrong price, which is treated as the most serious class of bug            |
 

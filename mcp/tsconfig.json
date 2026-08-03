@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    // DOM is here for the fetch types only. Node's own fetch typings omit
+    // `RequestInit.cache`, which both this package and the site's catalog
+    // loader pass — `cache: 'no-store'` is what stops a Worker or a long-lived
+    // process serving a catalog it fetched hours ago.
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    // The engine and the catalog types are imported from the site rather than
+    // reimplemented, so a price this server reports cannot drift from the one
+    // the website shows.
+    "paths": {
+      "@/*": ["../src/*"]
+    }
+  },
+  "include": ["src", "tools"]
+}

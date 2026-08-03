@@ -13,6 +13,8 @@ export default tseslint.config(
       'worker/dist',
       'api/node_modules',
       'api/dist',
+      'mcp/node_modules',
+      'mcp/dist',
       // Wrangler's scratch directory. It holds the bundled output of the last
       // `wrangler dev` — machine-generated, transient, and linting it produced
       // a wall of errors about a file nobody wrote.
@@ -62,7 +64,7 @@ export default tseslint.config(
     // The alerts worker runs on workerd. Its console output is not debug
     // clutter — logs are the only observability a Worker has, and the fan-out
     // counts printed after a notify run are how a delivery problem gets found.
-    files: ['worker/**/*.ts', 'api/**/*.ts'],
+    files: ['worker/**/*.ts', 'api/**/*.ts', 'mcp/**/*.ts'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: { ...globals.worker, ...globals.node },
