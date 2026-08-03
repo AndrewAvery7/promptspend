@@ -52,7 +52,8 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 
 ## Genuinely not started
 
-**axe and visual-regression tests** — the remaining half of audit finding TT-28.
+**axe and visual-regression tests** — the remaining half of a pre-publication
+audit finding that asked for automated accessibility and visual coverage.
 Playwright landed on 2026-08-02 and covers layout at four viewports; what is
 still uncovered is automated accessibility auditing (axe) and screenshot
 diffing. The colour-contrast side is partly handled already by
