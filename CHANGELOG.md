@@ -32,6 +32,22 @@ page while being right in the code.
   UTF-8, and on double-encoding. Detection is a round-trip rather than a list of
   suspicious characters, because a pattern list both misses real cases and flags
   innocent text.
+- **A browser suite**, gating CI as `verify / e2e`. Playwright at four viewports
+  — 320, 390, 768 and 1280 — with touch emulation on the narrow three, because
+  the 44px target rules live behind `@media (pointer: coarse)` and without it the
+  run silently checks the desktop stylesheet on a narrow screen. It runs against
+  the **built** site, since the 159 generated pages only exist after
+  `build:pages`. 0.2.0 called this "the next investment"; this is it arriving.
+  The remaining half — axe and screenshot diffing — is still open, and named in
+  [docs/DEFERRED.md](docs/DEFERRED.md).
+- **The README badges are held to the numbers that produce them.** `check:budget`
+  asserts the payload badge against the gzipped bundle, and `validate:catalog`
+  asserts the model and provider badges against the catalog. Three hand-written
+  figures had already gone stale — the test total, the bundle size, and counts
+  that move every morning the sync adds a row — so the scripts that know the real
+  number are now the things that keep the README honest. The test-count badge
+  stays manual: the only thing that knows it is a test run, and having the suite
+  assert its own total is circular.
 
 ### Fixed
 
