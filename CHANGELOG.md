@@ -32,6 +32,34 @@ page while being right in the code.
   UTF-8, and on double-encoding. Detection is a round-trip rather than a list of
   suspicious characters, because a pattern list both misses real cases and flags
   innocent text.
+- **An MCP server** (`mcp/`, `@promptspend/mcp`) for Claude Code, Cursor and
+  Windsurf. The category already has one, with more tools and data this project
+  does not hold — so this does not compete on breadth. It competes on the one
+  thing the competing server's own documentation does not offer: every price it
+  returns carries its source and the date it was last confirmed, and disputed
+  prices are marked rather than quietly resolved. That matters more to a model
+  than to a person, because a model handed a bare figure repeats it with
+  whatever confidence the sentence implied.
+
+  `estimate_cost` is the tool a price lookup structurally cannot provide: it
+  runs **this repository's cost engine**, imported rather than reimplemented, so
+  it accounts for compounding conversation history, cache writes, long-context
+  tiers and reasoning tokens — and cannot report a figure that disagrees with the
+  calculator. A test compares against `compareModels` directly rather than
+  trusting the import still exists.
+
+  Because MCP tool definitions load into context on _every_ turn, the server's
+  own overhead is measured, budgeted at 900, checked in CI and published:
+  **~700 tokens**. The README figure is asserted against the actual manifest.
+  See [mcp/README.md](mcp/README.md).
+
+- **`verify / mcp`** in CI: typecheck, 21 tests, the footprint budget, a bundle,
+  and a startup gate that spawns the built binary and speaks MCP to it. That last
+  one exists because it caught three faults everything upstream called fine —
+  `tsc` does not rewrite `paths`, Node's ESM loader needs the `.js` extensions
+  `moduleResolution: bundler` lets the source omit, and a shebang banner landed on
+  line 2 of a file that already had one. Vitest resolves the first two itself, so
+  only running the artifact could find them.
 - **A browser suite**, gating CI as `verify / e2e`. Playwright at four viewports
   — 320, 390, 768 and 1280 — with touch emulation on the narrow three, because
   the 44px target rules live behind `@media (pointer: coarse)` and without it the
@@ -49,8 +77,25 @@ page while being right in the code.
   stays manual: the only thing that knows it is a test run, and having the suite
   assert its own total is circular.
 
+### Changed
+
+- The site, the developer hub and `llms.txt` now say what makes this different
+  rather than leaving a reader to infer it. Data & Alerts gains a **Use it where
+  you work** panel, placed above the trust ladder deliberately: the ladder argues
+  the numbers are believable, and this is the payoff — the same numbers, with the
+  same paperwork, in an editor.
+- The promo video gains a scene for it and runs 1:53. Same rules as the rest of
+  the film: real figures, the site's own typefaces, no mockups, and the honest
+  comparison is a price beside a price-with-its-paperwork rather than a
+  competitor's name.
+
 ### Fixed
 
+- **A long install command in the new panel pushed the page sideways at 320px.**
+  Grid children default to `min-width: auto`, so the column refused to shrink
+  below one unbreakable token and widened the whole data grid. The browser suite
+  named the health panel as the offender, which was true and misleading — it was
+  a victim of a sibling that would not narrow.
 - **README.md was mojibake on the public repository page.** A Windows read/write
   pair that disagreed about encoding: PowerShell 5.1 reads an un-BOMed file as
   the system ANSI codepage while `Out-File` writes UTF-8 with a BOM, so every
