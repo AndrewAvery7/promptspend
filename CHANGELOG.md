@@ -7,10 +7,16 @@ on their own schedule and are not releases.
 
 ## Unreleased
 
-No change to what the application does. Everything here is about the repository
-being honest about itself — a corrupted README that had already shipped, a promo
-that could have drifted from the product, and two numbers that were wrong on the
-page while being right in the code.
+Two threads. The first is the repository being honest about itself — a corrupted
+README that had already shipped, a promo that could have drifted from the
+product, and two numbers that were wrong on the page while being right in the
+code.
+
+The second is new reach for the same data. The catalog now answers inside a
+coding agent as well as on a web page, and every surface it reaches carries the
+same paperwork: a source, a confirmation date, and a mark on the prices nobody
+has adjudicated. That is the only claim here a competitor cannot match by
+shipping a package next week.
 
 ### Added
 
