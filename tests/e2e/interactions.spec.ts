@@ -131,28 +131,77 @@ test('the value map never prints one model label through another', async ({ page
     // copies nothing and every comparison silently comes out false. That is how
     // the first version of this test passed against a chart with four visible
     // collisions on screen.
-    const boxes = [...document.querySelectorAll('.value-map svg text')]
-      .filter((t) => t.getAttribute('font-weight') === '600')
-      .map((t) => {
-        const r = (t as SVGGraphicsElement).getBBox();
-        return { name: t.textContent ?? '', x: r.x, y: r.y, w: r.width, h: r.height };
-      });
+    const measure = (t: Element) => {
+      const r = (t as SVGGraphicsElement).getBBox();
+      return { name: t.textContent ?? '', x: r.x, y: r.y, w: r.width, h: r.height };
+    };
+    const all = [...document.querySelectorAll('.value-map svg text')];
+    const labels = all.filter((t) => t.getAttribute('font-weight') === '600').map(measure);
+    // Everything else that is drawn: axis tick numbers and axis titles. A model
+    // name printed over the y-axis "70" is exactly as unreadable as one printed
+    // over another model, and the label-versus-label check cannot see it.
+    const furniture = all.filter((t) => t.getAttribute('font-weight') !== '600').map(measure);
+
+    const hits = (a: ReturnType<typeof measure>, b: ReturnType<typeof measure>) =>
+      a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
     const clashes: string[] = [];
-    for (let i = 0; i < boxes.length; i += 1) {
-      for (let j = i + 1; j < boxes.length; j += 1) {
-        const a = boxes[i]!;
-        const b = boxes[j]!;
-        if (!Number.isFinite(a.x) || !Number.isFinite(b.x)) {
-          clashes.push('a label could not be measured');
-          continue;
-        }
-        if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) {
-          clashes.push(a.name + ' over ' + b.name);
-        }
+    for (let i = 0; i < labels.length; i += 1) {
+      const a = labels[i]!;
+      if (!Number.isFinite(a.x) || !Number.isFinite(a.w)) {
+        clashes.push(`${a.name} could not be measured`);
+        continue;
+      }
+      for (let j = i + 1; j < labels.length; j += 1) {
+        if (hits(a, labels[j]!)) clashes.push(`${a.name} over ${labels[j]!.name}`);
+      }
+      for (const f of furniture) {
+        if (f.name.trim() && hits(a, f)) clashes.push(`${a.name} over axis text "${f.name}"`);
       }
     }
     return clashes;
   });
 
   expect(overlaps, `overlapping labels: ${overlaps.join(', ')}`).toEqual([]);
+});
+
+/**
+ * The chart's caption tells the reader to hover or tab a dot for its details,
+ * so both routes have to actually show them.
+ *
+ * Focus was setting the hover state to (0, 0) while the tooltip renders only
+ * when `x > 0`, so tabbing a dot displayed nothing at all. The aria-label
+ * carried the same information, which is why it survived an axe pass and a
+ * manual read: a screen reader was never affected, only a sighted person using
+ * a keyboard.
+ */
+test('a dot shows its details on hover and on keyboard focus', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Compare', exact: true }).click();
+  const dot = page.locator('.value-map svg g[tabindex="0"]').first();
+  await expect(dot).toBeAttached();
+  const tip = page.locator('.chart-tooltip');
+
+  // Explicit coordinates rather than `hover()`. The dot is an svg <g> whose
+  // only painted children are transparent circles, and Playwright's
+  // actionability wait never settles on it.
+  await dot.scrollIntoViewIfNeeded();
+  const box = (await dot.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(tip).toBeVisible();
+  const hovered = await tip.innerText();
+  expect(hovered.length).toBeGreaterThan(0);
+
+  await page.mouse.move(1, 1);
+  await expect(tip).toBeHidden();
+
+  await dot.focus();
+  await expect(tip, 'focusing a dot must show its details, as hovering does').toBeVisible();
+
+  // Not compared against the hovered text: the 22px transparent hit areas
+  // overlap, so the pixel under the cursor is often a different model from the
+  // one `.first()` focuses. What matters is that focus names the dot it landed
+  // on, so the tooltip is checked against that dot's own accessible name.
+  const name = ((await dot.getAttribute('aria-label')) ?? '').split(',')[0]!;
+  expect(await tip.innerText()).toContain(name);
 });

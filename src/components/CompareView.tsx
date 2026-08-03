@@ -159,8 +159,19 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
         const y = point.cy + spot.dy;
         const x1 = spot.anchor === 'middle' ? x - width / 2 : spot.anchor === 'start' ? x : x - width;
         const box = { x1, y1: y - LABEL_H, x2: x1 + width, y2: y + 3 };
-        // Outside the plot is as unusable as overlapped — it clips at the edge.
-        if (box.x1 < 2 || box.x2 > WIDTH - 2 || box.y1 < 2 || box.y2 > HEIGHT - PAD.bottom) continue;
+        // Inside the plot area, not merely inside the svg. The first version
+        // bounded against the svg edge, which let a label for a cheap model
+        // spill left into the axis gutter and print over the y-axis tick
+        // numbers — a collision the model-versus-model check could not see,
+        // because a tick is not a model.
+        if (
+          box.x1 < PAD.left ||
+          box.x2 > WIDTH - PAD.right ||
+          box.y1 < PAD.top ||
+          box.y2 > HEIGHT - PAD.bottom
+        ) {
+          continue;
+        }
         if (hits(box)) continue;
         taken.push(box);
         placements.set(id, { x, y, anchor: spot.anchor });
@@ -281,7 +292,16 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
                       onToggle(model.id);
                     }
                   }}
-                  onFocus={() => setHover({ model, x: 0, y: 0 })}
+                  onFocus={(event) => {
+                    // Position from the dot's own box, not (0, 0). The tooltip
+                    // renders only when `hover.x > 0`, so focusing a dot set the
+                    // state and then displayed nothing — a sighted keyboard user
+                    // tabbed through every dot and saw no name for any of them.
+                    // The aria-label carried it all along, which is why this went
+                    // unnoticed: a screen reader was never affected.
+                    const box = event.currentTarget.getBoundingClientRect();
+                    setHover({ model, x: box.left + box.width / 2, y: box.top });
+                  }}
                   onBlur={() => setHover(null)}
                   onMouseMove={(event) => setHover({ model, x: event.clientX, y: event.clientY })}
                   onMouseLeave={() => setHover(null)}
@@ -317,8 +337,9 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
         </svg>
       </div>
       <p className="value-map__caption">
-        Filled dots are in your estimate — choose any dot to add or remove it. Blended price weights input 75%
-        / output 25%.{' '}
+        <b>Hover or tab to any dot</b> for its name, price and provider — only the extremes are labelled, to
+        keep the chart readable. Filled dots are in your estimate; choose any dot to add or remove it. Blended
+        price weights input 75% / output 25%.{' '}
         {points.unscored > 0 && (
           <>
             <b>{points.unscored}</b> of {catalog.primaryModels.length} models have no capability estimate and
