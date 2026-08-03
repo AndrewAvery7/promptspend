@@ -431,6 +431,11 @@ body.tour-active .main {
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
+  /* Follows the palette the reader picked, like the eyebrow and the emphasised
+   * word in the headline. 1.6rem at weight 700 is "large text" under WCAG, so
+   * the 3:1 threshold applies rather than 4.5:1 — and `contrast.test.ts` already
+   * checks every accent against every surface it can land on. */
+  color: var(--accent);
 }
 .hero__stats dd {
   color: var(--muted);

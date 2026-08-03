@@ -109,7 +109,11 @@ shipping a package next week.
   **derived from the catalog being displayed**, including the vendor count,
   which is now `Catalog.vendorVerifiedCount()` rather than a literal. It is the
   number this project is really selling, so it is precisely the one that must
-  not be a figure somebody forgot to raise after a verification pass.
+  not be a figure somebody forgot to raise after a verification pass. The
+  figures take the reader's chosen accent, like the eyebrow and the emphasised
+  word in the headline; at 25.6px and weight 700 they are large text, so the
+  3:1 threshold applies, and `contrast.test.ts` already checks every accent
+  against every surface it can land on.
 
 - **Both install commands gained a copy button.** They sit in boxes that scroll
   sideways, because the command does not fit a phone and shrinking it below 12px
