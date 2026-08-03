@@ -134,6 +134,15 @@ ${rows}
           adjudicated yet — treat those rows with suspicion, which is why they are flagged rather than
           hidden.
         </p>
+        <p>
+          <code>lastChanged</code> is <strong>absent</strong> until a rate is observed to move, and it is
+          absent on every model today. That is deliberate. This catalog's recorded history begins on
+          2026-08-01 and no vendor has moved a price since, so there is no date to report — and a field
+          that quietly reported the last sync instead would say "changed today" every morning, which is
+          the one failure a provenance API cannot afford. Treat its absence as "no change on record",
+          never as "unknown freshness": <code>lastVerified</code> answers that question, and it is always
+          present.
+        </p>
 
         <h2>Example</h2>
         <pre><code>$ curl -s ${origin}/v1/models/claude-opus-5 | jq '{id, pricing, provenance}'
@@ -143,12 +152,13 @@ ${rows}
     "input": 5,
     "output": 25,
     "cachedInput": 0.5,
-    "cacheWrite": 6.25
+    "cacheWrite": 6.25,
+    "batchDiscount": 0.5
   },
   "provenance": {
     "source": "vendor",
     "lastVerified": "2026-08-01",
-    "lastChanged": "2026-07-20"
+    "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
   }
 }</code></pre>
 
