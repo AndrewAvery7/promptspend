@@ -41,7 +41,7 @@ body:
       description: >
         The whole scenario lives in the query string, so this reproduces your
         estimate exactly. It never contains prompt text — only token counts.
-      placeholder: 'https://andrewavery7.github.io/promptspend/?m=gpt-5.4&sys=800&...'
+      placeholder: 'https://promptspend.com/?m=gpt-5.4&sys=800&...'
     validations:
       required: true
 

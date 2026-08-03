@@ -21,8 +21,16 @@
 </p>
 
 <p align="center">
-  <a href="https://andrewavery7.github.io/promptspend/"><b>&rarr; Open PromptSpend</b></a>
+  <a href="https://promptspend.com"><b>&rarr; Open PromptSpend</b></a>
   &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no tracking
+</p>
+
+<!-- PROMO-VIDEO -->
+
+<p align="center">
+  <i>69 seconds &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/AndrewAvery7/promptspend/releases/latest/download/promptspend-promo.mp4">Download the MP4</a>
 </p>
 
 ---
@@ -116,7 +124,7 @@ perfectly; a broken scheduler looks exactly the same if you only publish one dat
 a health manifest written on every run, successful or not:
 
 ```
-https://andrewavery7.github.io/promptspend/data/sync-status.json
+https://promptspend.com/data/sync-status.json
 ```
 
 ## Use the data yourself
@@ -240,6 +248,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                          |
 | [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                       |
 | [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                     |
+| [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                |
 | [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                   |
 | [SECURITY.md](SECURITY.md)                             | What is in scope — including a wrong price, which is treated as the most serious class of bug            |
 

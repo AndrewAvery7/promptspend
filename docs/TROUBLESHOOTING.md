@@ -120,7 +120,7 @@ The header shows two dates, deliberately:
   one that indicates a problem if it stops moving.
 
 The full picture is at
-[`data/sync-status.json`](https://andrewavery7.github.io/promptspend/data/sync-status.json):
+[`data/sync-status.json`](https://promptspend.com/data/sync-status.json):
 attempted and succeeded timestamps, per-source status, row counts and a catalog
 fingerprint. If a run was **degraded** — a source unavailable, a payload
 suspiciously small, the catalog about to shrink — it publishes nothing, records

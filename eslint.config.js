@@ -44,8 +44,8 @@ export default tseslint.config(
     },
   },
   {
-    // The sync script is a CLI: printing is the point.
-    files: ['scripts/**/*.ts'],
+    // These are CLIs: printing is the point.
+    files: ['scripts/**/*.ts', 'tools/**/*.ts'],
     rules: { 'no-console': 'off' },
   },
   {
