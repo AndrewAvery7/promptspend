@@ -177,6 +177,7 @@ shipping a package next week.
   the product" under product snippets, which need only `name` plus one of
   `review`, `aggregateRating` or `offers`. `docs/PAGES.md` records which
   warnings are permanent so the next person to receive one does not "fix" it.
+
 - ESLint no longer walks `.claude`. A git worktree lands there as a complete
   second copy of the repository, and the path-scoped override that gives the
   service worker its globals matches `public/sw.js` but not
