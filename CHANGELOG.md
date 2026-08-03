@@ -90,6 +90,47 @@ shipping a package next week.
   you work** panel, placed above the trust ladder deliberately: the ladder argues
   the numbers are believable, and this is the payoff — the same numbers, with the
   same paperwork, in an editor.
+- **Compare now prices the shortlist it lets you build.** The page let you
+  assemble a selection and showed you none of its money — the bill was a tab
+  away on Estimate — so it answered "which of these is expensive relative to the
+  others" rather than "what do these cost", which is the question someone
+  comparing prices actually has. The selection now appears beside the chart,
+  cheapest first, each with its monthly cost at the workload already set, the
+  cheapest tagged and the priciest expressed as a multiple and a monthly delta.
+
+  It reads `estimator.rows` — the same array the cost cards render, not a
+  recalculation. Two different numbers for one model on two tabs of one site
+  would read as a pricing error rather than the plumbing mistake it would be. A
+  browser test walks both pages and asserts every shared model reports the same
+  figure, confirmed by doubling one side and watching it fail.
+
+  It was first placed in the hero, above the chart, which reintroduced exactly
+  the problem it was added to solve: clicking a dot changed a panel that had
+  already scrolled out of the window. The chart and the panel now share a row
+  and the panel is sticky, so the choice and its consequence are in one view.
+  Below 1080px the row stacks and the panel goes static, since pinning it there
+  would park it on top of the chart it describes.
+
+- **The value map no longer prints one model name through another.** Every label
+  was drawn 15px above its dot regardless of what was already there, so the
+  frontier cluster — models within a few capability points and a couple of
+  dollars of each other — printed straight through itself. Placement now tries
+  four positions and drops a label that fits nowhere; it remains in the tooltip
+  and the table, and an unreadable label takes its neighbour down with it.
+
+  A second pass fixed a collision the first could not see: candidates were
+  bounded against the svg edge rather than the plot area, so a cheap model's
+  label sat in the left gutter and printed over the y-axis tick numbers. A tick
+  is not a model, so the label-versus-label check was blind to it. The browser
+  test now compares every label against the axis text as well.
+
+- **A dot's details appear on keyboard focus, not only on hover.** Focus set the
+  hover state to `(0, 0)` while the tooltip renders only when `x > 0`, so
+  tabbing to a dot showed nothing at all. The `aria-label` carried the same
+  information, which is why a screen reader was unaffected and the axe pass had
+  nothing to report — the person it failed was someone sighted using a keyboard,
+  the case that falls between the two things being checked. The chart's caption
+  also now says the dots are interactive, which it never did.
 - **The MCP server is now on the landing view**, not only inside Data & Alerts.
   It was findable one way: open a tab most visitors never open. The hero copy is
   capped at a readable measure, which left the right of that row empty on a wide
