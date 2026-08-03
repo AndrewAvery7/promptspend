@@ -20,6 +20,8 @@ interface EstimateViewProps {
   showWelcome: boolean;
   onStartTour: () => void;
   onDismissWelcome: () => void;
+  /** Opens Data & Alerts, where the editor/API story is told in full. */
+  onOpenData: () => void;
 }
 
 const FIELD_COPY: Record<
@@ -67,6 +69,7 @@ export function EstimateView({
   showWelcome,
   onStartTour,
   onDismissWelcome,
+  onOpenData,
 }: EstimateViewProps) {
   const { scenario, fields, rows, insights } = estimator;
   const groups = catalog.byProvider(search);
@@ -77,14 +80,43 @@ export function EstimateView({
 
   return (
     <section aria-labelledby="estimate-heading">
-      <p className="eyebrow">Estimate</p>
-      <h1 className="headline" id="estimate-heading">
-        Know the tab <em>before</em> you build.
-      </h1>
-      <p className="subhead">
-        Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s bill
-        side by side — at your scale, from prices re-checked every morning.
-      </p>
+      {/* The hero copy is capped at a readable measure, which left the right of
+          the row empty on a wide screen. The MCP server was only mentioned in
+          Data & Alerts, so anyone who never opened that tab never learned the
+          catalog answers anywhere but here. */}
+      <div className="hero">
+        <div className="hero__copy">
+          <p className="eyebrow">Estimate</p>
+          <h1 className="headline" id="estimate-heading">
+            Know the tab <em>before</em> you build.
+          </h1>
+          <p className="subhead">
+            Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s
+            bill side by side — at your scale, from prices re-checked every morning.
+          </p>
+        </div>
+        <aside className="hero__aside" aria-labelledby="hero-mcp-title">
+          <p className="hero__aside-eyebrow">Also in your editor</p>
+          <h2 className="hero__aside-title" id="hero-mcp-title">
+            The same numbers, inside a coding agent
+          </h2>
+          <p>
+            An MCP server for Claude Code, Cursor and Windsurf. Every price still arrives with its source and
+            the date it was confirmed.
+          </p>
+          {/* Scrollable, so focusable: `overflow-x: auto` without a tab stop is
+              a box a keyboard user cannot reach the end of. */}
+          <pre className="mono" tabIndex={0}>
+            <code>claude mcp add promptspend -- npx -y @promptspend/mcp</code>
+          </pre>
+          <p className="hero__aside-note">
+            ~700 tokens per turn, measured ·{' '}
+            <button type="button" className="linklike" onClick={onOpenData}>
+              How it works
+            </button>
+          </p>
+        </aside>
+      </div>
 
       {showWelcome && (
         <div className="welcome">

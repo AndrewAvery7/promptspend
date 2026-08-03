@@ -232,6 +232,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
             showWelcome={!welcomeDismissed}
             onStartTour={startTour}
             onDismissWelcome={dismissWelcome}
+            onOpenData={() => setView('data')}
           />
         )}
         {view === 'compare' && (

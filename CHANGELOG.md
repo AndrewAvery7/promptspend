@@ -90,6 +90,20 @@ shipping a package next week.
   you work** panel, placed above the trust ladder deliberately: the ladder argues
   the numbers are believable, and this is the payoff — the same numbers, with the
   same paperwork, in an editor.
+- **The MCP server is now on the landing view**, not only inside Data & Alerts.
+  It was findable one way: open a tab most visitors never open. The hero copy is
+  capped at a readable measure, which left the right of that row empty on a wide
+  screen, so the card sits there — a sentence, the install command, the measured
+  per-turn cost, and a link through to the full panel. Below 1080px the row
+  becomes one column and the card follows the copy.
+
+  Two things the browser suite caught before this shipped, both the class of
+  fault that only exists at a particular width or in a particular input device:
+  the install command was set at `0.72rem`, rendering at 11.5px against a floor
+  of 12, and the scrollable `<pre>` needed a tab stop so a keyboard can reach the
+  end of the line. Adding it moved the initial payload from 81 KB gzip to 82, and
+  `check:budget` refused the build until the README badge said so.
+
 - The promo video gains a scene for it and runs 1:53. Same rules as the rest of
   the film: real figures, the site's own typefaces, no mockups, and the honest
   comparison is a price beside a price-with-its-paperwork rather than a
