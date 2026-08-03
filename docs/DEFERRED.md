@@ -82,6 +82,15 @@ Aggregator sites have numbers for all of them, and that is precisely the source
 this catalog refuses. These rows stay honestly labelled `litellm` until a
 first-party page carries them.
 
+A second attempt on 2026-08-03 went past the pricing pages to each vendor's
+model documentation — `docs.mistral.ai` models overview, `docs.cohere.com/docs/models`,
+Alibaba Model Studio's model list, Kimi's per-model pages and the AWS Bedrock
+pricing page. **None publishes a per-token rate for the models in question.**
+Two independent passes is enough to call this an upstream gap rather than a
+search problem; do not spend a third on the same URLs. The realistic unlocks are
+a vendor publishing a pricing page, or the model appearing in a source the
+catalog already accepts.
+
 **Six standing price flags.** DeepSeek R1 (gone from DeepSeek's current pricing
 page, consistent with it being marked legacy here), MiniMax M2.5, Kimi K2.6 and
 three DashScope rows. Their first-party pricing pages defeated an initial

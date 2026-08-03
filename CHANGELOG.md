@@ -199,6 +199,18 @@ shipping a package next week.
   `review`, `aggregateRating` or `offers`. `docs/PAGES.md` records which
   warnings are permanent so the next person to receive one does not "fix" it.
 
+- **The MCP readme's worked example was not the response the server returns.**
+  It was labelled as what an agent receives for `gpt-5` and showed that model as
+  `source: vendor` with a `verified_url`, while the published catalog had it as
+  `litellm` with neither — aspirational when written, and made mostly true only
+  by the verification pass above, which is the wrong reason for an example to
+  become correct. It is now pasted from a live `get_price` call against the
+  published package, including the `upstream_stale` field the hand-written
+  version omitted, with a line noting that the date will age and the shape will
+  not. Same defect and same fix as the developer hub. Released as
+  **`@promptspend/mcp` 0.1.2** so the package page carries it too; the npm
+  readme is only replaced on publish, so until then the old example stands
+  there regardless of what the repository says.
 - ESLint no longer walks `.claude`. A git worktree lands there as a complete
   second copy of the repository, and the path-scoped override that gives the
   service worker its globals matches `public/sw.js` but not
