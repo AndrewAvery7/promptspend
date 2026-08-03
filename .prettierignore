@@ -14,3 +14,5 @@ api/node_modules
 api/dist
 api/worker-configuration.d.ts
 **/.wrangler
+test-results
+playwright-report

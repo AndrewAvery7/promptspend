@@ -602,9 +602,31 @@ body.tour-active .main {
   font-size: 0.78rem;
   color: var(--muted);
   margin-top: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
 }
 .selection-count b {
   color: var(--accent);
+}
+/* A text button, for an action that undoes rather than commits. Giving "Clear
+   all" the weight of a real button would put it in competition with the
+   estimate itself. */
+.link-button {
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  color: var(--accent);
+  font-size: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+  flex: none;
+}
+.link-button:hover {
+  color: var(--ink);
 }
 
 /* ---------------------------------------------------------------- fields */
@@ -1997,11 +2019,41 @@ input[type='range'] {
 @media (pointer: coarse) {
   button,
   [role='button'],
-  input[type='checkbox'],
-  input[type='radio'],
+  input,
+  select,
+  textarea,
   .nav button,
   .mode-switch button,
   .catalog th button {
+    /* `input` broadly, not just checkbox and radio. The number fields were
+       42px — close enough to look right and still under the threshold, which
+       is exactly the kind of miss a person scrolling a page never catches. */
+    min-height: 44px;
+  }
+  /* Two selectors elsewhere in this file are *more specific* than the bare
+     `input` above, and a media query adds no specificity — so `input[type=
+     'range'] { min-height: 28px }` and `.check-row input` both kept winning
+     while the rule above looked like it had covered them. */
+  input[type='range'] {
+    min-height: 44px;
+  }
+  /* The checkbox itself stays checkbox-sized; the label beside it becomes the
+     44px target, which is what a thumb lands on anyway. */
+  .check-row {
+    align-items: center;
+    min-height: 44px;
+  }
+  .check-row label {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  /* "Advanced assumptions" is a disclosure, and a 24px-tall one is a thumb's
+     worth of guesswork. `summary` needs `display: flex` explicitly or the
+     marker collapses the box back to its text height. */
+  summary {
+    display: flex;
+    align-items: center;
     min-height: 44px;
   }
   button,

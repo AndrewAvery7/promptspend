@@ -309,6 +309,18 @@ export function useEstimator(catalog: Catalog) {
     return result;
   }, []);
 
+  /**
+   * Empty the selection without touching anything else.
+   *
+   * Distinct from `reset`, which also throws away the workload, the scale and
+   * any pasted text. Wanting to try four different models is not wanting to
+   * start over — and with a 69-model list behind a scroll box, unticking four
+   * boxes you have to find first is a genuinely tedious way to do it.
+   */
+  const clearModels = useCallback(() => {
+    setScenario((prev) => (prev.modelIds.length === 0 ? prev : { ...prev, modelIds: [] }));
+  }, []);
+
   const setFieldMode = useCallback((field: FieldKey, mode: InputMode) => {
     setFields((prev) => ({ ...prev, [field]: { ...prev[field], mode } }));
   }, []);
@@ -352,6 +364,7 @@ export function useEstimator(catalog: Catalog) {
     update,
     updateNumber,
     toggleModel,
+    clearModels,
     setFieldMode,
     setFieldText,
     tokensForModel,

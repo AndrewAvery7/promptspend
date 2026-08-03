@@ -74,6 +74,42 @@ jobs:
       - name: Verify the alerts worker
         run: npm run verify
 
+  # Layout, in a real browser at real viewport widths.
+  #
+  # Its own job because it needs a browser download and a built site, and
+  # because its failures are a different kind: the unit suite runs in jsdom,
+  # which has no layout engine, so it cannot see a table pushing the page
+  # sideways on a phone or a control too small for a thumb. Both shipped here.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Chromium only. The mobile projects are Chromium contexts with touch
+      # emulation, so WebKit and Firefox would triple the download to re-check
+      # the same CSS.
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
+
+      # The config builds the site itself, so this needs no separate build step
+      # and cannot run against a stale dist/.
+      - name: Mobile and layout checks
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
   # The public pricing API. Separate again, and for the same reason: its own
   # runtime, its own lockfile, its own tests inside workerd.
   api:

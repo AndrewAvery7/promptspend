@@ -188,8 +188,19 @@ export function EstimateView({
                 {groups.length === 0 && <p className="state-message">No models match “{search}”.</p>}
               </div>
               <p className="selection-count">
-                <b>{scenario.modelIds.length}</b> of {MAX_MODELS} selected — every selection gets its own cost
-                card
+                <span>
+                  <b>{scenario.modelIds.length}</b> of {MAX_MODELS} selected — every selection gets its own
+                  cost card
+                </span>
+                {/* Finding and unticking four boxes in a 69-row scroll box is a
+                    tedious way to start a different comparison. This clears the
+                    selection only: the workload, the scale and any pasted text
+                    survive, which is the whole point of changing models. */}
+                {scenario.modelIds.length > 0 && (
+                  <button type="button" className="link-button" onClick={estimator.clearModels}>
+                    Clear all
+                  </button>
+                )}
               </p>
             </div>
           </section>

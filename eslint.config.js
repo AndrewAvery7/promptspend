@@ -22,6 +22,9 @@ export default tseslint.config(
       // ours to lint or to fix.
       'worker/worker-configuration.d.ts',
       'api/worker-configuration.d.ts',
+      // Playwright's own output: traces, screenshots and a static HTML report.
+      'test-results',
+      'playwright-report',
     ],
   },
   js.configs.recommended,
