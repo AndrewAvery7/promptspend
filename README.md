@@ -25,14 +25,18 @@
   &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no tracking
 </p>
 
-<!-- PROMO-VIDEO: replace this comment with a bare user-attachments URL on its own
-     line, which GitHub turns into an inline player. Markdown image or link syntax
-     does NOT work, and a release-asset URL downloads instead of playing.
+<!-- PROMO-VIDEO. A bare user-attachments URL on its own line: GitHub turns that
+     into an inline player. Markdown image or link syntax does NOT work, and a
+     release-asset URL downloads instead of playing, so do not "tidy" this into
+     a relative path or a link.
 
      The URL only exists after the file is dragged into a comment box in the web
-     UI AND that comment is submitted: an abandoned draft uploads the file but
-     does not retain it, and the URL 404s. Verify before committing - a live
-     attachment answers an unsigned request with 403 or 302, never 404. -->
+     UI AND that comment is submitted; an abandoned draft uploads the file but
+     does not retain it, and the URL then 404s. Verify any replacement before
+     committing - a live attachment answers an unsigned request with 302 or 403,
+     never 404. See docs/PROMO.md. -->
+
+https://github.com/user-attachments/assets/36fcd57f-3cfb-43d8-919d-77ecdfa377d9
 
 <p align="center">
   <i>1 minute 38 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
