@@ -111,9 +111,11 @@ textarea {
   max-width: 1280px;
   margin: 0 auto;
   /* Breathing room under the ticker: the two were flush against each other,
-   * which made a dark bar and a light bar read as one crowded block. 12px was
-   * still tight enough that the logo looked stuck to the tape. */
-  padding: 22px 24px 12px;
+   * which made a dark bar and a light bar read as one crowded block. Raised
+   * twice — 12px, then 22px — and both still read as crowded against a
+   * full-bleed dark bar. NB two media queries below override this; a change
+   * here alone moves nothing for anyone under 1021px wide. */
+  padding: 30px 24px 12px;
   /* Wrapping is unconditional rather than switched on at a breakpoint.
    * Breakpoints are matched against the viewport *including* the scrollbar, so
    * a `max-width: 1020px` rule does not fire in a 1024px window whose content
@@ -2083,7 +2085,10 @@ code {
 @media (max-width: 1020px) {
   .header__inner {
     gap: 8px 10px;
-    padding: 8px 20px;
+    /* Top padding tracks the desktop rule rather than resetting it: the ticker
+       is full-bleed at every width, so the gap under it has to exist at every
+       width too. */
+    padding: 20px 20px 8px;
     min-height: 60px;
   }
   /* Same rule as on desktop: the appearance and theme controls stay beside the
@@ -2123,7 +2128,7 @@ code {
 
 @media (max-width: 760px) {
   .header__inner {
-    padding: 8px 14px;
+    padding: 16px 14px 8px;
   }
   .kbd-button span {
     display: none;
