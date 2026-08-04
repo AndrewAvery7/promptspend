@@ -260,6 +260,41 @@ shipping a package next week.
 
 ### Fixed
 
+- **The VS Code extension shipped twice with faults that produced plausible
+  numbers rather than errors.** Both reached the Marketplace, and both were
+  found by a person reading the screen rather than by any of the 735 tests or
+  six gates.
+
+  **0.1.4 reported every token count as an estimate**, including for
+  OpenAI-family models, where running the real tokenizer instead of a calibrated
+  ratio is the entire claim. Three layers, each discovered by shipping the one
+  above it: esbuild leaves a dynamic `import()` of an _external_ module as a real
+  `import()` even in a CommonJS bundle, so Node's **ESM** resolver applies the
+  `default` condition and wants `dist/lite.js` — `.vscodeignore` shipped the
+  `require` condition's `.cjs`; `lite.js` turned out to be a seventy-byte stub
+  re-exporting from a content-hashed `chunk-*.js`; and that chunk imports
+  `base64-js` from a different package directory. `check-footprint` had proved
+  the externals resolved — with `createRequire().resolve`, which is CJS
+  resolution, so it found the `.cjs` trio and passed. Nothing threw at any point:
+  `loadEncoder` catches a failed import and falls back to a labelled estimate,
+  which is what it is for.
+
+  `npm run check:package` is the answer. It asks `vsce ls` what would be
+  packaged, copies exactly those files to a temp directory, and runs the encoder
+  from them alone. Resolution and packaging cannot be checked separately —
+  the fault lived in the gap — and checking entry points cannot see an import one
+  level down. It reproduced all three failures before they were fixed.
+
+  **0.1.5 let a call borrow the `max_tokens` from the call above it.** The
+  forward search stopped at the next model id; the backward search stopped at the
+  previous one, which is the obvious bound and the wrong one, because a cap
+  between two model ids sits inside the earlier one's forward window. A call with
+  no cap of its own displayed a ceiling computed from its neighbour's: a real
+  number, correct arithmetic, describing a request nobody had written. Backwards
+  now stops where the previous match's forward search stopped, and the
+  configuration case it exists for — a cap written above the model — has a test
+  of its own.
+
 - **`Unexpected token '<'` was all three catalog consumers had to offer when the
   catalog was not JSON.** On 2026-08-03 the published URL answered one request
   with the site's own `index.html`. The MCP server, the Worker and the VS Code
