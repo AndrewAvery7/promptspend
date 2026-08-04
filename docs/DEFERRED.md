@@ -40,6 +40,26 @@ The weekly `promptspend-seo-review` scheduled task carries both.
 that these pages are shared enough for it to matter. Revisit only if referral
 traffic from social says otherwise.
 
+**A `vendorId` field on each catalog row.** The catalog's ids are not uniformly
+the ids that appear in source code. Some are exactly what the vendor calls the
+model — `gpt-5.6`, `claude-sonnet-5`, `o3` — and some carry the upstream feed's
+routing prefix: `gemini-gemini-2.5-flash`, `deepseek-deepseek-v3.2`,
+`xai-grok-4.5`, `zai-glm-5`, `moonshot-kimi-k2.6`.
+
+Nobody writes the prefixed form. The VS Code extension has to match what is
+written, so `vscode/src/vendor-ids.ts` strips known prefixes and a test fails the
+build when the catalog grows a family nobody has classified — a loud failure
+rather than the quiet one it replaced, which was matching OpenAI and Anthropic
+and silently missing every other provider while looking like it worked.
+
+The right home for this is the catalog itself: the sync pipeline knows the
+upstream key it filtered on, so it could write the vendor-facing id beside it and
+every consumer would stop guessing. Deferred because it is a schema change —
+`SCHEMA_VERSION`, the validator, the sync pipeline and every reader — for a
+problem one consumer currently solves with a list of eight prefixes and a test
+that cannot go stale silently. Revisit when a second consumer needs it, or when
+the prefix list stops being able to describe what the feed produces.
+
 **Hand-adding models the feed does not carry.** Z.ai published GLM-5.2 and
 GLM-5-Turbo while LiteLLM had neither. An override with a full `pricing` block
 _can_ create a model the feed lacks — and that price then freezes, because no
