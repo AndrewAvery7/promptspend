@@ -2,7 +2,7 @@
   "name": "promptspend",
   "displayName": "PromptSpend — LLM prices in your editor",
   "description": "What the model on this line costs, and when that price was last confirmed.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "publisher": "promptspend",
   "type": "module",

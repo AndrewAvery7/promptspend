@@ -81,13 +81,42 @@ describe('string state', () => {
   });
 });
 
-describe('known limitation, recorded rather than hidden', () => {
-  it('DOES annotate a model named in a Python docstring', () => {
-    // Docstrings are strings, not comments. Treating them as comments would
-    // silence `MODEL = """gpt-5"""`, which is real if unusual code, and that
-    // failure would be invisible. This test is the record of the trade.
-    const source = '"""We moved to gpt-5 last quarter."""\n';
-    expect(inPython(source)).toEqual(['gpt-5']);
+describe('docstrings', () => {
+  it('leaves a model named in a Python docstring alone', () => {
+    // This assertion used to run the other way, on the reasoning that a
+    // docstring is a string rather than a comment and that skipping it would
+    // silence `MODEL = """gpt-5"""`.
+    //
+    // Seeing it render settled it. A module docstring naming a model put that
+    // model's diagnostic on the sentence *describing* it — line 6 of a file
+    // whose actual call was on line 51 — so clicking the entry in the Problems
+    // panel landed in documentation. One of those cases is common and the
+    // other is contrived.
+    expect(inPython('"""We moved to gpt-5 last quarter."""\n')).toEqual([]);
+    expect(inPython("'''Wrapper around claude-opus-4-5.'''\n")).toEqual([]);
+  });
+
+  it('still prices the code below a docstring', () => {
+    const source = '"""Calls gpt-5 for triage."""\nimport x\nMODEL = "claude-sonnet-5"\n';
+    expect(inPython(source)).toEqual(['claude-sonnet-5']);
+  });
+
+  it('handles a multi-line docstring without swallowing the rest of the file', () => {
+    const source = ['"""', 'Uses gpt-5 and gpt-5.6.', '"""', 'MODEL = "o3"'].join('\n');
+    expect(inPython(source)).toEqual(['o3']);
+  });
+
+  it('does not let an unterminated docstring hide code it never reaches', () => {
+    // An unclosed triple quote runs to end of file, which is what the Python
+    // parser thinks too — so agreeing with it is right, not a compromise.
+    const ranges = commentRanges('"""never closed\nMODEL = "gpt-5"', commentSyntaxFor('python')!);
+    expect(ranges).toHaveLength(1);
+  });
+
+  it('accepts the cost: a model id inside triple quotes is now skipped', () => {
+    // The case the old behaviour protected. Recorded so the trade stays visible
+    // rather than being rediscovered as a bug.
+    expect(inPython('MODEL = """gpt-5"""')).toEqual([]);
   });
 });
 

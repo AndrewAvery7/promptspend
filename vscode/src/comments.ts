@@ -15,11 +15,14 @@
  * exposes no stable API for "is this offset inside a comment scope". The
  * proposed one has been proposed for years.
  *
- * **Known limitation, recorded rather than hidden:** Python docstrings and other
- * triple-quoted strings are strings, not comments, and are treated as code here.
- * A docstring that names a model will be annotated. Treating them as comments
- * would silence `MODEL = """gpt-5"""`, which is real if unusual code, and the
- * failure would be invisible. comments.test.ts records this.
+ * Triple-quoted Python strings are skipped too, though they are strings rather
+ * than comments. That was originally the other way round, on the reasoning that
+ * treating them as prose would silence `MODEL = """gpt-5"""`. Seeing it render
+ * settled the argument: a module docstring reading "wrapper around
+ * claude-opus-4-5" put the model's diagnostic on the sentence describing it
+ * rather than on the call, so clicking the problem landed in documentation. One
+ * of those cases is common and the other is contrived, and prose in a docstring
+ * is prose by the same argument that keeps markdown out.
  */
 
 export interface CommentSyntax {
@@ -29,6 +32,13 @@ export interface CommentSyntax {
   block?: readonly [open: string, close: string];
   /** Characters that open a string literal, so a token inside one is not a comment. */
   quotes: readonly string[];
+  /**
+   * Symmetric delimiters whose contents are skipped like a comment.
+   *
+   * Python triple quotes. They hold docstrings far more often than they hold a
+   * model id being passed to an API, and a docstring is prose.
+   */
+  verbatim?: readonly string[];
 }
 
 const HASH: CommentSyntax = { line: ['#'], quotes: ['"', "'"] };
@@ -40,7 +50,7 @@ const SLASHES: CommentSyntax = { line: ['//'], block: ['/*', '*/'], quotes: ['"'
  * shared default would silence every line containing `this.#count`.
  */
 const BY_LANGUAGE: Record<string, CommentSyntax> = {
-  python: HASH,
+  python: { ...HASH, verbatim: ['"""', "'''"] },
   yaml: HASH,
   shellscript: HASH,
   ruby: HASH,
@@ -87,6 +97,18 @@ export function commentRanges(text: string, syntax: CommentSyntax): Range[] {
 
   while (i < text.length) {
     const char = text[i]!;
+
+    // Before the single-quote check, because `"""` starts with `"` and testing
+    // the short form first would consume an empty string and leave the docstring
+    // body looking like code.
+    const opener = syntax.verbatim?.find((v) => text.startsWith(v, i));
+    if (opener !== undefined) {
+      const close = text.indexOf(opener, i + opener.length);
+      const end = close === -1 ? text.length : close + opener.length;
+      ranges.push([i, end]);
+      i = end;
+      continue;
+    }
 
     if (quotes.has(char)) {
       i = skipString(text, i, char);

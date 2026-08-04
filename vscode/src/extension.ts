@@ -156,7 +156,7 @@ export function activate(context: vscode.ExtensionContext): void {
     updateStatusBar(status, service, current);
 
     if (skipped) {
-      log.appendLine('[refresh] document past the size cap; not scanned');
+      logOnce('[refresh] document past the size cap; not scanned');
       editor.setDecorations(decoration, []);
       diagnostics.delete(editor.document.uri);
       return;
@@ -165,13 +165,13 @@ export function activate(context: vscode.ExtensionContext): void {
     if (state.status !== 'ready') {
       // The silent-return that made this whole session's bug invisible. A clean
       // "unavailable" is not an exception, so nothing was ever written down.
-      log.appendLine(`[refresh] catalog unavailable, showing nothing: ${state.reason}`);
+      logOnce(`[refresh] catalog unavailable, showing nothing: ${state.reason}`);
       editor.setDecorations(decoration, []);
       diagnostics.delete(editor.document.uri);
       return;
     }
 
-    log.appendLine(
+    logOnce(
       `[refresh] ${editor.document.languageId}: ${matches.length} model reference(s), ` +
         `catalog generated ${state.generatedAt}${state.ageing ? ' (ageing)' : ''}`,
     );
