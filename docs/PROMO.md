@@ -113,14 +113,66 @@ Both prompts are abstract light and haze on purpose. Generative video garbles
 text and numbers, and this is a video about prices being correct — so nothing
 generative is ever asked to render a figure, a word or an interface.
 
+### The prompts, written down
+
+The first cut did not record them, and `.gitignore` keeps the clips out of the
+tree, so the 2026-08-04 re-cut had no bookends and no way to recreate the ones it
+had lost. That cost $4.80 to rediscover. Both are recorded here now, with seeds,
+because the clips are the only promo input that cannot be rebuilt from this
+repository.
+
+Endpoint `fal-ai/veo3.1`, `aspect_ratio: "16:9"`, `resolution: "1080p"`.
+
+**Hero** — `duration: "8s"`, `generate_audio: true`, `seed: 73501`:
+
+> Abstract macro shot of a dense field of luminous blue and cyan light particles
+> bursting outward from a brilliant white core at the centre of frame, radiating
+> in long motion-blurred streaks toward the camera through dark haze. Deep
+> near-black background, shallow depth of field, soft bokeh orbs, faint teal and
+> green highlights in the corners. Slow continuous camera push forward.
+> Cinematic, premium, calm but energetic. Pure abstract light and haze only - no
+> text, no letters, no numbers, no logos, no people, no objects, no user
+> interface.
+
+**End card** — `duration: "4s"`, `generate_audio: false`, `seed: 73502`:
+
+> A still, calm, deep navy-blue field with a soft glowing cobalt-blue radial
+> light in the centre of frame, tiny distant white star specks scattered across
+> the picture, very gentle drifting haze. Almost no motion - the central light
+> breathes slowly and settles. Minimal and airy, with clean empty space through
+> the middle of the frame. Fills the whole widescreen frame edge to edge. Pure
+> abstract light and haze only - no text, no letters, no numbers, no logos, no
+> people, no objects, no user interface.
+
+Both carry a negative prompt naming what must not appear — `text, letters, words,
+numbers, captions, subtitles, watermark, logo, user interface, screen, monitor,
+people, faces, hands, animals, buildings, clutter, letterbox, black bars,
+widescreen bars`, with `cinematic crop, anamorphic bars` added to the end card.
+The bar terms are load-bearing; see the letterbox note below.
+
+The hero's native audio is used; the end card's is not, which is why it is
+generated without any. Only the finished `promptspend-promo.mp4` and the
+processed `.bed-looped.mp3` need keeping — the raw bed can be rebuilt from the
+music prompt, and `stitch-promo.sh` re-derives the loop from it.
+
 ## Things that cost time
 
-- **The end card comes back letterboxed.** Veo returns a cinematic ~2.34:1 crop
-  for a still, slow prompt. The picture occupies rows 130–950 of 1080. Cropping
-  only the bars leaves a frame that has to be squashed into 16:9, so
-  `stitch-promo.sh` crops the width to match (`crop=1458:820:231:130`) and scales
-  up. Measured with `cropdetect`, not guessed — and worth re-measuring on any new
-  clip rather than assuming these numbers hold.
+- **The end card may come back letterboxed, and the crop is now measured rather
+  than written down.** Veo returns a cinematic ~2.34:1 crop for a still, slow
+  prompt: the first end card's picture occupied rows 130–950 of 1080. That was
+  measured with `cropdetect` and hard-coded as `crop=1458:820:231:130`, with a
+  note here to re-measure on any new clip.
+
+  The re-cut proved the note right in the direction nobody expected. Naming the
+  bars in the negative prompt and asking for a full-frame picture returned a clip
+  with **no bars at all**, and the old constant would have thrown away 260 good
+  rows — not a crash, just a quietly worse picture that still looks fine.
+  `stitch-promo.sh` now runs `cropdetect` itself from one second in (past the
+  fade from black, which otherwise reports a nearly empty frame), takes the modal
+  result, and crops only when the height is genuinely short. When it does crop,
+  it derives the width at 16:9 and centres it, because removing the bars alone
+  leaves a frame that then has to be squashed.
+
 - **Capture by selector, never by pixel rectangle.** A hard-coded crop silently
   captures the wrong thing the first time a margin changes, and the video is then
   wrong in a way nobody notices until it is published.

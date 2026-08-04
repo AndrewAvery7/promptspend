@@ -86,8 +86,18 @@ re-approve, across four viewports and two themes. That is worth paying once the
 design stops moving, and it has been moving weekly.
 
 **Launch marketing.** Show HN, the developer communities, the newsletters that
-cover LLM tooling. Now genuinely ready, which it was not before the pages and
-the API existed.
+cover LLM tooling. Now genuinely ready, which it was not before the pages, the
+API, the MCP server and the VS Code extension existed — four surfaces that give
+the same catalog four different ways to be found, and a story about provenance
+that is easier to tell with all of them in place than with any one.
+
+**A cost-diff GitHub Action.** A check that comments on a pull request when it
+changes what an LLM call will cost — the extension's per-line reading, applied
+to a diff. Deliberately waiting rather than rejected: it is the same scanning
+and pricing work `vscode/` already does, and building the reusable half twice
+would be the waste. Revisit once the extension's scanner has had real use and
+its rough edges are known rather than guessed at. A reminder is set for
+2026-08-25.
 
 **The 27 rows still sourced from LiteLLM.** A verification pass on 2026-08-03
 took vendor-sourced coverage from 16 of 70 to 43, and `verifiedUrl` from 17 to

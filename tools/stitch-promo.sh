@@ -49,16 +49,53 @@ LOGO_IN=0.5       # end-card logo fade in
 HERO_VOL=1.00     # native hero audio owns the opening on its own
 BED_VOL=0.90      # trim after loudnorm has already set the bed's loudness
 
-# The end card arrives letterboxed to roughly 2.34:1 - Veo returns a cinematic
-# crop for a still, slow prompt. Measured with cropdetect rather than guessed:
-# the picture occupies y=130..950, so 820 rows of 1080. Cropping only the bars
-# would leave a 2.34:1 frame that has to be squashed into 16:9, so the width is
-# cropped to match instead (820 * 16/9 = 1458, centred) and the result scaled
-# up. The content is an abstract glow, so a centre crop costs nothing.
-END_CROP="crop=1458:820:231:130"
+# The end card's framing is measured, never assumed.
+#
+# The first end card arrived letterboxed to roughly 2.34:1 - Veo returns a
+# cinematic crop for a still, slow prompt - with the picture occupying y=130..950,
+# 820 rows of 1080. That was measured with cropdetect and written in here as a
+# constant, and docs/PROMO.md told the next person to re-measure on any new clip
+# rather than assume it held.
+#
+# The 2026-08-04 re-cut proved that note right, in the opposite direction to the
+# one anybody expected. Asking for a full-frame 16:9 picture and naming the bars
+# in the negative prompt returned a clip with no bars at all, and the constant
+# would have thrown away 260 good rows of it. That is the worst shape of bug this
+# repository keeps meeting: not a crash, just a quietly worse result that looks
+# like it worked.
+#
+# So it is measured at stitch time. cropdetect runs from one second in, past the
+# fade from black that otherwise reports a nearly empty frame; the modal result
+# wins. A full-height result means no bars and no crop. When there are bars only
+# the height is trusted, and the width is derived at 16:9 and centred, because
+# cropping the bars alone leaves a frame that then has to be squashed. The
+# content is an abstract glow, so a centre crop costs nothing.
+detect_end_crop() {
+  local modal height top width left
+  modal=$(ffmpeg -hide_banner -nostats -ss 1 -i "$1" -vf cropdetect=24:2:0 -f null - 2>&1 |
+    grep -oE 'crop=[0-9]+:[0-9]+:[0-9]+:[0-9]+' | sort | uniq -c | sort -rn | head -1 |
+    grep -oE 'crop=[0-9:]+')
+  if [ -z "$modal" ]; then
+    echo "null"   # cropdetect said nothing; changing the frame on no evidence is worse
+    return
+  fi
+  height=$(echo "$modal" | cut -d: -f2)
+  top=$(echo "$modal" | cut -d: -f4)
+  # Within ten rows of full height is not a letterbox, it is rounding.
+  if [ "$height" -ge 1070 ]; then
+    echo "null"
+    return
+  fi
+  width=$(awk "BEGIN{w=int($height*16/9); print w - (w%2)}")
+  left=$(awk "BEGIN{l=int((1920-$width)/2); print l - (l%2)}")
+  echo "crop=${width}:${height}:${left}:${top}"
+}
 
 # awk for arithmetic - bc is not present in Git Bash or minimal images
 calc() { awk "BEGIN{printf \"%.3f\", $1}"; }
+
+END_CROP=$(detect_end_crop "$END")
+echo "end card: ${END_CROP}"
 
 CORE_LEN=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$CORE")
 # Everything downstream of the card shifts by the time it occupies. Computed

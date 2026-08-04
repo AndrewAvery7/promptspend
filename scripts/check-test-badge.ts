@@ -25,10 +25,11 @@
  * `verify` runs the root suite once for real, and this adds seconds to it
  * rather than a second full pass.
  *
- * **Which suites exist is discovered, not listed.** It differs by branch:
- * `vscode/` is on the extension branch and not on `main`, which is exactly why
- * the honest totals are 715 there and 580 here. A hard-coded list — or a
- * hard-coded number — would be wrong on one of them by construction.
+ * **Which suites exist is discovered, not listed.** It differed by branch while
+ * `vscode/` was unmerged — the honest total was 715 on the extension branch and
+ * 580 on `main` at the same moment — and it will differ again the next time a
+ * workspace is built somewhere before it lands. A hard-coded list, or a
+ * hard-coded number, is wrong on one branch or the other by construction.
  *
  *   npm run check:test-badge
  */
@@ -208,6 +209,56 @@ function claimsFor({ name, count }: Suite): Claim[] {
   }));
 }
 
+/**
+ * Every *other* figure in these documents that claims to count tests.
+ *
+ * The claims above hold the places a count is expected: the badge, its alt
+ * text, the total, and each suite's two entries. README.md stated the figure a
+ * sixth time — "What the 715 tests cover", in the documentation table, two
+ * hundred lines below a badge reading 735 — and nothing above looks there. This
+ * check passed on a day the README was wrong, which is precisely the failure it
+ * exists to prevent.
+ *
+ * The fix is not a seventh pattern for the sentence that happened to rot. Every
+ * `N tests` in both documents is read instead, and each one must be a figure
+ * the suites actually produce — the total, or one suite's count. That admits
+ * "112 browser tests" and "344 unit and integration tests" without anyone
+ * having to enumerate them, and refuses 715 without anyone having predicted
+ * where it would appear.
+ *
+ * Up to four words may sit between the number and `tests`, because that is how
+ * these counts are written; `\s+` throughout because markdown wraps wherever
+ * the column runs out.
+ */
+const ANY_COUNT = /(\d+)(?:\s+[a-z]+){0,4}\s+tests?\b/gi;
+
+/**
+ * Swept in full — as opposed to CHANGELOG.md, deliberately.
+ *
+ * A changelog records what was true at a release. "22 tests" in the entry that
+ * shipped 22 tests is correct and must stay; holding history to today's total
+ * would demand rewriting the past every time a test is added. These two
+ * documents describe the project as it is now, so every count in them is a
+ * present-tense claim.
+ */
+const SWEPT = ['README.md', 'docs/TESTING.md'];
+
+function lineOf(text: string, index: number): number {
+  let line = 1;
+  for (let i = 0; i < index; i += 1) if (text[i] === '\n') line += 1;
+  return line;
+}
+
+function strayCounts(file: string, text: string, permitted: Map<number, string>): string[] {
+  return [...text.matchAll(ANY_COUNT)]
+    .filter((match) => !permitted.has(Number(match[1])))
+    .map(
+      (match) =>
+        `${file}:${lineOf(text, match.index)}: "${match[0].replace(/\s+/g, ' ')}" is not a figure any ` +
+        `suite reports (${[...permitted].map(([count, name]) => `${count} ${name}`).join(', ')})`,
+    );
+}
+
 async function main(): Promise<void> {
   const suites: Suite[] = [];
   for (const { name, dir } of await workspaces()) {
@@ -238,7 +289,15 @@ async function main(): Promise<void> {
     ...suites.flatMap(claimsFor),
   ];
 
-  const problems = claims.flatMap((claim) => problemsWith(sources.get(claim.file)!, claim));
+  // Every figure a suite legitimately produces, and what to call it in the
+  // failure message. The total is listed first so it reads as the headline.
+  const permitted = new Map<number, string>([[total, 'in all']]);
+  for (const { name, count } of suites) permitted.set(count, `in ${name}`);
+
+  const problems = [
+    ...claims.flatMap((claim) => problemsWith(sources.get(claim.file)!, claim)),
+    ...SWEPT.flatMap((file) => strayCounts(file, sources.get(file)!, permitted)),
+  ];
 
   if (problems.length > 0) {
     console.error('✗ published test counts are stale:');

@@ -51,6 +51,20 @@ export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
 export const MCP_INSTALL_COMMAND = 'claude mcp add promptspend -- npx -y @promptspend/mcp';
 
 /**
+ * The VS Code extension: one command, two marketplaces.
+ *
+ * The command is the Marketplace route because that is what works inside VS
+ * Code itself, where most of these installs happen. Open VSX carries the same
+ * build for the editors that cannot reach the Marketplace — Cursor, Windsurf,
+ * VSCodium — and is linked rather than given a second command, because those
+ * editors install from their own extension pane and not from `code`.
+ */
+export const VSCODE_INSTALL_COMMAND = 'code --install-extension promptspend.promptspend';
+export const VSCODE_MARKETPLACE_URL =
+  'https://marketplace.visualstudio.com/items?itemName=promptspend.promptspend';
+export const OPEN_VSX_URL = 'https://open-vsx.org/extension/promptspend/promptspend';
+
+/**
  * What these numbers cover, stated once and reused wherever the boundary
  * matters. Being specific about the edge of the model is the difference
  * between an estimate and a guess wearing an estimate's clothes.

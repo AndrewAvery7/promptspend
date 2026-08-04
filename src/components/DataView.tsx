@@ -1,5 +1,12 @@
 import type { Catalog } from '@/lib/pricing/catalog';
-import { DEVELOPER_HUB_URL, MCP_INSTALL_COMMAND, PRICING_SCOPE, REPO_URL } from '@/config';
+import {
+  DEVELOPER_HUB_URL,
+  MCP_INSTALL_COMMAND,
+  OPEN_VSX_URL,
+  PRICING_SCOPE,
+  REPO_URL,
+  VSCODE_INSTALL_COMMAND,
+} from '@/config';
 import { AlertsPanel } from '@/components/AlertsPanel';
 import { CopyButton } from './CopyButton';
 
@@ -224,6 +231,34 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   <a href={DEVELOPER_HUB_URL} target="_blank" rel="noreferrer noopener">
                     Developer hub →
                   </a>
+                </p>
+              </article>
+              {/* The third card, and the one this panel's opening sentence had
+                  been promising since before it existed: "the same record
+                  travels through the API and into your editor", above two cards
+                  that were an agent and an API. */}
+              <article>
+                <h3>In your editor</h3>
+                <p>
+                  A VS Code extension. The rate sits on the line of code that names the model, and a nearby{' '}
+                  <code>max_tokens</code> becomes what one response can cost.
+                </p>
+                {/* `tabIndex` because this scrolls: `.build-grid pre` is
+                    `overflow-x: auto`, and a scrollable box that cannot take
+                    focus is one a keyboard user cannot scroll — the end of the
+                    command is simply unreachable without a mouse. */}
+                <div className="codeblock">
+                  <pre className="mono" tabIndex={0}>
+                    <code>{VSCODE_INSTALL_COMMAND}</code>
+                  </pre>
+                  <CopyButton value={VSCODE_INSTALL_COMMAND} label="install command" onToast={onToast} />
+                </div>
+                <p className="privacy-note">
+                  Also on{' '}
+                  <a href={OPEN_VSX_URL} target="_blank" rel="noreferrer noopener">
+                    Open VSX
+                  </a>{' '}
+                  for Cursor, Windsurf and VSCodium.
                 </p>
               </article>
             </div>

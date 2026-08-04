@@ -135,6 +135,18 @@ pricing page that lists their own models, and the honest answer there is to leav
 affects are named in [docs/DEFERRED.md](docs/DEFERRED.md). A number is only worth what its worst source is,
 so the site shows you the source per row instead of an average you cannot inspect.
 
+### Something watches the promise
+
+A daily job reads **the live site** — not the copy in this repository — and raises an issue if the
+published catalog is more than two days old. That distinction is the whole point. Between a price moving
+upstream and you seeing it, four things can fail: the sync errors, the sync opens a review pull request
+nobody merges, the deploy fails after a green sync, or the CDN serves a stale artifact. Checking the file
+in git catches the first of those. Fetching what the site actually serves catches all four.
+
+It exists because the sync once failed at the pull-request step and nothing said so; the site quietly
+served a day-old catalog until someone happened to look. A project that claims its numbers are never a
+year out of date should be the first to know when they are.
+
 ### Two dates, not one
 
 The site shows **prices last changed** and **sources last checked** separately, because they answer
@@ -212,6 +224,14 @@ Everything it says is _Information_ severity, never a warning. None of these are
 extension has no idea what the code needs. The cheaper-model suggestion is off by default for the
 same reason the value map's capability axis is labelled illustrative: it is an opinion, where the
 rest are facts.
+
+```bash
+code --install-extension promptspend.promptspend
+```
+
+Or search **PromptSpend** in the Extensions pane. It is on
+[Open VSX](https://open-vsx.org/extension/promptspend/promptspend) too, which is where Cursor, Windsurf
+and VSCodium look.
 
 Same rule as everywhere else — no bundled prices. If the catalog cannot be reached it says so and
 shows nothing, and the status bar carries the generation date at all times. See
@@ -324,7 +344,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                            |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way               |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 715 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 735 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 159 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline     |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live  |

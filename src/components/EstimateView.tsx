@@ -1,5 +1,5 @@
 import type { Catalog } from '@/lib/pricing/catalog';
-import { MCP_INSTALL_COMMAND, PRICING_SCOPE } from '@/config';
+import { MCP_INSTALL_COMMAND, PRICING_SCOPE, VSCODE_MARKETPLACE_URL } from '@/config';
 import { CopyButton } from './CopyButton';
 import { csvDocument } from '@/lib/engine/csv';
 import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
@@ -117,10 +117,10 @@ export function EstimateView({
             </div>
           </dl>
         </div>
-        <aside className="hero__aside" aria-labelledby="hero-mcp-title">
-          <p className="hero__aside-eyebrow">MCP Server Available</p>
-          <h2 className="hero__aside-title" id="hero-mcp-title">
-            The same numbers, inside a coding agent
+        <aside className="hero__aside" aria-labelledby="hero-aside-title">
+          <p className="hero__aside-eyebrow">Beyond the browser</p>
+          <h2 className="hero__aside-title" id="hero-aside-title">
+            The same numbers, where you work
           </h2>
           <p>
             An MCP server for Claude Code, Cursor and Windsurf. Every price still arrives with its source and
@@ -139,6 +139,18 @@ export function EstimateView({
             <button type="button" className="linklike" onClick={onOpenData}>
               How it works
             </button>
+          </p>
+          {/* The extension gets a line rather than a second install box. The
+              aside exists because anyone who never opened Data & Alerts never
+              learned the catalog answers anywhere but here, and that argument
+              applies to the editor too — but two commands in a sidebar is a
+              menu, and this is a pointer. */}
+          <p className="hero__aside-note">
+            Or on the line of code itself —{' '}
+            <a href={VSCODE_MARKETPLACE_URL} target="_blank" rel="noreferrer noopener">
+              the VS&nbsp;Code extension
+            </a>
+            .
           </p>
         </aside>
       </div>

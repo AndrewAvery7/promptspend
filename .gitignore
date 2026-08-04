@@ -28,6 +28,16 @@ assets/*-promo.mp4
 assets/.bed-looped.mp3
 .promo-fonts/
 
+# The generative bookends, same reasoning — the hero alone is 28 MB.
+#
+# These are the one promo input that cannot be regenerated from the repository,
+# and the 2026-08-04 re-cut paid $4.80 to learn it: they were ignored by no rule
+# in particular, never committed, and simply gone. The fix is not to commit
+# them. It is that docs/PROMO.md now carries the exact prompts, seeds and model
+# settings, so an identical pair is one API call away.
+assets/hero.mp4
+assets/endcard.mp4
+
 # The MCP server's bundle. Built by `npm run build` in mcp/ and published to
 # npm from CI; committing it would put a generated 37 KB file in every diff.
 mcp/dist/
