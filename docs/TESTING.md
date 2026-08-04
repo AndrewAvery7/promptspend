@@ -15,13 +15,13 @@ to publish past it.
 
 ## What the suite covers
 
-**732 tests in all**: 344 unit and integration tests in this package, 84 in
-`worker/`, 35 in `api/`, 29 in `mcp/`, 128 in `vscode/`, and 112 browser tests
+**735 tests in all**: 344 unit and integration tests in this package, 84 in
+`worker/`, 35 in `api/`, 29 in `mcp/`, 131 in `vscode/`, and 112 browser tests
 across four viewports. Those six figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
 of its own list nor inclusive of `mcp/` at all; the next claimed 580, which was
 correct when written and went stale the moment the VS Code extension landed with
-its own 128 tests. A total that is not re-derived from a run is a number that
+its own 131 tests. A total that is not re-derived from a run is a number that
 decays. The distribution is deliberately uneven: depth follows the cost of being
 wrong, not the size of the file.
 
@@ -67,7 +67,7 @@ browser run:
 | `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself.                                                                                                                                                 |
 | `api/`    | 35    | The public pricing API: filters, ETags, CORS, CSV quoting, that a catalog failing validation is refused rather than passed through, and that an origin answering with HTML is reported as such rather than as a JSON syntax error.                                                                        |
 | `mcp/`    | 29    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, that the server reports the version it was published as, and that the real fetch path names what arrived when the catalog is not JSON.                                                        |
-| `vscode/` | 128   | The editor extension: which lines in which languages name a model, hover, status-bar and inline rendering, the catalog fetch when the server is unreachable or answers malformed, selection estimates that name an impossible request rather than pricing it, and diagnostics that stay quiet by default. |
+| `vscode/` | 131   | The editor extension: which lines in which languages name a model, hover, status-bar and inline rendering, the catalog fetch when the server is unreachable or answers malformed, selection estimates that name an impossible request rather than pricing it, and diagnostics that stay quiet by default. |
 | Browser   | 112   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA. See below.                                                                                                                                                     |
 
 ## Layout is checked in a real browser

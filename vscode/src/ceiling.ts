@@ -42,25 +42,48 @@ export interface Ceiling {
   exceedsModelMax: boolean;
 }
 
+/** Where a match's forward search stops: the next model id, or the line budget. */
+function forwardEnd(text: string, match: ModelMatch, next: ModelMatch | undefined): number {
+  return Math.min(next?.start ?? text.length, lineBoundary(text, match.end, LINES_AFTER));
+}
+
 /**
  * The cap governing one model match, if there is one.
  *
- * Bounded by the neighbouring matches so that two calls in one file cannot
- * borrow each other's numbers: the search forward stops at the next model id,
- * and the search backward stops at the previous one. Without that, a file with
- * two calls would confidently price the first one using the second's cap.
+ * Neither direction may reach a cap that belongs to a neighbour, and the two
+ * directions need different guards for that.
+ *
+ * **Forwards** stops at the next model id. Without it, a call with no cap of its
+ * own confidently borrows the next call's.
+ *
+ * **Backwards** stops where the *previous* match's forward search stopped — not
+ * at the previous match itself, which is the obvious bound and the wrong one.
+ * A cap sitting between two model ids is inside the earlier one's forward
+ * window, so it is already spoken for; bounding only at `previous.end` leaves it
+ * reachable by both. That shipped, and it read like this:
+ *
+ *     client.messages.create(model="claude-sonnet-5", max_tokens=4096)
+ *     openai.chat.completions.create(model="gpt-5-mini")   ← max out $0.0082
+ *
+ * The second call has no cap. The figure was 4096 tokens at gpt-5-mini's rate:
+ * a real number, correct arithmetic, and about a request nobody had written.
+ *
+ * Backwards exists for configuration files, where the cap is often written
+ * above the model. That case still works, because a distant previous match's
+ * forward window runs out before this one's backward window begins.
  */
 export function ceilingFor(text: string, match: ModelMatch, all: readonly ModelMatch[]): Ceiling | undefined {
   const index = all.indexOf(match);
   const next = index >= 0 ? all[index + 1] : undefined;
   const previous = index > 0 ? all[index - 1] : undefined;
 
-  const forward = text.slice(
-    match.end,
-    Math.min(next?.start ?? text.length, lineBoundary(text, match.end, LINES_AFTER)),
-  );
+  const forward = text.slice(match.end, forwardEnd(text, match, next));
+
   const backward = text.slice(
-    Math.max(previous?.end ?? 0, lineBoundary(text, match.start, -LINES_BEFORE)),
+    Math.max(
+      previous ? forwardEnd(text, previous, match) : 0,
+      lineBoundary(text, match.start, -LINES_BEFORE),
+    ),
     match.start,
   );
 
