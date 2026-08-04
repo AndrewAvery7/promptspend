@@ -465,7 +465,10 @@ describe('how the catalog read fails', () => {
       call += 1;
       return call === 1
         ? new Response('<!doctype html>', { status: 200, headers: { 'Content-Type': 'text/html' } })
-        : new Response(JSON.stringify(CATALOG), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        : new Response(JSON.stringify(CATALOG), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          });
     };
 
     const response = await get('/v1/models');
