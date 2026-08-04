@@ -74,7 +74,7 @@ export const SERVER_INFO = {
   // the package version was bumped and this literal was not, and every gate
   // passed because none of them compared the two. A server that misreports its
   // own version is the same defect this project exists to catch, one level up.
-  version: '0.1.3',
+  version: '0.1.4',
 } as const;
 
 export const INSTRUCTIONS =

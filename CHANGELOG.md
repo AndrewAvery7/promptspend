@@ -260,6 +260,40 @@ shipping a package next week.
 
 ### Fixed
 
+- **`Unexpected token '<'` was all three catalog consumers had to offer when the
+  catalog was not JSON.** On 2026-08-03 the published URL answered one request
+  with the site's own `index.html`. The MCP server, the Worker and the VS Code
+  extension all fetched and parsed without checking what had come back, so the
+  symptom was the parser's confusion rather than the fact that a web page had
+  arrived where a catalog should be — and in an agent context that bare syntax
+  error is what a model relays to whoever asked for a price.
+
+  All three now check the content type before parsing and report the status, the
+  type and the first bytes. **The message stops there.** The cause was never
+  established — roughly eighteen fetches immediately afterwards, from Node, from
+  the editor's own runtime and from curl, all returned the catalog — and a
+  deploy in flight and a cold CDN edge are both plausible and neither was
+  confirmed. An earlier draft of that message asserted one of them; an error
+  that names a cause nobody has verified sends the next reader down a road that
+  may not exist. The wording is byte-identical in all three files so it cannot
+  drift.
+
+  All three also attempt the fetch twice, 400 ms apart, because the failure did
+  not reproduce and a second attempt would have survived it. This is **not** a
+  bundled fallback or a cache by another name: nothing stale is served, one
+  request is simply given a second chance before the answer becomes "the catalog
+  is unreachable".
+
+  The fetch path was the one part of each package that nothing had ever
+  executed — every existing test injected a fake fetcher or a stubbed origin —
+  so the code that has to work over a real network was the only code untested.
+  `mcp/` and `vscode/` now drive it against a loopback server; `api/` drives its
+  stubbed origin through the same shapes, since workerd has no `node:http`.
+  Writing those tests exposed a harness bug of their own: `fetchAndStore` writes
+  under `ctx.waitUntil`, so a previous test's write landed after the next test's
+  `beforeEach` delete and the persistently-bad-origin case was passing as a 200
+  in 17 ms against a good cached catalog.
+
 - **Every model in the published catalog claimed its price changed the same
   morning.** All 70 rows carried `provenance.lastChanged: 2026-08-02`, including
   the twelve whose `lastVerified` is pinned by a hand-written override to the
