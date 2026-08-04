@@ -33,8 +33,29 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          # Every lockfile, because the step below installs every workspace.
+          cache-dependency-path: '**/package-lock.json'
 
       - run: npm ci
+
+      # `verify` now includes `check:test-badge`, and the number on that badge is
+      # the sum of every workspace's suite — so this job has to be able to ask
+      # each of them, not only the root package.
+      #
+      # Discovered rather than listed, for the same reason the script discovers
+      # them: the set differs by branch. `vscode/` is on the extension branch and
+      # not on `main`, so a hard-coded list here would be wrong on one of them.
+      #
+      # Nothing in these workspaces is *run* here. The check collects test names
+      # without executing them, which is why this needs no workerd start and no
+      # browser download. Each still gets its own job below, on its own runtime,
+      # because that is where they are actually verified.
+      - name: Install every workspace whose tests count toward the badge
+        run: |
+          for config in */vitest.config.*; do
+            [ -e "$config" ] || continue
+            (cd "$(dirname "$config")" && npm ci)
+          done
 
       # Includes the colour-vision palette guarantee and the pricing-pipeline
       # rules, so a change that breaks either fails the build.

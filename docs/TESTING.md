@@ -8,9 +8,10 @@ npm run test:coverage # with thresholds enforced
 ```
 
 `verify` is one gate: typecheck, lint, format check, tests with coverage
-thresholds, a production build, catalog schema validation, and the bundle
-budget. CI and the Pages deploy both call the same reusable workflow, so there
-is exactly one definition of "verified" and no way to publish past it.
+thresholds, a production build, catalog schema validation, the bundle budget,
+and the published test counts. CI and the Pages deploy both call the same
+reusable workflow, so there is exactly one definition of "verified" and no way
+to publish past it.
 
 ## What the suite covers
 
@@ -24,9 +25,16 @@ its own 124 tests. A total that is not re-derived from a run is a number that
 decays. The distribution is deliberately uneven: depth follows the cost of being
 wrong, not the size of the file.
 
-The per-file counts below drift by one or two as tests are added; the totals
-above come from actually running the suites. If a number here matters to you,
-run `npm test` rather than trusting the table.
+Those totals are no longer kept by hand. `npm run check:test-badge` asks every
+suite what it contains, adds the answers up, and fails if the README badge, the
+total above, or any per-suite figure on this page disagrees with it. The list
+summing to the total is now a property of the build rather than something to
+proofread — which is the whole reason it exists, since proofreading is exactly
+what failed twice.
+
+The per-file table below is **not** checked and drifts by one or two as tests
+are added: it is a map of where the depth is, not an inventory. If a number
+there matters to you, run `npm test`.
 
 | Suite                                 | Tests | Guards                                                                                                                                                                                                                           |
 | ------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

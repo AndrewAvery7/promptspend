@@ -86,6 +86,18 @@ shipping a package next week.
   UTF-8, and on double-encoding. Detection is a round-trip rather than a list of
   suspicious characters, because a pattern list both misses real cases and flags
   innocent text.
+- **`npm run check:test-badge`**, in `verify`. The `tests-` badge was the last of
+  the README's four counted figures with nothing holding it to anything, and the
+  only one that had actually rotted: corrected by hand at 533, then 559, then
+  580, then 715, every time after somebody noticed rather than before.
+  docs/TESTING.md went further and twice published a total that was not the sum
+  of its own list. The check asks every suite what it contains — `vitest list`
+  and `playwright test --list`, collection rather than a second full run — adds
+  the answers up, and fails if the badge, its alt text, the total on
+  docs/TESTING.md or any per-suite figure there disagrees. Which suites exist is
+  discovered rather than listed, because that differs by branch: the honest total
+  is 580 without the VS Code extension and 715 with it, so a hard-coded number
+  would be wrong on one of them by construction.
 - **An MCP server** (`mcp/`, `@promptspend/mcp`) for Claude Code, Cursor and
   Windsurf. The category already has one, with more tools and data this project
   does not hold — so this does not compete on breadth. It competes on the one
