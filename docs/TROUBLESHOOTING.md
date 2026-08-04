@@ -149,6 +149,51 @@ console output and the URL are exactly what a fix needs.
 
 ---
 
+## The VS Code extension is not showing anything
+
+**Check the version first.** Two faults that produced plausible wrong output
+shipped and were fixed in **0.1.6**; if you are below that, update before
+reading further. The Extensions pane shows the installed version, and
+`PromptSpend: Show log` prints it on the first line.
+
+**No annotation on any line.** In order of likelihood:
+
+- **The language is not in the allowlist.** Twenty source languages are
+  annotated. Markdown and plain text are excluded deliberately — a model named
+  in prose is being discussed, not called. `promptspend.languages` is the list.
+- **The id is in a comment.** Also deliberate, and also a setting:
+  `promptspend.annotateComments`.
+- **`promptspend.inlineDetail` is `off`.** Hovers still work in that mode, so
+  hover a model id to tell this case from the others.
+- **The catalog could not be fetched.** Then the status bar says so rather than
+  going quiet. There is no bundled price list, on purpose, so an extension that
+  cannot reach the catalog shows nothing instead of showing something old.
+
+`PromptSpend: Show log` names which of these applied. Every early return records
+why, because an extension that fails invisibly is worse than one that crashes.
+
+**One model id is annotated and the one beside it is not.** Most often a dated
+snapshot: `claude-sonnet-5-20260101` is not a catalog id, and inventing a price
+for it by stripping the date would be guessing at which snapshot you meant. The
+undated id is annotated; the pinned one is not.
+
+The other cause is a routing prefix. Roughly half the catalog's ids carry the
+upstream feed's prefix — `gemini-gemini-2.5-flash`, `xai-grok-4.5` — and nobody
+writes those in code, so the extension strips the known ones. A provider family
+nobody has classified yet fails the build rather than going quiet, but a
+released version can still predate a new family. Open an issue with the id.
+
+**A token count says `(estimate)` for an OpenAI model.** It should say `exact`.
+This was a packaging fault in 0.1.5: the tokenizer's files were excluded from
+the `.vsix`, so exact counting degraded to the calibrated ratio silently and
+every number stayed plausible. Fixed in 0.1.6, and `check:package` now runs the
+encoder from the real packaged file set so it cannot recur unnoticed.
+
+**A `max out $…` figure is attached to a call that has no `max_tokens`.** Also
+0.1.5, also fixed: a call with no cap of its own borrowed the cap from the call
+above it and priced it at its own rate — a real number, correct arithmetic, and
+about a request nobody had written.
+
 ## Running it locally
 
 ```bash
@@ -170,6 +215,15 @@ shrunk more than 10%. It writes the health manifest and refuses to touch
 `pricing.json`. Use `npm run sync:pricing:dry` to see what it would have done,
 or `--litellm-file ./fixture.json` to run it entirely offline.
 
-**Tests pass but the layout is wrong.** Expected — jsdom has no layout engine, so
-the suite cannot see geometry at all. Check responsive and accessibility changes
-in a real browser; see [TESTING.md](TESTING.md).
+**Unit tests pass but the layout is wrong.** Expected — jsdom has no layout
+engine, so the _unit_ suite cannot see geometry at all. That is what the browser
+suite is for:
+
+```bash
+npm run test:e2e
+```
+
+Playwright at 320, 390, 768 and 1280 plus an axe pass at WCAG 2.1 A/AA. What
+neither can see is a change that leaves a page correctly sized, accessible and
+semantically valid while making it look wrong — there is no screenshot diffing.
+Treat a purely visual change as something to look at. See [TESTING.md](TESTING.md).

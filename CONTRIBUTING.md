@@ -44,14 +44,42 @@ Never edit `public/data/pricing.json` — the sync regenerates it. Put the corre
 `data/pricing-overrides.json` with `"vendorVerified": true` and the date you checked it. Overrides beat
 every automated source, and the UI shows the model as vendor-verified.
 
+## The repository is five packages
+
+The site is the root package. Four more sit beside it, each with its own `package.json`, lockfile, test
+suite and CI job:
+
+| Package   | What it is                                    | Where it ships               |
+| --------- | --------------------------------------------- | ---------------------------- |
+| `api/`    | `promptspend.dev`, the public pricing API     | a Cloudflare Worker          |
+| `mcp/`    | `@promptspend/mcp`, pricing for coding agents | npm                          |
+| `vscode/` | the editor extension                          | the Marketplace and Open VSX |
+| `worker/` | the price-alerts API                          | a Cloudflare Worker          |
+
+**`mcp/` and `vscode/` import the site's own code** — the catalog schema, the cost engine, the tokenizer —
+through a `@/*` → `../src/*` mapping. That is deliberate and load-bearing: it is what makes it impossible
+for the extension to report a number the calculator disagrees with. It also means a change under
+`src/lib/` can break packages whose tests the root `verify` never runs.
+
 ## Before you open a pull request
 
 ```bash
 npm run verify
 ```
 
-That runs the typecheck, the linter, the formatter check, the full test suite and a production build —
-the same things CI runs.
+That runs the typecheck, the linter, the formatter check, the full test suite and a production build.
+
+**It is not the whole gate, and neither is any single package's.** CI runs six jobs. If you touched
+`src/lib/`, or anything inside one of the four packages, run that package's own verify as well:
+
+```bash
+cd vscode && npm ci && npm run verify
+```
+
+The gap runs in both directions, which is why it catches people. The root `verify` does not run any
+sub-package's tests. A sub-package's `verify` does not run the repository-wide checks — Prettier and the
+test-count badge among them — so a package can be entirely green on its own and still fail CI on
+formatting it never looked at.
 
 ## What the tests protect
 

@@ -15,6 +15,23 @@ response = client.messages.create(
 
 ---
 
+## Install
+
+```
+code --install-extension promptspend.promptspend
+```
+
+Or search **PromptSpend** in the Extensions pane (`Ctrl`/`Cmd`+`Shift`+`X`).
+
+Cursor, Windsurf and VSCodium install it from
+[Open VSX](https://open-vsx.org/extension/promptspend/promptspend), which carries the
+same build.
+
+Nothing to configure, and no account. The first annotations appear a moment after
+the window opens, once the catalog has been fetched.
+
+---
+
 ## What it does
 
 **Prices where the decision is made.** Every model id in your code is annotated

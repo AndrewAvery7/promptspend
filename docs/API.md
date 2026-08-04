@@ -90,6 +90,11 @@ its upstream hands it has no more integrity than that upstream.
 
 ## Going live
 
+**Status: live since 2026-08-02.** Everything below is done — `promptspend.dev`
+serves this Worker today, as [DOMAINS.md](DOMAINS.md) records. It is kept as the
+runbook for a redeployment, a second environment, or a rollback, and written in
+the present tense for whoever has to run it again.
+
 The Worker is written, tested and deploys with one command. Three things have to
 happen in Cloudflare first, and **the first one is not optional**.
 

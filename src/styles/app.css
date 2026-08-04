@@ -994,7 +994,14 @@ body.tour-active .main {
    so the Data view never has one grid stacking while another does not. */
 .build-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* Was `repeat(2, 1fr)` for the agent and the API. The editor extension made it
+     three, and a third hard-coded column would have been a third breakpoint to
+     maintain. `auto-fit` derives the count instead: three abreast on a wide
+     panel, two in the middle, one when the cards would otherwise be narrower
+     than their own install commands. `min()` caps the track floor at the
+     container width so a 320px screen cannot overflow before the media query
+     below has anything to say. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 18px;
   /* The panel's intro sentence sat directly on top of the two column headings,
    * so a line of body copy and a heading of the same weight read as one block.

@@ -158,10 +158,38 @@ visual change as something to look at.
 The deploy job downloads the artifact the verify job built, rather than building
 its own, so what ships is byte-for-byte what passed.
 
+It carries six jobs — `verify`, `worker`, `e2e`, `api`, `mcp` and `vscode` — one
+per package with a suite, each installing only what it needs. `vscode` is the
+exception that installs twice: the extension type-checks against files in the
+root package through its `@/*` mapping, so the site's dependencies have to be on
+disk before the extension's own can be.
+
+Three of the extension's gates do something the tests cannot, and each was
+written after a fault the tests had passed:
+
+| Gate               | What it catches                                                                                                                                                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `check:activation` | Drives a full refresh over a real document and fails if nothing is drawn. Every refresh used to be fired as `void refresh(…)`, so an exception left the screen unchanged and said nothing.                                       |
+| `check:footprint`  | A 100 KB bundle budget, and it resolves each declared external. Inlining the tokenizer took the extension from 19.7 KB to 3,368 KB; a _missing_ external is worse, because exact counting then silently degrades to an estimate. |
+| `check:package`    | Stages the real `vsce ls` file set into a temp directory and runs the encoder from there. It is the only check that sees packaging, module resolution and the tokenizer at once — which is what shipped broken.                  |
+
+`ci.yml` also triggers on pushes to `pricing-sync/**`, and the reason is not
+obvious. GitHub does not trigger workflows for events created with
+`GITHUB_TOKEN`, so the review pull requests the sync opens arrive with only the
+checks that run on their own schedule. Catalog validation — the check that
+matters most on a pricing change — was the one not running.
+
 `sync-pricing.yml` is separate and runs on a cron. It exercises the pipeline
 against the live sources every morning, which is a useful early warning that an
 upstream feed has changed shape — a degraded run fails loudly rather than
-publishing.
+publishing. `notify-alerts.yml` fires on a push to `main` that changes the
+published catalog.
+
+`freshness.yml` is the odd one out: it tests nothing in this repository. It
+fetches the catalog from the live site daily and raises an issue if it is more
+than two days old. Every other job here asks whether the code is correct; that
+one asks whether the promise is being kept, which no amount of passing tests can
+answer.
 
 ## Line endings
 

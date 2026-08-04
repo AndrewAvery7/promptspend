@@ -63,7 +63,7 @@ export function docsPage(origin: string, siteOrigin: string): string {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PromptSpend Pricing API — free, keyless LLM price data</title>
-    <meta name="description" content="A free, keyless, CORS-open JSON API for current LLM API prices across 70+ models, re-checked against the vendors every morning. OpenAPI described, MIT licensed." />
+    <meta name="description" content="A free, keyless, CORS-open JSON API for current LLM API prices, re-checked against the vendors every morning. OpenAPI described, MIT licensed." />
     <meta name="color-scheme" content="light dark" />
     <link rel="canonical" href="${origin}/" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
@@ -80,7 +80,8 @@ export function docsPage(origin: string, siteOrigin: string): string {
       <main>
         <h1>PromptSpend Pricing API</h1>
         <p class="lede">
-          Current published API prices for 70+ language models, as JSON. No key, no account, no rate limit,
+          Current published API prices for every language model this catalog tracks, as JSON. No key, no
+          account, no rate limit,
           no logging of who calls it. Re-checked against every vendor each morning, and every row tells you
           where its number came from and when it was last confirmed.
         </p>

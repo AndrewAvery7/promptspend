@@ -82,6 +82,23 @@ shipping a package next week.
   from frame 0 and offers no `poster` a README can set — the hero clip begins
   near-black, so the front page showed an empty rectangle until someone pressed
   play.
+
+  Re-cut on 2026-08-04 to 2:08, adding a scene for the editor extension. Its
+  screenshot is the only one in the film that Playwright could not take — it
+  drives a browser and cannot photograph an editor — so it is a native crop of
+  VS Code running the published extension against the published catalog rather
+  than an editor drawn in PIL, which would have put a mockup on the one frame
+  claiming the product notices things. The frame happens to prove the 0.1.6
+  ceiling fix on its own: `gpt-5-mini` shows a rate and no ceiling while sitting
+  between two calls that have one.
+
+  Two things the re-cut settled that had been written down as open questions.
+  The **freshness-date artifact fixed itself**: `docs/PROMO.md` had recorded that
+  three frames showed a fabricated `lastChanged` and predicted that re-capturing
+  alone would clear it, and it did. And the **end-card letterbox crop is now
+  measured rather than hard-coded** — the new clip came back with no bars at all,
+  where the old constant would have cropped 260 good rows out of it.
+
 - **`npm run check:encoding`**, in `verify`. Fails on a UTF-8 BOM, on invalid
   UTF-8, and on double-encoding. Detection is a round-trip rather than a list of
   suspicious characters, because a pattern list both misses real cases and flags
@@ -98,6 +115,18 @@ shipping a package next week.
   discovered rather than listed, because that differs by branch: the honest total
   is 580 without the VS Code extension and 715 with it, so a hard-coded number
   would be wrong on one of them by construction.
+
+  It then missed one anyway, which is the more useful half of the story. Those
+  patterns hold the places a count is _expected_ — the badge, its alt text, the
+  total, each suite's two entries — and the README stated the figure a sixth
+  time, in the documentation table, two hundred lines below a badge that
+  disagreed with it. The check passed on a day the README was wrong. It now also
+  sweeps every `N tests` in both documents and requires each one to be a figure
+  some suite actually reports, which refuses a wrong number without anyone having
+  predicted where it would appear. CHANGELOG.md is deliberately not swept: "22
+  tests" in the entry that shipped 22 tests is correct, and holding history to
+  today's total would mean rewriting the past every time a test is added.
+
 - **An MCP server** (`mcp/`, `@promptspend/mcp`) for Claude Code, Cursor and
   Windsurf. The category already has one, with more tools and data this project
   does not hold — so this does not compete on breadth. It competes on the one
@@ -140,8 +169,36 @@ shipping a package next week.
   figures had already gone stale — the test total, the bundle size, and counts
   that move every morning the sync adds a row — so the scripts that know the real
   number are now the things that keep the README honest. The test-count badge
-  stays manual: the only thing that knows it is a test run, and having the suite
-  assert its own total is circular.
+  was the exception, on the reasoning that the only thing which knows it is a
+  test run — until `check:test-badge` above settled it by asking each runner what
+  it _contains_ rather than running it a second time.
+
+- **A monitor for the promise itself** (`.github/workflows/freshness.yml`).
+  Every other check in this repository asks whether the code is correct. This one
+  asks the only question a visitor has: is the published catalog actually
+  current? It reads `promptspend.com/data/pricing.json` daily at 15:00 UTC — four
+  hours after the sync, so a slow run is not mistaken for a stale one — and
+  alerts if `generatedAt` is more than two days old.
+
+  **It reads the live site rather than the repository, and that is the design.**
+  Between a price moving upstream and a visitor seeing it there are four places
+  to fail: the sync errors or its sources go degraded; the sync raises a review
+  flag and the pull request sits unmerged; the deploy fails after a green sync;
+  or Pages serves a stale artifact. Checking the file in git catches the first.
+  Fetching what the site serves catches all four, because it asks from where the
+  answer matters.
+
+  Two days rather than one, because the sync runs daily: one missed morning is a
+  transient and two is a fault. It opens a single issue carrying a triage order,
+  reuses it instead of filing a duplicate every morning, closes it on recovery,
+  and fails the run so the alert arrives as email as well as a notification.
+
+  It exists because the sync failed at the pull-request step on 2026-08-04 —
+  Actions had read-only permissions, so it pushed a branch and could not open the
+  PR — and nothing surfaced that. The site served a day-old catalog until
+  somebody happened to open the Actions tab. A project whose whole premise is
+  that the numbers are never a year out of date needs something that notices when
+  they are.
 
 ### Changed
 
@@ -232,10 +289,9 @@ shipping a package next week.
   test: `clipboard.writeText` requires transient user activation, so a
   programmatic click is refused and only a trusted event proves the thing works.
 
-- The promo video gains a scene for it and runs 1:53. Same rules as the rest of
-  the film: real figures, the site's own typefaces, no mockups, and the honest
-  comparison is a price beside a price-with-its-paperwork rather than a
-  competitor's name.
+- The promo video gains a scene for it. Same rules as the rest of the film: real
+  figures, the site's own typefaces, no mockups, and the honest comparison is a
+  price beside a price-with-its-paperwork rather than a competitor's name.
 - **A vendor-verification pass, taking first-party coverage from 16 of 70 rows
   to 43.** `verifiedUrl` — the link to the page that was actually read — goes
   from 17 rows to 44. Anthropic's, OpenAI's, Google's, xAI's and DeepSeek's own
@@ -259,6 +315,20 @@ shipping a package next week.
   `litellm`. See [docs/DEFERRED.md](docs/DEFERRED.md).
 
 ### Fixed
+
+- **The sync's own pull requests were the one class of change reaching `main`
+  without `verify` having run.** GitHub deliberately does not trigger workflows
+  for events created with `GITHUB_TOKEN`, to stop a workflow triggering itself
+  forever. The daily sync opens its review pull requests with exactly that token,
+  so those PRs arrived carrying only the checks that run on their own schedule —
+  CodeQL — and none of the catalog validation. A pricing change, the one thing
+  this repository exists to get right, was the thing arriving unchecked.
+
+  Found on a pricing PR that had to be verified by hand before it could be
+  merged. CI now also triggers on pushes to `pricing-sync/**`, which sidesteps
+  the token restriction entirely and needs no credentials — where the obvious
+  alternative, passing a fine-grained PAT to the action, needs a secret that can
+  open pull requests.
 
 - **The VS Code extension shipped twice with faults that produced plausible
   numbers rather than errors.** Both reached the Marketplace, and both were

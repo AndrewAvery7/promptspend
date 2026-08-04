@@ -1,16 +1,30 @@
 # Architecture
 
-PromptSpend is a static site with a scheduled data pipeline. There is no server, no database and no
-account system: the only moving part is a GitHub Action that regenerates one JSON file.
+PromptSpend is a scheduled data pipeline that publishes one JSON file, a static site that reads it, and
+four other packages that read it too. The pipeline is the product; everything else is a consumer.
 
 ```
  ┌── daily, in CI ───────────────────────────────┐   ┌── in the browser ──────────────┐
  │ LiteLLM ─┐                                    │   │                               │
- │          ├─ allowlist ─ merge ─ validate ─ diff│──▶│ pricing.json ─ Catalog ─ engine│─▶ views
- │ OpenRouter┘     ▲                             │   │                     ▲         │
- │ overrides ──────┘                             │   │            tokenizer┘         │
- └───────────────────────────────────────────────┘   └───────────────────────────────┘
+ │          ├─ allowlist ─ merge ─ validate ─ diff│─┬▶│ pricing.json ─ Catalog ─ engine│─▶ views
+ │ OpenRouter┘     ▲                             │ │ │                     ▲         │
+ │ overrides ──────┘                             │ │ │            tokenizer┘         │
+ └───────────────────────────────────────────────┘ │ └───────────────────────────────┘
+                                                   ├──▶ api/      promptspend.dev, keyless JSON and CSV
+                                                   ├──▶ mcp/      @promptspend/mcp, for coding agents
+                                                   └──▶ vscode/   the editor extension
 ```
+
+**There is a server now, and this document said there was not for three releases after it landed.** The
+sentence that used to open this file — _"no server, no database and no account system"_ — was true when
+written and stopped being true when opt-in price alerts shipped. `worker/` is a Cloudflare Worker on D1
+holding a push endpoint or an email address and the models being followed; `api/` is a second, stateless
+Worker serving the catalog to anyone who asks. Rule two of this project is that a claim must be true of
+the code, and README.md was corrected at the time. This file and SECURITY.md were missed, which is the
+ordinary way a document goes wrong: nobody re-reads the paragraph they are not editing.
+
+Neither Worker is in the path of the estimator. Close the alerts form and the site is still a static page
+that sends nothing anywhere. There is still no account system.
 
 ## The data pipeline (`scripts/`)
 
@@ -68,6 +82,28 @@ last time anyone looked at it. Two invariants came out of it:
 - **`validate:catalog` now fails the build when `lastChanged > lastVerified`**, naming the offending ids.
   The schema validator cannot catch this — both fields are individually valid dates, and only their
   relationship is impossible.
+
+### Something watches the promise
+
+Every gate above asks whether the code is correct. `.github/workflows/freshness.yml` asks the only
+question a visitor has: is the published catalog actually current? It fetches
+`promptspend.com/data/pricing.json` daily at 15:00 UTC — four hours after the sync, so a slow run is not
+mistaken for a stale one — and alerts if `generatedAt` is more than two days old.
+
+**It reads the live site rather than the file in git, and that is the whole design.** Between a price
+moving upstream and a visitor seeing it there are four places to fail: the sync errors or its sources go
+degraded; the sync raises a review flag and the pull request sits unmerged; the deploy fails after a green
+sync; or Pages serves a stale artifact. Checking the repository copy catches only the first. Fetching what
+the site serves catches all four, because it asks the question from where the answer matters.
+
+Two days rather than one because the sync runs daily, so one missed morning is a transient and two is a
+fault. It opens a single issue with a triage order, reuses that issue instead of filing a duplicate every
+morning, closes it on recovery, and fails the run so the alert also arrives as email.
+
+This exists because on 2026-08-04 the sync failed at the pull-request step — Actions had read-only
+permissions, so it pushed a branch and could not open the PR — and nothing surfaced it. The site quietly
+served a day-old catalog until somebody happened to look at the Actions tab. A project whose premise is
+"the numbers are never a year out of date" needs something that notices when they are.
 
 ## The cost engine (`src/lib/engine/`)
 
@@ -131,6 +167,40 @@ and the shareable state lives in the query string. Styling is plain CSS with cus
 independent axes (`data-theme`, `data-accent`) plus a canvas variant — no utility framework, because the
 design system is token-driven and a translation layer would only add a build step.
 
+## The other four packages
+
+Four packages outside the site read the same catalog, and three of them import the same code. That is the
+most important structural fact in this repository: none of them holds a rate table, a tokenizer or a copy
+of the cost formula, so none of them can quietly disagree with the calculator.
+
+| Package   | What it is                                                             | What it imports from `src/lib/`                       |
+| --------- | ---------------------------------------------------------------------- | ----------------------------------------------------- |
+| `api/`    | `promptspend.dev` — keyless JSON and CSV over the catalog, on a Worker | `pricing/` — the schema and its validator             |
+| `mcp/`    | `@promptspend/mcp` — three tools for coding agents                     | `pricing/`, `engine/`, `select/`                      |
+| `vscode/` | the editor extension — prices on the line that names the model         | `pricing/`, `engine/`, `select/`, `tokenize/`, `url/` |
+| `worker/` | the alerts API — the one stateful service                              | nothing; it watches the published file                |
+
+`mcp/` and `vscode/` reach the shared code through a `@/*` → `../src/*` mapping in their `tsconfig.json`
+plus a matching alias in their esbuild step. **Both halves are load-bearing**, and it is worth knowing why
+before touching either: `tsc` does not rewrite the paths it type-checks, so a build with the mapping and
+without the alias compiles cleanly and then fails to resolve at runtime. `api/` skips the mechanism and
+imports by relative path, which is equivalent and reads worse.
+
+`mcp/src/tools.test.ts` asserts that `estimate_cost` returns what the site's engine returns for the same
+scenario. That test is why the paragraph above is a guarantee rather than an intention.
+
+**The no-bundled-prices rule is repeated in all four**, because the temptation is different in each and
+the failure is identical. An extension sitting in the Marketplace for three months with rates baked into
+it, or an npm package doing the same, is the purest possible version of the problem this project exists to
+prevent. Each fetches the published catalog, holds it briefly, serves a labelled stale copy for a bounded
+grace period, and then shows nothing rather than showing a number it cannot stand behind.
+
+The one thing `vscode/` cannot borrow is the catalog's own ids. Roughly half of them carry the upstream
+feed's routing prefix — `gemini-gemini-2.5-flash`, `xai-grok-4.5`, `zai-glm-5` — and nobody writes those
+in source code. `vscode/src/vendor-ids.ts` strips the known prefixes, and a test fails the build when the
+catalog grows a family nobody has classified. The alternative failure was silent: matching OpenAI and
+Anthropic, missing every other provider, and looking exactly like working.
+
 ## Testing strategy
 
 | Suite              | Guards                                                                                                                                                                                                                                                                                                    |
@@ -148,10 +218,19 @@ Coverage thresholds are enforced in CI, and they are uneven on purpose: 90% on t
 where a silent error is expensive, 70% overall. `npm run verify` is a single gate that both CI and the
 deploy workflow call, so there is exactly one definition of "verified" and no way to publish past it.
 
-**Known gap.** There is no browser-level end-to-end suite, no automated axe pass and no visual-regression
-snapshots. The component tests run in jsdom, which has no layout engine, so the responsive and
-touch-target guarantees in this document were verified by hand in a real browser at 320, 360, 390, 430,
-768, 1024 and 1280 pixels rather than by a test. Playwright plus axe is the obvious next investment.
+The table above covers the site. Four more suites sit in `api/`, `mcp/`, `vscode/` and `worker/`, each
+with its own runner and CI job; `docs/TESTING.md` has the breakdown and holds the total to what the
+runners actually report rather than to what anyone remembers.
+
+**What closed, and what did not.** This section used to name three gaps — no browser suite, no automated
+axe pass, no visual-regression snapshots — and call Playwright plus axe the obvious next investment. Both
+landed: 112 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
+two real defects, each a scrollable region no keyboard could reach.
+
+Screenshot diffing is still absent, and now deliberately rather than pending. A visual suite has a real
+running cost — every intended change becomes a diff to review and a baseline to re-approve, across four
+viewports and two themes — worth paying once the design stops moving, and it has been moving weekly. See
+`docs/DEFERRED.md`.
 
 ## Rendering non-goals
 
@@ -161,11 +240,17 @@ views; each of those would be ceremony. Styling is plain CSS custom properties o
 
 ## Deliberate non-goals
 
-No accounts, no analytics, no server-side rendering, no hosted API. Each one would add operational
-surface without making a single number more accurate. The one exception planned is a small opt-in alerts
-worker, which would store a push endpoint or an email address and the models being followed — and nothing
-else. Until it exists, the Data & Alerts page describes it as planned rather than rendering a control that
-does nothing.
+No accounts, no analytics, no tracking. Those hold, and they are the ones that matter.
+
+Three entries that used to sit in this list have since been built, and recording that is more useful than
+quietly deleting them: the opt-in alerts worker, the hosted API, and static pre-rendering — 159 crawlable
+pages generated from the catalog after every deploy. Each was argued against here on the grounds that it
+adds operational surface without making a single number more accurate. That is still the right test. Two
+of them passed it for a reason the original entry did not anticipate: an API and a set of crawlable pages
+put the same numbers in front of things that will never load a React app, and the alerts worker is the
+only way a price change reaches somebody who is not already looking at the site.
+
+What has not changed is that none of them sits in the estimator's path.
 
 ## What is deliberately not modelled
 

@@ -86,18 +86,36 @@ re-approve, across four viewports and two themes. That is worth paying once the
 design stops moving, and it has been moving weekly.
 
 **Launch marketing.** Show HN, the developer communities, the newsletters that
-cover LLM tooling. Now genuinely ready, which it was not before the pages and
-the API existed.
+cover LLM tooling. Now genuinely ready, which it was not before the pages, the
+API, the MCP server and the VS Code extension existed — four surfaces that give
+the same catalog four different ways to be found, and a story about provenance
+that is easier to tell with all of them in place than with any one.
+
+**A cost-diff GitHub Action.** A check that comments on a pull request when it
+changes what an LLM call will cost — the extension's per-line reading, applied
+to a diff. Deliberately waiting rather than rejected: it is the same scanning
+and pricing work `vscode/` already does, and building the reusable half twice
+would be the waste. Revisit once the extension's scanner has had real use and
+its rough edges are known rather than guessed at. A reminder is set for
+2026-08-25.
 
 **The 27 rows still sourced from LiteLLM.** A verification pass on 2026-08-03
 took vendor-sourced coverage from 16 of 70 to 43, and `verifiedUrl` from 17 to
 44, by reading Anthropic's, OpenAI's, Google's, xAI's and DeepSeek's own pricing
 pages. All 27 figures matched the feed exactly.
 
-What remains is not laziness but absence: Mistral Large 3 and Medium 3.5,
-Command A, every Kimi and MiniMax row, and GLM-5-Code **do not appear on their
-vendors' own pricing pages at all**. Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast
-and DeepSeek R1/V3/V3.2 are missing from the pages that carry their siblings.
+What remains is not laziness but absence. All 27, by family, so the list is the
+whole of it rather than a sample:
+
+- **No first-party pricing page carries them at all** — Mistral Large 3 and
+  Medium 3.5, Command A, three Kimi rows, four MiniMax rows, GLM-5-Code, and the
+  two Amazon Nova rows.
+- **Missing from the page that carries their siblings** — Gemini 3 Pro Preview
+  and 3.1 Flash Lite Preview, Grok 2, 3, 4 and 4.1-fast, DeepSeek R1, V3 and
+  V3.2, and four DashScope Qwen rows.
+- **One is an alias**, `gpt-5.6`, which inherits from its target and is not a
+  row anyone has to verify separately.
+
 Aggregator sites have numbers for all of them, and that is precisely the source
 this catalog refuses. These rows stay honestly labelled `litellm` until a
 first-party page carries them.

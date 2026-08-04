@@ -2,6 +2,7 @@ import { defineConfig, type Plugin } from 'vitest/config';
 import { loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
+import { readFileSync } from 'node:fs';
 
 // GitHub Pages serves the site from /<repo>/ unless a custom domain is configured;
 // set BASE_PATH=/ in the workflow when deploying to one. The dev server always
@@ -18,6 +19,31 @@ const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
 
 const CSP_PLACEHOLDER = '%CSP%';
 const SITE_URL_PLACEHOLDER = '%SITE_URL%';
+const MODEL_COUNT_PLACEHOLDER = '%MODEL_COUNT%';
+
+/**
+ * How many models the title tag and the meta description may claim.
+ *
+ * They said "70+ models" while the page under them said 69 and the README badge
+ * said 69 — the catalog holds 70 rows, one of which is an alias, and nothing was
+ * checking. A number in a `<title>` is the worst place for that: it is the line
+ * that shows in a search result and a browser tab, and it is the line nobody
+ * re-reads.
+ *
+ * A hand-written figure here would be wrong the first morning the sync captures
+ * a new family, so it is read from the catalog at build time instead. The same
+ * reasoning as the README badges, with the advantage that this one cannot go
+ * stale between syncs because nobody has to remember it.
+ *
+ * Aliases are excluded, matching `Catalog.primaryModels` and the badge: an id
+ * that routes to another model is not a second model.
+ */
+function primaryModelCount(): number {
+  const catalog = JSON.parse(
+    readFileSync(fileURLToPath(new URL('./public/data/pricing.json', import.meta.url)), 'utf8'),
+  ) as { models: { aliasOf?: string }[] };
+  return catalog.models.filter((model) => model.aliasOf === undefined).length;
+}
 
 /**
  * Where this build will actually be served from, with no trailing slash.
@@ -142,7 +168,16 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
           `index.html has no ${SITE_URL_PLACEHOLDER} placeholder — canonical and Open Graph URLs would ship relative.`,
         );
       }
-      return html.replaceAll(CSP_PLACEHOLDER, policy).replaceAll(SITE_URL_PLACEHOLDER, siteUrl);
+      if (!html.includes(MODEL_COUNT_PLACEHOLDER)) {
+        throw new Error(
+          `index.html has no ${MODEL_COUNT_PLACEHOLDER} placeholder — the title and description would ship a ` +
+            'hand-written model count, which is the one that goes stale without anybody reading it.',
+        );
+      }
+      return html
+        .replaceAll(CSP_PLACEHOLDER, policy)
+        .replaceAll(SITE_URL_PLACEHOLDER, siteUrl)
+        .replaceAll(MODEL_COUNT_PLACEHOLDER, String(primaryModelCount()));
     },
   };
 }
