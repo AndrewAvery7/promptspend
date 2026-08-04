@@ -323,3 +323,8 @@ _Manual correction, not a sync run._
 - **Review** `xai-grok-4.3` — provenance.verifiedUrl: — → https://docs.x.ai/docs/models
 - **Review** `xai-grok-4.5` — provenance.source: litellm → vendor
 - **Review** `xai-grok-4.5` — provenance.verifiedUrl: — → https://docs.x.ai/docs/models
+
+## 2026-08-04
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2 → OpenRouter disagrees (40%): $0.09/$1.1 vs $0.15/$1.2
+- **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: OpenRouter disagrees (37%): $0.6/$3.41 vs $0.95/$4 → OpenRouter disagrees (38%): $0.589/$2.48 vs $0.95/$4
