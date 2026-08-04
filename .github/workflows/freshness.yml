@@ -1,0 +1,164 @@
+name: Catalog freshness
+
+# The monitor that watches the promise.
+#
+# Every other check in this repository asks whether the code is correct. This
+# one asks the only question a visitor cares about: is the published catalog
+# actually current? A project whose entire premise is "the numbers are never a
+# year out of date" needs something that notices when they are.
+#
+# It reads the **live site**, not the repository, and that is the point. Between
+# a price moving upstream and a visitor seeing it there are four places to fail:
+#
+#   - the sync workflow errors, or its sources go degraded
+#   - the sync raises a review flag and the pull request sits unmerged
+#   - the deploy fails after a green sync
+#   - Pages serves a stale artifact
+#
+# Checking `public/data/pricing.json` in git would catch only the first. Fetching
+# what the site serves catches all four, because it asks the question from where
+# the answer matters.
+#
+# This exists because on 2026-08-04 the sync failed at the pull-request step —
+# Actions had read-only permissions, so it pushed a branch and could not open
+# the PR. Nothing surfaced that. The site quietly served a day-old catalog until
+# somebody happened to look at the Actions tab.
+on:
+  schedule:
+    # 15:00 UTC — four hours after the 11:00 sync, so a slow run is not mistaken
+    # for a stale one.
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check what the site is serving
+        id: check
+        env:
+          # The published artifact, not a preview and not the repository copy.
+          CATALOG_URL: https://promptspend.com/data/pricing.json
+          # Two days: the sync runs daily, so one missed morning is a transient
+          # and two is a fault. Tightening this to one day would fire on every
+          # blip; loosening it past two would let a broken week look normal.
+          MAX_AGE_DAYS: 2
+        run: |
+          set -uo pipefail
+
+          body=$(curl -sS --max-time 30 -w '\n%{http_code}\n%{content_type}' "$CATALOG_URL") || {
+            echo "problem=unreachable" >> "$GITHUB_OUTPUT"
+            echo "detail=The catalog could not be fetched at all. curl exited non-zero." >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+
+          type=$(printf '%s' "$body" | tail -n1)
+          status=$(printf '%s' "$body" | tail -n2 | head -n1)
+          json=$(printf '%s' "$body" | head -n -2)
+
+          if [ "$status" != "200" ]; then
+            echo "problem=http" >> "$GITHUB_OUTPUT"
+            echo "detail=The catalog returned HTTP $status with content-type \"$type\"." >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Content type is checked before parsing for the same reason the three
+          # catalog clients check it: a fallback page arriving where JSON should
+          # be produces "unexpected token '<'", which names the parser's
+          # confusion rather than what happened.
+          case "$type" in
+            *json*) ;;
+            *)
+              echo "problem=not-json" >> "$GITHUB_OUTPUT"
+              echo "detail=The catalog returned content-type \"$type\" rather than JSON. The first bytes were: $(printf '%s' "$json" | head -c 80 | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+          esac
+
+          generated=$(printf '%s' "$json" | python3 -c 'import sys,json; print(json.load(sys.stdin)["generatedAt"])') || {
+            echo "problem=unparseable" >> "$GITHUB_OUTPUT"
+            echo "detail=The response was JSON but had no readable generatedAt." >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+
+          age_days=$(python3 -c "
+          from datetime import datetime, timezone
+          import sys
+          g = datetime.fromisoformat('$generated'.replace('Z', '+00:00'))
+          print(round((datetime.now(timezone.utc) - g).total_seconds() / 86400, 2))
+          ")
+
+          echo "generated=$generated" >> "$GITHUB_OUTPUT"
+          echo "age_days=$age_days" >> "$GITHUB_OUTPUT"
+
+          if python3 -c "import sys; sys.exit(0 if float('$age_days') > float('$MAX_AGE_DAYS') else 1)"; then
+            echo "problem=stale" >> "$GITHUB_OUTPUT"
+            echo "detail=The published catalog was generated $generated, which is $age_days days ago. The daily sync should keep this under $MAX_AGE_DAYS." >> "$GITHUB_OUTPUT"
+          else
+            echo "problem=" >> "$GITHUB_OUTPUT"
+            echo "  catalog is $age_days days old (generated $generated) — within the $MAX_AGE_DAYS-day budget"
+          fi
+
+      # One issue, reopened and updated rather than a new one every morning. A
+      # monitor that files a duplicate daily is a monitor people mute.
+      - name: Raise or update the alert
+        if: steps.check.outputs.problem != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROBLEM: ${{ steps.check.outputs.problem }}
+          DETAIL: ${{ steps.check.outputs.detail }}
+        run: |
+          set -euo pipefail
+          title='Catalog freshness alert'
+
+          body=$(cat <<EOF
+          **$DETAIL**
+
+          Checked \`https://promptspend.com/data/pricing.json\` at $(date -u '+%Y-%m-%d %H:%M UTC').
+
+          ### Where to look, in order
+
+          1. **[Sync pricing](../../actions/workflows/sync-pricing.yml)** — did today's run succeed? A degraded run publishes nothing on purpose and fails loudly; a run that fails at the pull-request step pushes a branch and opens nothing.
+          2. **[Open pull requests](../../pulls?q=is%3Apr+is%3Aopen+label%3Aneeds-review)** — a sync that raised a *new* review flag waits for a human. If one is sitting there, the site stays at the last merged catalog until it is dealt with.
+          3. **[Deploy to GitHub Pages](../../actions/workflows/deploy.yml)** — a green sync still needs a green deploy.
+
+          This issue is reused rather than replaced. It closes itself on the next run that finds a fresh catalog.
+          EOF
+          )
+
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+            echo "  updated issue #$existing"
+          else
+            gh issue create --title "$title" --body "$body" --label "pricing" >/dev/null
+            echo "  opened a new alert issue"
+          fi
+
+      # Closing on recovery matters as much as opening. An alert left open after
+      # the fault clears trains people to ignore it.
+      - name: Close the alert once the catalog is fresh again
+        if: steps.check.outputs.problem == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          existing=$(gh issue list --state open --search "Catalog freshness alert in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Recovered — the published catalog is now ${{ steps.check.outputs.age_days }} days old (generated ${{ steps.check.outputs.generated }})."
+            gh issue close "$existing"
+            echo "  closed issue #$existing"
+          fi
+
+      # Last, so the issue is filed before the job goes red. Failing as well as
+      # filing means the run shows up in the Actions list and in the failure
+      # email, rather than only in a notification someone may have muted.
+      - name: Fail the run so it is visible
+        if: steps.check.outputs.problem != ''
+        run: |
+          echo "::error title=Catalog freshness::${{ steps.check.outputs.detail }}"
+          exit 1
