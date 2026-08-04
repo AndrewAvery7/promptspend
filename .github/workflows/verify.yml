@@ -185,7 +185,26 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: vscode/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            vscode/package-lock.json
+
+      # The root install, which this job genuinely needs and the MCP job does not.
+      #
+      # The extension typechecks `../src/lib/tokenize/index.ts` — a file that
+      # belongs to the root package and imports `js-tiktoken`. TypeScript
+      # resolves that from the importing file's own directory upwards, so it
+      # looks in `<repo>/node_modules` and never in `vscode/node_modules`, and
+      # without this step the typecheck fails on a module the extension has
+      # correctly declared. It passed locally only because a root install
+      # happened to be sitting there.
+      #
+      # Runtime resolution is the other way round: the bundle marks the
+      # tokenizer external and the packaged extension carries its own copy. Both
+      # are right; they are simply rooted differently.
+      - name: Install the site's dependencies
+        run: npm ci
+        working-directory: ${{ github.workspace }}
 
       - run: npm ci
 
