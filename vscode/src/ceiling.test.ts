@@ -71,6 +71,56 @@ client.messages.create(
   });
 });
 
+describe('a cap belongs to exactly one call', () => {
+  it('does not let a later call borrow the previous call’s cap', () => {
+    // Verbatim from the review file that caught this. The second call has no
+    // cap; it was showing 4096 tokens at gpt-5-mini's rate — a real number,
+    // correct arithmetic, about a request nobody had written.
+    const source = [
+      'response = client.messages.create(model="claude-sonnet-5", max_tokens=4096)',
+      'completion = openai.chat.completions.create(model="gpt-5-mini")',
+    ].join('\n');
+
+    const { matches } = index.scan(source, { comments: commentSyntaxFor('python') });
+    expect(matches).toHaveLength(2);
+    expect(ceilingFor(source, matches[0]!, matches)?.maxTokens).toBe(4096);
+    expect(ceilingFor(source, matches[1]!, matches)).toBeUndefined();
+  });
+
+  it('still reads a cap written above the model, which is why backwards exists', () => {
+    // Configuration files put the cap first. A distant previous match must not
+    // take that away — its forward window runs out before this one's begins.
+    const source = [
+      'model: gpt-5',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      'max_tokens: 512',
+      'model: claude-opus-4-5',
+    ].join('\n');
+
+    const { matches } = index.scan(source, { comments: commentSyntaxFor('yaml') });
+    expect(matches).toHaveLength(2);
+    expect(ceilingFor(source, matches[1]!, matches)?.maxTokens).toBe(512);
+  });
+
+  it('gives an unambiguous cap above the model to that model', () => {
+    const source = 'max_tokens: 256\nmodel: gpt-5\n';
+    const { matches } = index.scan(source, { comments: commentSyntaxFor('yaml') });
+    expect(ceilingFor(source, matches[0]!, matches)?.maxTokens).toBe(256);
+  });
+});
+
 describe('two calls in one file', () => {
   it('does not let the second call lend its cap to the first', () => {
     // Without the neighbour bound this was the failure: the first call has no
