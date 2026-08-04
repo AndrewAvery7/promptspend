@@ -1,6 +1,6 @@
 {
   "name": "@promptspend/mcp",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "LLM pricing for coding agents — every price carries its source and the date it was confirmed.",
   "license": "MIT",
   "type": "module",
