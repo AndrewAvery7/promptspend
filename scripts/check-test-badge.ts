@@ -237,11 +237,18 @@ const ANY_COUNT = /(\d+)(?:\s+[a-z]+){0,4}\s+tests?\b/gi;
  *
  * A changelog records what was true at a release. "22 tests" in the entry that
  * shipped 22 tests is correct and must stay; holding history to today's total
- * would demand rewriting the past every time a test is added. These two
- * documents describe the project as it is now, so every count in them is a
- * present-tense claim.
+ * would demand rewriting the past every time a test is added. These documents
+ * describe the project as it is now, so every count in them is a present-tense
+ * claim.
+ *
+ * ALERTS.md and ARCHITECTURE.md are here because scoping the sweep to the two
+ * documents that had already rotted was the same mistake one level up.
+ * `docs/ALERTS.md` said "77 tests run inside workerd against a real D1 and a
+ * real KV" — a stale count *and* a binding that had been deleted, sitting 174
+ * lines below the same file's own "There is no KV binding." Nothing looked at
+ * it, because it was not one of the two files anybody thought to name.
  */
-const SWEPT = ['README.md', 'docs/TESTING.md'];
+const SWEPT = ['README.md', 'docs/TESTING.md', 'docs/ALERTS.md', 'docs/ARCHITECTURE.md'];
 
 function lineOf(text: string, index: number): number {
   let line = 1;
@@ -269,10 +276,17 @@ async function main(): Promise<void> {
   const total = suites.reduce((sum, suite) => sum + suite.count, 0);
   const breakdown = suites.map(({ name, count }) => `${count} in ${name}`).join(', ');
 
-  const sources = new Map([
-    ['README.md', await readFile(resolve(ROOT, 'README.md'), 'utf8')],
-    ['docs/TESTING.md', await readFile(resolve(ROOT, 'docs/TESTING.md'), 'utf8')],
-  ]);
+  // Every document either check needs, loaded once and derived from the lists
+  // above rather than written out a third time. Naming a file in `SWEPT` and
+  // forgetting it here is exactly how the sweep died the first time it grew:
+  // `sources.get(file)!` handed back undefined and the `!` made TypeScript
+  // agree that could not happen.
+  const needed = new Set(['README.md', 'docs/TESTING.md', ...SWEPT]);
+  const sources = new Map(
+    await Promise.all(
+      [...needed].map(async (file) => [file, await readFile(resolve(ROOT, file), 'utf8')] as const),
+    ),
+  );
 
   const claims: Claim[] = [
     // The badge and its alt text are two hand-written copies of one number, and

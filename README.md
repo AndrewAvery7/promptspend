@@ -64,8 +64,9 @@ automatically without anyone touching code.
   and see the monthly, yearly, per-user and margin numbers for up to four models side by side.
 - **Compare** — every tracked model on a price-versus-capability value map, plus a sortable catalog you
   can select from directly, with the source and verification date for every row.
-- **Learn** — seven short interactive lessons on tokens, why output costs more, compounding chat history,
-  hidden reasoning tokens, caching and batching, and how the data pipeline works.
+- **Learn** — seven short interactive lessons on tokens, why output costs more, how wide the price spread
+  is, compounding chat history, hidden reasoning tokens, caching and batching, and how the data pipeline
+  works.
 - **Data & Alerts** — pipeline health, full provenance for every number with a link to the vendor page it
   came from, what is currently flagged, and four ways to hear about a price change: an Atom feed, the
   repository's own pull requests, browser push, and an email digest.
@@ -298,9 +299,13 @@ npm run verify             # exactly what CI runs, and what the deploy gate runs
 npm run sync:pricing:dry   # see what today's sync would change, without writing
 ```
 
-`verify` is typecheck, lint, format check, tests with coverage thresholds, a production build, catalog
-schema validation, and the bundle budget. The deploy workflow calls the same reusable workflow CI does
-and publishes the artifact it produced, so a commit that fails any of them cannot reach the live site.
+`verify` is typecheck, lint, format check, an encoding check, tests with coverage thresholds, the
+published test counts, a production build, catalog schema validation, the bundle budget, the Content
+Security Policy and the SEO checks. The deploy workflow calls the same reusable workflow CI does and
+publishes the artifact it produced, so a commit that fails any of them cannot reach the live site.
+
+It does **not** run the other four packages' suites — CI has a job each for `api/`, `mcp/`, `vscode/` and
+`worker/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Project layout
 
@@ -317,6 +322,9 @@ public/data/        the published catalog the app reads
 public/sw.js        service worker — push display only, no offline cache
 worker/             the alerts API (Cloudflare Worker, own package and tests)
 api/                the public pricing API on promptspend.dev (own package and tests)
+src/state/          the scenario hook, and the URL it mirrors itself into
+tests/              the browser suite: Playwright at four viewports, plus axe
+tools/              the promo pipeline — capture, render, stitch
 mcp/                the MCP server — imports the engine above, so it cannot disagree with it
 vscode/             the VS Code extension — imports it too, for the same reason
 ```
@@ -349,6 +357,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | [docs/PAGES.md](docs/PAGES.md)                         | The 159 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline     |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live  |
 | [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                 |
+| [docs/ALERTS.md](docs/ALERTS.md)                       | The price-alerts Worker — push and email architecture, the cost model, the domain cutover                |
 | [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                          |
 | [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                       |
 | [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                     |

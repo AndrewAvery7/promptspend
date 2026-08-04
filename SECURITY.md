@@ -3,10 +3,23 @@
 PromptSpend is a static site with no accounts and no login. The calculator itself
 sends nothing anywhere, which removes most of the usual attack surface.
 
-There is one server: the opt-in price-alerts API in [`worker/`](worker), a
-Cloudflare Worker with a D1 database holding email subscribers and push
-subscriptions. It is small and deliberately boring, but it is a backend that
-stores personal data and can send mail, so it is squarely in scope.
+There are two servers, both Cloudflare Workers, and only one of them holds
+anything:
+
+- **The opt-in price-alerts API** in [`worker/`](worker), on a D1 database
+  holding email subscribers and push subscriptions. Small and deliberately
+  boring, but it is a backend that stores personal data and can send mail, so it
+  is squarely in scope.
+- **The public pricing API** in [`api/`](api), serving `promptspend.dev`. It is
+  stateless, keyless and read-only — it holds no data and has no accounts — but
+  it re-serves prices to callers who cannot see the catalog behind it, which
+  puts it inside the blast radius of the first item below.
+
+Two more surfaces re-serve those prices without being servers at all: the MCP
+server ([`mcp/`](mcp)) and the VS Code extension ([`vscode/`](vscode)). Neither
+stores anything and neither accepts input from anyone but its own user, but a
+wrong price reaching either is the same class of bug as a wrong price on the
+site, and reports about them belong here.
 
 ## Supported versions
 

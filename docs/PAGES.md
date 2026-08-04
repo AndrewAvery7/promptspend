@@ -73,7 +73,7 @@ get tidied up — the changelog is full of it — and a URL that moves throws aw
 everything the page has earned.
 
 The one transformation is collapsing a doubled leading token, so
-`gemini-gemini-3.1-pro` becomes `gemini-3-1-pro` rather than something that looks
+`gemini-gemini-2.5-flash` becomes `gemini-2-5-flash` rather than something that looks
 like a bug to anyone reading the URL. `assertUniqueSlugs` fails the build if two
 ids ever land on one address; a collision would mean the second page silently
 overwrote the first.

@@ -20,8 +20,10 @@ There is no KV binding. There was one, and nothing ever read it; an unused
 binding is a claim about what this Worker can reach, and that claim should be
 true.
 
-Live at `https://promptspend-alerts.crestwood.workers.dev` until
-`api.promptspend.dev` is attached — see [DOMAINS.md](DOMAINS.md).
+Live at `https://api.promptspend.dev`, attached as a custom domain in
+`worker/wrangler.jsonc` — see [DOMAINS.md](DOMAINS.md). The
+`promptspend-alerts.crestwood.workers.dev` address still resolves and is not
+used by anything.
 
 ### Endpoints
 
@@ -59,7 +61,11 @@ cutover arranges.
 4. In `wrangler.jsonc` set `"EMAIL_TRANSPORT": "cloudflare"` and
    `"EMAIL_FROM": "alerts@promptspend.com"`, then deploy.
 
-Until step 4, `EMAIL_TRANSPORT` is `console`: the flows all run and the messages
+**All four are done** — `wrangler.jsonc` carries `"EMAIL_TRANSPORT":
+"cloudflare"` and `"EMAIL_FROM": "alerts@promptspend.com"`. The steps are kept as
+the runbook for a redeployment or a second environment.
+
+Before step 4, `EMAIL_TRANSPORT` is `console`: the flows all run and the messages
 are logged rather than sent. `GET /v1/config` reports `emailEnabled` and the UI
 says so plainly rather than offering a form that cannot work.
 
@@ -72,6 +78,10 @@ quota and the domain's sending reputation.
 1. Cloudflare dashboard → **Turnstile → Add site**.
 2. Put the site key in `wrangler.jsonc` as `TURNSTILE_SITE_KEY`.
 3. `npx wrangler secret put TURNSTILE_SECRET_KEY`, then deploy.
+
+Steps 1 and 2 are done — the site key is in `wrangler.jsonc`. Whether the secret
+is set is not visible from this repository by design, and it is the secret that
+switches enforcement on.
 
 The secret being set is what switches enforcement on. The browser reads the site
 key from `/v1/config`, so no front-end rebuild is needed.
@@ -190,7 +200,7 @@ count stops being zero, and not before.
 cd worker && npm test
 ```
 
-77 tests run inside workerd against a real D1 and a real KV, so the query layer
+84 tests run inside workerd against a real D1, so the query layer
 is exercised against genuine SQLite and the migrations are proved to apply. The
 full subscribe → confirm → change preferences → unsubscribe lifecycle is
 covered, as are signature rejection, replay rejection, CORS, and the SSRF

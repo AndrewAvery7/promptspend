@@ -18,10 +18,10 @@ four other packages that read it too. The pipeline is the product; everything el
 **There is a server now, and this document said there was not for three releases after it landed.** The
 sentence that used to open this file — _"no server, no database and no account system"_ — was true when
 written and stopped being true when opt-in price alerts shipped. `worker/` is a Cloudflare Worker on D1
-and KV holding a push endpoint or an email address and the models being followed; `api/` is a second,
-stateless Worker serving the catalog to anyone who asks. Rule two of this project is that a claim must be
-true of the code, and README.md and SECURITY.md were corrected at the time. This file was missed, which is
-the ordinary way a document goes wrong: nobody re-reads the paragraph they are not editing.
+holding a push endpoint or an email address and the models being followed; `api/` is a second, stateless
+Worker serving the catalog to anyone who asks. Rule two of this project is that a claim must be true of
+the code, and README.md was corrected at the time. This file and SECURITY.md were missed, which is the
+ordinary way a document goes wrong: nobody re-reads the paragraph they are not editing.
 
 Neither Worker is in the path of the estimator. Close the alerts form and the site is still a static page
 that sends nothing anywhere. There is still no account system.

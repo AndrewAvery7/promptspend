@@ -215,6 +215,15 @@ shrunk more than 10%. It writes the health manifest and refuses to touch
 `pricing.json`. Use `npm run sync:pricing:dry` to see what it would have done,
 or `--litellm-file ./fixture.json` to run it entirely offline.
 
-**Tests pass but the layout is wrong.** Expected — jsdom has no layout engine, so
-the suite cannot see geometry at all. Check responsive and accessibility changes
-in a real browser; see [TESTING.md](TESTING.md).
+**Unit tests pass but the layout is wrong.** Expected — jsdom has no layout
+engine, so the _unit_ suite cannot see geometry at all. That is what the browser
+suite is for:
+
+```bash
+npm run test:e2e
+```
+
+Playwright at 320, 390, 768 and 1280 plus an axe pass at WCAG 2.1 A/AA. What
+neither can see is a change that leaves a page correctly sized, accessible and
+semantically valid while making it look wrong — there is no screenshot diffing.
+Treat a purely visual change as something to look at. See [TESTING.md](TESTING.md).

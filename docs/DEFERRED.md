@@ -104,10 +104,18 @@ took vendor-sourced coverage from 16 of 70 to 43, and `verifiedUrl` from 17 to
 44, by reading Anthropic's, OpenAI's, Google's, xAI's and DeepSeek's own pricing
 pages. All 27 figures matched the feed exactly.
 
-What remains is not laziness but absence: Mistral Large 3 and Medium 3.5,
-Command A, every Kimi and MiniMax row, and GLM-5-Code **do not appear on their
-vendors' own pricing pages at all**. Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast
-and DeepSeek R1/V3/V3.2 are missing from the pages that carry their siblings.
+What remains is not laziness but absence. All 27, by family, so the list is the
+whole of it rather than a sample:
+
+- **No first-party pricing page carries them at all** — Mistral Large 3 and
+  Medium 3.5, Command A, three Kimi rows, four MiniMax rows, GLM-5-Code, and the
+  two Amazon Nova rows.
+- **Missing from the page that carries their siblings** — Gemini 3 Pro Preview
+  and 3.1 Flash Lite Preview, Grok 2, 3, 4 and 4.1-fast, DeepSeek R1, V3 and
+  V3.2, and four DashScope Qwen rows.
+- **One is an alias**, `gpt-5.6`, which inherits from its target and is not a
+  row anyone has to verify separately.
+
 Aggregator sites have numbers for all of them, and that is precisely the source
 this catalog refuses. These rows stay honestly labelled `litellm` until a
 first-party page carries them.

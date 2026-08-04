@@ -139,7 +139,7 @@ In `worker/wrangler.jsonc`:
 "vars": {
   "SITE_ORIGIN": "https://promptspend.com",
   "SITE_BASE_PATH": "/",
-  "ALLOWED_ORIGINS": "https://promptspend.com,https://www.promptspend.com,http://localhost:5173",
+  "ALLOWED_ORIGINS": "https://promptspend.com,https://www.promptspend.com,https://andrewavery7.github.io,http://localhost:5173",
   ...
 }
 ```
@@ -174,7 +174,7 @@ reputation you build belongs to the domain people actually see.
 
 ### 7. Turnstile
 
-Not optional once email is live — see [ALERTS.md](ALERTS.md#5-turn-on-turnstile).
+Not optional once email is live — see [ALERTS.md](ALERTS.md#turn-on-turnstile).
 
 ### 8. Tell search engines
 
@@ -217,6 +217,10 @@ Everything currently naming a host, so nothing is missed:
 | `api/wrangler.jsonc`    | `routes`, `CATALOG_URL`, `SYNC_STATUS_URL`, `SITE_ORIGIN`                  |
 | `src/config.ts`         | `DEVELOPER_HUB_URL`, the footer link to `.dev`                             |
 | `.env.local`            | `VITE_ALERTS_API` for local development                                    |
+| `mcp/src/catalog.ts`    | `CATALOG_URL`                                                              |
+| `mcp/src/tools.ts`      | the `promptspend.dev/v1/prices` hint in a tool response                    |
+| `vscode/src/catalog.ts` | `CATALOG_URL`                                                              |
+| `vscode/src/present.ts` | `SITE`                                                                     |
 
 The site's canonical link, Open Graph tags, structured data, `robots.txt`,
 `sitemap.xml`, `CNAME`, the 159 generated pages and the IndexNow submissions are

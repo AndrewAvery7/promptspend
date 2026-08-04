@@ -123,7 +123,7 @@ fresh clone — regenerate them from the prompts and seeds recorded below.
 needs a fresh drag-and-drop and a new URL in the README, as well as
 `gh release upload --clobber`.
 
-`python tools/make-promo.py --check` runs step 3's verification alone. It fails
+`python tools/make-promo.py --check` runs step 4's verification alone. It fails
 if a model in the captured estimate has been renamed or retired, or if the rates
 have moved far enough that the saving shown on screen is no longer what the
 engine would compute. **The screenshots stay current because they are captured;
@@ -263,8 +263,8 @@ music prompt, and `stitch-promo.sh` re-derives the loop from it.
   scene that puts a screenshot of that headline on screen. The video would have
   been arguing with the product.
 - **`vite preview` needs `--host 127.0.0.1`** on Windows, and `BASE_PATH` on both
-  the build and the serve. Both failures look like a hang, not an error. See
-  [TESTING.md](TESTING.md), which hit the same two.
+  the build and the serve. Both failures look like a hang, not an error, and
+  the Git Bash variant above is a third way into the same symptom.
 
 ## Publishing
 
