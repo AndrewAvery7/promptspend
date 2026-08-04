@@ -29,7 +29,7 @@
   "homepage": "https://promptspend.com/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AndrewAvery7/promptspend.git",
+    "url": "git+https://github.com/AndrewAvery7/promptspend.git",
     "directory": "vscode"
   },
   "bugs": {
