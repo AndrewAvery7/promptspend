@@ -20,6 +20,54 @@ shipping a package next week.
 
 ### Added
 
+- **A VS Code extension** (`vscode/`). The catalog, in the one place where a
+  model is actually chosen: the line of code naming it. Write
+  `model="claude-sonnet-5"` and the rates appear beside it; hover for the full
+  rate card, the confirmation date and the vendor page the number came from.
+
+  It is a linter for model choice rather than a calculator in a sidebar — a
+  calculator in an editor is only the website with worse ergonomics. What an
+  editor can do that a web page cannot is notice things: a `max_tokens` near a
+  model id becomes an output ceiling in money, deprecated and disputed rows
+  reach the Problems panel, and an Explorer view lists every model the whole
+  repository calls, dearest first.
+
+  Everything is _Information_ severity, never a warning. None of these are
+  mistakes, the extension has no idea what the code needs, and a squiggle that
+  calls a defensible decision wrong is how a linter gets uninstalled. The
+  cheaper-model suggestion is off by default for the same reason: it rests on
+  the capability estimate, which this project calls illustrative rather than a
+  benchmark, so it is an opinion where the rest are facts.
+
+  Chosen over a browser extension deliberately. The Marketplace has no review
+  queue, so a price-handling fix ships the same day — which matters more here
+  than anywhere, because "never stale" is the whole premise. It needs no host
+  permissions, so the privacy story survives intact. And it reaches people who
+  are metered per token rather than flat-rate chat subscribers, for whom a cost
+  readout is a curiosity.
+
+  Three things the build learned the hard way, each now a gate:
+
+  - **The catalog id is not always what anyone types.** Roughly half the catalog
+    carries the upstream feed's routing prefix — `gemini-gemini-2.5-flash`,
+    `xai-grok-4.5`, `zai-glm-5`. Scanning for catalog ids alone found OpenAI and
+    Anthropic and silently missed every other provider, which looked exactly
+    like working. `vendor-ids.ts` strips known prefixes, and a test fails the
+    build when the catalog grows a family nobody has classified.
+  - **The tokenizer must not be bundled.** Inlining it took the extension from
+    19.7 KB to 3,368 KB — two megabytes of rank tables loaded by every editor
+    window whether or not anyone ran the estimate command. It is external and
+    vendored as four files; `check:footprint` enforces a 100 KB bundle budget
+    and resolves each external, because the failure mode of a missing one is
+    exact counting silently degrading to an estimate.
+  - **An extension that fails invisibly is worse than one that crashes.** Every
+    refresh was fired as `void refresh(...)`, so an exception left the screen
+    unchanged and said nothing. Failures now reach an output channel and the
+    status bar, every early return records why, and `check:activation` drives a
+    full refresh over a real document and fails if nothing is drawn.
+
+  See [vscode/README.md](vscode/README.md).
+
 - **A promo video, built from the real interface.** The two sibling repositories
   draw their promos in PIL because they are command-line tools with nothing to
   film. This one has an interface, and the rule here is that a claim on screen

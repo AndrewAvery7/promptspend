@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-69-2456E6.svg" alt="69 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-580-blue.svg" alt="580 tests">
+  <img src="https://img.shields.io/badge/tests-719-blue.svg" alt="719 tests">
   <img src="https://img.shields.io/badge/initial%20payload-83%20KB%20gzip-blue.svg" alt="83 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -191,6 +191,32 @@ And because MCP tool definitions load into your context on _every_ turn, the ser
 measured, budgeted at 900, checked in CI and published: **~700 tokens**. Nothing else in the
 ecosystem appears to publish its own footprint. See [mcp/README.md](mcp/README.md).
 
+### Or in your editor
+
+The same catalog, on the line of code that chooses the model.
+
+```python
+response = client.messages.create(
+    model="claude-sonnet-5",   # $3 / $15 per M · max out $0.061
+    max_tokens=4096,
+)
+```
+
+A **linter for model choice** rather than a calculator in a sidebar — a calculator in an editor is
+only this website with worse ergonomics. What an editor can do that a web page cannot is notice
+things: a nearby `max_tokens` becomes the output ceiling in money, a cap above what the model can
+emit is named rather than priced as though it would work, deprecated and disputed rows reach the
+Problems panel, and an Explorer view lists every model the repository calls, dearest first.
+
+Everything it says is _Information_ severity, never a warning. None of these are mistakes and the
+extension has no idea what the code needs. The cheaper-model suggestion is off by default for the
+same reason the value map's capability axis is labelled illustrative: it is an opinion, where the
+rest are facts.
+
+Same rule as everywhere else — no bundled prices. If the catalog cannot be reached it says so and
+shows nothing, and the status bar carries the generation date at all times. See
+[vscode/README.md](vscode/README.md).
+
 Or read the file the API reads. The catalog is plain, versioned JSON with a stable shape:
 
 ```
@@ -272,6 +298,7 @@ public/sw.js        service worker — push display only, no offline cache
 worker/             the alerts API (Cloudflare Worker, own package and tests)
 api/                the public pricing API on promptspend.dev (own package and tests)
 mcp/                the MCP server — imports the engine above, so it cannot disagree with it
+vscode/             the VS Code extension — imports it too, for the same reason
 ```
 
 Beyond the calculator, the build writes 159 crawlable pages — one per model, one per provider, and a
@@ -297,7 +324,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                            |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way               |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 580 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 715 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 159 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline     |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live  |
@@ -307,6 +334,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                     |
 | [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                |
 | [mcp/README.md](mcp/README.md)                         | The MCP server — pricing for coding agents, with the source and date on every number                     |
+| [vscode/README.md](vscode/README.md)                   | The VS Code extension — prices on the line of code that chooses the model                                |
 | [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                   |
 | [SECURITY.md](SECURITY.md)                             | What is in scope — including a wrong price, which is treated as the most serious class of bug            |
 

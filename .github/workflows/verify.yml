@@ -188,3 +188,49 @@ jobs:
       # website cannot report different numbers.
       - name: Verify the MCP server
         run: npm run verify
+
+  # The VS Code extension. Its own job for the same reason as the MCP server:
+  # own lockfile, own build target. The one thing this job cannot check is the
+  # thing a reviewer most wants checked — whether a hover renders and whether
+  # the inline annotation reads as useful or as clutter. That needs a human with
+  # the .vsix installed, and the plan says so rather than pretending otherwise.
+  vscode:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vscode
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            vscode/package-lock.json
+
+      # The root install, which this job genuinely needs and the MCP job does not.
+      #
+      # The extension typechecks `../src/lib/tokenize/index.ts` — a file that
+      # belongs to the root package and imports `js-tiktoken`. TypeScript
+      # resolves that from the importing file's own directory upwards, so it
+      # looks in `<repo>/node_modules` and never in `vscode/node_modules`, and
+      # without this step the typecheck fails on a module the extension has
+      # correctly declared. It passed locally only because a root install
+      # happened to be sitting there.
+      #
+      # Runtime resolution is the other way round: the bundle marks the
+      # tokenizer external and the packaged extension carries its own copy. Both
+      # are right; they are simply rooted differently.
+      - name: Install the site's dependencies
+        run: npm ci
+        working-directory: ${{ github.workspace }}
+
+      - run: npm ci
+
+      # The tests import the site's catalog and cost engine from ../src, so a
+      # green run here is also the proof that a price in the editor gutter and a
+      # price on the website cannot disagree.
+      - name: Verify the VS Code extension
+        run: npm run verify
