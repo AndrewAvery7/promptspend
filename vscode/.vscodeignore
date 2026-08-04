@@ -14,18 +14,40 @@ package-lock.json
 # stack trace in a bug report is unreadable — a few hundred KB is a cheap price
 # for being able to act on the reports that do arrive.
 
-# The tokenizer, and only the parts of it that are used.
+# ---------------------------------------------------------------------------
+# The tokenizer.
 #
-# `tools/build.ts` marks these external so the encoder stays a lazy runtime
-# require rather than 3.3 MB inlined into the bundle. That only works if the
-# files are actually in the package, so these four negations are load-bearing:
-# remove one and exact token counting silently degrades to a calibrated ratio.
+# `tools/build.ts` marks it external so the encoder stays a lazy runtime import
+# rather than 3.3 MB inlined into the bundle and loaded by every editor window.
+# That only works if the files are in the package, and getting *which* files
+# wrong is silent: the import throws, `loadEncoder`'s catch swallows it, and
+# every token count degrades to a calibrated estimate with no error anywhere.
+# 0.1.4 shipped that way and reached the Marketplace.
 #
-# `package.json` is needed for the exports map that resolves the subpaths, and
-# the `require` condition is what selects the .cjs files rather than the .js
-# ones. The other five rank tables — gpt2, p50k, p50k_edit, r50k — stay
-# excluded; no model in the catalog uses them, and together they are 7 MB.
+# Three layers, each discovered by shipping the one above it:
+#
+#   1. **.js, not .cjs.** esbuild leaves a dynamic `import()` of an external
+#      module as a real `import()` even in a CommonJS bundle, and `import()`
+#      uses Node's ESM resolver — the `default` condition picks `dist/lite.js`,
+#      not the `require` condition's `dist/lite.cjs`.
+#   2. **`lite.js` is a seventy-byte stub** re-exporting from a content-hashed
+#      `chunk-*.js`, matched by glob here because that hash moves on every
+#      js-tiktoken rebuild.
+#   3. **That chunk imports `base64-js`**, a transitive dependency living in an
+#      entirely different package directory.
+#
+# Listed file by file rather than by whole subtree with exclusions: vsce's
+# matcher does not honour a re-exclusion underneath a broad negation, so
+# `!js-tiktoken/**` followed by `dist/ranks/**` shipped all eleven megabytes of
+# rank tables. Explicit negations are the only form that behaves.
+#
+# `npm run check:package` stages exactly these files and runs the encoder from
+# them alone. It is what makes an incomplete list here a red build rather than
+# another silent degradation.
 !node_modules/js-tiktoken/package.json
-!node_modules/js-tiktoken/dist/lite.cjs
-!node_modules/js-tiktoken/dist/ranks/o200k_base.cjs
-!node_modules/js-tiktoken/dist/ranks/cl100k_base.cjs
+!node_modules/js-tiktoken/dist/lite.js
+!node_modules/js-tiktoken/dist/chunk-*.js
+!node_modules/js-tiktoken/dist/ranks/o200k_base.js
+!node_modules/js-tiktoken/dist/ranks/cl100k_base.js
+!node_modules/base64-js/package.json
+!node_modules/base64-js/index.js
