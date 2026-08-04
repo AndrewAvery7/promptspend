@@ -60,6 +60,15 @@ describe('the failure that started all this', () => {
 
     await expect(fetchCatalog(`${base}/data/pricing.json`)).rejects.toThrow(/Expected JSON/);
     await expect(fetchCatalog(`${base}/data/pricing.json`)).rejects.toThrow(/text\/html/);
+
+    // Status and body, asserted separately, and both load-bearing. A 200 that
+    // serves HTML is a routing or deploy problem; a 404 that serves HTML is a
+    // path that does not exist. Telling those apart was the entire gap in the
+    // old message, so the test holds the message to reporting both.
+    // (Aligned with the assertions the mcp/ and api/ suites make, so all three
+    // fail for the same reasons.)
+    await expect(fetchCatalog(`${base}/data/pricing.json`)).rejects.toThrow(/HTTP 200/);
+    await expect(fetchCatalog(`${base}/data/pricing.json`)).rejects.toThrow(/<!doctype html>/);
   });
 
   it('retries, so one bad response does not empty the editor', async () => {
