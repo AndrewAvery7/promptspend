@@ -92,12 +92,28 @@ export async function readCatalog(env: Env, ctx?: ExecutionContext): Promise<Cat
   return fetchAndStore(env, key, cache, ctx);
 }
 
-async function fetchAndStore(
-  env: Env,
-  key: Request,
-  cache: Cache,
-  ctx?: ExecutionContext,
-): Promise<CatalogRead> {
+/**
+ * How many times the origin is asked before the read is called a failure.
+ *
+ * Two, because the failure that prompted this did not reproduce. On 2026-08-03
+ * the catalog URL returned the site's own HTML once; roughly eighteen fetches
+ * immediately afterwards — from Node, from the editor's own runtime, and from
+ * curl — all returned the catalog. **The cause was never established.** A deploy
+ * in flight and a CDN edge without the file yet are both plausible and neither
+ * was confirmed, so nothing here claims either.
+ *
+ * What is known is the shape of the failure: one bad response turned into a
+ * Worker serving a 5xx. Retrying once is a response to that fact rather than to
+ * a diagnosis.
+ *
+ * This is not a second cache. Nothing older is being served; a single read is
+ * given one more chance before the layer above falls back to what it retained.
+ */
+const ATTEMPTS = 2;
+const RETRY_DELAY_MS = 400;
+
+/** One read of the origin: fetched, type-checked, parsed and validated. */
+async function readOrigin(url: string): Promise<{ body: string; parsed: unknown }> {
   // `no-store`: this subrequest must never be served from, or written to,
   // Cloudflare's cache. Caching is what the layer above already does, with a
   // freshness window we control and a `fetchedAt` stamp we can reason about.
@@ -108,9 +124,28 @@ async function fetchAndStore(
   // then read back our own day-old copy. Worse, fixing the key alone was not
   // enough — the poisoned entry outlives the deploy that created it, so the
   // only reliable repair is to stop consulting that cache.
-  const response = await fetch(env.CATALOG_URL, { cache: 'no-store' });
+  const response = await fetch(url, { cache: 'no-store' });
   if (!response.ok) {
     throw new Error(`catalog origin returned HTTP ${response.status}`);
+  }
+
+  // Checked before parsing so the error reports what arrived. Letting
+  // `JSON.parse` fail produces `Unexpected token '<'`, which is true and tells
+  // whoever reads the Worker's logs nothing about a web page having arrived
+  // where a catalog should be.
+  //
+  // The message states the status, the type and the first bytes, and stops
+  // there. Naming a cause it cannot know is the mistake that produced this
+  // whole episode; an error that reports only what it saw is one the next
+  // reader can diagnose from — and this one reaches a log nobody is watching
+  // live, so it has to carry its own evidence.
+  const contentType = response.headers.get('content-type') ?? '(none)';
+  if (!contentType.includes('json')) {
+    const preview = (await response.text()).slice(0, 80).replace(/\s+/g, ' ');
+    throw new Error(
+      `Expected JSON from ${url} but got HTTP ${response.status} ` +
+        `with content-type "${contentType}". Body began: ${preview}`,
+    );
   }
 
   const body = await response.text();
@@ -122,6 +157,29 @@ async function fetchAndStore(
     throw new Error(`catalog failed validation: ${errors.slice(0, 3).join('; ')}`);
   }
 
+  return { body, parsed };
+}
+
+async function fetchAndStore(
+  env: Env,
+  key: Request,
+  cache: Cache,
+  ctx?: ExecutionContext,
+): Promise<CatalogRead> {
+  let lastError: unknown;
+  let read: { body: string; parsed: unknown } | undefined;
+
+  for (let attempt = 1; attempt <= ATTEMPTS && read === undefined; attempt += 1) {
+    try {
+      read = await readOrigin(env.CATALOG_URL);
+    } catch (cause) {
+      lastError = cause;
+      if (attempt < ATTEMPTS) await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+    }
+  }
+  if (read === undefined) throw lastError;
+
+  const { body, parsed } = read;
   const fetchedAt = new Date();
   const store = new Response(body, {
     headers: {

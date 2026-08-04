@@ -70,6 +70,11 @@ function serveCatalog(body: unknown = CATALOG, status = 200): void {
     });
 }
 
+/** An arbitrary status, content type and body — the shapes `serveCatalog` cannot make. */
+function serveRaw(status: number, contentType: string, body: string): void {
+  origin = () => new Response(body, { status, headers: { 'Content-Type': contentType } });
+}
+
 function originUnreachable(): void {
   origin = () => {
     throw new Error('origin unreachable');
@@ -360,6 +365,113 @@ describe('when the catalog cannot be trusted', () => {
     } finally {
       vars.FRESH_SECONDS = configured;
     }
+  });
+});
+
+/**
+ * How the origin read fails, as opposed to what the endpoints do afterwards.
+ *
+ * These go through `SELF.fetch` rather than calling `readCatalog` directly
+ * because the Cache API only works inside a request context, and a test body is
+ * not one. That also means the loopback-server approach `vscode/src/fetch.test.ts`
+ * uses is unavailable here — workerd has no `node:http` server — so the origin is
+ * the stub installed above, driven to produce the same five shapes.
+ */
+describe('how the catalog read fails', () => {
+  /**
+   * A cold cache, verified rather than assumed.
+   *
+   * `fetchAndStore` stores under `ctx.waitUntil`, so a write from the previous
+   * test can land *after* the `beforeEach` delete. That is not hypothetical: it
+   * served a good cached catalog to the test below that asserts a persistently
+   * bad origin produces a 503, which passed as a 200 in 17ms. Every case here
+   * asserts on what happens when the origin is actually read, so every case has
+   * to start by making sure it will be.
+   */
+  async function coldCache(): Promise<void> {
+    const key = new Request(CACHE_KEY);
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      await caches.default.delete(key);
+      if ((await caches.default.match(key)) === undefined) {
+        originHits = 0;
+        return;
+      }
+    }
+    throw new Error('the retained catalog could not be cleared');
+  }
+
+  /** The 503 detail is logged and never sent, so the log is where it is checked. */
+  async function detailOf(path: string): Promise<string> {
+    await coldCache();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      expect((await get(path)).status).toBe(503);
+      return warn.mock.calls.map((call) => String(call[0])).join('\n');
+    } finally {
+      warn.mockRestore();
+    }
+  }
+
+  it('names HTML for what it is instead of reporting a JSON syntax error', async () => {
+    // Verbatim shape of the real incident: the catalog path served the site's
+    // own page, 200 and all. Why it did is not known. `JSON.parse` would say
+    // `Unexpected token '<'`, which is true and tells whoever reads these logs
+    // nothing about a web page having arrived where a catalog should.
+    serveRaw(200, 'text/html; charset=utf-8', '<!doctype html><html><body>PromptSpend</body></html>');
+
+    const detail = await detailOf('/v1/models');
+    expect(detail).toMatch(/Expected JSON/);
+    expect(detail).toMatch(/text\/html/);
+    // The status matters as much as the type: it is what separates "the origin
+    // 404d and something rendered an error page" from "the origin answered 200
+    // with the wrong body". The message that started this recorded neither.
+    expect(detail).toMatch(/HTTP 200/);
+    expect(detail).toMatch(/<!doctype html>/);
+  });
+
+  it('gives up after the retry rather than hammering a persistently bad origin', async () => {
+    serveRaw(200, 'text/html', '<!doctype html>');
+    await detailOf('/v1/models');
+    expect(originHits).toBe(2);
+  });
+
+  it('reports the status code when the origin answers 503', async () => {
+    serveRaw(503, 'text/plain', 'down for maintenance');
+    expect(await detailOf('/v1/models')).toMatch(/HTTP 503/);
+  });
+
+  it('rejects JSON that is not a catalog rather than serving it as an empty one', async () => {
+    // A server that answers with the right content type and the wrong shape is
+    // the most dangerous case: it would otherwise become `count: 0`, which
+    // looks identical to a catalog with nothing in it.
+    serveCatalog({ hello: 'world' });
+    expect(await detailOf('/v1/models')).toMatch(/failed validation/);
+  });
+
+  it('rejects a truncated body', async () => {
+    serveRaw(200, 'application/json', JSON.stringify(CATALOG).slice(0, 400));
+    await detailOf('/v1/models');
+  });
+
+  // Last in the block on purpose: it is the only case here that succeeds, so it
+  // is the only one that leaves a `waitUntil` write in flight behind it.
+  it('retries, so one bad response does not 503 the whole API', async () => {
+    // The shape the real failure had: one bad response, then a good one. That
+    // it did not repeat is the only thing established about it, and it is
+    // enough to justify a second attempt — 400ms rather than an outage.
+    await coldCache();
+    let call = 0;
+    origin = () => {
+      call += 1;
+      return call === 1
+        ? new Response('<!doctype html>', { status: 200, headers: { 'Content-Type': 'text/html' } })
+        : new Response(JSON.stringify(CATALOG), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    };
+
+    const response = await get('/v1/models');
+    expect(response.status).toBe(200);
+    expect(((await response.json()) as { count: number }).count).toBe(2);
+    expect(originHits).toBe(2);
   });
 });
 
