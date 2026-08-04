@@ -109,6 +109,10 @@ jobs:
         if: steps.check.outputs.problem != ''
         env:
           GH_TOKEN: ${{ github.token }}
+          # This job checks out nothing — it reads a public URL — so `gh` has no
+          # git remote to infer the repository from and fails with "not a git
+          # repository". Naming it explicitly is cheaper than a checkout.
+          GH_REPO: ${{ github.repository }}
           PROBLEM: ${{ steps.check.outputs.problem }}
           DETAIL: ${{ steps.check.outputs.detail }}
         run: |
@@ -145,6 +149,7 @@ jobs:
         if: steps.check.outputs.problem == ''
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           existing=$(gh issue list --state open --search "Catalog freshness alert in:title" --json number --jq '.[0].number // empty')
