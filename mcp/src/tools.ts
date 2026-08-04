@@ -29,18 +29,13 @@ import type { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { provenanceOf } from './provenance';
 
-export const DEFAULT_WORKLOAD: Workload = {
-  systemTokens: 800,
-  userTokens: 150,
-  outputTokens: 350,
-  turns: 4,
-};
+// The comparison workload and the cheaper-model search moved to the site's lib
+// when the VS Code extension needed them verbatim. Re-exported here so this
+// module's public surface is unchanged — what `findCheaper` returns is this
+// server's response shape, and that stays here where it belongs.
+import { findCheaperModels, DEFAULT_WORKLOAD, DEFAULT_SCALE } from '@/lib/select/cheaper';
 
-export const DEFAULT_SCALE: Scale = {
-  conversationsPerDay: 1000,
-  monthlyActiveUsers: 1000,
-  revenuePerUserPerMonth: 0,
-};
+export { DEFAULT_WORKLOAD, DEFAULT_SCALE };
 
 export interface PriceBlock {
   model: string;
@@ -212,49 +207,34 @@ export function findCheaper(catalog: Catalog, generatedAt: string, input: Cheape
   const target = resolveModel(catalog, input.model);
   if (!target) return notFound(catalog, input.model);
 
-  const bar = input.min_capability ?? target.capabilityIndex;
-  const candidates = catalog.models.filter(
-    (m) =>
-      !m.aliasOf &&
-      m.status === 'current' &&
-      m.id !== target.id &&
-      m.provenance.stale !== true &&
-      (bar === undefined || (m.capabilityIndex !== undefined && m.capabilityIndex >= bar)),
-  );
+  const { targetRow, capabilityBar, cheaper, note } = findCheaperModels(catalog, target, {
+    minCapability: input.min_capability,
+    workload: {
+      systemTokens: input.system_tokens ?? DEFAULT_WORKLOAD.systemTokens,
+      userTokens: input.user_tokens ?? DEFAULT_WORKLOAD.userTokens,
+      outputTokens: input.output_tokens ?? DEFAULT_WORKLOAD.outputTokens,
+      turns: input.turns ?? DEFAULT_WORKLOAD.turns,
+    },
+    scale: {
+      ...DEFAULT_SCALE,
+      conversationsPerDay: input.conversations_per_day ?? DEFAULT_SCALE.conversationsPerDay,
+    },
+  });
 
-  if (candidates.length === 0) {
+  if (note !== undefined) {
     return {
       model: target.id,
       alternatives: [],
-      note:
-        bar === undefined
-          ? 'No comparable current models found.'
-          : `No current model scores at or above ${bar} on the capability estimate. ` +
-            `That estimate is illustrative, not a benchmark — lower min_capability to widen the search.`,
+      // The shared helper words this for a general caller; the tool's own
+      // parameter is what an agent can actually change, so say so.
+      note: note.replace('lower the bar', 'lower min_capability'),
     };
   }
-
-  const workload: Workload = {
-    systemTokens: input.system_tokens ?? DEFAULT_WORKLOAD.systemTokens,
-    userTokens: input.user_tokens ?? DEFAULT_WORKLOAD.userTokens,
-    outputTokens: input.output_tokens ?? DEFAULT_WORKLOAD.outputTokens,
-    turns: input.turns ?? DEFAULT_WORKLOAD.turns,
-  };
-  const scale: Scale = {
-    ...DEFAULT_SCALE,
-    conversationsPerDay: input.conversations_per_day ?? DEFAULT_SCALE.conversationsPerDay,
-  };
-
-  const rows = compareModels([target, ...candidates], workload, scale);
-  const targetRow = rows.find((r) => r.model.id === target.id);
-  const cheaper = rows.filter(
-    (r) => r.model.id !== target.id && targetRow && r.scaled.perMonth < targetRow.scaled.perMonth,
-  );
 
   return {
     model: target.id,
     current_cost_per_month_usd: Number((targetRow?.scaled.perMonth ?? 0).toFixed(2)),
-    capability_bar: bar ?? null,
+    capability_bar: capabilityBar ?? null,
     alternatives: cheaper.slice(0, 5).map((r) => ({
       model: r.model.id,
       display_name: r.model.displayName,
