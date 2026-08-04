@@ -121,6 +121,8 @@ run and a clearly labelled ratio where it cannot.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). Source at
+MIT — see
+[LICENSE](https://github.com/AndrewAvery7/promptspend/blob/main/LICENSE).
+Source at
 [github.com/AndrewAvery7/promptspend](https://github.com/AndrewAvery7/promptspend),
 in `vscode/`.
