@@ -1,0 +1,201 @@
+{
+  "name": "promptspend",
+  "displayName": "PromptSpend — LLM prices in your editor",
+  "description": "What the model on this line costs, and when that price was last confirmed.",
+  "version": "0.1.3",
+  "license": "MIT",
+  "publisher": "promptspend",
+  "type": "module",
+  "main": "./dist/extension.cjs",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Linters",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "llm",
+    "pricing",
+    "tokens",
+    "cost",
+    "openai",
+    "anthropic",
+    "ai-costs"
+  ],
+  "homepage": "https://promptspend.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndrewAvery7/promptspend.git",
+    "directory": "vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/AndrewAvery7/promptspend/issues"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "promptspend.openSite",
+        "title": "Open the pricing data page",
+        "category": "PromptSpend"
+      },
+      {
+        "command": "promptspend.estimateSelection",
+        "title": "Estimate selection",
+        "category": "PromptSpend"
+      },
+      {
+        "command": "promptspend.refresh",
+        "title": "Refresh prices now",
+        "category": "PromptSpend"
+      },
+      {
+        "command": "promptspend.showLog",
+        "title": "Show log",
+        "category": "PromptSpend"
+      },
+      {
+        "command": "promptspend.scanWorkspace",
+        "title": "Scan workspace",
+        "category": "PromptSpend",
+        "icon": "$(refresh)"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "promptspend.workspaceCost",
+          "name": "LLM models in use",
+          "icon": "$(symbol-constant)",
+          "contextualTitle": "PromptSpend"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "promptspend.workspaceCost",
+        "contents": "See every model this repository calls, what each costs, and where it is referenced.\n[Scan workspace](command:promptspend.scanWorkspace)\nThe sweep reads files from disk; nothing is sent anywhere."
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "promptspend.estimateSelection",
+          "when": "editorHasSelection",
+          "group": "9_cutcopypaste"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "promptspend.scanWorkspace",
+          "when": "view == promptspend.workspaceCost",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "PromptSpend",
+      "properties": {
+        "promptspend.inlineDetail": {
+          "type": "string",
+          "enum": [
+            "compact",
+            "full",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Rates only — $3 / $15 per M",
+            "Rates and the date the price was last confirmed",
+            "No end-of-line annotation; hovers still work"
+          ],
+          "default": "compact",
+          "description": "How much the annotation at the end of the line says."
+        },
+        "promptspend.languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "python",
+            "javascript",
+            "javascriptreact",
+            "typescript",
+            "typescriptreact",
+            "go",
+            "rust",
+            "java",
+            "kotlin",
+            "csharp",
+            "ruby",
+            "php",
+            "shellscript",
+            "yaml",
+            "json",
+            "jsonc",
+            "toml",
+            "ini",
+            "properties",
+            "dotenv"
+          ],
+          "markdownDescription": "Language ids to annotate. Markdown and plain text are left out on purpose: a model id in prose is being discussed, not called."
+        },
+        "promptspend.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the date the pricing catalog was last synced."
+        },
+        "promptspend.diagnostics": {
+          "type": "string",
+          "enum": [
+            "facts",
+            "all",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Only what the catalog knows: deprecated, legacy, disputed and stale models",
+            "Also suggest a cheaper model where one clears the same capability estimate",
+            "No entries in the Problems panel"
+          ],
+          "default": "facts",
+          "markdownDescription": "Which findings reach the Problems panel. The cheaper-model suggestion is opt-in because it rests on a capability estimate this project calls illustrative rather than a benchmark. All entries are Information severity — none of them are mistakes."
+        },
+        "promptspend.annotateComments": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Annotate model ids inside comments. Off by default: a model named in a comment is being discussed rather than called."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsx tools/build.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:activation": "tsx tools/check-activation.ts",
+    "check:footprint": "tsx tools/check-footprint.ts",
+    "verify": "npm run typecheck && npm run test && npm run build && npm run check:activation && npm run check:footprint",
+    "package": "npm run build && npx --yes @vscode/vsce@^3 package --out dist/promptspend.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.28.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.10"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  },
+  "dependencies": {
+    "js-tiktoken": "^1.0.21"
+  }
+}

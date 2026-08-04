@@ -1,0 +1,31 @@
+# Everything the Marketplace package does not need. The published .vsix should
+# be the bundle, the icon and the two documents a reader looks for — nothing
+# that would let someone mistake the package for the source of truth.
+src/**
+tools/**
+node_modules/**
+.vscode/**
+tsconfig.json
+vitest.config.ts
+package-lock.json
+**/*.test.ts
+
+# The sourcemap ships on purpose. The bundle is minified, so without it every
+# stack trace in a bug report is unreadable — a few hundred KB is a cheap price
+# for being able to act on the reports that do arrive.
+
+# The tokenizer, and only the parts of it that are used.
+#
+# `tools/build.ts` marks these external so the encoder stays a lazy runtime
+# require rather than 3.3 MB inlined into the bundle. That only works if the
+# files are actually in the package, so these four negations are load-bearing:
+# remove one and exact token counting silently degrades to a calibrated ratio.
+#
+# `package.json` is needed for the exports map that resolves the subpaths, and
+# the `require` condition is what selects the .cjs files rather than the .js
+# ones. The other five rank tables — gpt2, p50k, p50k_edit, r50k — stay
+# excluded; no model in the catalog uses them, and together they are 7 MB.
+!node_modules/js-tiktoken/package.json
+!node_modules/js-tiktoken/dist/lite.cjs
+!node_modules/js-tiktoken/dist/ranks/o200k_base.cjs
+!node_modules/js-tiktoken/dist/ranks/cl100k_base.cjs

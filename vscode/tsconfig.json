@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    // DOM is here for the fetch types only, for the same reason the MCP server
+    // pulls it in: Node's own fetch typings omit `RequestInit.cache`, and
+    // `cache: 'no-store'` is what stops a long-lived process — which an editor
+    // extension very much is — serving a catalog it fetched hours ago.
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    // The catalog, the types and the cost engine are imported from the site
+    // rather than reimplemented, so a price this extension shows in the gutter
+    // cannot drift from the one the website shows. Same mechanism as mcp/.
+    "paths": {
+      "@/*": ["../src/*"]
+    }
+  },
+  "include": ["src", "tools"]
+}
