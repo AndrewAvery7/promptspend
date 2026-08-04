@@ -82,6 +82,23 @@ shipping a package next week.
   from frame 0 and offers no `poster` a README can set — the hero clip begins
   near-black, so the front page showed an empty rectangle until someone pressed
   play.
+
+  Re-cut on 2026-08-04 to 2:08, adding a scene for the editor extension. Its
+  screenshot is the only one in the film that Playwright could not take — it
+  drives a browser and cannot photograph an editor — so it is a native crop of
+  VS Code running the published extension against the published catalog rather
+  than an editor drawn in PIL, which would have put a mockup on the one frame
+  claiming the product notices things. The frame happens to prove the 0.1.6
+  ceiling fix on its own: `gpt-5-mini` shows a rate and no ceiling while sitting
+  between two calls that have one.
+
+  Two things the re-cut settled that had been written down as open questions.
+  The **freshness-date artifact fixed itself**: `docs/PROMO.md` had recorded that
+  three frames showed a fabricated `lastChanged` and predicted that re-capturing
+  alone would clear it, and it did. And the **end-card letterbox crop is now
+  measured rather than hard-coded** — the new clip came back with no bars at all,
+  where the old constant would have cropped 260 good rows out of it.
+
 - **`npm run check:encoding`**, in `verify`. Fails on a UTF-8 BOM, on invalid
   UTF-8, and on double-encoding. Detection is a round-trip rather than a list of
   suspicious characters, because a pattern list both misses real cases and flags
@@ -272,10 +289,9 @@ shipping a package next week.
   test: `clipboard.writeText` requires transient user activation, so a
   programmatic click is refused and only a trusted event proves the thing works.
 
-- The promo video gains a scene for it and runs 1:53. Same rules as the rest of
-  the film: real figures, the site's own typefaces, no mockups, and the honest
-  comparison is a price beside a price-with-its-paperwork rather than a
-  competitor's name.
+- The promo video gains a scene for it. Same rules as the rest of the film: real
+  figures, the site's own typefaces, no mockups, and the honest comparison is a
+  price beside a price-with-its-paperwork rather than a competitor's name.
 - **A vendor-verification pass, taking first-party coverage from 16 of 70 rows
   to 43.** `verifiedUrl` — the link to the page that was actually read — goes
   from 17 rows to 44. Anthropic's, OpenAI's, Google's, xAI's and DeepSeek's own

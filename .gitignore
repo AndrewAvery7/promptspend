@@ -22,7 +22,21 @@ blob-report
 # `npx tsx tools/capture-ui.ts` and `python tools/make-promo.py`, and they SHOULD
 # be regenerated rather than kept — a stale screenshot of a price is the one
 # thing this repository exists to prevent.
-assets/promo-frames/
+# `/*` rather than `/`: git cannot re-include a file whose parent directory is
+# excluded, so ignoring the directory itself would make the two negations below
+# silently do nothing.
+assets/promo-frames/*
+# ...except the two frames nothing in this repository can regenerate.
+#
+# Every other frame comes back from `npx tsx tools/capture-ui.ts`, which is why
+# keeping them would be worse than useless — a committed screenshot of a price
+# is the one thing this project exists to prevent. The editor scene is the
+# exception: Playwright drives a browser and cannot photograph an editor, so
+# these two are hand-taken from VS Code. Ignoring them is how the promo bookends
+# were lost earlier the same day, at $4.80 to replace. 96 KB is the cheaper side
+# of that trade.
+!assets/promo-frames/04-editor.png
+!assets/promo-frames/04-status.png
 assets/core.mp4
 assets/*-promo.mp4
 assets/.bed-looped.mp3
@@ -46,3 +60,6 @@ mcp/dist/
 # .claude/worktrees/<branch>, so this is a complete second copy of the
 # repository nested inside the first — never something to commit.
 .claude/
+
+# Python bytecode from the promo tooling.
+tools/__pycache__/

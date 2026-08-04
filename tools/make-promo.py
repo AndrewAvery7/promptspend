@@ -556,6 +556,69 @@ def scene_agent(fr, n):
     return im
 
 
+def scene_editor(fr, n):
+    """The last surface: the line of code that names the model.
+
+    The agent scene argues that the paperwork travels. This one shows the place
+    it travels *to*, and it is the only scene in the film whose screenshot did
+    not come from `capture-ui.ts` - Playwright drives a browser and cannot
+    photograph an editor.
+
+    It is still a real screenshot. Drawing an editor in PIL would have been
+    quicker and would have broken this project's first rule on the one frame
+    claiming the product notices things. So `assets/promo-frames/04-editor.png`
+    is a native-resolution crop of VS Code with the published extension running
+    against the published catalog, and the three annotations in it are the
+    extension's own output, not typed here.
+
+    What the frame happens to prove, without a caption having to claim it:
+    `gpt-5-mini` shows a rate and no ceiling while sitting between two calls
+    that have one. That is the neighbour-bound fix in 0.1.6 - before it, a call
+    with no cap of its own borrowed the cap above it and priced it at its own
+    rate.
+    """
+    t = fr / n
+    im = base()
+    d = ImageDraw.Draw(im)
+    eyebrow(im, "AND ON THE LINE THAT CHOOSES", ease(seg(t, 0.02, 0.12)))
+    headline(im, "The price, where the decision is.", ease(seg(t, 0.04, 0.14)),
+             sub="A VS Code extension - the same catalog, on the line naming the model.",
+             sub_alpha=ease(seg(t, 0.16, 0.14)))
+
+    # Left, large: the editor itself. Everything else is annotation around it.
+    a = ease(seg(t, 0.24, 0.18))
+    place(im, load("04-editor"), 690, 610, 1040, a, radius=12)
+
+    # Right: what to look at, in the order the eye should take it.
+    points = [
+        ("THE RATE", "on the line that names the model", ACCENT),
+        ("THE CEILING", "a nearby max_tokens, in money", SAVE),
+        ("THE FLAG", "legacy rows reach the Problems panel", WARN),
+    ]
+    for i, (label, body, colour) in enumerate(points):
+        aa = ease(seg(t, 0.44 + i * 0.09, 0.16))
+        if aa < 0.01:
+            continue
+        y = 330 + i * 132
+        badge(im, 1300, y, label, colour, aa, 26)
+        d.text((1300, y + 54), body, font=F("body", 30), fill=fade(MUTED, aa))
+
+    # The closing argument, and the reason the status bar carries a date at all.
+    a4 = ease(seg(t, 0.74, 0.16))
+    if a4 > 0.01:
+        d.text((1300, 762), "No bundled prices, here either.",
+               font=F("display-mid", 38), fill=fade(INK, a4))
+        a5 = ease(seg(t, 0.82, 0.14))
+        d.text((1300, 816), "Unreachable catalog, no number -",
+               font=F("body", 30), fill=fade(MUTED, a5))
+        d.text((1300, 852), "and the date is on screen throughout.",
+               font=F("body", 30), fill=fade(MUTED, a5))
+
+    a6 = ease(seg(t, 0.88, 0.12))
+    place(im, load("04-status"), 1490, 940, 400, a6, radius=8, shadow=False)
+    return im
+
+
 def scene_pipeline(fr, n):
     """The actual product is the pipeline; the calculator sits on top of it."""
     t = fr / n
@@ -675,6 +738,7 @@ HOLD = {  # seconds of settled time after everything has appeared
     "saving": 5.0,     # one big number lands fast, then a two-line callout
     "trust": 6.3,      # two panels plus three lines; the heaviest for text
     "agent": 6.0,      # a command, two panels and a closing pair
+    "editor": 6.3,     # a screenshot to read as code, plus three labels
     "pipeline": 6.0,   # a three-step ladder, two counters, a closing line
     "cta": 4.5,        # light, but it is the address and it should linger
 }
@@ -690,7 +754,8 @@ SCENES = [
     (scene_estimate, 205 + _frames(HOLD["estimate"]), 205),    # the product working
     (scene_saving, 150 + _frames(HOLD["saving"]), 150),        # the payoff
     (scene_trust, 195 + _frames(HOLD["trust"]), 195),          # provenance and flags
-    (scene_agent, 200 + _frames(HOLD["agent"]), 200),          # into the editor
+    (scene_agent, 200 + _frames(HOLD["agent"]), 200),          # into the agent
+    (scene_editor, 200 + _frames(HOLD["editor"]), 200),        # onto the line of code
     (scene_pipeline, 200 + _frames(HOLD["pipeline"]), 200),    # the daily sync
     (scene_cta, 145 + _frames(HOLD["cta"]), 145),              # where to go
 ]

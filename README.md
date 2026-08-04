@@ -39,7 +39,7 @@
 https://github.com/user-attachments/assets/475eb203-fab5-42b3-8e8d-788b1ce13edf
 
 <p align="center">
-  <i>1 minute 53 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
+  <i>2 minutes 8 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
   &nbsp;·&nbsp;
   <a href="https://github.com/AndrewAvery7/promptspend/releases/latest/download/promptspend-promo.mp4">Download the MP4</a>
 </p>

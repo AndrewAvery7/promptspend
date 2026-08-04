@@ -1,12 +1,16 @@
 # The promo video
 
-`promptspend-promo.mp4` — 1 minute 53, 1920×1080, shipped as a **release asset**
+`promptspend-promo.mp4` — 2 minutes 8, 1920×1080, shipped as a **release asset**
 rather than committed. At ~23 MB it would otherwise be by far the heaviest thing
 in the repository, and every rebuild would add another copy to history forever.
 
 ```
-[ title card 1.7s ] → [ AI hero shot 6.4s ] → [ real-UI core 103s ] → [ AI end card 3.6s ]
+[ title card 1.7s ] → [ AI hero shot 6.4s ] → [ real-UI core 118s ] → [ AI end card 3.6s ]
 ```
+
+Nine scenes in the core: the snapshot problem, the size of the decision, the
+estimate working, the saving, provenance and flags, the MCP server, **the editor
+extension**, the daily pipeline, and the address.
 
 The title card is frame 0, and frame 0 is the thumbnail. GitHub's inline player
 is generated from a bare attachment URL and its markdown sanitiser strips
@@ -49,44 +53,70 @@ draw their whole core in PIL, because they are command-line tools and there was
 nothing to film. That is the difference worth understanding before copying their
 approach here.
 
-### The published cut shows a freshness date the site no longer displays
+### The freshness-date artifact, and how it resolved
 
-Not a bug, and a deliberate decision not to re-cut. The film was captured on
-2026-08-02, when the catalog carried a fabricated `provenance.lastChanged` on
-every model, so three frames show it: the header (`prices last changed
-2026-08-02`), the results pill (`PRICES CHANGED 2026-08-02`) and the pipeline
-health panel. The data was corrected the next day — see the **Fixed** entries in
-`CHANGELOG.md` — and the site now reads `not yet recorded` until a rate actually
-moves.
+For two days this section recorded a known blemish. The 2026-08-02 cut was
+captured while the catalog carried a fabricated `provenance.lastChanged` on every
+model, so three frames showed it: the header, the results pill and the pipeline
+health panel. The data was corrected the next day and the site began reading
+`not yet recorded` until a rate actually moves, but the film kept the old dates.
 
-Every price in the video is still correct; only the provenance dates aged. The
-judgement was that a period artifact is not worth re-cutting and re-uploading,
-since GitHub's `user-attachments` URLs are immutable and re-embedding is manual.
-Worth knowing before the next rebuild: **re-capturing is enough to fix it** —
-`capture-ui.ts` reads the live built site, so the frames come back correct on
-their own with no edit to the video pipeline.
+It was left alone deliberately — every price in it was still correct, only the
+provenance dates had aged, and GitHub's `user-attachments` URLs are immutable so
+re-embedding is manual. The note said re-capturing would be enough to fix it,
+with no edit to the video pipeline.
+
+That turned out to be exactly right. The 2026-08-04 re-cut ran `capture-ui.ts`
+against the rebuilt site and the health panel came back reading **`not yet
+recorded`** on its own. The lesson generalises: a promo built from captures
+repairs itself the next time it is built, and the only thing that needs
+deliberate maintenance is the hand-written caption layer around it.
 
 ## Rebuilding it
 
 The order matters: the captions are checked against the catalog, and the catalog
 moves every morning.
 
-```bash
-# 1. Build and serve the site. BASE_PATH must be / or the capture 404s.
-BASE_PATH=/ SITE_URL=http://127.0.0.1:4173 npm run build
-npx vite preview --port 4173 --strictPort --host 127.0.0.1
+**Run steps 1 and 2 in PowerShell, not Git Bash.** `BASE_PATH=/` in Git Bash is
+rewritten by MSYS path conversion into `/Program Files/Git/`, and the build then
+bakes that into every asset URL. Nothing errors: the site builds, the preview
+serves, and the capture sits waiting for a `<main>` that never mounts because the
+JavaScript 404s. It looks exactly like a hang. This cost two ten-minute timeouts
+on 2026-08-04 before the preview log gave it away.
 
-# 2. Capture the real interface (writes assets/promo-frames/)
+```powershell
+# 1. Build AND serve with base "/". Both halves need it - a build at "/" served
+#    at "/promptspend/" 302s the capture into the same silent hang.
+$env:BASE_PATH = '/'; $env:SITE_URL = 'http://127.0.0.1:4173'
+npm run build
+node node_modules/vite/bin/vite.js preview --port 4173 --strictPort --host 127.0.0.1
+
+# 2. Capture the real interface (writes assets/promo-frames/). Confirm the root
+#    answers 200, not 302, before starting this.
 npx tsx tools/capture-ui.ts
+```
 
-# 3. Render the 103s core (also checks the figures, and writes the overlays)
+Step 3 is the one screenshot Playwright cannot take: `04-editor.png` and
+`04-status.png` are crops of VS Code with the published extension running. See
+**The editor scene** below. They change far less often than the site does, so
+this step is usually skipped.
+
+```bash
+# 4. Render the 118s core (also checks the figures, and writes the overlays)
 python tools/make-promo.py
 
-# 4. Stitch, with the two generative bookends and the music bed
-bash tools/stitch-promo.sh HERO.mp4 assets/core.mp4 ENDCARD.mp4 \
-  assets/title-overlay.png assets/endcard-logo.png BED.mp3 \
+# 5. Stitch. The bed is COPIED first: stitch-promo.sh writes its loop to
+#    assets/.bed-looped.mp3, so passing that same path as the input makes ffmpeg
+#    read and write one file.
+cp assets/.bed-looped.mp3 assets/bed-source.mp3
+bash tools/stitch-promo.sh assets/hero.mp4 assets/core.mp4 assets/endcard.mp4 \
+  assets/title-overlay.png assets/endcard-logo.png assets/bed-source.mp3 \
   assets/poster.png assets/promptspend-promo.mp4
+rm assets/bed-source.mp3
 ```
+
+`assets/hero.mp4` and `assets/endcard.mp4` are gitignored and will not be in a
+fresh clone — regenerate them from the prompts and seeds recorded below.
 
 **Re-uploading matters.** Changing the video changes the file, so the existing
 `user-attachments` URL still serves the old cut — it is immutable. A rebuild
@@ -98,6 +128,37 @@ if a model in the captured estimate has been renamed or retired, or if the rates
 have moved far enough that the saving shown on screen is no longer what the
 engine would compute. **The screenshots stay current because they are captured;
 the risk here is the reverse — the hand-written captions rotting around them.**
+
+## The editor scene
+
+One scene's screenshot does not come from `capture-ui.ts`, and cannot: Playwright
+drives a browser and cannot photograph an editor. `04-editor.png` and
+`04-status.png` are native-resolution crops of VS Code with the **published**
+extension running against the **published** catalog.
+
+Drawing an editor in PIL would have been quicker. It would also have broken this
+project's first rule on the single frame that claims the product notices things,
+which is the worst possible place to put a mockup — so the scene waited for a
+real screenshot instead.
+
+How to retake them:
+
+1. Open a file naming a few models **inside a folder VS Code already trusts**.
+   Restricted Mode disables the extension, and the symptom is simply that no
+   annotations appear — it does not announce itself.
+2. Capture the screen at native resolution rather than through any downscaling
+   tool; the annotations are small grey text and do not survive a resample.
+3. Crop the code region and the status item separately. Measure the status item's
+   bounds off a zoom — the first attempt guessed and clipped the `P` off
+   `Prices synced`.
+
+The demo file is worth constructing rather than grabbing: the published frame
+shows `claude-sonnet-5` with a `max_tokens` and a ceiling, `gpt-5-mini` with no
+cap and therefore **no** ceiling, and a legacy `claude-opus-4-5` carrying a
+diagnostic underline. The middle one is the point. A call with no cap of its own
+sitting between two that have one is precisely the case that shipped broken in
+0.1.5, where it borrowed the cap above it and priced it at its own rate. The
+frame proves the fix without a caption having to claim it.
 
 ## The bookends
 
