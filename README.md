@@ -300,8 +300,8 @@ npm run sync:pricing:dry   # see what today's sync would change, without writing
 ```
 
 `verify` is typecheck, lint, format check, an encoding check, tests with coverage thresholds, the
-published test counts, a production build, catalog schema validation, the bundle budget, the Content
-Security Policy and the SEO checks. The deploy workflow calls the same reusable workflow CI does and
+published test counts, the published page counts, a production build, catalog schema validation, the
+bundle budget, the Content Security Policy and the SEO checks. The deploy workflow calls the same reusable workflow CI does and
 publishes the artifact it produced, so a commit that fails any of them cannot reach the live site.
 
 It does **not** run the other four packages' suites — CI has a job each for `api/`, `mcp/`, `vscode/` and
