@@ -120,10 +120,32 @@ function requireInstalled(bin: string, name: string): void {
   );
 }
 
-async function countVitest(dir: string, name: string): Promise<number> {
+/** One entry per test `vitest list` can see: its name and the file holding it. */
+interface VitestEntry {
+  name: string;
+  file: string;
+}
+
+/**
+ * A suite's total, and the same tests broken down by file.
+ *
+ * The breakdown costs nothing — it is the same JSON, counted by a different key
+ * — and it is what lets the table in docs/TESTING.md be checked rather than
+ * proofread.
+ */
+async function countVitest(
+  dir: string,
+  name: string,
+): Promise<{ total: number; byFile: Map<string, number> }> {
   const bin = resolve(dir, 'node_modules/vitest/vitest.mjs');
   requireInstalled(bin, name);
-  return (JSON.parse(await run(bin, ['list', '--json'], dir)) as unknown[]).length;
+  const entries = JSON.parse(await run(bin, ['list', '--json'], dir)) as VitestEntry[];
+  const byFile = new Map<string, number>();
+  for (const entry of entries) {
+    const file = relative(ROOT, entry.file).replaceAll('\\', '/');
+    byFile.set(file, (byFile.get(file) ?? 0) + 1);
+  }
+  return { total: entries.length, byFile };
 }
 
 interface PlaywrightSuite {
@@ -250,6 +272,49 @@ const ANY_COUNT = /(\d+)(?:\s+[a-z]+){0,4}\s+tests?\b/gi;
  */
 const SWEPT = ['README.md', 'docs/TESTING.md', 'docs/ALERTS.md', 'docs/ARCHITECTURE.md'];
 
+/**
+ * The per-file table in docs/TESTING.md, which nothing was holding to anything.
+ *
+ * Twenty rows of hand-maintained numbers. Adding two tests on 2026-08-04
+ * invalidated two of them and every check above still passed: the totals were
+ * corrected, the badge agreed with the sum, and two rows inside the table that
+ * produces that sum were quietly wrong. It is the same failure as the badge
+ * itself, one level finer — a figure nobody recomputes because recomputing it
+ * means running something.
+ *
+ * Both directions are checked, because each catches a different mistake:
+ * a row whose figure has drifted, a row for a file that no longer exists, and a
+ * file with no row at all. That last one is what makes the table's implicit
+ * claim — "these are the whole suite, and they sum to the total" — true by
+ * construction rather than by anyone adding them up.
+ */
+const TABLE_ROW = /^\| `([^`]+\.test\.tsx?)`\s*\| (\d+)\s*\|/gm;
+
+function tableProblems(text: string, byFile: Map<string, number>): string[] {
+  const problems: string[] = [];
+  const listed = new Map<string, number>();
+  for (const match of text.matchAll(TABLE_ROW)) listed.set(match[1]!, Number(match[2]));
+
+  if (listed.size === 0) {
+    return ['docs/TESTING.md: the per-file table is no longer in a form this check can read'];
+  }
+
+  for (const [file, claimed] of listed) {
+    const actual = byFile.get(file);
+    if (actual === undefined) {
+      problems.push(`docs/TESTING.md lists \`${file}\`, which holds no tests — renamed or deleted?`);
+    } else if (actual !== claimed) {
+      problems.push(`docs/TESTING.md says \`${file}\` has ${claimed} tests; it has ${actual}`);
+    }
+  }
+  for (const [file, actual] of byFile) {
+    if (!listed.has(file)) {
+      problems.push(`docs/TESTING.md has no row for \`${file}\` (${actual} tests), so its table cannot sum`);
+    }
+  }
+  return problems;
+}
+
 function lineOf(text: string, index: number): number {
   let line = 1;
   for (let i = 0; i < index; i += 1) if (text[i] === '\n') line += 1;
@@ -268,8 +333,14 @@ function strayCounts(file: string, text: string, permitted: Map<number, string>)
 
 async function main(): Promise<void> {
   const suites: Suite[] = [];
+  // Only the root package's breakdown is kept: it is the only one docs/TESTING.md
+  // itemises, and a table of another workspace's files is not a claim anyone has
+  // made.
+  let rootByFile = new Map<string, number>();
   for (const { name, dir } of await workspaces()) {
-    suites.push({ name, count: await countVitest(dir, name) });
+    const { total, byFile } = await countVitest(dir, name);
+    if (name === THIS_PACKAGE) rootByFile = byFile;
+    suites.push({ name, count: total });
   }
   suites.push({ name: BROWSER, count: await countPlaywright() });
 
@@ -311,6 +382,7 @@ async function main(): Promise<void> {
   const problems = [
     ...claims.flatMap((claim) => problemsWith(sources.get(claim.file)!, claim)),
     ...SWEPT.flatMap((file) => strayCounts(file, sources.get(file)!, permitted)),
+    ...tableProblems(sources.get('docs/TESTING.md')!, rootByFile),
   ];
 
   if (problems.length > 0) {
@@ -321,8 +393,10 @@ async function main(): Promise<void> {
     return;
   }
 
+  const rootTotal = suites.find((suite) => suite.name === THIS_PACKAGE)?.count ?? 0;
   console.log(`✓ ${total} tests — ${breakdown}`);
-  console.log('✓ README badge and docs/TESTING.md both agree');
+  console.log('✓ README badge, alt text and every figure in docs/TESTING.md agree');
+  console.log(`✓ its ${rootByFile.size} per-file rows are the whole package and sum to ${rootTotal}`);
 }
 
 main().catch((error: unknown) => {

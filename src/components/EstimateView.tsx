@@ -1,6 +1,5 @@
 import type { Catalog } from '@/lib/pricing/catalog';
-import { MCP_INSTALL_COMMAND, PRICING_SCOPE, VSCODE_MARKETPLACE_URL } from '@/config';
-import { CopyButton } from './CopyButton';
+import { PRICING_SCOPE } from '@/config';
 import { csvDocument } from '@/lib/engine/csv';
 import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
 import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
@@ -122,35 +121,36 @@ export function EstimateView({
           <h2 className="hero__aside-title" id="hero-aside-title">
             The same numbers, where you work
           </h2>
-          <p>
-            An MCP server for Claude Code, Cursor and Windsurf. Every price still arrives with its source and
-            the date it was confirmed.
-          </p>
-          {/* Scrollable, so focusable: `overflow-x: auto` without a tab stop is
-              a box a keyboard user cannot reach the end of. */}
-          <div className="codeblock">
-            <pre className="mono" tabIndex={0}>
-              <code>{MCP_INSTALL_COMMAND}</code>
-            </pre>
-            <CopyButton value={MCP_INSTALL_COMMAND} label="install command" onToast={onToast} />
-          </div>
+          <p>The same prices, carrying the same source and confirmation date, are also here:</p>
+          {/* A list of what exists, not a menu of commands.
+
+              This box used to hold one install command — the MCP server's — which
+              made it an advert for one of four things and a place to copy from
+              for none of the others. Every install route now lives together on
+              Data & Alerts, where there is room to give each a command, a link
+              and the reason to pick it. The job here is to tell somebody who
+              never leaves this page that the other three exist at all.
+
+              `role="list"` because `list-style: none` strips list semantics in
+              Safari, and four items are worth announcing as four. */}
+          <ul className="hero__aside-list" role="list">
+            <li>
+              <b>MCP server</b> — for Claude Code, Cursor and Windsurf
+            </li>
+            <li>
+              <b>VS&nbsp;Code extension</b> — the rate on the line of code that names the model
+            </li>
+            <li>
+              <b>Open VSX</b> — the same extension, for Cursor, Windsurf and VSCodium
+            </li>
+            <li>
+              <b>Pricing API</b> — keyless and CORS-open, as JSON or CSV
+            </li>
+          </ul>
           <p className="hero__aside-note">
-            ~700 tokens per turn, measured ·{' '}
             <button type="button" className="linklike" onClick={onOpenData}>
-              How it works
+              How to install each &rarr;
             </button>
-          </p>
-          {/* The extension gets a line rather than a second install box. The
-              aside exists because anyone who never opened Data & Alerts never
-              learned the catalog answers anywhere but here, and that argument
-              applies to the editor too — but two commands in a sidebar is a
-              menu, and this is a pointer. */}
-          <p className="hero__aside-note">
-            Or on the line of code itself —{' '}
-            <a href={VSCODE_MARKETPLACE_URL} target="_blank" rel="noreferrer noopener">
-              the VS&nbsp;Code extension
-            </a>
-            .
           </p>
         </aside>
       </div>
