@@ -5,6 +5,90 @@ models arriving, rows being flagged — are recorded separately and automaticall
 in [docs/pricing-changelog.md](docs/pricing-changelog.md), because they happen
 on their own schedule and are not releases.
 
+## Unreleased
+
+Work that landed after `v0.6.0` was tagged. The tag points at `fd54a49` and
+these commits came after it, so they are recorded here rather than folded into
+a release that does not contain them.
+
+### Changed
+
+- **The landing hero's aside advertises all four surfaces instead of installing
+  one.** It carried the MCP install command, which made it an advert for one of
+  four things and a place to copy from for none of the others — and the box is
+  the first thing a visitor sees who never opens another tab. It now names the
+  MCP server, the extension, Open VSX and the API, each in a line, and links to
+  Data & Alerts where every install route already lives together with a command,
+  a link and the reason to pick it.
+
+  The clipboard test moved with the command rather than being deleted. It asserts
+  the same behaviour on the panel that now owns it, because "the install command
+  copy button writes to the clipboard" is still a claim worth holding — it needs
+  a real browser, since `clipboard.writeText` requires transient user activation
+  and refuses a programmatic click.
+
+  The four hero figures went from 1.6rem to 2.05rem in the space that freed up.
+  They are the strongest evidence on the page and were the quietest thing on it.
+
+- **The freshness chip sits at the right edge of its panel head.** Eight pixels
+  after "YOUR MODELS, SIDE BY SIDE", it read as a continuation of the title
+  rather than a status. `margin-left: auto` rather than a media query: when the
+  head wraps at a narrow width the chip drops to its own line and still sits
+  right. Measured at 0px from the inner edge at 1280, 1024, 768, 390 and 320.
+
+- **`check:test-badge` now holds the per-file table in docs/TESTING.md, which
+  carried a note saying it was deliberately unchecked.** Twenty rows of
+  hand-maintained numbers, described as "a map of where the depth is, not an
+  inventory" that "drifts by one or two as tests are added".
+
+  Adding two tests proved that framing wrong on the same day it was tested.
+  Two rows went stale and every existing check still passed — the totals were
+  corrected, the badge agreed with the sum, and two rows _inside the table that
+  produces that sum_ were quietly wrong. That is the badge's own failure one
+  level finer: a figure nobody recomputes, because recomputing it means running
+  something.
+
+  Three states now fail the build: a row whose figure has drifted, a row for a
+  file that holds no tests, and a test file with no row at all. The last is what
+  makes the table's implicit claim — that these are the whole package and they
+  sum to the total — true by construction rather than by anyone adding them up.
+  All three were driven to failure before the fix, and the per-file breakdown
+  costs nothing: it is the same `vitest list --json`, counted by a different key.
+
+- **The site now names every surface the catalog reaches, on every surface that
+  should name them.** The extension shipped to two marketplaces and the site
+  mentioned it in one panel; `llms.txt` — the file written expressly for models —
+  listed the HTTP API and neither of the two things built for agents.
+
+  - `llms.txt` gains a section for the MCP server and the extension, with the
+    install line for each. An index that omits the two most agent-native things
+    it indexes is the one omission that matters in a file only agents read.
+  - The **159 generated pages** now link the API from their footer. `llms.txt`
+    told readers to "prefer the API over scraping these pages" while those very
+    pages offered no route to it — two generated artifacts disagreeing about how
+    a machine should read the catalog, each looking fine alone. `apiUrl` is now
+    one value in `build-pages.ts` feeding both, rather than computed inline for
+    one of them.
+  - The footer carries the MCP server, the Marketplace and Open VSX. It is the
+    only row on every view, so it is where somebody who never opens Data & Alerts
+    learns they exist.
+  - Each panel card ends with somewhere to go — npm, the developer hub, the
+    Marketplace — because a command suits people who already decided and a link
+    suits everyone still deciding. The editor card previously linked only Open
+    VSX, so the marketplace most people use was the one route not offered.
+  - Marketplace, Open VSX, npm and both install commands moved to `src/lib/links.ts`.
+    `llms.txt` is generated under plain Node, where `src/config.ts` cannot be
+    imported at all — it reads `import.meta.env`, which is undefined there and
+    throws on first access. Two copies of a marketplace URL is one wrong URL
+    waiting to happen.
+
+- **Learn lesson 7 covers the monitor that checks its own title.** "How this site
+  never goes stale" described the pipeline and stopped. It now closes on the job
+  that reads the published site every afternoon, why reading the live site
+  catches four failure modes where reading the repository catches one, and the
+  transferable version: monitor the promise you made to the reader, not the
+  machinery you built to keep it.
+
 ## 0.6.0 - 2026-08-04
 
 **The catalog stops being a website.** It now answers on the line of code that
@@ -210,40 +294,6 @@ file in git catches one of them.
   they are.
 
 ### Changed
-
-- **The site now names every surface the catalog reaches, on every surface that
-  should name them.** The extension shipped to two marketplaces and the site
-  mentioned it in one panel; `llms.txt` — the file written expressly for models —
-  listed the HTTP API and neither of the two things built for agents.
-
-  - `llms.txt` gains a section for the MCP server and the extension, with the
-    install line for each. An index that omits the two most agent-native things
-    it indexes is the one omission that matters in a file only agents read.
-  - The **159 generated pages** now link the API from their footer. `llms.txt`
-    told readers to "prefer the API over scraping these pages" while those very
-    pages offered no route to it — two generated artifacts disagreeing about how
-    a machine should read the catalog, each looking fine alone. `apiUrl` is now
-    one value in `build-pages.ts` feeding both, rather than computed inline for
-    one of them.
-  - The footer carries the MCP server, the Marketplace and Open VSX. It is the
-    only row on every view, so it is where somebody who never opens Data & Alerts
-    learns they exist.
-  - Each panel card ends with somewhere to go — npm, the developer hub, the
-    Marketplace — because a command suits people who already decided and a link
-    suits everyone still deciding. The editor card previously linked only Open
-    VSX, so the marketplace most people use was the one route not offered.
-  - Marketplace, Open VSX, npm and both install commands moved to `src/lib/links.ts`.
-    `llms.txt` is generated under plain Node, where `src/config.ts` cannot be
-    imported at all — it reads `import.meta.env`, which is undefined there and
-    throws on first access. Two copies of a marketplace URL is one wrong URL
-    waiting to happen.
-
-- **Learn lesson 7 covers the monitor that checks its own title.** "How this site
-  never goes stale" described the pipeline and stopped. It now closes on the job
-  that reads the published site every afternoon, why reading the live site
-  catches four failure modes where reading the repository catches one, and the
-  transferable version: monitor the promise you made to the reader, not the
-  machinery you built to keep it.
 
 - The site, the developer hub and `llms.txt` now say what makes this different
   rather than leaving a reader to infer it. Data & Alerts gains a **Use it where

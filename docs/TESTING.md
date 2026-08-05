@@ -32,9 +32,18 @@ summing to the total is now a property of the build rather than something to
 proofread — which is the whole reason it exists, since proofreading is exactly
 what failed twice.
 
-The per-file table below is **not** checked and drifts by one or two as tests
-are added: it is a map of where the depth is, not an inventory. If a number
-there matters to you, run `npm test`.
+The per-file table below is checked too, and that is newer than the rest. It
+used to carry a note saying it was **not** checked and drifted by one or two —
+that it was a map of where the depth is rather than an inventory. Then two tests
+were added on 2026-08-04, two of its rows went stale, and every check above still
+passed: the totals were corrected, the badge agreed with the sum, and two rows
+inside the table that produces that sum were quietly wrong.
+
+So it is now an inventory. Three things fail the build: a row whose figure has
+drifted, a row for a file that holds no tests, and a test file with no row at
+all. The last is what makes this table's implicit claim — that these are the
+whole package and they sum to the total — true by construction rather than by
+anyone adding them up.
 
 | Suite                                 | Tests | Guards                                                                                                                                                                                                                                    |
 | ------------------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

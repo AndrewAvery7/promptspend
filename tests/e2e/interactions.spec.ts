@@ -92,7 +92,12 @@ test('the install command copy button writes to the clipboard', async ({ page, c
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto('/');
 
-  await page.locator('.hero__aside .copy-button').click();
+  // Data & Alerts rather than the landing hero: the hero aside used to carry the
+  // MCP install command and now advertises all four surfaces without a command,
+  // because every install route lives together on that panel instead.
+  await page.getByRole('button', { name: 'Data & Alerts', exact: true }).click();
+  await page.locator('.build-grid').waitFor();
+  await page.locator('.build-grid .copy-button').first().click();
 
   await expect(page.locator('.toast')).toContainText('Install command copied');
   const clipboard = await page.evaluate(() => navigator.clipboard.readText());

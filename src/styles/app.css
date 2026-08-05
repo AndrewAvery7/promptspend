@@ -427,14 +427,18 @@ body.tour-active .main {
 }
 .hero__stats dt {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  /* Raised from 1.6rem when the aside beside it lost its install box: these four
+   * figures are the strongest evidence on the page and were the quietest thing
+   * on it. */
+  font-size: 2.05rem;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
   /* Follows the palette the reader picked, like the eyebrow and the emphasised
-   * word in the headline. 1.6rem at weight 700 is "large text" under WCAG, so
-   * the 3:1 threshold applies rather than 4.5:1 — and `contrast.test.ts` already
-   * checks every accent against every surface it can land on. */
+   * word in the headline. Comfortably "large text" under WCAG at this size and
+   * weight, so the 3:1 threshold applies rather than 4.5:1 — and
+   * `contrast.test.ts` already checks every accent against every surface it can
+   * land on. */
   color: var(--accent);
 }
 .hero__stats dd {
@@ -528,6 +532,39 @@ body.tour-active .main {
   color: var(--muted);
   font-size: 0.85rem;
   line-height: 1.5;
+}
+/* The four places this catalog answers besides a web page. A custom marker
+   rather than a disc: the default sits too far from the text at this size and
+   cannot take the accent. */
+.hero__aside-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+}
+.hero__aside-list li {
+  position: relative;
+  padding-left: 15px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.hero__aside-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  /* Aligned to the first line's optical centre rather than its box, so the
+     marker does not ride high beside a bullet that wraps to two lines. */
+  top: 0.56em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.hero__aside-list b {
+  color: var(--ink);
+  font-weight: 650;
 }
 .hero__aside pre {
   max-width: 100%;
@@ -724,6 +761,15 @@ body.tour-active .main {
 }
 .note b {
   color: var(--info);
+}
+/* Pushed to the far end of the panel head. The chip is a status, not part of
+   the title, and sitting 8px after "YOUR MODELS, SIDE BY SIDE" read as a
+   continuation of it. `margin-left: auto` rather than `justify-content` because
+   the title is the only other child and must stay left. When the head wraps at
+   a narrow width the chip drops to its own line and still sits right, which is
+   the behaviour that would otherwise need a media query. */
+.panel__title .sync-chip {
+  margin-left: auto;
 }
 .sync-chip {
   font-family: var(--font-mono);
