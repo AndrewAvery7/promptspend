@@ -5,18 +5,27 @@ models arriving, rows being flagged — are recorded separately and automaticall
 in [docs/pricing-changelog.md](docs/pricing-changelog.md), because they happen
 on their own schedule and are not releases.
 
-## Unreleased
+## 0.6.0 - 2026-08-04
 
-Two threads. The first is the repository being honest about itself — a corrupted
-README that had already shipped, a promo that could have drifted from the
-product, and two numbers that were wrong on the page while being right in the
-code.
+**The catalog stops being a website.** It now answers on the line of code that
+chooses a model, inside a coding agent, and over a keyless API — and every
+surface it reaches carries the same paperwork: a source, a confirmation date,
+and a mark on the prices nobody has adjudicated. That is the claim a competitor
+cannot match by shipping a package next week, and it is why an MCP server and an
+editor extension are one release rather than two.
 
-The second is new reach for the same data. The catalog now answers inside a
-coding agent as well as on a web page, and every surface it reaches carries the
-same paperwork: a source, a confirmation date, and a mark on the prices nobody
-has adjudicated. That is the only claim here a competitor cannot match by
-shipping a package next week.
+The second thread is the repository being honest about itself, which took more
+work than the first. Six defects were found by a person looking at the screen
+rather than by 735 tests and six gates, and two of them had already shipped to
+the Marketplace. Every one produced a plausible wrong answer — real numbers,
+correct arithmetic, describing something nobody had written — rather than an
+error. The gates added in response are the substance of this release as much as
+the features are.
+
+Something now watches the promise from outside, too: a daily job that reads the
+**published** catalog rather than the repository, because between a price moving
+upstream and a visitor seeing it there are four places to fail and checking the
+file in git catches one of them.
 
 ### Added
 

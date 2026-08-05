@@ -1,5 +1,5 @@
 name: Bug report
-description: Something the estimator did, or failed to do
+description: Something the calculator, the extension, the MCP server or the API did — or failed to do
 labels: [bug]
 body:
   - type: markdown
@@ -8,14 +8,32 @@ body:
         If a **number** looks wrong, that is the most serious kind of bug this
         project can have — please file it here rather than assuming it is your
         setup. [docs/TROUBLESHOOTING.md](https://github.com/AndrewAvery7/promptspend/blob/main/docs/TROUBLESHOOTING.md)
-        covers the common cases first: caching, long-context tiers, and why two
-        models disagree about the same prompt.
+        covers the common cases first: caching, long-context tiers, why two
+        models disagree about the same prompt, and why the VS Code extension
+        might be showing nothing at all.
+
+  # Asked first, because the answer changes which of the fields below are worth
+  # filling in. One catalog reaches people through four different things, and a
+  # report that does not say which one leaves the first reply asking.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where did this happen?
+      options:
+        - promptspend.com — the calculator
+        - The VS Code extension
+        - The MCP server (@promptspend/mcp)
+        - The pricing API (promptspend.dev)
+        - A generated model, provider or comparison page
+        - Not sure
+    validations:
+      required: true
 
   - type: textarea
     id: what-happened
     attributes:
       label: What happened
-      description: What did the site do, and what did you expect instead?
+      description: What did it do, and what did you expect instead?
     validations:
       required: true
 
@@ -27,35 +45,50 @@ body:
         - A price is wrong
         - The estimate does not match my real bill
         - A model is missing, duplicated, or shown as the wrong thing
-        - The page broke, or would not load
+        - No annotation, hover or diagnostic appeared where one should have
+        - A token count said "estimate" where it should have been exact
+        - It broke, or would not load
         - Something is unreachable by keyboard, screen reader, or on mobile
-        - The site claims something that is not true
+        - A claim is not true of the code
         - Something else
     validations:
       required: true
 
+  # No longer required. It was, and that quietly told anyone hitting an
+  # extension or MCP bug that they were in the wrong form.
   - type: input
     id: url
     attributes:
       label: The URL you were on
       description: >
-        The whole scenario lives in the query string, so this reproduces your
-        estimate exactly. It never contains prompt text — only token counts.
+        Website only. The whole scenario lives in the query string, so this
+        reproduces your estimate exactly. It never contains prompt text — only
+        token counts.
       placeholder: 'https://promptspend.com/?m=gpt-5.4&sys=800&...'
-    validations:
-      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: >
+        For the extension, **PromptSpend: Show log** prints it on the first
+        line, and the Extensions pane shows it too. For the MCP server, the
+        version your client reports when it connects, or the one your lockfile
+        pins. Two faults that produced plausible wrong numbers were fixed in
+        extension 0.1.6, so this is worth checking before filing.
+      placeholder: 'extension 0.1.6'
 
   - type: textarea
     id: numbers
     attributes:
       label: The numbers involved
       description: >
-        For anything price-related: which model, what the site showed, what you
+        For anything price-related: which model, what it showed, what you
         expected, and — if you have one — a link to the vendor page you are
         comparing against. That last one turns a report into a fix.
       placeholder: |
         Model: GPT-5.6 Terra
-        Site showed: $2.00 in / $12.00 out per 1M
+        Showed: $2.00 in / $12.00 out per 1M
         Vendor page says: ...
         Link: https://...
 
@@ -64,22 +97,31 @@ body:
     attributes:
       label: Assumptions shown under the results
       description: >
-        Copy the "Assumptions in these numbers" list. Most estimate-versus-bill
-        gaps are explained by something in it — caching, batch, reasoning
-        multiplier, or a long-context tier that did or did not apply.
+        Website only. Copy the "Assumptions in these numbers" list. Most
+        estimate-versus-bill gaps are explained by something in it — caching,
+        batch, reasoning multiplier, or a long-context tier that did or did not
+        apply.
       render: text
 
   - type: input
     id: environment
     attributes:
-      label: Browser, OS, and screen width
-      placeholder: 'Safari 18, iOS 26, iPhone 15 Pro (393px)'
+      label: Where it was running
+      description: >
+        Browser, OS and screen width for the website. For the extension, the
+        editor and its version — Cursor and Windsurf count, and behave slightly
+        differently from VS Code. For the MCP server, the client and your Node
+        version.
+      placeholder: 'Safari 18, iOS 26, iPhone 15 Pro (393px) — or: VS Code 1.99, Windows 11'
     validations:
       required: true
 
   - type: textarea
     id: console
     attributes:
-      label: Console errors
-      description: Anything in the browser console, if the page misbehaved.
+      label: Errors or log output
+      description: >
+        Anything in the browser console, if a page misbehaved. For the
+        extension, **PromptSpend: Show log** — every early return records why it
+        returned, so the log usually says what the screen could not.
       render: shell
