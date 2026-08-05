@@ -175,7 +175,11 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
         */}
         <section className="panel span-2" aria-labelledby="build-title">
           <div className="panel__head">
-            <h2 className="panel__title" id="build-title">
+            {/* `tabIndex={-1}` so the hero's "How to install each" link can move
+                focus here as well as scroll here. Scrolling alone would leave a
+                keyboard user's focus on a button that is now off screen, and
+                their next Tab would continue from a place they cannot see. */}
+            <h2 className="panel__title" id="build-title" tabIndex={-1}>
               Use it where you work
             </h2>
           </div>

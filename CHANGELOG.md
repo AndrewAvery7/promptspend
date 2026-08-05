@@ -13,6 +13,30 @@ a release that does not contain them.
 
 ### Changed
 
+- **"How to install each" lands on the panel rather than the top of the page.**
+  It switched view and left the reader to find the thing they had just asked
+  for. It now scrolls to _Use it where you work_ and moves focus there — a
+  scroll alone leaves a keyboard user's focus on a link that is now off screen,
+  so their next Tab continues from somewhere they cannot see. `scroll-margin-top`
+  keeps the heading clear of the sticky header, whose height changes at two
+  breakpoints, rather than JavaScript offset arithmetic. `prefers-reduced-motion`
+  is honoured in the JavaScript, as the guided tour already does, because no CSS
+  rule reaches `scrollIntoView`.
+
+- **The hero's empty column carries the argument it was making with adjectives.**
+  Six chips naming what the engine models and a hard-coded calculator does not:
+  output priced separately, compounding history, cache writes, long-context
+  tiers, reasoning tokens, batch discounts. Every one is computed and reported in
+  the assumptions that travel with each result. They also bring the left column
+  level with the aside, which is what left the gap.
+
+- **The three cards in that panel have accented headings and a light rule above
+  each.** Three columns of body text with nothing between them read as one
+  paragraph that happened to wrap. The accent rather than a tinted chip behind
+  the text: a background needs its own padding, which would leave each heading a
+  few pixels off the body under it, and a misaligned heading reads as a bug
+  rather than a highlight.
+
 - **The landing hero's aside advertises all four surfaces instead of installing
   one.** It carried the MCP install command, which made it an advert for one of
   four things and a place to copy from for none of the others — and the box is

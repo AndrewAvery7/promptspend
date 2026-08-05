@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Catalog, loadCatalog } from '@/lib/pricing/catalog';
 import {
   COMPARE_INDEX_URL,
@@ -84,6 +84,39 @@ function Workspace({ catalog }: { catalog: Catalog }) {
   );
   const [search, setSearch] = useState('');
   const [toast, setToast] = useState<string | null>(null);
+
+  /**
+   * An id to scroll to once the view holding it has rendered.
+   *
+   * Switching view and scrolling cannot happen in the same statement: the target
+   * lives in a component that has not mounted yet, so `getElementById` returns
+   * null. The id is parked here and read by the effect below, which runs after
+   * React commits the new view — the first moment the element exists.
+   *
+   * A ref rather than state, and keyed on `view` rather than on itself: clearing
+   * state from inside the effect that reads it is an extra render and a
+   * `set-state-in-effect` lint error, and the value is never rendered.
+   */
+  const scrollTarget = useRef<string | null>(null);
+
+  useEffect(() => {
+    const id = scrollTarget.current;
+    if (id === null) return;
+    scrollTarget.current = null;
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    // Focus as well as scroll. Scrolling alone leaves a keyboard user's focus on
+    // the link they just used — now off screen — and their next Tab carries on
+    // from somewhere they cannot see. `preventScroll` because the smooth scroll
+    // below owns the movement; without it the browser jumps there first.
+    target.focus({ preventScroll: true });
+
+    // The same rule the guided tour follows: `prefers-reduced-motion` has to be
+    // honoured in JavaScript too, since no CSS rule reaches `scrollIntoView`.
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }, [view]);
   const [tourStep, setTourStep] = useState<number | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [welcomeDismissed, setWelcomeDismissed] = useState(() => {
@@ -235,7 +268,10 @@ function Workspace({ catalog }: { catalog: Catalog }) {
             showWelcome={!welcomeDismissed}
             onStartTour={startTour}
             onDismissWelcome={dismissWelcome}
-            onOpenData={() => setView('data')}
+            onOpenData={() => {
+              scrollTarget.current = 'build-title';
+              setView('data');
+            }}
           />
         )}
         {view === 'compare' && (
