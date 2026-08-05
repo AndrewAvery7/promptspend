@@ -115,6 +115,22 @@ export function EstimateView({
               <dd>accounts, trackers or cookies</dd>
             </div>
           </dl>
+          {/* What the engine models that a hard-coded calculator does not.
+
+              This space was empty because the aside beside it grew taller than
+              the copy, and the honest thing to put in a gap is the reason to
+              trust the numbers rather than more adjectives. Every item here is
+              something the engine actually computes and reports in the
+              assumptions that travel with each result — none is a claim this
+              page makes alone. */}
+          <ul className="hero__factors" role="list">
+            <li>Output priced separately</li>
+            <li>History compounds</li>
+            <li>Cache writes billed</li>
+            <li>Long-context tiers</li>
+            <li>Reasoning tokens</li>
+            <li>Batch discounts</li>
+          </ul>
         </div>
         <aside className="hero__aside" aria-labelledby="hero-aside-title">
           <p className="hero__aside-eyebrow">Beyond the browser</p>

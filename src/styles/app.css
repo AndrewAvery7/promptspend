@@ -447,6 +447,31 @@ body.tour-active .main {
   margin: 2px 0 0;
   max-width: 15ch;
 }
+/* The six things the engine models, as quiet chips under the figures. They fill
+   the column the taller aside used to leave empty, and they are the argument the
+   hero was otherwise making with adjectives.
+
+   0.78rem is 12.48px at the default root size, deliberately: `mobile.spec.ts`
+   fails the build on anything under 12px, and a row of small chips is exactly
+   the thing that gets shrunk to make it fit. */
+.hero__factors {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hero__factors li {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 4px 11px;
+  white-space: nowrap;
+}
 @media (max-width: 560px) {
   .hero__stats {
     gap: 12px 20px;
@@ -719,6 +744,25 @@ body.tour-active .main {
 }
 .panel__head {
   padding: 15px 18px 0;
+}
+/* Room for the sticky header when something scrolls a panel title into view.
+   Without it `block: 'start'` puts the heading exactly at the viewport top,
+   which is underneath the header — the panel looks like it did not move.
+   `scroll-margin-top` rather than JavaScript offset arithmetic, because the
+   header's height changes at two breakpoints and the browser already knows. */
+.panel__title {
+  scroll-margin-top: 110px;
+}
+/* A heading is only focusable so a link can send focus to it; the ring around a
+   whole title reads as a bug rather than a destination. Keyboard users still
+   get one — `:focus-visible` is what the browser withholds from a programmatic
+   focus() and grants on a real key press. */
+.panel__title:focus {
+  outline: none;
+}
+.panel__title:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 .panel__title {
   font-family: var(--font-mono);
@@ -1064,9 +1108,22 @@ body.tour-active .main {
 .build-grid > article {
   min-width: 0;
 }
+/* A light rule above each column, in the soft accent. Three cards of body text
+   with nothing between them read as one paragraph that happened to wrap into
+   columns; this separates them without a border box around each. */
+.build-grid > article {
+  border-top: 2px solid var(--accent-soft);
+  padding-top: 12px;
+}
 .build-grid h3 {
   font-size: 0.95rem;
   margin: 0 0 6px;
+  /* The accent rather than a tinted chip behind the text: a background would
+     have to be inset by its own padding, leaving the heading a few pixels off
+     the body text under it, and a misaligned heading reads as a bug rather than
+     a highlight. `contrast.test.ts` already holds every accent against every
+     surface it can land on, so this needs no separate check. */
+  color: var(--accent);
 }
 .build-grid p {
   font-size: 0.88rem;
