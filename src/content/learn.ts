@@ -106,13 +106,15 @@ export const LEARN_MODULES: LearnModule[] = [
     title: 'How this site never goes stale',
     teaser:
       'The daily pipeline behind every price: two independent sources, sanity checks, a public changelog. Steal the pattern.',
-    minutes: 4,
+    minutes: 5,
     kind: 'architecture',
     body: [
       'Every morning a GitHub Action fetches a community pricing catalog and an independent second source, filters both through a family-level allowlist, and merges them under a fixed trust order: hand-verified vendor rates beat the automated feed, which beats nothing at all.',
       'Sanity rules then decide what happens next. A clean diff is committed and deployed automatically. A price that moved more than half in one day, or where the two sources disagree by more than a fifth, is raised as a pull request for a human instead. A run that loses a source, gets a suspiciously small payload, or would shrink the catalog publishes nothing at all and fails loudly — the failure mode to design against is not "the data is late", it is "the data is confidently wrong".',
       'Nothing is deleted on one bad morning either. A model that stops appearing upstream is kept and marked unlisted; removing it for good is a deliberate edit somebody has to make.',
       'Because the capture patterns are family-level rather than a fixed list, a brand-new model version is picked up by the next run without anyone touching code — which is exactly the failure this project was built to avoid.',
+      'One piece remains, and it is the one most projects skip: something has to check that any of this reached you. A separate job fetches the catalog from the live site every afternoon and raises an alarm if it is more than two days old. Reading the *live site* rather than the repository is the whole point — between a price moving at the vendor and you seeing it here, the sync can fail, a flagged change can sit unmerged, the deploy can fail after a good sync, or the CDN can keep serving yesterday. Checking the file in version control catches the first. Fetching what the site actually serves catches all four.',
+      'That check exists because exactly that happened: a sync could not open its pull request, published nothing, and nobody noticed until someone looked. Monitor the promise you made to the reader, not the machinery you built to keep it.',
     ],
   },
 ];

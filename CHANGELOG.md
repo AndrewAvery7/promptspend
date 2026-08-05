@@ -202,6 +202,40 @@ shipping a package next week.
 
 ### Changed
 
+- **The site now names every surface the catalog reaches, on every surface that
+  should name them.** The extension shipped to two marketplaces and the site
+  mentioned it in one panel; `llms.txt` — the file written expressly for models —
+  listed the HTTP API and neither of the two things built for agents.
+
+  - `llms.txt` gains a section for the MCP server and the extension, with the
+    install line for each. An index that omits the two most agent-native things
+    it indexes is the one omission that matters in a file only agents read.
+  - The **159 generated pages** now link the API from their footer. `llms.txt`
+    told readers to "prefer the API over scraping these pages" while those very
+    pages offered no route to it — two generated artifacts disagreeing about how
+    a machine should read the catalog, each looking fine alone. `apiUrl` is now
+    one value in `build-pages.ts` feeding both, rather than computed inline for
+    one of them.
+  - The footer carries the MCP server, the Marketplace and Open VSX. It is the
+    only row on every view, so it is where somebody who never opens Data & Alerts
+    learns they exist.
+  - Each panel card ends with somewhere to go — npm, the developer hub, the
+    Marketplace — because a command suits people who already decided and a link
+    suits everyone still deciding. The editor card previously linked only Open
+    VSX, so the marketplace most people use was the one route not offered.
+  - Marketplace, Open VSX, npm and both install commands moved to `src/lib/links.ts`.
+    `llms.txt` is generated under plain Node, where `src/config.ts` cannot be
+    imported at all — it reads `import.meta.env`, which is undefined there and
+    throws on first access. Two copies of a marketplace URL is one wrong URL
+    waiting to happen.
+
+- **Learn lesson 7 covers the monitor that checks its own title.** "How this site
+  never goes stale" described the pipeline and stopped. It now closes on the job
+  that reads the published site every afternoon, why reading the live site
+  catches four failure modes where reading the repository catches one, and the
+  transferable version: monitor the promise you made to the reader, not the
+  machinery you built to keep it.
+
 - The site, the developer hub and `llms.txt` now say what makes this different
   rather than leaving a reader to infer it. Data & Alerts gains a **Use it where
   you work** panel, placed above the trust ladder deliberately: the ladder argues

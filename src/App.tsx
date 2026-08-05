@@ -5,10 +5,13 @@ import {
   CONTACT_EMAIL,
   DEVELOPER_HUB_URL,
   HEALTH_URL,
+  MCP_PACKAGE_URL,
   MODELS_INDEX_URL,
+  OPEN_VSX_URL,
   PRICING_URL,
   PROVIDERS_INDEX_URL,
   REPO_URL,
+  VSCODE_MARKETPLACE_URL,
 } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAppearance, ACCENTS } from '@/state/useAppearance';
@@ -264,6 +267,22 @@ function Workspace({ catalog }: { catalog: Catalog }) {
           <div>
             <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
             <a href={COMPARE_INDEX_URL}>Comparisons</a> · <a href={DEVELOPER_HUB_URL}>Pricing API</a>
+          </div>
+          {/* The three places this catalog answers that are not a web page. The
+              footer is the only row present on every view, so it is where
+              somebody who never opens Data & Alerts finds out they exist. */}
+          <div>
+            <a href={MCP_PACKAGE_URL} target="_blank" rel="noreferrer noopener">
+              MCP server
+            </a>{' '}
+            ·{' '}
+            <a href={VSCODE_MARKETPLACE_URL} target="_blank" rel="noreferrer noopener">
+              VS Code extension
+            </a>{' '}
+            ·{' '}
+            <a href={OPEN_VSX_URL} target="_blank" rel="noreferrer noopener">
+              Open VSX
+            </a>
           </div>
           <div className="mono">
             {catalog.primaryModels.length} models · prices last changed{' '}
