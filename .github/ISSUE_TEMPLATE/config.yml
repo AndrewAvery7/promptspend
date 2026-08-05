@@ -3,6 +3,15 @@ contact_links:
   - name: Add or correct a model
     url: https://github.com/AndrewAvery7/promptspend/issues/new?template=model-request.yml
     about: The fastest route for coverage gaps and wrong rates — about thirty seconds
+  - name: Install the VS Code extension
+    url: https://marketplace.visualstudio.com/items?itemName=promptspend.promptspend
+    about: Prices on the line of code that names the model — also on Open VSX, for Cursor, Windsurf and VSCodium
+  - name: Install the MCP server
+    url: https://www.npmjs.com/package/@promptspend/mcp
+    about: The same catalog inside a coding agent, every price carrying its source and confirmation date
+  - name: Use the pricing API
+    url: https://promptspend.dev
+    about: Keyless, CORS-open, OpenAPI 3.1 — JSON and CSV over the same catalog, no account
   - name: Question or discussion
     url: https://github.com/AndrewAvery7/promptspend/discussions
     about: For questions, methodology debates, and ideas that aren't yet concrete requests
