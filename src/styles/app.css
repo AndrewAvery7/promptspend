@@ -427,10 +427,14 @@ body.tour-active .main {
 }
 .hero__stats dt {
   font-family: var(--font-display);
-  /* Raised from 1.6rem when the aside beside it lost its install box: these four
-   * figures are the strongest evidence on the page and were the quietest thing
-   * on it. */
-  font-size: 2.05rem;
+  /* 1.6rem, then 2.05rem, now this. These four figures are the strongest
+   * evidence on the page and were the quietest thing on it.
+   *
+   * A row of chips lived under them briefly, to level this column against the
+   * taller aside. It was answering the wrong question: the column being shorter
+   * than its neighbour is not a problem, and filling it pushed the figures back
+   * into being one element among several. They carry the space on their own. */
+  font-size: 2.6rem;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -446,31 +450,6 @@ body.tour-active .main {
   font-size: 0.78rem;
   margin: 2px 0 0;
   max-width: 15ch;
-}
-/* The six things the engine models, as quiet chips under the figures. They fill
-   the column the taller aside used to leave empty, and they are the argument the
-   hero was otherwise making with adjectives.
-
-   0.78rem is 12.48px at the default root size, deliberately: `mobile.spec.ts`
-   fails the build on anything under 12px, and a row of small chips is exactly
-   the thing that gets shrunk to make it fit. */
-.hero__factors {
-  list-style: none;
-  margin: 22px 0 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.hero__factors li {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--muted);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  padding: 4px 11px;
-  white-space: nowrap;
 }
 @media (max-width: 560px) {
   .hero__stats {

@@ -23,12 +23,15 @@ a release that does not contain them.
   is honoured in the JavaScript, as the guided tour already does, because no CSS
   rule reaches `scrollIntoView`.
 
-- **The hero's empty column carries the argument it was making with adjectives.**
-  Six chips naming what the engine models and a hard-coded calculator does not:
-  output priced separately, compounding history, cache writes, long-context
-  tiers, reasoning tokens, batch discounts. Every one is computed and reported in
-  the assumptions that travel with each result. They also bring the left column
-  level with the aside, which is what left the gap.
+- **The four hero figures are the largest thing in their column.** 1.6rem, then
+  2.05rem, now 2.6rem. They are the strongest evidence on the page and were the
+  quietest thing on it.
+
+  A row of chips lived here briefly, naming what the engine models, to level this
+  column against the taller aside beside it. That answered the wrong question: a
+  column being shorter than its neighbour is not a problem, and filling it pushed
+  the figures back into being one element among several. Removed — the numbers
+  carry the space on their own, and the space did not need carrying.
 
 - **The three cards in that panel have accented headings and a light rule above
   each.** Three columns of body text with nothing between them read as one
