@@ -44,25 +44,20 @@ export const COMPARE_INDEX_URL = `${import.meta.env.BASE_URL}compare/`;
 export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
 
 /**
- * The MCP install command, in one place because it is shown in two — the
- * landing view and the Data & Alerts panel — and a command that differs
- * between them is one that is wrong in at least one of them.
- */
-export const MCP_INSTALL_COMMAND = 'claude mcp add promptspend -- npx -y @promptspend/mcp';
-
-/**
- * The VS Code extension: one command, two marketplaces.
+ * Install routes for the two things that are not this website.
  *
- * The command is the Marketplace route because that is what works inside VS
- * Code itself, where most of these installs happen. Open VSX carries the same
- * build for the editors that cannot reach the Marketplace — Cursor, Windsurf,
- * VSCodium — and is linked rather than given a second command, because those
- * editors install from their own extension pane and not from `code`.
+ * Defined in `@/lib/links` and re-exported here so components keep importing
+ * from one place. They are not declared in this file because `llms.txt` needs
+ * them too, and its generator runs under plain Node where the `import.meta.env`
+ * reads above would throw.
  */
-export const VSCODE_INSTALL_COMMAND = 'code --install-extension promptspend.promptspend';
-export const VSCODE_MARKETPLACE_URL =
-  'https://marketplace.visualstudio.com/items?itemName=promptspend.promptspend';
-export const OPEN_VSX_URL = 'https://open-vsx.org/extension/promptspend/promptspend';
+export {
+  MCP_INSTALL_COMMAND,
+  MCP_PACKAGE_URL,
+  OPEN_VSX_URL,
+  VSCODE_INSTALL_COMMAND,
+  VSCODE_MARKETPLACE_URL,
+} from '@/lib/links';
 
 /**
  * What these numbers cover, stated once and reused wherever the boundary

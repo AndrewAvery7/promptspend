@@ -2,10 +2,12 @@ import type { Catalog } from '@/lib/pricing/catalog';
 import {
   DEVELOPER_HUB_URL,
   MCP_INSTALL_COMMAND,
+  MCP_PACKAGE_URL,
   OPEN_VSX_URL,
   PRICING_SCOPE,
   REPO_URL,
   VSCODE_INSTALL_COMMAND,
+  VSCODE_MARKETPLACE_URL,
 } from '@/config';
 import { AlertsPanel } from '@/components/AlertsPanel';
 import { CopyButton } from './CopyButton';
@@ -180,7 +182,8 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
           <div className="panel__body">
             <p>
               Every price here carries its source and the date it was last confirmed. That does not stop at
-              this page — the same record travels through the API and into your editor.
+              this page — the same record travels into your coding agent, through the API, and onto the line
+              of code that names the model.
             </p>
             <div className="build-grid">
               <article>
@@ -203,6 +206,14 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                 <p className="privacy-note">
                   Adds ~700 tokens of context per turn — measured, budgeted and published, because a pricing
                   tool that quietly taxes every message would be a poor joke.
+                </p>
+                {/* Every card ends with somewhere to go. The command suits
+                    people who already know they want it; the link is for
+                    everyone deciding. */}
+                <p className="privacy-note">
+                  <a href={MCP_PACKAGE_URL} target="_blank" rel="noreferrer noopener">
+                    View on npm →
+                  </a>
                 </p>
               </article>
               <article>
@@ -254,7 +265,12 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   <CopyButton value={VSCODE_INSTALL_COMMAND} label="install command" onToast={onToast} />
                 </div>
                 <p className="privacy-note">
-                  Also on{' '}
+                  <a href={VSCODE_MARKETPLACE_URL} target="_blank" rel="noreferrer noopener">
+                    VS Code Marketplace →
+                  </a>
+                </p>
+                <p className="privacy-note">
+                  Or{' '}
                   <a href={OPEN_VSX_URL} target="_blank" rel="noreferrer noopener">
                     Open VSX
                   </a>{' '}

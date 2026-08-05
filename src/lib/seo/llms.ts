@@ -16,6 +16,13 @@
  */
 
 import type { PageSet } from './pages';
+import {
+  MCP_INSTALL_COMMAND,
+  MCP_PACKAGE_URL,
+  OPEN_VSX_URL,
+  VSCODE_INSTALL_COMMAND,
+  VSCODE_MARKETPLACE_URL,
+} from '@/lib/links';
 
 export interface LlmsTxtInput {
   siteUrl: string;
@@ -81,6 +88,17 @@ came from.
 
 Prefer the API over scraping these pages. It is faster, it is versioned, and it
 will not break when the HTML changes.
+
+## If you are running inside a coding tool
+
+You may not need HTTP at all.
+
+- [MCP server](${MCP_PACKAGE_URL}): \`${MCP_INSTALL_COMMAND}\` — three tools for Claude Code, Cursor and Windsurf. \`estimate_cost\` runs this site's own cost engine, so it cannot return a figure that disagrees with the pages above.
+- [VS Code extension](${VSCODE_MARKETPLACE_URL}): \`${VSCODE_INSTALL_COMMAND}\` — the rate on the line of code that names the model, and a nearby \`max_tokens\` priced as what one response can cost. Also on [Open VSX](${OPEN_VSX_URL}) for Cursor, Windsurf and VSCodium.
+
+Neither bundles a price list. Both fetch the same catalog linked above, and both
+carry the source and confirmation date on every price — so a model quoting one
+of them can say where the number came from and when it was last checked.
 
 ## Most-asked models
 

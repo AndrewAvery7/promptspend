@@ -106,12 +106,19 @@ async function main(): Promise<void> {
     .slice(0, 8)}.css`;
   await writeFileAt(cssName, PAGE_CSS);
 
+  // One value, used by both generated artifacts. It was computed inline at the
+  // llms.txt call below and nowhere else, which was fine while llms.txt was the
+  // only thing that named the API — and would have quietly let the pages' footer
+  // and llms.txt point at different origins the first time this was overridden.
+  const apiUrl = (process.env.PRICING_API_URL ?? '').trim() || 'https://promptspend.dev';
+
   const ctx: RenderContext = {
     siteUrl,
     basePath,
     cssPath: `/${cssName}`,
     hashInline: sha256Base64,
     generatedAt: catalog.generatedAt,
+    apiUrl,
   };
 
   await writeFileAt(fileFor(set.modelsIndex.path), renderModelsIndex(set, ctx));
@@ -142,7 +149,7 @@ async function main(): Promise<void> {
     'llms.txt',
     renderLlmsTxt(set, {
       siteUrl,
-      apiUrl: (process.env.PRICING_API_URL ?? '').trim() || 'https://promptspend.dev',
+      apiUrl,
       generatedAt: catalog.generatedAt,
     }),
   );

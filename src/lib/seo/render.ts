@@ -52,6 +52,16 @@ export interface RenderContext {
   hashInline: (content: string) => string;
   /** When the catalog behind these numbers was generated. */
   generatedAt: string;
+  /**
+   * Origin of the public pricing API, no trailing slash.
+   *
+   * These pages are the most-crawled surface here, and `llms.txt` tells anything
+   * reading them to prefer the API over scraping — while their own footer, until
+   * now, offered no way to reach it. Two generated artifacts disagreeing about
+   * how a machine should read the catalog is the kind of thing nobody notices
+   * because each one looks fine alone.
+   */
+  apiUrl: string;
 }
 
 const ESCAPES: Record<string, string> = {
@@ -185,6 +195,7 @@ ${input.body}
           <a href="${escapeHtml(href(ctx, '/models/'))}">All models</a> &middot;
           <a href="${escapeHtml(href(ctx, '/providers/'))}">Providers</a> &middot;
           <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
+          <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a> &middot;
           <a href="https://github.com/AndrewAvery7/promptspend">Source</a>
         </p>
       </footer>

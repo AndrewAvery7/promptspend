@@ -24,6 +24,7 @@ function recordingContext(overrides: Partial<RenderContext> = {}): RenderContext
     basePath: '/',
     cssPath: '/assets/pages.abc12345.css',
     generatedAt: '2026-08-02T02:00:00.000Z',
+    apiUrl: 'https://promptspend.dev',
     hashInline: (content: string) => {
       hashed.push(content);
       return `LEN${content.length}`;
@@ -131,6 +132,17 @@ describe('rendered pages', () => {
     expect(html).toContain(
       `<meta property="og:url" content="https://promptspend.com${set.models[0]!.path}" />`,
     );
+  });
+
+  it('offers the API in the footer, since llms.txt tells readers to prefer it', () => {
+    // These are the most-crawled pages here, and llms.txt says in as many words:
+    // "Prefer the API over scraping these pages." Their footer offered the
+    // calculator, the indexes and the source, and no way to reach the API at
+    // all — two generated artifacts disagreeing about how a machine should read
+    // the catalog, each looking perfectly fine on its own.
+    for (const { html, ctx } of everyPage(SAMPLE)) {
+      expect(html).toContain(`<a href="${ctx.apiUrl}">Pricing API</a>`);
+    }
   });
 
   it('uses no inline style attributes, which the policy would silently drop', () => {

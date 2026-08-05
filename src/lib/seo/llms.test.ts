@@ -62,6 +62,23 @@ describe('renderLlmsTxt', () => {
     expect(text.length).toBeLessThan(8_000);
   });
 
+  it('points an agent at the two surfaces built for agents', () => {
+    const text = renderLlmsTxt(SET, INPUT);
+
+    // This file exists to tell a model what is here. It listed the HTTP API and
+    // the raw catalog and named neither the MCP server — which exists so an
+    // agent never has to make an HTTP call — nor the extension, which runs
+    // inside the editors those agents live in. An index that omits the two most
+    // agent-native things it indexes is the one omission that matters here.
+    expect(text).toContain('@promptspend/mcp');
+    expect(text).toContain('claude mcp add promptspend');
+    expect(text).toContain('marketplace.visualstudio.com');
+    expect(text).toContain('open-vsx.org');
+
+    // And says the thing that makes either safe to quote.
+    expect(text).toMatch(/source and confirmation date/i);
+  });
+
   it('uses absolute URLs throughout, since it is read away from the site', () => {
     const text = renderLlmsTxt(SET, INPUT);
     const links = [...text.matchAll(/\]\(([^)]+)\)/g)].map((match) => match[1]!);

@@ -18,6 +18,7 @@ const CTX: RenderContext = {
   basePath: '/',
   cssPath: '/assets/pages.test.css',
   generatedAt: '2026-08-02T02:00:00.000Z',
+  apiUrl: 'https://promptspend.dev',
   hashInline: () => 'stub',
 };
 
