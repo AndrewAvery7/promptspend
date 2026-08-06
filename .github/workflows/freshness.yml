@@ -167,3 +167,29 @@ jobs:
         run: |
           echo "::error title=Catalog freshness::${{ steps.check.outputs.detail }}"
           exit 1
+
+      # This one watches the watchman, and that distinction decides the
+      # semantics: a stale catalog is NOT a Healthchecks failure. It already has
+      # an alarm — the issue filed above — and pinging /fail for it would mean
+      # two notifications for one fault, which is how monitoring gets muted.
+      #
+      # So the ping keys on whether the CHECK ran, not on what it found. A
+      # verdict of "stale" is the monitor working. Only the check step itself
+      # dying reports /fail, and silence reports the case this exists for: the
+      # monitor stopped running and nobody was watching the watchman.
+      - name: Report to Healthchecks
+        if: always()
+        env:
+          HC_PING_KEY: ${{ secrets.HC_PING_KEY }}
+          CHECK_OUTCOME: ${{ steps.check.outcome }}
+        run: |
+          if [ -z "${HC_PING_KEY:-}" ]; then
+            echo "HC_PING_KEY not configured - skipping ping."
+            exit 0
+          fi
+          suffix=""
+          if [ "$CHECK_OUTCOME" != "success" ]; then suffix="/fail"; fi
+          # Never fail the job over its own monitoring.
+          curl -fsS -m 10 --retry 3 \
+            "https://hc-ping.com/${HC_PING_KEY}/promptspend-freshness${suffix}" \
+            || echo "Healthchecks ping failed - not failing the run over it."

@@ -123,3 +123,28 @@ jobs:
         run: |
           echo "::error::Pricing sync was degraded — see public/data/sync-status.json for the reasons."
           exit 1
+
+      # After the failing step on purpose, with always(), so the ping reflects
+      # the run's real verdict.
+      #
+      # A degraded sync reports /fail: unlike the freshness monitor next door,
+      # this workflow has no alerting channel of its own beyond a red square in
+      # a tab nobody opens daily — which is precisely how 2026-08-04 went
+      # unnoticed. Silence reports the other half: a sync that stopped running
+      # at all, including GitHub pausing the schedule after ~60 idle days.
+      - name: Report to Healthchecks
+        if: always()
+        env:
+          HC_PING_KEY: ${{ secrets.HC_PING_KEY }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ -z "${HC_PING_KEY:-}" ]; then
+            echo "HC_PING_KEY not configured - skipping ping."
+            exit 0
+          fi
+          suffix=""
+          if [ "$JOB_STATUS" != "success" ]; then suffix="/fail"; fi
+          # Never fail the job over its own monitoring.
+          curl -fsS -m 10 --retry 3 \
+            "https://hc-ping.com/${HC_PING_KEY}/promptspend-sync-pricing${suffix}" \
+            || echo "Healthchecks ping failed - not failing the run over it."
