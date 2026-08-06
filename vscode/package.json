@@ -13,18 +13,40 @@
     "node": ">=20"
   },
   "categories": [
-    "Linters",
+    "AI",
+    "Machine Learning",
     "Programming Languages",
-    "Other"
+    "Linters"
   ],
   "keywords": [
     "llm",
     "pricing",
+    "llm-pricing",
     "tokens",
+    "token-counter",
     "cost",
+    "ai-costs",
+    "cost-estimator",
+    "cost-optimization",
+    "api-cost",
+    "inference-cost",
+    "ai",
+    "mcp",
+    "model-context-protocol",
     "openai",
     "anthropic",
-    "ai-costs"
+    "claude",
+    "gpt",
+    "chatgpt",
+    "gemini",
+    "google",
+    "deepseek",
+    "mistral",
+    "cohere",
+    "xai",
+    "grok",
+    "bedrock",
+    "openrouter"
   ],
   "homepage": "https://promptspend.com/",
   "repository": {
