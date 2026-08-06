@@ -6,7 +6,7 @@
       "id": "anthropic",
       "name": "Anthropic",
       "country": "US",
-      "pricingUrl": "https://platform.claude.com/docs/en/pricing"
+      "pricingUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
       "id": "openai",
