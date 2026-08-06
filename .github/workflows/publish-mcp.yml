@@ -58,7 +58,15 @@ jobs:
           [ "$published" = "$server_version" ] || \
             fail "npm has no $npm_name@$server_version yet — publish the package before listing it"
 
-          echo "✓ $registry_name $server_version — manifest, package and npm agree"
+          # The registry caps the description at 100 characters and rejects the
+          # whole publish with a 422 if it is longer. Checking it here costs
+          # nothing and turns a failed publish into a failed assertion that says
+          # which field and by how much.
+          description_length=$(jq -r '.description | length' server.json)
+          [ "$description_length" -le 100 ] || \
+            fail "server.json description is $description_length characters; the registry rejects anything over 100"
+
+          echo "✓ $registry_name $server_version — manifest, package and npm agree (description $description_length/100)"
 
       - name: Install mcp-publisher
         run: |
