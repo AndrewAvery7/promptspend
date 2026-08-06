@@ -85,8 +85,15 @@ jobs:
         run: |
           set -euo pipefail
           name=$(jq -r '.name' server.json)
-          for attempt in 1 2 3 4 5; do
-            sleep 5
+          # 5 x 5s was not enough. On 2026-08-06 two runs published 0.1.5
+          # successfully and then failed this check; the entry appeared in the
+          # registry shortly afterwards. A publish that worked, reported as a
+          # failure, is worse than no check at all - it trains you to ignore
+          # the red X, and this check exists precisely to catch a silent
+          # publish failure. 10 attempts with a widening gap gives it about
+          # three minutes before it calls the publish bad.
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            sleep $(( attempt * 4 ))
             # The name sits at .servers[].server.name — the list wraps each
             # entry in an envelope alongside its registry metadata. Reading
             # .servers[].name instead finds nothing and reports a successful
