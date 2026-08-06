@@ -24,7 +24,7 @@
  * conversation history compounding quadratically - to whoever asked. Those are
  * exactly the things this project documents everyone getting wrong.
  */
-import { compareModels, type Workload, type Scale } from '@/lib/engine/cost';
+import { compareModels, effectivePricing, type Workload, type Scale } from '@/lib/engine/cost';
 import type { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { provenanceOf } from './provenance';
@@ -48,11 +48,23 @@ export interface PriceBlock {
   cache_write_per_million_usd?: number;
   context_window: number;
   max_output?: number;
+  promotional_pricing?: {
+    in_force_until: string;
+    standard_input_per_million_usd: number;
+    standard_output_per_million_usd: number;
+    note: string;
+  };
   provenance: ReturnType<typeof provenanceOf>;
 }
 
-function priceBlock(catalog: Catalog, model: Model): PriceBlock {
-  const p = model.pricing;
+function priceBlock(catalog: Catalog, model: Model, asOf: Date): PriceBlock {
+  // Quote the rate actually in force, not the standard one. `estimate_cost`
+  // has always billed through the engine, which honours promotional windows —
+  // so reading `pricing.input` here made the two tools disagree about the same
+  // model on the same day. Claude Sonnet 5 is the live case: $2/$10 through
+  // 2026-08-31, $3/$15 after, and `get_price` was quoting next month's rate as
+  // today's while stamping it "confirmed against the vendor's page".
+  const p = effectivePricing(model.pricing, asOf);
   const block: PriceBlock = {
     model: model.id,
     display_name: model.displayName,
@@ -66,6 +78,20 @@ function priceBlock(catalog: Catalog, model: Model): PriceBlock {
   if (p.cachedInput !== undefined) block.cached_input_per_million_usd = p.cachedInput;
   if (p.cacheWrite !== undefined) block.cache_write_per_million_usd = p.cacheWrite;
   if (model.maxOutput !== undefined) block.max_output = model.maxOutput;
+  // A promoted rate that silently differs from the vendor's headline number is
+  // the kind of unexplained discrepancy this server exists to avoid, so say
+  // both figures and when the cheaper one lapses.
+  if (p !== model.pricing && model.pricing.intro) {
+    const intro = model.pricing.intro;
+    block.promotional_pricing = {
+      in_force_until: intro.until,
+      standard_input_per_million_usd: model.pricing.input,
+      standard_output_per_million_usd: model.pricing.output,
+      note:
+        `Promotional pricing is in force until ${intro.until}. The rates above are ` +
+        `what you are billed today; the standard rates take over afterwards.`,
+    };
+  }
   return block;
 }
 
@@ -106,15 +132,17 @@ function notFound(catalog: Catalog, query: string) {
 
 // ---------------------------------------------------------------------------
 
-export function getPrice(catalog: Catalog, generatedAt: string, model_name: string) {
+export function getPrice(catalog: Catalog, generatedAt: string, model_name: string, asOf: Date = new Date()) {
   const model = resolveModel(catalog, model_name);
   if (!model) return notFound(catalog, model_name);
   return {
-    ...priceBlock(catalog, model),
+    ...priceBlock(catalog, model, asOf),
     catalog_generated_at: generatedAt,
     note:
-      'Rates are standard-tier list prices in USD per million tokens. They exclude ' +
-      'regional premiums, priority tiers, server-side tool fees and negotiated discounts.',
+      'Rates are the list prices in force today, in USD per million tokens, at standard ' +
+      'tier. Where a promotional rate applies it is quoted here and flagged in ' +
+      'promotional_pricing. Excludes regional premiums, priority tiers, server-side tool ' +
+      'fees and negotiated discounts.',
   };
 }
 
