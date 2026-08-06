@@ -332,3 +332,20 @@ _Manual correction, not a sync run._
 ## 2026-08-06
 
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (50%): $0.15/$0.9 vs $0.3/$1.2 → OpenRouter disagrees (27%): $0.22/$0.9 vs $0.3/$1.2
+
+## 2026-08-06
+
+- **Price** `xai-grok-4.3` — longContext.thresholdTokens to — → 200000
+- **Price** `xai-grok-4.3` — longContext.input to — → 2.5
+- **Price** `xai-grok-4.3` — longContext.output to — → 5
+- **Price** `xai-grok-4.3` — longContext.cachedInput to — → 0.4
+- **Price** `xai-grok-4.5` — cachedInput down 0.5 → 0.3
+- **Price** `xai-grok-4.5` — longContext.thresholdTokens to — → 200000
+- **Price** `xai-grok-4.5` — longContext.input to — → 4
+- **Price** `xai-grok-4.5` — longContext.output to — → 12
+- **Price** `xai-grok-4.5` — longContext.cachedInput to — → 0.6
+- **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: OpenRouter disagrees (38%): $0.589/$2.48 vs $0.95/$4 → OpenRouter disagrees (40%): $0.57/$2.4 vs $0.95/$4
+- **Review** `xai-grok-4.3` — provenance.verifiedUrl: https://docs.x.ai/docs/models → https://docs.x.ai/developers/pricing
+- **Review** `xai-grok-4.3` — provenance.lastChanged: — → 2026-08-06
+- **Review** `xai-grok-4.5` — provenance.verifiedUrl: https://docs.x.ai/docs/models → https://docs.x.ai/developers/pricing
+- **Review** `xai-grok-4.5` — provenance.lastChanged: — → 2026-08-06
