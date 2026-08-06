@@ -87,8 +87,12 @@ jobs:
           name=$(jq -r '.name' server.json)
           for attempt in 1 2 3 4 5; do
             sleep 5
+            # The name sits at .servers[].server.name — the list wraps each
+            # entry in an envelope alongside its registry metadata. Reading
+            # .servers[].name instead finds nothing and reports a successful
+            # publish as a failure, which is what happened the first time.
             found=$(curl -sS "https://registry.modelcontextprotocol.io/v0.1/servers?search=promptspend" \
-              | jq -r --arg n "$name" '.servers[]? | select(.name == $n) | .name' | head -1)
+              | jq -r --arg n "$name" '.servers[]?.server | select(.name == $n) | .name' | head -1)
             if [ -n "$found" ]; then
               echo "✓ listed as $found"
               exit 0
