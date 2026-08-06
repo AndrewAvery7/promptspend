@@ -523,16 +523,38 @@
       "displayName": "Grok 4.5",
       "capabilityIndex": 84,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
-      "verifiedUrl": "https://docs.x.ai/docs/models"
+      "lastVerified": "2026-08-06",
+      "verifiedUrl": "https://docs.x.ai/developers/pricing",
+      "pricing": {
+        "input": 2.0,
+        "output": 6.0,
+        "cachedInput": 0.3,
+        "longContext": {
+          "thresholdTokens": 200000,
+          "input": 4.0,
+          "output": 12.0,
+          "cachedInput": 0.6
+        }
+      }
     },
     {
       "id": "xai-grok-4.3",
       "displayName": "Grok 4.3",
       "capabilityIndex": 80,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
-      "verifiedUrl": "https://docs.x.ai/docs/models"
+      "lastVerified": "2026-08-06",
+      "verifiedUrl": "https://docs.x.ai/developers/pricing",
+      "pricing": {
+        "input": 1.25,
+        "output": 2.5,
+        "cachedInput": 0.2,
+        "longContext": {
+          "thresholdTokens": 200000,
+          "input": 2.5,
+          "output": 5.0,
+          "cachedInput": 0.4
+        }
+      }
     },
     {
       "id": "xai-grok-4-1-fast",
