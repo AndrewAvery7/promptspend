@@ -328,3 +328,7 @@ _Manual correction, not a sync run._
 
 - **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2 → OpenRouter disagrees (40%): $0.09/$1.1 vs $0.15/$1.2
 - **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: OpenRouter disagrees (37%): $0.6/$3.41 vs $0.95/$4 → OpenRouter disagrees (38%): $0.589/$2.48 vs $0.95/$4
+
+## 2026-08-06
+
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (50%): $0.15/$0.9 vs $0.3/$1.2 → OpenRouter disagrees (27%): $0.22/$0.9 vs $0.3/$1.2
