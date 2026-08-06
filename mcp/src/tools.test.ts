@@ -78,6 +78,29 @@ const RAW: PricingCatalog = {
       capabilities: { reasoning: false, vision: false },
       provenance: { source: 'litellm', lastVerified: '2026-06-01', stale: true },
     },
+    {
+      // A model inside a promotional window, which the real catalog has had
+      // since Claude Sonnet 5's introductory pricing landed.
+      id: 'promo-test-one',
+      providerId: 'openai',
+      displayName: 'Promo Test One',
+      status: 'current',
+      contextWindow: 200_000,
+      pricing: {
+        input: 3,
+        output: 15,
+        cachedInput: 0.3,
+        intro: { input: 2, output: 10, cachedInput: 0.2, until: '2026-08-31' },
+      },
+      tokenizer: { kind: 'approx', charsPerToken: 3.6, cjkCharsPerToken: 1.5 },
+      capabilities: { reasoning: true, vision: true },
+      capabilityIndex: 90,
+      provenance: {
+        source: 'vendor',
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://openai.example/pricing',
+      },
+    },
   ],
 };
 
@@ -290,5 +313,62 @@ describe('the server describes itself accurately', () => {
       version: string;
     };
     expect(SERVER_INFO.version).toBe(pkg.version);
+  });
+});
+
+describe('a promotional rate is the rate', () => {
+  // get_price read `pricing.input` while estimate_cost billed through the
+  // engine, which honours promotional windows. So on 2026-08-06 the two tools
+  // disagreed about Claude Sonnet 5 on the same day: get_price quoted $3/$15,
+  // the September rate, while estimate_cost billed a million tokens at $2 —
+  // and get_price stamped its answer "confirmed against the provider's own
+  // pricing page". Wrong is recoverable; wrong with a confidence claim is not.
+  const INSIDE = new Date('2026-08-06T00:00:00Z');
+  const AFTER = new Date('2026-09-01T00:00:00Z');
+
+  it('quotes the promoted rate while the promotion is running', () => {
+    const r = getPrice(catalog, AT, 'promo-test-one', INSIDE) as Record<string, unknown>;
+    expect(r.input_per_million_usd).toBe(2);
+    expect(r.output_per_million_usd).toBe(10);
+    expect(r.cached_input_per_million_usd).toBe(0.2);
+  });
+
+  it('says the standard rate and when the promotion lapses', () => {
+    const r = getPrice(catalog, AT, 'promo-test-one', INSIDE) as Record<string, unknown>;
+    const promo = r.promotional_pricing as Record<string, unknown>;
+    expect(promo).toBeDefined();
+    expect(promo.in_force_until).toBe('2026-08-31');
+    expect(promo.standard_input_per_million_usd).toBe(3);
+    expect(promo.standard_output_per_million_usd).toBe(15);
+  });
+
+  it('reverts to the standard rate once the promotion has lapsed', () => {
+    const r = getPrice(catalog, AT, 'promo-test-one', AFTER) as Record<string, unknown>;
+    expect(r.input_per_million_usd).toBe(3);
+    expect(r.output_per_million_usd).toBe(15);
+    expect(r.promotional_pricing).toBeUndefined();
+  });
+
+  it('leaves a model with no promotion untouched', () => {
+    const r = getPrice(catalog, AT, 'gpt-test-pro', INSIDE) as Record<string, unknown>;
+    expect(r.input_per_million_usd).toBe(10);
+    expect(r.promotional_pricing).toBeUndefined();
+  });
+
+  // The guard that matters: the two tools must not be able to disagree again.
+  it('quotes the same input rate that estimate_cost bills', () => {
+    const quoted = getPrice(catalog, AT, 'promo-test-one', INSIDE) as Record<string, unknown>;
+    const billed = estimateCost(catalog, AT, {
+      models: ['promo-test-one'],
+      system_tokens: 1_000_000,
+      user_tokens: 0,
+      output_tokens: 0,
+      turns: 1,
+      conversations_per_day: 1,
+    }) as Record<string, unknown>;
+    const row = (billed.results as Record<string, unknown>[])[0]!;
+    // One million input tokens, nothing else — cost per conversation is the
+    // per-million input rate, in dollars.
+    expect(row.cost_per_conversation_usd).toBe(quoted.input_per_million_usd);
   });
 });
