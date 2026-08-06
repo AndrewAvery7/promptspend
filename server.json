@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.AndrewAvery7/promptspend",
+  "title": "PromptSpend",
+  "description": "LLM pricing for coding agents — every price carries its source and the date it was last confirmed, re-checked against the vendors every morning.",
+  "websiteUrl": "https://promptspend.com",
+  "repository": {
+    "url": "https://github.com/AndrewAvery7/promptspend",
+    "source": "github",
+    "subfolder": "mcp"
+  },
+  "version": "0.1.5",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@promptspend/mcp",
+      "version": "0.1.5",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
