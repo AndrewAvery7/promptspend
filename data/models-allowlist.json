@@ -5,7 +5,7 @@
       "id": "anthropic",
       "name": "Anthropic",
       "country": "US",
-      "pricingUrl": "https://platform.claude.com/docs/en/pricing"
+      "pricingUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     { "id": "openai", "name": "OpenAI", "country": "US", "pricingUrl": "https://openai.com/api/pricing/" },
     { "id": "google", "name": "Google", "country": "US", "pricingUrl": "https://ai.google.dev/pricing" },

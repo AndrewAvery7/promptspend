@@ -15,9 +15,26 @@ permissions:
   pages: write
   id-token: write
 
+# One deployment at a time, but never cancel one that is already running.
+#
+# `cancel-in-progress: true` looks right for a deploy and is not. Pages keys a
+# deployment by the commit SHA, and `actions/deploy-pages` cancels its
+# deployment when it is interrupted or times out — after which that SHA is
+# spent. A later run for the same commit does not retry it; it is rejected
+# immediately with "Deployment cancelled", and re-running the job cannot help
+# because the commit is the identity. Recovering needs a *new* commit.
+#
+# On 2026-08-06 two merges landed four minutes apart. The second cancelled the
+# first mid-deployment, which left a deployment stuck in progress; that blocked
+# the next one with "due to in progress deployment", and once it was cancelled
+# to clear the block, every retry of the same commit failed instantly. The site
+# served a two-day-old catalog through all of it.
+#
+# Queued runs still collapse to the newest, which is the behaviour worth having:
+# skip the middle, never interrupt the one in flight.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   verify:
