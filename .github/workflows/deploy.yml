@@ -62,3 +62,17 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
+        with:
+          # The action's default is ten minutes, and on 2026-08-06 every run hit
+          # it while Pages was still reporting `deployment_queued`. The action
+          # then cancels and fails — but Pages went on to publish afterwards, so
+          # the site was correct and current while eight consecutive deploy runs
+          # showed red. A job that reports failure on a deployment that
+          # succeeded is worse than a slow one: it is the freshness alert's
+          # third failure mode inverted, and a permanently red deploy is one
+          # nobody reads when it finally means something.
+          #
+          # Twenty minutes is a ceiling on the wait, not a target. A deployment
+          # that genuinely cannot land still fails, just not before Pages has
+          # actually been given a chance to finish.
+          timeout: 1200000
