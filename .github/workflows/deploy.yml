@@ -60,6 +60,13 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Only for `public/data/pricing.json`, which the confirmation step below
+      # compares against what the site is actually serving.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: public/data/pricing.json
+          sparse-checkout-cone-mode: false
+
       - id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
         with:
@@ -72,7 +79,41 @@ jobs:
           # third failure mode inverted, and a permanently red deploy is one
           # nobody reads when it finally means something.
           #
-          # Twenty minutes is a ceiling on the wait, not a target. A deployment
-          # that genuinely cannot land still fails, just not before Pages has
-          # actually been given a chance to finish.
-          timeout: 1200000
+          # Ten minutes is the action's ceiling, not its default — asking for
+          # more is accepted, warned about, and ignored:
+          #
+          #   Warning: timeout value is greater than the allowed maximum -
+          #   timeout set to the maximum of 600000 milliseconds.
+          #
+          # So the wait cannot be extended, and on a slow morning this step will
+          # fail while Pages goes on to publish. That makes its verdict
+          # unreliable in one direction only, which the next step settles by
+          # reading the site.
+          timeout: 600000
+        continue-on-error: true
+
+      # The deployment is what the visitor gets, so that is what decides whether
+      # this job passed. The step above reports on its own timer; this one reads
+      # `generatedAt` off the live catalog and compares it with the artifact just
+      # built. A slow-but-successful deploy goes green, a genuinely failed one
+      # still goes red, and neither depends on how long Pages happened to take.
+      - name: Confirm the site is serving this build
+        if: always()
+        run: |
+          set -uo pipefail
+          expected=$(jq -r '.generatedAt' public/data/pricing.json)
+          echo "expecting generatedAt=$expected"
+
+          for attempt in $(seq 1 40); do
+            live=$(curl -sS --max-time 20 "https://promptspend.com/data/pricing.json" \
+              | jq -r '.generatedAt' 2>/dev/null || echo '')
+            if [ "$live" = "$expected" ]; then
+              echo "✓ the site is serving this build (after ${attempt} check(s))"
+              exit 0
+            fi
+            echo "  serving $live — waiting"
+            sleep 30
+          done
+
+          echo "::error title=Deploy::The site is still serving $live, not $expected, 20 minutes after the artifact was published."
+          exit 1
