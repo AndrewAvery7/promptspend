@@ -42,9 +42,27 @@ jobs:
         if: steps.sync.outputs.degraded != 'true'
         run: npx tsx scripts/validate-catalog.ts
 
-      - name: Nothing changed
+      # A run that moved no price still read every source, and that reading is
+      # the product. `isEmpty` deliberately ignores `lastVerified`, so a stable
+      # morning produced a catalog that is materially identical but genuinely
+      # re-verified — and publishing nothing froze both `generatedAt` and the
+      # per-model `lastVerified` dates until something substantive moved. The
+      # site then *understated* its own freshness, which is the one claim this
+      # project exists to make. On 2026-08-05 this path ran and published
+      # nothing; the next morning's dates jumped 08-04 -> 08-06, skipping a day
+      # that had in fact been checked.
+      #
+      # Both files are committed: the manifest records that the check happened,
+      # the catalog carries the dates it happened on.
+      - name: Publish a clean run that changed no prices
         if: steps.sync.outputs.degraded != 'true' && steps.sync.outputs.changed != 'true'
-        run: echo "Sources stable — no update needed."
+        run: |
+          echo "Sources stable — recording the verification."
+          git config user.name "promptspend-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add public/data/pricing.json public/data/sync-status.json
+          git diff --staged --quiet || git commit -m "chore: re-verified, no price changes"
+          git push
 
       # A degraded run still publishes its health manifest: "we tried and it
       # went wrong" is information visitors are entitled to.
