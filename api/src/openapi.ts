@@ -171,7 +171,16 @@ export function openApiDocument(origin: string): unknown {
           summary: 'Flat price rows — the numbers and nothing else',
           operationId: 'listPrices',
           parameters: listParams,
-          responses: { '200': { description: 'One row per model.', headers: freshnessHeaders } },
+          responses: {
+            '200': {
+              description:
+                'One row per model. `input` and `output` are the rates in force today: where a ' +
+                'promotional rate applies it is quoted here, and `promotionalUntil`, ' +
+                '`standardInput` and `standardOutput` say when it lapses and what follows. Those ' +
+                'three are null otherwise. Use /v1/models for the full pricing object.',
+              headers: freshnessHeaders,
+            },
+          },
         },
       },
       '/v1/prices.csv': {
@@ -180,7 +189,12 @@ export function openApiDocument(origin: string): unknown {
           operationId: 'listPricesCsv',
           parameters: listParams,
           responses: {
-            '200': { description: 'CSV, RFC 4180.', content: { 'text/csv': { schema: { type: 'string' } } } },
+            '200': {
+              description:
+                'CSV, RFC 4180. Same columns as /v1/prices, in the order listed there; the three ' +
+                'promotional columns are appended last so a positional reader is unaffected.',
+              content: { 'text/csv': { schema: { type: 'string' } } },
+            },
           },
         },
       },

@@ -1,7 +1,7 @@
 import { SELF, env } from 'cloudflare:test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PricingCatalog } from '../../src/lib/pricing/types';
-import { CACHE_KEY } from './catalog';
+import { CACHE_KEY, priceRows } from './catalog';
 
 const API = 'https://promptspend.dev';
 
@@ -241,7 +241,7 @@ describe('catalog endpoints', () => {
   it('quotes a display name containing a comma and a quote, per RFC 4180', async () => {
     const csv = await (await get('/v1/prices.csv')).text();
     expect(csv.split('\r\n')[0]).toBe(
-      'id,provider,displayName,input,output,cachedInput,cacheWrite,contextWindow,maxOutput,status,lastVerified',
+      'id,provider,displayName,input,output,cachedInput,cacheWrite,contextWindow,maxOutput,status,lastVerified,promotionalUntil,standardInput,standardOutput',
     );
     expect(csv).toContain('"Claude, ""the Opus"" 5"');
   });
@@ -494,5 +494,55 @@ describe('method handling', () => {
   it('404s an endpoint that does not exist', async () => {
     expect((await get('/v2/models')).status).toBe(404);
     expect((await get('/v1/nonsense')).status).toBe(404);
+  });
+});
+
+describe('a promotional rate is the rate', () => {
+  // /v1/prices is the "only numbers" shape: a caller reading it is asking what
+  // a token costs today and has nowhere to put a promotional window. It read
+  // pricing.input directly, so during Claude Sonnet 5's introductory period it
+  // served $3/$15 -- September's rate, quoted in August.
+  const PROMO = {
+    ...CATALOG,
+    models: [
+      {
+        ...CATALOG.models[0]!,
+        id: 'promo-model',
+        pricing: {
+          input: 3,
+          output: 15,
+          cachedInput: 0.3,
+          intro: { input: 2, output: 10, cachedInput: 0.2, until: '2026-08-31' },
+        },
+      },
+    ],
+  } as PricingCatalog;
+
+  it('quotes the promoted rate while the promotion is running', () => {
+    const row = priceRows(PROMO, new Date('2026-08-06T00:00:00Z'))[0]!;
+    expect(row.input).toBe(2);
+    expect(row.output).toBe(10);
+    expect(row.cachedInput).toBe(0.2);
+  });
+
+  it('carries the standard rates and the lapse date alongside', () => {
+    const row = priceRows(PROMO, new Date('2026-08-06T00:00:00Z'))[0]!;
+    expect(row.promotionalUntil).toBe('2026-08-31');
+    expect(row.standardInput).toBe(3);
+    expect(row.standardOutput).toBe(15);
+  });
+
+  it('reverts once the promotion has lapsed', () => {
+    const row = priceRows(PROMO, new Date('2026-09-01T00:00:00Z'))[0]!;
+    expect(row.input).toBe(3);
+    expect(row.output).toBe(15);
+    expect(row.promotionalUntil).toBeNull();
+    expect(row.standardInput).toBeNull();
+  });
+
+  it('leaves a model with no promotion alone', () => {
+    const row = priceRows(CATALOG, new Date('2026-08-06T00:00:00Z'))[0]!;
+    expect(row.input).toBe(1.25);
+    expect(row.promotionalUntil).toBeNull();
   });
 });

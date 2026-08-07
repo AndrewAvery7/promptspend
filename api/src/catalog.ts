@@ -20,6 +20,7 @@
  */
 
 import { validateCatalog, type Model, type PricingCatalog } from '../../src/lib/pricing/types';
+import { effectivePricing } from '../../src/lib/engine/cost';
 import type { Env } from './env';
 
 /** How long a cached copy is retained, as opposed to how long it stays fresh. */
@@ -197,7 +198,20 @@ async function fetchAndStore(
 
 // ------------------------------------------------------------- projections
 
-/** The flat shape most callers want: one row, one model, only numbers. */
+/**
+ * The flat shape most callers want: one row, one model, only numbers.
+ *
+ * `input` and `output` are the rates in force on the day of the request, not
+ * the standard ones. A caller reading this shape is asking what a token costs
+ * today and has nowhere to put a promotional window, so quoting the standard
+ * rate during one would answer a question nobody asked. `/v1/models` still
+ * returns the full `pricing` object, promotion and all, for callers that want
+ * to do their own arithmetic.
+ *
+ * When a promotion is running, `promotionalUntil` carries the date it lapses
+ * and `standardInput` / `standardOutput` carry the rates that take over. All
+ * three are null the rest of the time, which is most of the time.
+ */
 export interface PriceRow {
   id: string;
   provider: string;
@@ -210,24 +224,36 @@ export interface PriceRow {
   maxOutput: number | null;
   status: string;
   lastVerified: string;
+  promotionalUntil: string | null;
+  standardInput: number | null;
+  standardOutput: number | null;
 }
 
-export function priceRows(catalog: PricingCatalog): PriceRow[] {
-  return catalog.models.map((model) => ({
-    id: model.id,
-    provider: model.providerId,
-    displayName: model.displayName,
-    input: model.pricing.input,
-    output: model.pricing.output,
-    cachedInput: model.pricing.cachedInput ?? null,
-    cacheWrite: model.pricing.cacheWrite ?? null,
-    contextWindow: model.contextWindow,
-    maxOutput: model.maxOutput ?? null,
-    status: model.status,
-    lastVerified: model.provenance.lastVerified,
-  }));
+export function priceRows(catalog: PricingCatalog, asOf: Date = new Date()): PriceRow[] {
+  return catalog.models.map((model) => {
+    const rates = effectivePricing(model.pricing, asOf);
+    const promoted = rates !== model.pricing;
+    return {
+      id: model.id,
+      provider: model.providerId,
+      displayName: model.displayName,
+      input: rates.input,
+      output: rates.output,
+      cachedInput: rates.cachedInput ?? null,
+      cacheWrite: rates.cacheWrite ?? null,
+      contextWindow: model.contextWindow,
+      maxOutput: model.maxOutput ?? null,
+      status: model.status,
+      lastVerified: model.provenance.lastVerified,
+      promotionalUntil: promoted ? (model.pricing.intro?.until ?? null) : null,
+      standardInput: promoted ? model.pricing.input : null,
+      standardOutput: promoted ? model.pricing.output : null,
+    };
+  });
 }
 
+// Appended rather than inserted: a reader taking the first eleven columns
+// positionally keeps working, and gains the promotional ones only if it looks.
 const CSV_COLUMNS: (keyof PriceRow)[] = [
   'id',
   'provider',
@@ -240,6 +266,9 @@ const CSV_COLUMNS: (keyof PriceRow)[] = [
   'maxOutput',
   'status',
   'lastVerified',
+  'promotionalUntil',
+  'standardInput',
+  'standardOutput',
 ];
 
 /** RFC 4180: quote anything containing a comma, quote or newline; double the quotes. */
