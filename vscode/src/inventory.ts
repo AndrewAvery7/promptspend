@@ -11,6 +11,7 @@
  * the tree says.
  */
 import type { Model } from '@/lib/pricing/types';
+import { effectivePricing } from '@/lib/engine/cost';
 import type { ModelMatch } from './scan';
 
 export interface Reference {
@@ -96,11 +97,14 @@ export function buildInventory(files: readonly ScannedFile[], filesSkipped = 0):
     }
   }
 
+  const now = new Date();
   const usage = [...byModel.values()]
     .map(({ model, references, files: paths }) => ({ model, references, fileCount: paths.size }))
     .sort(
       (a, b) =>
-        b.model.pricing.output - a.model.pricing.output ||
+        // Ordered by what these models actually cost today, so the list is not
+        // sorted on one set of rates while showing another.
+        effectivePricing(b.model.pricing, now).output - effectivePricing(a.model.pricing, now).output ||
         b.references.length - a.references.length ||
         a.model.id.localeCompare(b.model.id),
     );

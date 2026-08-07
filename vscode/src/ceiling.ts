@@ -13,6 +13,7 @@
  * exists to correct.
  */
 import type { Model } from '@/lib/pricing/types';
+import { effectivePricing } from '@/lib/engine/cost';
 import type { ModelMatch } from './scan';
 
 /**
@@ -72,7 +73,12 @@ function forwardEnd(text: string, match: ModelMatch, next: ModelMatch | undefine
  * above the model. That case still works, because a distant previous match's
  * forward window runs out before this one's backward window begins.
  */
-export function ceilingFor(text: string, match: ModelMatch, all: readonly ModelMatch[]): Ceiling | undefined {
+export function ceilingFor(
+  text: string,
+  match: ModelMatch,
+  all: readonly ModelMatch[],
+  asOf: Date = new Date(),
+): Ceiling | undefined {
   const index = all.indexOf(match);
   const next = index >= 0 ? all[index + 1] : undefined;
   const previous = index > 0 ? all[index - 1] : undefined;
@@ -96,7 +102,9 @@ export function ceilingFor(text: string, match: ModelMatch, all: readonly ModelM
 
   return {
     maxTokens,
-    outputCostUsd: (maxTokens / 1_000_000) * match.model.pricing.output,
+    // Billed at the rate in force, so this figure agrees with the one the
+    // gutter and the hover quote beside it.
+    outputCostUsd: (maxTokens / 1_000_000) * effectivePricing(match.model.pricing, asOf).output,
     exceedsModelMax: exceedsMax(maxTokens, match.model),
   };
 }

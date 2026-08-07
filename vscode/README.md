@@ -8,7 +8,7 @@ came from.
 
 ```python
 response = client.messages.create(
-    model="claude-sonnet-5",   # $3 / $15 per M · max out $0.061
+    model="claude-sonnet-4-6", # $3 / $15 per M · max out $0.061
     max_tokens=4096,
 )
 ```

@@ -1,8 +1,8 @@
 {
   "name": "promptspend",
-  "displayName": "PromptSpend — LLM prices in your editor",
+  "displayName": "PromptSpend \u2014 LLM prices in your editor",
   "description": "What the model on this line costs, and when that price was last confirmed.",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "license": "MIT",
   "publisher": "promptspend",
   "type": "module",
@@ -138,7 +138,7 @@
             "off"
           ],
           "enumDescriptions": [
-            "Rates only — $3 / $15 per M",
+            "Rates only \u2014 $3 / $15 per M",
             "Rates and the date the price was last confirmed",
             "No end-of-line annotation; hovers still work"
           ],
@@ -192,7 +192,7 @@
             "No entries in the Problems panel"
           ],
           "default": "facts",
-          "markdownDescription": "Which findings reach the Problems panel. The cheaper-model suggestion is opt-in because it rests on a capability estimate this project calls illustrative rather than a benchmark. All entries are Information severity — none of them are mistakes."
+          "markdownDescription": "Which findings reach the Problems panel. The cheaper-model suggestion is opt-in because it rests on a capability estimate this project calls illustrative rather than a benchmark. All entries are Information severity \u2014 none of them are mistakes."
         },
         "promptspend.annotateComments": {
           "type": "boolean",
@@ -211,6 +211,9 @@
     "check:footprint": "tsx tools/check-footprint.ts",
     "verify": "npm run typecheck && npm run test && npm run build && npm run check:activation && npm run check:footprint && npm run check:package",
     "package": "npm run build && npx --yes @vscode/vsce@^3 package --out dist/promptspend.vsix",
+    "publish:vsce": "npx --yes @vscode/vsce@^3 publish --packagePath dist/promptspend.vsix",
+    "publish:ovsx": "npx --yes ovsx publish dist/promptspend.vsix",
+    "release": "npm run verify && npm run package && npm run publish:vsce && npm run publish:ovsx",
     "check:package": "tsx tools/check-package.ts"
   },
   "devDependencies": {
