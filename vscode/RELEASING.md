@@ -47,24 +47,31 @@ Creating an organization purely to mint a token would work, but it is a whole
 Azure DevOps tenant standing up to serve one string. Two better routes, in the
 order worth trying:
 
-**1. Entra ID, no token at all.**
-
-```
-npm run publish:vsce:entra
-```
-
-Same publish, `--azure-credential` instead of a PAT. It signs the Marketplace
-identity in through the browser. Nothing to store, nothing to expire, nothing to
-rotate — and no `VSCE_PAT` in the environment.
-
-**2. Upload the artifact by hand.**
+**1. Upload the artifact by hand. This is the one that works today.**
 
 <https://marketplace.visualstudio.com/manage/publishers/promptspend> → the
 extension row → **⋯** → **Update** → drop in `vscode/dist/promptspend.vsix`.
 
-The slowest of the three but the one with no auth plumbing at all: the browser
-session is already the publisher. Useful as a fallback when a release has to go
-out and the CLI is arguing.
+No token, no install, no CLI. The browser session is already the publisher.
+
+**2. `publish:vsce:entra` — only after installing the Azure CLI.**
+
+`--azure-credential` is **not** an interactive browser sign-in, which is the
+trap. It is a non-interactive chain, and on a clean Windows box every link in it
+is missing. Run on 2026-08-07 it reported, in order:
+
+```
+EnvironmentCredential          no underlying credential
+Azure CLI                      could not be found
+ManagedIdentityCredential      network unreachable
+Azure PowerShell               Az.Accounts module not installed
+Azure Developer CLI            could not be found
+```
+
+It never prompts, never opens a browser, and exits without publishing. To make
+this route work, install the Azure CLI and `az login` once; after that
+`npm run publish:vsce:entra` needs no token and no Azure DevOps organization.
+Worth doing if releases become frequent. Not worth doing to ship one version.
 
 **If a PAT is ever wanted anyway**, create an organization at
 <https://aex.dev.azure.com/me>, then **User settings** (person icon, top right) →
