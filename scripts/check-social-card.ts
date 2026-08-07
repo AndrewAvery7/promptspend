@@ -21,6 +21,7 @@
  *   npm run check:social-card
  */
 import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,6 +35,8 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG = resolve(ROOT, 'public/data/pricing.json');
 const ARTWORK = resolve(ROOT, 'tools/make-assets.py');
 const INDEX = resolve(ROOT, 'index.html');
+const CARD = resolve(ROOT, 'public/social-card.png');
+const RENDER = resolve(ROOT, 'src/lib/seo/render.ts');
 
 /** The card's chips, cheapest first — the three slots the artwork draws. */
 const SLOTS = ['BUDGET', 'MID', 'FRONTIER'] as const;
@@ -108,15 +111,47 @@ async function main(): Promise<void> {
     });
   }
 
+  // The cache key. Every platform stores og:image under its URL, so re-drawing
+  // the card at the same address changes nothing for anyone who has already
+  // ingested it. LinkedIn proved this on 2026-08-07: Post Inspector re-scraped
+  // the page on demand, reported "last scraped a few seconds ago", and still
+  // rendered the previous card, because only the metadata was refetched and the
+  // image URL it named had not moved. Keying the URL on the file's own hash
+  // makes a redrawn card a new URL by construction.
+  const version = createHash('sha256')
+    .update(await readFile(CARD))
+    .digest('hex')
+    .slice(0, 8);
+  for (const [label, file] of [
+    ['index.html', INDEX],
+    ['src/lib/seo/render.ts', RENDER],
+  ] as const) {
+    const source = await readFile(file, 'utf8');
+    const used = [...source.matchAll(/social-card\.png(\?v=([0-9a-f]{8}))?/g)];
+    if (used.length === 0) continue;
+    for (const match of used) {
+      if (match[2] !== version) {
+        problems.push(
+          `${label} points at social-card.png?v=${match[2] ?? '(none)'}; the card's hash is now ${version}`,
+        );
+        break;
+      }
+    }
+  }
+
   if (problems.length === 0) {
     console.log(`✓ Social card is true of the catalog — ${expected.join('  ·  ')}`);
     console.log(`  catalog generated ${catalog.generatedAt.toISOString().slice(0, 10)}`);
+    console.log(`  cache key         ?v=${version}`);
     return;
   }
   for (const problem of problems) console.error(`✗ ${problem}`);
   console.error('\n  Fix: update the three chips in tools/make-assets.py and the og:image:alt');
   console.error('  in index.html, then re-run `python tools/make-assets.py` and commit');
   console.error('  assets/social-card.png and public/social-card.png.');
+  console.error('  If the hash moved, put the new ?v= on both og:image and twitter:image in');
+  console.error('  index.html and src/lib/seo/render.ts — a redrawn card at the old URL is');
+  console.error('  invisible to every platform that already cached it.');
   process.exitCode = 1;
 }
 
