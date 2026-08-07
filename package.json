@@ -37,6 +37,7 @@
     "check:test-badge": "tsx scripts/check-test-badge.ts",
     "check:csp": "tsx scripts/check-csp.ts",
     "check:pages": "tsx scripts/check-pages.ts",
+    "check:social-card": "tsx scripts/check-social-card.ts",
     "check:encoding": "tsx scripts/check-encoding.ts",
     "ping:indexnow": "tsx scripts/ping-indexnow.ts",
     "ping:indexnow:dry": "tsx scripts/ping-indexnow.ts --dry-run",
