@@ -1,8 +1,8 @@
 {
   "name": "promptspend",
-  "displayName": "PromptSpend \u2014 LLM prices in your editor",
+  "displayName": "PromptSpend — LLM prices in your editor",
   "description": "What the model on this line costs, and when that price was last confirmed.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "license": "MIT",
   "publisher": "promptspend",
   "type": "module",
@@ -132,7 +132,7 @@
             "off"
           ],
           "enumDescriptions": [
-            "Rates only \u2014 $3 / $15 per M",
+            "Rates only — $3 / $15 per M",
             "Rates and the date the price was last confirmed",
             "No end-of-line annotation; hovers still work"
           ],
@@ -186,7 +186,7 @@
             "No entries in the Problems panel"
           ],
           "default": "facts",
-          "markdownDescription": "Which findings reach the Problems panel. The cheaper-model suggestion is opt-in because it rests on a capability estimate this project calls illustrative rather than a benchmark. All entries are Information severity \u2014 none of them are mistakes."
+          "markdownDescription": "Which findings reach the Problems panel. The cheaper-model suggestion is opt-in because it rests on a capability estimate this project calls illustrative rather than a benchmark. All entries are Information severity — none of them are mistakes."
         },
         "promptspend.annotateComments": {
           "type": "boolean",
