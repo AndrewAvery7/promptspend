@@ -214,13 +214,21 @@ def make_social_card(path):
     )
 
     # Three cost chips, cheapest first -- the shape of the product's own answer,
-    # and a reminder that the spread is the whole point.
+    # and a reminder that the spread is the whole point. The figures are the
+    # cheapest, middle and dearest of the site's own default estimate.
+    #
+    # They are literals because this script draws from primitives and stays
+    # dependency-free, which means nothing here notices when the catalog moves.
+    # `npm run check:social-card` recomputes them through the real engine and
+    # fails when they drift -- it caught exactly that on 2026-08-07, two days
+    # after the mid and frontier tiers stopped being true. Change these only
+    # together with the `og:image:alt` text in index.html, which repeats them.
     mono = find_font("mono", 27 * SCALE)
     label = find_font("medium", 15 * SCALE)
     chips = [
         ("BUDGET", "$723/mo", theme["save"]),
-        ("MID", "$3,240/mo", theme["muted"]),
-        ("FRONTIER", "$9,110/mo", theme["cost"]),
+        ("MID", "$2,417/mo", theme["muted"]),
+        ("FRONTIER", "$11,081/mo", theme["cost"]),
     ]
     chip_w, chip_h = 196 * SCALE, 96 * SCALE
     cx = w - pad - 52 * SCALE - chip_w

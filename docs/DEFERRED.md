@@ -91,6 +91,20 @@ API, the MCP server and the VS Code extension existed — four surfaces that giv
 the same catalog four different ways to be found, and a story about provenance
 that is easier to tell with all of them in place than with any one.
 
+Nothing has been posted. One piece of the preparation is done and written up in
+`LAUNCH.md`: **the link preview is verified on every surface it will be posted
+to** — ten crawlers, the page and the image under each, the two non-canonical
+hosts, the Marketplace listing, and Hacker News, which renders no card at all
+and never will. It found two things. The social card's mid and frontier figures
+matched no model in the default selection — not at today's catalog and not at
+the one it was drawn against, so they were never true rather than merely stale;
+that is fixed, and `npm run check:social-card` now recomputes them through the
+real engine so the next drift is loud. The repository's own social preview
+image answers 403, so every share of the _repository_ link — the likelier of the
+two links at an open-source launch — renders with a missing picture. That one
+needs a manual re-upload in repository settings; there is no API for it, and it
+is the remaining blocker on this item.
+
 **A cost-diff GitHub Action.** A check that comments on a pull request when it
 changes what an LLM call will cost — the extension's per-line reading, applied
 to a diff. Deliberately waiting rather than rejected: it is the same scanning
