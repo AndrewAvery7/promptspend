@@ -8,6 +8,10 @@
   "type": "module",
   "main": "./dist/extension.cjs",
   "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#2456E6",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.85.0",
     "node": ">=20"
@@ -46,7 +50,9 @@
     "xai",
     "grok",
     "bedrock",
-    "openrouter"
+    "openrouter",
+    "qwen",
+    "kimi"
   ],
   "homepage": "https://promptspend.com/",
   "repository": {

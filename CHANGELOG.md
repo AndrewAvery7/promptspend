@@ -195,6 +195,24 @@ a release that does not contain them.
   transferable version: monitor the promise you made to the reader, not the
   machinery you built to keep it.
 
+- **The Marketplace listing shows the product instead of describing it.** The
+  published page carries no image at all, so a reader has to take a sentence's
+  word for what an annotation looks like — while a real screenshot of the
+  extension running has been sitting in the repository since the promo re-cut.
+  `vscode/README.md` now carries `assets/promo-frames/04-editor.png` by absolute
+  URL, because the file lives outside `vscode/` and a relative `../assets` path
+  is never packaged: the image would not be broken on the rendered page, it
+  would simply not be there. The frame earns its place rather than decorating —
+  its middle call is `gpt-5-mini` with no `max_tokens`, and therefore no
+  ceiling, which is exactly the case that shipped broken in 0.1.5.
+  `galleryBanner` was unset, so the header rendered on the default background;
+  it is now the project's own `#2456E6`, dark. The keyword list — already
+  expanded to 28 for the categories 0.1.7 exists to ship — gains `qwen` and
+  `kimi` to reach exactly 30, the cap above which the Marketplace refuses the
+  upload outright. Both are families the catalog prices and `vendor-ids.ts`
+  already strips a route prefix for, so neither tag claims something the
+  extension cannot do. None of it is live: the published listing is still 0.1.6.
+
 ## 0.6.0 - 2026-08-04
 
 **The catalog stops being a website.** It now answers on the line of code that
