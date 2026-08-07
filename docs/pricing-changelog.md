@@ -372,3 +372,7 @@ verification date was touched in the repair.
 `pricingChanged` now distinguishes the three cases, so this cannot recur:
 absent → value is coverage, value → different value is a price change, and a
 value that moves in the same run as its source URL is a correction.
+
+## 2026-08-07
+
+- **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: OpenRouter disagrees (40%): $0.57/$2.4 vs $0.95/$4 → OpenRouter disagrees (38%): $0.589/$2.48 vs $0.95/$4
