@@ -23,7 +23,18 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    // For the site's own pricing engine, which `catalog.ts` uses so that a rate
+    // this API quotes cannot drift from the one the website shows — the same
+    // reason `mcp/tsconfig.json` carries this mapping.
+    //
+    // Only the typechecker needs it. `engine/cost.ts` imports these as types
+    // alone, so the specifier is erased before esbuild sees it, which is why
+    // the Worker bundles and the tests ran without an alias here.
+    "paths": {
+      "@/*": ["../src/*"]
+    }
   },
   "include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts", "worker-configuration.d.ts"]
 }
