@@ -31,10 +31,29 @@ export OVSX_PAT=...
 
 These last for the session only. Reopening the terminal means setting them again.
 
-| Registry            | Variable   | Where to mint                                                                                                                                                                 |
-| ------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| VS Code Marketplace | `VSCE_PAT` | Azure DevOps → User settings → Personal access tokens. **Organization: `All accessible organizations`**, scope **Marketplace → Manage** (click _Show all scopes_ to find it). |
-| Open VSX            | `OVSX_PAT` | <https://open-vsx.org/user-settings/tokens>                                                                                                                                   |
+| Registry            | Variable   | Where to mint                               |
+| ------------------- | ---------- | ------------------------------------------- |
+| VS Code Marketplace | `VSCE_PAT` | See below — the obvious URL 404s            |
+| Open VSX            | `OVSX_PAT` | <https://open-vsx.org/user-settings/tokens> |
+
+### Minting the Marketplace token
+
+Start at **<https://aex.dev.azure.com/me>**.
+
+Not `dev.azure.com/_usersSettings/tokens`, which **404s** — that path needs an
+organization segment. And not `azure.microsoft.com/devops`, which serves the
+marketing page to a signed-out browser instead of signing you in. `aex.../me` is
+the account page and forces the sign-in flow.
+
+1. Sign in as the Microsoft account that owns the `promptspend` publisher.
+2. **User settings** (the person icon, top right) → **Personal Access Tokens** →
+   **New Token**.
+3. **Organization: `All accessible organizations`.** This is the one that gets
+   picked wrong, and a single-organization token fails later with an error that
+   does not mention the organization.
+4. **Scopes** → **Show all scopes** at the bottom of the panel → **Marketplace** →
+   tick **Manage**.
+5. **Create**, then copy it immediately. Azure shows the value once.
 
 ## The release
 
