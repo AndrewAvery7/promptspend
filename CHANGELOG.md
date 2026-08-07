@@ -66,10 +66,25 @@ a release that does not contain them.
   past the window `freshness.yml` tolerates or after a degraded run. The
   strongest evidence the project holds was previously only visible to a reader
   who navigated to the Data view.
+- **Semantic text is never faded, only reweighted.** The chip's price clause
+  shipped at `opacity: 0.72`, which composited `--save` to `#4a9c71` on
+  `#e3f0e8` — 2.84:1, caught by axe at 320 and 390 after it was pushed. Every
+  token in `tokens.css` is validated at 4.5:1 against the surfaces it lands on,
+  and an alpha channel throws that guarantee away silently. `contrast.test.ts`
+  now covers the chip's four states in both themes, so the check runs in
+  `npm run verify` rather than waiting for the browser suite.
 - **`unknown` is a state, not a fallback to healthy.** When the health manifest
   fails to load the chip goes outlined-grey and says so. A status light that
   reads "fine" when its own evidence is missing is the exact failure the
   freshness monitor exists to catch.
+- **`--info` on `--info-soft` failed AA in dark, and had been failing for as
+  long as `.note` has existed.** 4.32:1 against its own fill. The accent matrix
+  in `contrast.test.ts` never covered it, because the status and money colours
+  sit outside the accent system on purpose — so the one pairing the stylesheet
+  actually uses for `.note b`, and now for the chip's aging state, was the one
+  nothing checked. The dark token moves to `#4d93ce` (4.53:1), a change too
+  small to see and enough to clear the floor. Found by the new chip cases, not
+  by looking.
 - **The chip is no longer a live region.** It carried `role="status"` while
   being present from first paint, which announced it for no reason and made
   `getByRole('status')` ambiguous for the guided tour. It now exposes a written

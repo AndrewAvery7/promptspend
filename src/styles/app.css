@@ -840,12 +840,16 @@ body.tour-active .main {
   background: none;
   box-shadow: inset 0 0 0 1px currentColor;
 }
-/* The price clause is the quieter of the two. Same ink at reduced strength
-   rather than --muted, so it stays legible against every state's fill. */
+/* The price clause is the quieter of the two, and weight is the only lever it
+   gets. `opacity: 0.72` was the obvious way to soften it and it is exactly
+   wrong: every token in tokens.css is validated at 4.5:1 against the surfaces
+   it appears on, and compositing one at 72% throws that guarantee away —
+   --save over --save-soft came out at #4a9c71 on #e3f0e8, a ratio of 2.84,
+   which axe caught at 320 and 390. Never fade semantic text; change its
+   weight. See the chip cases in src/lib/contrast.test.ts. */
 .sync-chip__sep,
 .sync-chip__prices {
-  opacity: 0.72;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* ---------------------------------------------------------- model picker */
