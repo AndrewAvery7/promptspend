@@ -64,8 +64,13 @@
   --save: #3ccb7f;
   --save-soft: rgb(51 166 100 / 14%);
   --cost: #f97066;
-  --info: #4b8fc9;
-  --info-soft: rgb(75 143 201 / 14%);
+  /* Nudged up from #4b8fc9, which cleared every opaque surface but not its own
+   * soft fill: `.note` and the status chip both put --info text on --info-soft,
+   * and 14% of the old blue over --surface landed at 4.32:1. The accent matrix
+   * never covered this pairing because the status colours sit outside the
+   * accent system deliberately. See the chip cases in src/lib/contrast.test.ts. */
+  --info: #4d93ce;
+  --info-soft: rgb(77 147 206 / 14%);
   --warn: #f5b849;
   --warn-soft: rgb(245 184 73 / 13%);
 

@@ -15,7 +15,7 @@ to publish past it.
 
 ## What the suite covers
 
-**762 tests in all**: 362 unit and integration tests in this package, 84 in
+**770 tests in all**: 370 unit and integration tests in this package, 84 in
 `worker/`, 39 in `api/`, 34 in `mcp/`, 131 in `vscode/`, and 112 browser tests
 across four viewports. Those six figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
@@ -48,7 +48,7 @@ anyone adding them up.
 | Suite                                 | Tests | Guards                                                                                                                                                                                                                                               |
 | ------------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `scripts/lib/pipeline.test.ts`        | 57    | The whole pipeline against fixtures: the trust ladder, both sanity thresholds, cold start, stale retention, flag-once semantics, full-field diffing, coverage versus a price move versus a source correction, the content hash, changelog rendering. |
-| `src/lib/contrast.test.ts`            | 41    | Every accent × theme × canvas combination against every surface it can appear on.                                                                                                                                                                    |
+| `src/lib/contrast.test.ts`            | 49    | Every accent × theme × canvas combination against every surface it can appear on, plus the status colours on their own soft fills — the pairing the accent matrix does not reach.                                                                    |
 | `src/lib/engine/cost.test.ts`         | 38    | Compounding history, per-turn long-context tiers, cache reads and writes, promotional windows, reasoning multipliers, margins, break-even, and the scenarios that cannot physically run.                                                             |
 | `src/App.test.tsx`                    | 29    | The views render, the URL round-trips, the tour and palette work — plus a named regression test for every defect the pre-publication audit found.                                                                                                    |
 | `src/lib/pricing/catalog.test.ts`     | 31    | Schema validation including every malformed case the pipeline could produce, alias handling, the two freshness dates, and the four states the results-panel chip can report.                                                                         |

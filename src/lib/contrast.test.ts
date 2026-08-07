@@ -136,3 +136,74 @@ describe('accent fills stay legible', () => {
     }
   });
 });
+
+/**
+ * The status chip on the results panel: semantic ink on its own soft fill.
+ *
+ * This pairing is not part of the accent matrix above — the money and status
+ * colours are deliberately outside the accent system — so nothing was checking
+ * it, and the first version of the chip shipped `opacity: 0.72` on its second
+ * clause. That composited `--save` down to #4a9c71 on #e3f0e8: a ratio of
+ * 2.84, caught by axe at 320 and 390 only after it was pushed. Softening
+ * semantic text with opacity throws away the guarantee every token here is
+ * validated for, so the rule is weight, never alpha — and this is the fast
+ * check that says so before the browser suite has to.
+ */
+describe('status chip contrast', () => {
+  /** `rgb(51 166 100 / 14%)` over an opaque base, as the browser composites it. */
+  function flatten(value: string, over: string): string {
+    const hex = value.trim().match(/^#([0-9a-fA-F]{6})$/);
+    if (hex) return `#${hex[1]!.toLowerCase()}`;
+
+    const rgba = value.trim().match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\/\s*([\d.]+)%\s*\)$/);
+    if (!rgba) throw new Error(`cannot parse colour: ${value}`);
+    const alpha = Number(rgba[4]) / 100;
+    const base = over.replace('#', '');
+    const mixed = [1, 2, 3].map((i) => {
+      const top = Number(rgba[i]);
+      const bottom = parseInt(base.slice((i - 1) * 2, (i - 1) * 2 + 2), 16);
+      return Math.round(top * alpha + bottom * (1 - alpha));
+    });
+    return `#${mixed.map((c) => c.toString(16).padStart(2, '0')).join('')}`;
+  }
+
+  /** Any `--name: <value>;`, translucent values included. */
+  function rawTokens(selector: string): Record<string, string> {
+    const start = TOKENS.indexOf(selector);
+    const open = TOKENS.indexOf('{', start);
+    const close = TOKENS.indexOf('}', open);
+    const out: Record<string, string> = {};
+    for (const match of TOKENS.slice(open, close).matchAll(/--([\w-]+):\s*([^;]+);/g)) {
+      out[match[1]!] = match[2]!.trim();
+    }
+    return out;
+  }
+
+  const themes = [
+    { name: 'light', tokens: rawTokens("[data-theme='light'] {"), resolved: light },
+    { name: 'dark', tokens: rawTokens("[data-theme='dark'] {"), resolved: dark },
+  ];
+
+  for (const theme of themes) {
+    for (const state of ['save', 'info', 'warn'] as const) {
+      it(`${state} chip ink reads on its own fill in ${theme.name}`, () => {
+        const ink = flatten(theme.tokens[state]!, theme.resolved.surface!);
+        const fill = flatten(theme.tokens[`${state}-soft`]!, theme.resolved.surface!);
+        expect(
+          contrastRatio(fill, ink),
+          `--${state} on --${state}-soft (${theme.name})`,
+        ).toBeGreaterThanOrEqual(AA_NORMAL);
+      });
+    }
+
+    it(`the unknown chip reads on every panel surface in ${theme.name}`, () => {
+      // No fill of its own: it sits directly on whatever panel holds it.
+      for (const surface of surfaces(theme.resolved)) {
+        expect(
+          contrastRatio(surface, theme.resolved.muted!),
+          `--muted on ${surface} (${theme.name})`,
+        ).toBeGreaterThanOrEqual(AA_NORMAL);
+      }
+    });
+  }
+});
