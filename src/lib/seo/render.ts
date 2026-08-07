@@ -173,9 +173,9 @@ function layout(ctx: RenderContext, input: LayoutInput): string {
     <meta property="og:url" content="${escapeHtml(canonical)}" />
     <meta property="og:title" content="${escapeHtml(input.title)}" />
     <meta property="og:description" content="${escapeHtml(input.description)}" />
-    <meta property="og:image" content="${escapeHtml(absolute(ctx, '/social-card.png'))}" />
+    <meta property="og:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=f66bdb7e'))}" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png'))}" />
+    <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=f66bdb7e'))}" />
     <link rel="stylesheet" href="${escapeHtml(href(ctx, ctx.cssPath))}" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1.5' y='1.5' width='23' height='23' rx='6' fill='none' stroke='%232456E6' stroke-width='2'/%3E%3Cpath d='M7 9.5h12M7 13.5h8M7 17.5h10' stroke='%232456E6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
     <script type="application/ld+json">${ld}</script>
