@@ -70,7 +70,26 @@ date, and the second one is the failure worth catching.
 — the same comparison the changelog uses, exported from `scripts/lib/diff.ts` so the two cannot form a
 second opinion — says that model's rates moved. A row published without it keeps none: there is
 deliberately no `?? today` fallback in `mergeCatalog`, and none in `Catalog.pricesLastChanged()`, which
-returns `null` rather than reaching for `generatedAt`.
+returns `null` rather than reaching for `generatedAt`. A model that has just appeared gets no date
+either — nothing moved, something arrived, and `diff.added` is where that belongs.
+
+**"Moved" is narrower than "differs".** `pricingChanged` distinguishes three events that all produce a
+diff, because only one of them is a vendor repricing:
+
+- **move** — both readings exist and differ. Stamped.
+- **coverage** — one side is absent. We gained or lost a field we were not recording. Not a stamp, not a
+  feed item, not `price_changed=true`; the changelog labels these **Coverage** rather than **Price**.
+- **correction** — the number moved in the same run `provenance.source` or `verifiedUrl` did. We changed
+  where we were reading, so the difference says nothing about the vendor. `mergeCatalog` reports these in
+  `MergeResult.corrections` and leaves the date alone.
+
+This cost the project once already, in the form the previous fix did not anticipate. Switching x.ai from
+its model list to its pricing page backfilled a long-context tier and restated a cached-input rate from
+0.5 to 0.3; both models were stamped, and `PRICES CHANGED 2026-08-06` appeared on the results panel with
+no vendor having touched a rate. The earlier fix had already written down the diagnosis — "all 43 are a
+field going from absent to a value, a rate gaining coverage, not a vendor changing one" — but encoded it
+only in the repaired data, never in the comparison. Suppressing corrections can hide a genuine same-day
+move; that trade is deliberate, and the next run catches it.
 
 Both of those fallbacks existed, and together they put a fabricated `2026-08-02` on all 70 models — with
 twelve claiming a change one day _after_ their own `lastVerified`, which says the number moved after the

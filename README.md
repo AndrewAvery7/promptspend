@@ -14,8 +14,8 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-69-2456E6.svg" alt="69 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-746-blue.svg" alt="746 tests">
-  <img src="https://img.shields.io/badge/initial%20payload-83%20KB%20gzip-blue.svg" alt="83 KB gzip initial payload">
+  <img src="https://img.shields.io/badge/tests-762-blue.svg" alt="762 tests">
+  <img src="https://img.shields.io/badge/initial%20payload-84%20KB%20gzip-blue.svg" alt="84 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
 </p>
@@ -163,6 +163,30 @@ Right now the first of those reads **not yet recorded**, and that is correct rat
 vendor has moved a price since this catalog's history began on 2026-08-01, so there is no date to show —
 and the alternative, quietly displaying the last build date, would announce a price change every morning
 nothing happened. An empty field you can trust beats a populated one you cannot.
+
+The second is now a state and not just a date: the chip on the results panel is green while the sources
+were checked within a day, blue at two days, amber past the window the freshness monitor tolerates or
+after a degraded run, and outlined-grey when the manifest could not be loaded at all. That last state
+exists on purpose. A status light that reads "fine" when its own evidence is missing is precisely the
+failure the monitor was built to catch.
+
+### Three things a number can do
+
+Keeping "prices last changed" honest means the pipeline has to tell apart three events that all look
+like a diff:
+
+|                  | What happened                                                                             | `lastChanged` |
+| ---------------- | ----------------------------------------------------------------------------------------- | ------------- |
+| **Price change** | Same source, different number. The vendor repriced.                                       | stamped       |
+| **Coverage**     | A field went from absent to present. We started recording a rate that was always offered. | untouched     |
+| **Correction**   | The number moved in the same run its source URL did. We had been reading the wrong page.  | untouched     |
+
+Only the first is news. Conflating them is not hypothetical: reading x.ai's real pricing page instead of
+its model list once gained a long-context tier and restated a cached-input rate, and the catalog stamped
+both as price changes — putting `PRICES CHANGED 2026-08-06` on the busiest panel of the site with no
+vendor having touched a rate. Suppressing corrections can hide a genuine same-day move, and that trade is
+deliberate: on a catalog whose whole claim is provenance, announcing a change nobody made costs more than
+missing one by a day.
 
 ## Use the data yourself
 
@@ -352,7 +376,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                            |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way               |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 746 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 762 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 159 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline     |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live  |

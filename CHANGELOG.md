@@ -11,7 +11,71 @@ Work that landed after `v0.6.0` was tagged. The tag points at `fd54a49` and
 these commits came after it, so they are recorded here rather than folded into
 a release that does not contain them.
 
+### Fixed
+
+- **The results panel announced a price change no vendor had made.** The chip
+  read `PRICES CHANGED 2026-08-06`, driven by two xAI rows whose
+  `provenance.lastChanged` had been stamped that morning. Neither vendor had
+  repriced anything. Commit `fab7d9b` moved x.ai's source from
+  `docs.x.ai/docs/models` to its real pricing page, which backfilled a
+  long-context tier both models had always offered and restated `grok-4.5`'s
+  cached-input rate from 0.5 to 0.3 — the 0.5 had been read off the wrong page.
+  For `grok-4.3` not one number moved at all; a tier was added. `pricingChanged`
+  called all of it a change, because it asked only whether the fields differed.
+- **The diagnosis was already written down, and only the data had been
+  repaired.** The previous round of this bug ended with the note that "all 43
+  are a field going from absent to a value — a rate gaining coverage, not a
+  vendor changing one", and then removed the bad dates without teaching the
+  comparison the distinction. So the fix held exactly until the next source
+  upgrade. `pricingChanged` now separates three events: a **move** (same source,
+  different number) stamps; **coverage** (a field absent on one side) does not;
+  a **correction** (a number that moves in the same run as `provenance.source`
+  or `verifiedUrl`) does not, and is reported in `MergeResult.corrections` so a
+  suppressed stamp is visible in the run log rather than silent. Suppressing
+  corrections can hide a genuine same-day move; on a catalog whose whole claim
+  is provenance, announcing a change nobody made costs more.
+- **Coverage no longer reaches the changelog, the feed or the workflow as a
+  price change.** Those lines render as **Coverage** rather than **Price**,
+  `diffToFeedItems` skips them, and `hasPriceChange` excludes them, so a field
+  we merely started tracking cannot set `price_changed=true` or open a
+  price-change pull request. Subscriber alerts were never affected —
+  `buildOutboundChanges` has always filtered to headline `input`/`output` — but
+  it now reads from `priceMoves` rather than relying on that filter to catch it.
+- **A newly discovered model no longer claims its price changed the day it
+  arrived.** `mergeCatalog` stamped `lastChanged` with today whenever there was
+  no previous row, which would have put `PRICES CHANGED <today>` on the panel
+  the first time any vendor shipped a model. The published catalog had been
+  hand-repaired to drop those dates but the generator was still writing them.
+  A model with no prior rate now carries no date; `diff.added` records the
+  arrival, which is the honest way to say it.
+- **The two bad stamps are removed from the published catalog** and
+  `pricesLastChanged` is back to `null`. The fingerprint is unchanged at
+  `9f2808f9b7502781`, which is the proof no rate, source or verification date
+  was touched in the repair — `catalogHash` deliberately excludes
+  `lastChanged`. `docs/pricing-changelog.md` keeps the original entries and
+  appends a correction rather than rewriting them.
+
 ### Changed
+
+- **The freshness chip says whether anybody is still checking.** It was
+  hard-coded to `--save` green and bound only to `pricesLastChanged`, so it
+  could not express staleness at all: a dead pipeline and a quiet market looked
+  identical, and both looked healthy. It now carries two clauses — how recently
+  the sources were checked, and whether prices moved — with colour driven by
+  `Catalog.freshness()`: green within a day, `--info` at two days, `--warn`
+  past the window `freshness.yml` tolerates or after a degraded run. The
+  strongest evidence the project holds was previously only visible to a reader
+  who navigated to the Data view.
+- **`unknown` is a state, not a fallback to healthy.** When the health manifest
+  fails to load the chip goes outlined-grey and says so. A status light that
+  reads "fine" when its own evidence is missing is the exact failure the
+  freshness monitor exists to catch.
+- **The chip is no longer a live region.** It carried `role="status"` while
+  being present from first paint, which announced it for no reason and made
+  `getByRole('status')` ambiguous for the guided tour. It now exposes a written
+  sentence to screen readers through `.visually-hidden` and hides the shouted
+  fragments, so "CHECKED TODAY · NO PRICE CHANGE RECORDED" is heard as
+  "Sources checked today. No price change recorded."
 
 - **"How to install each" lands on the panel rather than the top of the page.**
   It switched view and left the reader to find the thing they had just asked

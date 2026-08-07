@@ -61,7 +61,7 @@ export function buildOutboundChanges(
     });
   }
 
-  for (const modelId of new Set(diff.changed.map((change) => change.id))) {
+  for (const modelId of new Set(diff.priceMoves.map((change) => change.id))) {
     const before = priorById.get(modelId);
     const after = nextById.get(modelId);
     if (!before || !after || after.aliasOf) continue;

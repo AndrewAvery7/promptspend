@@ -207,7 +207,7 @@ async function main(): Promise<void> {
   console.log(`  matched ${litellm.length} models across ${allowlist.families.length} families`);
   console.log(`  OpenRouter cross-check pool: ${openrouter.size}`);
 
-  const { catalog, review, stale } = mergeCatalog({
+  const { catalog, review, stale, corrections } = mergeCatalog({
     litellm,
     openrouter,
     allowlist,
@@ -253,6 +253,13 @@ async function main(): Promise<void> {
   for (const item of diff.metadata) console.log(`   · ${item.id} ${item.field}`);
   for (const item of diff.reviewState) console.log(`   ⚑ ${item.id} ${item.field}`);
   for (const item of diff.removed) console.log(`   - ${item.id}`);
+
+  if (corrections.length > 0) {
+    console.log(`\n↻ ${corrections.length} rate(s) restated by a source change — lastChanged left alone:`);
+    for (const item of corrections) {
+      console.log(`   ${item.id}: ${item.from ?? '—'} → ${item.to ?? '—'}`);
+    }
+  }
 
   if (review.length > 0) {
     console.log(`\n⚠ ${review.length} flag(s), ${newReview.length} new since the published catalog:`);

@@ -2,6 +2,44 @@ import type { Model, PricingCatalog, Provider } from './types';
 import { assertCatalog } from './types';
 import { isSyncStatus, type SyncStatus } from './health';
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Whole calendar days between an ISO date and a moment, counted the way a
+ * reader counts them.
+ *
+ * Subtracting timestamps is the obvious version and it is wrong: `2026-08-06`
+ * parses as midnight *UTC*, so at 7pm on the 6th in Chicago the arithmetic
+ * returns 24.5 hours and the chip says "CHECKED 6 AUG" on the very day it was
+ * checked. Both sides are reduced to a local midnight instead, and rounded
+ * rather than floored so the 23- and 25-hour days either side of a daylight
+ * saving change do not shift the answer.
+ *
+ * Negative ages clamp to zero: a reader whose clock is behind the manifest
+ * should see "today", not a check from the future.
+ */
+function calendarDaysBetween(isoDate: string, now: Date): number {
+  const [year, month, day] = isoDate.split('-').map(Number);
+  if (!year || !month || !day) return 0;
+  const checked = new Date(year, month - 1, day).getTime();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  return Math.max(0, Math.round((today - checked) / DAY_MS));
+}
+
+/**
+ * `fresh`   — checked within a day. `aging` — two days, which the monitor
+ * tolerates. `stale` — past the monitor's threshold, or the last run was
+ * degraded. `unknown` — the health manifest did not load.
+ */
+export type FreshnessLevel = 'fresh' | 'aging' | 'stale' | 'unknown';
+
+export interface Freshness {
+  level: FreshnessLevel;
+  /** ISO date of the last clean run, or null when that is not known. */
+  checkedOn: string | null;
+  ageDays: number | null;
+}
+
 /** Index a catalog for the lookups the UI does on every render. */
 export class Catalog {
   readonly generatedAt: Date;
@@ -81,6 +119,29 @@ export class Catalog {
   /** The date the sources were last successfully checked, if we know it. */
   sourcesLastChecked(): string | null {
     return this.health?.succeededAt?.slice(0, 10) ?? null;
+  }
+
+  /**
+   * Whether the pipeline is currently keeping its promise, as a state the UI
+   * can colour rather than a date the reader has to interpret.
+   *
+   * The thresholds match `.github/workflows/freshness.yml`, which raises an
+   * issue when the published catalog is more than two days old. A quiet
+   * weekend must not look like a fault, and a fault must not look quiet.
+   *
+   * `unknown` is deliberately its own state rather than falling back to
+   * `fresh`. A status light that reads "fine" when its own evidence failed to
+   * load is the exact failure the freshness monitor exists to catch.
+   */
+  freshness(now: Date = new Date()): Freshness {
+    const checkedOn = this.sourcesLastChecked();
+    if (!this.health || !checkedOn) return { level: 'unknown', checkedOn: null, ageDays: null };
+
+    const ageDays = calendarDaysBetween(checkedOn, now);
+    if (this.health.outcome === 'degraded' || ageDays > 2) {
+      return { level: 'stale', checkedOn, ageDays };
+    }
+    return { level: ageDays >= 2 ? 'aging' : 'fresh', checkedOn, ageDays };
   }
 
   /** Models grouped by provider, in display order. Aliases are left out: one

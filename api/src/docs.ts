@@ -144,6 +144,13 @@ ${rows}
           never as "unknown freshness": <code>lastVerified</code> answers that question, and it is always
           present.
         </p>
+        <p>
+          "Moved" is narrower than "differs", and the difference is the point. A rate going from absent to
+          a value means this catalog started tracking a tier the vendor was already offering — coverage,
+          not a price change. A rate that changes in the same run its source URL changes is a correction:
+          we had been reading the wrong page. Neither stamps <code>lastChanged</code>. Only a different
+          number from the same source does.
+        </p>
 
         <h2>Example</h2>
         <pre><code>$ curl -s ${origin}/v1/models/claude-opus-5 | jq '{id, pricing, provenance}'

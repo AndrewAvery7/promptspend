@@ -349,3 +349,26 @@ _Manual correction, not a sync run._
 - **Review** `xai-grok-4.3` — provenance.lastChanged: — → 2026-08-06
 - **Review** `xai-grok-4.5` — provenance.verifiedUrl: https://docs.x.ai/docs/models → https://docs.x.ai/developers/pricing
 - **Review** `xai-grok-4.5` — provenance.lastChanged: — → 2026-08-06
+
+## 2026-08-06 — correction
+
+The four **Price** lines for `xai-grok-4.3` and the five for `xai-grok-4.5` above
+are mislabelled. They are left in place because this file is a record, not a
+draft, and the entries did happen — but they were not price changes:
+
+- Every `— → value` line is **coverage**. Reading x.ai's real pricing page
+  instead of its model list gained us a long-context tier that x.ai had been
+  offering all along. Our records changed; nobody's bill did.
+- `cachedInput down 0.5 → 0.3` on `xai-grok-4.5` is a **correction**. The
+  0.5 was read off the wrong page. x.ai did not cut the rate that morning.
+
+Both models were consequently stamped `provenance.lastChanged: 2026-08-06`,
+which put `PRICES CHANGED 2026-08-06` on the results panel with no vendor
+having moved a price. Those two stamps are now removed from the published
+catalog and `pricesLastChanged` is back to `null`. The catalog fingerprint is
+unchanged at `9f2808f9b7502781`, which is the proof that no rate, source or
+verification date was touched in the repair.
+
+`pricingChanged` now distinguishes the three cases, so this cannot recur:
+absent → value is coverage, value → different value is a price change, and a
+value that moves in the same run as its source URL is a correction.

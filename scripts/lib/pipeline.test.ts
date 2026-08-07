@@ -319,6 +319,9 @@ describe('mergeCatalog — the trust ladder', () => {
   });
 
   it('records when a price last changed, separately from when it was checked', () => {
+    // Cold start: nothing has moved yet, because there is nothing to move
+    // against. A model that has just appeared gets no date at all — `added`
+    // records the arrival, and "changed" would be a different claim.
     const first = mergeCatalog({
       litellm,
       openrouter: new Map(),
@@ -326,17 +329,38 @@ describe('mergeCatalog — the trust ladder', () => {
       overrides: [],
       generatedAt: new Date('2026-07-01T06:00:00.000Z'),
     });
-    const laterSameNumbers = mergeCatalog({
-      litellm,
+    expect(
+      first.catalog.models.find((m) => m.id === 'claude-sonnet-5')!.provenance.lastChanged,
+    ).toBeUndefined();
+
+    // A genuine move: same source, a rate that is now a different number.
+    const repriced = litellm.map((rate) =>
+      rate.id === 'claude-sonnet-5' ? { ...rate, outputPerMillion: rate.outputPerMillion + 3 } : rate,
+    );
+    const moved = mergeCatalog({
+      litellm: repriced,
       openrouter: new Map(),
       allowlist: ALLOWLIST,
       overrides: [],
       previous: first.catalog,
+      generatedAt: new Date('2026-07-20T06:00:00.000Z'),
+    });
+    expect(moved.catalog.models.find((m) => m.id === 'claude-sonnet-5')!.provenance.lastChanged).toBe(
+      '2026-07-20',
+    );
+
+    // A quiet run: the check date advances, the change date does not.
+    const laterSameNumbers = mergeCatalog({
+      litellm: repriced,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: moved.catalog,
       generatedAt: new Date('2026-08-15T06:00:00.000Z'),
     });
     const sonnet = laterSameNumbers.catalog.models.find((m) => m.id === 'claude-sonnet-5')!;
     expect(sonnet.provenance.lastVerified).toBe('2026-08-15');
-    expect(sonnet.provenance.lastChanged).toBe('2026-07-01');
+    expect(sonnet.provenance.lastChanged).toBe('2026-07-20');
   });
 
   // The bug this guards: `lastChanged` was stamped with today for every model
@@ -413,9 +437,65 @@ describe('mergeCatalog — the trust ladder', () => {
     const kimi = second.catalog.models.find((m) => m.id === 'moonshot-kimi-k2.6')!;
     expect(diffCatalogs(first.catalog, second.catalog).changed.map((c) => c.field)).toEqual(['cachedInput']);
     expect(kimi.provenance.lastChanged).toBe('2026-08-15');
-    expect(second.catalog.models.find((m) => m.id === 'claude-sonnet-5')!.provenance.lastChanged).toBe(
-      '2026-07-01',
+    // Untouched by the same run, and still carrying no date: nothing has ever
+    // moved for it, which is a real answer rather than a missing one.
+    expect(
+      second.catalog.models.find((m) => m.id === 'claude-sonnet-5')!.provenance.lastChanged,
+    ).toBeUndefined();
+  });
+
+  // The 2026-08-06 defect, in miniature. Switching x.ai from its model list to
+  // its real pricing page restated a cached-input rate from 0.5 to 0.3. The
+  // number on the page had not moved; we had been reading the wrong page. The
+  // old rule stamped `lastChanged`, and the results panel announced a price
+  // change no vendor had made.
+  it('treats a rate restated by a new source as a correction, not a change', () => {
+    const at = (url: string, cachedInput: number) => [
+      {
+        id: 'claude-sonnet-5',
+        vendorVerified: true,
+        verifiedUrl: url,
+        pricing: { input: 3, output: 15, cachedInput },
+      },
+    ];
+
+    const first = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: at('https://example.test/models', 0.5),
+      generatedAt: new Date('2026-07-01T06:00:00.000Z'),
+    });
+
+    const corrected = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: at('https://example.test/pricing', 0.3),
+      previous: first.catalog,
+      generatedAt: new Date('2026-08-15T06:00:00.000Z'),
+    });
+
+    const sonnet = corrected.catalog.models.find((m) => m.id === 'claude-sonnet-5')!;
+    expect(sonnet.pricing.cachedInput).toBe(0.3);
+    expect(sonnet.provenance.lastChanged).toBeUndefined();
+    expect(corrected.corrections).toEqual([
+      { id: 'claude-sonnet-5', from: 'https://example.test/models', to: 'https://example.test/pricing' },
+    ]);
+
+    // Same source next time: now a move is a move.
+    const moved = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: at('https://example.test/pricing', 0.25),
+      previous: corrected.catalog,
+      generatedAt: new Date('2026-08-16T06:00:00.000Z'),
+    });
+    expect(moved.catalog.models.find((m) => m.id === 'claude-sonnet-5')!.provenance.lastChanged).toBe(
+      '2026-08-16',
     );
+    expect(moved.corrections).toEqual([]);
   });
 
   it('does not invent a lastChanged for a row published without one', () => {
@@ -669,7 +749,9 @@ describe('diffCatalogs', () => {
     };
     const diff = diffCatalogs(base, next);
     expect(diff.added.map((m) => m.id)).toEqual(['b']);
-    expect(diff.changed).toEqual([{ id: 'a', displayName: 'Model A', field: 'output', from: 2, to: 3 }]);
+    expect(diff.changed).toEqual([
+      { id: 'a', displayName: 'Model A', field: 'output', from: 2, to: 3, kind: 'move' },
+    ]);
     expect(diff.removed).toEqual([]);
     expect(summarizeDiff(diff)).toBe('1 added, 1 price change');
   });
@@ -731,14 +813,39 @@ describe('diffCatalogs', () => {
     expect(diffToFeedItems('2026-08-01', diffCatalogs(base, cheaper))[0]!.title).toMatch(/cut/);
   });
 
-  it('renders a value that appeared from nothing without printing "undefined"', () => {
+  it('calls a value that appeared from nothing coverage, not a price change', () => {
     const withCache: PricingCatalog = {
       ...base,
       models: [{ ...base.models[0]!, pricing: { input: 1, output: 2, cachedInput: 0.1 } }],
     };
-    const entry = renderChangelogEntry('2026-08-01', diffCatalogs(base, withCache));
-    expect(entry).toMatch(/cachedInput to — → 0\.1/);
+    const diff = diffCatalogs(base, withCache);
+    const entry = renderChangelogEntry('2026-08-01', diff);
+
+    expect(entry).toMatch(/\*\*Coverage\*\* `a` — cachedInput now tracked: — → 0\.1/);
+    expect(entry).not.toMatch(/\*\*Price\*\*/);
     expect(entry).not.toMatch(/undefined/);
+
+    // The distinction has to reach everything downstream of it: no feed item,
+    // no `price_changed=true`, and no `lastChanged` stamp. This is the shape
+    // of the defect that put "PRICES CHANGED 2026-08-06" on the results panel
+    // when x.ai had not touched a rate.
+    expect(diff.changed).toHaveLength(1);
+    expect(diff.priceMoves).toHaveLength(0);
+    expect(diff.hasPriceChange).toBe(false);
+    expect(diffToFeedItems('2026-08-01', diff)).toHaveLength(0);
+    expect(summarizeDiff(diff)).toBe('1 coverage');
+  });
+
+  it('calls a value that disappeared coverage too', () => {
+    const withCache: PricingCatalog = {
+      ...base,
+      models: [{ ...base.models[0]!, pricing: { input: 1, output: 2, cachedInput: 0.1 } }],
+    };
+    const diff = diffCatalogs(withCache, base);
+    expect(renderChangelogEntry('2026-08-01', diff)).toMatch(
+      /\*\*Coverage\*\* `a` — cachedInput no longer published: 0\.1 → —/,
+    );
+    expect(diff.hasPriceChange).toBe(false);
   });
 
   it('lists a removal and a review change in the changelog', () => {

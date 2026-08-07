@@ -794,7 +794,14 @@ body.tour-active .main {
 .panel__title .sync-chip {
   margin-left: auto;
 }
+/* The chip carries two clauses and one state. Colour is the state — how recently
+   the sources were checked — and it is deliberately NOT decorative: green here
+   means a live pipeline, so it has to be able to stop being green. The default
+   below is the healthy case; the modifiers are the other three. */
 .sync-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-family: var(--font-mono);
   font-size: 0.62rem;
   font-weight: 700;
@@ -804,6 +811,41 @@ body.tour-active .main {
   border-radius: 99px;
   padding: 3px 10px;
   letter-spacing: 0.06em;
+}
+.sync-chip--info {
+  color: var(--info);
+  background: var(--info-soft);
+  border-color: var(--info);
+}
+.sync-chip--warn {
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-color: var(--warn);
+}
+/* No fill and no semantic hue: the manifest did not load, so the chip must not
+   imply a verdict it does not have. */
+.sync-chip--mute {
+  color: var(--muted);
+  background: transparent;
+  border-color: var(--border);
+}
+.sync-chip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+.sync-chip--mute .sync-chip__dot {
+  background: none;
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+/* The price clause is the quieter of the two. Same ink at reduced strength
+   rather than --muted, so it stays legible against every state's fill. */
+.sync-chip__sep,
+.sync-chip__prices {
+  opacity: 0.72;
+  font-weight: 600;
 }
 
 /* ---------------------------------------------------------- model picker */

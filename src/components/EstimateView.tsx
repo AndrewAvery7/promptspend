@@ -8,6 +8,7 @@ import { MAX_PASTE_CHARS, type FieldKey, type useEstimator } from '@/state/useEs
 import { AssumptionList, CostCards, InsightList, WarningList } from './CostCards';
 import { HelpTip, ReviewBadge } from './Disclosure';
 import { CountryTag } from './Flag';
+import { SyncChip } from './SyncChip';
 
 type Estimator = ReturnType<typeof useEstimator>;
 
@@ -543,15 +544,11 @@ export function EstimateView({
             <div className="panel__head">
               <h2 className="panel__title" id="results-title">
                 Your models, side by side
-                {/* The chip states a change or states that there has not been
-                    one. What it must never do is name a date to fill the space:
-                    "PRICES CHANGED <today>" on every build is the loudest way
-                    to be wrong on the busiest panel of the site. */}
-                <span className="sync-chip">
-                  {catalog.pricesLastChanged()
-                    ? `PRICES CHANGED ${catalog.pricesLastChanged()}`
-                    : 'NO PRICE CHANGE RECORDED'}
-                </span>
+                {/* Two facts, one pill: is anybody still checking, and have the
+                    prices moved. What it must never do is name a date to fill
+                    the space — "PRICES CHANGED <today>" on every build is the
+                    loudest way to be wrong on the busiest panel of the site. */}
+                <SyncChip catalog={catalog} />
               </h2>
             </div>
             <CostCards

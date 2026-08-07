@@ -1914,7 +1914,6 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-08-06",
-        "lastChanged": "2026-08-06",
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 1000000,
@@ -1950,7 +1949,6 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-08-06",
-        "lastChanged": "2026-08-06",
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 500000,

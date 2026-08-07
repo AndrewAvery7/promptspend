@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Catalog } from './catalog';
+import type { SyncStatus } from './health';
 import { SCHEMA_VERSION, validateCatalog, type PricingCatalog } from './types';
 
 const CATALOG: PricingCatalog = {
@@ -295,5 +296,77 @@ describe('Catalog', () => {
       pricesLastChanged: '2026-07-04',
     });
     expect(withHealth.sourcesLastChecked()).toBe('2026-09-30');
+  });
+});
+
+describe('Catalog.freshness', () => {
+  const health = (over: Partial<SyncStatus> = {}): SyncStatus => ({
+    schemaVersion: 1,
+    attemptedAt: '2026-09-30T06:00:00.000Z',
+    succeededAt: '2026-09-30T06:00:00.000Z',
+    outcome: 'ok',
+    problems: [],
+    sources: [],
+    modelCount: 2,
+    flaggedCount: 0,
+    staleCount: 0,
+    catalogHash: 'abc',
+    pricesLastChanged: null,
+    ...over,
+  });
+
+  /**
+   * The reader's clock, not UTC. Built with the local-time constructor on
+   * purpose: `new Date('2026-10-02T09:00:00Z')` is the 1st for anyone at
+   * UTC-10, which would make these assertions pass or fail depending on where
+   * the suite runs — and the day-boundary arithmetic is the whole subject.
+   */
+  const on = (day: string, over: Partial<SyncStatus> = {}) => {
+    const [year, month, date] = day.split('-').map(Number);
+    return new Catalog(CATALOG, health(over)).freshness(new Date(year!, month! - 1, date!, 9, 0));
+  };
+
+  it('is fresh the day of a clean run and the day after', () => {
+    expect(on('2026-09-30')).toEqual({ level: 'fresh', checkedOn: '2026-09-30', ageDays: 0 });
+    expect(on('2026-10-01').level).toBe('fresh');
+  });
+
+  /**
+   * The defect this caught: subtracting `Date.parse('2026-08-06')` (midnight
+   * UTC) from a local evening put the age at 24.5 hours, so the chip read
+   * "CHECKED 6 AUG" at 7pm on the 6th of August.
+   */
+  it('still says today late in the evening west of UTC', () => {
+    const lateLocal = new Date(2026, 8, 30, 23, 30);
+    expect(new Catalog(CATALOG, health()).freshness(lateLocal).ageDays).toBe(0);
+  });
+
+  // Two days is the window `.github/workflows/freshness.yml` tolerates before
+  // it files an issue. A quiet weekend must not look like a fault.
+  it('ages at two days and goes stale past the monitor’s threshold', () => {
+    expect(on('2026-10-02').level).toBe('aging');
+    expect(on('2026-10-03').level).toBe('stale');
+  });
+
+  it('is stale whenever the last run was degraded, however recent', () => {
+    expect(on('2026-09-30', { outcome: 'degraded' }).level).toBe('stale');
+  });
+
+  /**
+   * The one that matters most: a status light that reads "fine" when its own
+   * evidence failed to load is the failure the freshness monitor exists to
+   * catch. Unknown is its own state, never a quiet fall back to healthy.
+   */
+  it('reports unknown rather than fresh when the manifest is missing', () => {
+    expect(new Catalog(CATALOG).freshness(new Date(2026, 8, 30, 9, 0))).toEqual({
+      level: 'unknown',
+      checkedOn: null,
+      ageDays: null,
+    });
+    expect(on('2026-09-30', { succeededAt: null }).level).toBe('unknown');
+  });
+
+  it('never reports a negative age when a clock is behind the manifest', () => {
+    expect(on('2026-09-28').ageDays).toBe(0);
   });
 });

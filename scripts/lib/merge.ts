@@ -48,12 +48,21 @@ export interface ReviewItem {
   isNew: boolean;
 }
 
+/** A rate that moved because we changed where we read it, not because it moved. */
+export interface CorrectionItem {
+  id: string;
+  from: string | undefined;
+  to: string | undefined;
+}
+
 export interface MergeResult {
   catalog: PricingCatalog;
   /** Models whose numbers a human should look at before publishing. */
   review: ReviewItem[];
   /** Ids that were published yesterday and are missing from today's feed. */
   stale: string[];
+  /** Rates restated by a source change, so `lastChanged` was left alone. */
+  corrections: CorrectionItem[];
 }
 
 export function mergeCatalog(input: MergeInput): MergeResult {
@@ -62,6 +71,7 @@ export function mergeCatalog(input: MergeInput): MergeResult {
   const previousById = new Map((previous?.models ?? []).map((m) => [m.id, m]));
   const feedById = new Map(litellm.map((r) => [r.id, r]));
   const review: ReviewItem[] = [];
+  const corrections: CorrectionItem[] = [];
   const staleIds: string[] = [];
   const models: Model[] = [];
   const isoDate = generatedAt.toISOString().slice(0, 10);
@@ -175,11 +185,34 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     // say) keeps none. Stamping today on it would assert a change that did not
     // happen, and a date that claims everything moved this morning is worth
     // less than an empty field.
+    //
+    // Second guard: a number that moves in the same run the *source* moved is a
+    // correction, not a vendor repricing. Switching Grok from `docs.x.ai/docs/
+    // models` to the real pricing page dropped a cached-input rate from 0.5 to
+    // 0.3 — xAI had not touched it; we had simply been reading the wrong page.
+    // Suppressing here can hide a genuine same-day move, and that trade is
+    // deliberate: on a catalog whose whole claim is provenance, announcing a
+    // change nobody made costs more than missing one by a day. The next run
+    // reads the same source and catches it.
+    const sourceMoved =
+      before !== undefined &&
+      (before.provenance.source !== source ||
+        before.provenance.verifiedUrl !== (override?.verifiedUrl ?? undefined));
+
+    // A model that has just appeared has no prior rate, so nothing moved: it
+    // gets no date at all. The old `!before ? isoDate` branch would have put
+    // "PRICES CHANGED <today>" on the panel the first time any vendor shipped
+    // a model — the same false positive by a different route. `diff.added`
+    // already records the arrival, which is the honest way to say it.
     const lastChanged = !before
-      ? isoDate
-      : pricingChanged(before.pricing, pricing)
+      ? undefined
+      : pricingChanged(before.pricing, pricing) && !sourceMoved
         ? isoDate
         : before.provenance.lastChanged;
+
+    if (before && sourceMoved && pricingChanged(before.pricing, pricing)) {
+      corrections.push({ id, from: before.provenance.verifiedUrl, to: override?.verifiedUrl });
+    }
 
     const model: Model = {
       id,
@@ -224,7 +257,7 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     models: models.sort((a, b) => a.id.localeCompare(b.id)),
   };
 
-  return { catalog, review, stale: staleIds };
+  return { catalog, review, stale: staleIds, corrections };
 }
 
 /** Keep an existing note but do not repeat a reason already recorded in it. */
