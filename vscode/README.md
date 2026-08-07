@@ -13,6 +13,11 @@ response = client.messages.create(
 )
 ```
 
+![Three Python calls, each annotated at the end of its line. claude-sonnet-5 with max_tokens=4096 reads $3 / $15 per M · max out $0.061; gpt-5-mini reads $0.25 / $2 per M and no ceiling, because that call sets no cap of its own; a legacy claude-opus-4-5 carries a diagnostic underline.](https://raw.githubusercontent.com/AndrewAvery7/promptspend/main/assets/promo-frames/04-editor.png)
+
+The middle call is the one worth looking at: no `max_tokens`, so no ceiling is
+quoted. A cap belonging to the call above it is not a cap on this one.
+
 ---
 
 ## Install
