@@ -36,24 +36,41 @@ These last for the session only. Reopening the terminal means setting them again
 | VS Code Marketplace | `VSCE_PAT` | See below — the obvious URL 404s            |
 | Open VSX            | `OVSX_PAT` | <https://open-vsx.org/user-settings/tokens> |
 
-### Minting the Marketplace token
+### There is no `VSCE_PAT` on this account, and that is fine
 
-Start at **<https://aex.dev.azure.com/me>**.
+**Personal Access Tokens live under an Azure DevOps organization.** This account
+has none — <https://aex.dev.azure.com/me> shows a "Create new organization"
+prompt rather than a settings menu, and `dev.azure.com/_usersSettings/tokens`
+404s because that path needs an organization segment it cannot supply.
 
-Not `dev.azure.com/_usersSettings/tokens`, which **404s** — that path needs an
-organization segment. And not `azure.microsoft.com/devops`, which serves the
-marketing page to a signed-out browser instead of signing you in. `aex.../me` is
-the account page and forces the sign-in flow.
+Creating an organization purely to mint a token would work, but it is a whole
+Azure DevOps tenant standing up to serve one string. Two better routes, in the
+order worth trying:
 
-1. Sign in as the Microsoft account that owns the `promptspend` publisher.
-2. **User settings** (the person icon, top right) → **Personal Access Tokens** →
-   **New Token**.
-3. **Organization: `All accessible organizations`.** This is the one that gets
-   picked wrong, and a single-organization token fails later with an error that
-   does not mention the organization.
-4. **Scopes** → **Show all scopes** at the bottom of the panel → **Marketplace** →
-   tick **Manage**.
-5. **Create**, then copy it immediately. Azure shows the value once.
+**1. Entra ID, no token at all.**
+
+```
+npm run publish:vsce:entra
+```
+
+Same publish, `--azure-credential` instead of a PAT. It signs the Marketplace
+identity in through the browser. Nothing to store, nothing to expire, nothing to
+rotate — and no `VSCE_PAT` in the environment.
+
+**2. Upload the artifact by hand.**
+
+<https://marketplace.visualstudio.com/manage/publishers/promptspend> → the
+extension row → **⋯** → **Update** → drop in `vscode/dist/promptspend.vsix`.
+
+The slowest of the three but the one with no auth plumbing at all: the browser
+session is already the publisher. Useful as a fallback when a release has to go
+out and the CLI is arguing.
+
+**If a PAT is ever wanted anyway**, create an organization at
+<https://aex.dev.azure.com/me>, then **User settings** (person icon, top right) →
+**Personal Access Tokens** → **New Token** → **Organization: `All accessible
+organizations`** → **Scopes** → **Show all scopes** → **Marketplace** →
+**Manage**. Copy it at once; Azure shows it only the once.
 
 ## The release
 
