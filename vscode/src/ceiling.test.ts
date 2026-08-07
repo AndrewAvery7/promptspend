@@ -6,6 +6,7 @@ import type { PricingCatalog } from '@/lib/pricing/types';
 import { ModelIndex } from './scan';
 import { commentSyntaxFor } from './comments';
 import { ceilingFor } from './ceiling';
+import { effectivePricing } from '@/lib/engine/cost';
 
 let index: ModelIndex;
 let catalog: Catalog;
@@ -34,8 +35,29 @@ client.messages.create(
     max_tokens=4096,
 )`);
     expect(ceiling?.maxTokens).toBe(4096);
-    // The arithmetic, checked independently: 4096 tokens at $15/M output.
-    expect(ceiling?.outputCostUsd).toBeCloseTo((4096 / 1_000_000) * match.model.pricing.output, 10);
+    // The arithmetic, checked independently: 4096 tokens at the output rate in
+    // force. `effectivePricing` rather than `pricing.output` because this model
+    // sits inside a promotional window, and the ceiling has to price the call
+    // the way the user is actually billed for it.
+    const rate = effectivePricing(match.model.pricing, new Date()).output;
+    expect(ceiling?.outputCostUsd).toBeCloseTo((4096 / 1_000_000) * rate, 10);
+  });
+
+  it('prices the ceiling at the promotional rate while one is running', () => {
+    // claude-sonnet-5 carries intro pricing until 2026-08-31. Before this was
+    // fixed the gutter quoted the standard rate while the extension's own
+    // Estimate command quoted the promotional one — two prices, one model, one
+    // moment. Pinned with explicit dates so it does not lapse into vacuity.
+    const model = catalog.get('claude-sonnet-5');
+    if (!model?.pricing.intro) return; // promotion has ended; nothing to assert
+    const intro = model.pricing.intro;
+
+    const inside = effectivePricing(model.pricing, new Date(`${intro.until}T00:00:00Z`));
+    expect(inside.output).toBe(intro.output);
+
+    const after = effectivePricing(model.pricing, new Date('2099-01-01T00:00:00Z'));
+    expect(after.output).toBe(model.pricing.output);
+    expect(after.output).not.toBe(intro.output);
   });
 
   it('reads camelCase maxOutputTokens', () => {

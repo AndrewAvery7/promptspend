@@ -13,6 +13,7 @@
 import type { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { formatRate, formatContext, formatTokens, formatMoney, formatCount } from '@/lib/engine/format';
+import { effectivePricing } from '@/lib/engine/cost';
 import { encodeScenario, DEFAULT_SCENARIO } from '@/lib/url/scenario';
 import type { ModelMatch } from './scan';
 import type { Ceiling } from './ceiling';
@@ -51,9 +52,19 @@ export function estimatorLink(modelId: string, userTokens?: number): string {
  * It is the most actionable thing on the line — a rate is abstract, and
  * "$0.061 every call" is not.
  */
-export function inlineText(match: ModelMatch, detail: InlineDetail, ceiling?: Ceiling): string | null {
+export function inlineText(
+  match: ModelMatch,
+  detail: InlineDetail,
+  ceiling?: Ceiling,
+  asOf: Date = new Date(),
+): string | null {
   if (detail === 'off') return null;
-  const { pricing, provenance } = match.model;
+  const { provenance } = match.model;
+  // The rate in force today, not the standard one. A model inside a
+  // promotional window is billed at the promoted rate, and the gutter is the
+  // last place to quote a number nobody is charged — the header above says it:
+  // a plausible wrong figure here is the quietest damage this extension can do.
+  const pricing = effectivePricing(match.model.pricing, asOf);
 
   const parts = [`${formatRate(pricing.input)} / ${formatRate(pricing.output)} per M`];
   if (detail === 'full') parts.push(`confirmed ${provenance.lastVerified}`);
@@ -85,9 +96,17 @@ export function inlineText(match: ModelMatch, detail: InlineDetail, ceiling?: Ce
  * Warnings interrupt at the top, because a disputed price should not be read
  * before it is known to be disputed.
  */
-export function hoverMarkdown(match: ModelMatch, catalog: Catalog, ceiling?: Ceiling): string {
+export function hoverMarkdown(
+  match: ModelMatch,
+  catalog: Catalog,
+  ceiling?: Ceiling,
+  asOf: Date = new Date(),
+): string {
   const model = match.model;
-  const { pricing } = model;
+  // The table quotes what is billed today. It used to hold the standard rates
+  // with a note underneath saying a promotion applied, which put the number
+  // nobody is charged in the headline and the real one in a footnote.
+  const pricing = effectivePricing(model.pricing, asOf);
   const out: string[] = [];
 
   out.push(`### ${model.displayName}`);
@@ -112,7 +131,7 @@ export function hoverMarkdown(match: ModelMatch, catalog: Catalog, ceiling?: Cei
 
   if (ceiling) out.push(ceilingLine(ceiling, model));
 
-  const notes = pricingNotes(model);
+  const notes = pricingNotes(model, asOf);
   if (notes.length > 0) out.push(notes.map((n) => `- ${n}`).join('\n'));
 
   out.push(provenanceLine(model));
@@ -151,16 +170,23 @@ function ceilingLine(ceiling: Ceiling, model: Model): string {
  * model against a Gemini one is comparing a measured number against a
  * calibrated ratio whether or not anyone tells them.
  */
-export function estimateRowText(row: {
-  model: Model;
-  tokens: number;
-  method: string;
-  inputCostUsd: number;
-}): { label: string; description: string; detail: string } {
+export function estimateRowText(
+  row: {
+    model: Model;
+    tokens: number;
+    method: string;
+    inputCostUsd: number;
+  },
+  asOf: Date = new Date(),
+): { label: string; description: string; detail: string } {
+  // `inputCostUsd` is already billed at the effective rate by `estimate.ts`, so
+  // the rate quoted beside it has to be the same one or the row shows a price
+  // and a rate that do not multiply out.
+  const rate = effectivePricing(row.model.pricing, asOf).input;
   return {
     label: row.model.displayName,
     description: `${formatMoney(row.inputCostUsd)} · ${formatCount(row.tokens)} tokens (${row.method})`,
-    detail: `${formatRate(row.model.pricing.input)} per M input · sending this text once. Output not included.`,
+    detail: `${formatRate(rate)} per M input · sending this text once. Output not included.`,
   };
 }
 
@@ -193,7 +219,7 @@ export function warningsFor(match: ModelMatch): string[] {
 }
 
 /** Published facts that change what a request actually costs. */
-function pricingNotes(model: Model): string[] {
+function pricingNotes(model: Model, asOf: Date = new Date()): string[] {
   const { pricing } = model;
   const notes: string[] = [];
 
@@ -208,10 +234,14 @@ function pricingNotes(model: Model): string[] {
   if (pricing.batchDiscount !== undefined) {
     notes.push(`Batch API bills at ${Math.round(pricing.batchDiscount * 100)}% of these rates.`);
   }
-  if (pricing.intro) {
+  // The table above now quotes the promoted rate while one is running, so this
+  // says what replaces it rather than what it is. Once the window has passed the
+  // table is the standard rate again and there is nothing left to explain, so
+  // the note goes away instead of describing a promotion nobody can still get.
+  if (pricing.intro && effectivePricing(pricing, asOf) !== pricing) {
     notes.push(
-      `Promotional pricing of ${formatRate(pricing.intro.input)} / ${formatRate(pricing.intro.output)} ` +
-        `applies until ${pricing.intro.until}, after which the rates above take over.`,
+      `The rates above are promotional and hold until ${pricing.intro.until}. ` +
+        `After that the standard ${formatRate(pricing.input)} / ${formatRate(pricing.output)} per M take over.`,
     );
   }
   if (pricing.cacheWrite !== undefined) {

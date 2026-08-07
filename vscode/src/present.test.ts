@@ -154,3 +154,52 @@ describe('warningsFor', () => {
     expect(warnings[0]).toContain('disagree');
   });
 });
+
+describe('a promotional rate is the rate', () => {
+  // The extension shipped 0.1.7 quoting two different prices for one model at
+  // one moment: the gutter and the hover read `pricing.input` raw and showed
+  // $3/$15 for claude-sonnet-5, while Estimate selection went through
+  // `effectivePricing` and showed $2/$10. Only `estimate.ts` had been converted
+  // when the same defect was fixed in the MCP server and the public API.
+  const INSIDE = new Date('2026-08-06T00:00:00Z');
+  const AFTER = new Date('2099-01-01T00:00:00Z');
+
+  const promoted = () => {
+    const model = catalog.get('claude-sonnet-5');
+    return model?.pricing.intro ? model : undefined;
+  };
+
+  it('quotes the promoted rate in the gutter', () => {
+    const model = promoted();
+    if (!model) return; // promotion ended; the standard rate is now correct
+    const text = inlineText(matchIn('"claude-sonnet-5"'), 'compact', undefined, INSIDE);
+    expect(text).toContain(`$${model.pricing.intro!.input}`);
+    expect(text).not.toContain(`$${model.pricing.input} /`);
+  });
+
+  it('puts the promoted rate in the hover table, not in a footnote', () => {
+    const model = promoted();
+    if (!model) return;
+    const md = hoverMarkdown(matchIn('"claude-sonnet-5"'), catalog, undefined, INSIDE);
+    expect(md).toContain(`| Input | $${model.pricing.intro!.input} per 1M tokens |`);
+    // And says what replaces it, rather than announcing the promotion as news.
+    expect(md).toContain('promotional and hold until');
+  });
+
+  it('reverts to the standard rate once the window has passed', () => {
+    const model = promoted();
+    if (!model) return;
+    const text = inlineText(matchIn('"claude-sonnet-5"'), 'compact', undefined, AFTER);
+    expect(text).toContain(`$${model.pricing.input}`);
+    const md = hoverMarkdown(matchIn('"claude-sonnet-5"'), catalog, undefined, AFTER);
+    expect(md).not.toContain('promotional and hold until');
+  });
+
+  it('leaves a model with no promotion alone', () => {
+    const model = catalog.get('claude-sonnet-4-6');
+    if (!model) return;
+    expect(model.pricing.intro).toBeUndefined();
+    const text = inlineText(matchIn('"claude-sonnet-4-6"'), 'compact', undefined, INSIDE);
+    expect(text).toContain(`$${model.pricing.input}`);
+  });
+});

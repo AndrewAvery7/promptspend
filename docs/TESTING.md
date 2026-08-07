@@ -15,13 +15,13 @@ to publish past it.
 
 ## What the suite covers
 
-**770 tests in all**: 370 unit and integration tests in this package, 84 in
-`worker/`, 39 in `api/`, 34 in `mcp/`, 131 in `vscode/`, and 112 browser tests
+**775 tests in all**: 370 unit and integration tests in this package, 84 in
+`worker/`, 39 in `api/`, 34 in `mcp/`, 136 in `vscode/`, and 112 browser tests
 across four viewports. Those six figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
 of its own list nor inclusive of `mcp/` at all; the next claimed 580, which was
 correct when written and went stale the moment the VS Code extension landed with
-its own 131 tests. A total that is not re-derived from a run is a number that
+its own 136 tests. A total that is not re-derived from a run is a number that
 decays. The distribution is deliberately uneven: depth follows the cost of being
 wrong, not the size of the file.
 
@@ -73,13 +73,13 @@ anyone adding them up.
 Four more packages, each with its own runtime, lockfile and CI job, plus the
 browser run:
 
-| Package   | Tests | Guards                                                                                                                                                                                                                                                                                                                                                  |
-| --------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself.                                                                                                                                                                                               |
-| `api/`    | 39    | The public pricing API: filters, ETags, CORS, CSV quoting, that a catalog failing validation is refused rather than passed through, and that an origin answering with HTML is reported as such rather than as a JSON syntax error.                                                                                                                      |
-| `mcp/`    | 34    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, that `get_price` quotes the rate actually in force and cannot drift from what `estimate_cost` bills, that the server reports the version it was published as, and that the real fetch path names what arrived when the catalog is not JSON. |
-| `vscode/` | 131   | The editor extension: which lines in which languages name a model, hover, status-bar and inline rendering, the catalog fetch when the server is unreachable or answers malformed, selection estimates that name an impossible request rather than pricing it, and diagnostics that stay quiet by default.                                               |
-| Browser   | 112   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA. See below.                                                                                                                                                                                                   |
+| Package   | Tests | Guards                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself.                                                                                                                                                                                                                                                       |
+| `api/`    | 39    | The public pricing API: filters, ETags, CORS, CSV quoting, that a catalog failing validation is refused rather than passed through, and that an origin answering with HTML is reported as such rather than as a JSON syntax error.                                                                                                                                                                              |
+| `mcp/`    | 34    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, that `get_price` quotes the rate actually in force and cannot drift from what `estimate_cost` bills, that the server reports the version it was published as, and that the real fetch path names what arrived when the catalog is not JSON.                                                         |
+| `vscode/` | 136   | The editor extension: which lines in which languages name a model, hover, status-bar and inline rendering, that every surface quotes the rate in force rather than the standard one during a promotional window, the catalog fetch when the server is unreachable or answers malformed, selection estimates that name an impossible request rather than pricing it, and diagnostics that stay quiet by default. |
+| Browser   | 112   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA. See below.                                                                                                                                                                                                                                                           |
 
 ## Layout is checked in a real browser
 

@@ -20,6 +20,7 @@ import {
   type Reference,
   type ScannedFile,
 } from './inventory';
+import { effectivePricing } from '@/lib/engine/cost';
 import { formatRate } from '@/lib/engine/format';
 
 /**
@@ -121,8 +122,9 @@ export class WorkspaceCostProvider implements vscode.TreeDataProvider<Node> {
     if (node.kind === 'model') {
       const { model, references, fileCount } = node.usage;
       const item = new vscode.TreeItem(model.displayName, vscode.TreeItemCollapsibleState.Collapsed);
+      const rates = effectivePricing(model.pricing, new Date());
       item.description =
-        `${formatRate(model.pricing.input)} / ${formatRate(model.pricing.output)} per M · ` +
+        `${formatRate(rates.input)} / ${formatRate(rates.output)} per M · ` +
         `${references.length} reference${references.length === 1 ? '' : 's'} in ` +
         `${fileCount} file${fileCount === 1 ? '' : 's'}`;
       item.tooltip = new vscode.MarkdownString(
