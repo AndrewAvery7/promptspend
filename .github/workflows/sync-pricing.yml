@@ -94,7 +94,14 @@ jobs:
           steps.sync.outputs.needs_review == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
-          branch: pricing-sync/${{ github.run_id }}
+          # A FIXED branch on purpose. The action keys on the branch name: same
+          # branch means it force-updates the open pull request instead of
+          # opening another. A per-run name (`pricing-sync/${{ github.run_id }}`)
+          # made every re-raise a separate pull request, so an unreviewed flag
+          # accumulated one per morning — #51 and #57 were the same catalog
+          # twice, identical hash. Worst case here is one rolling pull request
+          # that always carries the freshest catalog.
+          branch: pricing-sync
           commit-message: 'data: ${{ steps.sync.outputs.summary }} (needs review)'
           title: 'Pricing sync needs review: ${{ steps.sync.outputs.summary }}'
           body: |

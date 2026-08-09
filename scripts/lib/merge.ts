@@ -11,9 +11,12 @@
  *   missing from today's feed is kept and marked `stale`, not deleted. One
  *   truncated upstream response must never be able to empty the catalog.
  *
- *   A flag is raised once. Review reasons are compared against what was
- *   already recorded, so a long-standing disagreement does not re-open a pull
- *   request every morning and drown the genuinely new ones.
+ *   A flag is raised once. Review reasons carry a stable `ReviewCode` and are
+ *   compared against the codes already recorded, so a long-standing
+ *   disagreement does not re-open a pull request every morning and drown the
+ *   genuinely new ones. Comparing the rendered *text* is what broke this
+ *   before: it embeds the percentage and both sides' rates, so a standing
+ *   disagreement that drifted 38% -> 39% read as brand new.
  */
 import type { Model, PricingCatalog } from '../../src/lib/pricing/types';
 import { SCHEMA_VERSION } from '../../src/lib/pricing/types';
@@ -41,10 +44,26 @@ export interface MergeInput {
   generatedAt: Date;
 }
 
+/** A stable identifier for *why* review was raised.
+ *
+ *  Deliberately distinct from the rendered reason text, which embeds live
+ *  figures (the disagreement percentage, both sides' rates) and therefore
+ *  changes whenever a rate drifts by a rounding step. Anything deciding
+ *  "is this flag new?" must key on the code; only humans read the text. */
+export type ReviewCode = 'upstream-missing' | 'openrouter-disagreement' | 'day-move' | 'new-model';
+
+/** One raised reason: a stable code plus its human-facing rendering. */
+interface Reason {
+  code: ReviewCode;
+  text: string;
+}
+
 export interface ReviewItem {
   id: string;
   reason: string;
-  /** False when the same reason was already recorded in the published catalog. */
+  code: ReviewCode;
+  /** False when a reason with this code was already recorded in the published
+   *  catalog. Compared by code, never by `reason` text — see `ReviewCode`. */
   isNew: boolean;
 }
 
@@ -90,7 +109,10 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     // Missing upstream and not hand-curated: keep yesterday's row, mark it.
     if (!feed && !override?.pricing) {
       if (!before) continue;
-      const reason = 'no longer listed upstream — confirm retirement before removing';
+      const reason: Reason = {
+        code: 'upstream-missing',
+        text: 'no longer listed upstream — confirm retirement before removing',
+      };
       const wasStale = before.provenance.stale === true;
       staleIds.push(id);
       models.push({
@@ -99,10 +121,12 @@ export function mergeCatalog(input: MergeInput): MergeResult {
           ...before.provenance,
           stale: true,
           needsReview: true,
-          reviewNote: mergeNote(before.provenance.reviewNote, reason),
+          reviewNote: mergeNote(before.provenance.reviewNote, reason.text),
+          reviewCodes: mergeCodes(before.provenance.reviewCodes, [reason.code]),
         },
       });
-      review.push({ id, reason, isNew: !wasStale });
+      // `stale` is already a stable boolean, so it answers "new?" directly.
+      review.push({ id, reason: reason.text, code: reason.code, isNew: !wasStale });
       continue;
     }
 
@@ -121,7 +145,7 @@ export function mergeCatalog(input: MergeInput): MergeResult {
         ? 'litellm'
         : 'vendor';
 
-    const reasons: string[] = [];
+    const reasons: Reason[] = [];
 
     // Rung 3: independent cross-check. Never overwrites, only raises a hand.
     if (feed && !override?.vendorVerified) {
@@ -130,10 +154,12 @@ export function mergeCatalog(input: MergeInput): MergeResult {
         const inputGap = relativeGap(input_, peer.inputPerMillion);
         const outputGap = relativeGap(output, peer.outputPerMillion);
         if (inputGap > DISAGREEMENT_THRESHOLD || outputGap > DISAGREEMENT_THRESHOLD) {
-          reasons.push(
-            `OpenRouter disagrees (${formatPct(Math.max(inputGap, outputGap))}): ` +
+          reasons.push({
+            code: 'openrouter-disagreement',
+            text:
+              `OpenRouter disagrees (${formatPct(Math.max(inputGap, outputGap))}): ` +
               `$${peer.inputPerMillion}/$${peer.outputPerMillion} vs $${input_}/$${output}`,
-          );
+          });
         }
       }
     }
@@ -143,15 +169,20 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       const inputMove = relativeGap(before.pricing.input, input_);
       const outputMove = relativeGap(before.pricing.output, output);
       if (inputMove > CHANGE_REVIEW_THRESHOLD || outputMove > CHANGE_REVIEW_THRESHOLD) {
-        reasons.push(
-          `price moved ${formatPct(Math.max(inputMove, outputMove))} in one day ` +
+        reasons.push({
+          code: 'day-move',
+          text:
+            `price moved ${formatPct(Math.max(inputMove, outputMove))} in one day ` +
             `($${before.pricing.input}/$${before.pricing.output} -> $${input_}/$${output})`,
-        );
+        });
       }
     } else if (!override && previous) {
       // Only interesting once there is a published catalog to be new *against*;
       // on a cold start every model is "new" and the flag would be noise.
-      reasons.push('new model discovered by pattern match — confirm name and rates');
+      reasons.push({
+        code: 'new-model',
+        text: 'new model discovered by pattern match — confirm name and rates',
+      });
     }
 
     const tokenizer = override?.tokenizer ??
@@ -233,7 +264,13 @@ export function mergeCatalog(input: MergeInput): MergeResult {
         lastVerified: override?.lastVerified ?? isoDate,
         ...(lastChanged ? { lastChanged } : {}),
         ...(override?.verifiedUrl ? { verifiedUrl: override.verifiedUrl } : {}),
-        ...(reasons.length > 0 ? { needsReview: true, reviewNote: reasons.join('; ') } : {}),
+        ...(reasons.length > 0
+          ? {
+              needsReview: true,
+              reviewNote: reasons.map((r) => r.text).join('; '),
+              reviewCodes: reasons.map((r) => r.code),
+            }
+          : {}),
       },
       ...(override?.aliasOf ? { aliasOf: override.aliasOf } : {}),
       ...(override?.releaseDate ? { releaseDate: override.releaseDate } : {}),
@@ -245,7 +282,12 @@ export function mergeCatalog(input: MergeInput): MergeResult {
 
     models.push(model);
     for (const reason of reasons) {
-      review.push({ id, reason, isNew: !(before?.provenance.reviewNote ?? '').includes(reason) });
+      review.push({
+        id,
+        reason: reason.text,
+        code: reason.code,
+        isNew: !wasAlreadyRaised(before, reason),
+      });
     }
   }
 
@@ -264,6 +306,29 @@ export function mergeCatalog(input: MergeInput): MergeResult {
 function mergeNote(existing: string | undefined, reason: string): string {
   if (!existing) return reason;
   return existing.includes(reason) ? existing : `${existing}; ${reason}`;
+}
+
+/** Union of review codes — order-stable and duplicate-free. */
+function mergeCodes(existing: string[] | undefined, incoming: ReviewCode[]): string[] {
+  return [...new Set([...(existing ?? []), ...incoming])];
+}
+
+/** Strip every figure, so two renderings of the same standing reason compare
+ *  equal. Only used for rows published before `reviewCodes` existed. */
+function stem(text: string): string {
+  return text.replace(/[\d.,$%]+/g, '');
+}
+
+/** Has a reason of this kind already been raised against the published row?
+ *
+ *  Keyed on the code. Rows published before `reviewCodes` existed carry only
+ *  the note, so those fall back to comparing the note's *stem* — without that
+ *  fallback the first run after this change would re-raise every standing flag
+ *  and open exactly the pull request this change exists to prevent. */
+function wasAlreadyRaised(before: Model | undefined, reason: Reason): boolean {
+  const codes = before?.provenance.reviewCodes;
+  if (codes && codes.length > 0) return codes.includes(reason.code);
+  return stem(before?.provenance.reviewNote ?? '').includes(stem(reason.text));
 }
 
 export function relativeGap(a: number, b: number): number {
