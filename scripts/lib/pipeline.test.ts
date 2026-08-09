@@ -299,6 +299,95 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(second.review.every((item) => item.isNew)).toBe(false);
   });
 
+  it('does not re-raise a standing disagreement whose figures drifted', () => {
+    // The regression that shipped. The test above passes the *same* peer prices
+    // twice, so the rendered reason is byte-identical and a substring match
+    // suppresses it. In production the peer moves a little every morning: the
+    // reason text embeds the percentage and both sides' rates, so it re-rendered
+    // 38% -> 39% and read as a brand-new flag. That opened one pull request per
+    // day against the same unchanged disagreement (#51 and #57, identical
+    // catalog hash). Suppression must key on the code, not the text.
+    const monday = fromOpenRouter({
+      data: [{ id: 'anthropic/claude-sonnet-5', pricing: { prompt: '0.000006', completion: '0.00003' } }],
+    });
+    // Same disagreement, still far past the threshold, figures nudged.
+    const tuesday = fromOpenRouter({
+      data: [{ id: 'anthropic/claude-sonnet-5', pricing: { prompt: '0.0000061', completion: '0.0000305' } }],
+    });
+
+    const first = mergeCatalog({
+      litellm,
+      openrouter: monday,
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt,
+    });
+    const raised = first.review.filter((item) => item.code === 'openrouter-disagreement');
+    expect(raised).toHaveLength(1);
+    expect(raised[0]?.isNew).toBe(true);
+
+    // The code is persisted on the row, which is what the next run compares to.
+    const flagged = first.catalog.models.find((m) => m.id === 'claude-sonnet-5');
+    expect(flagged?.provenance.reviewCodes).toEqual(['openrouter-disagreement']);
+
+    const second = mergeCatalog({
+      litellm,
+      openrouter: tuesday,
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: first.catalog,
+      generatedAt,
+    });
+    const again = second.review.filter((item) => item.code === 'openrouter-disagreement');
+    expect(again).toHaveLength(1);
+
+    // The guard rail: the rendered text really did change between the runs, so
+    // a text-keyed comparison would call this new. It must not be.
+    expect(again[0]?.reason).not.toEqual(raised[0]?.reason);
+    expect(again[0]?.isNew).toBe(false);
+    expect(second.review.some((item) => item.isNew)).toBe(false);
+  });
+
+  it('suppresses a standing flag carried on a catalog published before reviewCodes', () => {
+    // The transition run. Rows already in production have `reviewNote` and no
+    // `reviewCodes`; without a fallback every one of them would re-raise on the
+    // first sync after this change and open the very pull request it prevents.
+    const monday = fromOpenRouter({
+      data: [{ id: 'anthropic/claude-sonnet-5', pricing: { prompt: '0.000006', completion: '0.00003' } }],
+    });
+    const tuesday = fromOpenRouter({
+      data: [{ id: 'anthropic/claude-sonnet-5', pricing: { prompt: '0.0000061', completion: '0.0000305' } }],
+    });
+
+    const first = mergeCatalog({
+      litellm,
+      openrouter: monday,
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt,
+    });
+
+    // Strip the codes: this is exactly what a pre-change catalog looks like.
+    const legacy: PricingCatalog = {
+      ...first.catalog,
+      models: first.catalog.models.map((model) => {
+        const { reviewCodes: _dropped, ...provenance } = model.provenance;
+        return { ...model, provenance };
+      }),
+    };
+    expect(legacy.models.every((m) => m.provenance.reviewCodes === undefined)).toBe(true);
+
+    const second = mergeCatalog({
+      litellm,
+      openrouter: tuesday,
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: legacy,
+      generatedAt,
+    });
+    expect(second.review.some((item) => item.isNew)).toBe(false);
+  });
+
   it('retires a model only when the allowlist says so', () => {
     const cold = mergeCatalog({
       litellm,

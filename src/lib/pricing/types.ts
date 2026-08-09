@@ -69,6 +69,17 @@ export interface Provenance {
   /** Set when automated sources disagreed and a human has not adjudicated yet. */
   needsReview?: boolean;
   reviewNote?: string;
+  /** Stable identifiers for *why* review was raised, one per reason.
+   *
+   *  `reviewNote` is the human-facing rendering of the same reasons and embeds
+   *  live figures — the disagreement percentage and both sides' rates — so it
+   *  changes whenever a rate drifts by a rounding step. Keying "have we already
+   *  raised this?" on that text made a standing disagreement look brand new
+   *  every morning and opened a pull request per day. Codes do not move.
+   *
+   *  Written and read only by the sync pipeline, so this is additive: no app
+   *  reader consumes it and `SCHEMA_VERSION` does not need to move. */
+  reviewCodes?: string[];
   /** Set when upstream stopped listing the model but no retirement has been
    *  confirmed. The row is kept and marked rather than silently deleted. */
   stale?: boolean;
@@ -345,6 +356,12 @@ function validateProvenance(label: string, provenance: unknown): string[] {
     errors.push(`${label}: provenance.needsReview must be a boolean`);
   } else if (pr.needsReview === true && (typeof pr.reviewNote !== 'string' || pr.reviewNote.length === 0)) {
     errors.push(`${label}: needsReview is set but reviewNote is empty`);
+  }
+  if (
+    pr.reviewCodes !== undefined &&
+    (!Array.isArray(pr.reviewCodes) || pr.reviewCodes.some((code) => typeof code !== 'string'))
+  ) {
+    errors.push(`${label}: provenance.reviewCodes must be an array of strings`);
   }
   return errors;
 }
