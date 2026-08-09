@@ -18,6 +18,8 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  # To dispatch the deploy for a commit this job pushes — see the last step.
+  actions: write
 
 jobs:
   sync:
@@ -55,27 +57,40 @@ jobs:
       # Both files are committed: the manifest records that the check happened,
       # the catalog carries the dates it happened on.
       - name: Publish a clean run that changed no prices
+        id: publish-stable
         if: steps.sync.outputs.degraded != 'true' && steps.sync.outputs.changed != 'true'
         run: |
           echo "Sources stable — recording the verification."
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
           git add public/data/pricing.json public/data/sync-status.json
-          git diff --staged --quiet || git commit -m "chore: re-verified, no price changes"
-          git push
+          if git diff --staged --quiet; then
+            echo "Nothing staged — nothing to record."
+          else
+            git commit -m "chore: re-verified, no price changes"
+            git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       # A degraded run still publishes its health manifest: "we tried and it
       # went wrong" is information visitors are entitled to.
       - name: Record a degraded run
+        id: publish-degraded
         if: steps.sync.outputs.degraded == 'true'
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
           git add public/data/sync-status.json
-          git diff --staged --quiet || git commit -m "chore: record degraded pricing sync"
-          git push
+          if git diff --staged --quiet; then
+            echo "Nothing staged — the manifest is unchanged."
+          else
+            git commit -m "chore: record degraded pricing sync"
+            git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Commit clean updates
+        id: publish-updates
         if: >-
           steps.sync.outputs.degraded != 'true' &&
           steps.sync.outputs.changed == 'true' &&
@@ -86,6 +101,7 @@ jobs:
           git add public/data/pricing.json public/data/sync-status.json docs/pricing-changelog.md
           git commit -m "data: ${{ steps.sync.outputs.summary }}"
           git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
 
       - name: Open a pull request when a human should look
         if: >-
@@ -122,6 +138,34 @@ jobs:
             `data/pricing-overrides.json` (with `verifiedUrl`) rather than
             editing `pricing.json` directly.
           labels: pricing, needs-review
+
+      # A push made with GITHUB_TOKEN deliberately does not start another
+      # workflow run, so a commit from the steps above lands on main and the
+      # deploy that `on: push` would normally fire never happens. The catalog is
+      # then current in the repository and stale on the site — the one failure
+      # this project cannot afford, and a silent one: the sync goes green.
+      #
+      # It stayed hidden because the direct-commit paths had never run. Review
+      # suppression keyed on a reason string containing live figures, so
+      # `needs_review` was true every morning and every sync went down the pull
+      # request path instead; merging that PR is a push from a *user*, which does
+      # fire the deploy. `data: 4 review-state` on 2026-08-09 was the first
+      # bot-authored commit in 183, and it did not deploy.
+      #
+      # Dispatched rather than a `workflow_run` trigger, and only when something
+      # was actually pushed: Pages keys a deployment by commit SHA and rejects a
+      # second one for a SHA already deployed, so firing on every sync would turn
+      # a quiet morning into a red deploy.
+      - name: Deploy what this run published
+        if: >-
+          steps.publish-stable.outputs.pushed == 'true' ||
+          steps.publish-degraded.outputs.pushed == 'true' ||
+          steps.publish-updates.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Pushed a commit — dispatching the deploy it will not trigger on its own."
+          gh workflow run deploy.yml --ref main
 
       # Last, so the manifest above is committed first: a degraded run should
       # still be loud.
