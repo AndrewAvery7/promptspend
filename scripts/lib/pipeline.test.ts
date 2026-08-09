@@ -371,7 +371,8 @@ describe('mergeCatalog — the trust ladder', () => {
     const legacy: PricingCatalog = {
       ...first.catalog,
       models: first.catalog.models.map((model) => {
-        const { reviewCodes: _dropped, ...provenance } = model.provenance;
+        const provenance = { ...model.provenance };
+        delete provenance.reviewCodes;
         return { ...model, provenance };
       }),
     };

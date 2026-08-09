@@ -50,11 +50,7 @@ export interface MergeInput {
  *  figures (the disagreement percentage, both sides' rates) and therefore
  *  changes whenever a rate drifts by a rounding step. Anything deciding
  *  "is this flag new?" must key on the code; only humans read the text. */
-export type ReviewCode =
-  | 'upstream-missing'
-  | 'openrouter-disagreement'
-  | 'day-move'
-  | 'new-model';
+export type ReviewCode = 'upstream-missing' | 'openrouter-disagreement' | 'day-move' | 'new-model';
 
 /** One raised reason: a stable code plus its human-facing rendering. */
 interface Reason {
