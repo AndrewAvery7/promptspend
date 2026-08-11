@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "PromptSpend",
+    "slug": "promptspend-app",
+    "description": "Estimate, compare, and understand LLM API costs with pricing provenance and freshness evidence.",
+    "version": "0.1.0",
+    "orientation": "default",
+    "icon": "./assets/images/icon.png",
+    "scheme": "promptspend",
+    "userInterfaceStyle": "automatic",
+    "githubUrl": "https://github.com/AndrewAvery7/promptspend",
+    "ios": {
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "com.promptspend.app",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.promptspend.app",
+      "allowBackup": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#208AEF",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 76
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9671ef3e-be90-49ba-aebe-56b6982af806"
+      }
+    },
+    "owner": "crestwood-holdings"
+  }
+}
