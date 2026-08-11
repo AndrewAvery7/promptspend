@@ -2,7 +2,7 @@
 
 Native iOS and Android applications for PromptSpend, built with Expo SDK 57, React Native, TypeScript, and Expo Router.
 
-Status: Phase 1 compatibility spike and first Estimate vertical slice. The app now loads validated live pricing, enforces the 24-hour stale-price ceiling, and executes the same extracted cost engine as the website. It is not yet the complete version 1 product.
+Status: Phase 1 native beta. The app loads validated live pricing, enforces the 24-hour stale-price ceiling, and executes the same extracted cost engine as the website. Estimate and four-model cost comparison are available for physical-device QA; it is not yet the complete version 1 product.
 
 The generated icon, adaptive-icon, splash, and favicon files are temporary placeholders. They must be replaced with approved PromptSpend artwork before any external beta build.
 
@@ -62,6 +62,8 @@ See [`../../docs/MOBILE.md`](../../docs/MOBILE.md) and [`../../design-system/pro
 - `../../packages/core` owns platform-neutral catalog validation, freshness, exact integer cost math, and display formatting.
 - The existing `src/lib` paths are compatibility exports, so the website, API, and tests keep their stable imports.
 - `src/data/catalog.ts` owns the native network and file-cache adapter. It never persists prompts or scenario inputs.
-- The current Estimate slice includes model search, token/count inputs, conversation compounding, scale, optional caching, warnings, and calculation disclosure.
-- Estimate results open the native system share sheet. Platform-neutral text builders in `../../packages/core` cover both the current estimate and the upcoming multi-model comparison without including prompt content, and keep explicit field separators when email clients collapse plain-text line breaks.
+- Estimate includes model search, token/count inputs, conversation compounding, scale, optional caching, warnings, and calculation disclosure.
+- Compare applies that same workload to as many as four models, starts with the website's representative frontier-to-budget shortlist, ranks costs cheapest-first, shows monthly deltas and potential annual savings, and rejects a fifth model without changing the current selection.
+- Estimate and comparison results open the native system share sheet. Platform-neutral text builders in `../../packages/core` exclude prompt content and keep explicit field separators when email clients collapse plain-text line breaks.
+- CI typechecks and lints the native source, validates Expo configuration, and creates production bundles for iOS, Android, and web.
 - The responsive layout supports iPhone, iPad, Android phone/tablet, light/dark appearance, safe areas, and landscape. Native screen-reader and largest-text testing still requires physical devices.

@@ -13,7 +13,7 @@ on:
         description: Name of the uploaded production build
         value: site
 
-# Least privilege for GITHUB_TOKEN, applied to all five jobs below. They check
+# Least privilege for GITHUB_TOKEN, applied to every job below. They check
 # out the code, install, test and build; not one of them writes anything back.
 # The e2e job uploads an artifact, which does not need repository write.
 #
@@ -140,6 +140,34 @@ jobs:
           name: playwright-report
           path: playwright-report
           retention-days: 7
+
+  # The native iOS/Android client has its own Expo runtime and lockfile. A
+  # successful website build says nothing about whether Metro can bundle the
+  # same shared engine for Hermes, so typecheck/lint alone are not enough here.
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - run: npm ci
+
+      - name: Verify Expo configuration and source
+        run: |
+          npm run typecheck
+          npm run lint
+          npx expo-doctor
+
+      - name: Bundle iOS, Android and web
+        run: npx expo export --platform all --output-dir .expo/ci-export
 
   # The public pricing API. Separate again, and for the same reason: its own
   # runtime, its own lockfile, its own tests inside workerd.

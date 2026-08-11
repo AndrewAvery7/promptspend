@@ -13,17 +13,28 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { conversationCost, costAtScale, SUGGESTED_CACHE_SHARE, type Model } from '@promptspend/core';
+import {
+  compareModels,
+  conversationCost,
+  costAtScale,
+  SUGGESTED_CACHE_SHARE,
+  type Catalog,
+  type Model,
+} from '@promptspend/core';
 
+import { ComparisonModelPicker } from '@/components/ComparisonModelPicker';
+import { ComparisonResult } from '@/components/ComparisonResult';
 import { EstimateResult } from '@/components/EstimateResult';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { ModelPicker } from '@/components/ModelPicker';
 import { NumericField } from '@/components/NumericField';
 import { loadMobileCatalog, type MobileCatalogResult } from '@/data/catalog';
+import { defaultComparisonSelection, toggleComparisonSelection } from '@/lib/comparison';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 const DEFAULT_MODEL_ID = 'claude-sonnet-5';
+type AppMode = 'estimate' | 'compare';
 
 interface WorkloadState {
   conversationsPerDay: number;
@@ -46,7 +57,9 @@ export default function EstimateScreen() {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [catalogResult, setCatalogResult] = useState<MobileCatalogResult | null>(null);
   const [catalogError, setCatalogError] = useState<string | null>(null);
+  const [mode, setMode] = useState<AppMode>('estimate');
   const [selectedId, setSelectedId] = useState(DEFAULT_MODEL_ID);
+  const [comparisonIds, setComparisonIds] = useState<string[]>([]);
   const [workload, setWorkload] = useState(DEFAULT_WORKLOAD);
   const [cacheEnabled, setCacheEnabled] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -62,6 +75,7 @@ export default function EstimateScreen() {
     try {
       const result = await loadMobileCatalog();
       setCatalogResult(result);
+      setComparisonIds((current) => reconcileComparisonSelection(result.catalog, current));
       setCatalogError(null);
     } catch (error) {
       setCatalogResult(null);
@@ -77,6 +91,7 @@ export default function EstimateScreen() {
       .then((result) => {
         if (!cancelled) {
           setCatalogResult(result);
+          setComparisonIds((current) => reconcileComparisonSelection(result.catalog, current));
           setCatalogError(null);
         }
       })
@@ -117,6 +132,41 @@ export default function EstimateScreen() {
         : null,
     [breakdown, workload.conversationsPerDay],
   );
+  const comparisonModels = useMemo(
+    () =>
+      catalog
+        ? comparisonIds.map((id) => catalog.get(id)).filter((model): model is Model => model !== undefined)
+        : [],
+    [catalog, comparisonIds],
+  );
+  const comparisonRows = useMemo(
+    () =>
+      compareModels(
+        comparisonModels,
+        {
+          outputTokens: workload.outputTokens,
+          systemTokens: workload.systemTokens,
+          turns: workload.turns,
+          userTokens: workload.userTokens,
+        },
+        {
+          conversationsPerDay: workload.conversationsPerDay,
+          monthlyActiveUsers: 1,
+          revenuePerUserPerMonth: 0,
+        },
+        { cachedInputShare: cacheEnabled ? SUGGESTED_CACHE_SHARE : 0 },
+      ),
+    [cacheEnabled, comparisonModels, workload],
+  );
+
+  const toggleComparisonModel = useCallback(
+    (id: string) => {
+      const result = toggleComparisonSelection(comparisonIds, id);
+      if (result.accepted) setComparisonIds(result.selectedIds);
+      return result.accepted;
+    },
+    [comparisonIds],
+  );
 
   const updateWorkload = (key: keyof WorkloadState, value: number) => {
     setWorkload((current) => ({ ...current, [key]: value }));
@@ -155,14 +205,30 @@ export default function EstimateScreen() {
             <Text style={styles.phaseLabel}>NATIVE PREVIEW</Text>
           </View>
 
+          <View accessibilityRole="tablist" style={styles.modeSelector}>
+            <ModeButton
+              active={mode === 'estimate'}
+              label="Estimate"
+              onPress={() => setMode('estimate')}
+              styles={styles}
+            />
+            <ModeButton
+              active={mode === 'compare'}
+              label="Compare"
+              onPress={() => setMode('compare')}
+              styles={styles}
+            />
+          </View>
+
           <View style={styles.hero}>
-            <Text style={styles.eyebrow}>ESTIMATE</Text>
+            <Text style={styles.eyebrow}>{mode === 'estimate' ? 'ESTIMATE' : 'COMPARE'}</Text>
             <Text accessibilityRole="header" style={styles.title}>
-              Know the tab before you build.
+              {mode === 'estimate' ? 'Know the tab before you build.' : 'See the price difference.'}
             </Text>
             <Text style={styles.summary}>
-              Describe one typical AI conversation. PromptSpend applies the same validated pricing rules as
-              the website and scales the cost to your traffic.
+              {mode === 'estimate'
+                ? 'Describe one typical AI conversation. PromptSpend applies the same validated pricing rules as the website and scales the cost to your traffic.'
+                : 'Apply one workload to as many as four LLMs. PromptSpend ranks the same conversation from lowest to highest estimated cost.'}
             </Text>
             {catalog && <FreshnessChip freshness={catalog.freshness()} />}
           </View>
@@ -226,9 +292,11 @@ export default function EstimateScreen() {
             </View>
           )}
 
-          {breakdown && selectedModel && scaled && (
+          {mode === 'estimate' && breakdown && selectedModel && scaled && (
             <EstimateResult breakdown={breakdown} model={selectedModel} scaled={scaled} />
           )}
+
+          {mode === 'compare' && catalog && <ComparisonResult catalog={catalog} rows={comparisonRows} />}
 
           {catalog && selectedModel && (
             <>
@@ -239,19 +307,30 @@ export default function EstimateScreen() {
                   </View>
                   <View style={styles.panelHeadingCopy}>
                     <Text accessibilityRole="header" style={styles.panelTitle}>
-                      Model and workload
+                      {mode === 'estimate' ? 'Model and workload' : 'Models and workload'}
                     </Text>
                     <Text style={styles.panelSummary}>
-                      Start with token counts. Paste mode arrives in the next slice.
+                      {mode === 'estimate'
+                        ? 'Choose a model, then describe one representative conversation.'
+                        : 'Choose up to four models. Every one uses the workload below.'}
                     </Text>
                   </View>
                 </View>
 
-                <ModelPicker
-                  catalog={catalog}
-                  onChange={(model) => setSelectedId(model.id)}
-                  selected={selectedModel}
-                />
+                {mode === 'estimate' ? (
+                  <ModelPicker
+                    catalog={catalog}
+                    onChange={(model) => setSelectedId(model.id)}
+                    selected={selectedModel}
+                  />
+                ) : (
+                  <ComparisonModelPicker
+                    catalog={catalog}
+                    onClear={() => setComparisonIds([])}
+                    onToggle={toggleComparisonModel}
+                    selectedIds={comparisonIds}
+                  />
+                )}
 
                 <View style={styles.divider} />
 
@@ -360,11 +439,44 @@ export default function EstimateScreen() {
             </>
           )}
 
-          <Text style={styles.footer}>PromptSpend mobile · Estimate compatibility slice</Text>
+          <Text style={styles.footer}>PromptSpend mobile · Estimate and compare</Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
+}
+
+function ModeButton({
+  active,
+  label,
+  onPress,
+  styles,
+}: {
+  active: boolean;
+  label: string;
+  onPress: () => void;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="tab"
+      accessibilityState={{ selected: active }}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.modeButton,
+        active && styles.modeButtonActive,
+        pressed && styles.pressed,
+      ]}
+    >
+      <Text style={[styles.modeButtonText, active && styles.modeButtonTextActive]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function reconcileComparisonSelection(catalog: Catalog, selectedIds: readonly string[]): string[] {
+  const valid = selectedIds.filter((id) => catalog.get(id) !== undefined);
+  if (valid.length > 0) return valid;
+  return defaultComparisonSelection(catalog.primaryModels);
 }
 
 function chooseModel(models: Model[], selectedId: string): Model {
@@ -438,6 +550,35 @@ function createStyles(theme: MobileTheme) {
       fontSize: 20,
       fontWeight: '800',
       letterSpacing: -0.4,
+    },
+    modeSelector: {
+      alignSelf: 'flex-start',
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 12,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 4,
+      padding: 4,
+    },
+    modeButton: {
+      alignItems: 'center',
+      borderRadius: 8,
+      justifyContent: 'center',
+      minHeight: 44,
+      minWidth: 112,
+      paddingHorizontal: 18,
+    },
+    modeButtonActive: {
+      backgroundColor: theme.accent,
+    },
+    modeButtonText: {
+      color: theme.mutedText,
+      fontSize: 14,
+      fontWeight: '800',
+    },
+    modeButtonTextActive: {
+      color: theme.onAccent,
     },
     phaseLabel: {
       color: theme.mutedText,
