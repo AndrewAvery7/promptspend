@@ -12,7 +12,8 @@
     "./engine/share": "./src/engine/share.ts",
     "./pricing/catalog": "./src/pricing/catalog.ts",
     "./pricing/health": "./src/pricing/health.ts",
-    "./pricing/types": "./src/pricing/types.ts"
+    "./pricing/types": "./src/pricing/types.ts",
+    "./tokenize/estimate": "./src/tokenize/estimate.ts"
   },
   "sideEffects": false,
   "private": true

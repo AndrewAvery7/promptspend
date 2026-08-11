@@ -1,4 +1,7 @@
-import type { Model, TokenizerSpec } from '@/lib/pricing/types';
+import type { Model } from '@/lib/pricing/types';
+import { estimateTokens } from '../../../packages/core/src/tokenize/estimate';
+
+export { characterMix, DEFAULT_RATIO, estimateTokens } from '../../../packages/core/src/tokenize/estimate';
 
 export type CountMethod = 'exact' | 'estimate';
 
@@ -7,41 +10,6 @@ export interface TokenCount {
   method: CountMethod;
   /** Why this number is what it is — surfaced in the UI next to the count. */
   note: string;
-}
-
-/**
- * Default characters-per-token ratios, used when a family has no tokenizer we
- * can run in the browser.
- *
- * The English figure comes from the ~4 chars/token rule every major provider
- * documents; the CJK figure reflects that Chinese and Japanese text costs far
- * more per character (frequently 1–2 characters per token), which is exactly
- * the trap this tool exists to expose.
- */
-export const DEFAULT_RATIO = { charsPerToken: 3.8, cjkCharsPerToken: 1.5 } as const;
-
-/**
- * CJK punctuation, kana, and Han ideographs. Written with unicode escapes rather
- * than literal characters so the source stays free of invisible full-width
- * spaces (which are also a lint error).
- */
-const CJK = /[\u3000-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff00-\uffef]/g;
-
-/** Split text into CJK and non-CJK character counts. */
-export function characterMix(text: string): { cjk: number; other: number } {
-  const cjk = text.match(CJK)?.length ?? 0;
-  return { cjk, other: text.length - cjk };
-}
-
-/** Ratio-based estimate. Pure, synchronous, and always available. */
-export function estimateTokens(text: string, spec?: TokenizerSpec): number {
-  if (text.length === 0) return 0;
-  const ratio =
-    spec && spec.kind === 'approx'
-      ? { charsPerToken: spec.charsPerToken, cjkCharsPerToken: spec.cjkCharsPerToken }
-      : DEFAULT_RATIO;
-  const { cjk, other } = characterMix(text);
-  return Math.max(1, Math.round(other / ratio.charsPerToken + cjk / ratio.cjkCharsPerToken));
 }
 
 type TiktokenEncoder = { encode: (text: string) => unknown[] };

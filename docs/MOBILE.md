@@ -91,7 +91,8 @@ The SDK 57 scaffold's current npm audit findings and risk controls are documente
 - The mobile catalog adapter fetches the live pricing and sync manifests on cold start, validates before use, and keeps a bounded native file cache.
 - A failed refresh can use a validated cache only while it is under 24 hours old. At 24 hours or without any valid source, the app displays a retry state and withholds all calculated prices.
 - No hard-coded fallback price table is shipped in the app binary.
-- The first native Estimate slice includes searchable model selection, workload and traffic inputs, conversation-history compounding, optional prompt-cache assumptions, monthly/daily/annual results, impossible-scenario warnings, and calculation disclosure.
+- The native Estimate slice includes searchable model selection, manual token counts or private pasted-text estimation for all three workload fields, conversation-history compounding, traffic inputs, optional prompt-cache assumptions, monthly/daily/annual results, impossible-scenario warnings, and calculation disclosure.
+- Native Compare supports up to four selected models and derives pasted-text token estimates separately for each model's catalog profile before ranking costs. Pasted text is held only in screen state and is excluded from shared results.
 - The interface uses the existing light/dark cobalt design tokens, safe areas, Expo Router, semantic controls, 48dp interactions, and a tablet-width reading column. iPad support is enabled in the application configuration.
 - Mobile lint and strict TypeScript checks pass.
 - Expo dependency compatibility check passes.

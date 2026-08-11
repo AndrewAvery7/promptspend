@@ -14,7 +14,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
-  compareModels,
   conversationCost,
   costAtScale,
   SUGGESTED_CACHE_SHARE,
@@ -28,8 +27,17 @@ import { EstimateResult } from '@/components/EstimateResult';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { ModelPicker } from '@/components/ModelPicker';
 import { NumericField } from '@/components/NumericField';
+import { PromptInputField } from '@/components/PromptInputField';
 import { loadMobileCatalog, type MobileCatalogResult } from '@/data/catalog';
 import { defaultComparisonSelection, toggleComparisonSelection } from '@/lib/comparison';
+import {
+  compareModelsForInputs,
+  createDefaultPromptInputs,
+  promptFieldTokens,
+  workloadForModel,
+  type PromptFieldKey,
+  type PromptInputMode,
+} from '@/lib/promptInput';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
@@ -61,6 +69,7 @@ export default function EstimateScreen() {
   const [selectedId, setSelectedId] = useState(DEFAULT_MODEL_ID);
   const [comparisonIds, setComparisonIds] = useState<string[]>([]);
   const [workload, setWorkload] = useState(DEFAULT_WORKLOAD);
+  const [promptInputs, setPromptInputs] = useState(createDefaultPromptInputs);
   const [cacheEnabled, setCacheEnabled] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -108,18 +117,11 @@ export default function EstimateScreen() {
   const breakdown = useMemo(
     () =>
       selectedModel
-        ? conversationCost(
-            selectedModel,
-            {
-              outputTokens: workload.outputTokens,
-              systemTokens: workload.systemTokens,
-              turns: workload.turns,
-              userTokens: workload.userTokens,
-            },
-            { cachedInputShare: cacheEnabled ? SUGGESTED_CACHE_SHARE : 0 },
-          )
+        ? conversationCost(selectedModel, workloadForModel(selectedModel, promptInputs, workload), {
+            cachedInputShare: cacheEnabled ? SUGGESTED_CACHE_SHARE : 0,
+          })
         : null,
-    [cacheEnabled, selectedModel, workload],
+    [cacheEnabled, promptInputs, selectedModel, workload],
   );
   const scaled = useMemo(
     () =>
@@ -141,14 +143,10 @@ export default function EstimateScreen() {
   );
   const comparisonRows = useMemo(
     () =>
-      compareModels(
+      compareModelsForInputs(
         comparisonModels,
-        {
-          outputTokens: workload.outputTokens,
-          systemTokens: workload.systemTokens,
-          turns: workload.turns,
-          userTokens: workload.userTokens,
-        },
+        promptInputs,
+        workload,
         {
           conversationsPerDay: workload.conversationsPerDay,
           monthlyActiveUsers: 1,
@@ -156,7 +154,19 @@ export default function EstimateScreen() {
         },
         { cachedInputShare: cacheEnabled ? SUGGESTED_CACHE_SHARE : 0 },
       ),
-    [cacheEnabled, comparisonModels, workload],
+    [cacheEnabled, comparisonModels, promptInputs, workload],
+  );
+  const tokenReferenceModel = mode === 'compare' ? (comparisonModels[0] ?? selectedModel) : selectedModel;
+  const displayedPromptTokens = useMemo(
+    () =>
+      tokenReferenceModel
+        ? {
+            system: promptFieldTokens(promptInputs.system, workload.systemTokens, tokenReferenceModel),
+            user: promptFieldTokens(promptInputs.user, workload.userTokens, tokenReferenceModel),
+            output: promptFieldTokens(promptInputs.output, workload.outputTokens, tokenReferenceModel),
+          }
+        : { system: 0, user: 0, output: 0 },
+    [promptInputs, tokenReferenceModel, workload.outputTokens, workload.systemTokens, workload.userTokens],
   );
 
   const toggleComparisonModel = useCallback(
@@ -170,6 +180,20 @@ export default function EstimateScreen() {
 
   const updateWorkload = (key: keyof WorkloadState, value: number) => {
     setWorkload((current) => ({ ...current, [key]: value }));
+  };
+
+  const updatePromptMode = (field: PromptFieldKey, inputMode: PromptInputMode) => {
+    setPromptInputs((current) => ({
+      ...current,
+      [field]: { ...current[field], mode: inputMode },
+    }));
+  };
+
+  const updatePromptText = (field: PromptFieldKey, text: string) => {
+    setPromptInputs((current) => ({
+      ...current,
+      [field]: { ...current[field], text },
+    }));
   };
 
   return (
@@ -334,38 +358,57 @@ export default function EstimateScreen() {
 
                 <View style={styles.divider} />
 
-                <NumericField
+                <View style={styles.inputGuide}>
+                  <Text style={styles.inputGuideTitle}>Use counts or paste the real text</Text>
+                  <Text style={styles.inputGuideText}>
+                    If you do not know the token count, choose Paste text. The estimate updates on this device
+                    while you type.
+                  </Text>
+                </View>
+
+                <PromptInputField
                   accessibilityHint="Typical number of tokens in the system instructions sent with each request"
+                  helper="Sent with every request. Stable prefixes may be eligible for caching."
+                  input={promptInputs.system}
                   label="System prompt"
                   max={200000}
-                  onChange={(value) => updateWorkload('systemTokens', value)}
-                  suffix="tokens"
-                  value={workload.systemTokens}
+                  modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                  numericValue={workload.systemTokens}
+                  onModeChange={(inputMode) => updatePromptMode('system', inputMode)}
+                  onNumericChange={(value) => updateWorkload('systemTokens', value)}
+                  onTextChange={(text) => updatePromptText('system', text)}
+                  placeholder="Paste your actual system prompt — the token estimate updates live…"
+                  tokenEstimate={displayedPromptTokens.system}
                 />
-                <Text style={styles.helper}>
-                  Sent with every request. Stable prefixes may be eligible for caching.
-                </Text>
 
-                <NumericField
+                <PromptInputField
                   accessibilityHint="Typical number of tokens in each new user message"
+                  input={promptInputs.user}
                   label="User message"
                   max={200000}
-                  onChange={(value) => updateWorkload('userTokens', value)}
-                  suffix="tokens"
-                  value={workload.userTokens}
+                  modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                  numericValue={workload.userTokens}
+                  onModeChange={(inputMode) => updatePromptMode('user', inputMode)}
+                  onNumericChange={(value) => updateWorkload('userTokens', value)}
+                  onTextChange={(text) => updatePromptText('user', text)}
+                  placeholder="Paste a typical user message…"
+                  tokenEstimate={displayedPromptTokens.user}
                 />
 
-                <NumericField
+                <PromptInputField
                   accessibilityHint="Typical number of tokens generated in each model response"
+                  helper="Paste a representative earlier response if you have one; otherwise enter an expected token count."
+                  input={promptInputs.output}
                   label="Model response"
                   max={200000}
-                  onChange={(value) => updateWorkload('outputTokens', value)}
-                  suffix="tokens"
-                  value={workload.outputTokens}
+                  modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                  numericValue={workload.outputTokens}
+                  onModeChange={(inputMode) => updatePromptMode('output', inputMode)}
+                  onNumericChange={(value) => updateWorkload('outputTokens', value)}
+                  onTextChange={(text) => updatePromptText('output', text)}
+                  placeholder="Paste a sample response, if you have one…"
+                  tokenEstimate={displayedPromptTokens.output}
                 />
-                <Text style={styles.helper}>
-                  Output usually costs more than input, so this field often moves the bill most.
-                </Text>
 
                 <NumericField
                   accessibilityHint="Number of back-and-forth turns in one conversation"
@@ -717,6 +760,23 @@ function createStyles(theme: MobileTheme) {
     divider: {
       backgroundColor: theme.border,
       height: StyleSheet.hairlineWidth,
+    },
+    inputGuide: {
+      backgroundColor: theme.accentSoft,
+      borderRadius: 12,
+      gap: 4,
+      padding: 14,
+    },
+    inputGuideTitle: {
+      color: theme.accent,
+      fontSize: 14,
+      fontWeight: '800',
+      lineHeight: 19,
+    },
+    inputGuideText: {
+      color: theme.text,
+      fontSize: 12,
+      lineHeight: 18,
     },
     helper: {
       color: theme.mutedText,

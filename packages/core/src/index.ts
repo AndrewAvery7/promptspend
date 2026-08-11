@@ -5,3 +5,4 @@ export * from './engine/share';
 export * from './pricing/catalog';
 export * from './pricing/health';
 export * from './pricing/types';
+export * from './tokenize/estimate';
