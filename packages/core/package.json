@@ -9,6 +9,7 @@
     "./engine/cost": "./src/engine/cost.ts",
     "./engine/format": "./src/engine/format.ts",
     "./engine/money": "./src/engine/money.ts",
+    "./engine/share": "./src/engine/share.ts",
     "./pricing/catalog": "./src/pricing/catalog.ts",
     "./pricing/health": "./src/pricing/health.ts",
     "./pricing/types": "./src/pricing/types.ts"

@@ -1,7 +1,13 @@
-import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useRef, useState } from 'react';
+import { Alert, findNodeHandle, Pressable, Share, StyleSheet, Text, View } from 'react-native';
 
-import { formatMoney, type CostBreakdown, type Model, type ScaledCost } from '@promptspend/core';
+import {
+  buildEstimateShareText,
+  formatMoney,
+  type CostBreakdown,
+  type Model,
+  type ScaledCost,
+} from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
@@ -15,7 +21,36 @@ interface EstimateResultProps {
 export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const shareButtonRef = useRef<View>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+
+  const shareEstimate = async () => {
+    if (isSharing) return;
+
+    setIsSharing(true);
+    try {
+      const anchor = findNodeHandle(shareButtonRef.current);
+      await Share.share(
+        {
+          message: buildEstimateShareText({ breakdown, model, scaled }),
+          title: 'PromptSpend estimate',
+        },
+        {
+          dialogTitle: 'Share PromptSpend estimate',
+          subject: `PromptSpend estimate for ${model.displayName}`,
+          ...(anchor === null ? {} : { anchor }),
+        },
+      );
+    } catch {
+      Alert.alert(
+        'Sharing is unavailable',
+        'The share menu could not open. Please try again after checking that sharing is enabled on this device.',
+      );
+    } finally {
+      setIsSharing(false);
+    }
+  };
 
   return (
     <View
@@ -40,6 +75,23 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
           <Text style={styles.warningText}>{warning}</Text>
         </View>
       ))}
+
+      <Pressable
+        accessibilityHint="Opens the system share menu with this estimate"
+        accessibilityLabel="Share this PromptSpend estimate"
+        accessibilityRole="button"
+        accessibilityState={{ busy: isSharing, disabled: isSharing }}
+        disabled={isSharing}
+        onPress={() => void shareEstimate()}
+        ref={shareButtonRef}
+        style={({ pressed }) => [
+          styles.shareButton,
+          pressed && !isSharing && styles.pressed,
+          isSharing && styles.disabled,
+        ]}
+      >
+        <Text style={styles.shareButtonText}>{isSharing ? 'Opening share menu...' : 'Share estimate'}</Text>
+      </Pressable>
 
       <Pressable
         accessibilityRole="button"
@@ -193,6 +245,24 @@ function createStyles(theme: MobileTheme) {
       fontSize: 13,
       lineHeight: 19,
     },
+    shareButton: {
+      alignItems: 'center',
+      backgroundColor: theme.accentSoft,
+      borderColor: theme.accent,
+      borderRadius: 10,
+      borderWidth: 1,
+      justifyContent: 'center',
+      marginTop: 18,
+      minHeight: 48,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    shareButtonText: {
+      color: theme.accent,
+      fontSize: 14,
+      fontWeight: '800',
+      lineHeight: 20,
+    },
     detailsButton: {
       alignItems: 'center',
       alignSelf: 'flex-start',
@@ -209,6 +279,9 @@ function createStyles(theme: MobileTheme) {
     },
     pressed: {
       opacity: 0.65,
+    },
+    disabled: {
+      opacity: 0.5,
     },
     details: {
       borderTopColor: theme.border,
