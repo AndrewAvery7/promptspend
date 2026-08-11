@@ -63,5 +63,5 @@ See [`../../docs/MOBILE.md`](../../docs/MOBILE.md) and [`../../design-system/pro
 - The existing `src/lib` paths are compatibility exports, so the website, API, and tests keep their stable imports.
 - `src/data/catalog.ts` owns the native network and file-cache adapter. It never persists prompts or scenario inputs.
 - The current Estimate slice includes model search, token/count inputs, conversation compounding, scale, optional caching, warnings, and calculation disclosure.
-- Estimate results open the native system share sheet. Platform-neutral text builders in `../../packages/core` cover both the current estimate and the upcoming multi-model comparison without including prompt content.
+- Estimate results open the native system share sheet. Platform-neutral text builders in `../../packages/core` cover both the current estimate and the upcoming multi-model comparison without including prompt content, and keep explicit field separators when email clients collapse plain-text line breaks.
 - The responsive layout supports iPhone, iPad, Android phone/tablet, light/dark appearance, safe areas, and landscape. Native screen-reader and largest-text testing still requires physical devices.

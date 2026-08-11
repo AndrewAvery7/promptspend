@@ -3,6 +3,7 @@ import { formatCount, formatMoney } from './format';
 import type { Model } from '../pricing/types';
 
 const PROMPTSPEND_URL = 'https://promptspend.com';
+const SHARE_LINE_BREAK = '\r\n';
 
 export interface EstimateShareInput {
   breakdown: CostBreakdown;
@@ -18,30 +19,31 @@ export function buildEstimateShareText({ breakdown, model, scaled }: EstimateSha
   const lines = [
     'PromptSpend estimate',
     '',
-    `Model: ${model.displayName}`,
-    `Estimated monthly cost: ${formatMoney(scaled.perMonth)}`,
-    `Per day: ${formatMoney(scaled.perDay)}`,
-    `Per conversation: ${formatMoney(breakdown.total)}`,
-    `Per year: ${formatMoney(scaled.perYear)}`,
-    `Tokens per conversation: ${formatCount(breakdown.inputTokens)} input + ${formatCount(breakdown.outputTokens)} output`,
+    `• Model: ${model.displayName}`,
+    `• Estimated monthly cost: ${formatMoney(scaled.perMonth)}`,
+    `• Per day: ${formatMoney(scaled.perDay)}`,
+    `• Per conversation: ${formatMoney(breakdown.total)}`,
+    `• Per year: ${formatMoney(scaled.perYear)}`,
+    `• Input tokens per conversation: ${formatCount(breakdown.inputTokens)}`,
+    `• Output tokens per conversation: ${formatCount(breakdown.outputTokens)}`,
   ];
 
   if (breakdown.assumptions.length > 0) {
-    lines.push('', 'Assumptions:', ...breakdown.assumptions.map((assumption) => `- ${assumption}`));
+    lines.push('', ...breakdown.assumptions.map((assumption) => `• Assumption: ${assumption}`));
   }
 
   if (breakdown.warnings.length > 0) {
-    lines.push('', 'Important:', ...breakdown.warnings.map((warning) => `- ${warning}`));
+    lines.push('', ...breakdown.warnings.map((warning) => `• Important: ${warning}`));
   }
 
   lines.push(
     '',
-    `Pricing last verified: ${model.provenance.lastVerified}`,
-    'Estimate based on published API prices and the selected workload. Actual bills can vary.',
-    `Create your own estimate: ${PROMPTSPEND_URL}`,
+    `• Pricing last verified: ${model.provenance.lastVerified}`,
+    '• Estimate note: Published API prices and the selected workload are used; actual bills can vary.',
+    `• Create your own estimate: ${PROMPTSPEND_URL}`,
   );
 
-  return lines.join('\n');
+  return lines.join(SHARE_LINE_BREAK);
 }
 
 /**
@@ -61,7 +63,7 @@ export function buildComparisonShareText(rows: readonly ComparisonRow[]): string
       '',
       'No models were selected.',
       `Compare models at ${PROMPTSPEND_URL}`,
-    ].join('\n');
+    ].join(SHARE_LINE_BREAK);
   }
 
   const comparisonLines = sorted.map((row, index) => {
@@ -73,7 +75,7 @@ export function buildComparisonShareText(rows: readonly ComparisonRow[]): string
   });
 
   const warningLines = sorted.flatMap((row) =>
-    row.breakdown.warnings.map((warning) => `- ${row.model.displayName}: ${warning}`),
+    row.breakdown.warnings.map((warning) => `• ${row.model.displayName}: ${warning}`),
   );
 
   const lines = [
@@ -81,8 +83,8 @@ export function buildComparisonShareText(rows: readonly ComparisonRow[]): string
     '',
     ...comparisonLines,
     '',
-    `Lowest estimated cost: ${cheapest.model.displayName} at ${formatMoney(cheapest.scaled.perMonth)}/month.`,
-    'The same workload and usage assumptions were applied to every model.',
+    `• Lowest estimated cost: ${cheapest.model.displayName} at ${formatMoney(cheapest.scaled.perMonth)}/month.`,
+    '• The same workload and usage assumptions were applied to every model.',
   ];
 
   if (warningLines.length > 0) {
@@ -91,9 +93,9 @@ export function buildComparisonShareText(rows: readonly ComparisonRow[]): string
 
   lines.push(
     '',
-    'Estimates use published API prices. Actual bills can vary.',
-    `Compare your workload: ${PROMPTSPEND_URL}`,
+    '• Estimate note: Published API prices are used; actual bills can vary.',
+    `• Compare your workload: ${PROMPTSPEND_URL}`,
   );
 
-  return lines.join('\n');
+  return lines.join(SHARE_LINE_BREAK);
 }

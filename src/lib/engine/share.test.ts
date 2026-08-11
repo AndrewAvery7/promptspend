@@ -40,12 +40,29 @@ describe('buildEstimateShareText', () => {
     const text = buildEstimateShareText({ breakdown, model: selectedModel, scaled });
 
     expect(text).toContain('PromptSpend estimate');
-    expect(text).toContain('Model: Model A');
-    expect(text).toContain('Estimated monthly cost:');
-    expect(text).toContain('Per conversation:');
-    expect(text).toContain('Tokens per conversation: 26,700 input + 5,400 output');
-    expect(text).toContain('Pricing last verified: 2026-08-11');
+    expect(text).toContain('• Model: Model A');
+    expect(text).toContain('• Estimated monthly cost:');
+    expect(text).toContain('• Per conversation:');
+    expect(text).toContain('• Input tokens per conversation: 26,700');
+    expect(text).toContain('• Output tokens per conversation: 5,400');
+    expect(text).toContain('• Pricing last verified: 2026-08-11');
     expect(text).toContain('https://promptspend.com');
+  });
+
+  it('remains scannable when an email client collapses every line break', () => {
+    const selectedModel = model('model-a', 'Model A', 3, 15);
+    const breakdown = conversationCost(selectedModel, WORKLOAD);
+    const scaled = costAtScale(breakdown.total, SCALE);
+
+    const text = buildEstimateShareText({ breakdown, model: selectedModel, scaled });
+    const collapsed = text.replace(/\s+/g, ' ');
+
+    expect(text).toContain('\r\n');
+    expect(collapsed).toContain('• Model: Model A • Estimated monthly cost:');
+    expect(collapsed).toContain('• Per year:');
+    expect(collapsed).toContain('• Input tokens per conversation: 26,700');
+    expect(collapsed).toContain('• Pricing last verified: 2026-08-11');
+    expect(collapsed).toContain('• Create your own estimate: https://promptspend.com');
   });
 });
 
