@@ -1,23 +1,32 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { darkTheme, lightTheme } from '@/theme/tokens';
+import { MobileThemeProvider, useMobileTheme } from '@/theme/useMobileTheme';
 
 export default function RootLayout() {
-  const isDark = useColorScheme() === 'dark';
-  const theme = isDark ? darkTheme : lightTheme;
-
   return (
     <SafeAreaProvider>
+      <MobileThemeProvider>
+        <ThemedStack />
+      </MobileThemeProvider>
+    </SafeAreaProvider>
+  );
+}
+
+function ThemedStack() {
+  const { isDark, theme } = useMobileTheme();
+  return (
+    <>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
           contentStyle: { backgroundColor: theme.background },
           headerShown: false,
         }}
-      />
-    </SafeAreaProvider>
+      >
+        <Stack.Screen name="index" options={{ title: 'PromptSpend — LLM cost estimator' }} />
+      </Stack>
+    </>
   );
 }

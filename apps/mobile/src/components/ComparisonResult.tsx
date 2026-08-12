@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 
-import { buildComparisonShareText, formatMoney, type Catalog, type ComparisonRow } from '@promptspend/core';
+import { buildComparisonShareText, formatMoney, formatPercent, type Catalog, type ComparisonRow } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
@@ -76,7 +76,7 @@ export function ComparisonResult({ catalog, rows }: ComparisonResultProps) {
       style={styles.resultCard}
     >
       <Text style={styles.eyebrow}>LOWEST ESTIMATED COST</Text>
-      <Text adjustsFontSizeToFit numberOfLines={1} style={styles.monthlyCost}>
+      <Text style={styles.monthlyCost}>
         {formatMoney(cheapest.scaled.perMonth)}
       </Text>
       <Text style={styles.monthlyLabel}>per month · {cheapest.model.displayName}</Text>
@@ -125,6 +125,10 @@ export function ComparisonResult({ catalog, rows }: ComparisonResultProps) {
                 styles={styles}
               />
               <SmallMetric label="Per year" value={formatMoney(row.scaled.perYear)} styles={styles} />
+              <SmallMetric label="Per user" value={formatMoney(row.scaled.costPerUser)} styles={styles} />
+              {row.scaled.margin !== null && (
+                <SmallMetric label="AI margin" value={formatPercent(row.scaled.margin, 1)} styles={styles} />
+              )}
             </View>
 
             {row.breakdown.warnings.map((warning, warningIndex) => (
@@ -323,8 +327,8 @@ function createStyles(theme: MobileTheme) {
       letterSpacing: -0.5,
       lineHeight: 32,
     },
-    rowMetrics: { flexDirection: 'row', gap: 12 },
-    smallMetric: { flex: 1, gap: 3 },
+    rowMetrics: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+    smallMetric: { flexBasis: '42%', flexGrow: 1, gap: 3 },
     smallMetricValue: { color: theme.text, fontSize: 14, fontVariant: ['tabular-nums'], fontWeight: '700' },
     smallMetricLabel: { color: theme.mutedText, fontSize: 10, lineHeight: 14 },
     warningCard: {

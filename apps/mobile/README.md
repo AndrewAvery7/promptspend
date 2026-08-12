@@ -2,7 +2,7 @@
 
 Native iOS and Android applications for PromptSpend, built with Expo SDK 57, React Native, TypeScript, and Expo Router.
 
-Status: Phase 1 native beta. The app loads validated live pricing, enforces the 24-hour stale-price ceiling, and executes the same extracted cost engine as the website. Estimate, four-model cost comparison, and private on-device pasted-text estimation are available for physical-device QA; it is not yet the complete version 1 product.
+Status: native parity beta. The app loads validated live pricing, enforces the 24-hour stale-price ceiling, and executes the same extracted cost engine as the website. Estimate, four-model workload comparison, full catalog exploration, Learn, Data & Alerts, private on-device pasted-text estimation, Search, Guided Tour, ticker, CSV/scenario sharing, and persisted appearance choices are implemented in source. Store release remains blocked on the physical-device and accessibility gates in [`../../docs/MOBILE_PARITY.md`](../../docs/MOBILE_PARITY.md).
 
 The generated icon, adaptive-icon, splash, and favicon files are temporary placeholders. They must be replaced with approved PromptSpend artwork before any external beta build.
 
@@ -15,7 +15,7 @@ The generated icon, adaptive-icon, splash, and favicon files are temporary place
 - Android application ID: `com.promptspend.app`
 - Deep-link scheme: `promptspend`
 
-The Apple and Google identifiers remain provisional until their publisher consoles accept them.
+Apple has accepted and processed production builds under this identifier. Google Play registration is paid; physical Android device verification and the closed-test/release gates remain pending.
 
 ## Local commands
 
@@ -64,6 +64,12 @@ See [`../../docs/MOBILE.md`](../../docs/MOBILE.md) and [`../../design-system/pro
 - `src/data/catalog.ts` owns the native network and file-cache adapter. It never persists prompts or scenario inputs.
 - Estimate lets people either enter known token counts or paste the real system prompt, typical user message, and representative model response. Pasted text remains only in screen state; the app derives an immediate, clearly marked approximate token count with the selected model's catalog profile.
 - Compare applies the same text and usage assumptions to as many as four models, derives each model's workload independently from its own tokenizer profile, starts with the website's representative frontier-to-budget shortlist, ranks costs cheapest-first, shows monthly deltas and potential annual savings, and rejects a fifth model without changing the current selection.
+- Compare also exposes the complete searchable/sortable catalog, legacy and unlisted filters, provenance details and links, and an accessible illustrative capability-versus-price map tied to the four-model shortlist.
+- Learn reads the same seven lesson modules as the website and includes a private three-family token lab. Counts remain honestly labelled as calibrated estimates pending Hermes parity proof.
+- Data & Alerts shows pipeline health, public sync evidence, the trust ladder, flagged prices, commit-feed and repository options, secure hosted email-alert management, and API/MCP/editor integrations. Native push remains withheld until the alerts Worker supports APNs/FCM tokens; browser VAPID subscriptions cannot be reused by native apps.
+- Search covers every destination, models, comparison selection, appearance, the tour, and scenario reset. Appearance persists System/Light/Dark, four accents, and cool/warm canvases on-device.
+- The pricing ticker is derived from the validated catalog, can be paused, and disables automatic movement when Reduce Motion is enabled.
+- Scenario links carry only model choices, derived token counts, and assumptions. Native CSV export includes costs, warnings, assumptions, provenance, and freshness evidence.
 - Estimate and comparison results open the native system share sheet. Platform-neutral text builders in `../../packages/core` exclude prompt content and keep explicit field separators when email clients collapse plain-text line breaks.
 - Exact native tokenization remains gated on golden-fixture, performance, and memory proof under Hermes on physical iOS and Android devices; until then, pasted-text counts use the documented calibrated estimate.
 - CI typechecks and lints the native source, validates Expo configuration, and creates production bundles for iOS, Android, and web.

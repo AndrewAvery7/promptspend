@@ -1,5 +1,5 @@
 import type { ComparisonRow, CostBreakdown, ScaledCost } from './cost';
-import { formatCount, formatMoney } from './format';
+import { formatCount, formatMoney, formatPercent } from './format';
 import type { Model } from '../pricing/types';
 
 const PROMPTSPEND_URL = 'https://promptspend.com';
@@ -24,9 +24,12 @@ export function buildEstimateShareText({ breakdown, model, scaled }: EstimateSha
     `• Per day: ${formatMoney(scaled.perDay)}`,
     `• Per conversation: ${formatMoney(breakdown.total)}`,
     `• Per year: ${formatMoney(scaled.perYear)}`,
+    `• Cost per active user: ${formatMoney(scaled.costPerUser)}`,
     `• Input tokens per conversation: ${formatCount(breakdown.inputTokens)}`,
     `• Output tokens per conversation: ${formatCount(breakdown.outputTokens)}`,
   ];
+
+  if (scaled.margin !== null) lines.push(`• AI gross margin: ${formatPercent(scaled.margin, 1)}`);
 
   if (breakdown.assumptions.length > 0) {
     lines.push('', ...breakdown.assumptions.map((assumption) => `• Assumption: ${assumption}`));
@@ -71,7 +74,8 @@ export function buildComparisonShareText(rows: readonly ComparisonRow[]): string
     const delta =
       index === 0 ? '' : `; +${formatMoney(row.scaled.perMonth - cheapest.scaled.perMonth)}/month`;
 
-    return `${index + 1}. ${row.model.displayName}: ${formatMoney(row.scaled.perMonth)}/month | ${formatMoney(row.breakdown.total)}/conversation${delta}${lowestLabel}`;
+    const unitEconomics = ` | ${formatMoney(row.scaled.costPerUser)}/user${row.scaled.margin === null ? '' : ` | ${formatPercent(row.scaled.margin, 1)} AI margin`}`;
+    return `${index + 1}. ${row.model.displayName}: ${formatMoney(row.scaled.perMonth)}/month | ${formatMoney(row.breakdown.total)}/conversation${unitEconomics}${delta}${lowestLabel}`;
   });
 
   const warningLines = sorted.flatMap((row) =>

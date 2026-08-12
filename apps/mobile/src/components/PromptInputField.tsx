@@ -146,6 +146,7 @@ function ModeButton({
 }) {
   return (
     <Pressable
+      aria-checked={active}
       accessibilityRole="radio"
       accessibilityState={{ checked: active }}
       onPress={onPress}

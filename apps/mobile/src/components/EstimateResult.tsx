@@ -4,6 +4,7 @@ import { Alert, findNodeHandle, Pressable, Share, StyleSheet, Text, View } from 
 import {
   buildEstimateShareText,
   formatMoney,
+  formatPercent,
   type CostBreakdown,
   type Model,
   type ScaledCost,
@@ -58,7 +59,7 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
       style={styles.resultCard}
     >
       <Text style={styles.eyebrow}>ESTIMATED AI COST</Text>
-      <Text adjustsFontSizeToFit numberOfLines={1} style={styles.monthlyCost}>
+      <Text style={styles.monthlyCost}>
         {formatMoney(scaled.perMonth)}
       </Text>
       <Text style={styles.monthlyLabel}>per month · {model.displayName}</Text>
@@ -67,6 +68,10 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
         <Metric label="Per conversation" value={formatMoney(breakdown.total)} styles={styles} />
         <Metric label="Per day" value={formatMoney(scaled.perDay)} styles={styles} />
         <Metric label="Per year" value={formatMoney(scaled.perYear)} styles={styles} />
+        <Metric label="Per user" value={formatMoney(scaled.costPerUser)} styles={styles} />
+        {scaled.margin !== null && (
+          <Metric label="AI gross margin" value={formatPercent(scaled.margin, 1)} styles={styles} />
+        )}
       </View>
 
       {breakdown.warnings.map((warning) => (
@@ -109,6 +114,16 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
             <DetailRow label="Cache write" value={formatMoney(breakdown.cacheWriteCost)} styles={styles} />
           )}
           <DetailRow label="Output" value={formatMoney(breakdown.outputCost)} styles={styles} />
+          <DetailRow
+            label="Monthly input"
+            value={formatMoney((breakdown.inputCost + breakdown.cacheWriteCost) * (scaled.perDay / Math.max(breakdown.total, Number.EPSILON)) * 30)}
+            styles={styles}
+          />
+          <DetailRow
+            label="Monthly output"
+            value={formatMoney(breakdown.outputCost * (scaled.perDay / Math.max(breakdown.total, Number.EPSILON)) * 30)}
+            styles={styles}
+          />
           <DetailRow
             label="Input tokens"
             value={Math.round(breakdown.inputTokens).toLocaleString('en-US')}
@@ -205,11 +220,14 @@ function createStyles(theme: MobileTheme) {
       borderTopColor: theme.border,
       borderTopWidth: StyleSheet.hairlineWidth,
       flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
       marginTop: 20,
       paddingTop: 16,
     },
     metric: {
-      flex: 1,
+      flexBasis: '29%',
+      flexGrow: 1,
       gap: 3,
       minWidth: 0,
     },

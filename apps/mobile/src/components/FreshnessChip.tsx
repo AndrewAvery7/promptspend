@@ -8,21 +8,23 @@ import { useMobileTheme } from '@/theme/useMobileTheme';
 
 interface FreshnessChipProps {
   freshness: Freshness;
+  pricesChangedOn?: string | null;
 }
 
-export function FreshnessChip({ freshness }: FreshnessChipProps) {
+export function FreshnessChip({ freshness, pricesChangedOn = null }: FreshnessChipProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const tone =
     freshness.level === 'fresh' ? theme.savings : freshness.level === 'stale' ? theme.danger : theme.warning;
   const label = freshness.checkedOn
-    ? `Prices checked ${formatDate(freshness.checkedOn)}`
-    : 'Price check unavailable';
+    ? `Sources checked ${formatDate(freshness.checkedOn)}`
+    : 'Source check unavailable';
+  const changeLabel = pricesChangedOn ? `prices changed ${formatDate(pricesChangedOn)}` : 'no price change recorded';
 
   return (
-    <View accessibilityLabel={`${label}. Status ${freshness.level}.`} style={styles.chip}>
+    <View accessibilityLabel={`${label}. ${changeLabel}. Status ${freshness.level}.`} style={styles.chip}>
       <View style={[styles.dot, { backgroundColor: tone }]} />
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{label} · {changeLabel}</Text>
     </View>
   );
 }

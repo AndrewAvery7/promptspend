@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Head from 'expo-router/head';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -23,11 +24,25 @@ import {
 
 import { ComparisonModelPicker } from '@/components/ComparisonModelPicker';
 import { ComparisonResult } from '@/components/ComparisonResult';
+import {
+  AppearanceSheet,
+  CommandSheet,
+  GlobalActions,
+  GuidedTourSheet,
+  PricingTicker,
+  SectionNav,
+  type AppSection,
+} from '@/components/AppChrome';
+import { DataSection } from '@/components/DataSection';
+import { CatalogExplorer } from '@/components/CatalogExplorer';
 import { EstimateResult } from '@/components/EstimateResult';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { LearnSection } from '@/components/LearnSection';
 import { ModelPicker } from '@/components/ModelPicker';
 import { NumericField } from '@/components/NumericField';
 import { PromptInputField } from '@/components/PromptInputField';
+import { ScenarioActions } from '@/components/ScenarioActions';
+import { ScenarioInsights } from '@/components/ScenarioInsights';
 import { loadMobileCatalog, type MobileCatalogResult } from '@/data/catalog';
 import { defaultComparisonSelection, toggleComparisonSelection } from '@/lib/comparison';
 import {
@@ -42,11 +57,12 @@ import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 const DEFAULT_MODEL_ID = 'claude-sonnet-5';
-type AppMode = 'estimate' | 'compare';
 
 interface WorkloadState {
   conversationsPerDay: number;
+  monthlyActiveUsers: number;
   outputTokens: number;
+  revenuePerUserPerMonth: number;
   systemTokens: number;
   turns: number;
   userTokens: number;
@@ -54,7 +70,9 @@ interface WorkloadState {
 
 const DEFAULT_WORKLOAD: WorkloadState = {
   conversationsPerDay: 2500,
+  monthlyActiveUsers: 1000,
   outputTokens: 900,
+  revenuePerUserPerMonth: 0,
   systemTokens: 800,
   turns: 6,
   userTokens: 400,
@@ -65,13 +83,20 @@ export default function EstimateScreen() {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [catalogResult, setCatalogResult] = useState<MobileCatalogResult | null>(null);
   const [catalogError, setCatalogError] = useState<string | null>(null);
-  const [mode, setMode] = useState<AppMode>('estimate');
+  const [section, setSection] = useState<AppSection>('estimate');
   const [selectedId, setSelectedId] = useState(DEFAULT_MODEL_ID);
   const [comparisonIds, setComparisonIds] = useState<string[]>([]);
   const [workload, setWorkload] = useState(DEFAULT_WORKLOAD);
   const [promptInputs, setPromptInputs] = useState(createDefaultPromptInputs);
   const [cacheEnabled, setCacheEnabled] = useState(false);
+  const [cacheSharePercent, setCacheSharePercent] = useState(SUGGESTED_CACHE_SHARE * 100);
+  const [reasoningMultiplier, setReasoningMultiplier] = useState(1);
+  const [batchEnabled, setBatchEnabled] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+  const mode = section === 'compare' ? 'compare' : 'estimate';
 
   const catalog = catalogResult?.catalog ?? null;
   const selectedModel = useMemo(
@@ -116,23 +141,25 @@ export default function EstimateScreen() {
 
   const breakdown = useMemo(
     () =>
-      selectedModel
+          selectedModel
         ? conversationCost(selectedModel, workloadForModel(selectedModel, promptInputs, workload), {
-            cachedInputShare: cacheEnabled ? SUGGESTED_CACHE_SHARE : 0,
+            cachedInputShare: cacheEnabled ? cacheSharePercent / 100 : 0,
+            reasoningMultiplier,
+            useBatchApi: batchEnabled,
           })
         : null,
-    [cacheEnabled, promptInputs, selectedModel, workload],
+    [batchEnabled, cacheEnabled, cacheSharePercent, promptInputs, reasoningMultiplier, selectedModel, workload],
   );
   const scaled = useMemo(
     () =>
       breakdown
         ? costAtScale(breakdown.total, {
             conversationsPerDay: workload.conversationsPerDay,
-            monthlyActiveUsers: 1,
-            revenuePerUserPerMonth: 0,
+            monthlyActiveUsers: workload.monthlyActiveUsers,
+            revenuePerUserPerMonth: workload.revenuePerUserPerMonth,
           })
         : null,
-    [breakdown, workload.conversationsPerDay],
+    [breakdown, workload.conversationsPerDay, workload.monthlyActiveUsers, workload.revenuePerUserPerMonth],
   );
   const comparisonModels = useMemo(
     () =>
@@ -149,12 +176,16 @@ export default function EstimateScreen() {
         workload,
         {
           conversationsPerDay: workload.conversationsPerDay,
-          monthlyActiveUsers: 1,
-          revenuePerUserPerMonth: 0,
+          monthlyActiveUsers: workload.monthlyActiveUsers,
+          revenuePerUserPerMonth: workload.revenuePerUserPerMonth,
         },
-        { cachedInputShare: cacheEnabled ? SUGGESTED_CACHE_SHARE : 0 },
+        {
+          cachedInputShare: cacheEnabled ? cacheSharePercent / 100 : 0,
+          reasoningMultiplier,
+          useBatchApi: batchEnabled,
+        },
       ),
-    [cacheEnabled, comparisonModels, promptInputs, workload],
+    [batchEnabled, cacheEnabled, cacheSharePercent, comparisonModels, promptInputs, reasoningMultiplier, workload],
   );
   const tokenReferenceModel = mode === 'compare' ? (comparisonModels[0] ?? selectedModel) : selectedModel;
   const displayedPromptTokens = useMemo(
@@ -168,6 +199,11 @@ export default function EstimateScreen() {
         : { system: 0, user: 0, output: 0 },
     [promptInputs, tokenReferenceModel, workload.outputTokens, workload.systemTokens, workload.userTokens],
   );
+  const exportRows = useMemo(() => {
+    if (section === 'compare') return comparisonRows;
+    if (!selectedModel || !breakdown || !scaled) return [];
+    return [{ model: selectedModel, breakdown, scaled, deltaPerMonth: 0, multipleOfCheapest: 1, isCheapest: true }];
+  }, [breakdown, comparisonRows, scaled, section, selectedModel]);
 
   const toggleComparisonModel = useCallback(
     (id: string) => {
@@ -196,8 +232,28 @@ export default function EstimateScreen() {
     }));
   };
 
+  const resetScenario = useCallback(() => {
+    setSelectedId(DEFAULT_MODEL_ID);
+    setComparisonIds(catalog ? defaultComparisonSelection(catalog.primaryModels) : []);
+    setWorkload(DEFAULT_WORKLOAD);
+    setPromptInputs(createDefaultPromptInputs());
+    setCacheEnabled(false);
+    setCacheSharePercent(SUGGESTED_CACHE_SHARE * 100);
+    setReasoningMultiplier(1);
+    setBatchEnabled(false);
+    setSection('estimate');
+  }, [catalog]);
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'right', 'bottom', 'left']}>
+    <>
+      <Head>
+        <title>PromptSpend — LLM cost estimator</title>
+        <meta
+          content="Estimate, compare, and understand LLM API costs with validated pricing evidence."
+          name="description"
+        />
+      </Head>
+      <SafeAreaView role="main" style={styles.safeArea} edges={['top', 'right', 'bottom', 'left']}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={0}
@@ -226,25 +282,17 @@ export default function EstimateScreen() {
               </View>
               <Text style={styles.brandName}>PromptSpend</Text>
             </View>
-            <Text style={styles.phaseLabel}>NATIVE PREVIEW</Text>
-          </View>
-
-          <View accessibilityRole="tablist" style={styles.modeSelector}>
-            <ModeButton
-              active={mode === 'estimate'}
-              label="Estimate"
-              onPress={() => setMode('estimate')}
-              styles={styles}
-            />
-            <ModeButton
-              active={mode === 'compare'}
-              label="Compare"
-              onPress={() => setMode('compare')}
-              styles={styles}
+            <GlobalActions
+              onAppearance={() => setAppearanceOpen(true)}
+              onSearch={() => setCommandOpen(true)}
+              onTour={() => setTourOpen(true)}
             />
           </View>
 
-          <View style={styles.hero}>
+          {catalog && <PricingTicker catalog={catalog} onOpenData={() => setSection('data')} />}
+          <SectionNav onChange={setSection} section={section} />
+
+          {(section === 'estimate' || section === 'compare') && <View style={styles.hero}>
             <Text style={styles.eyebrow}>{mode === 'estimate' ? 'ESTIMATE' : 'COMPARE'}</Text>
             <Text accessibilityRole="header" style={styles.title}>
               {mode === 'estimate' ? 'Know the tab before you build.' : 'See the price difference.'}
@@ -254,8 +302,13 @@ export default function EstimateScreen() {
                 ? 'Describe one typical AI conversation. PromptSpend applies the same validated pricing rules as the website and scales the cost to your traffic.'
                 : 'Apply one workload to as many as four LLMs. PromptSpend ranks the same conversation from lowest to highest estimated cost.'}
             </Text>
-            {catalog && <FreshnessChip freshness={catalog.freshness()} />}
-          </View>
+            {catalog && (
+              <FreshnessChip
+                freshness={catalog.freshness()}
+                pricesChangedOn={catalog.pricesLastChanged()}
+              />
+            )}
+          </View>}
 
           {!catalogResult && (
             <View accessibilityLiveRegion="polite" style={styles.gateCard}>
@@ -316,13 +369,40 @@ export default function EstimateScreen() {
             </View>
           )}
 
-          {mode === 'estimate' && breakdown && selectedModel && scaled && (
+          {section === 'estimate' && breakdown && selectedModel && scaled && (
             <EstimateResult breakdown={breakdown} model={selectedModel} scaled={scaled} />
           )}
 
-          {mode === 'compare' && catalog && <ComparisonResult catalog={catalog} rows={comparisonRows} />}
+          {section === 'compare' && catalog && <ComparisonResult catalog={catalog} rows={comparisonRows} />}
 
-          {catalog && selectedModel && (
+          {section === 'learn' && catalog && <LearnSection catalog={catalog} />}
+
+          {section === 'data' && catalog && <DataSection catalog={catalog} />}
+
+          {(section === 'estimate' || section === 'compare') && (
+            <ScenarioInsights onLearn={() => setSection('learn')} rows={exportRows} />
+          )}
+
+          {(section === 'estimate' || section === 'compare') && catalog && (
+            <ScenarioActions
+              batchEnabled={batchEnabled}
+              cacheShare={cacheEnabled ? cacheSharePercent / 100 : 0}
+              catalog={catalog}
+              conversationsPerDay={workload.conversationsPerDay}
+              monthlyActiveUsers={workload.monthlyActiveUsers}
+              modelIds={section === 'compare' ? comparisonIds : [selectedModel?.id ?? selectedId]}
+              outputTokens={displayedPromptTokens.output}
+              pastedFields={(Object.keys(promptInputs) as PromptFieldKey[]).filter((field) => promptInputs[field].mode === 'text')}
+              reasoningMultiplier={reasoningMultiplier}
+              revenuePerUserPerMonth={workload.revenuePerUserPerMonth}
+              rows={exportRows}
+              systemTokens={displayedPromptTokens.system}
+              turns={workload.turns}
+              userTokens={displayedPromptTokens.user}
+            />
+          )}
+
+          {(section === 'estimate' || section === 'compare') && catalog && selectedModel && (
             <>
               <View style={styles.panel}>
                 <View style={styles.panelHeader}>
@@ -428,7 +508,7 @@ export default function EstimateScreen() {
                     <Text style={styles.switchLabel}>Assume prompt caching</Text>
                     <Text style={styles.helper}>
                       Off by default. When enabled, applies a {Math.round(SUGGESTED_CACHE_SHARE * 100)}%
-                      hit-rate assumption and published cache-write rates.
+                      starting hit-rate assumption and published cache-write rates.
                     </Text>
                   </View>
                   <Switch
@@ -441,6 +521,48 @@ export default function EstimateScreen() {
                     value={cacheEnabled}
                   />
                 </View>
+
+                {cacheEnabled && (
+                  <NumericField
+                    accessibilityHint="Estimated percentage of repeated input served from the provider prompt cache"
+                    label="Cache hit share"
+                    max={100}
+                    onChange={setCacheSharePercent}
+                    suffix="percent"
+                    value={cacheSharePercent}
+                  />
+                )}
+
+                <View style={styles.switchRow}>
+                  <View style={styles.switchCopy}>
+                    <Text style={styles.switchLabel}>Use batch API where available</Text>
+                    <Text style={styles.helper}>
+                      Applies only each provider’s published batch multiplier. Models without one stay at full rates.
+                    </Text>
+                  </View>
+                  <Switch
+                    accessibilityLabel="Use batch API where available"
+                    ios_backgroundColor={theme.border}
+                    onValueChange={setBatchEnabled}
+                    thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
+                    trackColor={{ false: theme.border, true: theme.accent }}
+                    value={batchEnabled}
+                  />
+                </View>
+
+                <NumericField
+                  accessibilityHint="Multiplier for hidden reasoning tokens billed at the output rate"
+                  label="Reasoning token multiplier"
+                  max={5}
+                  min={1}
+                  onChange={setReasoningMultiplier}
+                  step={0.1}
+                  suffix="times"
+                  value={reasoningMultiplier}
+                />
+                <Text style={styles.helper}>
+                  Leave at 1× unless provider usage reports hidden reasoning tokens.
+                </Text>
               </View>
 
               <View style={styles.panel}>
@@ -466,6 +588,24 @@ export default function EstimateScreen() {
                   suffix="per day"
                   value={workload.conversationsPerDay}
                 />
+                <NumericField
+                  accessibilityHint="Number of users active in a typical month"
+                  label="Monthly active users"
+                  max={1000000000}
+                  min={1}
+                  onChange={(value) => updateWorkload('monthlyActiveUsers', value)}
+                  suffix="users"
+                  value={workload.monthlyActiveUsers}
+                />
+                <NumericField
+                  accessibilityHint="Average monthly revenue earned from each active user"
+                  label="Revenue per user per month"
+                  max={1000000}
+                  onChange={(value) => updateWorkload('revenuePerUserPerMonth', value)}
+                  step={0.01}
+                  suffix="USD"
+                  value={workload.revenuePerUserPerMonth}
+                />
               </View>
 
               <View style={styles.dataCard}>
@@ -479,40 +619,52 @@ export default function EstimateScreen() {
                   No account, prompt upload, tracker, or advertising identifier.
                 </Text>
               </View>
+
+              {section === 'compare' && (
+                <CatalogExplorer
+                  catalog={catalog}
+                  onToggle={toggleComparisonModel}
+                  selectedIds={comparisonIds}
+                />
+              )}
             </>
           )}
 
-          <Text style={styles.footer}>PromptSpend mobile · Estimate and compare</Text>
+          <Text style={styles.footer}>
+            PromptSpend mobile · Estimate · Compare · Learn · Data &amp; Alerts
+          </Text>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-}
 
-function ModeButton({
-  active,
-  label,
-  onPress,
-  styles,
-}: {
-  active: boolean;
-  label: string;
-  onPress: () => void;
-  styles: ReturnType<typeof createStyles>;
-}) {
-  return (
-    <Pressable
-      accessibilityRole="tab"
-      accessibilityState={{ selected: active }}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.modeButton,
-        active && styles.modeButtonActive,
-        pressed && styles.pressed,
-      ]}
-    >
-      <Text style={[styles.modeButtonText, active && styles.modeButtonTextActive]}>{label}</Text>
-    </Pressable>
+        <AppearanceSheet onClose={() => setAppearanceOpen(false)} visible={appearanceOpen} />
+        {catalog && (
+          <CommandSheet
+            catalog={catalog}
+            onClose={() => setCommandOpen(false)}
+            onReset={resetScenario}
+            onSection={setSection}
+            onSelectModel={(id) => {
+              setSelectedId(id);
+              setSection('estimate');
+            }}
+            onToggleComparison={(id) => {
+              if (toggleComparisonModel(id)) setSection('compare');
+            }}
+            onTour={() => {
+              setTourOpen(true);
+              setSection('estimate');
+            }}
+            visible={commandOpen}
+            selectedComparisonIds={comparisonIds}
+          />
+        )}
+        <GuidedTourSheet
+          onClose={() => setTourOpen(false)}
+          onOpenEstimate={() => setSection('estimate')}
+          visible={tourOpen}
+        />
+      </KeyboardAvoidingView>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -565,6 +717,8 @@ function createStyles(theme: MobileTheme) {
     brandRow: {
       alignItems: 'center',
       flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
       justifyContent: 'space-between',
       minHeight: 48,
     },
@@ -593,41 +747,6 @@ function createStyles(theme: MobileTheme) {
       fontSize: 20,
       fontWeight: '800',
       letterSpacing: -0.4,
-    },
-    modeSelector: {
-      alignSelf: 'flex-start',
-      backgroundColor: theme.surface,
-      borderColor: theme.border,
-      borderRadius: 12,
-      borderWidth: 1,
-      flexDirection: 'row',
-      gap: 4,
-      padding: 4,
-    },
-    modeButton: {
-      alignItems: 'center',
-      borderRadius: 8,
-      justifyContent: 'center',
-      minHeight: 44,
-      minWidth: 112,
-      paddingHorizontal: 18,
-    },
-    modeButtonActive: {
-      backgroundColor: theme.accent,
-    },
-    modeButtonText: {
-      color: theme.mutedText,
-      fontSize: 14,
-      fontWeight: '800',
-    },
-    modeButtonTextActive: {
-      color: theme.onAccent,
-    },
-    phaseLabel: {
-      color: theme.mutedText,
-      fontSize: 10,
-      fontWeight: '800',
-      letterSpacing: 1.1,
     },
     hero: {
       gap: 14,

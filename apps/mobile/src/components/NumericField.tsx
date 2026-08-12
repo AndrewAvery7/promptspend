@@ -10,6 +10,7 @@ interface NumericFieldProps {
   max: number;
   min?: number;
   onChange: (value: number) => void;
+  step?: number;
   suffix: string;
   value: number;
 }
@@ -20,21 +21,24 @@ export function NumericField({
   max,
   min = 0,
   onChange,
+  step = 1,
   suffix,
   value,
 }: NumericFieldProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const [draft, setDraft] = useState(String(value));
+  const [draft, setDraft] = useState({ text: String(value), sourceValue: value });
+  const displayed = draft.sourceValue === value ? draft.text : String(value);
 
   const commit = (text: string) => {
     const parsed = Number(text.replaceAll(',', '').trim());
     if (!Number.isFinite(parsed)) {
-      setDraft(String(value));
+      setDraft({ text: String(value), sourceValue: value });
       return;
     }
-    const next = Math.min(max, Math.max(min, Math.round(parsed)));
-    setDraft(String(next));
+    const rounded = Math.round(parsed / step) * step;
+    const next = Math.min(max, Math.max(min, Number(rounded.toFixed(step < 1 ? 2 : 0))));
+    setDraft({ text: String(next), sourceValue: next });
     onChange(next);
   };
 
@@ -47,19 +51,19 @@ export function NumericField({
         <TextInput
           accessibilityHint={accessibilityHint}
           accessibilityLabel={label}
-          inputMode="numeric"
-          keyboardType="number-pad"
+          inputMode={step < 1 ? 'decimal' : 'numeric'}
+          keyboardType={step < 1 ? 'decimal-pad' : 'number-pad'}
           maxLength={10}
-          onBlur={() => commit(draft)}
+          onBlur={() => commit(displayed)}
           onChangeText={(text) => {
-            const clean = text.replace(/[^0-9]/g, '');
-            setDraft(clean);
+            const clean = step < 1 ? text.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1') : text.replace(/[^0-9]/g, '');
+            setDraft({ text: clean, sourceValue: value });
             if (clean.length > 0) commit(clean);
           }}
           returnKeyType="done"
           selectTextOnFocus
           style={styles.input}
-          value={draft}
+          value={displayed}
         />
         <Text style={styles.suffix}>{suffix}</Text>
       </View>

@@ -51,7 +51,8 @@ export function ModelPicker({ catalog, onChange, selected }: ModelPickerProps) {
       </View>
 
       <Modal
-        animationType="slide"
+        accessibilityLabel="Choose a model"
+        animationType="none"
         onRequestClose={() => setOpen(false)}
         presentationStyle="pageSheet"
         visible={open}

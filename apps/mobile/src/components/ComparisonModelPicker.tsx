@@ -112,7 +112,8 @@ export function ComparisonModelPicker({
       </View>
 
       <Modal
-        animationType="slide"
+        accessibilityLabel="Compare models"
+        animationType="none"
         onRequestClose={() => setOpen(false)}
         presentationStyle="pageSheet"
         visible={open}
@@ -164,6 +165,7 @@ export function ComparisonModelPicker({
               const isAtLimit = selectedIds.length >= MAX_COMPARISON_MODELS && !isSelected;
               return (
                 <Pressable
+                  aria-checked={isSelected}
                   accessibilityHint={
                     isAtLimit
                       ? 'Remove one selected model before adding this model'
