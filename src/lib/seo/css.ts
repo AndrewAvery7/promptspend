@@ -104,6 +104,15 @@ caption.cap { text-align: left; padding-bottom: 0.5rem; }
 .cta:hover { opacity: 0.92; }
 ul.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
 ul.plain { margin: 0; padding-left: 1.1rem; }
+article p { margin: 0 0 1.1rem; max-width: 42rem; }
+article pre {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.85rem 1rem; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 0 0 1.1rem;
+}
+article code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+article :not(pre) > code {
+  background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.88em;
+}
 footer {
   margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
   color: var(--muted); font-size: 0.85rem;

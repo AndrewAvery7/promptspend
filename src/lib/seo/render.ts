@@ -847,3 +847,56 @@ ${items}
     body,
   });
 }
+
+// ------------------------------------------------------------ writing page
+
+/**
+ * A prose page — the calculator's pages so far are all catalog-driven, this
+ * is the one kind that isn't. `bodyHtml` arrives pre-rendered (see
+ * `../seo/prose.ts`) rather than being built here, so this stays a thin,
+ * consistent wrapper: same `layout()`, same breadcrumb and CSP handling as
+ * every other page, none of the markdown-to-HTML concern mixed in.
+ */
+export interface WritingPage {
+  path: string;
+  title: string;
+  description: string;
+  heading: string;
+  /** ISO date (`YYYY-MM-DD`) the article was published. */
+  publishedDate: string;
+  bodyHtml: string;
+}
+
+export function renderWritingPage(page: WritingPage, ctx: RenderContext): string {
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: page.heading, path: null },
+  ];
+
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <article>
+          <h1>${escapeHtml(page.heading)}</h1>
+          <p class="lede">Published ${escapeHtml(page.publishedDate)}</p>
+${page.bodyHtml}
+        </article>
+      </main>`;
+
+  return layout(ctx, {
+    path: page.path,
+    title: page.title,
+    description: page.description,
+    graph: [
+      breadcrumbLd(ctx, crumbs, page.path),
+      {
+        '@type': 'Article',
+        headline: page.heading,
+        description: page.description,
+        url: absolute(ctx, page.path),
+        datePublished: page.publishedDate,
+        author: { '@type': 'Organization', name: 'PromptSpend' },
+      },
+    ],
+    body,
+  });
+}
