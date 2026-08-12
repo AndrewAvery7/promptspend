@@ -23,6 +23,7 @@
 <p align="center">
   <a href="https://promptspend.com"><b>&rarr; Open PromptSpend</b></a>
   &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no tracking
+  &nbsp;·&nbsp; <a href="https://promptspend.com/writing/what-llm-cost-calculators-get-wrong/">Writing: What LLM Cost Calculators Get Wrong</a>
 </p>
 
 <!-- PROMO-VIDEO. A bare user-attachments URL on its own line: GitHub turns that

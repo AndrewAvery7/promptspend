@@ -17,7 +17,7 @@
 
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -26,6 +26,7 @@ import { assertCatalog } from '@/lib/pricing/types';
 import { buildPages } from '@/lib/seo/pages';
 import { PAGE_CSS } from '@/lib/seo/css';
 import { renderLlmsTxt } from '@/lib/seo/llms';
+import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import {
   renderComparisonPage,
   renderComparisonsIndex,
@@ -33,13 +34,16 @@ import {
   renderModelsIndex,
   renderProviderPage,
   renderProvidersIndex,
+  renderWritingPage,
   type RenderContext,
+  type WritingPage,
 } from '@/lib/seo/render';
 import { INDEXNOW_KEY, INDEXNOW_KEY_FILE } from './lib/indexnow';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
 const CATALOG = resolve(ROOT, 'public/data/pricing.json');
+const WRITING_DIR = resolve(ROOT, 'src/content/writing');
 
 /** Same defaults as `vite.config.ts`, and for the same reasons: an unset
  *  GitHub Actions variable arrives as `""`, so `??` would not catch it. */
@@ -79,6 +83,34 @@ function sitemap(entries: { loc: string; lastmod: string; priority: string }[]):
 ${urls}
 </urlset>
 `;
+}
+
+/**
+ * Every `.md` file under `src/content/writing/`, turned into a page.
+ *
+ * A directory scan rather than an imported list, so the next article is a new
+ * file, not a second place in the build that has to remember it exists.
+ */
+async function loadWritingPages(): Promise<WritingPage[]> {
+  if (!existsSync(WRITING_DIR)) return [];
+  const files = (await readdir(WRITING_DIR)).filter((name) => name.endsWith('.md'));
+  return Promise.all(
+    files.map(async (file) => {
+      const raw = await readFile(resolve(WRITING_DIR, file), 'utf8');
+      const { meta, body } = parseFrontmatter(raw);
+      for (const field of ['slug', 'title', 'description', 'published']) {
+        if (!meta[field]) throw new Error(`${file}: frontmatter is missing "${field}"`);
+      }
+      return {
+        path: `/writing/${meta.slug}/`,
+        title: meta.title!,
+        description: meta.description!,
+        heading: meta.title!,
+        publishedDate: meta.published!,
+        bodyHtml: renderMarkdown(body),
+      };
+    }),
+  );
 }
 
 async function main(): Promise<void> {
@@ -128,6 +160,12 @@ async function main(): Promise<void> {
   for (const page of set.providers) await writeFileAt(fileFor(page.path), renderProviderPage(page, ctx));
   for (const page of set.comparisons) await writeFileAt(fileFor(page.path), renderComparisonPage(page, ctx));
 
+  // Prose pages, not part of the catalog-driven `PageSet`: `check-pages.ts`'s
+  // page-count arithmetic is deliberately about the catalog alone, so these
+  // are written and added to the sitemap here rather than folded into `set`.
+  const writingPages = await loadWritingPages();
+  for (const page of writingPages) await writeFileAt(fileFor(page.path), renderWritingPage(page, ctx));
+
   // The sitemap lives here rather than in `vite.config.ts` because it has to
   // list these pages, and the config has no idea they exist.
   const lastmod = catalog.generatedAt.slice(0, 10);
@@ -139,6 +177,11 @@ async function main(): Promise<void> {
         loc: `${siteUrl}${page.path}`,
         lastmod: page.lastmod,
         priority: page.kind === 'index' ? '0.8' : page.kind === 'model' ? '0.7' : '0.5',
+      })),
+      ...writingPages.map((page) => ({
+        loc: `${siteUrl}${page.path}`,
+        lastmod: page.publishedDate,
+        priority: '0.6',
       })),
     ]),
   );
@@ -158,12 +201,12 @@ async function main(): Promise<void> {
   // key is public by design — see scripts/lib/indexnow.ts.
   await writeFileAt(INDEXNOW_KEY_FILE, `${INDEXNOW_KEY}\n`);
 
-  console.log(`✓ ${set.all.length} pages written under ${DIST}`);
+  console.log(`✓ ${set.all.length + writingPages.length} pages written under ${DIST}`);
   console.log(
-    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes`,
+    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing`,
   );
   console.log(`  stylesheet ${cssName}`);
-  console.log(`  sitemap    ${set.all.length + 1} URLs at ${siteUrl}/sitemap.xml`);
+  console.log(`  sitemap    ${set.all.length + writingPages.length + 1} URLs at ${siteUrl}/sitemap.xml`);
   console.log(`  llms.txt   ${siteUrl}/llms.txt`);
   if (set.droppedComparisons > 0) {
     // Never silent. A capped page set that looks complete is how a coverage

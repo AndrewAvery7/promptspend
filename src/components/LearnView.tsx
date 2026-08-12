@@ -54,6 +54,14 @@ export function LearnView({ catalog }: { catalog: Catalog }) {
           );
         })}
       </div>
+
+      <p className="learn-further">
+        Further reading:{' '}
+        <a href="https://promptspend.com/writing/what-llm-cost-calculators-get-wrong/">
+          What LLM Cost Calculators Get Wrong
+        </a>{' '}
+        — nine ways the number on screen can disagree with the invoice, and how this one tries not to.
+      </p>
     </section>
   );
 }

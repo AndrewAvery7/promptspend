@@ -1554,6 +1554,11 @@ table.catalog tbody tr:hover {
   display: grid;
   gap: 10px;
 }
+.learn-further {
+  margin-top: 22px;
+  font-size: 0.87rem;
+  color: var(--muted);
+}
 .token-lab {
   grid-column: 1 / -1;
   background: var(--surface);
