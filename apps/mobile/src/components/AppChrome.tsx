@@ -1,15 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  AccessibilityInfo,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { AccessibilityInfo, Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import { formatRate, type Catalog } from '@promptspend/core';
 
 import type { AccentName, CanvasName, MobileTheme, ThemeMode } from '@/theme/tokens';
@@ -418,7 +410,7 @@ export function GuidedTourSheet({
   );
 }
 
-function buildTickerItems(catalog: Catalog): { key: string; text: string }[] {
+export function buildTickerItems(catalog: Catalog): { key: string; text: string }[] {
   const items: { key: string; text: string }[] = [];
   const cheapest = [...catalog.primaryModels]
     .filter((model) => model.pricing.input > 0)

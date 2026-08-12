@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import type { Freshness } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import { formatMoney, formatPercent, type Model, type Scale } from '@promptspend/core';
 
 import { NumericField } from '@/components/NumericField';

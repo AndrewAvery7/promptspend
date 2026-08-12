@@ -1,6 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useMemo, useState } from 'react';
-import { Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
+
+import { AppText as Text } from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { SavedScenario } from '@/state/useLaunchState';

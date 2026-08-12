@@ -34,6 +34,16 @@ const DEFAULT_APPEARANCE: AppearanceState = {
   mode: 'system',
 };
 
+export function parseAppearanceState(value: unknown): AppearanceState {
+  if (typeof value !== 'object' || value === null) return DEFAULT_APPEARANCE;
+  const candidate = value as Partial<AppearanceState>;
+  return {
+    accent: isAccent(candidate.accent) ? candidate.accent : DEFAULT_APPEARANCE.accent,
+    canvas: candidate.canvas === 'warm' ? 'warm' : 'cool',
+    mode: candidate.mode === 'light' || candidate.mode === 'dark' ? candidate.mode : 'system',
+  };
+}
+
 const MobileThemeContext = createContext<MobileThemeContextValue | null>(null);
 
 export function MobileThemeProvider({ children }: PropsWithChildren) {
@@ -45,12 +55,7 @@ export function MobileThemeProvider({ children }: PropsWithChildren) {
     void AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
       if (!active || !stored) return;
       try {
-        const value = JSON.parse(stored) as Partial<AppearanceState>;
-        setAppearance({
-          accent: isAccent(value.accent) ? value.accent : DEFAULT_APPEARANCE.accent,
-          canvas: value.canvas === 'warm' ? 'warm' : 'cool',
-          mode: value.mode === 'light' || value.mode === 'dark' ? value.mode : 'system',
-        });
+        setAppearance(parseAppearanceState(JSON.parse(stored) as unknown));
       } catch {
         // Appearance is optional, non-sensitive state. Invalid storage falls back safely.
       }

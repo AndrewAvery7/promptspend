@@ -1,8 +1,9 @@
 import * as Clipboard from 'expo-clipboard';
 import * as WebBrowser from 'expo-web-browser';
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import { type Catalog, formatRate } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';

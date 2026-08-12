@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
-import { Alert, findNodeHandle, Pressable, Share, StyleSheet, Text, View } from 'react-native';
+import { Alert, findNodeHandle, Pressable, Share, StyleSheet, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import {
   buildEstimateShareText,
   formatMoney,

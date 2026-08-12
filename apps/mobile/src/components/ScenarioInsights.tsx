@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import { formatMoney, formatPercent, type ComparisonRow } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';

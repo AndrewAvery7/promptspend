@@ -1,8 +1,9 @@
 import * as WebBrowser from 'expo-web-browser';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import { Catalog, formatContext, formatRate, type Model } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';

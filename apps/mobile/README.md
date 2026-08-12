@@ -6,7 +6,7 @@ Status: native parity beta. The app loads validated live pricing, enforces the 2
 
 The full public Launch Release was approved on 2026-08-12. Its Home Cost Brief, five-destination navigation, onboarding, presets, saved scenarios, favorites/watchlist, Savings Playbook, Cost Sensitivity Lab, AI Cost Receipt, Privacy Shield, resilience, accessibility, visual-polish, and release gates are defined in [`../../docs/MOBILE_LAUNCH_RELEASE.md`](../../docs/MOBILE_LAUNCH_RELEASE.md).
 
-The generated icon, adaptive-icon, splash, and favicon files are temporary placeholders. They must be replaced with approved PromptSpend artwork before any external beta build.
+The icon, Android adaptive/monochrome layers, splash artwork, and favicon use the established PromptSpend mark from the production website. Space Grotesk, IBM Plex Sans, and JetBrains Mono are bundled locally with their licenses; the app never downloads interface fonts at runtime.
 
 ## Cloud identity
 

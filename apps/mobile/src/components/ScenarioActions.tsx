@@ -1,8 +1,9 @@
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { useMemo, useState } from 'react';
-import { Alert, Platform, Pressable, Share, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, Share, StyleSheet, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import { type Catalog, type ComparisonRow } from '@promptspend/core';
 
 import type { PromptFieldKey } from '@/lib/promptInput';

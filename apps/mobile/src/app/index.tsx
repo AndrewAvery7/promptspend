@@ -10,9 +10,10 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
-  Text,
   View,
 } from 'react-native';
+
+import { AppText as Text } from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { conversationCost, costAtScale, SUGGESTED_CACHE_SHARE, type Model } from '@promptspend/core';

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import { NumericField } from '@/components/NumericField';
 import {
   clampPromptText,

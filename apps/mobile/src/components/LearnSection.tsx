@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
+import { AppText as Text } from '@/components/AppText';
 import { estimateTokens, formatCount, LEARN_MODULES, type Catalog, type Model } from '@promptspend/core';
 
 import { MAX_PASTE_CHARS } from '@/lib/promptInput';
