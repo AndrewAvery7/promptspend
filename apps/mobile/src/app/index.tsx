@@ -69,9 +69,12 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
     cacheSharePercent,
     catalogError,
     catalogResult,
+    clearRestoredPasteNotice,
     comparisonIds,
+    favorites,
     promptInputs,
     reasoningMultiplier,
+    restoredPasteFields,
     refreshing,
     refreshCatalog,
     resetScenario,
@@ -84,6 +87,8 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
     setReasoningMultiplier,
     setSelectedId,
     setWorkload,
+    setModelsWatched,
+    toggleFavorite,
     workload,
   } = useLaunchState();
   const [appearanceOpen, setAppearanceOpen] = useState(false);
@@ -205,6 +210,7 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
   };
 
   const updatePromptMode = (field: PromptFieldKey, inputMode: PromptInputMode) => {
+    clearRestoredPasteNotice();
     setPromptInputs((current) => ({
       ...current,
       [field]: { ...current[field], mode: inputMode },
@@ -212,6 +218,7 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
   };
 
   const updatePromptText = (field: PromptFieldKey, text: string) => {
+    clearRestoredPasteNotice();
     setPromptInputs((current) => ({
       ...current,
       [field]: { ...current[field], text },
@@ -400,13 +407,17 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
                   {mode === 'estimate' ? (
                     <ModelPicker
                       catalog={catalog}
+                      isFavorite={favorites.includes(selectedModel.id)}
                       onChange={(model) => setSelectedId(model.id)}
+                      onToggleFavorite={() => toggleFavorite(selectedModel.id)}
                       selected={selectedModel}
                     />
                   ) : (
                     <ComparisonModelPicker
                       catalog={catalog}
+                      favoriteIds={favorites}
                       onClear={() => setComparisonIds([])}
+                      onSetModelsWatched={setModelsWatched}
                       onToggle={toggleComparisonModel}
                       selectedIds={comparisonIds}
                     />
@@ -421,6 +432,27 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
                       device while you type.
                     </Text>
                   </View>
+
+                  {restoredPasteFields.length > 0 && (
+                    <View accessibilityRole="alert" style={styles.restoreNotice}>
+                      <View style={styles.restoreNoticeCopy}>
+                        <Text style={styles.restoreNoticeTitle}>Private text was not restored</Text>
+                        <Text style={styles.restoreNoticeText}>
+                          This saved scenario used pasted text for {restoredPasteFields.join(', ')}.
+                          PromptSpend restored only the derived token counts. Paste again if you want to
+                          recalculate from the original text.
+                        </Text>
+                      </View>
+                      <Pressable
+                        accessibilityLabel="Dismiss restored text notice"
+                        accessibilityRole="button"
+                        onPress={clearRestoredPasteNotice}
+                        style={styles.restoreDismiss}
+                      >
+                        <Text style={styles.restoreDismissText}>Dismiss</Text>
+                      </Pressable>
+                    </View>
+                  )}
 
                   <PromptInputField
                     accessibilityHint="Typical number of tokens in the system instructions sent with each request"
@@ -648,6 +680,8 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
                 {section === 'compare' && (
                   <CatalogExplorer
                     catalog={catalog}
+                    favoriteIds={favorites}
+                    onToggleFavorite={toggleFavorite}
                     onToggle={toggleComparisonModel}
                     selectedIds={comparisonIds}
                   />
@@ -664,6 +698,7 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
           {catalog && (
             <CommandSheet
               catalog={catalog}
+              favoriteIds={favorites}
               onClose={() => setCommandOpen(false)}
               onReset={resetScenario}
               onSection={navigateToSection}
@@ -674,6 +709,7 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
               onToggleComparison={(id) => {
                 if (toggleComparisonModel(id)) navigateToSection('compare');
               }}
+              onToggleFavorite={toggleFavorite}
               onTour={() => {
                 setTourOpen(true);
                 navigateToSection('estimate');
@@ -916,6 +952,21 @@ function createStyles(theme: MobileTheme) {
       fontSize: 12,
       lineHeight: 18,
     },
+    restoreNotice: {
+      alignItems: 'flex-start',
+      backgroundColor: theme.surfaceRaised,
+      borderColor: theme.warning,
+      borderLeftWidth: 3,
+      borderRadius: 10,
+      flexDirection: 'row',
+      gap: 10,
+      padding: 12,
+    },
+    restoreNoticeCopy: { flex: 1, gap: 3 },
+    restoreNoticeTitle: { color: theme.warning, fontSize: 13, fontWeight: '900' },
+    restoreNoticeText: { color: theme.text, fontSize: 12, lineHeight: 18 },
+    restoreDismiss: { alignItems: 'center', justifyContent: 'center', minHeight: 48, paddingHorizontal: 4 },
+    restoreDismissText: { color: theme.accent, fontSize: 12, fontWeight: '800' },
     helper: {
       color: theme.mutedText,
       fontSize: 12,

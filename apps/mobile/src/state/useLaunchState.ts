@@ -16,8 +16,13 @@ import { SUGGESTED_CACHE_SHARE, type Catalog } from '@promptspend/core';
 
 import { loadMobileCatalog, type MobileCatalogResult } from '@/data/catalog';
 import { defaultComparisonSelection } from '@/lib/comparison';
-import { createDefaultPromptInputs, type PromptInputState } from '@/lib/promptInput';
+import { createDefaultPromptInputs, type PromptFieldKey, type PromptInputState } from '@/lib/promptInput';
 import { createPersistedLaunchState, parsePersistedLaunchState } from '@/state/launchPersistence';
+import {
+  duplicateSavedScenario,
+  normalizeScenarioName,
+  renameSavedScenarios,
+} from '@/state/scenarioLifecycle';
 
 const STORAGE_KEY = 'promptspend:launch:v1';
 export const DEFAULT_MODEL_ID = 'claude-sonnet-5';
@@ -129,6 +134,7 @@ export interface SavedScenario {
   comparisonIds: string[];
   id: string;
   name: string;
+  pastedFields: PromptFieldKey[];
   reasoningMultiplier: number;
   savedAt: string;
   selectedId: string;
@@ -144,15 +150,19 @@ interface LaunchStateValue {
   catalogResult: MobileCatalogResult | null;
   comparisonIds: string[];
   completeOnboarding: () => void;
+  clearRestoredPasteNotice: () => void;
   deleteScenario: (id: string) => void;
+  duplicateScenario: (scenario: SavedScenario) => SavedScenario;
   favorites: string[];
   hydrated: boolean;
   onboardingComplete: boolean;
   promptInputs: PromptInputState;
   reasoningMultiplier: number;
+  restoredPasteFields: PromptFieldKey[];
   refreshing: boolean;
   refreshCatalog: () => Promise<void>;
   recoverScenario: (scenario: SavedScenario) => void;
+  renameScenario: (id: string, name: string) => void;
   resetOnboarding: () => void;
   resetScenario: () => void;
   restoreScenario: (scenario: SavedScenario) => void;
@@ -168,6 +178,7 @@ interface LaunchStateValue {
   setSelectedId: Dispatch<SetStateAction<string>>;
   setWorkload: Dispatch<SetStateAction<WorkloadState>>;
   toggleFavorite: (id: string) => void;
+  setModelsWatched: (ids: readonly string[], watched: boolean) => void;
   workload: WorkloadState;
 }
 
@@ -189,6 +200,7 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
   const [savedScenarios, setSavedScenarios] = useState<SavedScenario[]>([]);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [restoredPasteFields, setRestoredPasteFields] = useState<PromptFieldKey[]>([]);
 
   const acceptCatalog = useCallback((result: MobileCatalogResult) => {
     setCatalogResult(result);
@@ -271,6 +283,7 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
     setCacheSharePercent(SUGGESTED_CACHE_SHARE * 100);
     setReasoningMultiplier(1);
     setBatchEnabled(false);
+    setRestoredPasteFields([]);
   }, [catalogResult]);
 
   const applyPreset = useCallback((preset: ScenarioPreset) => {
@@ -280,6 +293,7 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
     setCacheSharePercent(SUGGESTED_CACHE_SHARE * 100);
     setReasoningMultiplier(1);
     setBatchEnabled(false);
+    setRestoredPasteFields([]);
   }, []);
 
   const saveScenario = useCallback(
@@ -290,7 +304,10 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
         cacheSharePercent,
         comparisonIds: [...comparisonIds],
         id: `scenario-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        name: name.trim() || 'Untitled scenario',
+        name: normalizeScenarioName(name),
+        pastedFields: (Object.keys(promptInputs) as PromptFieldKey[]).filter(
+          (field) => promptInputs[field].mode === 'text',
+        ),
         reasoningMultiplier,
         savedAt: new Date().toISOString(),
         selectedId,
@@ -299,7 +316,16 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
       setSavedScenarios((current) => [scenario, ...current].slice(0, 50));
       return scenario;
     },
-    [batchEnabled, cacheEnabled, cacheSharePercent, comparisonIds, reasoningMultiplier, selectedId, workload],
+    [
+      batchEnabled,
+      cacheEnabled,
+      cacheSharePercent,
+      comparisonIds,
+      promptInputs,
+      reasoningMultiplier,
+      selectedId,
+      workload,
+    ],
   );
 
   const restoreScenario = useCallback((scenario: SavedScenario) => {
@@ -311,6 +337,17 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
     setCacheSharePercent(scenario.cacheSharePercent);
     setReasoningMultiplier(scenario.reasoningMultiplier);
     setBatchEnabled(scenario.batchEnabled);
+    setRestoredPasteFields([...scenario.pastedFields]);
+  }, []);
+
+  const duplicateScenario = useCallback((scenario: SavedScenario) => {
+    const duplicate = duplicateSavedScenario(
+      scenario,
+      `scenario-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      new Date().toISOString(),
+    );
+    setSavedScenarios((current) => [duplicate, ...current].slice(0, 50));
+    return duplicate;
   }, []);
 
   const value = useMemo<LaunchStateValue>(
@@ -322,8 +359,10 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
       catalogError,
       catalogResult,
       comparisonIds,
+      clearRestoredPasteNotice: () => setRestoredPasteFields([]),
       completeOnboarding: () => setOnboardingComplete(true),
       deleteScenario: (id) => setSavedScenarios((current) => current.filter((item) => item.id !== id)),
+      duplicateScenario,
       favorites,
       hydrated,
       onboardingComplete,
@@ -332,7 +371,11 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
         setSavedScenarios((current) =>
           [scenario, ...current.filter((item) => item.id !== scenario.id)].slice(0, 50),
         ),
+      renameScenario: (id, name) => {
+        setSavedScenarios((current) => renameSavedScenarios(current, id, name));
+      },
       reasoningMultiplier,
+      restoredPasteFields,
       refreshing,
       refreshCatalog,
       resetOnboarding: () => setOnboardingComplete(false),
@@ -353,6 +396,12 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
         setFavorites((current) =>
           current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
         ),
+      setModelsWatched: (ids, watched) =>
+        setFavorites((current) => {
+          const targets = new Set(ids);
+          if (watched) return [...new Set([...current, ...ids])].slice(0, 100);
+          return current.filter((id) => !targets.has(id));
+        }),
       workload,
     }),
     [
@@ -363,11 +412,13 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
       catalogError,
       catalogResult,
       comparisonIds,
+      duplicateScenario,
       favorites,
       hydrated,
       onboardingComplete,
       promptInputs,
       reasoningMultiplier,
+      restoredPasteFields,
       refreshing,
       refreshCatalog,
       resetScenario,

@@ -8,6 +8,8 @@ import { type Catalog, type ComparisonRow } from '@promptspend/core';
 import type { PromptFieldKey } from '@/lib/promptInput';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { CostReceiptSheet } from '@/components/CostReceiptSheet';
+import { useLaunchState } from '@/state/useLaunchState';
 
 interface ScenarioActionsProps {
   batchEnabled: boolean;
@@ -27,9 +29,12 @@ interface ScenarioActionsProps {
 }
 
 export function ScenarioActions(props: ScenarioActionsProps) {
+  const launch = useLaunchState();
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [working, setWorking] = useState(false);
+  const [receiptOpen, setReceiptOpen] = useState(false);
+  const [savedName, setSavedName] = useState<string | null>(null);
   const scenarioUrl = useMemo(() => buildScenarioUrl(props), [props]);
 
   const shareScenario = async () => {
@@ -82,6 +87,47 @@ export function ScenarioActions(props: ScenarioActionsProps) {
       </Text>
       <View style={styles.actions}>
         <Pressable
+          accessibilityHint="Stores derived counts, model choices, scale, and assumptions on this device"
+          accessibilityRole="button"
+          onPress={() => {
+            const scenario = launch.saveScenario(
+              `AI cost scenario · ${new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(new Date())}`,
+              {
+                conversationsPerDay: props.conversationsPerDay,
+                monthlyActiveUsers: props.monthlyActiveUsers,
+                outputTokens: props.outputTokens,
+                revenuePerUserPerMonth: props.revenuePerUserPerMonth,
+                systemTokens: props.systemTokens,
+                turns: props.turns,
+                userTokens: props.userTokens,
+              },
+            );
+            setSavedName(scenario.name);
+          }}
+          style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+        >
+          <Text style={styles.buttonText}>Save on this device</Text>
+        </Pressable>
+        {savedName && (
+          <Text accessibilityLiveRegion="polite" style={styles.savedNotice}>
+            Saved “{savedName}”. Rename or duplicate it from Home.
+          </Text>
+        )}
+        <Pressable
+          accessibilityHint="Previews a polished private image or readable text receipt"
+          accessibilityRole="button"
+          accessibilityState={{ disabled: props.rows.length === 0 }}
+          disabled={props.rows.length === 0}
+          onPress={() => setReceiptOpen(true)}
+          style={({ pressed }) => [
+            styles.receiptButton,
+            pressed && styles.pressed,
+            props.rows.length === 0 && styles.disabled,
+          ]}
+        >
+          <Text style={styles.receiptButtonText}>Create AI Cost Receipt</Text>
+        </Pressable>
+        <Pressable
           accessibilityHint="Shares a restorable website link without pasted prompt text"
           accessibilityRole="button"
           onPress={() => void shareScenario()}
@@ -104,6 +150,7 @@ export function ScenarioActions(props: ScenarioActionsProps) {
           <Text style={styles.buttonText}>{working ? 'Preparing CSV…' : 'Export CSV'}</Text>
         </Pressable>
       </View>
+      <CostReceiptSheet {...props} onClose={() => setReceiptOpen(false)} visible={receiptOpen} />
     </View>
   );
 }
@@ -211,6 +258,15 @@ function createStyles(theme: MobileTheme) {
     title: { color: theme.text, fontSize: 19, fontWeight: '800', lineHeight: 25 },
     body: { color: theme.mutedText, fontSize: 13, lineHeight: 19 },
     actions: { gap: 8 },
+    receiptButton: {
+      alignItems: 'center',
+      backgroundColor: theme.accent,
+      borderRadius: 10,
+      justifyContent: 'center',
+      minHeight: 50,
+      paddingHorizontal: 14,
+    },
+    receiptButtonText: { color: theme.onAccent, fontSize: 14, fontWeight: '900' },
     button: {
       alignItems: 'center',
       borderColor: theme.accent,
@@ -221,6 +277,7 @@ function createStyles(theme: MobileTheme) {
       paddingHorizontal: 14,
     },
     buttonText: { color: theme.accent, fontSize: 14, fontWeight: '800' },
+    savedNotice: { color: theme.savings, fontSize: 12, fontWeight: '700', lineHeight: 18 },
     pressed: { opacity: 0.68 },
     disabled: { opacity: 0.4 },
   });

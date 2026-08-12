@@ -10,14 +10,18 @@ import { useMobileTheme } from '@/theme/useMobileTheme';
 
 interface ComparisonModelPickerProps {
   catalog: Catalog;
+  favoriteIds: readonly string[];
   onClear: () => void;
+  onSetModelsWatched: (ids: readonly string[], watched: boolean) => void;
   onToggle: (id: string) => boolean;
   selectedIds: readonly string[];
 }
 
 export function ComparisonModelPicker({
   catalog,
+  favoriteIds,
   onClear,
+  onSetModelsWatched,
   onToggle,
   selectedIds,
 }: ComparisonModelPickerProps) {
@@ -36,6 +40,7 @@ export function ComparisonModelPicker({
       return `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase().includes(needle);
     });
   }, [catalog, query]);
+  const allSelectedWatched = selectedIds.length > 0 && selectedIds.every((id) => favoriteIds.includes(id));
 
   const toggle = (id: string) => {
     if (onToggle(id)) return;
@@ -100,14 +105,27 @@ export function ComparisonModelPicker({
           </Text>
         </Pressable>
         {selectedModels.length > 0 && (
-          <Pressable
-            accessibilityHint="Removes every model but keeps the current workload"
-            accessibilityRole="button"
-            onPress={onClear}
-            style={({ pressed }) => [styles.clearButton, pressed && styles.pressed]}
-          >
-            <Text style={styles.clearButtonText}>Clear all models</Text>
-          </Pressable>
+          <View style={styles.secondaryActions}>
+            <Pressable
+              accessibilityHint="Adds or removes every selected model from the local watchlist"
+              accessibilityRole="button"
+              accessibilityState={{ selected: allSelectedWatched }}
+              onPress={() => onSetModelsWatched(selectedIds, !allSelectedWatched)}
+              style={({ pressed }) => [styles.clearButton, pressed && styles.pressed]}
+            >
+              <Text style={styles.watchText}>
+                {allSelectedWatched ? 'Stop watching selected' : 'Watch selected models'}
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityHint="Removes every model but keeps the current workload"
+              accessibilityRole="button"
+              onPress={onClear}
+              style={({ pressed }) => [styles.clearButton, pressed && styles.pressed]}
+            >
+              <Text style={styles.clearButtonText}>Clear all models</Text>
+            </Pressable>
+          </View>
         )}
       </View>
 
@@ -270,9 +288,11 @@ function createStyles(theme: MobileTheme) {
       alignItems: 'center',
       alignSelf: 'center',
       justifyContent: 'center',
-      minHeight: 44,
+      minHeight: 48,
       paddingHorizontal: 12,
     },
+    secondaryActions: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+    watchText: { color: theme.accent, fontSize: 13, fontWeight: '800' },
     clearButtonText: { color: theme.mutedText, fontSize: 13, fontWeight: '700' },
     pressed: { opacity: 0.68 },
     modalSafeArea: { backgroundColor: theme.background, flex: 1 },

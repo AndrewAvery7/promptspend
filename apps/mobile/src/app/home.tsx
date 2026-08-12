@@ -4,6 +4,7 @@ import Head from 'expo-router/head';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
   ActivityIndicator,
+  Alert,
   Modal,
   Pressable,
   RefreshControl,
@@ -25,6 +26,7 @@ import {
   type AppSection,
 } from '@/components/AppChrome';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { SavedScenarioSheet } from '@/components/SavedScenarioSheet';
 import { toggleComparisonSelection } from '@/lib/comparison';
 import { compareModelsForInputs, workloadForModel } from '@/lib/promptInput';
 import { APP_ROUTES } from '@/lib/routes';
@@ -47,6 +49,8 @@ export default function HomeScreen() {
   const [tourOpen, setTourOpen] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [deletedScenario, setDeletedScenario] = useState<SavedScenario | null>(null);
+  const [managedScenario, setManagedScenario] = useState<SavedScenario | null>(null);
+  const [showAllScenarios, setShowAllScenarios] = useState(false);
 
   const catalog = launch.catalogResult?.catalog ?? null;
   const selectedModel = useMemo(
@@ -340,7 +344,7 @@ export default function HomeScreen() {
             </View>
           ) : (
             <View style={styles.savedList}>
-              {launch.savedScenarios.slice(0, 5).map((scenario) => (
+              {launch.savedScenarios.slice(0, showAllScenarios ? 50 : 5).map((scenario) => (
                 <View key={scenario.id} style={styles.savedRow}>
                   <Pressable
                     accessibilityHint="Restores derived counts and assumptions, then opens Estimate"
@@ -358,24 +362,36 @@ export default function HomeScreen() {
                     </Text>
                   </Pressable>
                   <Pressable
-                    accessibilityLabel={`Delete ${scenario.name}`}
+                    accessibilityHint="Opens rename, duplicate, and delete actions"
+                    accessibilityLabel={`More actions for ${scenario.name}`}
                     accessibilityRole="button"
-                    onPress={() => {
-                      launch.deleteScenario(scenario.id);
-                      setDeletedScenario(scenario);
-                    }}
+                    onPress={() => setManagedScenario(scenario)}
                     style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
                   >
-                    <Ionicons color={theme.danger} name="trash-outline" size={20} />
+                    <Ionicons color={theme.accent} name="ellipsis-horizontal" size={21} />
                   </Pressable>
                 </View>
               ))}
+              {launch.savedScenarios.length > 5 && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: showAllScenarios }}
+                  onPress={() => setShowAllScenarios((current) => !current)}
+                  style={({ pressed }) => [styles.showAllButton, pressed && styles.pressed]}
+                >
+                  <Text style={styles.showAllText}>
+                    {showAllScenarios
+                      ? 'Show recent five'
+                      : `View all ${launch.savedScenarios.length} scenarios`}
+                  </Text>
+                </Pressable>
+              )}
             </View>
           )}
 
           <SectionHeading
             eyebrow="WATCHLIST"
-            summary="Local to this device. Native price notifications arrive after launch."
+            summary="Local to this device. Verified changes and review flags appear here; version 1 does not send push notifications."
             title="Models you follow"
             styles={styles}
           />
@@ -396,9 +412,40 @@ export default function HomeScreen() {
             <View style={styles.watchGrid}>
               {launch.favorites.slice(0, 6).map((id) => {
                 const model = catalog.get(id);
-                if (!model) return null;
+                if (!model) {
+                  return (
+                    <View key={id} style={styles.watchCard}>
+                      <View style={styles.watchHeader}>
+                        <Text style={styles.watchName}>{id}</Text>
+                        <Text style={[styles.watchBadge, styles.watchBadgeWarning]}>UNAVAILABLE</Text>
+                      </View>
+                      <Text style={styles.watchMeta}>
+                        This saved model is no longer in the validated catalog. Your watch choice was kept.
+                      </Text>
+                      <Pressable
+                        accessibilityLabel={`Remove ${id} from watchlist`}
+                        accessibilityRole="button"
+                        onPress={() => launch.toggleFavorite(id)}
+                        style={styles.watchRemove}
+                      >
+                        <Text style={styles.watchRemoveText}>Remove from watchlist</Text>
+                      </Pressable>
+                    </View>
+                  );
+                }
+                const attention =
+                  model.provenance.needsReview || model.provenance.stale || model.status !== 'current';
+                const status = model.provenance.needsReview
+                  ? 'CHECK'
+                  : model.provenance.stale
+                    ? 'UNLISTED'
+                    : model.status === 'current'
+                      ? 'CURRENT'
+                      : model.status.toUpperCase();
                 return (
                   <Pressable
+                    accessibilityLabel={`${model.displayName}. ${status}. Input ${formatMoney(model.pricing.input)} and output ${formatMoney(model.pricing.output)} per million tokens. Verified ${model.provenance.lastVerified}.`}
+                    accessibilityRole="button"
                     key={id}
                     onPress={() => {
                       launch.setSelectedId(id);
@@ -406,13 +453,21 @@ export default function HomeScreen() {
                     }}
                     style={({ pressed }) => [styles.watchCard, pressed && styles.pressed]}
                   >
-                    <Text style={styles.watchName}>{model.displayName}</Text>
+                    <View style={styles.watchHeader}>
+                      <Text style={styles.watchName}>{model.displayName}</Text>
+                      <Text style={[styles.watchBadge, attention && styles.watchBadgeWarning]}>{status}</Text>
+                    </View>
                     <Text style={styles.watchMeta}>
-                      {catalog.providerName(model)} · {model.status}
+                      {catalog.providerName(model)} · verified {model.provenance.lastVerified}
                     </Text>
                     <Text style={styles.watchPrice}>
                       {formatMoney(model.pricing.input)}/{formatMoney(model.pricing.output)} per 1M
                     </Text>
+                    {model.provenance.reviewNote && (
+                      <Text numberOfLines={2} style={styles.watchReview}>
+                        {model.provenance.reviewNote}
+                      </Text>
+                    )}
                   </Pressable>
                 );
               })}
@@ -446,10 +501,34 @@ export default function HomeScreen() {
           </View>
         )}
 
+        <SavedScenarioSheet
+          key={managedScenario?.id ?? 'no-managed-scenario'}
+          onClose={() => setManagedScenario(null)}
+          onDelete={(scenario) => {
+            launch.deleteScenario(scenario.id);
+            setDeletedScenario(scenario);
+          }}
+          onDuplicate={(scenario) => {
+            const duplicate = launch.duplicateScenario(scenario);
+            setManagedScenario(null);
+            Alert.alert('Scenario duplicated', `“${duplicate.name}” is ready in Saved scenarios.`);
+          }}
+          onOpen={(scenario) => {
+            launch.restoreScenario(scenario);
+            setManagedScenario(null);
+            router.navigate(APP_ROUTES.estimate);
+          }}
+          onRename={(scenario, name) => {
+            launch.renameScenario(scenario.id, name);
+            setManagedScenario({ ...scenario, name });
+          }}
+          scenario={managedScenario}
+        />
         <AppearanceSheet onClose={() => setAppearanceOpen(false)} visible={appearanceOpen} />
         {catalog && (
           <CommandSheet
             catalog={catalog}
+            favoriteIds={launch.favorites}
             onClose={() => setCommandOpen(false)}
             onReset={() => {
               launch.resetScenario();
@@ -465,6 +544,7 @@ export default function HomeScreen() {
               if (result.accepted) launch.setComparisonIds(result.selectedIds);
               if (result.accepted) router.navigate(APP_ROUTES.compare);
             }}
+            onToggleFavorite={launch.toggleFavorite}
             onTour={() => setTourOpen(true)}
             selectedComparisonIds={launch.comparisonIds}
             visible={commandOpen}
@@ -866,6 +946,8 @@ function createStyles(theme: MobileTheme) {
     },
     savedName: { color: theme.text, fontSize: 15, fontWeight: '800' },
     savedMeta: { color: theme.mutedText, fontSize: 11, lineHeight: 17, marginTop: 3 },
+    showAllButton: { alignItems: 'center', justifyContent: 'center', minHeight: 48, paddingHorizontal: 14 },
+    showAllText: { color: theme.accent, fontSize: 13, fontWeight: '800' },
     watchGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
     watchCard: {
       backgroundColor: theme.surface,
@@ -879,8 +961,24 @@ function createStyles(theme: MobileTheme) {
       padding: 14,
     },
     watchName: { color: theme.text, fontSize: 14, fontWeight: '800' },
+    watchHeader: { alignItems: 'flex-start', flexDirection: 'row', gap: 8, justifyContent: 'space-between' },
+    watchBadge: {
+      backgroundColor: theme.accentSoft,
+      borderRadius: 6,
+      color: theme.accent,
+      fontSize: 8,
+      fontWeight: '900',
+      letterSpacing: 0.6,
+      overflow: 'hidden',
+      paddingHorizontal: 6,
+      paddingVertical: 4,
+    },
+    watchBadgeWarning: { backgroundColor: theme.surfaceRaised, color: theme.warning },
     watchMeta: { color: theme.mutedText, fontSize: 11 },
     watchPrice: { color: theme.accent, fontSize: 11, fontWeight: '800', marginTop: 6 },
+    watchReview: { color: theme.warning, fontSize: 10, lineHeight: 15 },
+    watchRemove: { alignItems: 'center', alignSelf: 'flex-start', justifyContent: 'center', minHeight: 48 },
+    watchRemoveText: { color: theme.danger, fontSize: 11, fontWeight: '800' },
     footer: {
       color: theme.mutedText,
       fontSize: 11,

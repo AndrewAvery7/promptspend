@@ -12,6 +12,7 @@ const scenario: SavedScenario = {
   comparisonIds: ['claude-sonnet-5', 'gpt-5.2'],
   id: 'scenario-1',
   name: 'Support assistant',
+  pastedFields: ['system'],
   reasoningMultiplier: 1,
   savedAt: '2026-08-12T12:00:00.000Z',
   selectedId: 'claude-sonnet-5',
@@ -40,29 +41,44 @@ describe('launch persistence', () => {
       favorites: ['claude-sonnet-5'],
       onboardingComplete: true,
       savedScenarios: [scenario],
-      version: 1,
+      version: 2,
     });
   });
 
   test('drops unknown fields, malformed entries, and any injected prompt text', () => {
+    const injectedScenario = { ...scenario, promptText: 'SENTINEL_PRIVATE_PROMPT' };
     const parsed = parsePersistedLaunchState({
       favorites: ['claude-sonnet-5', 42],
       onboardingComplete: true,
       promptText: 'SENTINEL_PRIVATE_PROMPT',
-      savedScenarios: [scenario, { id: 'broken' }],
-      version: 1,
+      savedScenarios: [injectedScenario, { id: 'broken' }],
+      version: 2,
     });
 
     expect(parsed).toEqual({
       favorites: ['claude-sonnet-5'],
       onboardingComplete: true,
       savedScenarios: [scenario],
-      version: 1,
+      version: 2,
     });
     expect(JSON.stringify(parsed)).not.toContain('SENTINEL_PRIVATE_PROMPT');
   });
 
-  test.each([null, {}, { version: 2 }, 'corrupt'])('rejects unsupported storage payloads: %p', (value) => {
+  test('migrates version 1 scenarios without paste markers', () => {
+    const legacyScenario: Partial<SavedScenario> = { ...scenario };
+    delete legacyScenario.pastedFields;
+    const parsed = parsePersistedLaunchState({
+      favorites: [],
+      onboardingComplete: true,
+      savedScenarios: [legacyScenario],
+      version: 1,
+    });
+
+    expect(parsed?.version).toBe(2);
+    expect(parsed?.savedScenarios[0]?.pastedFields).toEqual([]);
+  });
+
+  test.each([null, {}, { version: 3 }, 'corrupt'])('rejects unsupported storage payloads: %p', (value) => {
     expect(parsePersistedLaunchState(value)).toBeNull();
   });
 
@@ -74,7 +90,7 @@ describe('launch persistence', () => {
         ...scenario,
         id: `scenario-${index}`,
       })),
-      version: 1,
+      version: 2,
     };
 
     const parsed = parsePersistedLaunchState(input);

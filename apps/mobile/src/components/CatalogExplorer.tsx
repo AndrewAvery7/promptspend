@@ -1,4 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 
@@ -11,11 +12,19 @@ type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context';
 
 interface CatalogExplorerProps {
   catalog: Catalog;
+  favoriteIds: readonly string[];
+  onToggleFavorite: (id: string) => void;
   onToggle: (id: string) => boolean;
   selectedIds: readonly string[];
 }
 
-export function CatalogExplorer({ catalog, onToggle, selectedIds }: CatalogExplorerProps) {
+export function CatalogExplorer({
+  catalog,
+  favoriteIds,
+  onToggle,
+  onToggleFavorite,
+  selectedIds,
+}: CatalogExplorerProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [query, setQuery] = useState('');
@@ -185,13 +194,35 @@ export function CatalogExplorer({ catalog, onToggle, selectedIds }: CatalogExplo
                 {model.provenance.source}
                 {model.provenance.needsReview ? ' · CHECK' : ''} · verified {model.provenance.lastVerified}
               </Text>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => setDetail(model)}
-                style={styles.detailButton}
-              >
-                <Text style={styles.detailText}>Details and source</Text>
-              </Pressable>
+              <View style={styles.modelActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => setDetail(model)}
+                  style={styles.detailButton}
+                >
+                  <Text style={styles.detailText}>Details and source</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityLabel={
+                    favoriteIds.includes(model.id)
+                      ? `Remove ${model.displayName} from watchlist`
+                      : `Watch ${model.displayName}`
+                  }
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: favoriteIds.includes(model.id) }}
+                  onPress={() => onToggleFavorite(model.id)}
+                  style={styles.watchButton}
+                >
+                  <Ionicons
+                    color={theme.accent}
+                    name={favoriteIds.includes(model.id) ? 'bookmark' : 'bookmark-outline'}
+                    size={18}
+                  />
+                  <Text style={styles.watchText}>
+                    {favoriteIds.includes(model.id) ? 'Watching' : 'Watch'}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
           );
         })}
@@ -231,6 +262,21 @@ export function CatalogExplorer({ catalog, onToggle, selectedIds }: CatalogExplo
                 {detail.provenance.reviewNote && (
                   <Text style={styles.warning}>{detail.provenance.reviewNote}</Text>
                 )}
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: favoriteIds.includes(detail.id) }}
+                  onPress={() => onToggleFavorite(detail.id)}
+                  style={styles.watchDetailButton}
+                >
+                  <Ionicons
+                    color={theme.accent}
+                    name={favoriteIds.includes(detail.id) ? 'bookmark' : 'bookmark-outline'}
+                    size={20}
+                  />
+                  <Text style={styles.detailText}>
+                    {favoriteIds.includes(detail.id) ? 'Remove from watchlist' : 'Add to watchlist'}
+                  </Text>
+                </Pressable>
                 {(detail.provenance.verifiedUrl ?? catalog.provider(detail)?.pricingUrl) && (
                   <Pressable
                     accessibilityRole="link"
@@ -358,6 +404,26 @@ function createStyles(theme: MobileTheme) {
       paddingTop: 14,
     },
     modelHeader: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+    modelActions: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
+      justifyContent: 'space-between',
+    },
+    watchButton: { alignItems: 'center', flexDirection: 'row', gap: 5, minHeight: 48, paddingHorizontal: 4 },
+    watchText: { color: theme.accent, fontSize: 12, fontWeight: '800' },
+    watchDetailButton: {
+      alignItems: 'center',
+      borderColor: theme.accent,
+      borderRadius: 10,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 8,
+      justifyContent: 'center',
+      minHeight: 48,
+      paddingHorizontal: 14,
+    },
     modelCopy: { flex: 1, gap: 2 },
     modelName: { color: theme.text, fontSize: 15, fontWeight: '800', lineHeight: 20 },
     provider: { color: theme.mutedText, fontSize: 11 },

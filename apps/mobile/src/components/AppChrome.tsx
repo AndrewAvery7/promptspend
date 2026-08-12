@@ -183,11 +183,13 @@ export function AppearanceSheet({ onClose, visible }: { onClose: () => void; vis
 
 interface CommandSheetProps {
   catalog: Catalog;
+  favoriteIds: readonly string[];
   onClose: () => void;
   onReset: () => void;
   onSection: (section: AppSection) => void;
   onSelectModel: (id: string) => void;
   onToggleComparison: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
   selectedComparisonIds: readonly string[];
   onTour: () => void;
   visible: boolean;
@@ -195,11 +197,13 @@ interface CommandSheetProps {
 
 export function CommandSheet({
   catalog,
+  favoriteIds,
   onClose,
   onReset,
   onSection,
   onSelectModel,
   onToggleComparison,
+  onToggleFavorite,
   selectedComparisonIds,
   onTour,
   visible,
@@ -264,6 +268,7 @@ export function CommandSheet({
     ];
     const models = catalog.primaryModels.flatMap((model) => {
       const selected = selectedComparisonIds.includes(model.id);
+      const watched = favoriteIds.includes(model.id);
       return [
         {
           id: `estimate-${model.id}`,
@@ -277,16 +282,24 @@ export function CommandSheet({
           label: `${selected ? 'Remove' : 'Add'} ${model.displayName} ${selected ? 'from' : 'to'} comparison`,
           run: () => onToggleComparison(model.id),
         },
+        {
+          id: `watch-${model.id}`,
+          kind: 'Watchlist',
+          label: `${watched ? 'Stop watching' : 'Watch'} ${model.displayName}`,
+          run: () => onToggleFavorite(model.id),
+        },
       ];
     });
     return [...base, ...models];
   }, [
     appearance,
     catalog,
+    favoriteIds,
     onReset,
     onSection,
     onSelectModel,
     onToggleComparison,
+    onToggleFavorite,
     onTour,
     selectedComparisonIds,
   ]);

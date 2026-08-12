@@ -9,11 +9,13 @@ import { useMobileTheme } from '@/theme/useMobileTheme';
 
 interface ModelPickerProps {
   catalog: Catalog;
+  isFavorite: boolean;
   onChange: (model: Model) => void;
+  onToggleFavorite: () => void;
   selected: Model;
 }
 
-export function ModelPicker({ catalog, onChange, selected }: ModelPickerProps) {
+export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, selected }: ModelPickerProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [open, setOpen] = useState(false);
@@ -46,6 +48,20 @@ export function ModelPicker({ catalog, onChange, selected }: ModelPickerProps) {
           </View>
           <Text accessibilityElementsHidden style={styles.changeLabel}>
             Change
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityHint="Adds or removes the selected model from the local watchlist"
+          accessibilityLabel={
+            isFavorite ? `Remove ${selected.displayName} from watchlist` : `Watch ${selected.displayName}`
+          }
+          accessibilityRole="button"
+          accessibilityState={{ selected: isFavorite }}
+          onPress={onToggleFavorite}
+          style={({ pressed }) => [styles.watchButton, pressed && styles.pressed]}
+        >
+          <Text style={styles.watchButtonText}>
+            {isFavorite ? 'Watching this model' : 'Watch this model'}
           </Text>
         </Pressable>
       </View>
@@ -181,6 +197,14 @@ function createStyles(theme: MobileTheme) {
     pressed: {
       opacity: 0.68,
     },
+    watchButton: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      justifyContent: 'center',
+      minHeight: 48,
+      paddingHorizontal: 4,
+    },
+    watchButtonText: { color: theme.accent, fontSize: 13, fontWeight: '800' },
     modalSafeArea: {
       backgroundColor: theme.background,
       flex: 1,

@@ -4,7 +4,7 @@ export interface PersistedLaunchState {
   favorites: string[];
   onboardingComplete: boolean;
   savedScenarios: SavedScenario[];
-  version: 1;
+  version: 2;
 }
 
 interface PersistedLaunchStateInput {
@@ -22,29 +22,32 @@ export function createPersistedLaunchState({
     favorites: [...favorites].slice(0, 100),
     onboardingComplete,
     savedScenarios: [...savedScenarios].slice(0, 50),
-    version: 1,
+    version: 2,
   };
 }
 
 export function parsePersistedLaunchState(value: unknown): PersistedLaunchState | null {
-  if (!isRecord(value) || value.version !== 1) return null;
+  if (!isRecord(value) || (value.version !== 1 && value.version !== 2)) return null;
   const favorites = Array.isArray(value.favorites)
     ? value.favorites.filter((id): id is string => typeof id === 'string').slice(0, 100)
     : [];
   const savedScenarios = Array.isArray(value.savedScenarios)
-    ? value.savedScenarios.filter(isSavedScenario).slice(0, 50)
+    ? value.savedScenarios
+        .map(parseSavedScenario)
+        .filter((scenario): scenario is SavedScenario => scenario !== null)
+        .slice(0, 50)
     : [];
   return {
     favorites,
     onboardingComplete: value.onboardingComplete === true,
     savedScenarios,
-    version: 1,
+    version: 2,
   };
 }
 
-function isSavedScenario(value: unknown): value is SavedScenario {
-  if (!isRecord(value) || !isWorkload(value.workload)) return false;
-  return (
+function parseSavedScenario(value: unknown): SavedScenario | null {
+  if (!isRecord(value) || !isWorkload(value.workload)) return null;
+  const valid =
     typeof value.id === 'string' &&
     typeof value.name === 'string' &&
     typeof value.savedAt === 'string' &&
@@ -56,8 +59,36 @@ function isSavedScenario(value: unknown): value is SavedScenario {
     typeof value.cacheSharePercent === 'number' &&
     Number.isFinite(value.cacheSharePercent) &&
     typeof value.reasoningMultiplier === 'number' &&
-    Number.isFinite(value.reasoningMultiplier)
-  );
+    Number.isFinite(value.reasoningMultiplier);
+  if (!valid) return null;
+  const pastedFields = Array.isArray(value.pastedFields)
+    ? value.pastedFields.filter(
+        (field): field is SavedScenario['pastedFields'][number] =>
+          field === 'system' || field === 'user' || field === 'output',
+      )
+    : [];
+  const workload = value.workload as SavedScenario['workload'];
+  return {
+    batchEnabled: value.batchEnabled as boolean,
+    cacheEnabled: value.cacheEnabled as boolean,
+    cacheSharePercent: value.cacheSharePercent as number,
+    comparisonIds: [...(value.comparisonIds as string[])],
+    id: value.id as string,
+    name: value.name as string,
+    pastedFields: [...new Set(pastedFields)],
+    reasoningMultiplier: value.reasoningMultiplier as number,
+    savedAt: value.savedAt as string,
+    selectedId: value.selectedId as string,
+    workload: {
+      conversationsPerDay: workload.conversationsPerDay,
+      monthlyActiveUsers: workload.monthlyActiveUsers,
+      outputTokens: workload.outputTokens,
+      revenuePerUserPerMonth: workload.revenuePerUserPerMonth,
+      systemTokens: workload.systemTokens,
+      turns: workload.turns,
+      userTokens: workload.userTokens,
+    },
+  };
 }
 
 function isWorkload(value: unknown): boolean {
