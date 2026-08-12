@@ -10,7 +10,13 @@ import {
   View,
 } from 'react-native';
 
-import { buildComparisonShareText, formatMoney, formatPercent, type Catalog, type ComparisonRow } from '@promptspend/core';
+import {
+  buildComparisonShareText,
+  formatMoney,
+  formatPercent,
+  type Catalog,
+  type ComparisonRow,
+} from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
@@ -76,9 +82,7 @@ export function ComparisonResult({ catalog, rows }: ComparisonResultProps) {
       style={styles.resultCard}
     >
       <Text style={styles.eyebrow}>LOWEST ESTIMATED COST</Text>
-      <Text style={styles.monthlyCost}>
-        {formatMoney(cheapest.scaled.perMonth)}
-      </Text>
+      <Text style={styles.monthlyCost}>{formatMoney(cheapest.scaled.perMonth)}</Text>
       <Text style={styles.monthlyLabel}>per month · {cheapest.model.displayName}</Text>
 
       {rows.length > 1 && priciest && (

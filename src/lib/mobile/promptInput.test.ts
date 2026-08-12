@@ -91,4 +91,17 @@ describe('mobile pasted prompt inputs', () => {
     expect(buildComparisonShareText(rows)).not.toContain(sentinel);
     expect(JSON.stringify(rows)).not.toContain(sentinel);
   });
+
+  it('handles an empty comparison and stable zero-cost ties', () => {
+    const inputs = createDefaultPromptInputs();
+    const scale = { conversationsPerDay: 2500, monthlyActiveUsers: 1, revenuePerUserPerMonth: 0 };
+    expect(compareModelsForInputs([], inputs, manual, scale)).toEqual([]);
+
+    const zeroA = { ...claude, displayName: 'Zero A', id: 'zero-a', pricing: { input: 0, output: 0 } };
+    const zeroB = { ...gpt, displayName: 'Zero B', id: 'zero-b', pricing: { input: 0, output: 0 } };
+    const rows = compareModelsForInputs([zeroB, zeroA], inputs, manual, scale);
+
+    expect(rows.map((row) => row.model.id)).toEqual(['zero-a', 'zero-b']);
+    expect(rows.every((row) => row.multipleOfCheapest === 1)).toBe(true);
+  });
 });

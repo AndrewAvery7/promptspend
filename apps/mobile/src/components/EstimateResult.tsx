@@ -59,9 +59,7 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
       style={styles.resultCard}
     >
       <Text style={styles.eyebrow}>ESTIMATED AI COST</Text>
-      <Text style={styles.monthlyCost}>
-        {formatMoney(scaled.perMonth)}
-      </Text>
+      <Text style={styles.monthlyCost}>{formatMoney(scaled.perMonth)}</Text>
       <Text style={styles.monthlyLabel}>per month · {model.displayName}</Text>
 
       <View style={styles.metrics}>
@@ -116,12 +114,18 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
           <DetailRow label="Output" value={formatMoney(breakdown.outputCost)} styles={styles} />
           <DetailRow
             label="Monthly input"
-            value={formatMoney((breakdown.inputCost + breakdown.cacheWriteCost) * (scaled.perDay / Math.max(breakdown.total, Number.EPSILON)) * 30)}
+            value={formatMoney(
+              (breakdown.inputCost + breakdown.cacheWriteCost) *
+                (scaled.perDay / Math.max(breakdown.total, Number.EPSILON)) *
+                30,
+            )}
             styles={styles}
           />
           <DetailRow
             label="Monthly output"
-            value={formatMoney(breakdown.outputCost * (scaled.perDay / Math.max(breakdown.total, Number.EPSILON)) * 30)}
+            value={formatMoney(
+              breakdown.outputCost * (scaled.perDay / Math.max(breakdown.total, Number.EPSILON)) * 30,
+            )}
             styles={styles}
           />
           <DetailRow

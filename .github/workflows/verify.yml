@@ -162,6 +162,7 @@ jobs:
 
       - name: Verify Expo configuration and source
         run: |
+          npm run test -- --ci
           npm run typecheck
           npm run lint
           npx expo-doctor

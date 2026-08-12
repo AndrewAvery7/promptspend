@@ -48,15 +48,25 @@ export function ScenarioActions(props: ScenarioActionsProps) {
     setWorking(true);
     try {
       if (Platform.OS === 'web') {
-        Alert.alert('Use the website to download CSV', 'File sharing from the web preview is not supported. The installed iOS and Android apps can export this file.');
+        Alert.alert(
+          'Use the website to download CSV',
+          'File sharing from the web preview is not supported. The installed iOS and Android apps can export this file.',
+        );
         return;
       }
       if (!(await Sharing.isAvailableAsync())) throw new Error('The system file share menu is unavailable.');
       const file = new File(Paths.cache, `promptspend-estimate-${Date.now()}.csv`);
       file.write(csvForRows(props));
-      await Sharing.shareAsync(file.uri, { dialogTitle: 'Save or share PromptSpend CSV', mimeType: 'text/csv', UTI: 'public.comma-separated-values-text' });
+      await Sharing.shareAsync(file.uri, {
+        dialogTitle: 'Save or share PromptSpend CSV',
+        mimeType: 'text/csv',
+        UTI: 'public.comma-separated-values-text',
+      });
     } catch (error) {
-      Alert.alert('CSV export is unavailable', error instanceof Error ? error.message : 'The file could not be created.');
+      Alert.alert(
+        'CSV export is unavailable',
+        error instanceof Error ? error.message : 'The file could not be created.',
+      );
     } finally {
       setWorking(false);
     }
@@ -64,11 +74,35 @@ export function ScenarioActions(props: ScenarioActionsProps) {
 
   return (
     <View style={styles.card}>
-      <Text accessibilityRole="header" style={styles.title}>Save or continue this scenario</Text>
-      <Text style={styles.body}>The link carries derived counts and assumptions only. It never carries pasted prompt text.</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        Save or continue this scenario
+      </Text>
+      <Text style={styles.body}>
+        The link carries derived counts and assumptions only. It never carries pasted prompt text.
+      </Text>
       <View style={styles.actions}>
-        <Pressable accessibilityHint="Shares a restorable website link without pasted prompt text" accessibilityRole="button" onPress={() => void shareScenario()} style={({ pressed }) => [styles.button, pressed && styles.pressed]}><Text style={styles.buttonText}>Share scenario link</Text></Pressable>
-        <Pressable accessibilityHint="Creates a CSV containing costs, assumptions, source dates, and warnings" accessibilityRole="button" accessibilityState={{ busy: working, disabled: working || props.rows.length === 0 }} disabled={working || props.rows.length === 0} onPress={() => void exportCsv()} style={({ pressed }) => [styles.button, pressed && styles.pressed, (working || props.rows.length === 0) && styles.disabled]}><Text style={styles.buttonText}>{working ? 'Preparing CSV…' : 'Export CSV'}</Text></Pressable>
+        <Pressable
+          accessibilityHint="Shares a restorable website link without pasted prompt text"
+          accessibilityRole="button"
+          onPress={() => void shareScenario()}
+          style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+        >
+          <Text style={styles.buttonText}>Share scenario link</Text>
+        </Pressable>
+        <Pressable
+          accessibilityHint="Creates a CSV containing costs, assumptions, source dates, and warnings"
+          accessibilityRole="button"
+          accessibilityState={{ busy: working, disabled: working || props.rows.length === 0 }}
+          disabled={working || props.rows.length === 0}
+          onPress={() => void exportCsv()}
+          style={({ pressed }) => [
+            styles.button,
+            pressed && styles.pressed,
+            (working || props.rows.length === 0) && styles.disabled,
+          ]}
+        >
+          <Text style={styles.buttonText}>{working ? 'Preparing CSV…' : 'Export CSV'}</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -99,13 +133,62 @@ function csvForRows(props: ScenarioActionsProps): string {
     ['exported', new Date().toISOString()],
     ['prices last changed', props.catalog.pricesLastChanged() ?? 'none recorded'],
     ['sources last checked', props.catalog.sourcesLastChecked() ?? 'unknown'],
-    ['scope', 'Standard-tier global list prices in USD; regional premiums, priority tiers, tool fees, and negotiated discounts are excluded.'],
+    [
+      'scope',
+      'Standard-tier global list prices in USD; regional premiums, priority tiers, tool fees, and negotiated discounts are excluded.',
+    ],
     ['cache-hit share assumed', `${Math.round(props.cacheShare * 100)}%`],
     ...assumptions.map((text) => ['assumption', text]),
     ...warnings.map((text) => ['warning', text]),
     [],
-    ['model', 'model_id', 'provider', 'status', 'source', 'last_verified', 'vendor_url', 'flagged_for_review', 'tokenizer', 'input_per_1m', 'output_per_1m', 'cached_input_per_1m', 'cache_write_per_1m', 'input_tokens_per_conversation', 'output_tokens_per_conversation', 'peak_request_tokens', 'long_context_turns', 'cost_per_conversation', 'cost_per_month', 'cost_per_year', 'cost_per_user', 'margin'],
-    ...props.rows.map(({ breakdown, model, scaled }) => [model.displayName, model.id, props.catalog.providerName(model), model.status, model.provenance.source, model.provenance.lastVerified, model.provenance.verifiedUrl ?? props.catalog.provider(model)?.pricingUrl ?? '', model.provenance.needsReview ? 'yes' : 'no', model.tokenizer.kind === 'tiktoken' ? `estimated:${model.tokenizer.encoding}` : 'estimated:ratio', model.pricing.input, model.pricing.output, model.pricing.cachedInput ?? '', model.pricing.cacheWrite ?? '', Math.round(breakdown.inputTokens), Math.round(breakdown.outputTokens), Math.round(breakdown.peakRequestTokens), breakdown.longContextTurns, scaled.perConversation.toFixed(6), scaled.perMonth.toFixed(2), scaled.perYear.toFixed(2), scaled.costPerUser.toFixed(4), scaled.margin === null ? '' : scaled.margin.toFixed(4)]),
+    [
+      'model',
+      'model_id',
+      'provider',
+      'status',
+      'source',
+      'last_verified',
+      'vendor_url',
+      'flagged_for_review',
+      'tokenizer',
+      'input_per_1m',
+      'output_per_1m',
+      'cached_input_per_1m',
+      'cache_write_per_1m',
+      'input_tokens_per_conversation',
+      'output_tokens_per_conversation',
+      'peak_request_tokens',
+      'long_context_turns',
+      'cost_per_conversation',
+      'cost_per_month',
+      'cost_per_year',
+      'cost_per_user',
+      'margin',
+    ],
+    ...props.rows.map(({ breakdown, model, scaled }) => [
+      model.displayName,
+      model.id,
+      props.catalog.providerName(model),
+      model.status,
+      model.provenance.source,
+      model.provenance.lastVerified,
+      model.provenance.verifiedUrl ?? props.catalog.provider(model)?.pricingUrl ?? '',
+      model.provenance.needsReview ? 'yes' : 'no',
+      model.tokenizer.kind === 'tiktoken' ? `estimated:${model.tokenizer.encoding}` : 'estimated:ratio',
+      model.pricing.input,
+      model.pricing.output,
+      model.pricing.cachedInput ?? '',
+      model.pricing.cacheWrite ?? '',
+      Math.round(breakdown.inputTokens),
+      Math.round(breakdown.outputTokens),
+      Math.round(breakdown.peakRequestTokens),
+      breakdown.longContextTurns,
+      scaled.perConversation.toFixed(6),
+      scaled.perMonth.toFixed(2),
+      scaled.perYear.toFixed(2),
+      scaled.costPerUser.toFixed(4),
+      scaled.margin === null ? '' : scaled.margin.toFixed(4),
+    ]),
   ];
   return `${rows.map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }
@@ -117,8 +200,28 @@ function csvCell(value: unknown): string {
 
 function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
-    card: { backgroundColor: theme.surface, borderColor: theme.border, borderRadius: 16, borderWidth: 1, gap: 10, padding: 18 },
-    title: { color: theme.text, fontSize: 19, fontWeight: '800', lineHeight: 25 }, body: { color: theme.mutedText, fontSize: 13, lineHeight: 19 }, actions: { gap: 8 },
-    button: { alignItems: 'center', borderColor: theme.accent, borderRadius: 10, borderWidth: 1, justifyContent: 'center', minHeight: 48, paddingHorizontal: 14 }, buttonText: { color: theme.accent, fontSize: 14, fontWeight: '800' }, pressed: { opacity: 0.68 }, disabled: { opacity: 0.4 },
+    card: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 16,
+      borderWidth: 1,
+      gap: 10,
+      padding: 18,
+    },
+    title: { color: theme.text, fontSize: 19, fontWeight: '800', lineHeight: 25 },
+    body: { color: theme.mutedText, fontSize: 13, lineHeight: 19 },
+    actions: { gap: 8 },
+    button: {
+      alignItems: 'center',
+      borderColor: theme.accent,
+      borderRadius: 10,
+      borderWidth: 1,
+      justifyContent: 'center',
+      minHeight: 48,
+      paddingHorizontal: 14,
+    },
+    buttonText: { color: theme.accent, fontSize: 14, fontWeight: '800' },
+    pressed: { opacity: 0.68 },
+    disabled: { opacity: 0.4 },
   });
 }

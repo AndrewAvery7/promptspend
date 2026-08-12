@@ -19,12 +19,16 @@ export function FreshnessChip({ freshness, pricesChangedOn = null }: FreshnessCh
   const label = freshness.checkedOn
     ? `Sources checked ${formatDate(freshness.checkedOn)}`
     : 'Source check unavailable';
-  const changeLabel = pricesChangedOn ? `prices changed ${formatDate(pricesChangedOn)}` : 'no price change recorded';
+  const changeLabel = pricesChangedOn
+    ? `prices changed ${formatDate(pricesChangedOn)}`
+    : 'no price change recorded';
 
   return (
     <View accessibilityLabel={`${label}. ${changeLabel}. Status ${freshness.level}.`} style={styles.chip}>
       <View style={[styles.dot, { backgroundColor: tone }]} />
-      <Text style={styles.label}>{label} · {changeLabel}</Text>
+      <Text style={styles.label}>
+        {label} · {changeLabel}
+      </Text>
     </View>
   );
 }

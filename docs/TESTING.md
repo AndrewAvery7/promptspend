@@ -15,7 +15,7 @@ to publish past it.
 
 ## What the suite covers
 
-**777 tests in all**: 372 unit and integration tests in this package, 84 in
+**797 tests in all**: 392 unit and integration tests in this package, 84 in
 `worker/`, 39 in `api/`, 34 in `mcp/`, 136 in `vscode/`, and 112 browser tests
 across four viewports. Those six figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
@@ -67,6 +67,10 @@ anyone adding them up.
 | `src/lib/engine/csv.test.ts`          | 8     | Quoting, escaping, and formula neutralisation for the export.                                                                                                                                                                                                                                                                                                 |
 | `scripts/lib/indexnow.test.ts`        | 7     | The submission shape, the batch rules, and that a rejection is reported rather than thrown.                                                                                                                                                                                                                                                                   |
 | `scripts/lib/notify.test.ts`          | 7     | Which catalog changes are worth interrupting somebody for, and which are not.                                                                                                                                                                                                                                                                                 |
+| `src/lib/mobile/promptInput.test.ts`  | 8     | Native count/paste behavior, model-specific token estimates, the 200,000-character boundary, empty and multilingual text, comparison ranking, and proof that private prompt text never enters share output.                                                                                                                                                   |
+| `src/lib/mobile/comparison.test.ts`   | 5     | Four-model selection defaults, add/remove behavior, duplicate prevention, maximum enforcement, and safe handling when catalog entries disappear.                                                                                                                                                                                                              |
+| `src/lib/engine/share.test.ts`        | 4     | Readable estimate and comparison sharing, cheapest-model labeling, warnings, freshness context, and mail-safe line breaks.                                                                                                                                                                                                                                    |
+| `src/lib/engine/insights.test.ts`     | 3     | Deterministic output, history, caching, margin, and price-spread explanations, including empty and single-model scenarios.                                                                                                                                                                                                                                    |
 
 | `src/lib/seo/css.test.ts` | 3 | That the generated-page stylesheet defines every class the renderers emit, styles both colour schemes, and lets wide tables scroll inside their own container. |
 

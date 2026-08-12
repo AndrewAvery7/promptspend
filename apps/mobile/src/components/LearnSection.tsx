@@ -1,13 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import {
-  estimateTokens,
-  formatCount,
-  LEARN_MODULES,
-  type Catalog,
-  type Model,
-} from '@promptspend/core';
+import { estimateTokens, formatCount, LEARN_MODULES, type Catalog, type Model } from '@promptspend/core';
 
 import { MAX_PASTE_CHARS } from '@/lib/promptInput';
 import type { MobileTheme } from '@/theme/tokens';
@@ -40,8 +34,8 @@ export function LearnSection({ catalog }: { catalog: Catalog }) {
           Try it: the same text is a different token count on every model
         </Text>
         <Text style={styles.body}>
-          Paste any sample below. Counts are private, calculated on this device, and deliberately labelled
-          as estimates until exact tokenizers pass physical-device parity tests.
+          Paste any sample below. Counts are private, calculated on this device, and deliberately labelled as
+          estimates until exact tokenizers pass physical-device parity tests.
         </Text>
         <TextInput
           accessibilityHint="Counts update while you type and the text never leaves this device"

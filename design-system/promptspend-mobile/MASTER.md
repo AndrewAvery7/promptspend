@@ -1,6 +1,6 @@
 # PromptSpend Mobile Design System
 
-Status: foundational source of truth
+Status: launch-release source of truth (approved 2026-08-12)
 
 This mobile system inherits the tested PromptSpend web identity. Automated design-search recommendations informed the minimal information hierarchy, restrained motion, and native accessibility rules, but they do not replace the existing brand palette or typography.
 
@@ -86,8 +86,21 @@ Until fonts are bundled and licensed in Phase 3, use platform system fonts. Do n
 - Prefer a single primary reading column on phones.
 - Keep long text to a readable measure on tablets and wide layouts.
 - Scroll content must clear tab bars, keyboards, and bottom actions.
-- Phone launch uses at most five top-level tabs: Estimate, Compare, Prices, Learn, and More.
+- Phone launch uses five top-level tabs: Home, Estimate, Compare, Learn, and More.
+- Prices, the full catalog, model details, and the value map live within Compare.
+- Data & Alerts, appearance, privacy, integrations, settings, accessibility information, and support live within More.
+- Search and the Guided Tour remain globally reachable from the app header.
 - Back behavior, deep links, and selected-tab restoration must use Expo Router conventions.
+
+## Launch hierarchy
+
+- Home is a local, personalized Cost Brief rather than a marketing landing page.
+- Estimate and Compare lead with the answer, then reveal calculation detail and controls progressively.
+- Learn explains cost mechanics without interrupting the primary estimate flow.
+- More is a structured secondary destination, not a miscellaneous dumping ground.
+- The Market Pulse uses validated catalog evidence only and must remain readable when paused or when Reduce Motion is enabled.
+- Saved scenarios, favorites, and watchlist state stay on-device in version 1.
+- The AI Cost Receipt is a privacy-safe result artifact, not a social-media advertisement disguised as user data.
 
 ## Components
 
@@ -125,6 +138,6 @@ Until fonts are bundled and licensed in Phase 3, use platform system fonts. Do n
 - Cached or stale data uses explicit text and timestamps, not only a color change.
 - Optional alerts explain what is stored before notification permission is requested.
 
-## Foundation-shell scope
+## Launch-release scope
 
-The Phase 1 shell exists to prove routing, theming, safe areas, app identity, and build health. It is not the final onboarding or home screen. Avoid committing tutorial UI or invented product behavior merely to make the scaffold look complete.
+The existing foundation shell proves theming, safe areas, app identity, and build health. The Launch Release replaces its horizontal section switcher with native, persistent, five-destination navigation and adds the approved Home, onboarding, saved-work, decision-intelligence, privacy, accessibility, resilience, and release-polish experiences defined in `../../docs/MOBILE_LAUNCH_RELEASE.md`.

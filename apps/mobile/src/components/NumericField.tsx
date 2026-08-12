@@ -56,7 +56,10 @@ export function NumericField({
           maxLength={10}
           onBlur={() => commit(displayed)}
           onChangeText={(text) => {
-            const clean = step < 1 ? text.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1') : text.replace(/[^0-9]/g, '');
+            const clean =
+              step < 1
+                ? text.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')
+                : text.replace(/[^0-9]/g, '');
             setDraft({ text: clean, sourceValue: value });
             if (clean.length > 0) commit(clean);
           }}

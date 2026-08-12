@@ -10,12 +10,7 @@ import {
 } from 'react';
 import { useColorScheme } from 'react-native';
 
-import {
-  createMobileTheme,
-  type AccentName,
-  type CanvasName,
-  type ThemeMode,
-} from './tokens';
+import { createMobileTheme, type AccentName, type CanvasName, type ThemeMode } from './tokens';
 
 const STORAGE_KEY = 'promptspend:appearance:v1';
 

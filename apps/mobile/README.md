@@ -4,6 +4,8 @@ Native iOS and Android applications for PromptSpend, built with Expo SDK 57, Rea
 
 Status: native parity beta. The app loads validated live pricing, enforces the 24-hour stale-price ceiling, and executes the same extracted cost engine as the website. Estimate, four-model workload comparison, full catalog exploration, Learn, Data & Alerts, private on-device pasted-text estimation, Search, Guided Tour, ticker, CSV/scenario sharing, and persisted appearance choices are implemented in source. Store release remains blocked on the physical-device and accessibility gates in [`../../docs/MOBILE_PARITY.md`](../../docs/MOBILE_PARITY.md).
 
+The full public Launch Release was approved on 2026-08-12. Its Home Cost Brief, five-destination navigation, onboarding, presets, saved scenarios, favorites/watchlist, Savings Playbook, Cost Sensitivity Lab, AI Cost Receipt, Privacy Shield, resilience, accessibility, visual-polish, and release gates are defined in [`../../docs/MOBILE_LAUNCH_RELEASE.md`](../../docs/MOBILE_LAUNCH_RELEASE.md).
+
 The generated icon, adaptive-icon, splash, and favicon files are temporary placeholders. They must be replaced with approved PromptSpend artwork before any external beta build.
 
 ## Cloud identity
@@ -15,7 +17,7 @@ The generated icon, adaptive-icon, splash, and favicon files are temporary place
 - Android application ID: `com.promptspend.app`
 - Deep-link scheme: `promptspend`
 
-Apple has accepted and processed production builds under this identifier. Google Play registration is paid; physical Android device verification and the closed-test/release gates remain pending.
+Apple has accepted and processed production builds under this identifier. Google Play registration is paid. The owner is working with Google to transition the developer account from personal to organization; until Play Console confirms that change and its production path, personal-account testing requirements remain a release contingency. Android physical-device, beta, policy, and release-quality gates remain required regardless of account type.
 
 ## Local commands
 

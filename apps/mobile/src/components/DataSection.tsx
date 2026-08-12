@@ -52,7 +52,11 @@ export function DataSection({ catalog }: { catalog: Catalog }) {
       )}
 
       <Card styles={styles} title="Pipeline health">
-        <Metric styles={styles} label="Prices last changed" value={catalog.pricesLastChanged() ?? 'Not recorded'} />
+        <Metric
+          styles={styles}
+          label="Prices last changed"
+          value={catalog.pricesLastChanged() ?? 'Not recorded'}
+        />
         <Metric
           styles={styles}
           label="Sources last checked cleanly"
@@ -71,7 +75,8 @@ export function DataSection({ catalog }: { catalog: Catalog }) {
         {health?.outcome === 'degraded' && (
           <View accessibilityRole="alert" style={styles.warning}>
             <Text style={styles.warningText}>
-              The last run was degraded and published nothing. {health.problems.join('; ') || 'A source was unavailable.'}
+              The last run was degraded and published nothing.{' '}
+              {health.problems.join('; ') || 'A source was unavailable.'}
             </Text>
           </View>
         )}
@@ -89,8 +94,8 @@ export function DataSection({ catalog }: { catalog: Catalog }) {
           styles={styles}
         />
         <Text style={styles.body}>
-          Native push is not yet enabled. Browser VAPID subscriptions cannot be reused by iOS or Android;
-          the alert service must add APNs/FCM tokens before the app asks for notification permission.
+          Native push is not yet enabled. Browser VAPID subscriptions cannot be reused by iOS or Android; the
+          alert service must add APNs/FCM tokens before the app asks for notification permission.
         </Text>
         <Action
           label="Copy catalog commit feed"
@@ -167,7 +172,9 @@ export function DataSection({ catalog }: { catalog: Catalog }) {
           flagged.slice(0, 12).map((model) => (
             <View key={model.id} style={styles.flaggedRow}>
               <Text style={styles.flaggedTitle}>Δ {model.displayName}</Text>
-              <Text style={styles.body}>{model.provenance.reviewNote ?? 'Independent sources disagree.'}</Text>
+              <Text style={styles.body}>
+                {model.provenance.reviewNote ?? 'Independent sources disagree.'}
+              </Text>
               <Text style={styles.rateText}>
                 {formatRate(model.pricing.input)} input · {formatRate(model.pricing.output)} output / 1M
               </Text>
@@ -190,7 +197,9 @@ export function DataSection({ catalog }: { catalog: Catalog }) {
 function Card({ children, styles, title }: { children: React.ReactNode; styles: Styles; title: string }) {
   return (
     <View style={styles.card}>
-      <Text accessibilityRole="header" style={styles.cardTitle}>{title}</Text>
+      <Text accessibilityRole="header" style={styles.cardTitle}>
+        {title}
+      </Text>
       {children}
     </View>
   );
@@ -217,7 +226,17 @@ function Action({ label, onPress, styles }: { label: string; onPress: () => void
   );
 }
 
-function Resource({ description, label, onPress, styles }: { description: string; label: string; onPress: () => void; styles: Styles }) {
+function Resource({
+  description,
+  label,
+  onPress,
+  styles,
+}: {
+  description: string;
+  label: string;
+  onPress: () => void;
+  styles: Styles;
+}) {
   return (
     <View style={styles.resource}>
       <Text style={styles.resourceTitle}>{label}</Text>
@@ -227,11 +246,26 @@ function Resource({ description, label, onPress, styles }: { description: string
   );
 }
 
-function TrustRow({ detail, number, styles, title }: { detail: string; number: string; styles: Styles; title: string }) {
+function TrustRow({
+  detail,
+  number,
+  styles,
+  title,
+}: {
+  detail: string;
+  number: string;
+  styles: Styles;
+  title: string;
+}) {
   return (
     <View style={styles.trustRow}>
-      <View style={styles.trustNumber}><Text style={styles.trustNumberText}>{number}</Text></View>
-      <View style={styles.trustCopy}><Text style={styles.resourceTitle}>{title}</Text><Text style={styles.body}>{detail}</Text></View>
+      <View style={styles.trustNumber}>
+        <Text style={styles.trustNumberText}>{number}</Text>
+      </View>
+      <View style={styles.trustCopy}>
+        <Text style={styles.resourceTitle}>{title}</Text>
+        <Text style={styles.body}>{detail}</Text>
+      </View>
     </View>
   );
 }
@@ -245,24 +279,62 @@ function createStyles(theme: MobileTheme) {
     eyebrow: { color: theme.accent, fontSize: 12, fontWeight: '800', letterSpacing: 1.4 },
     title: { color: theme.text, fontSize: 34, fontWeight: '800', letterSpacing: -1, lineHeight: 41 },
     summary: { color: theme.mutedText, fontSize: 17, lineHeight: 25 },
-    card: { backgroundColor: theme.surface, borderColor: theme.border, borderRadius: 16, borderWidth: 1, gap: 14, padding: 18 },
+    card: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 16,
+      borderWidth: 1,
+      gap: 14,
+      padding: 18,
+    },
     cardTitle: { color: theme.text, fontSize: 20, fontWeight: '800', lineHeight: 26 },
     body: { color: theme.mutedText, fontSize: 14, lineHeight: 21 },
     metric: { backgroundColor: theme.surfaceRaised, borderRadius: 10, gap: 3, padding: 12 },
     metricLabel: { color: theme.mutedText, fontSize: 11, fontWeight: '700' },
     metricValue: { color: theme.text, fontSize: 15, fontVariant: ['tabular-nums'], fontWeight: '800' },
-    warning: { backgroundColor: theme.surfaceRaised, borderColor: theme.warning, borderLeftWidth: 3, borderRadius: 10, padding: 12 },
+    warning: {
+      backgroundColor: theme.surfaceRaised,
+      borderColor: theme.warning,
+      borderLeftWidth: 3,
+      borderRadius: 10,
+      padding: 12,
+    },
     warningText: { color: theme.warning, fontSize: 13, fontWeight: '700', lineHeight: 19 },
-    action: { alignItems: 'center', borderColor: theme.accent, borderRadius: 10, borderWidth: 1, justifyContent: 'center', minHeight: 48, paddingHorizontal: 14 },
+    action: {
+      alignItems: 'center',
+      borderColor: theme.accent,
+      borderRadius: 10,
+      borderWidth: 1,
+      justifyContent: 'center',
+      minHeight: 48,
+      paddingHorizontal: 14,
+    },
     actionText: { color: theme.accent, fontSize: 14, fontWeight: '800', textAlign: 'center' },
-    resource: { borderTopColor: theme.border, borderTopWidth: StyleSheet.hairlineWidth, gap: 8, paddingTop: 14 },
+    resource: {
+      borderTopColor: theme.border,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      gap: 8,
+      paddingTop: 14,
+    },
     resourceTitle: { color: theme.text, fontSize: 15, fontWeight: '800', lineHeight: 20 },
     trustRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 12 },
-    trustNumber: { alignItems: 'center', backgroundColor: theme.accentSoft, borderRadius: 10, height: 32, justifyContent: 'center', width: 32 },
+    trustNumber: {
+      alignItems: 'center',
+      backgroundColor: theme.accentSoft,
+      borderRadius: 10,
+      height: 32,
+      justifyContent: 'center',
+      width: 32,
+    },
     trustNumberText: { color: theme.accent, fontWeight: '900' },
     trustCopy: { flex: 1, gap: 3 },
     scope: { color: theme.mutedText, fontSize: 12, fontStyle: 'italic', lineHeight: 18 },
-    flaggedRow: { borderTopColor: theme.border, borderTopWidth: StyleSheet.hairlineWidth, gap: 4, paddingTop: 12 },
+    flaggedRow: {
+      borderTopColor: theme.border,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      gap: 4,
+      paddingTop: 12,
+    },
     flaggedTitle: { color: theme.warning, fontSize: 14, fontWeight: '800' },
     rateText: { color: theme.text, fontSize: 12, fontVariant: ['tabular-nums'], fontWeight: '700' },
     notice: { backgroundColor: theme.accentSoft, borderRadius: 10, padding: 12 },
