@@ -383,3 +383,7 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `moonshot-kimi-k2.6` — provenance.needsReview: true → —
 - **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: OpenRouter disagrees (38%): $0.589/$2.48 vs $0.95/$4 → —
 - **Review** `moonshot-kimi-k2.6` — provenance.verifiedUrl: — → https://platform.kimi.ai/docs/pricing/chat-k26
+
+## 2026-08-12
+
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: OpenRouter disagrees (48%): $0.21/$1.9 vs $0.4/$1.6 → OpenRouter disagrees (35%): $0.26/$1.04 vs $0.4/$1.6
