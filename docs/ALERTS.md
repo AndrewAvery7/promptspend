@@ -8,13 +8,14 @@ the custom domain on, and what to do when something misbehaves.
 
 ## What exists
 
-| Piece           | Where                                               | Notes                                             |
-| --------------- | --------------------------------------------------- | ------------------------------------------------- |
-| Alerts API      | `worker/`                                           | Cloudflare Worker, `promptspend-alerts`           |
-| Subscriber data | D1 `promptspend-alerts`                             | `5b28b2b1-1b5e-4209-a771-e5ec24ca32b1`            |
-| Browser client  | `src/lib/alerts/`, `src/components/AlertsPanel.tsx` |                                                   |
-| Service worker  | `public/sw.js`                                      | Push display only — deliberately no offline cache |
-| Change notifier | `scripts/notify-alerts.ts`                          | Runs on push to `main`                            |
+| Piece           | Where                                                        | Notes                                             |
+| --------------- | ------------------------------------------------------------ | ------------------------------------------------- |
+| Alerts API      | `worker/`                                                    | Cloudflare Worker, `promptspend-alerts`           |
+| Subscriber data | D1 `promptspend-alerts`                                      | `5b28b2b1-1b5e-4209-a771-e5ec24ca32b1`            |
+| Browser client  | `src/lib/alerts/`, `src/components/AlertsPanel.tsx`          |                                                   |
+| Native client   | `apps/mobile/src/lib/emailAlerts.ts`, `EmailAlertCenter.tsx` | Native UI; isolated Turnstile WebView only        |
+| Service worker  | `public/sw.js`                                               | Push display only — deliberately no offline cache |
+| Change notifier | `scripts/notify-alerts.ts`                                   | Runs on push to `main`                            |
 
 There is no KV binding. There was one, and nothing ever read it; an unused
 binding is a claim about what this Worker can reach, and that claim should be
@@ -27,18 +28,20 @@ used by anything.
 
 ### Endpoints
 
-| Method       | Path                    | Purpose                                               |
-| ------------ | ----------------------- | ----------------------------------------------------- |
-| `GET`        | `/health`               | Configuration and dependency check                    |
-| `GET`        | `/v1/config`            | What the browser needs before offering either channel |
-| `POST`       | `/v1/push/subscribe`    | Register or update a push subscription                |
-| `POST`       | `/v1/push/unsubscribe`  | Forget one                                            |
-| `POST`       | `/v1/push/test`         | Send one notification to the caller's own endpoint    |
-| `POST`       | `/v1/email/subscribe`   | Start double opt-in                                   |
-| `GET`        | `/v1/email/confirm`     | Activate a subscription                               |
-| `GET`/`POST` | `/v1/email/unsubscribe` | GET asks, POST acts (see below)                       |
-| `GET`/`POST` | `/v1/preferences`       | Read and update, authenticated by a signed token      |
-| `POST`       | `/v1/notify`            | HMAC-signed, called by CI when prices move            |
+| Method       | Path                       | Purpose                                               |
+| ------------ | -------------------------- | ----------------------------------------------------- |
+| `GET`        | `/health`                  | Configuration and dependency check                    |
+| `GET`        | `/v1/config`               | What the browser needs before offering either channel |
+| `POST`       | `/v1/push/subscribe`       | Register or update a push subscription                |
+| `POST`       | `/v1/push/unsubscribe`     | Forget one                                            |
+| `POST`       | `/v1/push/test`            | Send one notification to the caller's own endpoint    |
+| `POST`       | `/v1/email/subscribe`      | Start double opt-in                                   |
+| `POST`       | `/v1/email/manage/request` | Send an enumeration-resistant, short-lived code       |
+| `POST`       | `/v1/email/manage/verify`  | Exchange a valid one-time code for preferences        |
+| `GET`        | `/v1/email/confirm`        | Activate a subscription                               |
+| `GET`/`POST` | `/v1/email/unsubscribe`    | GET asks, POST acts (see below)                       |
+| `GET`/`POST` | `/v1/preferences`          | Read and update, authenticated by a signed token      |
+| `POST`       | `/v1/notify`               | HMAC-signed, called by CI when prices move            |
 
 ---
 
@@ -85,6 +88,18 @@ switches enforcement on.
 
 The secret being set is what switches enforcement on. The browser reads the site
 key from `/v1/config`, so no front-end rebuild is needed.
+
+The native app renders `public/mobile-turnstile.html` in an ephemeral WebView.
+That page receives only the public site key and light/dark choice and returns a
+Turnstile token; email addresses, selected models, scenarios, and prompt text
+never enter the WebView. The Worker validates the mobile action server-side.
+
+Apply `worker/migrations/0002_email_manage_codes.sql` before deploying the
+native management endpoints. Codes expire after ten minutes, are stored only as
+an HMAC bound to the subscriber id, work once, and are invalidated after five
+failed attempts. Request responses are identical for active and unknown
+addresses, and lookup/delivery runs after the response, so neither content nor
+email-provider latency discloses list membership.
 
 ---
 
@@ -200,7 +215,7 @@ count stops being zero, and not before.
 cd worker && npm test
 ```
 
-84 tests run inside workerd against a real D1, so the query layer
+89 tests run inside workerd against a real D1, so the query layer
 is exercised against genuine SQLite and the migrations are proved to apply. The
 full subscribe → confirm → change preferences → unsubscribe lifecycle is
 covered, as are signature rejection, replay rejection, CORS, and the SSRF

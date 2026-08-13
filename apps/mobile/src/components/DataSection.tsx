@@ -1,10 +1,11 @@
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { type RefObject, useMemo, useState } from 'react';
+import { Pressable, type ScrollView, StyleSheet, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
+import { EmailAlertCenter } from '@/components/EmailAlertCenter';
 import { type Catalog, formatRate } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';
@@ -21,7 +22,15 @@ const OPEN_VSX_URL = 'https://open-vsx.org/extension/promptspend/promptspend';
 const PRIVACY_URL = `${SITE_URL}privacy/`;
 const SUPPORT_URL = `${SITE_URL}support/`;
 
-export function DataSection({ catalog }: { catalog: Catalog }) {
+export function DataSection({
+  catalog,
+  preferencesToken,
+  tourScrollRef,
+}: {
+  catalog: Catalog;
+  preferencesToken?: string;
+  tourScrollRef?: RefObject<ScrollView | null>;
+}) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [notice, setNotice] = useState<string | null>(null);
@@ -48,6 +57,8 @@ export function DataSection({ catalog }: { catalog: Catalog }) {
           Trace every rate to its source, inspect pipeline health, and choose how to follow changes.
         </Text>
       </View>
+
+      <EmailAlertCenter catalog={catalog} preferencesToken={preferencesToken} tourScrollRef={tourScrollRef} />
 
       {notice && (
         <View accessibilityLiveRegion="polite" style={styles.notice}>
@@ -87,19 +98,11 @@ export function DataSection({ catalog }: { catalog: Catalog }) {
         <Action label="Open the public sync manifest" onPress={() => void open(HEALTH_URL)} styles={styles} />
       </Card>
 
-      <Card styles={styles} title="Price alerts">
+      <Card styles={styles} title="Native notifications">
         <Text style={styles.body}>
-          Email alerts are available now through PromptSpend’s secure double-opt-in web flow. The form uses
-          Turnstile to prevent abuse; prompt text is never part of an alert.
-        </Text>
-        <Action
-          label="Manage email alerts securely"
-          onPress={() => void open(`${SITE_URL}?alerts`)}
-          styles={styles}
-        />
-        <Text style={styles.body}>
-          Native push is not yet enabled. Browser VAPID subscriptions cannot be reused by iOS or Android; the
-          alert service must add APNs/FCM tokens before the app asks for notification permission.
+          Email alerts are managed directly above. Native push is not yet enabled because browser VAPID
+          subscriptions cannot be reused by iOS or Android; the alert service must add APNs/FCM tokens before
+          the app asks for notification permission.
         </Text>
         <Action
           label="Copy catalog commit feed"

@@ -1,6 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
-import Head from 'expo-router/head';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
   ActivityIndicator,
@@ -22,12 +21,13 @@ import {
   AppearanceSheet,
   CommandSheet,
   GlobalActions,
-  GuidedTourSheet,
   PricingTicker,
   type AppSection,
 } from '@/components/AppChrome';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { TourTarget, useGuidedTour } from '@/components/GuidedTour';
 import { SavedScenarioSheet } from '@/components/SavedScenarioSheet';
+import { WebDocumentHead } from '@/components/WebDocumentHead';
 import { toggleComparisonSelection } from '@/lib/comparison';
 import { compareModelsForInputs, workloadForModel } from '@/lib/promptInput';
 import { APP_ROUTES } from '@/lib/routes';
@@ -44,10 +44,11 @@ export default function HomeScreen() {
   const router = useRouter();
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const { startTour } = useGuidedTour();
+  const scrollRef = useRef<ScrollView>(null);
   const launch = useLaunchState();
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
-  const [tourOpen, setTourOpen] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [deletedScenario, setDeletedScenario] = useState<SavedScenario | null>(null);
   const [managedScenario, setManagedScenario] = useState<SavedScenario | null>(null);
@@ -127,7 +128,7 @@ export default function HomeScreen() {
     if (section === 'estimate') router.navigate(APP_ROUTES.estimate);
     if (section === 'compare') router.navigate(APP_ROUTES.compare);
     if (section === 'learn') router.navigate(APP_ROUTES.learn);
-    if (section === 'data') router.navigate(APP_ROUTES.more);
+    if (section === 'data') router.navigate(APP_ROUTES.data);
   };
 
   const applyPreset = (preset: ScenarioPreset) => {
@@ -147,16 +148,14 @@ export default function HomeScreen() {
 
   return (
     <>
-      <Head>
-        <title>PromptSpend — AI Cost Brief</title>
-        <meta
-          content="Your private AI cost brief, scenarios, watchlist, and price evidence."
-          name="description"
-        />
-      </Head>
+      <WebDocumentHead
+        description="Your private AI cost brief, scenarios, watchlist, and price evidence."
+        title="PromptSpend — AI Cost Brief"
+      />
       <SafeAreaView edges={['top', 'right', 'left']} role="main" style={styles.safeArea}>
         <ScrollView
           contentContainerStyle={styles.content}
+          ref={scrollRef}
           contentInsetAdjustmentBehavior="automatic"
           refreshControl={
             <RefreshControl
@@ -181,25 +180,30 @@ export default function HomeScreen() {
             <GlobalActions
               onAppearance={() => setAppearanceOpen(true)}
               onSearch={() => setCommandOpen(true)}
-              onTour={() => setTourOpen(true)}
+              onTour={startTour}
             />
           </View>
 
-          {catalog && <PricingTicker catalog={catalog} onOpenData={() => router.navigate(APP_ROUTES.more)} />}
+          {catalog && <PricingTicker catalog={catalog} onOpenData={() => router.navigate(APP_ROUTES.data)} />}
 
-          <View style={styles.hero}>
-            <Text style={styles.eyebrow}>YOUR COST BRIEF</Text>
-            <Text accessibilityRole="header" style={styles.title}>
-              Know what your AI decision costs.
-            </Text>
-            <Text style={styles.summary}>
-              One private view of the estimate you are shaping, the models you watch, and the next place to
-              save.
-            </Text>
-            {catalog && (
-              <FreshnessChip freshness={catalog.freshness()} pricesChangedOn={catalog.pricesLastChanged()} />
-            )}
-          </View>
+          <TourTarget id="home-cost-brief" scrollRef={scrollRef}>
+            <View style={styles.hero}>
+              <Text style={styles.eyebrow}>YOUR COST BRIEF</Text>
+              <Text accessibilityRole="header" style={styles.title}>
+                Know what your AI decision costs.
+              </Text>
+              <Text style={styles.summary}>
+                One private view of the estimate you are shaping, the models you watch, and the next place to
+                save.
+              </Text>
+              {catalog && (
+                <FreshnessChip
+                  freshness={catalog.freshness()}
+                  pricesChangedOn={catalog.pricesLastChanged()}
+                />
+              )}
+            </View>
+          </TourTarget>
 
           {!launch.catalogResult && (
             <View accessibilityLiveRegion="polite" style={styles.statusCard}>
@@ -546,16 +550,11 @@ export default function HomeScreen() {
               if (result.accepted) router.navigate(APP_ROUTES.compare);
             }}
             onToggleFavorite={launch.toggleFavorite}
-            onTour={() => setTourOpen(true)}
+            onTour={startTour}
             selectedComparisonIds={launch.comparisonIds}
             visible={commandOpen}
           />
         )}
-        <GuidedTourSheet
-          onClose={() => setTourOpen(false)}
-          onOpenEstimate={() => router.navigate(APP_ROUTES.estimate)}
-          visible={tourOpen}
-        />
         <Onboarding
           onApplyPreset={applyPreset}
           onBack={() => setOnboardingStep((step) => Math.max(0, step - 1))}

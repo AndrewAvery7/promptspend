@@ -28,6 +28,7 @@ export async function verifyTurnstile(
   env: Env,
   token: string | undefined,
   remoteIp: string | null,
+  expectedAction?: string,
 ): Promise<TurnstileResult> {
   if (!env.TURNSTILE_SECRET_KEY) return { ok: true };
   if (!token) return { ok: false, errorCodes: ['missing-input-response'] };
@@ -40,7 +41,10 @@ export async function verifyTurnstile(
   try {
     const response = await fetch(VERIFY_URL, { method: 'POST', body });
     if (!response.ok) return { ok: false, errorCodes: [`http-${response.status}`] };
-    const result = (await response.json()) as { success: boolean; 'error-codes'?: string[] };
+    const result = (await response.json()) as { action?: string; success: boolean; 'error-codes'?: string[] };
+    if (expectedAction && result.success && result.action !== expectedAction) {
+      return { ok: false, errorCodes: ['action-mismatch'] };
+    }
     return result.success ? { ok: true } : { ok: false, errorCodes: result['error-codes'] ?? [] };
   } catch {
     // Fail closed. An outage at the verifier is rare; letting an unverified

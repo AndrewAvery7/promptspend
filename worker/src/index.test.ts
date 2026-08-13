@@ -8,6 +8,7 @@ const ORIGIN = 'https://andrewavery7.github.io';
 
 beforeEach(async () => {
   for (const table of [
+    'email_manage_codes',
     'email_subscribers',
     'push_subscriptions',
     'follows',
@@ -197,6 +198,74 @@ describe('email lifecycle', () => {
     ],
   ])('refuses %s', async (_label, body) => {
     expect((await post('/v1/email/subscribe', body)).status).toBe(400);
+  });
+});
+
+describe('native email preference access', () => {
+  async function activeSubscriber(email = 'reader@example.com') {
+    await post('/v1/email/subscribe', { email, cadence: 'weekly', scope: 'all' });
+    const id = await subscriberId(email);
+    await SELF.fetch(`${API}/v1/email/confirm?t=${encodeURIComponent(await tokenFor('confirm', id))}`);
+    return id;
+  }
+
+  it('answers a management-code request identically for known and unknown addresses', async () => {
+    const id = await activeSubscriber();
+    const known = await post('/v1/email/manage/request', { email: 'reader@example.com' });
+    const unknown = await post('/v1/email/manage/request', { email: 'nobody@example.com' });
+
+    expect(await known.json()).toEqual(await unknown.json());
+    expect(
+      await env.DB.prepare('SELECT subscriber_id FROM email_manage_codes WHERE subscriber_id = ?')
+        .bind(id)
+        .first(),
+    ).not.toBeNull();
+    expect(
+      (await env.DB.prepare('SELECT COUNT(*) AS count FROM email_manage_codes').first<{ count: number }>())
+        ?.count,
+    ).toBe(1);
+  });
+
+  it('exchanges a single-use code for native preferences access', async () => {
+    const id = await activeSubscriber();
+    const { hashManageCode } = await import('./lib/manage-code');
+    const { storeEmailManageCode } = await import('./db/queries');
+    const code = '482731';
+    await storeEmailManageCode(env.DB, id, await hashManageCode(env.TOKEN_SECRET!, id, code));
+
+    const verified = await post('/v1/email/manage/verify', { email: 'reader@example.com', code });
+    const body = (await verified.json()) as {
+      ok: boolean;
+      token: string;
+      preferences: { cadence: string; email: string; scope: string };
+    };
+
+    expect(verified.status).toBe(200);
+    expect(body.ok).toBe(true);
+    expect(body.preferences).toMatchObject({ email: 'reader@example.com', cadence: 'weekly', scope: 'all' });
+    expect(body.token).not.toContain('reader@example.com');
+    expect(
+      await env.DB.prepare('SELECT id FROM email_manage_codes WHERE subscriber_id = ?').bind(id).first(),
+    ).toBeNull();
+
+    const replay = await post('/v1/email/manage/verify', { email: 'reader@example.com', code });
+    expect(replay.status).toBe(400);
+  });
+
+  it('invalidates a management code after five wrong attempts', async () => {
+    const id = await activeSubscriber();
+    const { hashManageCode } = await import('./lib/manage-code');
+    const { storeEmailManageCode } = await import('./db/queries');
+    await storeEmailManageCode(env.DB, id, await hashManageCode(env.TOKEN_SECRET!, id, '123456'));
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      expect(
+        (await post('/v1/email/manage/verify', { email: 'reader@example.com', code: '654321' })).status,
+      ).toBe(400);
+    }
+    expect(
+      await env.DB.prepare('SELECT id FROM email_manage_codes WHERE subscriber_id = ?').bind(id).first(),
+    ).toBeNull();
   });
 });
 

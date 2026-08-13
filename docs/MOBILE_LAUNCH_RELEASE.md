@@ -89,8 +89,8 @@ Phone navigation uses five labelled, icon-supported top-level destinations:
 3. **Compare** - up to four models, the full catalog, value map, and model
    details.
 4. **Learn** - lessons, glossary, and private token lab.
-5. **More** - Data & Alerts, appearance, privacy, integrations, settings,
-   accessibility information, and support resources.
+5. **Data & Alerts** - native email-alert controls, pricing evidence, pipeline
+   health, privacy, integrations, and support resources.
 
 Global Search and the Guided Tour remain available from the app header. Tablets
 may use an adaptive rail or sidebar at the same hierarchy; they must not expose
@@ -123,8 +123,8 @@ a competing navigation system.
 - Explain the product promise, private paste mode, comparison, freshness, and
   savings in a short, skippable sequence.
 - Allow the user to begin with a preset or a blank estimate.
-- Preserve progress if the app is interrupted and allow replay from More and
-  Search.
+- Preserve progress if the app is interrupted and allow replay from the global
+  Guide action and Search.
 - Never request notification, tracking, contact, or account permissions during
   onboarding.
 
@@ -196,7 +196,7 @@ a competing navigation system.
 
 - Show concise, contextual explanations at paste, save, share, alert, and data
   freshness boundaries.
-- Provide a More destination that explains local storage, network requests,
+- Provide a Data & Alerts destination that explains local storage, network requests,
   shared content, and what PromptSpend does not collect.
 - Include automated sentinel tests proving that private prompt strings do not
   cross persistence or share boundaries.

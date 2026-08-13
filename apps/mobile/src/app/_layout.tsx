@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LaunchStateProvider } from '@/state/useLaunchState';
+import { GuidedTourProvider } from '@/components/GuidedTour';
 import { MobileThemeProvider, useMobileTheme } from '@/theme/useMobileTheme';
 
 export default function RootLayout() {
@@ -11,7 +12,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <MobileThemeProvider>
         <LaunchStateProvider>
-          <ThemedTabs />
+          <GuidedTourProvider>
+            <ThemedTabs />
+          </GuidedTourProvider>
         </LaunchStateProvider>
       </MobileThemeProvider>
     </SafeAreaProvider>
@@ -82,17 +85,13 @@ function ThemedTabs() {
           }}
         />
         <Tabs.Screen
-          name="more"
+          name="data"
           options={{
-            tabBarAccessibilityLabel: 'More, data, alerts, privacy, and settings',
+            tabBarAccessibilityLabel: 'Data and Alerts',
             tabBarIcon: ({ color, focused, size }) => (
-              <Ionicons
-                color={color}
-                name={focused ? 'ellipsis-horizontal-circle' : 'ellipsis-horizontal-circle-outline'}
-                size={size}
-              />
+              <Ionicons color={color} name={focused ? 'pulse' : 'pulse-outline'} size={size} />
             ),
-            title: 'More',
+            title: 'Data & Alerts',
           }}
         />
       </Tabs>
