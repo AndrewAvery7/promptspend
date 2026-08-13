@@ -21,6 +21,11 @@ This build is for direct installation on an owned test device. It has not been
 uploaded to Google Play and this record does not authorize any Google Play or
 Apple action.
 
+Source hardening completed after this APK was built is recorded in
+`docs/qa/SOURCE_HARDENING_2026-08-13.md`. Those changes are not present in
+versionCode 3 and require a later explicitly approved private QA binary before
+physical validation.
+
 ## Device facts to record before testing
 
 - Exact Galaxy model number:
