@@ -22,6 +22,7 @@ import {
 import { issueToken, verifyToken } from './lib/tokens';
 import { verifySignature } from './lib/signature';
 import { verifyTurnstile } from './lib/turnstile';
+import { createManageCode, hashManageCode, manageCodeMatches, parseManageCode } from './lib/manage-code';
 import {
   requireCadence,
   requireEmail,
@@ -32,13 +33,19 @@ import {
 } from './lib/validate';
 import {
   activateEmail,
+  deleteEmailManageCode,
   deletePushSubscription,
+  findEmailByAddress,
   findEmailById,
   getFollows,
   insertEvent,
+  latestEmailManageCode,
+  pruneEmailManageCodes,
   prunePendingSubscribers,
   pruneRateLimits,
+  rejectEmailManageCode,
   setFollows,
+  storeEmailManageCode,
   unsubscribeEmail,
   updateEmailPreferences,
   upsertPendingEmail,
@@ -47,7 +54,7 @@ import {
 } from './db/queries';
 import { changedModelIds, validateChangeSet, type ChangeSet } from './changes';
 import { createTransport } from './email/transport';
-import { renderConfirmation } from './email/render';
+import { renderConfirmation, renderManageCode } from './email/render';
 import { buildNotificationPayload, sendPush } from './push/send';
 import { assertKeyPairMatches } from './push/vapid';
 import { fanoutDigest, fanoutInstantEmail, fanoutPush, setApiOrigin } from './fanout';
@@ -76,6 +83,7 @@ export default {
         const counts = await fanoutDigest(env);
         console.log(`weekly digest: ${JSON.stringify(counts)}`);
         await pruneRateLimits(env.DB);
+        await pruneEmailManageCodes(env.DB);
         const pruned = await prunePendingSubscribers(env.DB);
         if (pruned > 0) console.log(`pruned ${pruned} unconfirmed signups`);
       })(),
@@ -106,6 +114,10 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
       return handlePushTest(request, env);
     case 'POST /v1/email/subscribe':
       return handleEmailSubscribe(request, env);
+    case 'POST /v1/email/manage/request':
+      return handleEmailManageRequest(request, env, ctx);
+    case 'POST /v1/email/manage/verify':
+      return handleEmailManageVerify(request, env);
     case 'GET /v1/email/confirm':
       return handleEmailConfirm(request, env);
     case 'GET /v1/email/unsubscribe':
@@ -250,6 +262,7 @@ async function handleEmailSubscribe(request: Request, env: Env): Promise<Respons
     env,
     typeof body.turnstileToken === 'string' ? body.turnstileToken : undefined,
     request.headers.get('CF-Connecting-IP'),
+    body.client === 'mobile' ? 'mobile_email_alerts' : undefined,
   );
   if (!turnstile.ok) {
     throw badRequest(
@@ -292,6 +305,117 @@ async function handleEmailSubscribe(request: Request, env: Env): Promise<Respons
   // subscribed, so the endpoint cannot be used to test whether someone has an
   // account here.
   return json({ ok: true, pending: true }, request, env);
+}
+
+async function handleEmailManageRequest(
+  request: Request,
+  env: Env,
+  ctx: ExecutionContext,
+): Promise<Response> {
+  if (!emailEnabled(env)) throw new HttpError(503, 'Email alerts are not configured yet.');
+  await guard(request, env, 'email-manage-request', 6);
+
+  const body = await readJson<Record<string, unknown>>(request);
+  const turnstile = await verifyTurnstile(
+    env,
+    typeof body.turnstileToken === 'string' ? body.turnstileToken : undefined,
+    request.headers.get('CF-Connecting-IP'),
+    'mobile_email_alerts',
+  );
+  if (!turnstile.ok) {
+    throw badRequest(
+      'We could not verify that you are human. Refresh the check and try again.',
+      (turnstile.errorCodes ?? []).join(','),
+    );
+  }
+
+  const email = requireEmail(body.email);
+  ctx.waitUntil(sendEmailManagementCode(env, email));
+
+  // Lookup, rate-limit, code creation and email delivery continue after this
+  // deliberately uniform response. Keeping those operations off the response
+  // path prevents delivery latency from becoming a subscriber-enumeration
+  // signal.
+  return json({ ok: true, pending: true }, request, env);
+}
+
+async function sendEmailManagementCode(env: Env, email: string): Promise<void> {
+  try {
+    const subscriber = await findEmailByAddress(env.DB, email);
+
+    if (subscriber?.status === 'active') {
+      const withinSubscriberLimit = await withinRateLimit(
+        env.DB,
+        `email-manage-subscriber:${subscriber.id}`,
+        3,
+        3600,
+      );
+      if (withinSubscriberLimit) {
+        const code = createManageCode();
+        const codeHash = await hashManageCode(requireSecret(env, 'TOKEN_SECRET'), subscriber.id, code);
+        await storeEmailManageCode(env.DB, subscriber.id, codeHash);
+        const message = renderManageCode(code, siteUrl(env));
+        const result = await createTransport(env).send({
+          to: subscriber.email,
+          subject: message.subject,
+          html: message.html,
+          text: message.text,
+        });
+        if (!result.ok) {
+          const stored = await latestEmailManageCode(env.DB, subscriber.id);
+          if (stored) await deleteEmailManageCode(env.DB, stored.id);
+          console.warn('manage-code delivery failed');
+        }
+      }
+    }
+  } catch {
+    // The public response is intentionally already complete. Log no address or
+    // exception object: either could contain subscriber data or provider detail.
+    console.warn('manage-code dispatch failed');
+  }
+}
+
+async function handleEmailManageVerify(request: Request, env: Env): Promise<Response> {
+  if (!emailEnabled(env)) throw new HttpError(503, 'Email alerts are not configured yet.');
+  await guard(request, env, 'email-manage-verify', 20);
+  const body = await readJson<Record<string, unknown>>(request);
+  const email = requireEmail(body.email);
+  const code = parseManageCode(body.code);
+  if (!code) throw badRequest('That code is invalid or expired. Request a new one.');
+
+  const subscriber = await findEmailByAddress(env.DB, email);
+  if (!subscriber || subscriber.status !== 'active') {
+    throw badRequest('That code is invalid or expired. Request a new one.');
+  }
+  const stored = await latestEmailManageCode(env.DB, subscriber.id);
+  if (!stored || stored.expires_at < new Date().toISOString() || stored.attempts >= 5) {
+    if (stored) await deleteEmailManageCode(env.DB, stored.id);
+    throw badRequest('That code is invalid or expired. Request a new one.');
+  }
+
+  const candidateHash = await hashManageCode(requireSecret(env, 'TOKEN_SECRET'), subscriber.id, code);
+  if (!manageCodeMatches(stored.code_hash, candidateHash)) {
+    await rejectEmailManageCode(env.DB, stored.id);
+    throw badRequest('That code is invalid or expired. Request a new one.');
+  }
+
+  await deleteEmailManageCode(env.DB, stored.id);
+  const token = await issueToken(requireSecret(env, 'TOKEN_SECRET'), 'preferences', subscriber.id);
+  return json(
+    {
+      ok: true,
+      token,
+      preferences: {
+        email: subscriber.email,
+        status: subscriber.status,
+        cadence: subscriber.cadence,
+        scope: subscriber.scope,
+        models: await getFollows(env.DB, 'email', subscriber.id),
+      },
+    },
+    request,
+    env,
+  );
 }
 
 async function handleEmailConfirm(request: Request, env: Env): Promise<Response> {

@@ -1,6 +1,6 @@
 # iPhone and iPad physical QA — iOS build 12
 
-Status: uploaded to App Store Connect for private internal TestFlight QA
+Status: failed physical-device smoke test; replacement build required
 
 ## Candidate identity
 
@@ -91,7 +91,15 @@ Use the defect template in `docs/MOBILE_BETA_QA.md`. Remove prompt text,
 account information, email addresses, device identifiers, and other private
 data from screenshots, recordings, and logs.
 
-- Overall result: Not run
+- Overall result: Failed
 - Open P0 defects: Not assessed
-- Open P1 defects: Not assessed
-- Tester notes:
+- Open P1 defects: 1
+- Tester notes: On 2026-08-13 at 4:42 PM, build 12 displayed a blocking
+  developer alert on iPhone: Expo Head required a configured Handoff origin.
+  Current-source analysis found that the Estimate and Home routes imported
+  `expo-router/head` for web title and description metadata. Expo Router SDK 57
+  registers native iOS route activity for every rendered Head component and
+  requires an origin. PromptSpend had not enabled or validated that Handoff
+  contract. The corrective branch confines Head metadata to `.web.tsx`, makes
+  the native component inert, and adds a release-policy check plus a native
+  regression test. Build 12 must not be approved as the release candidate.

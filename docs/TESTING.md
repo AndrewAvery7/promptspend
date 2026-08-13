@@ -15,7 +15,7 @@ to publish past it.
 
 ## What the suite covers
 
-**807 tests in all**: 402 unit and integration tests in this package, 84 in
+**812 tests in all**: 402 unit and integration tests in this package, 89 in
 `worker/`, 39 in `api/`, 34 in `mcp/`, 136 in `vscode/`, and 112 browser tests
 across four viewports. Those six figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
@@ -80,7 +80,7 @@ browser run:
 
 | Package   | Tests | Guards                                                                                                                                                                                                                                                                                                                                                                                                          |
 | --------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `worker/` | 84    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself.                                                                                                                                                                                                                                                       |
+| `worker/` | 89    | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself.                                                                                                                                                                                                                                                       |
 | `api/`    | 39    | The public pricing API: filters, ETags, CORS, CSV quoting, that a catalog failing validation is refused rather than passed through, and that an origin answering with HTML is reported as such rather than as a JSON syntax error.                                                                                                                                                                              |
 | `mcp/`    | 34    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, that `get_price` quotes the rate actually in force and cannot drift from what `estimate_cost` bills, that the server reports the version it was published as, and that the real fetch path names what arrived when the catalog is not JSON.                                                         |
 | `vscode/` | 136   | The editor extension: which lines in which languages name a model, hover, status-bar and inline rendering, that every surface quotes the rate in force rather than the standard one during a promotional window, the catalog fetch when the server is unreachable or answers malformed, selection estimates that name an impossible request rather than pricing it, and diagnostics that stay quiet by default. |

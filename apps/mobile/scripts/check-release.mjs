@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
@@ -19,6 +19,13 @@ function requireFile(path) {
     fail(`${path} is missing`);
     return null;
   }
+}
+
+function sourceFiles(directory) {
+  return readdirSync(resolve(ROOT, directory), { withFileTypes: true }).flatMap((entry) => {
+    const path = `${directory}/${entry.name}`;
+    return entry.isDirectory() ? sourceFiles(path) : [path];
+  });
 }
 
 function png(path, width, height, alpha) {
@@ -70,6 +77,9 @@ if (APP.ios?.infoPlist?.ITSAppUsesNonExemptEncryption !== false) {
 }
 if (APP.android?.allowBackup !== false) fail('Android backup must remain disabled for local scenario data');
 if (APP.android?.usesCleartextTraffic === true) fail('Android cleartext network traffic must not be enabled');
+if (PACKAGE.dependencies?.['react-native-webview'] !== '13.16.1') {
+  fail('react-native-webview must stay on the Expo SDK 57 supported version');
+}
 if (Array.isArray(APP.android?.permissions) && APP.android.permissions.length > 0) {
   fail('launch build must not request explicit Android runtime permissions');
 }
@@ -120,6 +130,14 @@ for (const dependency of [
   }
 }
 
+for (const path of sourceFiles('src')) {
+  if (!/\.[cm]?[jt]sx?$/.test(path) || /\.web\.[cm]?[jt]sx?$/.test(path)) continue;
+  const source = requireFile(path)?.toString('utf8') ?? '';
+  if (source.includes('expo-router/head')) {
+    fail(`${path} imports Expo Head on native; keep web document metadata in a .web module`);
+  }
+}
+
 const easIgnore = requireFile('../../.easignore')?.toString('utf8') ?? '';
 for (const pattern of [
   '.env',
@@ -138,6 +156,7 @@ for (const pattern of [
 }
 
 for (const path of [
+  '../../public/mobile-turnstile.html',
   '../../src/content/information/privacy.md',
   '../../src/content/information/support.md',
   '../../docs/STORE_RELEASE_PACKAGE.md',

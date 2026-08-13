@@ -27,6 +27,15 @@ export interface EmailSubscriber {
   bounce_count: number;
 }
 
+export interface EmailManageCode {
+  id: string;
+  subscriber_id: string;
+  code_hash: string;
+  created_at: string;
+  expires_at: string;
+  attempts: number;
+}
+
 export interface PushSubscriptionRow {
   id: string;
   endpoint: string;
@@ -154,6 +163,60 @@ export async function updateEmailPreferences(
     .prepare('UPDATE email_subscribers SET cadence = ?, scope = ? WHERE id = ?')
     .bind(input.cadence, input.scope, id)
     .run();
+}
+
+export async function storeEmailManageCode(
+  db: D1Database,
+  subscriberId: string,
+  codeHash: string,
+  lifetimeSeconds = 10 * 60,
+): Promise<void> {
+  const createdAt = nowIso();
+  const expiresAt = new Date(Date.now() + lifetimeSeconds * 1000).toISOString();
+  await db.batch([
+    db.prepare('DELETE FROM email_manage_codes WHERE subscriber_id = ?').bind(subscriberId),
+    db
+      .prepare(
+        `INSERT INTO email_manage_codes (id, subscriber_id, code_hash, created_at, expires_at, attempts)
+         VALUES (?, ?, ?, ?, ?, 0)`,
+      )
+      .bind(newId(), subscriberId, codeHash, createdAt, expiresAt),
+  ]);
+}
+
+export async function latestEmailManageCode(
+  db: D1Database,
+  subscriberId: string,
+): Promise<EmailManageCode | null> {
+  return db
+    .prepare(
+      `SELECT * FROM email_manage_codes
+        WHERE subscriber_id = ?
+        ORDER BY created_at DESC
+        LIMIT 1`,
+    )
+    .bind(subscriberId)
+    .first<EmailManageCode>();
+}
+
+export async function rejectEmailManageCode(db: D1Database, id: string): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE email_manage_codes
+          SET attempts = attempts + 1
+        WHERE id = ? AND attempts < 5`,
+    )
+    .bind(id)
+    .run();
+  await db.prepare('DELETE FROM email_manage_codes WHERE id = ? AND attempts >= 5').bind(id).run();
+}
+
+export async function deleteEmailManageCode(db: D1Database, id: string): Promise<void> {
+  await db.prepare('DELETE FROM email_manage_codes WHERE id = ?').bind(id).run();
+}
+
+export async function pruneEmailManageCodes(db: D1Database): Promise<void> {
+  await db.prepare('DELETE FROM email_manage_codes WHERE expires_at < ?').bind(nowIso()).run();
 }
 
 export async function markEmailSent(db: D1Database, ids: string[]): Promise<void> {

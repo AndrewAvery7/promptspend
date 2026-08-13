@@ -177,6 +177,35 @@ ${links.siteUrl}`;
   };
 }
 
+/** Passwordless native preference access. The code is short-lived and single-use. */
+export function renderManageCode(code: string, siteUrl: string): RenderedEmail {
+  const body = `<h1 class="ps-ink" style="margin:0 0 14px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">Your alert management code</h1>
+<p style="margin:0 0 18px;">Enter this code in the PromptSpend app to review or change your email alerts:</p>
+<p class="ps-ink" style="margin:0;padding:18px;border:1px solid ${BORDER};border-radius:12px;text-align:center;font:700 32px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:0.22em;color:${INK};">${escapeHtml(code)}</p>
+<p class="ps-muted" style="margin:16px 0 0;font-size:13.5px;color:${MUTED};">The code expires in 10 minutes and works once. PromptSpend will never ask you to send this code to another person.</p>`;
+
+  const text = `Your PromptSpend alert management code
+
+${code}
+
+Enter this code in the PromptSpend app. It expires in 10 minutes and works once.
+PromptSpend will never ask you to send this code to another person.
+
+--
+${siteUrl}`;
+
+  return {
+    subject: 'Your PromptSpend alert management code',
+    html: layout({
+      title: 'Your PromptSpend alert management code',
+      preheader: `${code} · Expires in 10 minutes.`,
+      body,
+      footer: `<p style="margin:0;">If you did not request this code, ignore this message. Your alert preferences have not changed.</p>`,
+    }),
+    text,
+  };
+}
+
 export function renderInstantAlert(set: ChangeSet, links: Links): RenderedEmail {
   const headline =
     set.changes.length === 1 ? '1 model just changed price' : `${set.changes.length} models just changed`;

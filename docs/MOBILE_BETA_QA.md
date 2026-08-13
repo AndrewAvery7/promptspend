@@ -57,10 +57,15 @@ size, light/dark setting, and assistive technology.
 7. Save, rename, duplicate, restore, delete, and undo a scenario.
 8. Share estimate, comparison, scenario link, CSV, receipt image, and receipt
    text to at least Messages, Mail/Gmail, Files/Drive, and one third-party target.
-9. Search for a model and command; complete Guided Tour; change appearance.
+9. Search for a model and command; complete Guided Tour and confirm every step
+   navigates, scrolls, spotlights, and announces the surface it describes; test
+   Back, Exit, Finish, Reduce Motion, and replay; change appearance.
 10. Read every Learn lesson and use the private token lab.
-11. Open every Data & Alerts, source, support, privacy, API, MCP, VS Code, and
-    Open VSX link; cancel each browser/share handoff safely.
+11. In Data & Alerts, complete email subscribe and double opt-in; request and
+    verify a management code; update cadence/scope/models; exercise an invalid
+    and expired code; unsubscribe and confirm deletion. Then open every source,
+    support, privacy, API, MCP, VS Code, and Open VSX link and cancel each
+    browser/share handoff safely.
 
 ## Resilience cases
 
@@ -98,6 +103,7 @@ Run the complete `MOBILE_ACCESSIBILITY.md` script. In addition:
 
 - no primary control below 44 points on iOS or 48 dp on Android;
 - no horizontal clipping at largest practical text/display size;
+- the complete Data & Alerts tab label remains readable without truncation;
 - keyboard focus remains visible and modal focus returns to its opener;
 - values are spoken with labels and not as unexplained punctuation;
 - selected, warning, savings, freshness, and error states remain clear in

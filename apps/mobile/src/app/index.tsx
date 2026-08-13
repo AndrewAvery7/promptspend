@@ -1,6 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
-import Head from 'expo-router/head';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -24,7 +23,6 @@ import {
   AppearanceSheet,
   CommandSheet,
   GlobalActions,
-  GuidedTourSheet,
   PricingTicker,
   type AppSection,
 } from '@/components/AppChrome';
@@ -32,7 +30,9 @@ import { DataSection } from '@/components/DataSection';
 import { CatalogExplorer } from '@/components/CatalogExplorer';
 import { EstimateResult } from '@/components/EstimateResult';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { TourTarget, useGuidedTour } from '@/components/GuidedTour';
 import { LearnSection } from '@/components/LearnSection';
+import { WebDocumentHead } from '@/components/WebDocumentHead';
 import { ModelPicker } from '@/components/ModelPicker';
 import { NumericField } from '@/components/NumericField';
 import { PromptInputField } from '@/components/PromptInputField';
@@ -60,10 +60,12 @@ export default function EstimateScreen() {
   return <EstimatorWorkspace section="estimate" />;
 }
 
-export function EstimatorWorkspace({ section }: { section: AppSection }) {
+export function EstimatorWorkspace({ alertToken, section }: { alertToken?: string; section: AppSection }) {
   const router = useRouter();
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const { startTour } = useGuidedTour();
+  const scrollRef = useRef<ScrollView>(null);
   const {
     batchEnabled,
     cacheEnabled,
@@ -94,7 +96,6 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
   } = useLaunchState();
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
-  const [tourOpen, setTourOpen] = useState(false);
   const mode = section === 'compare' ? 'compare' : 'estimate';
 
   const navigateToSection = useCallback(
@@ -102,7 +103,7 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
       if (next === 'estimate') router.navigate(APP_ROUTES.estimate);
       if (next === 'compare') router.navigate(APP_ROUTES.compare);
       if (next === 'learn') router.navigate(APP_ROUTES.learn);
-      if (next === 'data') router.navigate(APP_ROUTES.more);
+      if (next === 'data') router.navigate(APP_ROUTES.data);
     },
     [router],
   );
@@ -252,13 +253,10 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
 
   return (
     <>
-      <Head>
-        <title>PromptSpend — LLM cost estimator</title>
-        <meta
-          content="Estimate, compare, and understand LLM API costs with validated pricing evidence."
-          name="description"
-        />
-      </Head>
+      <WebDocumentHead
+        description="Estimate, compare, and understand LLM API costs with validated pricing evidence."
+        title="PromptSpend — LLM cost estimator"
+      />
       <SafeAreaView role="main" style={styles.safeArea} edges={['top', 'right', 'bottom', 'left']}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -270,6 +268,7 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
             contentInsetAdjustmentBehavior="automatic"
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="handled"
+            ref={scrollRef}
             refreshControl={
               <RefreshControl
                 accessibilityLabel="Refresh pricing catalog"
@@ -288,11 +287,13 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
                 </View>
                 <Text style={styles.brandName}>PromptSpend</Text>
               </View>
-              <GlobalActions
-                onAppearance={() => setAppearanceOpen(true)}
-                onSearch={() => setCommandOpen(true)}
-                onTour={() => setTourOpen(true)}
-              />
+              <TourTarget enabled={section === 'data'} id="global-tools" scrollRef={scrollRef}>
+                <GlobalActions
+                  onAppearance={() => setAppearanceOpen(true)}
+                  onSearch={() => setCommandOpen(true)}
+                  onTour={startTour}
+                />
+              </TourTarget>
             </View>
 
             {catalog && <PricingTicker catalog={catalog} onOpenData={() => navigateToSection('data')} />}
@@ -380,200 +381,212 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
               <EstimateResult breakdown={breakdown} model={selectedModel} scaled={scaled} />
             )}
 
-            {section === 'compare' && catalog && <ComparisonResult catalog={catalog} rows={comparisonRows} />}
+            {section === 'compare' && catalog && (
+              <TourTarget id="compare-results" scrollRef={scrollRef}>
+                <ComparisonResult catalog={catalog} rows={comparisonRows} />
+              </TourTarget>
+            )}
 
-            {section === 'learn' && catalog && <LearnSection catalog={catalog} />}
+            {section === 'learn' && catalog && (
+              <TourTarget id="learn-token-lab" scrollRef={scrollRef}>
+                <LearnSection catalog={catalog} />
+              </TourTarget>
+            )}
 
-            {section === 'data' && catalog && <DataSection catalog={catalog} />}
+            {section === 'data' && catalog && (
+              <DataSection catalog={catalog} preferencesToken={alertToken} tourScrollRef={scrollRef} />
+            )}
 
             {(section === 'estimate' || section === 'compare') && catalog && selectedModel && (
               <>
-                <View style={styles.panel}>
-                  <View style={styles.panelHeader}>
-                    <View style={styles.stepBadge}>
-                      <Text style={styles.stepBadgeText}>1</Text>
-                    </View>
-                    <View style={styles.panelHeadingCopy}>
-                      <Text accessibilityRole="header" style={styles.panelTitle}>
-                        {mode === 'estimate' ? 'Model and workload' : 'Models and workload'}
-                      </Text>
-                      <Text style={styles.panelSummary}>
-                        {mode === 'estimate'
-                          ? 'Choose a model, then describe one representative conversation.'
-                          : 'Choose up to four models. Every one uses the workload below.'}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {mode === 'estimate' ? (
-                    <ModelPicker
-                      catalog={catalog}
-                      isFavorite={favorites.includes(selectedModel.id)}
-                      onChange={(model) => setSelectedId(model.id)}
-                      onToggleFavorite={() => toggleFavorite(selectedModel.id)}
-                      selected={selectedModel}
-                    />
-                  ) : (
-                    <ComparisonModelPicker
-                      catalog={catalog}
-                      favoriteIds={favorites}
-                      onClear={() => setComparisonIds([])}
-                      onSetModelsWatched={setModelsWatched}
-                      onToggle={toggleComparisonModel}
-                      selectedIds={comparisonIds}
-                    />
-                  )}
-
-                  <View style={styles.divider} />
-
-                  <View style={styles.inputGuide}>
-                    <Text style={styles.inputGuideTitle}>Use counts or paste the real text</Text>
-                    <Text style={styles.inputGuideText}>
-                      If you do not know the token count, choose Paste text. The estimate updates on this
-                      device while you type.
-                    </Text>
-                  </View>
-
-                  {restoredPasteFields.length > 0 && (
-                    <View accessibilityRole="alert" style={styles.restoreNotice}>
-                      <View style={styles.restoreNoticeCopy}>
-                        <Text style={styles.restoreNoticeTitle}>Private text was not restored</Text>
-                        <Text style={styles.restoreNoticeText}>
-                          This saved scenario used pasted text for {restoredPasteFields.join(', ')}.
-                          PromptSpend restored only the derived token counts. Paste again if you want to
-                          recalculate from the original text.
+                <TourTarget enabled={section === 'estimate'} id="estimate-workload" scrollRef={scrollRef}>
+                  <View style={styles.panel}>
+                    <View style={styles.panelHeader}>
+                      <View style={styles.stepBadge}>
+                        <Text style={styles.stepBadgeText}>1</Text>
+                      </View>
+                      <View style={styles.panelHeadingCopy}>
+                        <Text accessibilityRole="header" style={styles.panelTitle}>
+                          {mode === 'estimate' ? 'Model and workload' : 'Models and workload'}
+                        </Text>
+                        <Text style={styles.panelSummary}>
+                          {mode === 'estimate'
+                            ? 'Choose a model, then describe one representative conversation.'
+                            : 'Choose up to four models. Every one uses the workload below.'}
                         </Text>
                       </View>
-                      <Pressable
-                        accessibilityLabel="Dismiss restored text notice"
-                        accessibilityRole="button"
-                        onPress={clearRestoredPasteNotice}
-                        style={styles.restoreDismiss}
-                      >
-                        <Text style={styles.restoreDismissText}>Dismiss</Text>
-                      </Pressable>
                     </View>
-                  )}
 
-                  <PromptInputField
-                    accessibilityHint="Typical number of tokens in the system instructions sent with each request"
-                    helper="Sent with every request. Stable prefixes may be eligible for caching."
-                    input={promptInputs.system}
-                    label="System prompt"
-                    max={200000}
-                    modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
-                    numericValue={workload.systemTokens}
-                    onModeChange={(inputMode) => updatePromptMode('system', inputMode)}
-                    onNumericChange={(value) => updateWorkload('systemTokens', value)}
-                    onTextChange={(text) => updatePromptText('system', text)}
-                    placeholder="Paste your actual system prompt — the token estimate updates live…"
-                    tokenEstimate={displayedPromptTokens.system}
-                  />
+                    {mode === 'estimate' ? (
+                      <ModelPicker
+                        catalog={catalog}
+                        isFavorite={favorites.includes(selectedModel.id)}
+                        onChange={(model) => setSelectedId(model.id)}
+                        onToggleFavorite={() => toggleFavorite(selectedModel.id)}
+                        selected={selectedModel}
+                      />
+                    ) : (
+                      <ComparisonModelPicker
+                        catalog={catalog}
+                        favoriteIds={favorites}
+                        onClear={() => setComparisonIds([])}
+                        onSetModelsWatched={setModelsWatched}
+                        onToggle={toggleComparisonModel}
+                        selectedIds={comparisonIds}
+                      />
+                    )}
 
-                  <PromptInputField
-                    accessibilityHint="Typical number of tokens in each new user message"
-                    input={promptInputs.user}
-                    label="User message"
-                    max={200000}
-                    modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
-                    numericValue={workload.userTokens}
-                    onModeChange={(inputMode) => updatePromptMode('user', inputMode)}
-                    onNumericChange={(value) => updateWorkload('userTokens', value)}
-                    onTextChange={(text) => updatePromptText('user', text)}
-                    placeholder="Paste a typical user message…"
-                    tokenEstimate={displayedPromptTokens.user}
-                  />
+                    <View style={styles.divider} />
 
-                  <PromptInputField
-                    accessibilityHint="Typical number of tokens generated in each model response"
-                    helper="Paste a representative earlier response if you have one; otherwise enter an expected token count."
-                    input={promptInputs.output}
-                    label="Model response"
-                    max={200000}
-                    modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
-                    numericValue={workload.outputTokens}
-                    onModeChange={(inputMode) => updatePromptMode('output', inputMode)}
-                    onNumericChange={(value) => updateWorkload('outputTokens', value)}
-                    onTextChange={(text) => updatePromptText('output', text)}
-                    placeholder="Paste a sample response, if you have one…"
-                    tokenEstimate={displayedPromptTokens.output}
-                  />
-
-                  <NumericField
-                    accessibilityHint="Number of back-and-forth turns in one conversation"
-                    label="Turns per conversation"
-                    max={200}
-                    min={1}
-                    onChange={(value) => updateWorkload('turns', value)}
-                    suffix="turns"
-                    value={workload.turns}
-                  />
-                  <Text style={styles.helper}>
-                    Conversation history is re-sent each turn, so cost compounds.
-                  </Text>
-
-                  <View style={styles.switchRow}>
-                    <View style={styles.switchCopy}>
-                      <Text style={styles.switchLabel}>Assume prompt caching</Text>
-                      <Text style={styles.helper}>
-                        Off by default. When enabled, applies a {Math.round(SUGGESTED_CACHE_SHARE * 100)}%
-                        starting hit-rate assumption and published cache-write rates.
+                    <View style={styles.inputGuide}>
+                      <Text style={styles.inputGuideTitle}>Use counts or paste the real text</Text>
+                      <Text style={styles.inputGuideText}>
+                        If you do not know the token count, choose Paste text. The estimate updates on this
+                        device while you type.
                       </Text>
                     </View>
-                    <Switch
-                      accessibilityHint="Applies a sixty percent cached-input assumption"
-                      accessibilityLabel="Assume prompt caching"
-                      ios_backgroundColor={theme.border}
-                      onValueChange={setCacheEnabled}
-                      thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
-                      trackColor={{ false: theme.border, true: theme.accent }}
-                      value={cacheEnabled}
-                    />
-                  </View>
 
-                  {cacheEnabled && (
+                    {restoredPasteFields.length > 0 && (
+                      <View accessibilityRole="alert" style={styles.restoreNotice}>
+                        <View style={styles.restoreNoticeCopy}>
+                          <Text style={styles.restoreNoticeTitle}>Private text was not restored</Text>
+                          <Text style={styles.restoreNoticeText}>
+                            This saved scenario used pasted text for {restoredPasteFields.join(', ')}.
+                            PromptSpend restored only the derived token counts. Paste again if you want to
+                            recalculate from the original text.
+                          </Text>
+                        </View>
+                        <Pressable
+                          accessibilityLabel="Dismiss restored text notice"
+                          accessibilityRole="button"
+                          onPress={clearRestoredPasteNotice}
+                          style={styles.restoreDismiss}
+                        >
+                          <Text style={styles.restoreDismissText}>Dismiss</Text>
+                        </Pressable>
+                      </View>
+                    )}
+
+                    <PromptInputField
+                      accessibilityHint="Typical number of tokens in the system instructions sent with each request"
+                      helper="Sent with every request. Stable prefixes may be eligible for caching."
+                      input={promptInputs.system}
+                      label="System prompt"
+                      max={200000}
+                      modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                      numericValue={workload.systemTokens}
+                      onModeChange={(inputMode) => updatePromptMode('system', inputMode)}
+                      onNumericChange={(value) => updateWorkload('systemTokens', value)}
+                      onTextChange={(text) => updatePromptText('system', text)}
+                      placeholder="Paste your actual system prompt — the token estimate updates live…"
+                      tokenEstimate={displayedPromptTokens.system}
+                    />
+
+                    <PromptInputField
+                      accessibilityHint="Typical number of tokens in each new user message"
+                      input={promptInputs.user}
+                      label="User message"
+                      max={200000}
+                      modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                      numericValue={workload.userTokens}
+                      onModeChange={(inputMode) => updatePromptMode('user', inputMode)}
+                      onNumericChange={(value) => updateWorkload('userTokens', value)}
+                      onTextChange={(text) => updatePromptText('user', text)}
+                      placeholder="Paste a typical user message…"
+                      tokenEstimate={displayedPromptTokens.user}
+                    />
+
+                    <PromptInputField
+                      accessibilityHint="Typical number of tokens generated in each model response"
+                      helper="Paste a representative earlier response if you have one; otherwise enter an expected token count."
+                      input={promptInputs.output}
+                      label="Model response"
+                      max={200000}
+                      modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                      numericValue={workload.outputTokens}
+                      onModeChange={(inputMode) => updatePromptMode('output', inputMode)}
+                      onNumericChange={(value) => updateWorkload('outputTokens', value)}
+                      onTextChange={(text) => updatePromptText('output', text)}
+                      placeholder="Paste a sample response, if you have one…"
+                      tokenEstimate={displayedPromptTokens.output}
+                    />
+
                     <NumericField
-                      accessibilityHint="Estimated percentage of repeated input served from the provider prompt cache"
-                      label="Cache hit share"
-                      max={100}
-                      onChange={setCacheSharePercent}
-                      suffix="percent"
-                      value={cacheSharePercent}
+                      accessibilityHint="Number of back-and-forth turns in one conversation"
+                      label="Turns per conversation"
+                      max={200}
+                      min={1}
+                      onChange={(value) => updateWorkload('turns', value)}
+                      suffix="turns"
+                      value={workload.turns}
                     />
-                  )}
+                    <Text style={styles.helper}>
+                      Conversation history is re-sent each turn, so cost compounds.
+                    </Text>
 
-                  <View style={styles.switchRow}>
-                    <View style={styles.switchCopy}>
-                      <Text style={styles.switchLabel}>Use batch API where available</Text>
-                      <Text style={styles.helper}>
-                        Applies only each provider’s published batch multiplier. Models without one stay at
-                        full rates.
-                      </Text>
+                    <View style={styles.switchRow}>
+                      <View style={styles.switchCopy}>
+                        <Text style={styles.switchLabel}>Assume prompt caching</Text>
+                        <Text style={styles.helper}>
+                          Off by default. When enabled, applies a {Math.round(SUGGESTED_CACHE_SHARE * 100)}%
+                          starting hit-rate assumption and published cache-write rates.
+                        </Text>
+                      </View>
+                      <Switch
+                        accessibilityHint="Applies a sixty percent cached-input assumption"
+                        accessibilityLabel="Assume prompt caching"
+                        ios_backgroundColor={theme.border}
+                        onValueChange={setCacheEnabled}
+                        thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
+                        trackColor={{ false: theme.border, true: theme.accent }}
+                        value={cacheEnabled}
+                      />
                     </View>
-                    <Switch
-                      accessibilityLabel="Use batch API where available"
-                      ios_backgroundColor={theme.border}
-                      onValueChange={setBatchEnabled}
-                      thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
-                      trackColor={{ false: theme.border, true: theme.accent }}
-                      value={batchEnabled}
-                    />
-                  </View>
 
-                  <NumericField
-                    accessibilityHint="Multiplier for hidden reasoning tokens billed at the output rate"
-                    label="Reasoning token multiplier"
-                    max={5}
-                    min={1}
-                    onChange={setReasoningMultiplier}
-                    step={0.1}
-                    suffix="times"
-                    value={reasoningMultiplier}
-                  />
-                  <Text style={styles.helper}>
-                    Leave at 1× unless provider usage reports hidden reasoning tokens.
-                  </Text>
-                </View>
+                    {cacheEnabled && (
+                      <NumericField
+                        accessibilityHint="Estimated percentage of repeated input served from the provider prompt cache"
+                        label="Cache hit share"
+                        max={100}
+                        onChange={setCacheSharePercent}
+                        suffix="percent"
+                        value={cacheSharePercent}
+                      />
+                    )}
+
+                    <View style={styles.switchRow}>
+                      <View style={styles.switchCopy}>
+                        <Text style={styles.switchLabel}>Use batch API where available</Text>
+                        <Text style={styles.helper}>
+                          Applies only each provider’s published batch multiplier. Models without one stay at
+                          full rates.
+                        </Text>
+                      </View>
+                      <Switch
+                        accessibilityLabel="Use batch API where available"
+                        ios_backgroundColor={theme.border}
+                        onValueChange={setBatchEnabled}
+                        thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
+                        trackColor={{ false: theme.border, true: theme.accent }}
+                        value={batchEnabled}
+                      />
+                    </View>
+
+                    <NumericField
+                      accessibilityHint="Multiplier for hidden reasoning tokens billed at the output rate"
+                      label="Reasoning token multiplier"
+                      max={5}
+                      min={1}
+                      onChange={setReasoningMultiplier}
+                      step={0.1}
+                      suffix="times"
+                      value={reasoningMultiplier}
+                    />
+                    <Text style={styles.helper}>
+                      Leave at 1× unless provider usage reports hidden reasoning tokens.
+                    </Text>
+                  </View>
+                </TourTarget>
 
                 <View style={styles.panel}>
                   <View style={styles.panelHeader}>
@@ -711,19 +724,11 @@ export function EstimatorWorkspace({ section }: { section: AppSection }) {
                 if (toggleComparisonModel(id)) navigateToSection('compare');
               }}
               onToggleFavorite={toggleFavorite}
-              onTour={() => {
-                setTourOpen(true);
-                navigateToSection('estimate');
-              }}
+              onTour={startTour}
               visible={commandOpen}
               selectedComparisonIds={comparisonIds}
             />
           )}
-          <GuidedTourSheet
-            onClose={() => setTourOpen(false)}
-            onOpenEstimate={() => navigateToSection('estimate')}
-            visible={tourOpen}
-          />
         </KeyboardAvoidingView>
       </SafeAreaView>
     </>

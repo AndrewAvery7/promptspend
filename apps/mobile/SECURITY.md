@@ -1,15 +1,24 @@
 # Mobile dependency security notes
 
-Last reviewed: August 10, 2026
+Last reviewed: August 13, 2026
 
 ## Current scaffold audit
 
-The initial Expo SDK 57 dependency graph reports npm audit findings even though Expo Doctor and Expo's compatibility check pass. The 22 expanded findings trace to two root advisories:
+The current Expo SDK 57 dependency graph reports 25 expanded npm audit findings
+(9 moderate, 16 high, 0 critical) even though Expo Doctor's 20 checks and the
+production-platform exports pass. The actionable advisory chain still traces
+to two root advisories:
 
 1. `image-size` can loop indefinitely while parsing specially crafted ICNS, JXL, or HEIF images. It is pulled into Metro's development/build toolchain.
 2. Older `uuid` releases can miss a destination-buffer bounds check in specific v3/v5/v6 API usage. They are pulled into Expo configuration/build tooling.
 
 The current mobile application does not accept user images, parse these image formats at runtime, call the affected `uuid` buffer APIs, or ship Metro as an end-user feature. That materially limits exposure, but it does not make the dependency findings disappear.
+
+The new `react-native-webview` 13.16.1 dependency is the Expo SDK 57 supported
+version and does not appear as a vulnerable package in the current audit. The
+Alert Center WebView is ephemeral, loads one HTTPS origin, blocks mixed content
+and unapproved top-level navigation, and receives no email address, model
+selection, scenario data, or prompt text.
 
 ## Why `npm audit fix --force` is prohibited
 
