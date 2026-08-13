@@ -24,3 +24,12 @@ vscode/package-lock.json
 **/.wrangler
 test-results
 playwright-report
+
+# Expo Router and Metro generate these locally. Device screenshots and bundle
+# manifests are release evidence, not author-maintained source.
+apps/mobile/.expo
+apps/mobile/expo-env.d.ts
+
+# Local traffic exports are diagnostic evidence and may be intentionally kept
+# outside version control. Never rewrite them during a repository format gate.
+referrers-*.json

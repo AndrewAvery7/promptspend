@@ -17,6 +17,10 @@ export default tseslint.config(
       'mcp/dist',
       'vscode/node_modules',
       'vscode/dist',
+      // The Expo app has its own SDK-aware lint configuration and gate. Running
+      // the web config over it both duplicates that work and treats generated
+      // Metro bundles and Node maintenance scripts as browser source.
+      'apps/mobile/**',
       // Wrangler's scratch directory. It holds the bundled output of the last
       // `wrangler dev` — machine-generated, transient, and linting it produced
       // a wall of errors about a file nobody wrote.

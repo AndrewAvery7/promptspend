@@ -31,6 +31,18 @@ describe('renderMarkdown', () => {
     );
   });
 
+  it('renders safe links and unordered lists', () => {
+    expect(
+      renderMarkdown('- [Support](https://promptspend.com/support/)\n- [Email](mailto:info@promptspend.com)'),
+    ).toBe(
+      '<ul><li><a href="https://promptspend.com/support/">Support</a></li><li><a href="mailto:info@promptspend.com">Email</a></li></ul>',
+    );
+  });
+
+  it('does not turn executable URL schemes into links', () => {
+    expect(renderMarkdown('[Unsafe](javascript:alert(1))')).toBe('<p>[Unsafe](javascript:alert(1))</p>');
+  });
+
   it('renders a fenced code block as <pre><code>, tagged with its language', () => {
     const html = renderMarkdown('```bash\ncurl -s https://promptspend.dev\n```');
     expect(html).toBe('<pre><code class="language-bash">curl -s https://promptspend.dev</code></pre>');

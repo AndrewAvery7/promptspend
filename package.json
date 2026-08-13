@@ -57,6 +57,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@promptspend/core": "file:packages/core",
     "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^9.39.5",
     "@playwright/test": "^1.62.1",

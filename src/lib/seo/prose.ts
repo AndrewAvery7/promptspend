@@ -4,8 +4,8 @@
  *
  * Deliberately not a general-purpose parser or a new dependency: the pieces
  * used here are `## ` headings, blank-line-separated paragraphs, fenced code
- * blocks, `**bold**` and `` `code` `` spans. Nothing else is supported, and
- * anything outside that set (lists, links, blockquotes, images) passes
+ * blocks, unordered lists, links, `**bold**` and `` `code` `` spans. Nothing
+ * else is supported, and anything outside that set (blockquotes, images) passes
  * through as a literal paragraph rather than silently vanishing — a markdown
  * feature nobody wrote a renderer for should fail loud in review, not render
  * as plain, un-styled text with no explanation.
@@ -26,7 +26,10 @@ function escapeHtml(value: string): string {
 /** `**bold**` and `` `code` `` within a run of text already destined for HTML. */
 function inline(text: string): string {
   const escaped = escapeHtml(text);
-  return escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`(.+?)`/g, '<code>$1</code>');
+  return escaped
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\((https:\/\/[^\s)]+|mailto:[^\s)]+)\)/g, '<a href="$2">$1</a>');
 }
 
 export interface ParsedContent {
@@ -73,6 +76,14 @@ export function renderMarkdown(markdown: string): string {
     if (fence) {
       const lang = fence[1] ? ` class="language-${escapeHtml(fence[1])}"` : '';
       html.push(`<pre><code${lang}>${escapeHtml(fence[2]!)}</code></pre>`);
+      continue;
+    }
+
+    const listItems = trimmed.split(/\r?\n/);
+    if (listItems.every((line) => /^-\s+\S/.test(line))) {
+      html.push(
+        `<ul>${listItems.map((line) => `<li>${inline(line.replace(/^-\s+/, ''))}</li>`).join('')}</ul>`,
+      );
       continue;
     }
 

@@ -30,11 +30,13 @@ import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import {
   renderComparisonPage,
   renderComparisonsIndex,
+  renderInformationPage,
   renderModelPage,
   renderModelsIndex,
   renderProviderPage,
   renderProvidersIndex,
   renderWritingPage,
+  type InformationPage,
   type RenderContext,
   type WritingPage,
 } from '@/lib/seo/render';
@@ -44,6 +46,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
 const CATALOG = resolve(ROOT, 'public/data/pricing.json');
 const WRITING_DIR = resolve(ROOT, 'src/content/writing');
+const INFORMATION_DIR = resolve(ROOT, 'src/content/information');
 
 /** Same defaults as `vite.config.ts`, and for the same reasons: an unset
  *  GitHub Actions variable arrives as `""`, so `??` would not catch it. */
@@ -113,6 +116,29 @@ async function loadWritingPages(): Promise<WritingPage[]> {
   );
 }
 
+/** Durable public information pages used by the apps and store listings. */
+async function loadInformationPages(): Promise<InformationPage[]> {
+  if (!existsSync(INFORMATION_DIR)) return [];
+  const files = (await readdir(INFORMATION_DIR)).filter((name) => name.endsWith('.md'));
+  return Promise.all(
+    files.map(async (file) => {
+      const raw = await readFile(resolve(INFORMATION_DIR, file), 'utf8');
+      const { meta, body } = parseFrontmatter(raw);
+      for (const field of ['slug', 'title', 'description', 'heading', 'updated']) {
+        if (!meta[field]) throw new Error(`${file}: frontmatter is missing "${field}"`);
+      }
+      return {
+        path: `/${meta.slug}/`,
+        title: meta.title!,
+        description: meta.description!,
+        heading: meta.heading!,
+        updatedDate: meta.updated!,
+        bodyHtml: renderMarkdown(body),
+      };
+    }),
+  );
+}
+
 async function main(): Promise<void> {
   if (!existsSync(DIST)) {
     console.error('✗ dist/ does not exist — run `npm run build` first.');
@@ -165,6 +191,10 @@ async function main(): Promise<void> {
   // are written and added to the sitemap here rather than folded into `set`.
   const writingPages = await loadWritingPages();
   for (const page of writingPages) await writeFileAt(fileFor(page.path), renderWritingPage(page, ctx));
+  const informationPages = await loadInformationPages();
+  for (const page of informationPages) {
+    await writeFileAt(fileFor(page.path), renderInformationPage(page, ctx));
+  }
 
   // The sitemap lives here rather than in `vite.config.ts` because it has to
   // list these pages, and the config has no idea they exist.
@@ -182,6 +212,11 @@ async function main(): Promise<void> {
         loc: `${siteUrl}${page.path}`,
         lastmod: page.publishedDate,
         priority: '0.6',
+      })),
+      ...informationPages.map((page) => ({
+        loc: `${siteUrl}${page.path}`,
+        lastmod: page.updatedDate,
+        priority: '0.4',
       })),
     ]),
   );
@@ -201,12 +236,16 @@ async function main(): Promise<void> {
   // key is public by design — see scripts/lib/indexnow.ts.
   await writeFileAt(INDEXNOW_KEY_FILE, `${INDEXNOW_KEY}\n`);
 
-  console.log(`✓ ${set.all.length + writingPages.length} pages written under ${DIST}`);
   console.log(
-    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing`,
+    `✓ ${set.all.length + writingPages.length + informationPages.length} pages written under ${DIST}`,
+  );
+  console.log(
+    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing, ${informationPages.length} information`,
   );
   console.log(`  stylesheet ${cssName}`);
-  console.log(`  sitemap    ${set.all.length + writingPages.length + 1} URLs at ${siteUrl}/sitemap.xml`);
+  console.log(
+    `  sitemap    ${set.all.length + writingPages.length + informationPages.length + 1} URLs at ${siteUrl}/sitemap.xml`,
+  );
   console.log(`  llms.txt   ${siteUrl}/llms.txt`);
   if (set.droppedComparisons > 0) {
     // Never silent. A capped page set that looks complete is how a coverage
