@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 const ROOT = resolve(import.meta.dirname, '..');
 const APP = JSON.parse(readFileSync(resolve(ROOT, 'app.json'), 'utf8')).expo;
 const EAS = JSON.parse(readFileSync(resolve(ROOT, 'eas.json'), 'utf8'));
+const PACKAGE = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
 const STORE = JSON.parse(readFileSync(resolve(ROOT, 'store/metadata.en-US.json'), 'utf8'));
 const problems = [];
 
@@ -68,6 +69,16 @@ if (APP.ios?.infoPlist?.ITSAppUsesNonExemptEncryption !== false) {
   fail('export-compliance declaration is missing or changed');
 }
 if (APP.android?.allowBackup !== false) fail('Android backup must remain disabled for local scenario data');
+if (APP.android?.usesCleartextTraffic === true) fail('Android cleartext network traffic must not be enabled');
+if (Array.isArray(APP.android?.permissions) && APP.android.permissions.length > 0) {
+  fail('launch build must not request explicit Android runtime permissions');
+}
+const iosUsageDescriptions = Object.keys(APP.ios?.infoPlist ?? {}).filter((key) =>
+  /^NS.*UsageDescription$/.test(key),
+);
+if (iosUsageDescriptions.length > 0) {
+  fail(`launch build contains unexpected iOS permission descriptions: ${iosUsageDescriptions.join(', ')}`);
+}
 if (EAS.submit?.production?.ios?.ascAppId !== '6800386428') fail('App Store Connect app id drifted');
 if (EAS.build?.production?.autoIncrement !== true)
   fail('production build auto-increment must remain enabled');
@@ -94,6 +105,37 @@ for (const key of ['supportUrl', 'marketingUrl', 'privacyPolicyUrl']) {
   if (!/^https:\/\//.test(STORE[key] ?? '')) fail(`${key} must be an absolute HTTPS URL`);
 }
 if (STORE.supportEmail !== 'info@promptspend.com') fail('support email drifted');
+
+for (const dependency of [
+  'expo-camera',
+  'expo-contacts',
+  'expo-location',
+  'expo-media-library',
+  'expo-notifications',
+  'expo-tracking-transparency',
+  'react-native-permissions',
+]) {
+  if (PACKAGE.dependencies?.[dependency]) {
+    fail(`${dependency} was added, but the launch privacy contract allows no sensitive permissions`);
+  }
+}
+
+const easIgnore = requireFile('../../.easignore')?.toString('utf8') ?? '';
+for (const pattern of [
+  '.env',
+  'referrers-*.json',
+  'credentials.json',
+  'google-services.json',
+  'GoogleService-Info.plist',
+  '*.jks',
+  '*.p8',
+  '*.p12',
+  '*.mobileprovision',
+]) {
+  if (!easIgnore.split(/\r?\n/).includes(pattern)) {
+    fail(`.easignore must exclude ${pattern}`);
+  }
+}
 
 for (const path of [
   '../../src/content/information/privacy.md',

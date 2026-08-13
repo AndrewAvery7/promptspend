@@ -156,7 +156,7 @@ export function ScenarioActions(props: ScenarioActionsProps) {
   );
 }
 
-function buildScenarioUrl(props: ScenarioActionsProps): string {
+export function buildScenarioUrl(props: ScenarioActionsProps): string {
   const params = new URLSearchParams();
   params.set('m', props.modelIds.slice(0, 4).join(','));
   params.set('sys', String(Math.round(props.systemTokens)));
@@ -173,7 +173,7 @@ function buildScenarioUrl(props: ScenarioActionsProps): string {
   return `https://promptspend.com/?${params.toString()}`;
 }
 
-function csvForRows(props: ScenarioActionsProps): string {
+export function csvForRows(props: ScenarioActionsProps): string {
   const assumptions = [...new Set(props.rows.flatMap((row) => row.breakdown.assumptions))];
   const warnings = [...new Set(props.rows.flatMap((row) => row.breakdown.warnings))];
   const rows: unknown[][] = [
@@ -243,7 +243,11 @@ function csvForRows(props: ScenarioActionsProps): string {
 
 function csvCell(value: unknown): string {
   const text = String(value ?? '');
-  return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+  // Spreadsheet apps can execute cells that begin with formula sigils even
+  // when the CSV field is quoted. Prefix untrusted catalog text with a single
+  // quote so exported evidence remains inert when opened in Excel or Sheets.
+  const safeText = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
+  return /[",\r\n]/.test(safeText) ? `"${safeText.replaceAll('"', '""')}"` : safeText;
 }
 
 function createStyles(theme: MobileTheme) {

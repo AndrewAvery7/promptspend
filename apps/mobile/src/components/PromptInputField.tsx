@@ -78,7 +78,11 @@ export function PromptInputField({
         <View style={styles.textField}>
           <View style={styles.labelRow}>
             <Text style={styles.label}>{label}</Text>
-            <Text style={styles.tokenCount}>
+            <Text
+              accessibilityLabel={`Approximately ${Math.round(tokenEstimate).toLocaleString('en-US')} tokens for ${modelName}`}
+              accessibilityLiveRegion="polite"
+              style={styles.tokenCount}
+            >
               ≈ {Math.round(tokenEstimate).toLocaleString('en-US')} tokens
             </Text>
           </View>
@@ -91,6 +95,7 @@ export function PromptInputField({
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect={false}
+            allowFontScaling
             importantForAutofill="no"
             maxLength={MAX_PASTE_CHARS}
             multiline
