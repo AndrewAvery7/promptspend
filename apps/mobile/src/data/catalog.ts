@@ -13,10 +13,15 @@ const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 type CatalogSource = 'network' | 'cache';
 
-interface CacheEnvelope {
+export interface CacheEnvelope {
   cachedAt: string;
   health: unknown;
   pricing: unknown;
+}
+
+export interface MobileCatalogCache {
+  read(): Promise<{ envelope: CacheEnvelope; catalog: Catalog } | null>;
+  write(envelope: CacheEnvelope): Promise<void>;
 }
 
 export interface MobileCatalogResult {
@@ -27,6 +32,7 @@ export interface MobileCatalogResult {
 }
 
 interface LoadCatalogOptions {
+  cache?: MobileCatalogCache;
   fetcher?: typeof fetch;
   now?: Date;
 }
@@ -36,22 +42,16 @@ function validatedCatalog(pricing: unknown, health: unknown): Catalog {
   return new Catalog(pricing, isSyncStatus(health) ? health : null);
 }
 
-async function readCache(): Promise<{ envelope: CacheEnvelope; catalog: Catalog } | null> {
-  if (Platform.OS === 'web') return null;
-
+export function parseCacheRecord(value: unknown): { envelope: CacheEnvelope; catalog: Catalog } | null {
+  if (typeof value !== 'object' || value === null) return null;
+  const envelope = value as Partial<CacheEnvelope>;
+  if (typeof envelope.cachedAt !== 'string' || Number.isNaN(Date.parse(envelope.cachedAt))) return null;
+  const completeEnvelope: CacheEnvelope = {
+    cachedAt: envelope.cachedAt,
+    health: envelope.health,
+    pricing: envelope.pricing,
+  };
   try {
-    const { File, Paths } = await import('expo-file-system');
-    const cacheFile = new File(Paths.document, 'promptspend-pricing-v2.json');
-    if (!cacheFile.exists) return null;
-    const parsed: unknown = JSON.parse(await cacheFile.text());
-    if (typeof parsed !== 'object' || parsed === null) return null;
-    const envelope = parsed as Partial<CacheEnvelope>;
-    if (typeof envelope.cachedAt !== 'string' || Number.isNaN(Date.parse(envelope.cachedAt))) return null;
-    const completeEnvelope: CacheEnvelope = {
-      cachedAt: envelope.cachedAt,
-      health: envelope.health,
-      pricing: envelope.pricing,
-    };
     return {
       envelope: completeEnvelope,
       catalog: validatedCatalog(completeEnvelope.pricing, completeEnvelope.health),
@@ -61,7 +61,21 @@ async function readCache(): Promise<{ envelope: CacheEnvelope; catalog: Catalog 
   }
 }
 
-async function writeCache(envelope: CacheEnvelope): Promise<void> {
+async function readDeviceCache(): Promise<{ envelope: CacheEnvelope; catalog: Catalog } | null> {
+  if (Platform.OS === 'web') return null;
+
+  try {
+    const { File, Paths } = await import('expo-file-system');
+    const cacheFile = new File(Paths.document, 'promptspend-pricing-v2.json');
+    if (!cacheFile.exists) return null;
+    const parsed: unknown = JSON.parse(await cacheFile.text());
+    return parseCacheRecord(parsed);
+  } catch {
+    return null;
+  }
+}
+
+async function writeDeviceCache(envelope: CacheEnvelope): Promise<void> {
   if (Platform.OS === 'web') return;
   try {
     const { File, Paths } = await import('expo-file-system');
@@ -72,6 +86,11 @@ async function writeCache(envelope: CacheEnvelope): Promise<void> {
   }
 }
 
+const DEVICE_CACHE: MobileCatalogCache = {
+  read: readDeviceCache,
+  write: writeDeviceCache,
+};
+
 async function fetchJson(url: string, fetcher: typeof fetch): Promise<unknown> {
   const response = await fetcher(url, { cache: 'no-cache' });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -81,14 +100,16 @@ async function fetchJson(url: string, fetcher: typeof fetch): Promise<unknown> {
 /**
  * Load a validated catalog without making startup depend on the network.
  *
- * A successful download is reused for 24 hours. If refresh fails, the last
- * valid cache remains usable; a bundled snapshot is the final offline fallback.
+ * A successful download is reused for up to 24 hours. If refresh fails, only a
+ * still-current validated cache remains usable. Older prices fail closed.
  */
 export async function loadMobileCatalog(options: LoadCatalogOptions = {}): Promise<MobileCatalogResult> {
   const now = options.now ?? new Date();
-  const cached = await readCache();
+  const cache = options.cache ?? DEVICE_CACHE;
+  const cached = await cache.read();
   const cachedAt = cached ? Date.parse(cached.envelope.cachedAt) : Number.NaN;
-  const cacheIsFresh = cached !== null && now.getTime() - cachedAt < CACHE_TTL_MS;
+  const cacheAge = now.getTime() - cachedAt;
+  const cacheIsFresh = cached !== null && cacheAge >= 0 && cacheAge < CACHE_TTL_MS;
 
   try {
     const fetcher = options.fetcher ?? fetch;
@@ -98,7 +119,7 @@ export async function loadMobileCatalog(options: LoadCatalogOptions = {}): Promi
     ]);
     const catalog = validatedCatalog(pricing, health);
     const cachedAtIso = now.toISOString();
-    await writeCache({ cachedAt: cachedAtIso, health, pricing: pricing as PricingCatalog });
+    await cache.write({ cachedAt: cachedAtIso, health, pricing: pricing as PricingCatalog });
     const freshness = catalog.freshness(now);
     const warning =
       freshness.level === 'unknown'

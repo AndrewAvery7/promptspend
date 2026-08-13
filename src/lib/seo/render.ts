@@ -195,6 +195,8 @@ ${input.body}
           <a href="${escapeHtml(href(ctx, '/models/'))}">All models</a> &middot;
           <a href="${escapeHtml(href(ctx, '/providers/'))}">Providers</a> &middot;
           <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
+          <a href="${escapeHtml(href(ctx, '/support/'))}">Support</a> &middot;
+          <a href="${escapeHtml(href(ctx, '/privacy/'))}">Privacy</a> &middot;
           <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a> &middot;
           <a href="https://github.com/AndrewAvery7/promptspend">Source</a>
         </p>
@@ -895,6 +897,52 @@ ${page.bodyHtml}
         url: absolute(ctx, page.path),
         datePublished: page.publishedDate,
         author: { '@type': 'Organization', name: 'PromptSpend' },
+      },
+    ],
+    body,
+  });
+}
+
+// -------------------------------------------------------- information page
+
+/** A durable product-information page such as Support or Privacy. */
+export interface InformationPage {
+  path: string;
+  title: string;
+  description: string;
+  heading: string;
+  /** ISO date (`YYYY-MM-DD`) the information was last reviewed. */
+  updatedDate: string;
+  bodyHtml: string;
+}
+
+export function renderInformationPage(page: InformationPage, ctx: RenderContext): string {
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: page.heading, path: null },
+  ];
+
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <article>
+          <h1>${escapeHtml(page.heading)}</h1>
+          <p class="lede">Last reviewed ${escapeHtml(page.updatedDate)}</p>
+${page.bodyHtml}
+        </article>
+      </main>`;
+
+  return layout(ctx, {
+    path: page.path,
+    title: page.title,
+    description: page.description,
+    graph: [
+      breadcrumbLd(ctx, crumbs, page.path),
+      {
+        '@type': 'WebPage',
+        name: page.heading,
+        description: page.description,
+        url: absolute(ctx, page.path),
+        dateModified: page.updatedDate,
       },
     ],
     body,

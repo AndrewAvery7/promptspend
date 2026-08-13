@@ -27,7 +27,9 @@ These values are the proposed permanent identifiers. They must be registered in 
 
 The Expo owner, slug, and EAS project ID are linked. The bundle/application ID cannot be treated as final until both publisher consoles accept it. Changing it after a public release would create a different application, so registration is a Phase 0 gate.
 
-The support and privacy URLs are reserved decisions, not claims that those pages are live yet. Both pages must be implemented, published, and verified before beta distribution or store submission.
+The support and privacy pages are implemented in the static-site build and
+included in its sitemap, CSP, canonical, and link-integrity checks. They are not
+considered live until the website deployment containing them is verified.
 
 ## Repository starting state
 

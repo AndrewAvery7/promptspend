@@ -1,4 +1,5 @@
 import * as Clipboard from 'expo-clipboard';
+import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -17,6 +18,8 @@ const DEVELOPER_HUB_URL = 'https://promptspend.dev';
 const MCP_URL = 'https://www.npmjs.com/package/@promptspend/mcp';
 const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=promptspend.promptspend';
 const OPEN_VSX_URL = 'https://open-vsx.org/extension/promptspend/promptspend';
+const PRIVACY_URL = `${SITE_URL}privacy/`;
+const SUPPORT_URL = `${SITE_URL}support/`;
 
 export function DataSection({ catalog }: { catalog: Catalog }) {
   const { theme } = useMobileTheme();
@@ -131,6 +134,26 @@ export function DataSection({ catalog }: { catalog: Catalog }) {
           description="The same extension for Cursor, Windsurf, and VSCodium."
           label="Open VSX"
           onPress={() => void open(OPEN_VSX_URL)}
+          styles={styles}
+        />
+      </Card>
+
+      <Card styles={styles} title="Privacy & support">
+        <Text style={styles.body}>
+          PromptSpend has no native account, advertising SDK, behavioral analytics, or cross-app tracking.
+          Pasted text stays on this device and is excluded from shares.
+        </Text>
+        <Action label="Read the privacy policy" onPress={() => void open(PRIVACY_URL)} styles={styles} />
+        <Action
+          label="Open support and troubleshooting"
+          onPress={() => void open(SUPPORT_URL)}
+          styles={styles}
+        />
+        <Action
+          label="Email PromptSpend support"
+          onPress={() =>
+            void Linking.openURL('mailto:info@promptspend.com?subject=PromptSpend%20app%20support')
+          }
           styles={styles}
         />
       </Card>
