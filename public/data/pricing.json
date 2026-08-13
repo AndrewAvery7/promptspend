@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-13T11:17:24.040Z",
+  "generatedAt": "2026-08-13T18:46:47.641Z",
   "providers": [
     {
       "id": "anthropic",
@@ -516,13 +516,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-08-13",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 65536,
       "capabilityIndex": 70
@@ -574,13 +570,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-08-13",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (35%): $0.26/$1.04 vs $0.4/$1.6",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 32768
     },
@@ -606,16 +598,44 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-08-13",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (41%): $1.475/$4.425 vs $2.5/$7.5",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max"
       },
       "maxOutput": 65536,
       "capabilityIndex": 83
+    },
+    {
+      "id": "dashscope-qwen3.8-max",
+      "providerId": "alibaba",
+      "displayName": "Qwen3.8 Max",
+      "status": "current",
+      "contextWindow": 991808,
+      "pricing": {
+        "input": 2,
+        "output": 6,
+        "cachedInput": 0.25
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — Qwen tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-08-13",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 131072
     },
     {
       "id": "deepseek-deepseek-r1",
@@ -1042,6 +1062,34 @@
       },
       "maxOutput": 65536,
       "capabilityIndex": 82
+    },
+    {
+      "id": "gemini-gemini-3.7-flash",
+      "providerId": "google",
+      "displayName": "Gemini 3.7 Flash",
+      "status": "current",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 0.75,
+        "output": 3.75,
+        "cachedInput": 0.075
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 4,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Gemini's tokenizer is server-side"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+      },
+      "maxOutput": 65536
     },
     {
       "id": "gpt-5",
@@ -1497,7 +1545,8 @@
       "pricing": {
         "input": 0.3,
         "output": 1.2,
-        "cachedInput": 0.03
+        "cachedInput": 0.03,
+        "cacheWrite": 0.375
       },
       "tokenizer": {
         "kind": "approx",
@@ -1510,13 +1559,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-08-13",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (27%): $0.22/$0.9 vs $0.3/$1.2",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo"
       },
       "maxOutput": 8192
     },

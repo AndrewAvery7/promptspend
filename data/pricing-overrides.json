@@ -446,12 +446,18 @@
     {
       "id": "dashscope-qwen3.7-max",
       "displayName": "Qwen 3.7 Max",
-      "capabilityIndex": 83
+      "capabilityIndex": 83,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "displayName": "Qwen3 Next 80B",
-      "capabilityIndex": 70
+      "capabilityIndex": 70,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-thinking",
@@ -459,7 +465,10 @@
     },
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
-      "displayName": "Qwen3 VL 235B"
+      "displayName": "Qwen3 VL 235B",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
     },
     {
       "id": "zai-glm-5.1",
@@ -520,6 +529,17 @@
       "id": "minimax-minimax-m3",
       "displayName": "MiniMax M3",
       "capabilityIndex": 72
+    },
+    {
+      "$note": "Listed under `Legacy Models` on MiniMax's own pay-as-you-go table, which is consistent with M2.7/M3 having superseded it. Input, output and cache-read all match the feed, so those keep flowing from it; only `cacheWrite` is recorded, because the vendor publishes a prompt-cache write price the feed does not carry.",
+      "id": "minimax-minimax-m2.5",
+      "displayName": "MiniMax M2.5",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
+      "pricing": {
+        "cacheWrite": 0.375
+      }
     },
     {
       "id": "xai-grok-4.5",
@@ -620,7 +640,16 @@
       "vendorVerified": true,
       "lastVerified": "2026-08-03",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "$note": "Arrived from the feed on 2026-08-12 and was read against Google's pricing page the same day, so it publishes with a first-party rate rather than an unread one. Google states an increase to $1.50/$7.50 on 2027-01-01, which makes the current $0.75/$3.75 a promotional rate rather than the list rate. That is deliberately NOT modelled as an `intro` block here: doing so would mean hard-coding $1.50/$7.50 as the base and freezing both numbers against the feed. The feed should carry the step-up on its own in January — if it has not by then, this row needs revisiting.",
+      "id": "gemini-gemini-3.7-flash",
+      "providerId": "google",
+      "displayName": "Gemini 3.7 Flash",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     }
   ],
-  "$verificationPasses": "2026-08-01: Anthropic and OpenAI flagship rows read against the first-party pricing pages; all matched the automated feed, and the additions were the modifiers the feed does not carry (cache writes, long-context tiers, batch discounts). 2026-08-03: a second pass covering 27 more rows across Anthropic, OpenAI, Google, xAI and DeepSeek. Every one of the 27 matched the feed exactly, so these entries record provenance ONLY — no `pricing` block — which leaves the rate flowing from the feed and self-correcting. Recording a price we did not need to change would freeze it for no reason. NOT verifiable on 2026-08-03, and deliberately left as `litellm`: Mistral Large 3 and Medium 3.5, Command A, all four Kimi rows, all four MiniMax rows and GLM-5-Code are absent from their vendors' own pricing pages; Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are not listed on the pages that carry their siblings. An aggregator would have numbers for all of them, which is exactly why this catalog does not accept one. 2026-08-09: Kimi K2.6 read against Moonshot's own per-model pricing page and moved to `vendor`. The 2026-08-03 pass recorded it as not verifiable because no such page existed; the platform has since moved from platform.moonshot.ai to platform.kimi.ai and now publishes a page per model. The vendor's figures match the feed exactly — $0.95 input on a cache miss, $4.00 output, $0.16 on a cache hit — so this row records provenance ONLY and its rate keeps flowing from the feed. That also settles the standing cross-source flag on it: OpenRouter's $0.58/$2.44 is a reseller-routed price, the 20-50% adrift case `$coverage` describes, and the published number was the right one all along. NOT verified in this pass and deliberately still `litellm`: Kimi K2.5 and K2-thinking, which the vendor's pricing index no longer lists — it now carries K3, K2.7 Code, K2.6 and the sunsetting Moonshot V1. The vendor publishes K3 and K2.7 Code, which the feed does not yet carry; per `$coverage` those are left to arrive on their own rather than hand-added."
+  "$verificationPasses": "2026-08-01: Anthropic and OpenAI flagship rows read against the first-party pricing pages; all matched the automated feed, and the additions were the modifiers the feed does not carry (cache writes, long-context tiers, batch discounts). 2026-08-03: a second pass covering 27 more rows across Anthropic, OpenAI, Google, xAI and DeepSeek. Every one of the 27 matched the feed exactly, so these entries record provenance ONLY — no `pricing` block — which leaves the rate flowing from the feed and self-correcting. Recording a price we did not need to change would freeze it for no reason. NOT verifiable on 2026-08-03, and deliberately left as `litellm`: Mistral Large 3 and Medium 3.5, Command A, all four Kimi rows, all four MiniMax rows and GLM-5-Code are absent from their vendors' own pricing pages; Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are not listed on the pages that carry their siblings. An aggregator would have numbers for all of them, which is exactly why this catalog does not accept one. 2026-08-09: Kimi K2.6 read against Moonshot's own per-model pricing page and moved to `vendor`. The 2026-08-03 pass recorded it as not verifiable because no such page existed; the platform has since moved from platform.moonshot.ai to platform.kimi.ai and now publishes a page per model. The vendor's figures match the feed exactly — $0.95 input on a cache miss, $4.00 output, $0.16 on a cache hit — so this row records provenance ONLY and its rate keeps flowing from the feed. That also settles the standing cross-source flag on it: OpenRouter's $0.58/$2.44 is a reseller-routed price, the 20-50% adrift case `$coverage` describes, and the published number was the right one all along. NOT verified in this pass and deliberately still `litellm`: Kimi K2.5 and K2-thinking, which the vendor's pricing index no longer lists — it now carries K3, K2.7 Code, K2.6 and the sunsetting Moonshot V1. The vendor publishes K3 and K2.7 Code, which the feed does not yet carry; per `$coverage` those are left to arrive on their own rather than hand-added. 2026-08-12: the four remaining cross-source flags that could be settled were settled, all four against the vendor's own page and all four matching the feed exactly, so each records provenance ONLY and its rate keeps flowing from the feed. Qwen 3.7 Max read on its per-model page: the `Scope: International` (Singapore) block gives $2.5 input, $7.5 output, $0.5 implicit-cache input — matching all three fields including the cache rate. Worth knowing for the next pass: that page tabs by region and the OTHER international regions (Frankfurt, Virginia, Tokyo, Hong Kong, and China Beijing) are all $1.65/$4.951, so Singapore is the outlier and the tab you land on is not the one this catalog wants. Qwen3 Next 80B ($0.15/$1.2) and Qwen3 VL 235B ($0.4/$1.6) read off the `International` rows of the Model Studio pricing page; both are the non-thinking instruct variants, whose thinking-mode siblings carry different output prices ($1.2 and $4 respectively) and are easy to misread. MiniMax M2.5 read on MiniMax's pay-as-you-go table, where it now sits under `Legacy Models`: $0.3 input, $1.2 output, $0.03 cache read — an exact match — plus a $0.375 prompt-cache write the feed does not carry, which is the one number recorded. Two traps this pass, both worth repeating: Alibaba's pricing pages are JS-rendered, and a scraper that does not wait for the render returns a loading spinner — from which an extraction model happily invented a clean, plausible, entirely fictional price table ($0.0001/M, tiers named `Premium` and `Elite`). The published figures here were read from the rendered table, not from an extractor's summary of one. Separately, a search snippet asserted M2.5 was $0.15/$1.2 by halving the `-highspeed` price off a marketing page; the vendor's actual table says otherwise. NOT verified in this pass and deliberately still flagged: DeepSeek R1. DeepSeek's pricing page now lists only deepseek-v4-flash and deepseek-v4-pro, and the changelog shows the `deepseek-reasoner` alias was remapped to V3.2 and then to V4-Flash before being discontinued on 2026-07-24. R1 therefore has no first-party price left to read. Its row is already `status: legacy`; the flag is left standing rather than cleared against an aggregator, which is the correct outcome for a model the vendor no longer prices. Also deliberately NOT recorded: a `cacheWrite` for Qwen 3.7 Max. The vendor publishes two different caching mechanisms — implicit cache at $0.5 read with no write charge, and explicit cache at $3.125 write / $0.25 read — so pairing $3.125 with the implicit $0.5 already in the row would describe a combination no customer can actually buy. Two models also arrived from the feed mid-pass. Gemini 3.7 Flash was read against Google's pricing page and matches at $0.75/$3.75, so it publishes verified rather than unread — see its own note for the January 2027 step-up it carries. Qwen3.8-Max ($2/$6) was NOT verifiable: it has no row on the Model Studio pricing page yet and no per-model page, only a marketing tile on qwencloud.com with no rates, so it stays flagged as a new model pending confirmation."
 }
