@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "attemptedAt": "2026-08-12T11:16:43.408Z",
-  "succeededAt": "2026-08-12T11:16:43.408Z",
+  "attemptedAt": "2026-08-13T11:17:24.040Z",
+  "succeededAt": "2026-08-13T11:17:24.040Z",
   "outcome": "ok",
   "problems": [],
   "sources": [
@@ -14,12 +14,12 @@
     {
       "id": "openrouter",
       "ok": true,
-      "entries": 406
+      "entries": 409
     }
   ],
   "modelCount": 70,
   "flaggedCount": 5,
   "staleCount": 0,
-  "catalogHash": "4a876fc241d39fde",
+  "catalogHash": "3761a44b5649871c",
   "pricesLastChanged": null
 }
