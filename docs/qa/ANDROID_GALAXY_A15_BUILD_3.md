@@ -7,13 +7,13 @@ Status: ready for private-device execution
 - App: PromptSpend 0.1.0
 - Platform: Android
 - Device target: Samsung Galaxy A15 5G
-- EAS build: `d63cdad4-73bf-45ac-b871-a286b0de415b`
+- EAS build: `9e49ea20-d18b-4bac-be85-f52fdebe20b7`
 - Android versionCode: `3`
-- Git commit: `189030acaa7377f955af16123803bd457fccddc6`
+- Git commit: `5fcdc0d28ff0f8d85ab355b6ddc3abca8d300625`
 - Build profile/distribution: `preview` / internal APK
-- APK size: `96,781,275` bytes
+- APK size: `96,781,643` bytes
 - APK SHA-256:
-  `0ADD371BBA3DDBA61DE13C7967CF2F2F9FA4D7BBF7144F8B3D8AE43B88290452`
+  `DBE85568B5908B860D0171E768F6D5D6D4CD20CD294199CDBBF3A87226D960F4`
 - Archive validation: ZIP/APK signature present, `AndroidManifest.xml` present,
   four DEX files, and native libraries present
 
@@ -21,10 +21,8 @@ This build is for direct installation on an owned test device. It has not been
 uploaded to Google Play and this record does not authorize any Google Play or
 Apple action.
 
-Source hardening completed after this APK was built is recorded in
-`docs/qa/SOURCE_HARDENING_2026-08-13.md`. Those changes are not present in
-versionCode 3 and require a later explicitly approved private QA binary before
-physical validation.
+Source hardening is recorded in `docs/qa/SOURCE_HARDENING_2026-08-13.md` and is
+included in this replacement versionCode 3 private QA binary.
 
 ## Device facts to record before testing
 

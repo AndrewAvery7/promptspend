@@ -6,20 +6,28 @@ Last reviewed: 2026-08-13
 
 ## Current installable baseline
 
-- iOS TestFlight baseline: version 0.1.0, build 11, EAS build
-  `3cf0273e-33a3-4b62-8c6d-1ba49a48d3bc`.
+- iOS TestFlight baseline: version 0.1.0, build 12, EAS build
+  `a682ed35-1e2f-4448-a430-b088d27d61cd`, built from merge commit
+  `5fcdc0d28ff0f8d85ab355b6ddc3abca8d300625`. Verified IPA SHA-256:
+  `67130DFFBBDB9C5D4BFE73611C07002B7C3C020F74CDB87504114BED0E168C3B`.
 - Android internal APK baseline: version 0.1.0, versionCode 3, EAS build
-  `d63cdad4-73bf-45ac-b871-a286b0de415b`, built from merge commit
-  `189030acaa7377f955af16123803bd457fccddc6`. Verified APK SHA-256:
-  `0ADD371BBA3DDBA61DE13C7967CF2F2F9FA4D7BBF7144F8B3D8AE43B88290452`.
+  `9e49ea20-d18b-4bac-be85-f52fdebe20b7`, built from merge commit
+  `5fcdc0d28ff0f8d85ab355b6ddc3abca8d300625`. Verified APK SHA-256:
+  `DBE85568B5908B860D0171E768F6D5D6D4CD20CD294199CDBBF3A87226D960F4`.
 
 These identify the last known baseline, not the eventual release candidate.
 Every test record must name the exact installed build.
 
-Apple and Google developer-platform work is paused pending the account/D-U-N-S
-process and a separate explicit approval. The Android baseline may be installed
-directly for private physical-device QA; this does not authorize a Play Console
-upload, testing-track release, store review, or public distribution.
+Per-build execution records:
+
+- `docs/qa/IOS_TESTFLIGHT_BUILD_12.md`
+- `docs/qa/ANDROID_GALAXY_A15_BUILD_3.md`
+
+Apple public-release and Google developer-platform work remain gated by the
+account/D-U-N-S process and separate explicit approvals. Build 12 was uploaded
+to App Store Connect for private internal TestFlight QA only. The Android
+baseline may be installed directly for private physical-device QA. Neither
+action authorizes a Play Console upload, store review, or public distribution.
 
 ## Device matrix
 
