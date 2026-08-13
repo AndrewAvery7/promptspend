@@ -2,17 +2,24 @@
 
 Status: active test protocol
 
-Last reviewed: 2026-08-12
+Last reviewed: 2026-08-13
 
 ## Current installable baseline
 
-- iOS TestFlight baseline: version 0.1.0, build 10, EAS build
-  `ba93e3e7-0ee8-4843-8c22-442adfa33faf`.
+- iOS TestFlight baseline: version 0.1.0, build 11, EAS build
+  `3cf0273e-33a3-4b62-8c6d-1ba49a48d3bc`.
 - Android internal APK baseline: version 0.1.0, versionCode 3, EAS build
-  `54bc8cb0-b985-4c0e-89cd-9ca488612df8`.
+  `d63cdad4-73bf-45ac-b871-a286b0de415b`, built from merge commit
+  `189030acaa7377f955af16123803bd457fccddc6`. Verified APK SHA-256:
+  `0ADD371BBA3DDBA61DE13C7967CF2F2F9FA4D7BBF7144F8B3D8AE43B88290452`.
 
 These identify the last known baseline, not the eventual release candidate.
 Every test record must name the exact installed build.
+
+Apple and Google developer-platform work is paused pending the account/D-U-N-S
+process and a separate explicit approval. The Android baseline may be installed
+directly for private physical-device QA; this does not authorize a Play Console
+upload, testing-track release, store review, or public distribution.
 
 ## Device matrix
 
