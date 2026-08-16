@@ -391,3 +391,48 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-08-13
 
 - **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: OpenRouter disagrees (40%): $0.09/$1.1 vs $0.15/$1.2 → OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2
+
+## 2026-08-16
+
+- **Added** `gemini-gemini-3.7-flash` — Gemini 3.7 Flash ($1.5 in / $7.5 out per 1M)
+- **Added** `xai-grok-4.6` — Grok 4.6 ($2 in / $6 out per 1M)
+- **Price** `claude-sonnet-5` — input down 3 → 2
+- **Price** `claude-sonnet-5` — output down 15 → 10
+- **Price** `claude-sonnet-5` — cachedInput down 0.3 → 0.2
+- **Price** `claude-sonnet-5` — cacheWrite down 3.75 → 2.5
+- **Coverage** `claude-sonnet-5` — intro.input no longer published: 2 → —
+- **Coverage** `claude-sonnet-5` — intro.output no longer published: 10 → —
+- **Coverage** `claude-sonnet-5` — intro.until no longer published: 2026-08-31 → —
+- **Price** `deepseek-deepseek-v4-flash` — input up 0.14 → 0.44
+- **Price** `deepseek-deepseek-v4-flash` — output up 0.28 → 1.32
+- **Price** `deepseek-deepseek-v4-flash` — cachedInput up 0.0028 → 0.014
+- **Price** `deepseek-deepseek-v4-pro` — input up 0.435 → 1.32
+- **Price** `deepseek-deepseek-v4-pro` — output up 0.87 → 3.96
+- **Price** `deepseek-deepseek-v4-pro` — cachedInput up 0.003625 → 0.044
+- **Coverage** `gemini-gemini-2.5-flash` — cacheStoragePerMillionTokenHour now tracked: — → 1
+- **Coverage** `gemini-gemini-2.5-pro` — cacheStoragePerMillionTokenHour now tracked: — → 4.5
+- **Coverage** `gemini-gemini-2.5-pro` — longContext.thresholdTokens now tracked: — → 200000
+- **Coverage** `gemini-gemini-2.5-pro` — longContext.input now tracked: — → 2.5
+- **Coverage** `gemini-gemini-2.5-pro` — longContext.output now tracked: — → 15
+- **Coverage** `gemini-gemini-2.5-pro` — longContext.cachedInput now tracked: — → 0.25
+- **Coverage** `gemini-gemini-3-flash-preview` — cacheStoragePerMillionTokenHour now tracked: — → 1
+- **Coverage** `gemini-gemini-3.1-flash-lite` — cacheStoragePerMillionTokenHour now tracked: — → 1
+- **Coverage** `gemini-gemini-3.1-pro-preview` — longContext.thresholdTokens now tracked: — → 200000
+- **Coverage** `gemini-gemini-3.1-pro-preview` — longContext.input now tracked: — → 4
+- **Coverage** `gemini-gemini-3.1-pro-preview` — longContext.output now tracked: — → 18
+- **Coverage** `gemini-gemini-3.1-pro-preview` — longContext.cachedInput now tracked: — → 0.4
+- **Coverage** `gemini-gemini-3.5-flash-lite` — cacheStoragePerMillionTokenHour now tracked: — → 1
+- **Coverage** `gemini-gemini-3.6-flash` — cacheStoragePerMillionTokenHour now tracked: — → 1
+- **Coverage** `gemini-gemini-3.6-flash` — intro.input now tracked: — → 0.75
+- **Coverage** `gemini-gemini-3.6-flash` — intro.output now tracked: — → 3.75
+- **Coverage** `gemini-gemini-3.6-flash` — intro.until now tracked: — → 2026-12-31
+- **Coverage** `gpt-5.6-terra` — cacheStoragePerMillionTokenHour now tracked: — → 4.5
+- **Metadata** `deepseek-deepseek-v4-flash` — maxOutput: 8192 → 384000
+- **Metadata** `deepseek-deepseek-v4-pro` — maxOutput: 8192 → 384000
+- **Review** `claude-sonnet-5` — provenance.lastChanged: — → 2026-08-16
+- **Review** `deepseek-deepseek-v4-flash` — provenance.needsReview: — → true
+- **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: — → vendor override differs from the automated feed (79%): $0.14/$0.28 vs $0.44/$1.32; price moved 79% in one day ($0.14/$0.28 -> $0.44/$1.32)
+- **Review** `deepseek-deepseek-v4-flash` — provenance.lastChanged: — → 2026-08-16
+- **Review** `deepseek-deepseek-v4-pro` — provenance.needsReview: — → true
+- **Review** `deepseek-deepseek-v4-pro` — provenance.reviewNote: — → vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96; price moved 78% in one day ($0.435/$0.87 -> $1.32/$3.96)
+- **Review** `deepseek-deepseek-v4-pro` — provenance.lastChanged: — → 2026-08-16

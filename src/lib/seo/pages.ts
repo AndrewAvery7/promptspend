@@ -267,7 +267,7 @@ function formatCompactMoney(dollars: number): string {
 /**
  * Which models are worth a side-by-side page.
  *
- * The combinatorial answer is 69 × 68 ÷ 2 = 2,346 pages, nearly all of which
+ * The combinatorial answer is 71 × 70 ÷ 2 = 2,485 pages, nearly all of which
  * compare things nobody would choose between — a $0.14 flash model against a
  * $75 frontier model is not a decision, it is a category difference. Mass pages
  * like that are the textbook definition of thin content and they cost more
