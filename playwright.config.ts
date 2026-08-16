@@ -69,7 +69,12 @@ export default defineConfig({
     // with it and served without it, the app is at `/promptspend/` while every
     // test asks for `/`, and all 55 fail identically for one reason.
     command: `npm run build && npx vite preview --port ${PORT} --strictPort --host 127.0.0.1`,
-    env: { BASE_PATH: '/', SITE_URL: BASE },
+    env: {
+      BASE_PATH: '/',
+      SITE_URL: BASE,
+      VITE_ALERTS_API: process.env.VITE_ALERTS_API ?? '',
+      VITE_TURNSTILE_SITE_KEY: process.env.VITE_TURNSTILE_SITE_KEY ?? '',
+    },
     url: `${BASE}/`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

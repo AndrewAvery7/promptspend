@@ -35,7 +35,11 @@ const CATALOG: PricingCatalog = {
       tokenizer: { kind: 'approx', charsPerToken: 3.6, cjkCharsPerToken: 1.5 },
       capabilities: { reasoning: true, vision: true },
       capabilityIndex: 90,
-      provenance: { source: 'vendor', lastVerified: '2026-08-01' },
+      provenance: {
+        source: 'vendor',
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://www.anthropic.com/pricing',
+      },
     },
     {
       id: 'deepseek-deepseek-v3.2',

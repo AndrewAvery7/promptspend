@@ -86,9 +86,9 @@ Until fonts are bundled and licensed in Phase 3, use platform system fonts. Do n
 - Prefer a single primary reading column on phones.
 - Keep long text to a readable measure on tablets and wide layouts.
 - Scroll content must clear tab bars, keyboards, and bottom actions.
-- Phone launch uses five top-level tabs: Home, Estimate, Compare, Learn, and More.
+- Phone launch uses five top-level tabs: Home, Estimate, Compare, Learn, and Data & Alerts.
 - Prices, the full catalog, model details, and the value map live within Compare.
-- Data & Alerts, appearance, privacy, integrations, settings, accessibility information, and support live within More.
+- Data & Alerts is a first-class destination. Appearance, Search, and Guide remain global actions; privacy, support, integrations, and evidence live in Data & Alerts.
 - Search and the Guided Tour remain globally reachable from the app header.
 - Back behavior, deep links, and selected-tab restoration must use Expo Router conventions.
 
@@ -97,7 +97,7 @@ Until fonts are bundled and licensed in Phase 3, use platform system fonts. Do n
 - Home is a local, personalized Cost Brief rather than a marketing landing page.
 - Estimate and Compare lead with the answer, then reveal calculation detail and controls progressively.
 - Learn explains cost mechanics without interrupting the primary estimate flow.
-- More is a structured secondary destination, not a miscellaneous dumping ground.
+- Data & Alerts is structured around freshness, evidence, optional alerts, privacy, support, and integrations rather than acting as a miscellaneous overflow screen.
 - The Market Pulse uses validated catalog evidence only and must remain readable when paused or when Reduce Motion is enabled.
 - Saved scenarios, favorites, and watchlist state stay on-device in version 1.
 - The AI Cost Receipt is a privacy-safe result artifact, not a social-media advertisement disguised as user data.

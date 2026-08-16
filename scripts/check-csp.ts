@@ -24,14 +24,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const INDEX = resolve(ROOT, 'dist/index.html');
 
 /** Directives that must be present and non-empty, whatever else changes. */
-const REQUIRED = [
-  'default-src',
-  'script-src',
-  'connect-src',
-  'frame-ancestors',
-  'base-uri',
-  'object-src',
-] as const;
+const REQUIRED = ['default-src', 'script-src', 'connect-src', 'base-uri', 'object-src'] as const;
 
 async function main(): Promise<void> {
   if (!existsSync(INDEX)) {
@@ -52,6 +45,9 @@ async function main(): Promise<void> {
   if (policy === undefined) {
     problems.push('no Content-Security-Policy meta tag in the built page');
   } else {
+    if (/(^|;)\s*frame-ancestors\b/.test(policy)) {
+      console.log('  note: meta-delivered frame-ancestors is ignored by browsers; no protection is claimed');
+    }
     for (const directive of REQUIRED) {
       const found = new RegExp(`(^|;)\\s*${directive}\\s+\\S`).test(policy);
       if (!found) problems.push(`policy is missing a non-empty \`${directive}\``);

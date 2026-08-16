@@ -12,6 +12,7 @@ export interface Env {
   // ---- vars (wrangler.jsonc, non-secret) ----
   SITE_ORIGIN: string;
   SITE_BASE_PATH: string;
+  ALERTS_API_ORIGIN: string;
   ALLOWED_ORIGINS: string;
   EMAIL_TRANSPORT: string;
   EMAIL_FROM: string;
@@ -20,6 +21,7 @@ export interface Env {
   CLOUDFLARE_ACCOUNT_ID: string;
   VAPID_SUBJECT: string;
   TURNSTILE_SITE_KEY: string;
+  TURNSTILE_HOSTNAMES: string;
 
   // ---- secrets (wrangler secret put) ----
   VAPID_PUBLIC_KEY?: string;
@@ -64,6 +66,12 @@ export function siteUrl(env: Env, path = ''): string {
   return path ? `${root}/${trimSlashes(path, { start: true })}` : `${root}/`;
 }
 
+export function alertsApiUrl(env: Env, path = ''): string {
+  const origin = trimSlashes(env.ALERTS_API_ORIGIN, { end: true });
+  if (!origin.startsWith('https://')) throw new Error('ALERTS_API_ORIGIN must use HTTPS');
+  return path ? `${origin}/${trimSlashes(path, { start: true })}` : origin;
+}
+
 export function allowedOrigins(env: Env): string[] {
   return env.ALLOWED_ORIGINS.split(',')
     .map((origin) => origin.trim())
@@ -72,7 +80,8 @@ export function allowedOrigins(env: Env): string[] {
 
 /** True once a sending domain is onboarded and the transport is switched over. */
 export function emailEnabled(env: Env): boolean {
-  return env.EMAIL_TRANSPORT === 'cloudflare' ? Boolean(env.EMAIL_API_TOKEN) : true;
+  if (env.EMAIL_TRANSPORT === 'cloudflare') return Boolean(env.EMAIL_API_TOKEN);
+  return env.EMAIL_TRANSPORT === 'console';
 }
 
 export function pushEnabled(env: Env): boolean {

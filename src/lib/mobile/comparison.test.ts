@@ -73,7 +73,13 @@ describe('mobile comparison selection', () => {
     expect(rows.map((row) => row.scaled.perMonth)).toEqual(
       [...rows].map((row) => row.scaled.perMonth).sort((left, right) => left - right),
     );
-    expect(rows.slice(1).every((row) => row.deltaPerMonth >= 0 && row.multipleOfCheapest >= 1)).toBe(true);
+    expect(
+      rows
+        .slice(1)
+        .every(
+          (row) => row.deltaPerMonth >= 0 && row.multipleOfCheapest !== null && row.multipleOfCheapest >= 1,
+        ),
+    ).toBe(true);
     expect(new Set(rows.map((row) => row.breakdown.inputTokens))).toEqual(new Set([26700]));
     expect(new Set(rows.map((row) => row.breakdown.outputTokens))).toEqual(new Set([5400]));
   });

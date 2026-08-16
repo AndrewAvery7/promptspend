@@ -110,22 +110,24 @@ export function verifyEmailManagementCode(
 }
 
 export function fetchEmailAlertPreferences(token: string): Promise<EmailAlertPreferences> {
-  return call(`/v1/preferences?t=${encodeURIComponent(token)}`);
+  return call('/v1/preferences', { headers: { Authorization: `Bearer ${token}` } });
 }
 
 export function saveEmailAlertPreferences(
   token: string,
   draft: Pick<EmailAlertDraft, 'cadence' | 'models' | 'scope'>,
 ): Promise<{ ok: true }> {
-  return call(`/v1/preferences?t=${encodeURIComponent(token)}`, {
+  return call('/v1/preferences', {
     method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify(draft),
   });
 }
 
 export function unsubscribeEmailAlerts(token: string): Promise<{ ok: true }> {
-  return call(`/v1/preferences?t=${encodeURIComponent(token)}`, {
+  return call('/v1/preferences', {
     method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify({ unsubscribe: true }),
   });
 }

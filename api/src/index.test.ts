@@ -1,13 +1,13 @@
 import { SELF, env } from 'cloudflare:test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PricingCatalog } from '../../src/lib/pricing/types';
-import { CACHE_KEY, priceRows } from './catalog';
+import { CACHE_KEY, SYNC_CACHE_KEY, priceRows } from './catalog';
 
 const API = 'https://promptspend.dev';
 
 const CATALOG: PricingCatalog = {
   schemaVersion: 2,
-  generatedAt: '2026-08-02T02:00:00.000Z',
+  generatedAt: new Date().toISOString(),
   providers: [
     { id: 'openai', name: 'OpenAI', country: 'US', pricingUrl: 'https://openai.com/api/pricing/' },
     { id: 'anthropic', name: 'Anthropic', country: 'US' },
@@ -23,7 +23,12 @@ const CATALOG: PricingCatalog = {
       pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
       tokenizer: { kind: 'tiktoken', encoding: 'o200k_base' },
       capabilities: { reasoning: true, vision: true },
-      provenance: { source: 'vendor', lastVerified: '2026-08-01', lastChanged: '2026-07-20' },
+      provenance: {
+        source: 'vendor',
+        lastVerified: '2026-08-01',
+        lastChanged: '2026-07-20',
+        verifiedUrl: 'https://openai.com/api/pricing/',
+      },
     },
     {
       id: 'gpt-5-alias',
@@ -35,7 +40,11 @@ const CATALOG: PricingCatalog = {
       pricing: { input: 1.25, output: 10 },
       tokenizer: { kind: 'tiktoken', encoding: 'o200k_base' },
       capabilities: { reasoning: true, vision: true },
-      provenance: { source: 'vendor', lastVerified: '2026-08-01' },
+      provenance: {
+        source: 'vendor',
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://openai.com/api/pricing/',
+      },
     },
     {
       id: 'claude-opus-5',
@@ -87,12 +96,33 @@ beforeEach(async () => {
   // The Cache API is shared across a test file, and caching is most of what
   // this Worker does. Clearing it makes every test start from the same place.
   await caches.default.delete(new Request(CACHE_KEY));
+  await caches.default.delete(new Request(SYNC_CACHE_KEY));
 
   // The Worker runs in this isolate, so replacing the global reaches it.
   // Nothing here may touch the real network: a test that quietly passed
   // because promptspend.com happened to be up would be worse than no test.
   vi.stubGlobal('fetch', (input: RequestInfo | URL) => {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+    if (url === env.SYNC_STATUS_URL) {
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            schemaVersion: 1,
+            attemptedAt: new Date().toISOString(),
+            succeededAt: new Date().toISOString(),
+            outcome: 'ok',
+            problems: [],
+            sources: [],
+            modelCount: CATALOG.models.length,
+            flaggedCount: 1,
+            staleCount: 0,
+            catalogHash: 'test',
+            pricesLastChanged: null,
+          }),
+          { headers: { 'Content-Type': 'application/json' } },
+        ),
+      );
+    }
     if (url !== env.CATALOG_URL) throw new Error(`unexpected outbound fetch to ${url}`);
     originHits += 1;
     return Promise.resolve(origin());
@@ -241,7 +271,7 @@ describe('catalog endpoints', () => {
   it('quotes a display name containing a comma and a quote, per RFC 4180', async () => {
     const csv = await (await get('/v1/prices.csv')).text();
     expect(csv.split('\r\n')[0]).toBe(
-      'id,provider,displayName,input,output,cachedInput,cacheWrite,contextWindow,maxOutput,status,lastVerified,promotionalUntil,standardInput,standardOutput',
+      'id,provider,displayName,input,output,cachedInput,cacheWrite,contextWindow,maxOutput,status,lastVerified,promotionalUntil,standardInput,standardOutput,cacheStoragePerMillionTokenHour',
     );
     expect(csv).toContain('"Claude, ""the Opus"" 5"');
   });
@@ -266,6 +296,8 @@ describe('catalog endpoints', () => {
 
     const second = await get('/v1/models', { 'If-None-Match': etag });
     expect(second.status).toBe(304);
+    expect(second.headers.get('X-PromptSpend-Generated-At')).toBe(CATALOG.generatedAt);
+    expect(second.headers.get('X-PromptSpend-Stale')).toBeNull();
   });
 
   it('gives different paths different ETags', async () => {
@@ -278,6 +310,18 @@ describe('catalog endpoints', () => {
     for (const path of ['/v1/models', '/v1/prices', '/openapi.json']) {
       expect((await get(path)).headers.get('Access-Control-Allow-Origin')).toBe('*');
     }
+  });
+
+  it('locks response content types on data and document responses', async () => {
+    for (const path of ['/v1/prices', '/v1/prices.csv', '/llms.txt', '/not-found']) {
+      expect((await get(path)).headers.get('X-Content-Type-Options')).toBe('nosniff');
+    }
+  });
+
+  it('ignores filter-like query parameters on endpoints that do not use filters', async () => {
+    expect((await get('/v1/health?status=not-a-status')).status).toBe(200);
+    expect((await get('/v1/providers?aliases=all')).status).toBe(200);
+    expect((await get('/v1/models?status=not-a-status')).status).toBe(400);
   });
 
   it('reads the origin once and serves the rest from cache', async () => {
@@ -328,13 +372,14 @@ describe('when the catalog cannot be trusted', () => {
       expect(((await (await get('/v1/models')).json()) as { count: number }).count).toBe(2);
 
       // The catalog moves, as it does every morning.
-      serveCatalog({ ...CATALOG, models: [CATALOG.models[0]!], generatedAt: '2026-08-03T02:00:00.000Z' });
+      const movedAt = new Date(Date.now() + 1000).toISOString();
+      serveCatalog({ ...CATALOG, models: [CATALOG.models[0]!], generatedAt: movedAt });
       const response = await get('/v1/models');
       const body = (await response.json()) as { count: number; generatedAt: string };
 
       expect(body.count).toBe(1);
-      expect(body.generatedAt).toBe('2026-08-03T02:00:00.000Z');
-      expect(response.headers.get('X-PromptSpend-Generated-At')).toBe('2026-08-03T02:00:00.000Z');
+      expect(body.generatedAt).toBe(movedAt);
+      expect(response.headers.get('X-PromptSpend-Generated-At')).toBe(movedAt);
     } finally {
       vars.FRESH_SECONDS = configured;
     }
@@ -361,6 +406,8 @@ describe('when the catalog cannot be trusted', () => {
 
       expect(response.status).toBe(200);
       expect(response.headers.get('X-PromptSpend-Stale')).toBe('true');
+      expect(response.headers.get('Cache-Control')).toContain('max-age=0');
+      expect(response.headers.get('Cache-Control')).not.toContain('stale-while-revalidate');
       expect(((await response.json()) as { count: number }).count).toBe(2);
     } finally {
       vars.FRESH_SECONDS = configured;
@@ -494,6 +541,33 @@ describe('method handling', () => {
   it('404s an endpoint that does not exist', async () => {
     expect((await get('/v2/models')).status).toBe(404);
     expect((await get('/v1/nonsense')).status).toBe(404);
+  });
+
+  it('calls a malformed model id a bad request rather than a server failure', async () => {
+    serveCatalog();
+    const response = await get('/v1/models/%');
+    expect(response.status).toBe(400);
+    expect(await response.text()).not.toContain('on our side');
+  });
+
+  it('bounds a reflected missing model id', async () => {
+    serveCatalog();
+    const response = await get(`/v1/models/${'x'.repeat(500)}`);
+    expect(response.status).toBe(404);
+    expect((await response.text()).length).toBeLessThan(250);
+  });
+});
+
+describe('freshness ceiling', () => {
+  it('marks a valid but abandoned catalog unhealthy', async () => {
+    serveCatalog({ ...CATALOG, generatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() });
+    const health = await get('/v1/health');
+    expect(health.status).toBe(503);
+    expect(health.headers.get('X-PromptSpend-Stale')).toBe('true');
+    expect(((await health.json()) as { ok: boolean }).ok).toBe(false);
+
+    const prices = await get('/v1/prices');
+    expect(prices.headers.get('X-PromptSpend-Stale')).toBe('true');
   });
 });
 

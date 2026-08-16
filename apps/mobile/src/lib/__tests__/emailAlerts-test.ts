@@ -1,8 +1,11 @@
 import {
   alertDraftValidationMessage,
   emailValidationMessage,
+  fetchEmailAlertPreferences,
   requestEmailManagementCode,
+  saveEmailAlertPreferences,
   subscribeEmailAlerts,
+  unsubscribeEmailAlerts,
 } from '@/lib/emailAlerts';
 
 describe('native email alert client', () => {
@@ -55,5 +58,24 @@ describe('native email alert client', () => {
       turnstileAction: 'mobile_email_alerts',
       turnstileToken: 'turnstile-token-safe-for-test',
     });
+  });
+
+  test('keeps preference bearer credentials out of request URLs', async () => {
+    const fetchMock = jest
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(JSON.stringify({ status: 'active' }), { status: 200 }));
+
+    await fetchEmailAlertPreferences('private-preferences-token');
+    await saveEmailAlertPreferences('private-preferences-token', {
+      cadence: 'weekly',
+      models: [],
+      scope: 'all',
+    });
+    await unsubscribeEmailAlerts('private-preferences-token');
+
+    for (const [url, init] of fetchMock.mock.calls) {
+      expect(String(url)).not.toContain('private-preferences-token');
+      expect(new Headers(init?.headers).get('Authorization')).toBe('Bearer private-preferences-token');
+    }
   });
 });

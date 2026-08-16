@@ -9,7 +9,8 @@ import { Platform } from 'react-native';
 
 const PRICING_URL = 'https://promptspend.com/data/pricing.json';
 const HEALTH_URL = 'https://promptspend.com/data/sync-status.json';
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+export const MOBILE_CATALOG_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+export const MOBILE_CATALOG_TIMEOUT_MS = 8_000;
 
 type CatalogSource = 'network' | 'cache';
 
@@ -35,6 +36,7 @@ interface LoadCatalogOptions {
   cache?: MobileCatalogCache;
   fetcher?: typeof fetch;
   now?: Date;
+  timeoutMs?: number;
 }
 
 function validatedCatalog(pricing: unknown, health: unknown): Catalog {
@@ -66,7 +68,7 @@ async function readDeviceCache(): Promise<{ envelope: CacheEnvelope; catalog: Ca
 
   try {
     const { File, Paths } = await import('expo-file-system');
-    const cacheFile = new File(Paths.document, 'promptspend-pricing-v2.json');
+    const cacheFile = new File(Paths.cache, 'promptspend-pricing-v2.json');
     if (!cacheFile.exists) return null;
     const parsed: unknown = JSON.parse(await cacheFile.text());
     return parseCacheRecord(parsed);
@@ -79,7 +81,7 @@ async function writeDeviceCache(envelope: CacheEnvelope): Promise<void> {
   if (Platform.OS === 'web') return;
   try {
     const { File, Paths } = await import('expo-file-system');
-    const cacheFile = new File(Paths.document, 'promptspend-pricing-v2.json');
+    const cacheFile = new File(Paths.cache, 'promptspend-pricing-v2.json');
     cacheFile.write(JSON.stringify(envelope));
   } catch {
     // A read-only or full device must not prevent the estimator from working.
@@ -91,10 +93,26 @@ const DEVICE_CACHE: MobileCatalogCache = {
   write: writeDeviceCache,
 };
 
-async function fetchJson(url: string, fetcher: typeof fetch): Promise<unknown> {
-  const response = await fetcher(url, { cache: 'no-cache' });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.json() as Promise<unknown>;
+async function fetchJson(url: string, fetcher: typeof fetch, timeoutMs: number): Promise<unknown> {
+  const controller = new AbortController();
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<never>((_resolve, reject) => {
+    timeout = setTimeout(() => {
+      controller.abort();
+      reject(new Error('Request timed out'));
+    }, timeoutMs);
+  });
+
+  try {
+    const response = await Promise.race([
+      fetcher(url, { cache: 'no-cache', signal: controller.signal }),
+      timeoutPromise,
+    ]);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json() as Promise<unknown>;
+  } finally {
+    if (timeout !== undefined) clearTimeout(timeout);
+  }
 }
 
 /**
@@ -109,13 +127,14 @@ export async function loadMobileCatalog(options: LoadCatalogOptions = {}): Promi
   const cached = await cache.read();
   const cachedAt = cached ? Date.parse(cached.envelope.cachedAt) : Number.NaN;
   const cacheAge = now.getTime() - cachedAt;
-  const cacheIsFresh = cached !== null && cacheAge >= 0 && cacheAge < CACHE_TTL_MS;
+  const cacheIsFresh = cached !== null && cacheAge >= 0 && cacheAge < MOBILE_CATALOG_MAX_AGE_MS;
 
   try {
     const fetcher = options.fetcher ?? fetch;
+    const timeoutMs = options.timeoutMs ?? MOBILE_CATALOG_TIMEOUT_MS;
     const [pricing, health] = await Promise.all([
-      fetchJson(PRICING_URL, fetcher),
-      fetchJson(HEALTH_URL, fetcher).catch(() => null),
+      fetchJson(PRICING_URL, fetcher, timeoutMs),
+      fetchJson(HEALTH_URL, fetcher, timeoutMs).catch(() => null),
     ]);
     const catalog = validatedCatalog(pricing, health);
     const cachedAtIso = now.toISOString();

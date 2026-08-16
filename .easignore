@@ -50,6 +50,10 @@ GoogleService-Info.plist
 
 # The build needs apps/mobile and packages/core. These repository surfaces are
 # not build inputs and only increase archive size and disclosure surface.
+# `apps/mobile/scripts/check-release.mjs` is intentionally a host/CI preflight:
+# it verifies several excluded docs and public policy files before EAS archives
+# this reduced tree. Do not wire that script as an EAS build hook unless those
+# evidence paths are first supplied as a separate verified artifact.
 /.github/
 /api/
 /assets/

@@ -7,10 +7,10 @@
  * confidently quoting last month's numbers. That is the exact failure this
  * project exists to prevent, so it must not be reintroduced here.
  *
- * There is deliberately no bundled fallback. If the catalog cannot be reached,
- * the tools say so. A months-old snapshot presented as current is worse than an
- * honest failure — and in an agent context it is worse still, because the model
- * will relay it to the user with full confidence.
+ * There is deliberately no bundled fallback. A recently fetched copy can be
+ * used for a bounded grace period only when its degraded status is carried into
+ * the tool result. A months-old snapshot presented as current is worse than an
+ * honest failure.
  */
 import { Catalog } from '@/lib/pricing/catalog';
 import { assertCatalog, type PricingCatalog } from '@/lib/pricing/types';
@@ -19,11 +19,16 @@ export const CATALOG_URL = 'https://promptspend.com/data/pricing.json';
 
 /** How long a fetched catalog is reused before being re-fetched. */
 const FRESH_MS = 5 * 60 * 1000;
+const FALLBACK_MS = 24 * 60 * 60 * 1000;
+const CATALOG_AGE_CEILING_MS = 48 * 60 * 60 * 1000;
+const FETCH_TIMEOUT_MS = 8_000;
 
 interface Cached {
   catalog: Catalog;
   generatedAt: string;
   fetchedAt: number;
+  servedFromFallback: boolean;
+  warning?: string;
 }
 
 let cached: Cached | null = null;
@@ -32,7 +37,7 @@ export class CatalogUnavailableError extends Error {
   constructor(cause: unknown) {
     super(
       `Could not reach the PromptSpend catalog at ${CATALOG_URL}. ` +
-        `No prices are being returned rather than stale ones. (${String(cause)})`,
+        `The bounded cached-copy window has expired, so no prices are being returned. (${String(cause)})`,
     );
     this.name = 'CatalogUnavailableError';
   }
@@ -75,7 +80,7 @@ const ATTEMPTS = 2;
 const RETRY_DELAY_MS = 400;
 
 const fetchOnce = async (url: string): Promise<PricingCatalog> => {
-  const response = await fetch(url, { cache: 'no-store' });
+  const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
   if (!response.ok) throw new Error(`HTTP ${response.status} from ${url}`);
 
   // Checked before parsing so the error reports what arrived. Letting
@@ -128,16 +133,29 @@ export async function getCatalog(
   if (cached && now - cached.fetchedAt < FRESH_MS) return cached;
   try {
     const raw = await fetcher(CATALOG_URL);
+    const generatedAt = Date.parse(raw.generatedAt);
+    const age = Number.isFinite(generatedAt) ? Math.max(0, now - generatedAt) : Number.POSITIVE_INFINITY;
     cached = {
       catalog: new Catalog(raw),
       generatedAt: raw.generatedAt,
       fetchedAt: now,
+      servedFromFallback: age > CATALOG_AGE_CEILING_MS,
+      warning:
+        age > CATALOG_AGE_CEILING_MS
+          ? 'The published catalog is more than 48 hours old. Say that the pricing sync may be delayed when relaying these rates.'
+          : undefined,
     };
     return cached;
   } catch (cause) {
     // A previously fetched catalog is better than nothing ONLY while it is
     // plausibly current; past that the honest answer is failure.
-    if (cached && now - cached.fetchedAt < 24 * 60 * 60 * 1000) return cached;
+    if (cached && now - cached.fetchedAt < FALLBACK_MS) {
+      return {
+        ...cached,
+        servedFromFallback: true,
+        warning: `The live PromptSpend catalog could not be reached. These rates are from a copy fetched at ${new Date(cached.fetchedAt).toISOString()}. Say that when relaying them.`,
+      };
+    }
     throw new CatalogUnavailableError(cause);
   }
 }

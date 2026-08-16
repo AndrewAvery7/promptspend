@@ -1,8 +1,10 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { type RefObject, useEffect, useMemo, useState } from 'react';
+import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  AccessibilityInfo,
   ActivityIndicator,
   Alert,
+  findNodeHandle,
   Modal,
   Platform,
   Pressable,
@@ -30,14 +32,20 @@ import {
   type EmailAlertDraft,
   type EmailAlertPreferences,
 } from '@/lib/emailAlerts';
+import {
+  isAllowedVerificationUrl,
+  isVerificationDocument,
+  parseTurnstileMessage,
+} from '@/lib/turnstileVerification';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 import type { Catalog, Model } from '@promptspend/core';
 
-const TURNSTILE_PAGE = 'https://promptspend.com/mobile-turnstile.html';
+const TURNSTILE_PAGE = 'https://api.promptspend.dev/v1/mobile-turnstile';
 
 type Mode = 'subscribe' | 'manage';
 type VerificationPurpose = 'manage' | 'subscribe';
+type PendingVerification = { nonce: string; purpose: VerificationPurpose };
 
 export function EmailAlertCenter({
   catalog,
@@ -67,7 +75,36 @@ export function EmailAlertCenter({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [verification, setVerification] = useState<VerificationPurpose | null>(null);
+  const [verification, setVerification] = useState<PendingVerification | null>(null);
+  const codeInput = useRef<TextInput>(null);
+  const verifiedPanel = useRef<View>(null);
+
+  useEffect(() => {
+    if (!codeSent) return;
+    void AccessibilityInfo.announceForAccessibility(
+      'Secure code sent. Enter the six-digit code from your email.',
+    );
+    const timer = setTimeout(() => codeInput.current?.focus(), 120);
+    return () => clearTimeout(timer);
+  }, [codeSent]);
+
+  useEffect(() => {
+    if (!preferences) return;
+    void AccessibilityInfo.announceForAccessibility(
+      'Identity verified. Alert preferences are ready to update.',
+    );
+    const timer = setTimeout(() => {
+      const node = findNodeHandle(verifiedPanel.current);
+      if (node) AccessibilityInfo.setAccessibilityFocus(node);
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [preferences]);
+
+  useEffect(() => {
+    void AccessibilityInfo.announceForAccessibility(
+      mode === 'subscribe' ? 'Start alerts form.' : 'Manage alerts form.',
+    );
+  }, [mode]);
 
   useEffect(() => {
     let active = true;
@@ -118,8 +155,13 @@ export function EmailAlertCenter({
         return;
       }
     }
-    if (config?.turnstileRequired) setVerification(purpose);
-    else void completeVerifiedAction(purpose);
+    if (config?.turnstileRequired) {
+      if (!config.turnstileSiteKey) {
+        setError('Secure verification is temporarily misconfigured. Please try again later.');
+        return;
+      }
+      setVerification({ nonce: createVerificationNonce(), purpose });
+    } else void completeVerifiedAction(purpose);
   };
 
   const completeVerifiedAction = async (purpose: VerificationPurpose, turnstileToken?: string) => {
@@ -367,6 +409,7 @@ export function EmailAlertCenter({
                 onChangeText={(value) => setCode(value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="000000"
                 placeholderTextColor={theme.mutedText}
+                ref={codeInput}
                 style={[styles.input, styles.codeInput]}
                 textContentType="oneTimeCode"
                 value={code}
@@ -404,7 +447,7 @@ export function EmailAlertCenter({
 
       {preferences && (
         <>
-          <View style={styles.verifiedRow}>
+          <View accessible ref={verifiedPanel} style={styles.verifiedRow}>
             <Ionicons color={theme.savings} name="shield-checkmark" size={22} />
             <View style={styles.flex}>
               <Text style={styles.verifiedLabel}>Verified subscription</Text>
@@ -463,7 +506,8 @@ export function EmailAlertCenter({
             setVerification(null);
             setError(message);
           }}
-          onToken={(value) => void completeVerifiedAction(verification, value)}
+          onToken={(value) => void completeVerifiedAction(verification.purpose, value)}
+          nonce={verification.nonce}
           siteKey={config.turnstileSiteKey}
         />
       )}
@@ -767,12 +811,14 @@ function ModelAlertPicker({
 
 function TurnstileSheet({
   dark,
+  nonce,
   onCancel,
   onError,
   onToken,
   siteKey,
 }: {
   dark: boolean;
+  nonce: string;
   onCancel: () => void;
   onError: (message: string) => void;
   onToken: (token: string) => void;
@@ -780,25 +826,18 @@ function TurnstileSheet({
 }) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const url = `${TURNSTILE_PAGE}?sitekey=${encodeURIComponent(siteKey)}&theme=${dark ? 'dark' : 'light'}`;
+  const url = `${TURNSTILE_PAGE}?sitekey=${encodeURIComponent(siteKey)}&theme=${dark ? 'dark' : 'light'}&nonce=${encodeURIComponent(nonce)}`;
   const handleMessage = (event: WebViewMessageEvent) => {
-    let value: unknown;
-    try {
-      value = JSON.parse(event.nativeEvent.data);
-    } catch {
-      onError('The secure verification returned an unreadable response.');
+    if (!isVerificationDocument(event.nativeEvent.url)) {
+      onError('The secure verification response came from an unexpected page.');
       return;
     }
-    if (!value || typeof value !== 'object' || !('type' in value)) return;
-    if (
-      value.type === 'token' &&
-      'token' in value &&
-      typeof value.token === 'string' &&
-      value.token.length > 20
-    )
-      onToken(value.token);
-    if (value.type === 'error')
+    const value = parseTurnstileMessage(event.nativeEvent.data, nonce);
+    if (value.kind === 'token') onToken(value.token);
+    if (value.kind === 'expired') onError('The secure check expired. Please complete a new verification.');
+    if (value.kind === 'error')
       onError('The secure anti-abuse check could not be completed. Check the network and try again.');
+    if (value.kind === 'invalid') onError(value.message);
   };
   return (
     <Modal animationType="slide" onRequestClose={onCancel} presentationStyle="pageSheet" visible>
@@ -833,7 +872,7 @@ function TurnstileSheet({
           onHttpError={() => onError('The secure anti-abuse check could not load.')}
           onMessage={handleMessage}
           onShouldStartLoadWithRequest={(request) => isAllowedVerificationUrl(request.url)}
-          originWhitelist={['https://promptspend.com', 'https://challenges.cloudflare.com', 'about:*']}
+          originWhitelist={['https://api.promptspend.dev', 'https://challenges.cloudflare.com', 'about:*']}
           setSupportMultipleWindows={false}
           source={{ uri: url }}
           style={styles.webView}
@@ -863,12 +902,8 @@ function uniqueValidModels(ids: readonly string[], catalog: Catalog): string[] {
 function modelSearchText(catalog: Catalog, model: Model): string {
   return `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase();
 }
-function isAllowedVerificationUrl(url: string): boolean {
-  return (
-    url.startsWith(TURNSTILE_PAGE) ||
-    url.startsWith('https://challenges.cloudflare.com/') ||
-    url.startsWith('about:')
-  );
+function createVerificationNonce(): string {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 }
 function messageFor(cause: unknown): string {
   return cause instanceof Error ? cause.message : 'Something went wrong. Please try again.';
@@ -878,7 +913,7 @@ function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
     center: {
       backgroundColor: theme.surface,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 16,
       borderWidth: 1,
       gap: 14,
@@ -906,13 +941,13 @@ function createStyles(theme: MobileTheme) {
       minHeight: 44,
       paddingHorizontal: 10,
     },
-    modeTabActive: { backgroundColor: theme.surface, borderColor: theme.border, borderWidth: 1 },
+    modeTabActive: { backgroundColor: theme.surface, borderColor: theme.borderStrong, borderWidth: 1 },
     modeTabText: { color: theme.mutedText, fontSize: 14, fontWeight: '700' },
     modeTabTextActive: { color: theme.accent },
     label: { color: theme.text, fontSize: 14, fontWeight: '800', marginTop: 4 },
     input: {
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 11,
       borderWidth: 1,
       color: theme.text,
@@ -931,7 +966,7 @@ function createStyles(theme: MobileTheme) {
     choice: {
       alignItems: 'flex-start',
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       flexDirection: 'row',
@@ -1015,7 +1050,7 @@ function createStyles(theme: MobileTheme) {
     statusCard: {
       alignItems: 'center',
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 14,
       borderWidth: 1,
       flexDirection: 'row',
@@ -1040,7 +1075,7 @@ function createStyles(theme: MobileTheme) {
     selectionCount: { color: theme.mutedText, fontSize: 13, paddingHorizontal: 18, paddingTop: 12 },
     searchInput: {
       backgroundColor: theme.surface,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 11,
       borderWidth: 1,
       color: theme.text,
@@ -1053,7 +1088,7 @@ function createStyles(theme: MobileTheme) {
     modelRow: {
       alignItems: 'center',
       backgroundColor: theme.surface,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       flexDirection: 'row',

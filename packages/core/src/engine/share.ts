@@ -29,6 +29,10 @@ export function buildEstimateShareText({ breakdown, model, scaled }: EstimateSha
     `• Output tokens per conversation: ${formatCount(breakdown.outputTokens)}`,
   ];
 
+  if (breakdown.billedOutputTokens !== breakdown.outputTokens) {
+    lines.push(`• Billed output tokens per conversation: ${formatCount(breakdown.billedOutputTokens)}`);
+  }
+
   if (scaled.margin !== null) lines.push(`• AI gross margin: ${formatPercent(scaled.margin, 1)}`);
 
   if (breakdown.assumptions.length > 0) {
@@ -70,9 +74,8 @@ export function buildComparisonShareText(rows: readonly ComparisonRow[]): string
   }
 
   const comparisonLines = sorted.map((row, index) => {
-    const lowestLabel = index === 0 ? ' (lowest estimated cost)' : '';
-    const delta =
-      index === 0 ? '' : `; +${formatMoney(row.scaled.perMonth - cheapest.scaled.perMonth)}/month`;
+    const lowestLabel = row.isCheapest ? ' (lowest estimated cost)' : '';
+    const delta = row.deltaPerMonth === 0 ? '' : `; +${formatMoney(row.deltaPerMonth)}/month`;
 
     const unitEconomics = ` | ${formatMoney(row.scaled.costPerUser)}/user${row.scaled.margin === null ? '' : ` | ${formatPercent(row.scaled.margin, 1)} AI margin`}`;
     return `${index + 1}. ${row.model.displayName}: ${formatMoney(row.scaled.perMonth)}/month | ${formatMoney(row.breakdown.total)}/conversation${unitEconomics}${delta}${lowestLabel}`;

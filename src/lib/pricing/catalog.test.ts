@@ -21,7 +21,11 @@ const CATALOG: PricingCatalog = {
       tokenizer: { kind: 'approx', charsPerToken: 3.6, cjkCharsPerToken: 1.5 },
       capabilities: { reasoning: true, vision: true },
       capabilityIndex: 90,
-      provenance: { source: 'vendor', lastVerified: '2026-08-01' },
+      provenance: {
+        source: 'vendor',
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+      },
     },
     {
       id: 'deepseek-v3.2',
@@ -95,6 +99,31 @@ describe('validateCatalog', () => {
       models: [{ ...CATALOG.models[0]!, pricing: { input: 3, output: 15, cacheWrite: 1 } }],
     };
     expect(validateCatalog(broken)).toContainEqual(expect.stringContaining('cheaper than input'));
+  });
+
+  it('validates promotional cache rates as strictly as standard rates', () => {
+    const broken = {
+      ...CATALOG,
+      models: [
+        {
+          ...CATALOG.models[0]!,
+          pricing: {
+            input: 3,
+            output: 15,
+            intro: {
+              input: 2,
+              output: 10,
+              cachedInput: 3,
+              cacheWrite: 1,
+              until: '2026-08-31',
+            },
+          },
+        },
+      ],
+    };
+    const problems = validateCatalog(broken).join(' ');
+    expect(problems).toContain('pricing.intro.cachedInput');
+    expect(problems).toContain('pricing.intro.cacheWrite');
   });
 
   it('rejects a long-context tier cheaper than the base rate', () => {
@@ -179,6 +208,21 @@ describe('validateCatalog', () => {
       ],
     };
     expect(validateCatalog(broken)).toContainEqual(expect.stringContaining('verifiedUrl must be https'));
+  });
+
+  it('requires a source URL for vendor provenance', () => {
+    const broken = {
+      ...CATALOG,
+      models: [
+        {
+          ...CATALOG.models[0]!,
+          provenance: { source: 'vendor' as const, lastVerified: '2026-08-01' },
+        },
+      ],
+    };
+    expect(validateCatalog(broken)).toContainEqual(
+      expect.stringContaining('vendor provenance requires provenance.verifiedUrl'),
+    );
   });
 });
 
@@ -367,6 +411,10 @@ describe('Catalog.freshness', () => {
   });
 
   it('never reports a negative age when a clock is behind the manifest', () => {
-    expect(on('2026-09-28').ageDays).toBe(0);
+    expect(on('2026-09-28')).toEqual({
+      level: 'unknown',
+      checkedOn: '2026-09-30',
+      ageDays: null,
+    });
   });
 });

@@ -270,8 +270,12 @@ async function main(): Promise<void> {
     for (const problem of problems) console.error(`  - ${problem}`);
   }
 
-  const flaggedCount = catalog.models.filter((m) => m.provenance.needsReview).length;
-  const pricesLastChanged = catalog.models
+  // A degraded run publishes only the health manifest. Every catalog-derived
+  // field in that manifest must therefore describe the catalog that remains
+  // public, not the rejected candidate produced by this attempt.
+  const publishedCatalog = degraded && previous ? previous : catalog;
+  const flaggedCount = publishedCatalog.models.filter((m) => m.provenance.needsReview).length;
+  const pricesLastChanged = publishedCatalog.models
     .map((m) => m.provenance.lastChanged)
     .filter((d): d is string => typeof d === 'string')
     .sort()
@@ -284,10 +288,10 @@ async function main(): Promise<void> {
     outcome: degraded ? 'degraded' : 'ok',
     problems,
     sources,
-    modelCount: catalog.models.length,
+    modelCount: publishedCatalog.models.length,
     flaggedCount,
-    staleCount: stale.length,
-    catalogHash: catalogHash(catalog),
+    staleCount: publishedCatalog.models.filter((m) => m.provenance.stale).length,
+    catalogHash: catalogHash(publishedCatalog),
     pricesLastChanged: pricesLastChanged ?? null,
   };
 

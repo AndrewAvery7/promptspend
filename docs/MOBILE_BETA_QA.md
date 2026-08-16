@@ -4,6 +4,12 @@ Status: active test protocol
 
 Last reviewed: 2026-08-13
 
+> **Historical binaries only.** Build 12 and Android versionCode 3 remain useful
+> for reproducing the August 13 baseline, but they do not contain the August 16
+> audit hardening. Do not record them as release-candidate proof. A newly built
+> private QA binary must identify its source revision and pass this protocol;
+> creating or distributing that binary requires separate explicit approval.
+
 ## Current installable baseline
 
 - iOS TestFlight baseline: version 0.1.0, build 12, EAS build

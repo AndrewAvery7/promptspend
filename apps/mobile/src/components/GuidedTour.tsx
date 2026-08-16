@@ -42,6 +42,7 @@ interface RegisteredTarget {
 interface GuidedTourValue {
   active: boolean;
   currentTargetId: GuidedTourTargetId | null;
+  reduceMotion: boolean;
   registerTarget: (id: GuidedTourTargetId, target: RegisteredTarget) => () => void;
   startTour: () => void;
 }
@@ -53,6 +54,8 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
   const [active, setActive] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
+  const [targetUnavailable, setTargetUnavailable] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const targets = useRef(new Map<GuidedTourTargetId, RegisteredTarget>());
   const step = GUIDED_TOUR_STEPS[stepIndex];
 
@@ -66,12 +69,20 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
   const startTour = useCallback(() => {
     setStepIndex(0);
     setTargetRect(null);
+    setTargetUnavailable(false);
     setActive(true);
   }, []);
 
   const close = useCallback(() => {
     setActive(false);
     setTargetRect(null);
+    setTargetUnavailable(false);
+  }, []);
+
+  useEffect(() => {
+    void AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
+    return () => subscription.remove();
   }, []);
 
   const move = useCallback(
@@ -83,6 +94,7 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
       }
       setStepIndex(nextIndex);
       setTargetRect(null);
+      setTargetUnavailable(false);
     },
     [close],
   );
@@ -102,26 +114,42 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
       const target = targets.current.get(step.targetId);
       if (!target) {
         attempts += 1;
-        if (attempts < 12) timer = setTimeout(locate, 120);
+        if (attempts < 12) timer = setTimeout(locate, reduceMotion ? 40 : 120);
+        else setTargetUnavailable(true);
         return;
       }
       target.reveal?.();
-      timer = setTimeout(() => {
+      const measureUntilReady = () => {
         target.measure((rect) => {
-          if (!cancelled) setTargetRect(rect);
+          if (cancelled) return;
+          if (rect) {
+            setTargetRect(rect);
+            setTargetUnavailable(false);
+            return;
+          }
+          attempts += 1;
+          if (attempts < 12) timer = setTimeout(measureUntilReady, reduceMotion ? 40 : 120);
+          else setTargetUnavailable(true);
         });
-      }, 260);
+      };
+      timer = setTimeout(measureUntilReady, reduceMotion ? 40 : 180);
     };
-    timer = setTimeout(locate, 220);
+    timer = setTimeout(locate, reduceMotion ? 80 : 220);
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
     };
-  }, [active, router, step, stepIndex]);
+  }, [active, reduceMotion, router, step, stepIndex]);
 
   const value = useMemo<GuidedTourValue>(
-    () => ({ active, currentTargetId: active ? step.targetId : null, registerTarget, startTour }),
-    [active, registerTarget, startTour, step.targetId],
+    () => ({
+      active,
+      currentTargetId: active ? step.targetId : null,
+      reduceMotion,
+      registerTarget,
+      startTour,
+    }),
+    [active, reduceMotion, registerTarget, startTour, step.targetId],
   );
 
   return (
@@ -132,9 +160,11 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
         onBack={() => move(stepIndex - 1)}
         onClose={close}
         onNext={() => move(stepIndex + 1)}
+        reduceMotion={reduceMotion}
         step={step}
         stepIndex={stepIndex}
         targetRect={targetRect}
+        targetUnavailable={targetUnavailable}
       />
     </GuidedTourContext.Provider>
   );
@@ -158,7 +188,7 @@ export function TourTarget({
   onReveal?: () => void;
   scrollRef?: RefObject<ScrollView | null>;
 }>) {
-  const { currentTargetId, registerTarget } = useGuidedTour();
+  const { currentTargetId, reduceMotion, registerTarget } = useGuidedTour();
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const container = useRef<View>(null);
@@ -179,13 +209,13 @@ export function TourTarget({
         if (scrollView && target) {
           target.measureLayout(
             scrollView.getInnerViewNode(),
-            (_x, y) => scrollView.scrollTo({ animated: true, y: Math.max(0, y - 88) }),
-            () => scrollView.scrollTo({ animated: true, y: Math.max(0, contentY.current - 88) }),
+            (_x, y) => scrollView.scrollTo({ animated: !reduceMotion, y: Math.max(0, y - 88) }),
+            () => scrollView.scrollTo({ animated: !reduceMotion, y: Math.max(0, contentY.current - 88) }),
           );
         }
       },
     });
-  }, [enabled, id, onReveal, registerTarget, scrollRef]);
+  }, [enabled, id, onReveal, reduceMotion, registerTarget, scrollRef]);
 
   const active = enabled && currentTargetId === id;
   return (
@@ -207,39 +237,38 @@ function GuidedTourOverlay({
   onBack,
   onClose,
   onNext,
+  reduceMotion,
   step,
   stepIndex,
   targetRect,
+  targetUnavailable,
 }: {
   active: boolean;
   onBack: () => void;
   onClose: () => void;
   onNext: () => void;
+  reduceMotion: boolean;
   step: GuidedTourStep;
   stepIndex: number;
   targetRect: TargetRect | null;
+  targetUnavailable: boolean;
 }) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const card = useRef<View>(null);
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    void AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => subscription.remove();
-  }, []);
-
   useEffect(() => {
     if (!active) return;
-    const timer = setTimeout(() => {
-      const node = findNodeHandle(card.current);
-      if (node) AccessibilityInfo.setAccessibilityFocus(node);
-    }, 420);
+    const timer = setTimeout(
+      () => {
+        const node = findNodeHandle(card.current);
+        if (node) AccessibilityInfo.setAccessibilityFocus(node);
+      },
+      reduceMotion ? 80 : 420,
+    );
     return () => clearTimeout(timer);
-  }, [active, stepIndex]);
+  }, [active, reduceMotion, stepIndex]);
 
   const padded = targetRect ? padAndClamp(targetRect, width, height, 8) : null;
   const placeAtTop = Boolean(padded && padded.y + padded.height > height * 0.6);
@@ -286,7 +315,7 @@ function GuidedTourOverlay({
           <View
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
-            style={[StyleSheet.absoluteFill, styles.scrim]}
+            style={[StyleSheet.absoluteFill, targetUnavailable ? styles.scrimUnavailable : styles.scrim]}
           />
         )}
 
@@ -318,6 +347,11 @@ function GuidedTourOverlay({
             </Pressable>
           </View>
           <Text style={styles.tourBody}>{step.body}</Text>
+          {targetUnavailable && (
+            <Text accessibilityLiveRegion="polite" style={styles.unavailableNote}>
+              This part of the app is still loading. You can continue the guide and return to it later.
+            </Text>
+          )}
           <View
             accessibilityLabel={`Step ${stepIndex + 1} of ${GUIDED_TOUR_STEPS.length}`}
             style={styles.progressRow}
@@ -371,6 +405,7 @@ function padAndClamp(rect: TargetRect, width: number, height: number, padding: n
 function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
     scrim: { backgroundColor: 'rgba(5, 8, 14, 0.62)', position: 'absolute' },
+    scrimUnavailable: { backgroundColor: 'rgba(5, 8, 14, 0.30)', position: 'absolute' },
     targetBlocker: { position: 'absolute' },
     targetOutline: {
       bottom: 0,
@@ -401,6 +436,7 @@ function createStyles(theme: MobileTheme) {
     tourStep: { color: theme.accent, fontSize: 11, fontWeight: '900', letterSpacing: 1 },
     tourTitle: { color: theme.text, fontSize: 22, fontWeight: '800', lineHeight: 28, marginTop: 6 },
     tourBody: { color: theme.mutedText, fontSize: 15, lineHeight: 22, marginTop: 12 },
+    unavailableNote: { color: theme.warning, fontSize: 13, lineHeight: 19, marginTop: 10 },
     exitButton: {
       alignItems: 'center',
       justifyContent: 'center',

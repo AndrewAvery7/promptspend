@@ -275,6 +275,30 @@ describe('model resolution is tolerant of how people actually type', () => {
     const r = getPrice(catalog, AT, 'gpt-does-not-exist') as { did_you_mean?: string[] };
     expect(r.did_you_mean).toContain('gpt-test-pro');
   });
+
+  it.each(['', ' ', '-', '_'])('refuses a degenerate model query %j', (query) => {
+    expect(resolveModel(catalog, query)).toBeUndefined();
+    expect(getPrice(catalog, AT, query)).toHaveProperty('error');
+  });
+});
+
+describe('tool argument validation', () => {
+  it('requires a bounded model array', () => {
+    expect(estimateCost(catalog, AT, { models: 'gpt-test-pro' } as never)).toHaveProperty('error');
+    expect(estimateCost(catalog, AT, { models: [] })).toHaveProperty('error');
+    expect(estimateCost(catalog, AT, { models: Array(21).fill('gpt-test-pro') })).toHaveProperty('error');
+  });
+
+  it.each([
+    { models: ['gpt-test-pro'], system_tokens: Number.NaN },
+    { models: ['gpt-test-pro'], output_tokens: Number.POSITIVE_INFINITY },
+    { models: ['gpt-test-pro'], turns: -1 },
+    { models: ['gpt-test-pro'], conversations_per_day: -1 },
+    { models: ['gpt-test-pro'], cached_input_share: 1.1 },
+    { models: ['gpt-test-pro'], reasoning_multiplier: 6 },
+  ])('rejects unsafe numeric input %#', (input) => {
+    expect(estimateCost(catalog, AT, input)).toHaveProperty('error');
+  });
 });
 
 describe('the caveats the site publishes travel with the numbers', () => {
@@ -360,15 +384,17 @@ describe('a promotional rate is the rate', () => {
     const quoted = getPrice(catalog, AT, 'promo-test-one', INSIDE) as Record<string, unknown>;
     const billed = estimateCost(catalog, AT, {
       models: ['promo-test-one'],
-      system_tokens: 1_000_000,
+      system_tokens: 200_000,
       user_tokens: 0,
       output_tokens: 0,
       turns: 1,
       conversations_per_day: 1,
     }) as Record<string, unknown>;
     const row = (billed.results as Record<string, unknown>[])[0]!;
-    // One million input tokens, nothing else — cost per conversation is the
-    // per-million input rate, in dollars.
-    expect(row.cost_per_conversation_usd).toBe(quoted.input_per_million_usd);
+    // 200k input tokens, nothing else — cost per conversation is one fifth
+    // of the per-million input rate, in dollars.
+    expect(row.cost_per_conversation_usd).toBe(
+      Number((Number(quoted.input_per_million_usd) * 0.2).toFixed(6)),
+    );
   });
 });

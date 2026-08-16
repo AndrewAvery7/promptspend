@@ -42,7 +42,7 @@ import { createTransport, type EmailTransport } from './email/transport';
 import { renderDigest, renderInstantAlert, type Links } from './email/render';
 import { buildNotificationPayload, sendPush } from './push/send';
 import { issueToken } from './lib/tokens';
-import { siteUrl, requireSecret, type Env } from './env';
+import { alertsApiUrl, siteUrl, requireSecret, type Env } from './env';
 
 /** Comfortably inside the 1000-subrequest ceiling, leaving room for retries. */
 const MAX_SENDS_PER_RUN = 700;
@@ -87,25 +87,10 @@ async function mapWithConcurrency<T>(
 function linksFor(env: Env, tokens: { unsubscribe: string; preferences: string }): Links {
   const site = siteUrl(env);
   return {
-    unsubscribeUrl: `${apiOrigin(env)}/v1/email/unsubscribe?t=${encodeURIComponent(tokens.unsubscribe)}`,
+    unsubscribeUrl: `${alertsApiUrl(env, 'v1/email/unsubscribe')}?t=${encodeURIComponent(tokens.unsubscribe)}`,
     preferencesUrl: `${site}?alerts=${encodeURIComponent(tokens.preferences)}`,
     siteUrl: site,
   };
-}
-
-/**
- * The worker's own public origin.
- *
- * Unsubscribe links have to point at the API, not the app: one-click
- * unsubscribe is a POST from the mail client with no browser and no JavaScript,
- * so the endpoint that handles it must be the one that can act on it.
- */
-let cachedOrigin: string | null = null;
-export function setApiOrigin(origin: string): void {
-  cachedOrigin = origin;
-}
-function apiOrigin(env: Env): string {
-  return cachedOrigin ?? env.SITE_ORIGIN;
 }
 
 // ------------------------------------------------------------------ push

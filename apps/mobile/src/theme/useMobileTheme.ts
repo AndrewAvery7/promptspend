@@ -49,27 +49,33 @@ const MobileThemeContext = createContext<MobileThemeContextValue | null>(null);
 export function MobileThemeProvider({ children }: PropsWithChildren) {
   const systemScheme = useColorScheme();
   const [appearance, setAppearance] = useState(DEFAULT_APPEARANCE);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     let active = true;
-    void AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
-      if (!active || !stored) return;
-      try {
-        setAppearance(parseAppearanceState(JSON.parse(stored) as unknown));
-      } catch {
-        // Appearance is optional, non-sensitive state. Invalid storage falls back safely.
-      }
-    });
+    void AsyncStorage.getItem(STORAGE_KEY)
+      .then((stored) => {
+        if (!active || !stored) return;
+        try {
+          setAppearance(parseAppearanceState(JSON.parse(stored) as unknown));
+        } catch {
+          // Appearance is optional, non-sensitive state. Invalid storage falls back safely.
+        }
+      })
+      .finally(() => {
+        if (active) setHydrated(true);
+      });
     return () => {
       active = false;
     };
   }, []);
 
   useEffect(() => {
+    if (!hydrated) return;
     void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(appearance)).catch(() => {
       // A full or read-only device must not stop the app from rendering.
     });
-  }, [appearance]);
+  }, [appearance, hydrated]);
 
   const isDark = appearance.mode === 'system' ? systemScheme === 'dark' : appearance.mode === 'dark';
   const value = useMemo<MobileThemeContextValue>(

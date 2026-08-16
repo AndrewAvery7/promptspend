@@ -113,7 +113,7 @@ export function decodeScenario(search: string, base: Scenario = DEFAULT_SCENARIO
   const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search);
   const num = (key: string, fallback: number): number => {
     const raw = params.get(key);
-    if (raw === null) return fallback;
+    if (raw === null || raw.trim() === '') return fallback;
     const parsed = Number(raw);
     return Number.isFinite(parsed) ? parsed : fallback;
   };

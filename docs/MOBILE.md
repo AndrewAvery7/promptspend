@@ -1,6 +1,6 @@
 # PromptSpend mobile applications
 
-Status: Phase 1 - compatibility spike and first Estimate vertical slice
+Status: launch-scope native source implemented; hardened release-candidate device QA pending
 
 PromptSpend will ship native iOS and Android applications from one React Native and Expo codebase. The mobile work must preserve the existing website, public API, MCP server, VS Code extension, catalog pipeline, and privacy guarantees.
 
@@ -8,7 +8,8 @@ This public document deliberately excludes legal entity details, D-U-N-S informa
 
 ## Stable application identity
 
-These values are the proposed permanent identifiers. They must be registered in the publisher accounts before production builds are created.
+These values are the permanent source identifiers. Publisher-account acceptance
+and public-release authority are tracked separately from this repository.
 
 | Purpose                | Value                                           |
 | ---------------------- | ----------------------------------------------- |
@@ -25,17 +26,18 @@ These values are the proposed permanent identifiers. They must be registered in 
 | Pricing catalog        | `https://promptspend.com/data/pricing.json`     |
 | Sync status            | `https://promptspend.com/data/sync-status.json` |
 
-The Expo owner, slug, and EAS project ID are linked. The bundle/application ID cannot be treated as final until both publisher consoles accept it. Changing it after a public release would create a different application, so registration is a Phase 0 gate.
+The Expo owner, slug, and EAS project ID are linked. Changing the bundle or
+application ID after a public release would create a different application.
 
 The support and privacy pages are implemented in the static-site build and
 included in its sitemap, CSP, canonical, and link-integrity checks. They are not
 considered live until the website deployment containing them is verified.
 
-## Repository starting state
+## Historical repository starting state
 
-- Mobile work begins from synchronized `main` commit `1fafd36`.
-- Working branch: `mobile/phase-0-foundation`.
-- Safety branch: `safety/pre-mobile-sync-20260810`.
+- Mobile work began from synchronized `main` commit `1fafd36`.
+- The initial working branch was `mobile/phase-0-foundation`.
+- The initial safety branch was `safety/pre-mobile-sync-20260810`.
 - A named safety stash preserves the two pre-existing local worktree files. It must not be popped as part of mobile development because those files are already restored in the worktree.
 - Mobile commits must stage only explicitly reviewed mobile paths. The pre-existing `docs/DEFERRED.md` modification and `referrers-2026-08-10.json` file are outside mobile scope.
 
@@ -44,7 +46,8 @@ considered live until the website deployment containing them is verified.
 - Free download.
 - No advertising.
 - No purchases or subscriptions.
-- No user accounts.
+- No PromptSpend password/account profile. Optional email price alerts use
+  double opt-in and short-lived management codes.
 - Phone-first layouts for the initial release.
 - A deliberate tablet experience follows the phone release.
 - No behavioral analytics or cross-app tracking.
@@ -82,7 +85,7 @@ considered live until the website deployment containing them is verified.
 
 The SDK 57 scaffold's current npm audit findings and risk controls are documented in `apps/mobile/SECURITY.md`. Expo Doctor and Expo's version compatibility check must remain green, but those checks do not replace advisory review. Forced audit downgrades are prohibited; findings must be traced to reachable runtime or build-tool behavior and reviewed again before beta and release.
 
-### Current Phase 1 evidence
+### Current source evidence (2026-08-16)
 
 - Expo SDK 57 application created at `apps/mobile`.
 - EAS project linked to `@crestwood-holdings/promptspend-app`.
@@ -96,13 +99,26 @@ The SDK 57 scaffold's current npm audit findings and risk controls are documente
 - The native Estimate slice includes searchable model selection, manual token counts or private pasted-text estimation for all three workload fields, conversation-history compounding, traffic inputs, optional prompt-cache assumptions, monthly/daily/annual results, impossible-scenario warnings, and calculation disclosure.
 - Native Compare supports up to four selected models and derives pasted-text token estimates separately for each model's catalog profile before ranking costs. Pasted text is held only in screen state and is excluded from shared results.
 - The interface uses the existing light/dark cobalt design tokens, safe areas, Expo Router, semantic controls, 48dp interactions, and a tablet-width reading column. iPad support is enabled in the application configuration.
-- Mobile lint and strict TypeScript checks pass.
+- The complete launch navigation is implemented: Home, Estimate, Compare,
+  Learn, and Data & Alerts, plus Search, Guided Tour, appearance controls,
+  ticker, saved scenarios, decision artifacts, and native sharing.
+- Optional native email-alert subscription and management are implemented. The
+  email address, cadence, scope, and selected model identifiers leave the
+  device only when the user chooses that feature; prompt text never does.
+- Mobile lint, strict TypeScript checks, the release-contract preflight, and 86
+  Jest tests across 20 suites pass.
 - Expo dependency compatibility check passes.
-- Expo Doctor passes all 20 checks.
-- Static Expo web export completes without warnings and was visually reviewed at 375x812 in light and dark themes plus landscape.
+- Expo Doctor passes all 21 checks.
+- Local Expo export produces Android, iOS, and web bundles from the hardened
+  source. This is bundle evidence, not an EAS build or store submission.
 - Browser-level compatibility tests prove model selection, recalculation, cache-assumption disclosure, and hard withholding when no valid catalog is available.
-- A signed Android production AAB has been produced through EAS; native installation still requires an APK/development build and Android hardware or emulator.
-- Remaining Phase 1 proof requires native iOS signing after Apple membership activation, physical iOS/Android execution, tokenizer compatibility, and measured device performance.
+- Earlier private iOS and Android binaries exist, but they predate the current
+  hardening work and are baseline records only. A new private QA binary requires
+  separate explicit approval.
+- Remaining release proof requires physical iPhone, iPad, and Android execution
+  of the hardened binary, real alert-email delivery, assistive-technology and
+  largest-text passes, exact build provenance, tokenizer fixture comparison,
+  and measured device performance.
 
 ## Planned repository layout
 

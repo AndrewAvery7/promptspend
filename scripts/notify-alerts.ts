@@ -27,17 +27,28 @@ import type { PricingCatalog } from '../src/lib/pricing/types';
 const CATALOG_PATH = 'public/data/pricing.json';
 const DRY_RUN = process.argv.includes('--dry-run');
 
-/** Read a file at a git revision, or undefined if it was not there. */
+/** Read a file at a git revision. Missing is allowed; malformed is fatal. */
 function readAtRevision(revision: string, path: string): PricingCatalog | undefined {
   try {
-    const raw = execFileSync('git', ['show', `${revision}:${path}`], {
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    });
-    return JSON.parse(raw) as PricingCatalog;
+    execFileSync('git', ['cat-file', '-e', `${revision}:${path}`], { stdio: 'ignore' });
   } catch {
     return undefined;
   }
+  const raw = execFileSync('git', ['show', `${revision}:${path}`], {
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  return JSON.parse(raw) as PricingCatalog;
+}
+
+function previousRevision(): string {
+  const fromEvent = (process.env.BEFORE_SHA ?? '').trim();
+  if (/^[0-9a-f]{40}$/i.test(fromEvent) && !/^0{40}$/.test(fromEvent)) return fromEvent;
+  return (
+    execFileSync('git', ['rev-list', '-n', '1', 'HEAD^', '--', CATALOG_PATH], {
+      encoding: 'utf8',
+    }).trim() || 'HEAD^'
+  );
 }
 
 async function main(): Promise<void> {
@@ -45,7 +56,7 @@ async function main(): Promise<void> {
   const secret = process.env.NOTIFY_SECRET ?? '';
 
   const next = JSON.parse(readFileSync(CATALOG_PATH, 'utf8')) as PricingCatalog;
-  const previous = readAtRevision('HEAD~1', CATALOG_PATH);
+  const previous = readAtRevision(previousRevision(), CATALOG_PATH);
 
   const changes = buildOutboundChanges(previous, next);
   if (changes.length === 0) {
@@ -54,10 +65,9 @@ async function main(): Promise<void> {
   }
 
   const payload = {
-    // Deterministic in the catalog contents. A re-run of this job, or a revert
-    // and re-apply, produces the same id, and the worker treats a repeat as a
-    // no-op rather than a second round of notifications.
-    eventId: `catalog-${catalogHash(next)}`,
+    // Address the transition, not only its destination. If a price returns to
+    // an earlier catalog value that is a new event and subscribers must hear it.
+    eventId: `catalog-${previous ? catalogHash(previous) : 'initial'}-${catalogHash(next)}`,
     generatedAt: next.generatedAt,
     changes,
   };

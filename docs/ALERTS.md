@@ -215,7 +215,7 @@ count stops being zero, and not before.
 cd worker && npm test
 ```
 
-89 tests run inside workerd against a real D1, so the query layer
+98 tests run inside workerd against a real D1, so the query layer
 is exercised against genuine SQLite and the migrations are proved to apply. The
 full subscribe → confirm → change preferences → unsubscribe lifecycle is
 covered, as are signature rejection, replay rejection, CORS, and the SSRF

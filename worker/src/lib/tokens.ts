@@ -14,7 +14,7 @@
 
 import { b64urlToBytes, bytesToB64url, timingSafeEqual, utf8 } from './bytes';
 
-export type TokenPurpose = 'confirm' | 'unsubscribe' | 'preferences';
+export type TokenPurpose = 'confirm' | 'unsubscribe' | 'preferences' | 'mobile-preferences';
 
 /**
  * Confirmation has to happen soon or not at all. Unsubscribe and preference
@@ -25,6 +25,7 @@ const LIFETIMES: Record<TokenPurpose, number> = {
   confirm: 48 * 60 * 60,
   unsubscribe: 365 * 24 * 60 * 60,
   preferences: 365 * 24 * 60 * 60,
+  'mobile-preferences': 30 * 60,
 };
 
 interface TokenClaims {

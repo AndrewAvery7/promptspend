@@ -3,7 +3,7 @@
  * pipeline produces and the whole app consumes. Bump `SCHEMA_VERSION` (and the
  * loader's migration path) if any field changes meaning.
  *
- * v2 added: `pricing.cacheWrite`, `pricing.longContext`, `Model.aliasOf`,
+ * v2 added: `pricing.cacheWrite`, `pricing.cacheStoragePerMillionTokenHour`, `pricing.longContext`, `Model.aliasOf`,
  * `provenance.verifiedUrl`, `provenance.lastChanged` and `provenance.stale`.
  */
 export const SCHEMA_VERSION = 2;
@@ -40,6 +40,10 @@ export interface Pricing {
   /** USD per 1M tokens to *write* the cache. Both OpenAI and Anthropic charge
    *  1.25× base input; it is billed once per cached prefix, not per read. */
   cacheWrite?: number;
+  /** Separate cache-residency charge in USD per 1M cached tokens per hour.
+   * The estimator cannot include it without a retention duration, so the
+   * engine surfaces it as an explicit bill-exclusion warning. */
+  cacheStoragePerMillionTokenHour?: number;
   /** Multiplier applied to both rates when the batch API is used (e.g. 0.5). */
   batchDiscount?: number;
   /** Promotional pricing that expires — engine honours it up to `until`.
@@ -83,6 +87,9 @@ export interface Provenance {
   /** Set when upstream stopped listing the model but no retirement has been
    *  confirmed. The row is kept and marked rather than silently deleted. */
   stale?: boolean;
+  /** Original status retained while a missing-upstream row is temporarily
+   * demoted, so a recovered feed can restore the exact prior state. */
+  statusBeforeStale?: ModelStatus;
 }
 
 export interface Model {
@@ -232,6 +239,20 @@ export function validateCatalog(value: unknown): string[] {
 
     errors.push(...validateTokenizer(label, model?.tokenizer));
     errors.push(...validatePricing(label, model?.pricing));
+    if (
+      model?.pricing?.longContext !== undefined &&
+      Number.isInteger(model.contextWindow) &&
+      model.pricing.longContext.thresholdTokens >= model.contextWindow
+    ) {
+      errors.push(`${label}: longContext.thresholdTokens must be below contextWindow`);
+    }
+    if (
+      model?.pricing?.intro !== undefined &&
+      typeof cat.generatedAt === 'string' &&
+      model.pricing.intro.until < cat.generatedAt.slice(0, 10)
+    ) {
+      errors.push(`${label}: pricing.intro expired before catalog.generatedAt`);
+    }
     errors.push(...validateProvenance(label, model?.provenance));
   }
   return errors;
@@ -288,6 +309,11 @@ function validatePricing(label: string, pricing: unknown): string[] {
       `${label}: output ($${output}) is implausibly low versus input ($${input}) — likely a source error`,
     );
   }
+  if (input !== undefined && output !== undefined && input > 0 && output > 0 && input > output) {
+    errors.push(
+      `${label}: input ($${input}) exceeds output ($${output}) — likely an upstream input/output swap`,
+    );
+  }
 
   if (p.cachedInput !== undefined && validateRate(label, 'pricing.cachedInput', p.cachedInput, errors)) {
     if (input !== undefined && p.cachedInput > input) {
@@ -301,16 +327,50 @@ function validatePricing(label: string, pricing: unknown): string[] {
       );
     }
   }
+  if (p.cacheStoragePerMillionTokenHour !== undefined) {
+    validateRate(label, 'pricing.cacheStoragePerMillionTokenHour', p.cacheStoragePerMillionTokenHour, errors);
+  }
   if (p.batchDiscount !== undefined) {
     if (typeof p.batchDiscount !== 'number' || !(p.batchDiscount > 0) || p.batchDiscount > 1) {
       errors.push(`${label}: batchDiscount must be a multiplier in (0, 1]`);
     }
   }
   if (p.intro !== undefined) {
-    validateRate(label, 'pricing.intro.input', p.intro.input, errors);
-    validateRate(label, 'pricing.intro.output', p.intro.output, errors);
+    const introInput = validateRate(label, 'pricing.intro.input', p.intro.input, errors)
+      ? p.intro.input
+      : undefined;
+    const introOutput = validateRate(label, 'pricing.intro.output', p.intro.output, errors)
+      ? p.intro.output
+      : undefined;
+    if (
+      p.intro.cachedInput !== undefined &&
+      validateRate(label, 'pricing.intro.cachedInput', p.intro.cachedInput, errors) &&
+      introInput !== undefined &&
+      p.intro.cachedInput > introInput
+    ) {
+      errors.push(
+        `${label}: pricing.intro.cachedInput ($${p.intro.cachedInput}) costs more than promotional input ($${introInput})`,
+      );
+    }
+    if (
+      p.intro.cacheWrite !== undefined &&
+      validateRate(label, 'pricing.intro.cacheWrite', p.intro.cacheWrite, errors) &&
+      introInput !== undefined &&
+      introInput > 0 &&
+      p.intro.cacheWrite < introInput
+    ) {
+      errors.push(
+        `${label}: pricing.intro.cacheWrite ($${p.intro.cacheWrite}) is cheaper than promotional input`,
+      );
+    }
     if (typeof p.intro.until !== 'string' || !ISO_DATE.test(p.intro.until)) {
       errors.push(`${label}: pricing.intro.until must be YYYY-MM-DD`);
+    }
+    if (introInput !== undefined && input !== undefined && introInput > input) {
+      errors.push(`${label}: pricing.intro.input exceeds the standard input rate`);
+    }
+    if (introOutput !== undefined && output !== undefined && introOutput > output) {
+      errors.push(`${label}: pricing.intro.output exceeds the standard output rate`);
     }
   }
   if (p.longContext !== undefined) {
@@ -319,7 +379,7 @@ function validatePricing(label: string, pricing: unknown): string[] {
       errors.push(`${label}: longContext.thresholdTokens must be a positive integer`);
     }
     const lcInput = validateRate(label, 'pricing.longContext.input', lc.input, errors);
-    validateRate(label, 'pricing.longContext.output', lc.output, errors);
+    const lcOutput = validateRate(label, 'pricing.longContext.output', lc.output, errors);
     if (lc.cachedInput !== undefined) {
       validateRate(label, 'pricing.longContext.cachedInput', lc.cachedInput, errors);
     }
@@ -328,6 +388,9 @@ function validatePricing(label: string, pricing: unknown): string[] {
     }
     if (input !== undefined && lcInput && lc.input < input) {
       errors.push(`${label}: longContext.input is cheaper than the base rate — tiers only ever cost more`);
+    }
+    if (output !== undefined && lcOutput && lc.output < output) {
+      errors.push(`${label}: longContext.output is cheaper than the base rate — tiers only ever cost more`);
     }
   }
   return errors;
@@ -352,6 +415,9 @@ function validateProvenance(label: string, provenance: unknown): string[] {
   if (pr.verifiedUrl !== undefined && !/^https:\/\//.test(pr.verifiedUrl)) {
     errors.push(`${label}: provenance.verifiedUrl must be https`);
   }
+  if (pr.source === 'vendor' && typeof pr.verifiedUrl !== 'string') {
+    errors.push(`${label}: vendor provenance requires provenance.verifiedUrl`);
+  }
   if (pr.needsReview !== undefined && typeof pr.needsReview !== 'boolean') {
     errors.push(`${label}: provenance.needsReview must be a boolean`);
   } else if (pr.needsReview === true && (typeof pr.reviewNote !== 'string' || pr.reviewNote.length === 0)) {
@@ -362,6 +428,12 @@ function validateProvenance(label: string, provenance: unknown): string[] {
     (!Array.isArray(pr.reviewCodes) || pr.reviewCodes.some((code) => typeof code !== 'string'))
   ) {
     errors.push(`${label}: provenance.reviewCodes must be an array of strings`);
+  }
+  if (pr.stale !== undefined && typeof pr.stale !== 'boolean') {
+    errors.push(`${label}: provenance.stale must be a boolean`);
+  }
+  if (pr.statusBeforeStale !== undefined && !STATUSES.includes(pr.statusBeforeStale)) {
+    errors.push(`${label}: provenance.statusBeforeStale must be one of ${STATUSES.join(', ')}`);
   }
   return errors;
 }

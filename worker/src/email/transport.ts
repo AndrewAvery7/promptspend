@@ -79,13 +79,14 @@ class CloudflareTransport implements EmailTransport {
       return { ok: true, id: payload?.result?.id };
     }
 
-    const detail = (await response.text().catch(() => '')).slice(0, 400);
+    // Provider response bodies can echo recipient addresses or message
+    // content. Status is enough to classify and operate the retry policy.
     // 429 and 5xx are worth another attempt; a 4xx is a message this transport
     // will never accept, and retrying it just burns quota against the same wall.
     return {
       ok: false,
       retryable: response.status === 429 || response.status >= 500,
-      detail: `HTTP ${response.status}: ${detail}`,
+      detail: `HTTP ${response.status}`,
     };
   }
 }
@@ -104,7 +105,7 @@ class ConsoleTransport implements EmailTransport {
     console.log(
       JSON.stringify({
         transport: 'console',
-        to: message.to,
+        recipient: '[redacted]',
         subject: message.subject,
         listUnsubscribe: message.headers?.['List-Unsubscribe'],
         textBytes: message.text.length,
@@ -127,5 +128,6 @@ export function createTransport(env: Env): EmailTransport {
       env.EMAIL_REPLY_TO,
     );
   }
-  return new ConsoleTransport();
+  if (env.EMAIL_TRANSPORT === 'console') return new ConsoleTransport();
+  throw new Error(`Unsupported EMAIL_TRANSPORT value: ${env.EMAIL_TRANSPORT || '(empty)'}`);
 }

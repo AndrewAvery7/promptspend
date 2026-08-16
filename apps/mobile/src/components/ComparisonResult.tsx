@@ -155,10 +155,17 @@ export function ComparisonResult({ catalog, rows }: ComparisonResultProps) {
                   styles={styles}
                 />
                 <DetailRow
-                  label="Output tokens"
+                  label="Generated output tokens"
                   value={Math.round(row.breakdown.outputTokens).toLocaleString('en-US')}
                   styles={styles}
                 />
+                {row.breakdown.billedOutputTokens !== row.breakdown.outputTokens && (
+                  <DetailRow
+                    label="Billed output tokens"
+                    value={Math.round(row.breakdown.billedOutputTokens).toLocaleString('en-US')}
+                    styles={styles}
+                  />
+                )}
                 {row.breakdown.assumptions.map((assumption, assumptionIndex) => (
                   <Text key={`${row.model.id}-assumption-${assumptionIndex}`} style={styles.assumptionText}>
                     · {assumption}
@@ -201,7 +208,8 @@ export function ComparisonResult({ catalog, rows }: ComparisonResultProps) {
   );
 }
 
-function formatMultiple(value: number): string {
+function formatMultiple(value: number | null): string {
+  if (value === null) return 'not meaningfully comparable to';
   if (!Number.isFinite(value)) return 'more than';
   if (value >= 10) return `${Math.round(value)}×`;
   return `${Number(value.toFixed(1))}×`;

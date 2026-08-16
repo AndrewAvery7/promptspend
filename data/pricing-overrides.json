@@ -194,6 +194,7 @@
         "input": 2,
         "output": 12,
         "cachedInput": 0.2,
+        "cacheStoragePerMillionTokenHour": 4.5,
         "cacheWrite": 2.5,
         "batchDiscount": 0.5,
         "longContext": {
@@ -370,8 +371,19 @@
       "id": "gemini-gemini-3.1-pro-preview",
       "displayName": "Gemini 3.1 Pro",
       "capabilityIndex": 88,
+      "pricing": {
+        "input": 2,
+        "output": 12,
+        "cachedInput": 0.2,
+        "longContext": {
+          "thresholdTokens": 200000,
+          "input": 4,
+          "output": 18,
+          "cachedInput": 0.4
+        }
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -386,17 +398,31 @@
       "id": "gemini-gemini-3.5-flash-lite",
       "displayName": "Gemini 3.5 Flash-Lite",
       "capabilityIndex": 66,
+      "pricing": {
+        "cacheStoragePerMillionTokenHour": 1
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
       "id": "gemini-gemini-2.5-pro",
       "displayName": "Gemini 2.5 Pro",
-      "status": "legacy",
       "capabilityIndex": 74,
+      "pricing": {
+        "input": 1.25,
+        "output": 10,
+        "cachedInput": 0.125,
+        "cacheStoragePerMillionTokenHour": 4.5,
+        "longContext": {
+          "thresholdTokens": 200000,
+          "input": 2.5,
+          "output": 15,
+          "cachedInput": 0.25
+        }
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -593,24 +619,33 @@
       "id": "gemini-gemini-2.5-flash",
       "providerId": "google",
       "displayName": "Gemini 2.5 Flash",
+      "pricing": {
+        "cacheStoragePerMillionTokenHour": 1
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
       "id": "gemini-gemini-3-flash-preview",
       "providerId": "google",
       "displayName": "Gemini 3 Flash Preview",
+      "pricing": {
+        "cacheStoragePerMillionTokenHour": 1
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
       "id": "gemini-gemini-3.1-flash-lite",
       "providerId": "google",
       "displayName": "Gemini 3.1 Flash Lite",
+      "pricing": {
+        "cacheStoragePerMillionTokenHour": 1
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {

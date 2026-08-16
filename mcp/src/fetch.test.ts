@@ -13,13 +13,14 @@
  * validation. (`check:startup` is where a real network hit belongs, and it is
  * already there.)
  */
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { createServer, type Server } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fetchCatalog } from './catalog';
+import { CatalogUnavailableError, clearCatalogCache, fetchCatalog, getCatalog } from './catalog';
 
 const REAL_CATALOG = readFileSync(resolve(import.meta.dirname, '../../public/data/pricing.json'), 'utf8');
+const PARSED_CATALOG = JSON.parse(REAL_CATALOG) as { generatedAt: string };
 
 /** What the next request will be answered with. */
 let respond: (send: (status: number, contentType: string, body: string) => void) => void;
@@ -43,6 +44,8 @@ beforeAll(async () => {
 afterAll(async () => {
   await new Promise<void>((done) => server.close(() => done()));
 });
+
+beforeEach(() => clearCatalogCache());
 
 describe('a well-behaved server', () => {
   it('fetches, parses and validates the catalog', async () => {
@@ -116,5 +119,30 @@ describe('other ways a server misbehaves', () => {
     };
     await expect(fetchCatalog(`${base}/data/pricing.json`)).rejects.toThrow(/Expected JSON/);
     expect(calls).toBe(2);
+  });
+});
+
+describe('bounded fallback honesty', () => {
+  it('marks a retained copy instead of passing it off as current', async () => {
+    const now = Date.parse(PARSED_CATALOG.generatedAt) + 60 * 60 * 1000;
+    const first = await getCatalog(now, async () => JSON.parse(REAL_CATALOG));
+    expect(first.servedFromFallback).toBe(false);
+
+    const fallback = await getCatalog(now + 6 * 60 * 1000, async () => {
+      throw new Error('offline');
+    });
+    expect(fallback.servedFromFallback).toBe(true);
+    expect(fallback.warning).toContain('could not be reached');
+    expect(fallback.warning).toContain(new Date(now).toISOString());
+  });
+
+  it('returns no prices once the fallback window expires', async () => {
+    const now = Date.parse(PARSED_CATALOG.generatedAt) + 60 * 60 * 1000;
+    await getCatalog(now, async () => JSON.parse(REAL_CATALOG));
+    await expect(
+      getCatalog(now + 25 * 60 * 60 * 1000, async () => {
+        throw new Error('offline');
+      }),
+    ).rejects.toBeInstanceOf(CatalogUnavailableError);
   });
 });

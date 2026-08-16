@@ -173,7 +173,7 @@ function createStyles(theme: MobileTheme) {
     modeGroup: {
       alignSelf: 'flex-start',
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 10,
       borderWidth: 1,
       flexDirection: 'row',
@@ -197,7 +197,7 @@ function createStyles(theme: MobileTheme) {
     estimateNote: { color: theme.mutedText, fontSize: 11, lineHeight: 16 },
     textInput: {
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       color: theme.text,

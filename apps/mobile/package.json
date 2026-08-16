@@ -8,14 +8,14 @@
     "@expo/vector-icons": "^15.0.2",
     "@promptspend/core": "file:../../packages/core",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "expo": "~57.0.12",
+    "expo": "~57.0.13",
     "expo-clipboard": "~57.0.1",
-    "expo-constants": "~57.0.10",
-    "expo-file-system": "~57.0.2",
+    "expo-constants": "~57.0.11",
+    "expo-file-system": "~57.0.4",
     "expo-font": "~57.0.1",
-    "expo-linking": "~57.0.5",
-    "expo-router": "~57.0.12",
-    "expo-sharing": "~57.0.11",
+    "expo-linking": "~57.0.6",
+    "expo-router": "~57.0.13",
+    "expo-sharing": "~57.0.12",
     "expo-splash-screen": "~57.0.6",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.2",
@@ -62,5 +62,8 @@
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)"
     ]
   },
-  "private": true
+  "private": true,
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
+  }
 }

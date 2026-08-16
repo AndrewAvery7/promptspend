@@ -90,7 +90,10 @@ export function subscribeEmail(input: {
   models: string[];
   turnstileToken?: string;
 }): Promise<{ ok: true; pending: true }> {
-  return call('/v1/email/subscribe', { method: 'POST', body: JSON.stringify(input) });
+  return call('/v1/email/subscribe', {
+    method: 'POST',
+    body: JSON.stringify({ ...input, client: 'web', turnstileAction: 'web_email_alerts' }),
+  });
 }
 
 export function fetchPreferences(token: string): Promise<EmailPreferences> {

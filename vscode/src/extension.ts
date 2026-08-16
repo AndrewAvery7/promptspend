@@ -149,10 +149,15 @@ export function activate(context: vscode.ExtensionContext): void {
       return;
     }
 
+    const documentVersion = editor.document.version;
+    const documentText = editor.document.getText();
     const { matches, state, skipped } = await service.scan(
-      editor.document.getText(),
+      documentText,
       scanOptions(editor.document, current),
+      Date.now(),
+      `${editor.document.uri.toString()}:${documentVersion}`,
     );
+    if (editor.document.version !== documentVersion) return;
     updateStatusBar(status, service, current);
 
     if (skipped) {
@@ -175,8 +180,6 @@ export function activate(context: vscode.ExtensionContext): void {
       `[refresh] ${editor.document.languageId}: ${matches.length} model reference(s), ` +
         `catalog generated ${state.generatedAt}${state.ageing ? ' (ageing)' : ''}`,
     );
-
-    const documentText = editor.document.getText();
 
     editor.setDecorations(
       decoration,
@@ -261,7 +264,13 @@ export function activate(context: vscode.ExtensionContext): void {
           const current = settings();
           if (!isRealDocument(document) || !shouldAnnotate(document.languageId, current)) return undefined;
 
-          const { matches, state } = await service.scan(document.getText(), scanOptions(document, current));
+          const text = document.getText();
+          const { matches, state } = await service.scan(
+            text,
+            scanOptions(document, current),
+            Date.now(),
+            `${document.uri.toString()}:${document.version}`,
+          );
           if (state.status !== 'ready') return undefined;
 
           const offset = document.offsetAt(position);
@@ -269,11 +278,11 @@ export function activate(context: vscode.ExtensionContext): void {
           if (!hit) return undefined;
 
           const markdown = new vscode.MarkdownString(
-            hoverMarkdown(hit, state.catalog, ceilingFor(document.getText(), hit, matches)),
+            hoverMarkdown(hit, state.catalog, ceilingFor(text, hit, matches)),
           );
-          // The content is built from catalog data by present.ts and contains
-          // no HTML; trusting it is what lets the links through.
-          markdown.isTrusted = true;
+          // HTTPS links remain usable without trusting command URIs embedded
+          // in catalog-supplied text.
+          markdown.isTrusted = false;
           markdown.supportThemeIcons = true;
           return new vscode.Hover(
             markdown,

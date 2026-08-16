@@ -1,5 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
-import { AccessibilityInfo, Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  AccessibilityInfo,
+  findNodeHandle,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { formatRate, type Catalog } from '@promptspend/core';
@@ -15,42 +24,6 @@ const SECTIONS: { id: AppSection; label: string }[] = [
   { id: 'learn', label: 'Learn' },
   { id: 'data', label: 'Data & Alerts' },
 ];
-
-export function SectionNav({
-  onChange,
-  section,
-}: {
-  onChange: (section: AppSection) => void;
-  section: AppSection;
-}) {
-  const { theme } = useMobileTheme();
-  const styles = useMemo(() => createStyles(theme), [theme]);
-  return (
-    <ScrollView
-      accessibilityRole="tablist"
-      contentContainerStyle={styles.navContent}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={styles.nav}
-    >
-      {SECTIONS.map((item) => (
-        <Pressable
-          accessibilityRole="tab"
-          accessibilityState={{ selected: item.id === section }}
-          key={item.id}
-          onPress={() => onChange(item.id)}
-          style={({ pressed }) => [
-            styles.navButton,
-            item.id === section && styles.navButtonActive,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Text style={[styles.navText, item.id === section && styles.navTextActive]}>{item.label}</Text>
-        </Pressable>
-      ))}
-    </ScrollView>
-  );
-}
 
 export function PricingTicker({ catalog, onOpenData }: { catalog: Catalog; onOpenData: () => void }) {
   const { theme } = useMobileTheme();
@@ -99,8 +72,10 @@ export function PricingTicker({ catalog, onOpenData }: { catalog: Catalog; onOpe
           reduceMotion ? 'Automatic movement is already disabled by Reduce Motion' : undefined
         }
         accessibilityRole="button"
+        accessibilityState={{ disabled: reduceMotion }}
+        disabled={reduceMotion}
         onPress={() => setPaused((value) => !value)}
-        style={styles.tickerPause}
+        style={[styles.tickerPause, reduceMotion && styles.disabled]}
       >
         <Text style={styles.tickerPauseText}>
           {reduceMotion ? 'Motion off' : paused ? 'Resume' : 'Pause'}
@@ -177,6 +152,7 @@ interface CommandSheetProps {
   catalog: Catalog;
   favoriteIds: readonly string[];
   onClose: () => void;
+  onHome: () => void;
   onReset: () => void;
   onSection: (section: AppSection) => void;
   onSelectModel: (id: string) => void;
@@ -191,6 +167,7 @@ export function CommandSheet({
   catalog,
   favoriteIds,
   onClose,
+  onHome,
   onReset,
   onSection,
   onSelectModel,
@@ -203,8 +180,13 @@ export function CommandSheet({
   const appearance = useMobileTheme();
   const styles = useMemo(() => createStyles(appearance.theme), [appearance.theme]);
   const [query, setQuery] = useState('');
+  const close = () => {
+    setQuery('');
+    onClose();
+  };
   const commands = useMemo(() => {
     const base = [
+      { id: 'view-home', kind: 'View', label: 'Go to Home Cost Brief', run: onHome },
       ...SECTIONS.map((item) => ({
         id: `view-${item.id}`,
         kind: 'View',
@@ -288,6 +270,7 @@ export function CommandSheet({
     catalog,
     favoriteIds,
     onReset,
+    onHome,
     onSection,
     onSelectModel,
     onToggleComparison,
@@ -302,7 +285,7 @@ export function CommandSheet({
     .slice(0, 15);
 
   return (
-    <Sheet label="Search and commands" onClose={onClose} visible={visible} styles={styles}>
+    <Sheet label="Search and commands" onClose={close} visible={visible} styles={styles}>
       <TextInput
         accessibilityLabel="Search commands and models"
         autoCapitalize="none"
@@ -321,8 +304,7 @@ export function CommandSheet({
             key={command.id}
             onPress={() => {
               command.run();
-              setQuery('');
-              onClose();
+              close();
             }}
             style={({ pressed }) => [styles.command, pressed && styles.pressed]}
           >
@@ -397,6 +379,17 @@ function Sheet({
   styles: Styles;
   visible: boolean;
 }) {
+  const sheet = useRef<View>(null);
+
+  useEffect(() => {
+    if (!visible) return;
+    const timer = setTimeout(() => {
+      const node = findNodeHandle(sheet.current);
+      if (node) AccessibilityInfo.setAccessibilityFocus(node);
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [visible]);
+
   return (
     <Modal
       accessibilityLabel={label}
@@ -406,7 +399,13 @@ function Sheet({
       visible={visible}
     >
       <View style={styles.backdrop}>
-        <View accessibilityRole="none" style={styles.sheet}>
+        <View
+          accessibilityLabel={label}
+          accessibilityRole="summary"
+          accessibilityViewIsModal
+          ref={sheet}
+          style={styles.sheet}
+        >
           <View style={styles.sheetHeader}>
             <Text accessibilityRole="header" style={styles.sheetTitle}>
               {label}
@@ -465,31 +464,12 @@ type Styles = ReturnType<typeof createStyles>;
 
 function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
-    nav: { flexGrow: 0 },
-    navContent: {
-      backgroundColor: theme.surface,
-      borderColor: theme.border,
-      borderRadius: 12,
-      borderWidth: 1,
-      gap: 4,
-      padding: 4,
-    },
-    navButton: {
-      alignItems: 'center',
-      borderRadius: 8,
-      flexGrow: 1,
-      justifyContent: 'center',
-      minHeight: 44,
-      paddingHorizontal: 8,
-    },
-    navButtonActive: { backgroundColor: theme.accent },
-    navText: { color: theme.mutedText, fontSize: 12, fontWeight: '800' },
-    navTextActive: { color: theme.onAccent },
     pressed: { opacity: 0.68 },
+    disabled: { opacity: 0.62 },
     ticker: {
       alignItems: 'center',
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       flexDirection: 'row',
@@ -509,7 +489,7 @@ function createStyles(theme: MobileTheme) {
     globalActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'flex-end' },
     miniAction: {
       alignItems: 'center',
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 8,
       borderWidth: 1,
       justifyContent: 'center',
@@ -537,7 +517,7 @@ function createStyles(theme: MobileTheme) {
     optionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     option: {
       alignItems: 'center',
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 10,
       borderWidth: 1,
       justifyContent: 'center',
@@ -551,7 +531,7 @@ function createStyles(theme: MobileTheme) {
     sheetBody: { color: theme.mutedText, fontSize: 16, lineHeight: 24 },
     searchInput: {
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       color: theme.text,
@@ -575,7 +555,7 @@ function createStyles(theme: MobileTheme) {
     tourActions: { flexDirection: 'row', gap: 10 },
     secondaryButton: {
       alignItems: 'center',
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 10,
       borderWidth: 1,
       flex: 1,
@@ -592,6 +572,5 @@ function createStyles(theme: MobileTheme) {
       minHeight: 48,
     },
     primaryButtonText: { color: theme.onAccent, fontWeight: '800' },
-    disabled: { opacity: 0.35 },
   });
 }

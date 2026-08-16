@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "updatedOn": "2026-08-16",
+  "versionSource": "remote",
+  "records": [
+    {
+      "platform": "ios",
+      "marketingVersion": "0.1.0",
+      "buildNumber": 12,
+      "channel": "internal-testflight",
+      "status": "superseded-private-qa",
+      "evidence": "docs/qa/IOS_TESTFLIGHT_BUILD_12.md"
+    },
+    {
+      "platform": "android",
+      "marketingVersion": "0.1.0",
+      "versionCode": 3,
+      "channel": "private-apk",
+      "status": "private-qa",
+      "evidence": "docs/qa/ANDROID_GALAXY_A15_BUILD_3.md"
+    }
+  ],
+  "note": "EAS remote versioning remains authoritative. Record every new private or store binary here after its build identifier is verified."
+}

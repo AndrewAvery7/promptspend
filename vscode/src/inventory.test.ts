@@ -19,6 +19,7 @@ beforeAll(() => {
 
 const scanned = (path: string, text: string): ScannedFile => ({
   path,
+  uri: `file:///workspace/${path}`,
   matches: index.scan(text, { comments: commentSyntaxFor('python') }).matches,
   lineStarts: lineStartsOf(text),
 });

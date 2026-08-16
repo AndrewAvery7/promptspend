@@ -7,6 +7,7 @@ export type MobileTheme = {
   accentSoft: string;
   background: string;
   border: string;
+  borderStrong: string;
   danger: string;
   information: string;
   mutedText: string;
@@ -23,6 +24,7 @@ const base = {
     cool: {
       background: '#EBEFF5',
       border: '#DCE2EB',
+      borderStrong: '#808A98',
       mutedText: '#5F6B78',
       surface: '#FFFFFF',
       surfaceRaised: '#FAFBFD',
@@ -31,6 +33,7 @@ const base = {
     warm: {
       background: '#F5F1E8',
       border: '#E0D8C4',
+      borderStrong: '#95886F',
       mutedText: '#6E6858',
       surface: '#FFFDF6',
       surfaceRaised: '#F7F3E9',
@@ -41,6 +44,7 @@ const base = {
     cool: {
       background: '#0B0E14',
       border: '#27303F',
+      borderStrong: '#68768C',
       mutedText: '#93A0B4',
       surface: '#121722',
       surfaceRaised: '#1A2130',
@@ -49,6 +53,7 @@ const base = {
     warm: {
       background: '#0C0E11',
       border: '#2A2E34',
+      borderStrong: '#6F736F',
       mutedText: '#9C968A',
       surface: '#14171B',
       surfaceRaised: '#1C2026',

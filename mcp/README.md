@@ -123,11 +123,11 @@ claude mcp add promptspend -- npx -y @promptspend/mcp
 
 ## What it will not do
 
-- **It will not serve you a stale price.** The catalog is fetched, never bundled,
-  because a bundled one is only as current as the last publish. If it cannot be
-  reached, the tools return an error rather than an old number — in an agent
-  context a stale figure gets relayed with full confidence, which is the exact
-  failure this project exists to prevent.
+- **It will not pass off a stale price as current.** The catalog is fetched,
+  never bundled. A retained copy may be used for at most 24 hours when the live
+  file cannot be reached, and every affected tool response carries an explicit
+  `catalog_status` warning written for the agent to relay. Past that bounded
+  grace period, the tools return an error rather than an old number.
 - **It has no benchmarks, latency or endpoint data.** Other servers do. Three
   tools is a deliberate choice about your context budget.
 - **It does not track you.** No key, no account, no logging of who calls it —

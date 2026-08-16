@@ -33,6 +33,8 @@ export const FRESH_MS = 6 * 60 * 60 * 1000;
  * ones — an offline laptop gets a day of usefulness, not a week of fiction.
  */
 export const GRACE_MS = 24 * 60 * 60 * 1000;
+/** Do not turn one offline editor into a request storm on every hover/file. */
+export const FAILURE_BACKOFF_MS = 60 * 1000;
 
 export interface CatalogReady {
   status: 'ready';
@@ -139,6 +141,7 @@ export class CatalogSource {
   private cached: Cached | null = null;
   private lastError: string | null = null;
   private inFlight: Promise<void> | null = null;
+  private retryAfter = 0;
 
   constructor(
     private readonly fetcher: CatalogFetch = defaultFetch,
@@ -163,6 +166,7 @@ export class CatalogSource {
         ageing: false,
       };
     }
+    if (now < this.retryAfter) return this.state(now);
 
     this.inFlight ??= this.refresh(now).finally(() => {
       this.inFlight = null;
@@ -181,6 +185,7 @@ export class CatalogSource {
   reset(): void {
     this.cached = null;
     this.lastError = null;
+    this.retryAfter = 0;
   }
 
   private state(now: number): CatalogState {
@@ -212,11 +217,13 @@ export class CatalogSource {
       const raw = await this.fetcher(this.url);
       this.cached = { catalog: new Catalog(raw), generatedAt: raw.generatedAt, fetchedAt: now };
       this.lastError = null;
+      this.retryAfter = 0;
     } catch (cause) {
       // Keep whatever is cached; `state()` decides whether it is still usable.
       // Losing the good copy because one request failed would turn a flaky
       // network into an outage.
       this.lastError = String(cause);
+      this.retryAfter = now + FAILURE_BACKOFF_MS;
     }
   }
 }

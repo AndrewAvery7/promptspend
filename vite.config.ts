@@ -92,7 +92,12 @@ function seoAssets(url: string): Plugin {
       this.emitFile({
         type: 'asset',
         fileName: 'robots.txt',
-        source: `# ${host}\n# Machine-readable index for assistants: ${url}/llms.txt\n\nUser-agent: *\nAllow: /\n\nSitemap: ${url}/sitemap.xml\n`,
+        source: `# ${host}\n# Machine-readable index for assistants: ${url}/llms.txt\n\nUser-agent: *\nAllow: /\nDisallow: /mobile-turnstile.html\n\nSitemap: ${url}/sitemap.xml\n`,
+      });
+      this.emitFile({
+        type: 'asset',
+        fileName: 'build.json',
+        source: `${JSON.stringify({ revision: process.env.GITHUB_SHA ?? 'local' })}\n`,
       });
 
       if (isCustomDomain) {

@@ -74,6 +74,27 @@ describe('email subscribers', () => {
     expect(results).toHaveLength(1);
   });
 
+  it('commits a pending subscription and its follows as one operation', async () => {
+    const subscriber = await upsertPendingEmail(db(), {
+      email: 'reader@example.com',
+      cadence: 'instant',
+      scope: 'followed',
+      consentIpHash: 'hash',
+      modelIds: ['a', 'b', 'a'],
+    });
+
+    expect(await getFollows(db(), 'email', subscriber.id)).toEqual(['a', 'b']);
+
+    await upsertPendingEmail(db(), {
+      email: 'reader@example.com',
+      cadence: 'weekly',
+      scope: 'followed',
+      consentIpHash: 'hash-2',
+      modelIds: ['c'],
+    });
+    expect(await getFollows(db(), 'email', subscriber.id)).toEqual(['c']);
+  });
+
   /**
    * The unsubscribe copy promises the address is deleted and that subscribing
    * again "starts fresh". Both halves are asserted here, because the code used
@@ -126,6 +147,37 @@ describe('email subscribers', () => {
     expect(await findEmailByAddress(db(), 'never-confirmed@example.com')).toBeNull();
     expect(await findEmailByAddress(db(), 'confirmed@example.com')).not.toBeNull();
   });
+
+  it('prunes dependent follows and management codes with a stale pending signup', async () => {
+    const stale = await upsertPendingEmail(db(), {
+      email: 'stale@example.com',
+      cadence: 'weekly',
+      scope: 'followed',
+      consentIpHash: null,
+      modelIds: ['model-a'],
+    });
+    await db()
+      .prepare(
+        `INSERT INTO email_manage_codes (id, subscriber_id, code_hash, created_at, expires_at, attempts)
+         VALUES ('code-1', ?, 'hash', ?, ?, 0)`,
+      )
+      .bind(
+        stale.id,
+        new Date(Date.now() - 8 * 24 * 3600 * 1000).toISOString(),
+        new Date(Date.now() + 3600 * 1000).toISOString(),
+      )
+      .run();
+    await db()
+      .prepare('UPDATE email_subscribers SET created_at = ? WHERE id = ?')
+      .bind(new Date(Date.now() - 8 * 24 * 3600 * 1000).toISOString(), stale.id)
+      .run();
+
+    expect(await prunePendingSubscribers(db())).toBe(1);
+    expect(await getFollows(db(), 'email', stale.id)).toEqual([]);
+    expect(
+      await db().prepare('SELECT id FROM email_manage_codes WHERE subscriber_id = ?').bind(stale.id).first(),
+    ).toBeNull();
+  });
 });
 
 describe('fan-out targeting', () => {
@@ -145,6 +197,14 @@ describe('fan-out targeting', () => {
   it('returns a subscriber once even when several followed models change', async () => {
     const subscriber = await subscribe('reader@example.com', 'followed', ['a', 'b', 'c']);
     const recipients = await emailRecipientsFor(db(), ['a', 'b', 'c'], 'instant');
+    expect(recipients.filter((row) => row.id === subscriber.id)).toHaveLength(1);
+  });
+
+  it('targets correctly when a change set exceeds one D1 bind batch', async () => {
+    const subscriber = await subscribe('reader@example.com', 'followed', ['model-94']);
+    const modelIds = Array.from({ length: 120 }, (_, index) => `model-${index}`);
+    const recipients = await emailRecipientsFor(db(), modelIds, 'instant');
+    expect(recipients.map((row) => row.id)).toContain(subscriber.id);
     expect(recipients.filter((row) => row.id === subscriber.id)).toHaveLength(1);
   });
 

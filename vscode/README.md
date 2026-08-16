@@ -101,6 +101,11 @@ find model ids. No telemetry, no account, no prompt text leaves your machine.
 Token counting runs locally, using the model's own tokenizer where one can be
 run and a clearly labelled ratio where it cannot.
 
+The workspace sweep opens the configured source-file types, including `.env`
+files when `dotenv` is enabled. Their contents are scanned in memory only for
+model ids; they are never transmitted, logged, or stored. VS Code's
+`files.exclude` rules are honored.
+
 ---
 
 ## Settings

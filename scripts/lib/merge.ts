@@ -34,6 +34,9 @@ import {
 export const DISAGREEMENT_THRESHOLD = 0.2;
 /** A day-over-day move beyond this fraction requires human sign-off. */
 export const CHANGE_REVIEW_THRESHOLD = 0.5;
+/** Hand-verified rows must be re-read periodically; otherwise a frozen
+ * override can outlive a vendor repricing without any automated signal. */
+export const VENDOR_REVIEW_MAX_AGE_DAYS = 30;
 
 export interface MergeInput {
   litellm: RawRate[];
@@ -50,7 +53,13 @@ export interface MergeInput {
  *  figures (the disagreement percentage, both sides' rates) and therefore
  *  changes whenever a rate drifts by a rounding step. Anything deciding
  *  "is this flag new?" must key on the code; only humans read the text. */
-export type ReviewCode = 'upstream-missing' | 'openrouter-disagreement' | 'day-move' | 'new-model';
+export type ReviewCode =
+  | 'upstream-missing'
+  | 'openrouter-disagreement'
+  | 'override-drift'
+  | 'vendor-verification-stale'
+  | 'day-move'
+  | 'new-model';
 
 /** One raised reason: a stable code plus its human-facing rendering. */
 interface Reason {
@@ -86,6 +95,14 @@ export interface MergeResult {
 
 export function mergeCatalog(input: MergeInput): MergeResult {
   const { litellm, openrouter, allowlist, overrides, previous, generatedAt } = input;
+  const duplicateOverrideIds = overrides
+    .map((override) => override.id)
+    .filter((id, index, ids) => ids.indexOf(id) !== index);
+  if (duplicateOverrideIds.length > 0) {
+    throw new Error(
+      `duplicate pricing override id(s): ${[...new Set(duplicateOverrideIds)].sort().join(', ')}`,
+    );
+  }
   const overrideById = new Map(overrides.map((o) => [o.id, o]));
   const previousById = new Map((previous?.models ?? []).map((m) => [m.id, m]));
   const feedById = new Map(litellm.map((r) => [r.id, r]));
@@ -106,6 +123,12 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     const override = overrideById.get(id);
     const before = previousById.get(id);
 
+    if (override?.vendorVerified && (!override.lastVerified || !override.verifiedUrl)) {
+      throw new Error(
+        `${id}: vendorVerified overrides require both lastVerified and verifiedUrl; refusing to invent provenance`,
+      );
+    }
+
     // Missing upstream and not hand-curated: keep yesterday's row, mark it.
     if (!feed && !override?.pricing) {
       if (!before) continue;
@@ -117,8 +140,10 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       staleIds.push(id);
       models.push({
         ...before,
+        status: before.status === 'current' ? 'legacy' : before.status,
         provenance: {
           ...before.provenance,
+          statusBeforeStale: before.provenance.statusBeforeStale ?? before.status,
           stale: true,
           needsReview: true,
           reviewNote: mergeNote(before.provenance.reviewNote, reason.text),
@@ -146,9 +171,44 @@ export function mergeCatalog(input: MergeInput): MergeResult {
         : 'vendor';
 
     const reasons: Reason[] = [];
+    const overrideSuppliesBasePrice =
+      override?.pricing?.input !== undefined || override?.pricing?.output !== undefined;
+
+    // Rung 1 still wins, but rung 2 must remain a drift detector. Without this
+    // comparison a literal vendor override could mask a later repricing
+    // forever while the daily run continued to report success.
+    if (feed && overrideSuppliesBasePrice) {
+      const inputGap =
+        override?.pricing?.input === undefined
+          ? 0
+          : relativeGap(override.pricing.input, feed.inputPerMillion);
+      const outputGap =
+        override?.pricing?.output === undefined
+          ? 0
+          : relativeGap(override.pricing.output, feed.outputPerMillion);
+      if (inputGap > DISAGREEMENT_THRESHOLD || outputGap > DISAGREEMENT_THRESHOLD) {
+        reasons.push({
+          code: 'override-drift',
+          text:
+            `vendor override differs from the automated feed (${formatPct(Math.max(inputGap, outputGap))}): ` +
+            `$${feed.inputPerMillion}/$${feed.outputPerMillion} vs $${input_}/$${output}`,
+        });
+      }
+    }
+
+    if (override?.vendorVerified && override.lastVerified) {
+      const verifiedAt = Date.parse(`${override.lastVerified}T00:00:00Z`);
+      const ageDays = Math.floor((generatedAt.getTime() - verifiedAt) / 86_400_000);
+      if (Number.isFinite(ageDays) && ageDays > VENDOR_REVIEW_MAX_AGE_DAYS) {
+        reasons.push({
+          code: 'vendor-verification-stale',
+          text: `vendor verification is ${ageDays} days old — re-read the first-party pricing page`,
+        });
+      }
+    }
 
     // Rung 3: independent cross-check. Never overwrites, only raises a hand.
-    if (feed && !override?.vendorVerified) {
+    if (feed && !overrideSuppliesBasePrice) {
       const peer = openrouter.get(comparisonKey(feed.sourceKey));
       if (peer) {
         const inputGap = relativeGap(input_, peer.inputPerMillion);
@@ -198,6 +258,9 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       output,
       ...(cachedInput !== undefined ? { cachedInput } : {}),
       ...(override?.pricing?.cacheWrite !== undefined ? { cacheWrite: override.pricing.cacheWrite } : {}),
+      ...(override?.pricing?.cacheStoragePerMillionTokenHour !== undefined
+        ? { cacheStoragePerMillionTokenHour: override.pricing.cacheStoragePerMillionTokenHour }
+        : {}),
       ...(override?.pricing?.batchDiscount !== undefined
         ? { batchDiscount: override.pricing.batchDiscount }
         : {}),
@@ -252,7 +315,12 @@ export function mergeCatalog(input: MergeInput): MergeResult {
         override?.displayName ??
         before?.displayName ??
         prettyName(feed?.sourceKey ?? id, family?.stripPrefix ?? undefined),
-      status: override?.status ?? before?.status ?? 'current',
+      status:
+        override?.status ??
+        (before?.provenance.stale
+          ? (before.provenance.statusBeforeStale ?? before.status)
+          : before?.status) ??
+        'current',
       contextWindow: override?.contextWindow ?? feed?.contextWindow ?? before?.contextWindow ?? 128_000,
       pricing,
       tokenizer,

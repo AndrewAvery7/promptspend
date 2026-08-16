@@ -68,6 +68,7 @@ const PRICING_FIELDS = [
   'output',
   'cachedInput',
   'cacheWrite',
+  'cacheStoragePerMillionTokenHour',
   'batchDiscount',
   'intro.input',
   'intro.output',
@@ -103,6 +104,7 @@ const REVIEW_FIELDS = [
   'provenance.needsReview',
   'provenance.reviewNote',
   'provenance.stale',
+  'provenance.statusBeforeStale',
   'provenance.verifiedUrl',
   'provenance.lastChanged',
 ] as const;
@@ -289,6 +291,19 @@ function diffProviders(previous: Provider[], next: Provider[]): FieldChange[] {
  * not run".
  */
 export function catalogHash(catalog: PricingCatalog): string {
+  // New optional columns enter the fingerprint only once at least one row
+  // carries them. That preserves the hash of an already-published catalog
+  // across a code-only schema expansion while still fingerprinting the new
+  // data on the first run that publishes it.
+  const hashPricingFields = PRICING_FIELDS.filter(
+    (field) =>
+      field !== 'cacheStoragePerMillionTokenHour' ||
+      catalog.models.some((model) => !missing(at(model.pricing, field))),
+  );
+  const hashReviewFields = REVIEW_FIELDS.filter(
+    (field) =>
+      field !== 'provenance.statusBeforeStale' || catalog.models.some((model) => !missing(at(model, field))),
+  );
   const canonical = JSON.stringify({
     schemaVersion: catalog.schemaVersion,
     providers: [...catalog.providers]
@@ -299,8 +314,8 @@ export function catalogHash(catalog: PricingCatalog): string {
       .map((m) => [
         m.id,
         ...METADATA_FIELDS.map((f) => at(m, f) ?? null),
-        ...PRICING_FIELDS.map((f) => at(m.pricing, f) ?? null),
-        ...REVIEW_FIELDS.filter((f) => f !== 'provenance.lastChanged').map((f) => at(m, f) ?? null),
+        ...hashPricingFields.map((f) => at(m.pricing, f) ?? null),
+        ...hashReviewFields.filter((f) => f !== 'provenance.lastChanged').map((f) => at(m, f) ?? null),
       ]),
   });
   return fnv1a(canonical);

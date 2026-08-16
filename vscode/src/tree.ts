@@ -65,9 +65,26 @@ export class WorkspaceCostProvider implements vscode.TreeDataProvider<Node> {
   /** Sweep the workspace and rebuild the tree. */
   async scan(token?: vscode.CancellationToken): Promise<void> {
     const current = this.settings();
-    const state = this.service.peek();
+    const prepared = await this.service.scan('');
+    if (prepared.state.status !== 'ready') {
+      this.inventory = null;
+      this.notice = 'Prices are unavailable, so nothing is being shown rather than shown wrong.';
+      this.changed.fire(undefined);
+      return;
+    }
 
-    const found = await vscode.workspace.findFiles(SCAN_GLOB, '**/node_modules/**', FILE_CAP + 1, token);
+    const configuredExcludes = vscode.workspace
+      .getConfiguration('files')
+      .get<Record<string, boolean>>('exclude', {});
+    const excluded = [
+      '**/node_modules/**',
+      '**/.git/**',
+      ...Object.entries(configuredExcludes)
+        .filter(([, enabled]) => enabled)
+        .map(([pattern]) => pattern),
+    ];
+    const excludeGlob = `{${excluded.join(',')}}`;
+    const found = await vscode.workspace.findFiles(SCAN_GLOB, excludeGlob, FILE_CAP + 1, token);
     const capped = found.length > FILE_CAP;
     const files = capped ? found.slice(0, FILE_CAP) : found;
 
@@ -80,8 +97,9 @@ export class WorkspaceCostProvider implements vscode.TreeDataProvider<Node> {
 
       let text: string;
       try {
+        const stat = await vscode.workspace.fs.stat(uri);
+        if (stat.size > MAX_FILE_BYTES) continue;
         const bytes = await vscode.workspace.fs.readFile(uri);
-        if (bytes.byteLength > MAX_FILE_BYTES) continue;
         text = new TextDecoder().decode(bytes);
       } catch {
         // A file that vanished mid-sweep, or one we cannot read. Skipping it is
@@ -96,18 +114,14 @@ export class WorkspaceCostProvider implements vscode.TreeDataProvider<Node> {
 
       scanned.push({
         path: vscode.workspace.asRelativePath(uri),
+        uri: uri.toString(),
         matches,
         lineStarts: lineStartsOf(text),
       });
     }
 
-    if (state.status !== 'ready' && this.service.peek().status !== 'ready') {
-      this.inventory = null;
-      this.notice = 'Prices are unavailable, so nothing is being shown rather than shown wrong.';
-    } else {
-      this.inventory = buildInventory(scanned, capped ? found.length - FILE_CAP : 0);
-      this.notice = null;
-    }
+    this.inventory = buildInventory(scanned, capped ? found.length - FILE_CAP : 0);
+    this.notice = null;
     this.changed.fire(undefined);
   }
 
@@ -136,18 +150,15 @@ export class WorkspaceCostProvider implements vscode.TreeDataProvider<Node> {
       return item;
     }
 
-    const { path, line, written } = node.reference;
+    const { path, uri, line, written } = node.reference;
     const item = new vscode.TreeItem(path, vscode.TreeItemCollapsibleState.None);
     item.description = `line ${line + 1} · ${written}`;
-    item.resourceUri = vscode.Uri.file(path);
+    item.resourceUri = vscode.Uri.parse(uri);
     item.iconPath = vscode.ThemeIcon.File;
     item.command = {
       command: 'vscode.open',
       title: 'Open',
-      arguments: [
-        vscode.Uri.joinPath(vscode.workspace.workspaceFolders?.[0]?.uri ?? vscode.Uri.file('.'), path),
-        { selection: new vscode.Range(line, 0, line, 0) },
-      ],
+      arguments: [vscode.Uri.parse(uri), { selection: new vscode.Range(line, 0, line, 0) }],
     };
     return item;
   }

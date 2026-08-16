@@ -21,6 +21,10 @@ permissions:
   # To dispatch the deploy for a commit this job pushes — see the last step.
   actions: write
 
+concurrency:
+  group: sync-pricing
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -32,7 +36,10 @@ jobs:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild
 
       - name: Fetch, merge and validate pricing
         id: sync
@@ -95,11 +102,13 @@ jobs:
           steps.sync.outputs.degraded != 'true' &&
           steps.sync.outputs.changed == 'true' &&
           steps.sync.outputs.needs_review != 'true'
+        env:
+          SYNC_SUMMARY: ${{ steps.sync.outputs.summary }}
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
           git add public/data/pricing.json public/data/sync-status.json docs/pricing-changelog.md
-          git commit -m "data: ${{ steps.sync.outputs.summary }}"
+          git commit -m "data: $SYNC_SUMMARY"
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
@@ -156,7 +165,7 @@ jobs:
       # was actually pushed: Pages keys a deployment by commit SHA and rejects a
       # second one for a SHA already deployed, so firing on every sync would turn
       # a quiet morning into a red deploy.
-      - name: Deploy what this run published
+      - name: Deploy and notify what this run published
         if: >-
           steps.publish-stable.outputs.pushed == 'true' ||
           steps.publish-degraded.outputs.pushed == 'true' ||
@@ -164,8 +173,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Pushed a commit — dispatching the deploy it will not trigger on its own."
+          echo "Pushed a commit — dispatching the workflows GITHUB_TOKEN will not trigger on its own."
           gh workflow run deploy.yml --ref main
+          gh workflow run notify-alerts.yml --ref main
 
       # Last, so the manifest above is committed first: a degraded run should
       # still be loud.

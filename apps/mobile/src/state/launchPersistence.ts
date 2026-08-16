@@ -58,8 +58,12 @@ function parseSavedScenario(value: unknown): SavedScenario | null {
     typeof value.cacheEnabled === 'boolean' &&
     typeof value.cacheSharePercent === 'number' &&
     Number.isFinite(value.cacheSharePercent) &&
+    value.cacheSharePercent >= 0 &&
+    value.cacheSharePercent <= 100 &&
     typeof value.reasoningMultiplier === 'number' &&
-    Number.isFinite(value.reasoningMultiplier);
+    Number.isFinite(value.reasoningMultiplier) &&
+    value.reasoningMultiplier >= 1 &&
+    value.reasoningMultiplier <= 5;
   if (!valid) return null;
   const pastedFields = Array.isArray(value.pastedFields)
     ? value.pastedFields.filter(
@@ -93,15 +97,19 @@ function parseSavedScenario(value: unknown): SavedScenario | null {
 
 function isWorkload(value: unknown): boolean {
   if (!isRecord(value)) return false;
-  return [
-    value.conversationsPerDay,
-    value.monthlyActiveUsers,
-    value.outputTokens,
-    value.revenuePerUserPerMonth,
-    value.systemTokens,
-    value.turns,
-    value.userTokens,
-  ].every((item) => typeof item === 'number' && Number.isFinite(item) && item >= 0);
+  return (
+    isBoundedNumber(value.conversationsPerDay, 0, 100_000_000) &&
+    isBoundedNumber(value.monthlyActiveUsers, 1, 1_000_000_000) &&
+    isBoundedNumber(value.outputTokens, 0, 200_000) &&
+    isBoundedNumber(value.revenuePerUserPerMonth, 0, 1_000_000) &&
+    isBoundedNumber(value.systemTokens, 0, 200_000) &&
+    isBoundedNumber(value.turns, 1, 200) &&
+    isBoundedNumber(value.userTokens, 0, 200_000)
+  );
+}
+
+function isBoundedNumber(value: unknown, min: number, max: number): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -68,6 +68,24 @@ describe('signed link tokens', () => {
     });
   });
 
+  it('expires a mobile preferences token after 30 minutes', async () => {
+    const issuedAt = Date.UTC(2026, 0, 1);
+    const token = await issueToken(SECRET, 'mobile-preferences', 'sub_123', issuedAt);
+
+    await expect(
+      verifyToken(SECRET, 'mobile-preferences', token, issuedAt + 29 * 60 * 1000),
+    ).resolves.toEqual({
+      ok: true,
+      subjectId: 'sub_123',
+    });
+    await expect(
+      verifyToken(SECRET, 'mobile-preferences', token, issuedAt + 31 * 60 * 1000),
+    ).resolves.toEqual({
+      ok: false,
+      reason: 'expired',
+    });
+  });
+
   /**
    * Unsubscribe links have to keep working. Someone digging up a year-old
    * newsletter to get off the list must not be told the link has expired —

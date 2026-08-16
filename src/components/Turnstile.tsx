@@ -23,6 +23,7 @@ interface TurnstileApi {
   render: (
     element: HTMLElement,
     options: {
+      action: string;
       sitekey: string;
       theme: 'light' | 'dark' | 'auto';
       callback: (token: string) => void;
@@ -97,6 +98,7 @@ export function Turnstile({ siteKey, theme, onToken }: TurnstileProps) {
         widgetId = window.turnstile.render(container.current, {
           sitekey: siteKey,
           theme,
+          action: 'web_email_alerts',
           callback: (token) => callback.current(token),
           'expired-callback': () => callback.current(null),
           'error-callback': () => callback.current(null),

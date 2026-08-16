@@ -24,13 +24,26 @@ export function AppText({ accessibilityRole, style, ...props }: TextProps) {
       : isNumeric
         ? FONT_FAMILIES.numeric
         : FONT_FAMILIES.body);
+  const requestedWeight = Number(flattened?.fontWeight ?? 400);
+  const fontWeight: TextStyle['fontWeight'] =
+    fontFamily === FONT_FAMILIES.display
+      ? requestedWeight >= 600
+        ? '700'
+        : '500'
+      : fontFamily === FONT_FAMILIES.numeric
+        ? requestedWeight >= 600
+          ? '700'
+          : '400'
+        : requestedWeight >= 500
+          ? '600'
+          : '400';
 
   return (
     <NativeText
       accessibilityRole={accessibilityRole}
       allowFontScaling
       {...props}
-      style={[{ fontFamily }, style]}
+      style={[style, { fontFamily, fontWeight }]}
     />
   );
 }

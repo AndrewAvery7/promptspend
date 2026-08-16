@@ -3,7 +3,7 @@ slug: support
 title: Support | PromptSpend
 description: Help with PromptSpend estimates, pricing freshness, private pasted text, sharing, accessibility, alerts, and app troubleshooting.
 heading: PromptSpend Support
-updated: 2026-08-12
+updated: 2026-08-16
 ---
 
 PromptSpend helps you estimate, compare, explain, and reduce LLM API cost. The estimates use published prices and the workload assumptions you provide; actual provider bills can vary.
@@ -32,7 +32,7 @@ Saved scenarios can be removed from the saved-scenarios sheet. Appearance and on
 
 ## Alerts
 
-The native app shows current data and links to the hosted alert service, but the first public release does not register for native push notifications. Email and browser-push subscriptions are managed on the PromptSpend website and can be cancelled from their unsubscribe or preferences links.
+The native app can create, confirm, review, change, and delete an optional email price-alert subscription. Request a six-digit management code in Data & Alerts, enter the code from your email, and update the cadence or followed models directly in the app. The code expires after 10 minutes; the resulting in-app management session expires after 30 minutes. Every alert email also includes an unsubscribe link. The first public release does not register for native push notifications; browser-push subscriptions remain a website feature.
 
 ## Accessibility
 

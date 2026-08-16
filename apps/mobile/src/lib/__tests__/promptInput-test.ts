@@ -109,7 +109,7 @@ describe('private prompt input conversion', () => {
     expect(compareModelsForInputs([], empty, numericValues, scale)).toEqual([]);
     expect(compareModelsForInputs([freeB, freeA], empty, numericValues, scale)).toEqual([
       expect.objectContaining({ deltaPerMonth: 0, isCheapest: true, multipleOfCheapest: 1 }),
-      expect.objectContaining({ deltaPerMonth: 0, isCheapest: false, multipleOfCheapest: 1 }),
+      expect.objectContaining({ deltaPerMonth: 0, isCheapest: true, multipleOfCheapest: 1 }),
     ]);
   });
 });

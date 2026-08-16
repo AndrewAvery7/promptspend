@@ -178,11 +178,17 @@ export function CatalogExplorer({
                   style={[
                     styles.selectButton,
                     selected && styles.selectButtonActive,
-                    !selected && selectedIds.length >= 4 && styles.disabled,
+                    !selected && selectedIds.length >= 4 && styles.selectButtonDisabled,
                   ]}
                 >
-                  <Text style={[styles.selectText, selected && styles.selectTextActive]}>
-                    {selected ? 'Selected' : 'Compare'}
+                  <Text
+                    style={[
+                      styles.selectText,
+                      selected && styles.selectTextActive,
+                      !selected && selectedIds.length >= 4 && styles.selectTextDisabled,
+                    ]}
+                  >
+                    {selected ? 'Selected' : selectedIds.length >= 4 ? 'Limit 4' : 'Compare'}
                   </Text>
                 </Pressable>
               </View>
@@ -332,7 +338,7 @@ function createStyles(theme: MobileTheme) {
     body: { color: theme.mutedText, fontSize: 14, lineHeight: 21 },
     card: {
       backgroundColor: theme.surface,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 16,
       borderWidth: 1,
       gap: 12,
@@ -342,7 +348,7 @@ function createStyles(theme: MobileTheme) {
     note: { color: theme.mutedText, fontSize: 11, lineHeight: 16 },
     chart: {
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       height: 252,
@@ -374,7 +380,7 @@ function createStyles(theme: MobileTheme) {
     },
     search: {
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       color: theme.text,
@@ -438,9 +444,10 @@ function createStyles(theme: MobileTheme) {
       paddingHorizontal: 11,
     },
     selectButtonActive: { backgroundColor: theme.accent },
+    selectButtonDisabled: { backgroundColor: theme.surfaceRaised, borderColor: theme.borderStrong },
     selectText: { color: theme.accent, fontSize: 11, fontWeight: '800' },
     selectTextActive: { color: theme.onAccent },
-    disabled: { opacity: 0.35 },
+    selectTextDisabled: { color: theme.mutedText },
     rates: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
     rate: { color: theme.text, fontSize: 12, fontVariant: ['tabular-nums'], fontWeight: '700' },
     detailButton: { alignItems: 'flex-start', justifyContent: 'center', minHeight: 44 },

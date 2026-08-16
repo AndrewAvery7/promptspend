@@ -9,12 +9,14 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
+import { AppState } from 'react-native';
 
 import { SUGGESTED_CACHE_SHARE, type Catalog } from '@promptspend/core';
 
-import { loadMobileCatalog, type MobileCatalogResult } from '@/data/catalog';
+import { loadMobileCatalog, MOBILE_CATALOG_MAX_AGE_MS, type MobileCatalogResult } from '@/data/catalog';
 import { defaultComparisonSelection } from '@/lib/comparison';
 import { createDefaultPromptInputs, type PromptFieldKey, type PromptInputState } from '@/lib/promptInput';
 import { createPersistedLaunchState, parsePersistedLaunchState } from '@/state/launchPersistence';
@@ -24,7 +26,8 @@ import {
   renameSavedScenarios,
 } from '@/state/scenarioLifecycle';
 
-const STORAGE_KEY = 'promptspend:launch:v1';
+export const STORAGE_KEY = 'promptspend:launch:v1';
+export const QUARANTINE_STORAGE_KEY = 'promptspend:launch:quarantine:v1';
 export const DEFAULT_MODEL_ID = 'claude-sonnet-5';
 
 export interface WorkloadState {
@@ -156,6 +159,7 @@ interface LaunchStateValue {
   favorites: string[];
   hydrated: boolean;
   onboardingComplete: boolean;
+  persistenceNotice: string | null;
   promptInputs: PromptInputState;
   reasoningMultiplier: number;
   restoredPasteFields: PromptFieldKey[];
@@ -199,11 +203,15 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [savedScenarios, setSavedScenarios] = useState<SavedScenario[]>([]);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
+  const [persistenceNotice, setPersistenceNotice] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [restoredPasteFields, setRestoredPasteFields] = useState<PromptFieldKey[]>([]);
+  const appState = useRef(AppState.currentState);
+  const suppressPersistence = useRef(false);
 
   const acceptCatalog = useCallback((result: MobileCatalogResult) => {
     setCatalogResult(result);
+    setSelectedId((current) => resolveSelectedModelId(result.catalog, current));
     setComparisonIds((current) => reconcileComparisonSelection(result.catalog, current));
     setCatalogError(null);
   }, []);
@@ -213,12 +221,21 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
     try {
       acceptCatalog(await loadMobileCatalog());
     } catch (error) {
-      setCatalogResult(null);
-      setCatalogError(error instanceof Error ? error.message : 'Current pricing is unavailable.');
+      const message = error instanceof Error ? error.message : 'Current pricing is unavailable.';
+      if (catalogResult && isCatalogResultUsable(catalogResult)) {
+        setCatalogResult({
+          ...catalogResult,
+          warning: 'Live prices could not be refreshed. Showing the last validated download.',
+        });
+        setCatalogError(null);
+      } else {
+        setCatalogResult(null);
+        setCatalogError(message);
+      }
     } finally {
       setRefreshing(false);
     }
-  }, [acceptCatalog]);
+  }, [acceptCatalog, catalogResult]);
 
   useEffect(() => {
     let active = true;
@@ -237,19 +254,43 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
   }, [acceptCatalog]);
 
   useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      const returningToForeground =
+        (appState.current === 'background' || appState.current === 'inactive') && nextState === 'active';
+      appState.current = nextState;
+      if (returningToForeground && (!catalogResult || !isCatalogResultUsable(catalogResult))) {
+        void refreshCatalog();
+      }
+    });
+    return () => subscription.remove();
+  }, [catalogResult, refreshCatalog]);
+
+  useEffect(() => {
     let active = true;
     void AsyncStorage.getItem(STORAGE_KEY)
       .then((stored) => {
         if (!active || !stored) return;
         const parsed: unknown = JSON.parse(stored);
         const safe = parsePersistedLaunchState(parsed);
-        if (!safe) return;
+        if (!safe) {
+          suppressPersistence.current = true;
+          setPersistenceNotice(
+            'Saved scenarios could not be read on this device. A recovery copy was preserved and the original data was not overwritten.',
+          );
+          return AsyncStorage.setItem(QUARANTINE_STORAGE_KEY, stored);
+        }
         setFavorites(safe.favorites);
         setSavedScenarios(safe.savedScenarios);
         setOnboardingComplete(safe.onboardingComplete);
       })
-      .catch(() => {
-        // Optional local launch state must never stop the app from opening.
+      .catch(async () => {
+        if (!active) return;
+        suppressPersistence.current = true;
+        setPersistenceNotice(
+          'Saved scenarios could not be read on this device. A recovery copy was preserved and the original data was not overwritten.',
+        );
+        const stored = await AsyncStorage.getItem(STORAGE_KEY).catch(() => null);
+        if (stored) await AsyncStorage.setItem(QUARANTINE_STORAGE_KEY, stored).catch(() => undefined);
       })
       .finally(() => {
         if (active) setHydrated(true);
@@ -260,7 +301,7 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
   }, []);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || suppressPersistence.current) return;
     const persisted = createPersistedLaunchState({
       favorites,
       onboardingComplete,
@@ -328,17 +369,23 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
     ],
   );
 
-  const restoreScenario = useCallback((scenario: SavedScenario) => {
-    setSelectedId(scenario.selectedId);
-    setComparisonIds([...scenario.comparisonIds]);
-    setWorkload({ ...scenario.workload });
-    setPromptInputs(createDefaultPromptInputs());
-    setCacheEnabled(scenario.cacheEnabled);
-    setCacheSharePercent(scenario.cacheSharePercent);
-    setReasoningMultiplier(scenario.reasoningMultiplier);
-    setBatchEnabled(scenario.batchEnabled);
-    setRestoredPasteFields([...scenario.pastedFields]);
-  }, []);
+  const restoreScenario = useCallback(
+    (scenario: SavedScenario) => {
+      const catalog = catalogResult?.catalog;
+      setSelectedId(catalog ? resolveSelectedModelId(catalog, scenario.selectedId) : scenario.selectedId);
+      setComparisonIds(
+        catalog ? reconcileComparisonSelection(catalog, scenario.comparisonIds) : [...scenario.comparisonIds],
+      );
+      setWorkload({ ...scenario.workload });
+      setPromptInputs(createDefaultPromptInputs());
+      setCacheEnabled(scenario.cacheEnabled);
+      setCacheSharePercent(scenario.cacheSharePercent);
+      setReasoningMultiplier(scenario.reasoningMultiplier);
+      setBatchEnabled(scenario.batchEnabled);
+      setRestoredPasteFields([...scenario.pastedFields]);
+    },
+    [catalogResult],
+  );
 
   const duplicateScenario = useCallback((scenario: SavedScenario) => {
     const duplicate = duplicateSavedScenario(
@@ -366,6 +413,7 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
       favorites,
       hydrated,
       onboardingComplete,
+      persistenceNotice,
       promptInputs,
       recoverScenario: (scenario) =>
         setSavedScenarios((current) =>
@@ -416,6 +464,7 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
       favorites,
       hydrated,
       onboardingComplete,
+      persistenceNotice,
       promptInputs,
       reasoningMultiplier,
       restoredPasteFields,
@@ -439,8 +488,19 @@ export function useLaunchState(): LaunchStateValue {
   return value;
 }
 
-function reconcileComparisonSelection(catalog: Catalog, selectedIds: readonly string[]): string[] {
-  const valid = selectedIds.filter((id) => catalog.get(id) !== undefined);
+export function reconcileComparisonSelection(catalog: Catalog, selectedIds: readonly string[]): string[] {
+  const valid = [...new Set(selectedIds)].filter((id) => catalog.get(id) !== undefined).slice(0, 4);
   if (valid.length > 0) return valid;
   return defaultComparisonSelection(catalog.primaryModels);
+}
+
+export function resolveSelectedModelId(catalog: Catalog, selectedId: string): string {
+  if (catalog.get(selectedId)) return selectedId;
+  if (catalog.get(DEFAULT_MODEL_ID)) return DEFAULT_MODEL_ID;
+  return catalog.primaryModels[0]?.id ?? '';
+}
+
+export function isCatalogResultUsable(result: MobileCatalogResult, now = new Date()): boolean {
+  const age = now.getTime() - result.refreshedAt.getTime();
+  return age >= 0 && age < MOBILE_CATALOG_MAX_AGE_MS;
 }

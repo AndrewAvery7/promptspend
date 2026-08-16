@@ -9,7 +9,17 @@
 export function openApiDocument(origin: string): unknown {
   const model = {
     type: 'object',
-    required: ['id', 'providerId', 'displayName', 'status', 'contextWindow', 'pricing', 'provenance'],
+    required: [
+      'id',
+      'providerId',
+      'displayName',
+      'status',
+      'contextWindow',
+      'pricing',
+      'tokenizer',
+      'capabilities',
+      'provenance',
+    ],
     properties: {
       id: { type: 'string', example: 'claude-opus-5' },
       providerId: { type: 'string', example: 'anthropic' },
@@ -35,12 +45,35 @@ export function openApiDocument(origin: string): unknown {
           output: { type: 'number', example: 25 },
           cachedInput: { type: 'number' },
           cacheWrite: { type: 'number' },
+          cacheStoragePerMillionTokenHour: {
+            type: 'number',
+            description: 'Separate cache-residency charge; not included in token-only estimates.',
+          },
           batchDiscount: { type: 'number', description: 'Multiplier, e.g. 0.5 for half price.' },
-          intro: { type: 'object', description: 'Promotional rates, with the date they lapse.' },
+          intro: {
+            type: 'object',
+            required: ['input', 'output', 'until'],
+            description: 'Promotional rates, valid through the named UTC date.',
+            properties: {
+              input: { type: 'number' },
+              output: { type: 'number' },
+              cachedInput: { type: 'number' },
+              cacheWrite: { type: 'number' },
+              until: { type: 'string', format: 'date' },
+            },
+          },
           longContext: {
             type: 'object',
+            required: ['thresholdTokens', 'input', 'output'],
             description:
               'Rates that replace the base ones once a single request exceeds thresholdTokens. The whole request is billed at these rates, not just the excess.',
+            properties: {
+              thresholdTokens: { type: 'integer' },
+              input: { type: 'number' },
+              output: { type: 'number' },
+              cachedInput: { type: 'number' },
+              cacheWrite: { type: 'number' },
+            },
           },
         },
       },
@@ -61,7 +94,14 @@ export function openApiDocument(origin: string): unknown {
           lastChanged: { type: 'string', format: 'date' },
           verifiedUrl: { type: 'string', format: 'uri' },
           needsReview: { type: 'boolean' },
+          reviewNote: { type: 'string' },
+          reviewCodes: { type: 'array', items: { type: 'string' } },
           stale: { type: 'boolean' },
+          statusBeforeStale: {
+            type: 'string',
+            enum: ['current', 'legacy', 'deprecated'],
+            description: 'Original status retained while an upstream-missing row is demoted.',
+          },
         },
       },
     },
@@ -74,7 +114,8 @@ export function openApiDocument(origin: string): unknown {
     },
     'X-PromptSpend-Stale': {
       schema: { type: 'string', enum: ['true'] },
-      description: 'Present only when the origin was unreachable and a retained copy was served.',
+      description:
+        'Present when a retained copy is served, the catalog exceeds the 48-hour ceiling, or the sync manifest is degraded.',
     },
   };
 
@@ -97,6 +138,47 @@ export function openApiDocument(origin: string): unknown {
       description: 'Routing aliases are excluded by default so one product is not counted twice.',
     },
   ];
+  const commonErrors = {
+    '405': { description: 'Only GET and HEAD are supported.' },
+    '503': { description: 'The catalog could not be read or is outside the freshness contract.' },
+  };
+  const priceRow = {
+    type: 'object',
+    required: [
+      'id',
+      'provider',
+      'displayName',
+      'input',
+      'output',
+      'cachedInput',
+      'cacheWrite',
+      'cacheStoragePerMillionTokenHour',
+      'contextWindow',
+      'maxOutput',
+      'status',
+      'lastVerified',
+      'promotionalUntil',
+      'standardInput',
+      'standardOutput',
+    ],
+    properties: {
+      id: { type: 'string' },
+      provider: { type: 'string' },
+      displayName: { type: 'string' },
+      input: { type: 'number' },
+      output: { type: 'number' },
+      cachedInput: { type: ['number', 'null'] },
+      cacheWrite: { type: ['number', 'null'] },
+      cacheStoragePerMillionTokenHour: { type: ['number', 'null'] },
+      contextWindow: { type: 'integer' },
+      maxOutput: { type: ['integer', 'null'] },
+      status: { type: 'string' },
+      lastVerified: { type: 'string', format: 'date' },
+      promotionalUntil: { type: ['string', 'null'], format: 'date' },
+      standardInput: { type: ['number', 'null'] },
+      standardOutput: { type: ['number', 'null'] },
+    },
+  };
 
   return {
     openapi: '3.1.0',
@@ -141,6 +223,8 @@ export function openApiDocument(origin: string): unknown {
                 },
               },
             },
+            '400': { description: 'A filter value is invalid.' },
+            ...commonErrors,
           },
         },
       },
@@ -156,6 +240,8 @@ export function openApiDocument(origin: string): unknown {
               content: { 'application/json': { schema: model } },
             },
             '404': { description: 'No model with that id.' },
+            '400': { description: 'The model id is not valid URL encoding.' },
+            ...commonErrors,
           },
         },
       },
@@ -163,7 +249,25 @@ export function openApiDocument(origin: string): unknown {
         get: {
           summary: 'Every provider, with a model count',
           operationId: 'listProviders',
-          responses: { '200': { description: 'The providers.', headers: freshnessHeaders } },
+          responses: {
+            '200': {
+              description: 'The providers.',
+              headers: freshnessHeaders,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      generatedAt: { type: 'string', format: 'date-time' },
+                      count: { type: 'integer' },
+                      providers: { type: 'array', items: { type: 'object' } },
+                    },
+                  },
+                },
+              },
+            },
+            ...commonErrors,
+          },
         },
       },
       '/v1/prices': {
@@ -179,7 +283,22 @@ export function openApiDocument(origin: string): unknown {
                 '`standardInput` and `standardOutput` say when it lapses and what follows. Those ' +
                 'three are null otherwise. Use /v1/models for the full pricing object.',
               headers: freshnessHeaders,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      generatedAt: { type: 'string', format: 'date-time' },
+                      unit: { type: 'string' },
+                      count: { type: 'integer' },
+                      prices: { type: 'array', items: priceRow },
+                    },
+                  },
+                },
+              },
             },
+            '400': { description: 'A filter value is invalid.' },
+            ...commonErrors,
           },
         },
       },
@@ -195,6 +314,8 @@ export function openApiDocument(origin: string): unknown {
                 'promotional columns are appended last so a positional reader is unaffected.',
               content: { 'text/csv': { schema: { type: 'string' } } },
             },
+            '400': { description: 'A filter value is invalid.' },
+            ...commonErrors,
           },
         },
       },
@@ -204,7 +325,7 @@ export function openApiDocument(origin: string): unknown {
           operationId: 'health',
           responses: {
             '200': { description: 'Healthy.' },
-            '503': { description: 'The catalog could not be read or did not validate.' },
+            ...commonErrors,
           },
         },
       },

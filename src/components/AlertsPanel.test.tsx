@@ -34,7 +34,11 @@ const RAW: PricingCatalog = {
       pricing: { input: 3, output: 15 },
       tokenizer: { kind: 'approx', charsPerToken: 3.6, cjkCharsPerToken: 1.5 },
       capabilities: { reasoning: true, vision: true },
-      provenance: { source: 'vendor', lastVerified: '2026-08-01' },
+      provenance: {
+        source: 'vendor',
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://www.anthropic.com/pricing',
+      },
     },
     {
       id: 'deepseek-v3.2',
@@ -163,6 +167,8 @@ describe('email subscription', () => {
       cadence: 'instant',
       scope: 'followed',
       models: ['claude-sonnet-5'],
+      client: 'web',
+      turnstileAction: 'web_email_alerts',
     });
   });
 

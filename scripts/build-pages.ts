@@ -72,12 +72,19 @@ function fileFor(path: string): string {
 }
 
 function sitemap(entries: { loc: string; lastmod: string; priority: string }[]): string {
+  const escapeXml = (value: string): string =>
+    value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
   const urls = entries
     .map(
       (entry) => `  <url>
-    <loc>${entry.loc}</loc>
-    <lastmod>${entry.lastmod}</lastmod>
-    <priority>${entry.priority}</priority>
+    <loc>${escapeXml(entry.loc)}</loc>
+    <lastmod>${escapeXml(entry.lastmod)}</lastmod>
+    <priority>${escapeXml(entry.priority)}</priority>
   </url>`,
     )
     .join('\n');

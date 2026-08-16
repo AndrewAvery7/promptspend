@@ -129,7 +129,7 @@ export function Header(props: HeaderProps) {
         <div className={`freshness${props.degraded ? ' freshness--degraded' : ''}`}>
           <span className="freshness__dot" />
           <span className="freshness__text">
-            <b>prices last changed</b> {props.pricesChangedOn ?? 'not yet recorded'}
+            <b>prices last changed</b> {props.pricesChangedOn ?? 'no change recorded since tracking began'}
             {props.sourcesCheckedOn && (
               <>
                 {' · '}

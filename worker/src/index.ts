@@ -57,12 +57,12 @@ import { createTransport } from './email/transport';
 import { renderConfirmation, renderManageCode } from './email/render';
 import { buildNotificationPayload, sendPush } from './push/send';
 import { assertKeyPairMatches } from './push/vapid';
-import { fanoutDigest, fanoutInstantEmail, fanoutPush, setApiOrigin } from './fanout';
+import { fanoutDigest, fanoutInstantEmail, fanoutPush } from './fanout';
 import { confirmUnsubscribePage, expiredLinkPage, page, unsubscribedPage } from './pages';
+import { mobileTurnstilePage } from './turnstile-page';
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    setApiOrigin(new URL(request.url).origin);
     try {
       return await route(request, env, ctx);
     } catch (cause) {
@@ -79,14 +79,17 @@ export default {
 
   async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil(
-      (async () => {
-        const counts = await fanoutDigest(env);
-        console.log(`weekly digest: ${JSON.stringify(counts)}`);
-        await pruneRateLimits(env.DB);
-        await pruneEmailManageCodes(env.DB);
-        const pruned = await prunePendingSubscribers(env.DB);
-        if (pruned > 0) console.log(`pruned ${pruned} unconfirmed signups`);
-      })(),
+      background(
+        'weekly digest',
+        (async () => {
+          const counts = await fanoutDigest(env);
+          console.log(`weekly digest: ${JSON.stringify(counts)}`);
+          await pruneRateLimits(env.DB);
+          await pruneEmailManageCodes(env.DB);
+          const pruned = await prunePendingSubscribers(env.DB);
+          if (pruned > 0) console.log(`pruned ${pruned} unconfirmed signups`);
+        })(),
+      ),
     );
   },
 };
@@ -106,6 +109,8 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
       return handleHealth(request, env);
     case 'GET /v1/config':
       return handleConfig(request, env);
+    case 'GET /v1/mobile-turnstile':
+      return mobileTurnstilePage();
     case 'POST /v1/push/subscribe':
       return handlePushSubscribe(request, env);
     case 'POST /v1/push/unsubscribe':
@@ -262,7 +267,7 @@ async function handleEmailSubscribe(request: Request, env: Env): Promise<Respons
     env,
     typeof body.turnstileToken === 'string' ? body.turnstileToken : undefined,
     request.headers.get('CF-Connecting-IP'),
-    body.client === 'mobile' ? 'mobile_email_alerts' : undefined,
+    body.client === 'mobile' ? 'mobile_email_alerts' : 'web_email_alerts',
   );
   if (!turnstile.ok) {
     throw badRequest(
@@ -276,8 +281,22 @@ async function handleEmailSubscribe(request: Request, env: Env): Promise<Respons
   const scope = requireScope(body.scope);
   const modelIds = requireModelIds(body.models, scope);
 
-  const subscriber = await upsertPendingEmail(env.DB, { email, cadence, scope, consentIpHash: ipHash });
-  await setFollows(env.DB, 'email', subscriber.id, modelIds);
+  const existing = await findEmailByAddress(env.DB, email);
+  if (existing?.status === 'active') {
+    // A public subscribe form is not authority to rewrite an existing
+    // subscriber's choices. Send the owner a short-lived management code and
+    // keep the HTTP response indistinguishable from a new subscription.
+    await sendEmailManagementCode(env, email);
+    return json({ ok: true, pending: true }, request, env);
+  }
+
+  const subscriber = await upsertPendingEmail(env.DB, {
+    email,
+    cadence,
+    scope,
+    consentIpHash: ipHash,
+    modelIds,
+  });
 
   const token = await issueToken(requireSecret(env, 'TOKEN_SECRET'), 'confirm', subscriber.id);
   const confirmUrl = `${new URL(request.url).origin}/v1/email/confirm?t=${encodeURIComponent(token)}`;
@@ -384,23 +403,26 @@ async function handleEmailManageVerify(request: Request, env: Env): Promise<Resp
   if (!code) throw badRequest('That code is invalid or expired. Request a new one.');
 
   const subscriber = await findEmailByAddress(env.DB, email);
+  // Always do the same database lookup and HMAC work, including for an unknown
+  // address, so response time does not reveal whether a person subscribes.
+  const subjectId = subscriber?.id ?? '00000000-0000-0000-0000-000000000000';
+  const stored = await latestEmailManageCode(env.DB, subjectId);
+  const candidateHash = await hashManageCode(requireSecret(env, 'TOKEN_SECRET'), subjectId, code);
   if (!subscriber || subscriber.status !== 'active') {
     throw badRequest('That code is invalid or expired. Request a new one.');
   }
-  const stored = await latestEmailManageCode(env.DB, subscriber.id);
   if (!stored || stored.expires_at < new Date().toISOString() || stored.attempts >= 5) {
     if (stored) await deleteEmailManageCode(env.DB, stored.id);
     throw badRequest('That code is invalid or expired. Request a new one.');
   }
 
-  const candidateHash = await hashManageCode(requireSecret(env, 'TOKEN_SECRET'), subscriber.id, code);
   if (!manageCodeMatches(stored.code_hash, candidateHash)) {
     await rejectEmailManageCode(env.DB, stored.id);
     throw badRequest('That code is invalid or expired. Request a new one.');
   }
 
   await deleteEmailManageCode(env.DB, stored.id);
-  const token = await issueToken(requireSecret(env, 'TOKEN_SECRET'), 'preferences', subscriber.id);
+  const token = await issueToken(requireSecret(env, 'TOKEN_SECRET'), 'mobile-preferences', subscriber.id);
   return json(
     {
       ok: true,
@@ -476,8 +498,15 @@ async function handleUnsubscribePost(request: Request, env: Env): Promise<Respon
 
 async function subjectFromPreferencesToken(request: Request, env: Env): Promise<string> {
   const url = new URL(request.url);
-  const token = url.searchParams.get('t') ?? '';
-  const result = await verifyToken(requireSecret(env, 'TOKEN_SECRET'), 'preferences', token);
+  const authorization = request.headers.get('Authorization') ?? '';
+  const bearer = authorization.startsWith('Bearer ') ? authorization.slice(7).trim() : '';
+  const token = bearer || url.searchParams.get('t') || '';
+  const secret = requireSecret(env, 'TOKEN_SECRET');
+  let result = await verifyToken(secret, bearer ? 'mobile-preferences' : 'preferences', token);
+  // A preference link from an alert email can be handed to the native app.
+  // Once captured, the app removes it from navigation and carries it only in
+  // the Authorization header. Keep those existing links interoperable.
+  if (bearer && !result.ok) result = await verifyToken(secret, 'preferences', token);
   if (!result.ok) throw unauthorized(`preferences token ${result.reason}`);
   return result.subjectId;
 }
@@ -506,6 +535,8 @@ async function handleGetPreferences(request: Request, env: Env): Promise<Respons
 async function handleSetPreferences(request: Request, env: Env): Promise<Response> {
   const id = await subjectFromPreferencesToken(request, env);
   const body = await readJson<Record<string, unknown>>(request);
+  const subscriber = await findEmailById(env.DB, id);
+  if (!subscriber || subscriber.status !== 'active') throw notFound();
 
   if (body.unsubscribe === true) {
     await unsubscribeEmail(env.DB, id);
@@ -516,8 +547,7 @@ async function handleSetPreferences(request: Request, env: Env): Promise<Respons
   const scope = requireScope(body.scope);
   const modelIds = requireModelIds(body.models, scope);
 
-  await updateEmailPreferences(env.DB, id, { cadence, scope });
-  await setFollows(env.DB, 'email', id, modelIds);
+  await updateEmailPreferences(env.DB, id, { cadence, modelIds, scope });
   return json({ ok: true, cadence, scope, models: modelIds }, request, env);
 }
 
@@ -556,12 +586,23 @@ async function handleNotify(request: Request, env: Env, ctx: ExecutionContext): 
   // Fan out after responding. A CI job should not sit waiting on a few hundred
   // push requests, and `waitUntil` keeps the worker alive until they finish.
   ctx.waitUntil(
-    (async () => {
-      const push = await fanoutPush(env, { id: set.eventId, set });
-      const email = await fanoutInstantEmail(env, { id: set.eventId, set });
-      console.log(`notify ${set.eventId}: push=${JSON.stringify(push)} email=${JSON.stringify(email)}`);
-    })(),
+    background(
+      'notification fan-out',
+      (async () => {
+        const push = await fanoutPush(env, { id: set.eventId, set });
+        const email = await fanoutInstantEmail(env, { id: set.eventId, set });
+        console.log(`notify ${set.eventId}: push=${JSON.stringify(push)} email=${JSON.stringify(email)}`);
+      })(),
+    ),
   );
 
   return json({ ok: true, eventId: set.eventId, models: changedModelIds(set).length }, request, env);
+}
+
+function background(label: string, promise: Promise<void>): Promise<void> {
+  return promise.catch(() => {
+    // No exception objects: provider responses and bindings can contain
+    // subscriber data or operational secrets.
+    console.error(`${label} failed`);
+  });
 }

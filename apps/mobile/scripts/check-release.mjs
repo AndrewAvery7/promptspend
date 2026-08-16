@@ -8,6 +8,10 @@ const PACKAGE = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
 const STORE = JSON.parse(readFileSync(resolve(ROOT, 'store/metadata.en-US.json'), 'utf8'));
 const problems = [];
 
+// Host/CI preflight only. This script deliberately reads store/privacy/QA
+// evidence outside apps/mobile; .easignore then removes those non-build inputs
+// from the upload. It must run before archive creation, not as an EAS hook.
+
 function fail(message) {
   problems.push(message);
 }
@@ -76,6 +80,9 @@ if (APP.ios?.infoPlist?.ITSAppUsesNonExemptEncryption !== false) {
   fail('export-compliance declaration is missing or changed');
 }
 if (APP.android?.allowBackup !== false) fail('Android backup must remain disabled for local scenario data');
+if (!APP.plugins?.includes('./plugins/with-android-data-protection')) {
+  fail('Android cloud-backup and device-transfer protection plugin is missing');
+}
 if (APP.android?.usesCleartextTraffic === true) fail('Android cleartext network traffic must not be enabled');
 if (PACKAGE.dependencies?.['react-native-webview'] !== '13.16.1') {
   fail('react-native-webview must stay on the Expo SDK 57 supported version');
@@ -90,8 +97,14 @@ if (iosUsageDescriptions.length > 0) {
   fail(`launch build contains unexpected iOS permission descriptions: ${iosUsageDescriptions.join(', ')}`);
 }
 if (EAS.submit?.production?.ios?.ascAppId !== '6800386428') fail('App Store Connect app id drifted');
+if (EAS.cli?.appVersionSource !== 'remote') fail('EAS appVersionSource must remain remote');
 if (EAS.build?.production?.autoIncrement !== true)
   fail('production build auto-increment must remain enabled');
+for (const profile of ['development', 'preview', 'production']) {
+  if (EAS.build?.[profile]?.env?.EXPO_PUBLIC_ALERTS_API !== 'https://api.promptspend.dev') {
+    fail(`${profile} alerts API must be pinned to https://api.promptspend.dev`);
+  }
+}
 
 const utf8Bytes = (value) => Buffer.byteLength(value, 'utf8');
 const limits = [
@@ -156,20 +169,57 @@ for (const pattern of [
 }
 
 for (const path of [
-  '../../public/mobile-turnstile.html',
+  '../../worker/src/turnstile-page.ts',
   '../../src/content/information/privacy.md',
   '../../src/content/information/support.md',
   '../../docs/STORE_RELEASE_PACKAGE.md',
   '../../docs/STORE_SCREENSHOTS.md',
   '../../docs/MOBILE_BETA_QA.md',
   '../../docs/MOBILE_RELEASE_RUNBOOK.md',
+  'assets/images/favicon.png',
+  'plugins/with-android-data-protection.js',
+  'store/build-history.json',
 ]) {
   requireFile(path);
+}
+
+const privacy = requireFile('../../src/content/information/privacy.md')?.toString('utf8') ?? '';
+const releasePackage = requireFile('../../docs/STORE_RELEASE_PACKAGE.md')?.toString('utf8') ?? '';
+const security = requireFile('SECURITY.md')?.toString('utf8') ?? '';
+const metadataText = JSON.stringify(STORE);
+for (const [label, source] of [
+  ['privacy policy', privacy],
+  ['store release package', releasePackage],
+  ['store metadata', metadataText],
+]) {
+  if (!/email address/i.test(source) || !/alert/i.test(source)) {
+    fail(`${label} must disclose optional email alerts and email-address processing`);
+  }
+}
+for (const staleClaim of ['we do not collect data from this app', 'No account exists']) {
+  if (releasePackage.includes(staleClaim)) fail(`store release package contains stale claim: ${staleClaim}`);
+}
+if (!/Email Address[\s\S]{0,220}App Functionality/i.test(releasePackage)) {
+  fail('Apple privacy draft must classify Email Address for App Functionality');
+}
+if (
+  !/device-transfer|device transfer/i.test(
+    requireFile('plugins/with-android-data-protection.js')?.toString('utf8') ?? '',
+  )
+) {
+  fail('Android data-protection plugin must explicitly exclude device transfer');
+}
+const securityReviewed = security.match(/Last reviewed:\s+([A-Za-z]+ \d{1,2}, \d{4})/i)?.[1];
+if (!securityReviewed || Date.now() - new Date(securityReviewed).getTime() > 14 * 24 * 60 * 60 * 1000) {
+  fail('SECURITY.md dependency triage must be re-derived within 14 days of a release check');
 }
 
 if (problems.length) {
   for (const problem of problems) console.error(`✗ ${problem}`);
   process.exitCode = 1;
 } else {
-  console.log('✓ Mobile release assets, identifiers, policy pages, and runbooks are present and consistent');
+  console.log('✓ Source-controlled mobile release contract checks passed');
+  console.log(
+    '  Device QA, screenshots, live dependency audit, credentials, and store answers still require release-time verification.',
+  );
 }

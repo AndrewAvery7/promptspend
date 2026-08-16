@@ -17,11 +17,12 @@
     // land back here, and it is the default CORS origin.
     "SITE_ORIGIN": "https://promptspend.com",
     "SITE_BASE_PATH": "/",
+    "ALERTS_API_ORIGIN": "https://api.promptspend.dev",
     // Comma-separated. Only these origins may call the API from a browser.
     // github.io stays listed through the cutover: the site is still served from
     // there until SITE_URL flips, and an origin that disappears mid-move breaks
     // every alerts call with a CORS error that looks like an outage.
-    "ALLOWED_ORIGINS": "https://promptspend.com,https://www.promptspend.com,https://andrewavery7.github.io,http://localhost:5173",
+    "ALLOWED_ORIGINS": "https://promptspend.com,https://www.promptspend.com,https://andrewavery7.github.io",
     // Set to "cloudflare" ahead of the API token existing, which is safe:
     // `emailEnabled()` requires BOTH the transport and EMAIL_API_TOKEN, so
     // until the secret is stored the API reports email as unavailable and the
@@ -38,6 +39,7 @@
     // Bot protection on the subscribe endpoints. Optional in development;
     // `TURNSTILE_SECRET_KEY` being set is what turns enforcement on.
     "TURNSTILE_SITE_KEY": "0x4AAAAAAEElIZdoZcZpxAjz",
+    "TURNSTILE_HOSTNAMES": "api.promptspend.dev,promptspend.com,www.promptspend.com,andrewavery7.github.io",
   },
 
   "d1_databases": [

@@ -47,13 +47,17 @@ export function json(body: unknown, request: Request, env: Env, status = 200): R
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
       ...corsHeaders(request, env),
     },
   });
 }
 
 export function noContent(request: Request, env: Env): Response {
-  return new Response(null, { status: 204, headers: corsHeaders(request, env) });
+  return new Response(null, {
+    status: 204,
+    headers: { 'X-Content-Type-Options': 'nosniff', ...corsHeaders(request, env) },
+  });
 }
 
 /**

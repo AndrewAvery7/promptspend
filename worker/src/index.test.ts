@@ -61,6 +61,15 @@ describe('meta endpoints', () => {
     expect(typeof body.vapidPublicKey).toBe('string');
     expect(body.turnstileRequired).toBe(false);
   });
+
+  it('serves the native verification document with anti-framing headers', async () => {
+    const response = await SELF.fetch(`${API}/v1/mobile-turnstile`);
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Security-Policy')).toContain("frame-ancestors 'none'");
+    expect(response.headers.get('X-Frame-Options')).toBe('DENY');
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+    expect(await response.text()).toContain('mobile_email_alerts');
+  });
 });
 
 describe('CORS', () => {
@@ -179,6 +188,35 @@ describe('email lifecycle', () => {
     expect(await first.json()).toEqual(await second.json());
   });
 
+  it('does not let a public re-subscribe rewrite an active subscriber', async () => {
+    await post('/v1/email/subscribe', {
+      email: 'reader@example.com',
+      cadence: 'weekly',
+      scope: 'followed',
+      models: ['claude-sonnet-5'],
+    });
+    const id = await subscriberId('reader@example.com');
+    await SELF.fetch(`${API}/v1/email/confirm?t=${encodeURIComponent(await tokenFor('confirm', id))}`);
+
+    const response = await post('/v1/email/subscribe', {
+      email: 'reader@example.com',
+      cadence: 'instant',
+      scope: 'all',
+      models: [],
+    });
+
+    expect(response.status).toBe(200);
+    expect(
+      await env.DB.prepare('SELECT status, cadence, scope FROM email_subscribers WHERE id = ?')
+        .bind(id)
+        .first(),
+    ).toMatchObject({ status: 'active', cadence: 'weekly', scope: 'followed' });
+    const follows = await env.DB.prepare('SELECT model_id FROM follows WHERE subscriber_id = ?')
+      .bind(id)
+      .all();
+    expect(follows.results).toEqual([{ model_id: 'claude-sonnet-5' }]);
+  });
+
   it('rejects a preferences token that was issued for unsubscribing', async () => {
     await post('/v1/email/subscribe', { email: 'reader@example.com', cadence: 'weekly', scope: 'all' });
     const id = await subscriberId('reader@example.com');
@@ -247,6 +285,12 @@ describe('native email preference access', () => {
     expect(
       await env.DB.prepare('SELECT id FROM email_manage_codes WHERE subscriber_id = ?').bind(id).first(),
     ).toBeNull();
+
+    const preferences = await SELF.fetch(`${API}/v1/preferences`, {
+      headers: { Authorization: `Bearer ${body.token}` },
+    });
+    expect(preferences.status).toBe(200);
+    expect(await preferences.json()).toMatchObject({ email: 'reader@example.com', status: 'active' });
 
     const replay = await post('/v1/email/manage/verify', { email: 'reader@example.com', code });
     expect(replay.status).toBe(400);

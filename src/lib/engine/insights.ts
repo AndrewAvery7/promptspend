@@ -59,7 +59,7 @@ export function buildInsights(rows: ComparisonRow[], workload: Workload, revenue
     }
   }
 
-  if (priciest && priciest !== cheapest && cheapest.scaled.perMonth > 0) {
+  if (priciest && priciest !== cheapest && priciest.multipleOfCheapest !== null) {
     insights.push({
       id: 'spread',
       learnId: 'price-spread',

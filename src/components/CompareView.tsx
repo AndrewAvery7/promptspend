@@ -86,7 +86,7 @@ export function CompareView({
                   </li>
                 ))}
               </ol>
-              {priciest && priciest.multipleOfCheapest > 1 && (
+              {priciest && priciest.multipleOfCheapest !== null && priciest.multipleOfCheapest > 1 && (
                 <p className="hero__aside-note">
                   <b>{priciest.model.displayName}</b> costs {Math.round(priciest.multipleOfCheapest)}× the
                   cheapest here — {formatMoney(priciest.deltaPerMonth)} more a month.

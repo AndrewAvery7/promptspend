@@ -73,7 +73,9 @@ export function buildCostReceiptData(input: CostReceiptInput): CostReceiptData |
   }));
 
   const assumptionLines = [
-    `Base prompt counts: ${Math.round(input.systemTokens + input.userTokens).toLocaleString('en-US')} input + ${Math.round(input.outputTokens).toLocaleString('en-US')} response tokens`,
+    isComparison && input.pastedFields.length > 0
+      ? 'Pasted fields were tokenized separately for every model; each row uses that model’s derived counts.'
+      : `Base prompt counts: ${Math.round(input.systemTokens + input.userTokens).toLocaleString('en-US')} input + ${Math.round(input.outputTokens).toLocaleString('en-US')} response tokens`,
     `${input.turns.toLocaleString('en-US')} ${input.turns === 1 ? 'turn' : 'turns'} · ${Math.round(input.conversationsPerDay).toLocaleString('en-US')} conversations/day`,
   ];
   if (input.cacheShare > 0)
@@ -96,7 +98,7 @@ export function buildCostReceiptData(input: CostReceiptInput): CostReceiptData |
     rows: receiptRows,
     savingsLabel:
       isComparison && highest.scaled.perMonth > lowest.scaled.perMonth
-        ? `${formatMoney((highest.scaled.perMonth - lowest.scaled.perMonth) * 12)} annual spread across this shortlist`
+        ? `${formatMoney(highest.scaled.perYear - lowest.scaled.perYear)} annual spread across this shortlist`
         : null,
     shareText: isComparison
       ? buildComparisonShareText(rows)
