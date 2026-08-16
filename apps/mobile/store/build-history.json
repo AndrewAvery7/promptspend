@@ -7,6 +7,7 @@
       "platform": "ios",
       "marketingVersion": "0.1.0",
       "buildNumber": 12,
+      "easBuildId": "a682ed35-1e2f-4448-a430-b088d27d61cd",
       "channel": "internal-testflight",
       "status": "superseded-private-qa",
       "evidence": "docs/qa/IOS_TESTFLIGHT_BUILD_12.md"
@@ -15,9 +16,30 @@
       "platform": "android",
       "marketingVersion": "0.1.0",
       "versionCode": 3,
+      "easBuildId": "9e49ea20-d18b-4bac-be85-f52fdebe20b7",
+      "channel": "private-apk",
+      "status": "superseded-private-qa",
+      "evidence": "docs/qa/ANDROID_GALAXY_A15_BUILD_3.md"
+    },
+    {
+      "platform": "ios",
+      "marketingVersion": "0.1.0",
+      "buildNumber": 14,
+      "easBuildId": "e75b93f4-6d23-4dd0-ac78-930cdaf2ad48",
+      "gitCommit": "f4318b4ade8f5937727e0741c337103c64a189b7",
+      "channel": "internal-testflight",
+      "status": "apple-processing",
+      "evidence": "docs/qa/IOS_TESTFLIGHT_BUILD_14.md"
+    },
+    {
+      "platform": "android",
+      "marketingVersion": "0.1.0",
+      "versionCode": 3,
+      "easBuildId": "391818eb-a439-4d8c-ad39-fb554fbb24e9",
+      "gitCommit": "f4318b4ade8f5937727e0741c337103c64a189b7",
       "channel": "private-apk",
       "status": "private-qa",
-      "evidence": "docs/qa/ANDROID_GALAXY_A15_BUILD_3.md"
+      "evidence": "docs/qa/ANDROID_GALAXY_A15_F4318B4.md"
     }
   ],
   "note": "EAS remote versioning remains authoritative. Record every new private or store binary here after its build identifier is verified."
