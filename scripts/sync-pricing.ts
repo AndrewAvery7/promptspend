@@ -27,11 +27,13 @@ import { HEALTH_SCHEMA_VERSION, type SourceReport, type SyncStatus } from '../sr
 import { fromLiteLLM, fromOpenRouter, type Allowlist, type Override } from './lib/normalize';
 import { mergeCatalog } from './lib/merge';
 import { catalogHash, diffCatalogs, renderChangelogEntry, summarizeDiff } from './lib/diff';
+import { updateCatalogBadges } from './lib/readme-badges';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG_PATH = resolve(ROOT, 'public/data/pricing.json');
 const STATUS_PATH = resolve(ROOT, 'public/data/sync-status.json');
 const CHANGELOG_PATH = resolve(ROOT, 'docs/pricing-changelog.md');
+const README_PATH = resolve(ROOT, 'README.md');
 const ALLOWLIST_PATH = resolve(ROOT, 'data/models-allowlist.json');
 const OVERRIDES_PATH = resolve(ROOT, 'data/pricing-overrides.json');
 
@@ -305,6 +307,14 @@ async function main(): Promise<void> {
 
   if (!degraded) {
     await writeFile(CATALOG_PATH, `${JSON.stringify(catalog, null, 2)}\n`, 'utf8');
+
+    const readme = await readFile(README_PATH, 'utf8');
+    const primaryModels = catalog.models.filter((model) => model.aliasOf === undefined).length;
+    const updatedReadme = updateCatalogBadges(readme, {
+      models: primaryModels,
+      providers: catalog.providers.length,
+    });
+    if (updatedReadme !== readme) await writeFile(README_PATH, updatedReadme, 'utf8');
 
     if (!diff.isEmpty) {
       const date = generatedAt.toISOString().slice(0, 10);
