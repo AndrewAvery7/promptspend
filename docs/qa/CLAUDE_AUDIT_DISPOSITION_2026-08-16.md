@@ -1,20 +1,40 @@
 # Claude full-system audit disposition — 2026-08-16
 
-Status: source remediation implemented and automated verification passed;
-physical-device and externally hosted evidence still required
+Status: source remediation, private QA binaries, production website/data, and
+hardened backend deployments completed; physical-device evidence and public
+store approval remain outstanding
 
 ## Scope and authority
 
 This record dispositions the findings in the August 16 Claude Code full-system
 audit against source commit `153ff12badb096e998a79deb1871c6a698559c50`.
-Changes are isolated on `fix/full-release-hardening-2026-08-16` and remain
-uncommitted at the time of this record so the complete diff can receive one
-final review.
+Changes were initially isolated on `fix/full-release-hardening-2026-08-16` so
+the complete diff could receive one final review.
 
-No EAS build, TestFlight upload, App Store Connect submission, Play Console
-upload, Cloudflare deployment, GitHub push, npm publication, VS Code extension
-publication, or public release was performed. Each remains behind a separate
-explicit approval.
+At the time of the initial disposition, no EAS build, TestFlight upload,
+Cloudflare deployment, GitHub push, publication, or public release had been
+performed. The later approved completion work is recorded below; no App Review
+submission, Google Play upload, npm publication, VS Code extension publication,
+or public mobile-app release has been performed.
+
+## Post-approval completion evidence
+
+- PR #70 merged the hardened release candidate to `main`; PRs #71 and #72 fixed
+  the pricing-sync badge and review-branch automation; PR #73 published the
+  first-party-reviewed 2026-08-16 catalog.
+- Private iOS build 14 (`e75b93f4-6d23-4dd0-ac78-930cdaf2ad48`) was uploaded to
+  App Store Connect/TestFlight through submission
+  `5cf00ebb-8624-4ff9-a8a7-bc7c84e6e031`. This was an internal beta delivery,
+  not an App Review submission.
+- Private Android APK build `391818eb-a439-4d8c-ad39-fb554fbb24e9` was produced
+  for direct physical-device QA. It was not uploaded to Google Play.
+- The hardened pricing API Worker is live as version
+  `32319e40-d665-4098-937a-9994ea081e50`; the hardened Alerts Worker is live as
+  version `6d85b14c-6a03-4926-8f61-0f62d4c33935`.
+- The Alerts Worker health and configuration endpoints returned healthy
+  production responses. The API health endpoint was temporarily freshness-
+  gated while the scheduled pricing review was unresolved; PR #73 published a
+  fresh validated catalog to clear that data gate.
 
 ## Implemented dispositions
 
@@ -77,10 +97,10 @@ kind of evidence:
 
 ## Verification evidence
 
-- Root `npm run verify`: 413 tests with enforced coverage; typecheck, lint,
+- Root `npm run verify`: 416 tests with enforced coverage; typecheck, lint,
   formatting, encoding, generated-page claims, production build, catalog
   integrity, bundle budget, CSP, and SEO passed.
-- Public test-count contract: 942 total — 413 root, 91 native, 98 Worker, 44
+- Public test-count contract: 945 total — 416 root, 91 native, 98 Worker, 44
   API, 47 MCP, 137 VS Code, and 112 browser definitions.
 - Browser QA: 108 passed and four intentional viewport skips across 112
   Playwright definitions.
@@ -95,13 +115,16 @@ kind of evidence:
 - Production dependency audit: zero known findings in root, API, Worker, MCP,
   and VS Code trees. Their shared development-tool `nanoid` advisory was
   removed through lockfile-only, script-disabled updates.
-- Live pricing dry run: fetched 3,040 LiteLLM entries and 389 OpenRouter
-  cross-check candidates; it flagged three new model IDs and nine new review
-  conditions. Dry-run mode wrote nothing, and write mode was not run.
+- Live pricing review fetched 3,040 LiteLLM entries and 389 OpenRouter
+  cross-check candidates. First-party review added Gemini 3.7 Flash and Grok
+  4.6, excluded a Token-Plan-only Qwen candidate, corrected current vendor
+  rates, and published a valid 72-row catalog while retaining honest
+  cross-source disagreement flags.
 
 ## Next release gate
 
-Before any new private binary is requested, review this diff and the dry-run
-pricing flags. After explicit build approval, bind the exact commit to a new
-private QA binary, execute `docs/MOBILE_BETA_QA.md`, and record device evidence.
-Public submission remains a later and separate approval.
+Install the exact private binaries above, execute `docs/MOBILE_BETA_QA.md` on
+iPhone, iPad, and the Galaxy device, and record physical-device evidence. Then
+resolve any device-only defects and repeat the affected checks. App Review and
+Google Play submission remain later, separate actions requiring the user's
+explicit approval.
