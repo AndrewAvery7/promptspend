@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-16T18:18:59.183Z",
+  "generatedAt": "2026-08-16T18:45:25.044Z",
   "providers": [
     {
       "id": "anthropic",
@@ -510,8 +510,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-08-16",
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2",
         "reviewCodes": [
@@ -568,8 +569,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-08-16",
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (35%): $0.26/$1.04 vs $0.4/$1.6",
         "reviewCodes": [
@@ -600,8 +602,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-08-16",
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (41%): $1.475/$4.425 vs $2.5/$7.5",
         "reviewCodes": [
@@ -724,10 +727,9 @@
         "lastChanged": "2026-08-16",
         "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing",
         "needsReview": true,
-        "reviewNote": "vendor override differs from the automated feed (79%): $0.14/$0.28 vs $0.44/$1.32; price moved 79% in one day ($0.14/$0.28 -> $0.44/$1.32)",
+        "reviewNote": "vendor override differs from the automated feed (79%): $0.14/$0.28 vs $0.44/$1.32",
         "reviewCodes": [
-          "override-drift",
-          "day-move"
+          "override-drift"
         ]
       },
       "maxOutput": 384000,
@@ -760,10 +762,9 @@
         "lastChanged": "2026-08-16",
         "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing",
         "needsReview": true,
-        "reviewNote": "vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96; price moved 78% in one day ($0.435/$0.87 -> $1.32/$3.96)",
+        "reviewNote": "vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96",
         "reviewCodes": [
-          "override-drift",
-          "day-move"
+          "override-drift"
         ]
       },
       "maxOutput": 384000,
@@ -1570,7 +1571,8 @@
       "pricing": {
         "input": 0.3,
         "output": 1.2,
-        "cachedInput": 0.03
+        "cachedInput": 0.03,
+        "cacheWrite": 0.375
       },
       "tokenizer": {
         "kind": "approx",
@@ -1583,8 +1585,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-08-16",
+        "source": "vendor",
+        "lastVerified": "2026-08-12",
+        "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (27%): $0.22/$0.9 vs $0.3/$1.2",
         "reviewCodes": [
