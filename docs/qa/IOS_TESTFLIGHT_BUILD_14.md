@@ -1,6 +1,6 @@
 # iPhone and iPad physical QA — iOS build 14
 
-Status: uploaded; awaiting Apple TestFlight processing
+Status: valid and available for internal TestFlight beta testing
 
 ## Candidate identity
 
@@ -19,9 +19,11 @@ Status: uploaded; awaiting Apple TestFlight processing
 - App Store Connect app: `6800386428`
 - Intended channel: private internal TestFlight QA
 
-The binary was uploaded on 2026-08-16. This record authorizes private internal
-TestFlight QA only. It does not authorize external testing, App Review, public
-release, pricing changes, or customer distribution.
+The binary was uploaded on 2026-08-16. EAS and App Store Connect were queried
+after processing: the submission is `FINISHED`, the build processing state is
+`VALID`, and its internal state is `IN_BETA_TESTING`. This record authorizes
+private internal TestFlight QA only. It does not authorize external testing,
+App Review, public release, pricing changes, or customer distribution.
 
 ## Installation
 

@@ -28,7 +28,7 @@
       "easBuildId": "e75b93f4-6d23-4dd0-ac78-930cdaf2ad48",
       "gitCommit": "f4318b4ade8f5937727e0741c337103c64a189b7",
       "channel": "internal-testflight",
-      "status": "apple-processing",
+      "status": "internal-beta-testing",
       "evidence": "docs/qa/IOS_TESTFLIGHT_BUILD_14.md"
     },
     {

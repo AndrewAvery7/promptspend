@@ -24,8 +24,10 @@ or public mobile-app release has been performed.
   first-party-reviewed 2026-08-16 catalog.
 - Private iOS build 14 (`e75b93f4-6d23-4dd0-ac78-930cdaf2ad48`) was uploaded to
   App Store Connect/TestFlight through submission
-  `5cf00ebb-8624-4ff9-a8a7-bc7c84e6e031`. This was an internal beta delivery,
-  not an App Review submission.
+  `5cf00ebb-8624-4ff9-a8a7-bc7c84e6e031`. EAS reports the submission
+  `FINISHED`; App Store Connect reports the build `VALID` and
+  `IN_BETA_TESTING`. This is an internal beta delivery, not an App Review
+  submission.
 - Private Android APK build `391818eb-a439-4d8c-ad39-fb554fbb24e9` was produced
   for direct physical-device QA. It was not uploaded to Google Play.
 - The hardened pricing API Worker is live as version
