@@ -436,3 +436,17 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `deepseek-deepseek-v4-pro` — provenance.needsReview: — → true
 - **Review** `deepseek-deepseek-v4-pro` — provenance.reviewNote: — → vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96; price moved 78% in one day ($0.435/$0.87 -> $1.32/$3.96)
 - **Review** `deepseek-deepseek-v4-pro` — provenance.lastChanged: — → 2026-08-16
+
+## 2026-08-16
+
+- **Coverage** `minimax-minimax-m2.5` — cacheWrite now tracked: — → 0.375
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.source: litellm → vendor
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.verifiedUrl: — → https://www.alibabacloud.com/help/en/model-studio/model-pricing
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.source: litellm → vendor
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.verifiedUrl: — → https://www.alibabacloud.com/help/en/model-studio/model-pricing
+- **Review** `dashscope-qwen3.7-max` — provenance.source: litellm → vendor
+- **Review** `dashscope-qwen3.7-max` — provenance.verifiedUrl: — → https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max
+- **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: vendor override differs from the automated feed (79%): $0.14/$0.28 vs $0.44/$1.32; price moved 79% in one day ($0.14/$0.28 -> $0.44/$1.32) → vendor override differs from the automated feed (79%): $0.14/$0.28 vs $0.44/$1.32
+- **Review** `deepseek-deepseek-v4-pro` — provenance.reviewNote: vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96; price moved 78% in one day ($0.435/$0.87 -> $1.32/$3.96) → vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96
+- **Review** `minimax-minimax-m2.5` — provenance.source: litellm → vendor
+- **Review** `minimax-minimax-m2.5` — provenance.verifiedUrl: — → https://platform.minimax.io/docs/guides/pricing-paygo

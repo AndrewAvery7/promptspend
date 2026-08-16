@@ -4,6 +4,7 @@
   "$coverage": "The catalog tracks what the automated feed carries. Vendors ship models before LiteLLM catalogues them — Z.ai published GLM-5.2 and GLM-5-Turbo on 2026-08-02 while the feed had neither — and the deliberate answer is to wait rather than hand-add. An override with a full `pricing` block CAN create a model the feed lacks, but that price is then frozen: no feed row exists to correct it, so it silently rots. Seeding from OpenRouter instead would publish a reseller's price as the vendor's, which for these providers runs 20-50% adrift. Missing a model for a few days costs less than publishing a number that is wrong and cannot self-correct. New models arrive on their own the morning the feed catches up.",
   "$scope": "These are standard-tier, global-endpoint list prices in USD. Not modelled: regional/data-residency premiums (OpenAI and Anthropic both charge 1.1x), fast/priority tiers, server-side tool call fees, fine-tuning, and negotiated volume discounts. The UI states this boundary rather than implying the figure is a whole invoice.",
   "$timeOfDay": "DeepSeek V4 publishes peak and off-peak rates but the current schema has no time-of-day tier. PromptSpend uses the higher peak rate so an estimate cannot silently understate the bill; off-peak usage can cost 50% less. Revisit this conservative representation when the engine can model a schedule explicitly.",
+  "$verificationPass20260812": "First-party rendered pricing tables cleared four standing feed-versus-reseller flags without freezing matching base rates: Qwen 3.7 Max at the International/Singapore rate, Qwen3 Next 80B Instruct, Qwen3 VL 235B Instruct, and MiniMax M2.5. MiniMax also publishes a $0.375/M prompt-cache write rate absent from the feed; that modifier alone is overridden. This evidence was reconciled into the current catalog on 2026-08-16 from the reviewed PR #65 rather than merging its stale generated artifacts.",
   "models": [
     {
       "id": "claude-fable-5",
@@ -518,12 +519,18 @@
     {
       "id": "dashscope-qwen3.7-max",
       "displayName": "Qwen 3.7 Max",
-      "capabilityIndex": 83
+      "capabilityIndex": 83,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "displayName": "Qwen3 Next 80B",
-      "capabilityIndex": 70
+      "capabilityIndex": 70,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-thinking",
@@ -531,7 +538,10 @@
     },
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
-      "displayName": "Qwen3 VL 235B"
+      "displayName": "Qwen3 VL 235B",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
     },
     {
       "id": "zai-glm-5.1",
@@ -592,6 +602,17 @@
       "id": "minimax-minimax-m3",
       "displayName": "MiniMax M3",
       "capabilityIndex": 72
+    },
+    {
+      "$note": "MiniMax lists M2.5 under Legacy Models. Input, output, and cache-read rates match the feed, so they remain feed-driven; only the vendor-published cache-write modifier is overridden.",
+      "id": "minimax-minimax-m2.5",
+      "displayName": "MiniMax M2.5",
+      "vendorVerified": true,
+      "lastVerified": "2026-08-12",
+      "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
+      "pricing": {
+        "cacheWrite": 0.375
+      }
     },
     {
       "id": "xai-grok-4.6",
