@@ -3,10 +3,10 @@ name: Notify price alerts
 # Fires when published prices actually change on the branch the site deploys
 # from — which is the only moment a subscriber would want to hear about.
 #
-# Deliberately not part of the sync workflow. A change that trips a sanity rule
-# goes to a pull request first, and notifying from the sync job would have told
-# people about numbers still sitting unmerged; hooking the push instead covers
-# the automatic commits and the human-reviewed merges with the same code path.
+# Human-reviewed merges arrive through the push trigger. Bot-authored commits
+# use GITHUB_TOKEN, which GitHub deliberately prevents from triggering another
+# workflow; sync-pricing.yml therefore dispatches this workflow explicitly only
+# after it has successfully pushed a published catalog to main.
 #
 # The script exits 0 without sending anything when ALERTS_API or NOTIFY_SECRET
 # is unset, so this stays green until the worker has a domain.
@@ -33,21 +33,25 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          # The script diffs HEAD against HEAD~1, so a shallow clone of depth 1
-          # would make every change look like the catalog's first appearance.
-          fetch-depth: 2
+          # Pushes may contain several commits. The script uses the event's
+          # before SHA, so the complete reachable history must be available.
+          fetch-depth: 0
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild
 
       - name: Notify subscribers
         env:
           ALERTS_API: ${{ vars.ALERTS_API }}
           NOTIFY_SECRET: ${{ secrets.NOTIFY_SECRET }}
+          BEFORE_SHA: ${{ github.event.before }}
         run: npx tsx scripts/notify-alerts.ts
 
       # Same trigger, different audience: subscribers hear about the change,

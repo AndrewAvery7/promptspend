@@ -36,7 +36,10 @@ jobs:
           # Every lockfile, because the step below installs every workspace.
           cache-dependency-path: '**/package-lock.json'
 
-      - run: npm ci
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild
 
       # `verify` now includes `check:test-badge`, and the number on that badge is
       # the sum of every workspace's suite — so this job has to be able to ask
@@ -54,8 +57,14 @@ jobs:
         run: |
           for config in */vitest.config.*; do
             [ -e "$config" ] || continue
-            (cd "$(dirname "$config")" && npm ci)
+            workspace=$(dirname "$config")
+            (cd "$workspace" && npm ci --ignore-scripts)
+            case "$workspace" in
+              api|worker) (cd "$workspace" && npm rebuild esbuild workerd) ;;
+              mcp|vscode) (cd "$workspace" && npm rebuild esbuild) ;;
+            esac
           done
+          (cd apps/mobile && npm ci --ignore-scripts && npm rebuild unrs-resolver)
 
       # Includes the colour-vision palette guarantee and the pricing-pipeline
       # rules, so a change that breaks either fails the build.
@@ -100,7 +109,10 @@ jobs:
           cache: npm
           cache-dependency-path: worker/package-lock.json
 
-      - run: npm ci
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild workerd
 
       - name: Verify the alerts worker
         run: npm run verify
@@ -121,7 +133,10 @@ jobs:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild
 
       # Chromium only. The mobile projects are Chromium contexts with touch
       # emulation, so WebKit and Firefox would triple the download to re-check
@@ -132,6 +147,9 @@ jobs:
       # The config builds the site itself, so this needs no separate build step
       # and cannot run against a stale dist/.
       - name: Mobile and layout checks
+        env:
+          VITE_ALERTS_API: ${{ vars.ALERTS_API }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
         run: npm run test:e2e
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -158,7 +176,10 @@ jobs:
           cache: npm
           cache-dependency-path: apps/mobile/package-lock.json
 
-      - run: npm ci
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild unrs-resolver
 
       - name: Verify Expo configuration and source
         run: |
@@ -187,7 +208,10 @@ jobs:
           cache: npm
           cache-dependency-path: api/package-lock.json
 
-      - run: npm ci
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild workerd
 
       - name: Verify the pricing API
         run: npm run verify
@@ -211,7 +235,10 @@ jobs:
           cache: npm
           cache-dependency-path: mcp/package-lock.json
 
-      - run: npm ci
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild
 
       # Typecheck, tests, and the footprint budget. The tests import the site's
       # own cost engine from ../src, so this also proves the server and the
@@ -254,10 +281,15 @@ jobs:
       # tokenizer external and the packaged extension carries its own copy. Both
       # are right; they are simply rooted differently.
       - name: Install the site's dependencies
-        run: npm ci
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild
         working-directory: ${{ github.workspace }}
 
-      - run: npm ci
+      - name: Install reviewed extension dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild
 
       # The tests import the site's catalog and cost engine from ../src, so a
       # green run here is also the proof that a price in the editor gutter and a

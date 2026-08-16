@@ -23,7 +23,11 @@ const PRICING: PricingCatalog = {
       pricing: { input: 1, output: 2 },
       tokenizer: { kind: 'approx', charsPerToken: 4, cjkCharsPerToken: 1.5 },
       capabilities: { reasoning: false, vision: false },
-      provenance: { source: 'vendor', lastVerified: '2026-08-12' },
+      provenance: {
+        source: 'vendor',
+        lastVerified: '2026-08-12',
+        verifiedUrl: 'https://example.com/pricing',
+      },
     },
   ],
 };
@@ -109,5 +113,31 @@ describe('loadMobileCatalog resilience policy', () => {
 
     expect(result.source).toBe('cache');
     expect(result.catalog.get('test-model')).toBeDefined();
+  });
+
+  test('times out a hung download and reaches the validated cache fallback', async () => {
+    const hungNetwork = jest.fn(() => new Promise<Response>(() => undefined)) as unknown as typeof fetch;
+
+    const result = await loadMobileCatalog({
+      cache: cacheAt('2026-08-12T17:30:00.000Z'),
+      fetcher: hungNetwork,
+      now: NOW,
+      timeoutMs: 5,
+    });
+
+    expect(result.source).toBe('cache');
+    expect(result.warning).toMatch(/could not be refreshed/i);
+  });
+
+  test('times out a hung download instead of leaving a cold start pending forever', async () => {
+    const hungNetwork = jest.fn(() => new Promise<Response>(() => undefined)) as unknown as typeof fetch;
+    const emptyCache: MobileCatalogCache = {
+      read: jest.fn(async () => null),
+      write: jest.fn(async () => undefined),
+    };
+
+    await expect(
+      loadMobileCatalog({ cache: emptyCache, fetcher: hungNetwork, now: NOW, timeoutMs: 5 }),
+    ).rejects.toThrow(/pricing is unavailable/i);
   });
 });

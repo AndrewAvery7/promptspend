@@ -75,6 +75,13 @@ describe('conversationCost', () => {
     expect(cost.inputCost + cost.cacheWriteCost + cost.outputCost).toBe(cost.total);
   });
 
+  it('reports raw and reasoning-adjusted output tokens separately', () => {
+    const cost = conversationCost(SONNET, WORKLOAD, { ...NO_CACHE, reasoningMultiplier: 2.5 });
+    expect(cost.outputTokens).toBe(5_400);
+    expect(cost.billedOutputTokens).toBe(13_500);
+    expect(cost.assumptions.join(' ')).toMatch(/2.5×/);
+  });
+
   it('assumes no caching unless asked — the headline carries no unrequested discount', () => {
     expect(DEFAULT_OPTIONS.cachedInputShare).toBe(0);
     const asked = conversationCost(SONNET, WORKLOAD, { cachedInputShare: 0.6 });
@@ -101,6 +108,21 @@ describe('conversationCost', () => {
     expect(cost.inputCost).toBeCloseTo(uncached.inputCost, 12);
     expect(cost.cacheSavings).toBeCloseTo(0, 12);
     expect(cost.assumptions.join(' ')).toMatch(/publishes no cached-input rate/);
+  });
+
+  it('discloses a separate cache-residency charge rather than hiding it', () => {
+    const gemini = model({
+      id: 'gemini',
+      pricing: {
+        input: 1.25,
+        output: 10,
+        cachedInput: 0.125,
+        cacheStoragePerMillionTokenHour: 4.5,
+      },
+    });
+    const cached = conversationCost(gemini, WORKLOAD, { cachedInputShare: 0.6 });
+    expect(cached.warnings.join(' ')).toMatch(/\$4.5\/1M cached tokens\/hour/);
+    expect(conversationCost(gemini, WORKLOAD, NO_CACHE).warnings).toEqual([]);
   });
 
   it('bills the cache write, so caching is not free', () => {
@@ -165,6 +187,16 @@ describe('conversationCost', () => {
     expect(tiny.total).toBe(0.000028);
     expect(tiny.exact).toBe(true);
   });
+
+  it('sums the total in pico-dollars before converting to a float', () => {
+    const exact = model({ id: 'exact-total', pricing: { input: 5, output: 30 } });
+    const cost = conversationCost(
+      exact,
+      { systemTokens: 1_000, userTokens: 500, outputTokens: 800, turns: 3 },
+      NO_CACHE,
+    );
+    expect(cost.total).toBe(0.114);
+  });
 });
 
 describe('long-context tiers', () => {
@@ -193,6 +225,33 @@ describe('long-context tiers', () => {
     expect(cost.longContextTurns).toBe(1);
     expect(cost.inputCost).toBeCloseTo((300_000 * 10) / 1e6, 10);
     expect(cost.outputCost).toBeCloseTo((100 * 45) / 1e6, 12);
+  });
+
+  it('uses the long-context cache-write rate when the cached prefix starts above the threshold', () => {
+    const tieredWrite = model({
+      id: 'tiered-write',
+      contextWindow: 1_050_000,
+      pricing: {
+        input: 5,
+        output: 30,
+        cachedInput: 0.5,
+        cacheWrite: 6.25,
+        longContext: {
+          thresholdTokens: 272_000,
+          input: 10,
+          output: 45,
+          cachedInput: 1,
+          cacheWrite: 12.5,
+        },
+      },
+    });
+    const cost = conversationCost(
+      tieredWrite,
+      { systemTokens: 300_000, userTokens: 0, outputTokens: 100, turns: 1 },
+      { cachedInputShare: 0.6 },
+    );
+    expect(cost.cacheWriteCost).toBe((180_000 * 12.5) / 1e6);
+    expect(cost.assumptions.join(' ')).toContain('long-context write rate');
   });
 
   it('prices turn by turn, so a conversation can cross over partway through', () => {
@@ -290,6 +349,11 @@ describe('effectivePricing', () => {
     expect(pricing.output).toBe(15);
   });
 
+  it('keeps promotional pricing through the end of its named UTC day', () => {
+    expect(effectivePricing(introModel.pricing, new Date('2026-08-31T23:59:59.999Z')).input).toBe(2);
+    expect(effectivePricing(introModel.pricing, new Date('2026-09-01T00:00:00.000Z')).input).toBe(3);
+  });
+
   it('surfaces the promotion as an assumption in the cost breakdown', () => {
     const cost = conversationCost(introModel, WORKLOAD, {
       ...NO_CACHE,
@@ -335,7 +399,8 @@ describe('costAtScale', () => {
     const scaled = costAtScale(0.117846, scale);
     expect(scaled.perDay).toBeCloseTo(294.615, 3);
     expect(scaled.perMonth).toBeCloseTo(8838.45, 2);
-    expect(scaled.perYear).toBeCloseTo(107_534.475, 2);
+    expect(scaled.perYear).toBeCloseTo(106_061.4, 2);
+    expect(scaled.perYear).toBeCloseTo(scaled.perMonth * 12, 10);
   });
 
   it('derives cost per user and margin from revenue', () => {
@@ -385,6 +450,14 @@ describe('compareModels', () => {
     const rows = compareModels([SONNET, twin], WORKLOAD, scale, NO_CACHE);
     expect(rows[0]!.model.id).toBe('a-twin');
     expect(rows[1]!.deltaPerMonth).toBeCloseTo(0, 10);
+    expect(rows.every((row) => row.isCheapest)).toBe(true);
+  });
+
+  it('does not invent a finite multiple when the cheapest model is free', () => {
+    const free = model({ id: 'free', pricing: { input: 0, output: 0 } });
+    const rows = compareModels([SONNET, free], WORKLOAD, scale, NO_CACHE);
+    expect(rows[0]!.multipleOfCheapest).toBe(1);
+    expect(rows[1]!.multipleOfCheapest).toBeNull();
   });
 
   it('handles an empty selection without throwing', () => {

@@ -237,6 +237,13 @@ export default function HomeScreen() {
             </View>
           )}
 
+          {launch.persistenceNotice && (
+            <View accessibilityRole="alert" style={styles.warningCard}>
+              <Ionicons color={theme.warning} name="file-tray-outline" size={22} />
+              <Text style={styles.warningText}>{launch.persistenceNotice}</Text>
+            </View>
+          )}
+
           {selectedModel && current && (
             <View
               accessibilityLabel={`${selectedModel.displayName} current estimate, ${formatMoney(current.scaled.perMonth)} per month`}
@@ -535,6 +542,7 @@ export default function HomeScreen() {
             catalog={catalog}
             favoriteIds={launch.favorites}
             onClose={() => setCommandOpen(false)}
+            onHome={() => router.navigate(APP_ROUTES.home)}
             onReset={() => {
               launch.resetScenario();
               router.navigate(APP_ROUTES.estimate);

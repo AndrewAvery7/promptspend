@@ -30,11 +30,10 @@ export interface EngineOptions {
  * case rather than the expected one — the control is on the main panel, one
  * click away, and every assumption it turns on is listed under the results.
  */
-export const DEFAULT_OPTIONS: EngineOptions = {
+export const DEFAULT_OPTIONS: Omit<EngineOptions, 'asOf'> = {
   cachedInputShare: 0,
   reasoningMultiplier: 1,
   useBatchApi: false,
-  asOf: new Date(),
 };
 
 /** The cache share applied when the visitor switches caching on. */
@@ -85,7 +84,9 @@ export function sessionTokens(w: Workload): SessionTokens {
 export function effectivePricing(pricing: Pricing, asOf: Date): Pricing {
   const intro = pricing.intro;
   if (!intro) return pricing;
-  const until = Date.parse(intro.until);
+  // A date-only promotion includes the full named UTC calendar day. Parsing
+  // YYYY-MM-DD alone yields midnight and used to expire the rate 24 hours early.
+  const until = Date.parse(`${intro.until}T23:59:59.999Z`);
   if (Number.isNaN(until) || asOf.getTime() > until) return pricing;
   return {
     ...pricing,
@@ -137,6 +138,8 @@ function discounted(rates: RateSet, multiplier: number): RateSet {
 }
 
 export interface CostBreakdown extends SessionTokens {
+  /** Output tokens actually billed after a reasoning multiplier is applied. */
+  billedOutputTokens: number;
   /** What input would have cost with no caching. */
   inputCostUncached: number;
   /** What input actually costs after the cache assumption. */
@@ -155,7 +158,7 @@ export interface CostBreakdown extends SessionTokens {
    *  a request that cannot fit, a response past the model's ceiling. */
   warnings: string[];
   /** False once the numbers are large enough that the last pico-dollars of the
-   *  integer arithmetic have been rounded. Never true for a real workload. */
+   *  integer arithmetic have been rounded. Never false for a real workload. */
   exact: boolean;
 }
 
@@ -165,7 +168,7 @@ export function conversationCost(
   workload: Workload,
   options: Partial<EngineOptions> = {},
 ): CostBreakdown {
-  const opts = { ...DEFAULT_OPTIONS, ...options };
+  const opts: EngineOptions = { ...DEFAULT_OPTIONS, asOf: new Date(), ...options };
   const tokens = sessionTokens(workload);
   const assumptions: string[] = [];
   const warnings: string[] = [];
@@ -201,6 +204,7 @@ export function conversationCost(
   let inputPico = 0;
   let inputUncachedPico = 0;
   let outputPico = 0;
+  let billedOutputTokens = 0;
   let longContextTurns = 0;
   let exact = true;
 
@@ -225,7 +229,9 @@ export function conversationCost(
 
     inputUncachedPico += charge(requestInput, rates.input);
     inputPico += charge(freshTokens, rates.input) + charge(cachedTokens, cachedRate);
-    outputPico += charge(Math.round(output * reasoningMultiplier), rates.output);
+    const billedOutput = Math.round(output * reasoningMultiplier);
+    billedOutputTokens += billedOutput;
+    outputPico += charge(billedOutput, rates.output);
   }
 
   // The cached prefix has to be written before it can be read. Both OpenAI and
@@ -235,9 +241,13 @@ export function conversationCost(
   let cacheWritePico = 0;
   if (cachedShare > 0) {
     const prefix = Math.round((system + user) * cachedShare);
-    if (standard.cacheWrite !== undefined) {
-      cacheWritePico = charge(prefix, standard.cacheWrite);
-      assumptions.push('One cache write per conversation, at the provider’s published write rate.');
+    const prefixUsesLongTier = long !== null && system + user > threshold;
+    const writeRates = prefixUsesLongTier ? long : standard;
+    if (writeRates.cacheWrite !== undefined) {
+      cacheWritePico = charge(prefix, writeRates.cacheWrite);
+      assumptions.push(
+        `One cache write per conversation, at the provider’s published ${prefixUsesLongTier ? 'long-context ' : ''}write rate.`,
+      );
     } else if (prefix > 0) {
       assumptions.push(
         'Cache writes are not modelled for this model — no published write rate, so the real bill is a little higher.',
@@ -253,6 +263,11 @@ export function conversationCost(
       // number is the full one.
       assumptions.push(
         `${model.displayName} publishes no cached-input rate — cached tokens are billed at the full input rate.`,
+      );
+    }
+    if (pricing.cacheStoragePerMillionTokenHour !== undefined) {
+      warnings.push(
+        `Cache storage is billed separately at $${pricing.cacheStoragePerMillionTokenHour}/1M cached tokens/hour and is not included because no retention duration was supplied.`,
       );
     }
   }
@@ -290,9 +305,10 @@ export function conversationCost(
     inputCostUncached,
     inputCost,
     cacheWriteCost,
-    cacheSavings: inputCostUncached - inputCost - cacheWriteCost,
+    cacheSavings: picoToDollars(inputUncachedPico - inputPico - cacheWritePico),
     outputCost,
-    total: inputCost + cacheWriteCost + outputCost,
+    billedOutputTokens,
+    total: picoToDollars(inputPico + cacheWritePico + outputPico),
     longContextTurns,
     assumptions,
     warnings,
@@ -338,7 +354,9 @@ export function costAtScale(perConversation: number, scale: Scale): ScaledCost {
     perConversation,
     perDay,
     perMonth,
-    perYear: perDay * 365,
+    // "Per year" is twelve forecast months, so custom daysPerMonth stays
+    // internally consistent instead of mixing a 30-day month with 365 days.
+    perYear: perMonth * 12,
     costPerUser,
     margin: revenue > 0 ? (revenue - costPerUser) / revenue : null,
     breakEvenConversationsPerDay: breakEven,
@@ -351,8 +369,9 @@ export interface ComparisonRow {
   scaled: ScaledCost;
   /** Extra monthly spend versus the cheapest model in the comparison. */
   deltaPerMonth: number;
-  /** Multiple of the cheapest model's monthly cost (1 for the cheapest). */
-  multipleOfCheapest: number;
+  /** Multiple of the cheapest model's monthly cost; null when the baseline is
+   *  free and a ratio would be mathematically undefined. */
+  multipleOfCheapest: number | null;
   isCheapest: boolean;
 }
 
@@ -371,12 +390,16 @@ export function compareModels(
   priced.sort((a, b) => a.scaled.perMonth - b.scaled.perMonth || a.model.id.localeCompare(b.model.id));
   const cheapest = priced[0];
 
-  return priced.map((row, index) => ({
+  return priced.map((row) => ({
     ...row,
     deltaPerMonth: cheapest ? row.scaled.perMonth - cheapest.scaled.perMonth : 0,
     multipleOfCheapest:
-      cheapest && cheapest.scaled.perMonth > 0 ? row.scaled.perMonth / cheapest.scaled.perMonth : 1,
-    isCheapest: index === 0,
+      cheapest && cheapest.scaled.perMonth > 0
+        ? row.scaled.perMonth / cheapest.scaled.perMonth
+        : row.scaled.perMonth === 0
+          ? 1
+          : null,
+    isCheapest: Boolean(cheapest && row.scaled.perMonth === cheapest.scaled.perMonth),
   }));
 }
 

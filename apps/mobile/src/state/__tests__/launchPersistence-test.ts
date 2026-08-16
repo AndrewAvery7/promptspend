@@ -97,4 +97,20 @@ describe('launch persistence', () => {
     expect(parsed?.favorites).toHaveLength(100);
     expect(parsed?.savedScenarios).toHaveLength(50);
   });
+
+  test.each([
+    ['cache share', { cacheSharePercent: 101 }],
+    ['reasoning multiplier', { reasoningMultiplier: 0 }],
+    ['turn count', { workload: { ...scenario.workload, turns: 0 } }],
+    ['token count', { workload: { ...scenario.workload, outputTokens: 200_001 } }],
+  ])('drops a scenario with an out-of-range %s', (_label, override) => {
+    const parsed = parsePersistedLaunchState({
+      favorites: [],
+      onboardingComplete: true,
+      savedScenarios: [{ ...scenario, ...override }],
+      version: 2,
+    });
+
+    expect(parsed?.savedScenarios).toEqual([]);
+  });
 });

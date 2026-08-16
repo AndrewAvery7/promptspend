@@ -15,15 +15,15 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  * rather than floored so the 23- and 25-hour days either side of a daylight
  * saving change do not shift the answer.
  *
- * Negative ages clamp to zero: a reader whose clock is behind the manifest
- * should see "today", not a check from the future.
+ * A negative value is preserved so callers can avoid claiming that future
+ * evidence is current when the device clock is wrong.
  */
 function calendarDaysBetween(isoDate: string, now: Date): number {
   const [year, month, day] = isoDate.split('-').map(Number);
   if (!year || !month || !day) return 0;
   const checked = new Date(year, month - 1, day).getTime();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  return Math.max(0, Math.round((today - checked) / DAY_MS));
+  return Math.round((today - checked) / DAY_MS);
 }
 
 /**
@@ -138,6 +138,7 @@ export class Catalog {
     if (!this.health || !checkedOn) return { level: 'unknown', checkedOn: null, ageDays: null };
 
     const ageDays = calendarDaysBetween(checkedOn, now);
+    if (ageDays < 0) return { level: 'unknown', checkedOn, ageDays: null };
     if (this.health.outcome === 'degraded' || ageDays > 2) {
       return { level: 'stale', checkedOn, ageDays };
     }

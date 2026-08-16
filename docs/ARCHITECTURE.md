@@ -57,7 +57,8 @@ and cleared the flag. That is the flag doing its job, not the feed being wrong.
 genuinely new ones drown in it. `mergeCatalog` compares each reason against what the published catalog
 already recorded and marks only the unrecorded ones `isNew`; the workflow gates on those.
 
-**Why nothing is deleted.** A model missing from the feed is kept, marked `stale` and flagged — because
+**Why nothing is deleted.** A model missing from the feed is kept, marked `stale`, demoted from
+`current` to `legacy`, and flagged — because
 one truncated upstream response should not be able to empty the catalog, and because the resulting
 deletion would have looked like a clean diff and been committed and deployed without anyone seeing it.
 Retiring a model for good means adding its id to `retired` in the allowlist: a deliberate, reviewable edit.

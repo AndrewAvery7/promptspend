@@ -14,7 +14,7 @@
  */
 import type { Model } from '@/lib/pricing/types';
 import { countTokens, type CountMethod } from '@/lib/tokenize';
-import { effectivePricing } from '@/lib/engine/cost';
+import { conversationCost } from '@/lib/engine/cost';
 
 export interface EstimateRow {
   model: Model;
@@ -41,16 +41,19 @@ export async function estimateSelection(
   const rows = await Promise.all(
     models.map(async (model): Promise<EstimateRow> => {
       const count = await countTokens(text, model);
-      // Promotional rates are honoured through the engine's own helper rather
-      // than read off `pricing.input`, so a model inside its intro window is
-      // priced here exactly as the website prices it.
-      const rate = effectivePricing(model.pricing, asOf).input;
+      // Use the shared integer-money engine so promotions and long-context
+      // tiers follow exactly the same request-level rules as every app surface.
+      const inputCostUsd = conversationCost(
+        model,
+        { systemTokens: 0, userTokens: count.tokens, outputTokens: 0, turns: 1 },
+        { asOf },
+      ).total;
       return {
         model,
         tokens: count.tokens,
         method: count.method,
         note: count.note,
-        inputCostUsd: (count.tokens / 1_000_000) * rate,
+        inputCostUsd,
       };
     }),
   );

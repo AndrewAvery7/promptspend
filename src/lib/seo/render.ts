@@ -225,6 +225,15 @@ function rateRows(pricing: Pricing): string {
   if (pricing.cacheWrite !== undefined) {
     rows.push(row('Cache write', pricing.cacheWrite, 'Charged once, to put a prefix into the cache.'));
   }
+  if (pricing.cacheStoragePerMillionTokenHour !== undefined) {
+    rows.push(
+      row(
+        'Cache storage / hour',
+        pricing.cacheStoragePerMillionTokenHour,
+        'Separate residency charge per 1M cached tokens; not included without a retention duration.',
+      ),
+    );
+  }
   if (pricing.longContext !== undefined) {
     const tier = pricing.longContext;
     rows.push(
@@ -311,14 +320,14 @@ ${page.alternatives
       `<a href="${escapeHtml(href(ctx, page.providerPath))}">${escapeHtml(page.providerName)}</a>`,
     ],
     ['Status', model.status === 'current' ? 'Current' : model.status === 'legacy' ? 'Legacy' : 'Deprecated'],
-    ...(model.releaseDate ? ([['Released', model.releaseDate]] as [string, string][]) : []),
+    ...(model.releaseDate ? ([['Released', escapeHtml(model.releaseDate)]] as [string, string][]) : []),
     ['Reasoning model', model.capabilities.reasoning ? 'Yes' : 'No'],
     ['Vision', model.capabilities.vision ? 'Yes' : 'No'],
     [
       'Token counting',
       model.tokenizer.kind === 'tiktoken'
         ? `Exact, via <code>${escapeHtml(model.tokenizer.encoding)}</code>`
-        : `Estimated at ~${model.tokenizer.charsPerToken} characters per token${model.tokenizer.note ? ` (${escapeHtml(model.tokenizer.note)})` : ''}`,
+        : `Estimated at ~${escapeHtml(String(model.tokenizer.charsPerToken))} characters per token${model.tokenizer.note ? ` (${escapeHtml(model.tokenizer.note)})` : ''}`,
     ],
     ...(model.pricing.batchDiscount !== undefined
       ? ([

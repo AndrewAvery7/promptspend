@@ -49,6 +49,8 @@ const ENDPOINTS: [string, string][] = [
   ['GET /v1/health', 'Whether this API can currently read and validate the catalog.'],
   ['GET /openapi.json', 'OpenAPI 3.1 description of everything above.'],
   ['GET /llms.txt', 'The same, in the form an agent reads first.'],
+  ['GET /sitemap.xml', 'The single indexable developer-hub URL.'],
+  ['GET /style.css', 'The hub stylesheet.'],
 ];
 
 export function docsPage(origin: string, siteOrigin: string): string {
@@ -123,10 +125,11 @@ ${rows}
 
         <h2>Freshness</h2>
         <p>
-          Every response carries <code>X-PromptSpend-Generated-At</code>, and the JSON body repeats it as
+          Every <code>/v1/</code> response carries <code>X-PromptSpend-Generated-At</code>, and list bodies repeat it as
           <code>generatedAt</code>. Responses are cached for five minutes at the edge. If the origin is
-          unreachable, a retained copy is served with <code>X-PromptSpend-Stale: true</code> rather than an
-          error — stale and labelled beats absent, but nothing here is ever undated.
+          unreachable, a retained copy is served with <code>X-PromptSpend-Stale: true</code>. The same warning
+          appears when the daily sync is degraded or the catalog exceeds its 48-hour ceiling. Stale responses
+          require revalidation, and <code>/v1/health</code> returns 503 until freshness recovers.
         </p>
         <p>
           Per model, <code>provenance.lastVerified</code> is when the price was last confirmed against its

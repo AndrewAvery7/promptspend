@@ -102,18 +102,21 @@ jobs:
         run: |
           set -uo pipefail
           expected=$(jq -r '.generatedAt' public/data/pricing.json)
-          echo "expecting generatedAt=$expected"
+          expected_revision="${GITHUB_SHA}"
+          echo "expecting revision=$expected_revision and generatedAt=$expected"
 
           for attempt in $(seq 1 40); do
+            live_revision=$(curl -sS --max-time 20 "https://promptspend.com/build.json" \
+              | jq -r '.revision' 2>/dev/null || echo '')
             live=$(curl -sS --max-time 20 "https://promptspend.com/data/pricing.json" \
               | jq -r '.generatedAt' 2>/dev/null || echo '')
-            if [ "$live" = "$expected" ]; then
+            if [ "$live_revision" = "$expected_revision" ] && [ "$live" = "$expected" ]; then
               echo "✓ the site is serving this build (after ${attempt} check(s))"
               exit 0
             fi
-            echo "  serving $live — waiting"
+            echo "  serving revision=$live_revision generatedAt=$live — waiting"
             sleep 30
           done
 
-          echo "::error title=Deploy::The site is still serving $live, not $expected, 20 minutes after the artifact was published."
+          echo "::error title=Deploy::The site is still serving revision=$live_revision generatedAt=$live, not revision=$expected_revision generatedAt=$expected, 20 minutes after publication."
           exit 1

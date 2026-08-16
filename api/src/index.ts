@@ -13,7 +13,7 @@
  * router dependency would be larger than the thing it routes.
  */
 
-import { filterModels, priceCsv, priceRows, readCatalog, type ModelFilter } from './catalog';
+import { filterModels, priceCsv, priceRows, readCatalog, readSyncStatus, type ModelFilter } from './catalog';
 import { DOCS_CSS, docsPage, llmsTxt } from './docs';
 import type { Env } from './env';
 import { ApiError, badRequest, corsHeaders, etagFor, html, json, notFound, notModified, text } from './http';
@@ -117,8 +117,8 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
       return text(robotsTxt(url.origin), 'text/plain; charset=utf-8', { maxAge: 86_400 });
     case '/sitemap.xml':
       // One URL, and that is the honest answer: the hub is the only page here.
-      // Everything else this Worker serves is data, and `/v1/` is disallowed
-      // above precisely so it does not get crawled as content.
+      // Everything else this Worker serves is data. `/v1/` is omitted from the
+      // sitemap and marked noindex while remaining fetchable by agents.
       return text(
         `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -144,33 +144,47 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
   const known = ['/v1/models', '/v1/prices', '/v1/prices.csv', '/v1/providers', '/v1/health'];
   if (!single && !known.includes(path)) throw notFound('That endpoint');
 
-  const read = await readCatalog(env, ctx).catch((cause: unknown) => {
-    throw new ApiError(
-      503,
-      'The pricing catalog could not be read right now. Try again shortly.',
-      cause instanceof Error ? cause.message : String(cause),
-    );
-  });
-  const freshness = { generatedAt: read.catalog.generatedAt, stale: read.stale };
-  const etag = etagFor(url.pathname + url.search, read.catalog.generatedAt);
-  if (request.headers.get('If-None-Match') === etag) return notModified(etag);
-
-  const filter = parseFilter(url);
+  const [read, sync] = await Promise.all([
+    readCatalog(env, ctx).catch((cause: unknown) => {
+      throw new ApiError(
+        503,
+        'The pricing catalog could not be read right now. Try again shortly.',
+        cause instanceof Error ? cause.message : String(cause),
+      );
+    }),
+    readSyncStatus(env, ctx),
+  ]);
+  const catalogAgeHours = Math.max(0, (Date.now() - Date.parse(read.catalog.generatedAt)) / 3.6e6);
+  const syncSucceededAgeHours = sync?.succeededAt
+    ? Math.max(0, (Date.now() - Date.parse(sync.succeededAt)) / 3.6e6)
+    : null;
+  const stale =
+    read.stale ||
+    catalogAgeHours > 48 ||
+    sync?.outcome === 'degraded' ||
+    (syncSucceededAgeHours !== null && syncSucceededAgeHours > 48);
+  const freshness = { generatedAt: read.catalog.generatedAt, stale };
+  const etag = etagFor(`${url.pathname}${url.search}-${stale ? 'stale' : 'fresh'}`, read.catalog.generatedAt);
+  if (request.headers.get('If-None-Match') === etag) return notModified(etag, freshness);
 
   if (path === '/v1/health') {
     return json(
       {
-        ok: true,
+        ok: !stale,
         generatedAt: read.catalog.generatedAt,
         fetchedAt: read.fetchedAt.toISOString(),
-        stale: read.stale,
+        stale,
+        catalogAgeHours: Number(catalogAgeHours.toFixed(2)),
+        syncOutcome: sync?.outcome ?? 'unknown',
+        syncSucceededAt: sync?.succeededAt ?? null,
+        reason: stale ? 'catalog_or_sync_freshness' : null,
         models: read.catalog.models.length,
         providers: read.catalog.providers.length,
         // Flagged rows are the ones a caller should not present as settled, so
         // the count belongs where a monitor can see it.
         needsReview: read.catalog.models.filter((model) => model.provenance.needsReview === true).length,
       },
-      { freshness, etag, maxAge: 60 },
+      { freshness, etag, maxAge: 60, status: stale ? 503 : 200 },
     );
   }
 
@@ -192,6 +206,8 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
     );
   }
 
+  const filter = parseFilter(url);
+
   if (path === '/v1/models') {
     const models = filterModels(read.catalog, filter);
     return json({ generatedAt: read.catalog.generatedAt, count: models.length, models }, { freshness, etag });
@@ -212,9 +228,17 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
     return text(priceCsv(filtered), 'text/csv; charset=utf-8', { freshness, etag });
   }
 
-  const id = decodeURIComponent(single![1]!);
+  let id: string;
+  try {
+    id = decodeURIComponent(single![1]!);
+  } catch {
+    throw badRequest('That model id is not a valid URL-encoded string.');
+  }
   const model = read.catalog.models.find((entry) => entry.id === id);
-  if (!model) throw notFound(`Model "${id}"`);
+  if (!model) {
+    const shown = id.length > 120 ? `${id.slice(0, 117)}…` : id;
+    throw notFound(`Model "${shown}"`);
+  }
   return json(model, { freshness, etag });
 }
 

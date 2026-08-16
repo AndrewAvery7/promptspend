@@ -22,6 +22,7 @@
 import { validateCatalog, type Model, type PricingCatalog } from '../../src/lib/pricing/types';
 import { effectivePricing } from '../../src/lib/engine/cost';
 import type { Env } from './env';
+import { isSyncStatus, type SyncStatus } from '../../packages/core/src/pricing/health';
 
 /** How long a cached copy is retained, as opposed to how long it stays fresh. */
 const CACHE_SECONDS = 86_400;
@@ -46,6 +47,7 @@ const FETCHED_AT = 'X-PromptSpend-Fetched-At';
  * hides.
  */
 export const CACHE_KEY = 'https://catalog.promptspend.dev/__cache/pricing/v1';
+export const SYNC_CACHE_KEY = 'https://catalog.promptspend.dev/__cache/sync-status/v1';
 
 export interface CatalogRead {
   catalog: PricingCatalog;
@@ -91,6 +93,43 @@ export async function readCatalog(env: Env, ctx?: ExecutionContext): Promise<Cat
   }
 
   return fetchAndStore(env, key, cache, ctx);
+}
+
+/** Read the independently published sync-health manifest on the same bounded cache. */
+export async function readSyncStatus(env: Env, ctx?: ExecutionContext): Promise<SyncStatus | null> {
+  const key = new Request(SYNC_CACHE_KEY, { method: 'GET' });
+  const cache = caches.default;
+  const cached = await cache.match(key);
+  if (cached) {
+    const fetchedAt = new Date(cached.headers.get(FETCHED_AT) ?? 0);
+    if ((Date.now() - fetchedAt.getTime()) / 1000 < freshSeconds(env)) {
+      const value: unknown = await cached.json();
+      return isSyncStatus(value) ? value : null;
+    }
+  }
+
+  try {
+    const response = await fetch(env.SYNC_STATUS_URL, { cache: 'no-store' });
+    if (!response.ok || !(response.headers.get('content-type') ?? '').includes('json')) return null;
+    const body = await response.text();
+    const value: unknown = JSON.parse(body);
+    if (!isSyncStatus(value)) return null;
+    const store = new Response(body, {
+      headers: {
+        'Cache-Control': `public, max-age=${CACHE_SECONDS}`,
+        'Content-Type': 'application/json; charset=utf-8',
+        [FETCHED_AT]: new Date().toISOString(),
+      },
+    });
+    const put = cache.put(key, store);
+    if (ctx) ctx.waitUntil(put);
+    else await put;
+    return value;
+  } catch {
+    if (!cached) return null;
+    const value: unknown = await cached.json();
+    return isSyncStatus(value) ? value : null;
+  }
 }
 
 /**
@@ -220,6 +259,7 @@ export interface PriceRow {
   output: number;
   cachedInput: number | null;
   cacheWrite: number | null;
+  cacheStoragePerMillionTokenHour: number | null;
   contextWindow: number;
   maxOutput: number | null;
   status: string;
@@ -241,6 +281,7 @@ export function priceRows(catalog: PricingCatalog, asOf: Date = new Date()): Pri
       output: rates.output,
       cachedInput: rates.cachedInput ?? null,
       cacheWrite: rates.cacheWrite ?? null,
+      cacheStoragePerMillionTokenHour: model.pricing.cacheStoragePerMillionTokenHour ?? null,
       contextWindow: model.contextWindow,
       maxOutput: model.maxOutput ?? null,
       status: model.status,
@@ -269,6 +310,7 @@ const CSV_COLUMNS: (keyof PriceRow)[] = [
   'promotionalUntil',
   'standardInput',
   'standardOutput',
+  'cacheStoragePerMillionTokenHour',
 ];
 
 /** RFC 4180: quote anything containing a comma, quote or newline; double the quotes. */

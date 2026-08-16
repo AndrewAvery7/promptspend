@@ -4,7 +4,7 @@ Status: pre-device-QA draft; copy and evidence are implementation-ready, but
 store declarations remain unsubmitted until the release-candidate binary and
 physical-device evidence are final.
 
-Last reviewed: 2026-08-12
+Last reviewed: 2026-08-16
 
 ## Sources of truth
 
@@ -73,8 +73,12 @@ behavior before submission:
 > The app downloads public pricing and sync-status JSON from promptspend.com and
 > may use a validated device cache for less than 24 hours when offline. Test
 > sharing from an estimate or comparison; the preview contains derived counts,
-> assumptions, and costs but never pasted text. Data & Alerts opens selected
-> public resources in a system browser. Native push notifications, accounts,
+> assumptions, and costs but never pasted text. In Data & Alerts, email alerts
+> are optional: enter an address, complete the Cloudflare human-verification
+> sheet, then confirm using the received email. Existing subscribers can request
+> a six-digit code and manage cadence and followed models in the app. The code
+> expires after 10 minutes and the management session after 30 minutes. No review
+> account or credentials are required. Native push notifications, accounts,
 > ads, analytics, and in-app purchases are not present in this version.
 
 No review credentials are required. Reviewer contact information belongs in
@@ -82,7 +86,16 @@ the private store portal and must not be committed to this public repository.
 
 ## Apple App Privacy draft
 
-Provisional answer: **No, we do not collect data from this app.**
+Provisional answer: **Yes, Contact Info — Email Address is collected only when a user opts into email alerts.**
+
+Recommended App Store Connect declaration:
+
+- Data type: Contact Info → Email Address.
+- Purpose: App Functionality.
+- Linked to the user: Yes. The address identifies the alert subscription.
+- Used for tracking: No.
+- Collection is optional; estimates, comparisons, Learn, and local saved
+  scenarios require no email address or account.
 
 Evidence supporting that draft:
 
@@ -94,6 +107,9 @@ Evidence supporting that draft:
 - Public catalog requests send no scenario or prompt payload.
 - User-initiated sharing is handed to the operating-system share sheet.
 - Predetermined external resources open in a system browser.
+- An optional alert flow transmits the entered email address and preferences to
+  PromptSpend's Cloudflare-hosted service. It does not transmit prompt text,
+  saved scenarios, contacts, advertising identifiers, or precise location.
 
 This answer is **not certified yet**. Before publishing it, inspect the final
 iOS privacy manifest and network trace, confirm the hosting layer and every
@@ -103,8 +119,9 @@ includes third-party partner behavior across supported platforms.
 
 Privacy Policy URL: `https://promptspend.com/privacy/`
 
-User Privacy Choices URL: leave blank; the app has no account or remote user
-profile. Local deletion instructions are on the support page.
+User Privacy Choices URL: `https://promptspend.com/support/`. The support and
+privacy pages explain in-app management and deletion. This is not an account;
+unsubscribing deletes the alert address and preferences.
 
 Tracking: No. ATT permission: not requested.
 
@@ -112,18 +129,23 @@ Tracking: No. ATT permission: not requested.
 
 Provisional answers:
 
-- Does the app collect or share required user-data types? **No**.
+- Does the app collect or share required user-data types? **Yes, optional email
+  address for app functionality. It is collected, not sold or shared for
+  advertising.**
 - Is user data encrypted in transit? **Yes; public network requests use HTTPS**.
 - Does the app provide account creation? **No**.
-- Account-deletion URL required? **No account exists**.
+- Account-deletion URL required? **No native account is created.** The in-app
+  unsubscribe action deletes the optional alert address and preferences, and
+  the privacy/support URL documents that deletion path.
 - Privacy policy: `https://promptspend.com/privacy/`.
 
 Google defines collection broadly as transmitting user data off-device,
-including third-party SDK behavior. On-device processing is outside that
-definition, while ephemeral off-device processing can still require an answer.
-Therefore this draft must not be submitted until the final Android manifest,
-SDK inventory, and network trace prove that only public catalog/resource
-requests leave the app and carry no reportable user data.
+including third-party SDK behavior. On-device prompt processing remains outside
+that definition, while the optional email-alert flow is reportable. Declare the
+email as optional, encrypted in transit, retained until unsubscribe, and used
+only for app functionality. This draft must not be submitted until the final
+Android manifest, SDK inventory, network trace, and exact release-candidate
+alert flow confirm those statements.
 
 The Data Safety form is required for closed, open, and production tracks even
 when an app collects no data. An app exclusively on the internal track is

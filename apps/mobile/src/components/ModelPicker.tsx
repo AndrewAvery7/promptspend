@@ -167,7 +167,7 @@ function createStyles(theme: MobileTheme) {
     selector: {
       alignItems: 'center',
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       flexDirection: 'row',
@@ -249,7 +249,7 @@ function createStyles(theme: MobileTheme) {
     },
     search: {
       backgroundColor: theme.surface,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       color: theme.text,

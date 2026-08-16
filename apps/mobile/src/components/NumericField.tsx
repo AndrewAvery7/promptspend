@@ -28,19 +28,39 @@ export function NumericField({
 }: NumericFieldProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const [draft, setDraft] = useState({ text: String(value), sourceValue: value });
-  const displayed = draft.sourceValue === value ? draft.text : String(value);
+  const [draft, setDraft] = useState(String(value));
+  const [editing, setEditing] = useState(false);
+  const [validationMessage, setValidationMessage] = useState<string | null>(null);
 
   const commit = (text: string) => {
-    const parsed = Number(text.replaceAll(',', '').trim());
+    const normalized = text.replace(',', '.').trim();
+    const parsed = normalized.length > 0 && normalized !== '.' ? Number(normalized) : Number.NaN;
     if (!Number.isFinite(parsed)) {
-      setDraft({ text: String(value), sourceValue: value });
+      setDraft(String(value));
+      setValidationMessage(`${label} must be a number.`);
       return;
     }
     const rounded = Math.round(parsed / step) * step;
     const next = Math.min(max, Math.max(min, Number(rounded.toFixed(step < 1 ? 2 : 0))));
-    setDraft({ text: String(next), sourceValue: next });
+    setDraft(String(next));
+    setValidationMessage(
+      parsed < min
+        ? `${label} was adjusted to the minimum of ${min}.`
+        : parsed > max
+          ? `${label} was adjusted to the maximum of ${max}.`
+          : null,
+    );
     onChange(next);
+  };
+
+  const updateDraft = (text: string) => {
+    const normalized = step < 1 ? text.replace(',', '.') : text;
+    const clean =
+      step < 1
+        ? normalized.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')
+        : normalized.replace(/[^0-9]/g, '');
+    setValidationMessage(null);
+    setDraft(clean);
   };
 
   return (
@@ -55,22 +75,28 @@ export function NumericField({
           inputMode={step < 1 ? 'decimal' : 'numeric'}
           keyboardType={step < 1 ? 'decimal-pad' : 'number-pad'}
           maxLength={10}
-          onBlur={() => commit(displayed)}
-          onChangeText={(text) => {
-            const clean =
-              step < 1
-                ? text.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')
-                : text.replace(/[^0-9]/g, '');
-            setDraft({ text: clean, sourceValue: value });
-            if (clean.length > 0) commit(clean);
+          onBlur={() => {
+            commit(draft);
+            setEditing(false);
           }}
+          onChangeText={updateDraft}
+          onFocus={() => {
+            setDraft(String(value));
+            setEditing(true);
+          }}
+          onSubmitEditing={() => commit(draft)}
           returnKeyType="done"
           selectTextOnFocus
           style={styles.input}
-          value={displayed}
+          value={editing ? draft : String(value)}
         />
         <Text style={styles.suffix}>{suffix}</Text>
       </View>
+      {validationMessage ? (
+        <Text accessibilityLiveRegion="polite" style={styles.validationMessage}>
+          {validationMessage}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -89,7 +115,7 @@ function createStyles(theme: MobileTheme) {
     inputRow: {
       alignItems: 'center',
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       flexDirection: 'row',
@@ -109,6 +135,11 @@ function createStyles(theme: MobileTheme) {
       color: theme.mutedText,
       fontSize: 13,
       paddingHorizontal: 14,
+    },
+    validationMessage: {
+      color: theme.danger,
+      fontSize: 13,
+      lineHeight: 18,
     },
   });
 }

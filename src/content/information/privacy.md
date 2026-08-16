@@ -3,14 +3,14 @@ slug: privacy
 title: Privacy Policy | PromptSpend
 description: How PromptSpend handles pasted text, local app data, public pricing requests, sharing, alerts, and support communications.
 heading: Privacy Policy
-updated: 2026-08-12
+updated: 2026-08-16
 ---
 
 PromptSpend is designed to estimate AI costs without turning your prompts into our data. This policy covers the PromptSpend native apps, website, pricing API, and optional alert and support services.
 
 ## The short version
 
-The native app has no account system, advertising SDK, behavioral analytics, cross-app tracking, or tracking identifier. Text pasted into the estimator is processed on your device. PromptSpend does not transmit or save that pasted text. You choose whether to share a result, and shared results contain derived counts and costs rather than the pasted text.
+The native app has no account system, advertising SDK, behavioral analytics, cross-app tracking, or tracking identifier. Text pasted into the estimator is processed on your device. PromptSpend does not transmit or save that pasted text. You choose whether to share a result, and shared results contain derived counts and costs rather than the pasted text. If you opt into email alerts, the app sends the email address and alert choices you enter to the PromptSpend alert service solely to provide and secure that feature.
 
 ## Information that stays on your device
 
@@ -30,7 +30,9 @@ Links to provider evidence, documentation, alerts, source code, or other resourc
 
 ## Optional alerts
 
-If you separately subscribe on the PromptSpend website, the alert service stores the email address or browser push subscription needed to deliver the service, together with the preferences you choose. Alert emails use no tracking pixels or click tracking. You can unsubscribe using the link in an alert or the preferences page. Native push notifications are not included in the current app release.
+You may subscribe to email price alerts from the native app or website. The alert service stores the email address, delivery cadence, followed-model choices, confirmation status, and consent time needed to deliver the service. It also stores a keyed hash of the connection address for abuse prevention rather than the original network address. Cloudflare provides the database, bot-verification, hosting, and email-delivery infrastructure used for this service and processes the data under PromptSpend's instructions.
+
+New subscriptions require email confirmation. Unconfirmed subscriptions are deleted after seven days. Short-lived management codes expire after 10 minutes, and an in-app management credential expires after 30 minutes. A confirmed email subscription remains until you unsubscribe; unsubscribing deletes the address, preferences, follows, and active management codes from the alert database. Alert emails use no tracking pixels or click tracking. Native push notifications are not included in the current app release.
 
 ## Support and security reports
 
@@ -46,7 +48,7 @@ PromptSpend is a technical cost-planning tool and is not directed to children un
 
 ## Security and retention
 
-PromptSpend minimizes collection, uses HTTPS for network traffic, and keeps private prompt processing on-device. No system is perfectly secure. Local app data remains until you remove it or uninstall the app; optional alert data remains while needed to provide and secure the subscription or until it is deleted under the service's operating and legal requirements.
+PromptSpend minimizes collection, uses HTTPS for network traffic, and keeps private prompt processing on-device. No system is perfectly secure. Local app data remains until you remove it or uninstall the app. Alert records follow the time limits described above; operational security logs may be retained for the limited period used by the infrastructure provider to deliver, protect, and troubleshoot the service.
 
 ## Changes and contact
 

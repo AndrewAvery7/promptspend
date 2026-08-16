@@ -10,7 +10,7 @@
  * written and stopped being so the morning the VS Code extension landed with
  * 124 tests of its own.
  *
- * It rots because no single command produces it. The figure spans six suites
+ * It rots because no single command produces it. The figure spans seven suites
  * with their own runners, lockfiles and CI jobs, so the only way to know it is
  * to ask every one of them and add up the answers — which is what this does,
  * for the same reason `validate-catalog.ts` holds the models badge to the
@@ -44,6 +44,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 /** How the root package and the browser run are named in the output. */
 const THIS_PACKAGE = 'this package';
 const BROWSER = 'the browser';
+const MOBILE = 'apps/mobile/';
 
 /** A counted suite. */
 interface Suite {
@@ -173,6 +174,27 @@ async function countPlaywright(): Promise<number> {
   requireInstalled(bin, BROWSER);
   const report = JSON.parse(await run(bin, ['test', '--list', '--reporter=json'], ROOT)) as PlaywrightSuite;
   return tally(report);
+}
+
+interface JestReport {
+  numTotalTests: number;
+  success: boolean;
+}
+
+/**
+ * The native Jest suite is part of the public total too.
+ *
+ * Jest has no collection-only command that reports individual test cases, so
+ * this one suite runs. That costs a few seconds and, unlike counting `test(`
+ * strings, includes parameterized tests and excludes helper text correctly.
+ */
+async function countMobileJest(): Promise<number> {
+  const dir = resolve(ROOT, 'apps/mobile');
+  const bin = resolve(dir, 'node_modules/jest/bin/jest.js');
+  requireInstalled(bin, MOBILE);
+  const report = JSON.parse(await run(bin, ['--runInBand', '--json', '--silent'], dir)) as JestReport;
+  if (!report.success) throw new Error(`${MOBILE} Jest report did not succeed`);
+  return report.numTotalTests;
 }
 
 /** A published number, and what it has to be. */
@@ -342,6 +364,7 @@ async function main(): Promise<void> {
     if (name === THIS_PACKAGE) rootByFile = byFile;
     suites.push({ name, count: total });
   }
+  suites.push({ name: MOBILE, count: await countMobileJest() });
   suites.push({ name: BROWSER, count: await countPlaywright() });
 
   const total = suites.reduce((sum, suite) => sum + suite.count, 0);

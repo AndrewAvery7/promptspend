@@ -249,11 +249,16 @@ export function useEstimator(catalog: Catalog) {
 
     perModel.sort((a, b) => a.scaled.perMonth - b.scaled.perMonth);
     const cheapest = perModel[0]!;
-    return perModel.map((row, index) => ({
+    return perModel.map((row) => ({
       ...row,
       deltaPerMonth: row.scaled.perMonth - cheapest.scaled.perMonth,
-      multipleOfCheapest: cheapest.scaled.perMonth > 0 ? row.scaled.perMonth / cheapest.scaled.perMonth : 1,
-      isCheapest: index === 0,
+      multipleOfCheapest:
+        cheapest.scaled.perMonth > 0
+          ? row.scaled.perMonth / cheapest.scaled.perMonth
+          : row.scaled.perMonth === 0
+            ? 1
+            : null,
+      isCheapest: row.scaled.perMonth === cheapest.scaled.perMonth,
     }));
   }, [models, scenario, tokensForModel]);
 
@@ -378,18 +383,4 @@ export function scenarioScale(scenario: Scenario) {
     monthlyActiveUsers: scenario.monthlyActiveUsers,
     revenuePerUserPerMonth: scenario.revenuePerUserPerMonth,
   };
-}
-
-/**
- * Token count shown next to a field label. Uses the first selected model, since
- * that is the one whose tokenizer the label's method refers to.
- */
-export function fieldTokenCount(
-  field: FieldState,
-  sliderValue: number,
-  model: Model | undefined,
-): { tokens: number; estimated: boolean } {
-  if (field.mode !== 'paste') return { tokens: sliderValue, estimated: false };
-  if (field.text.length === 0) return { tokens: 0, estimated: false };
-  return { tokens: estimateTokens(field.text, model?.tokenizer), estimated: true };
 }

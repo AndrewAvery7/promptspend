@@ -97,12 +97,14 @@ function priceBlock(catalog: Catalog, model: Model, asOf: Date): PriceBlock {
 
 /** Resolve a user-supplied name to a catalog model, tolerantly. */
 export function resolveModel(catalog: Catalog, query: string): Model | undefined {
+  if (typeof query !== 'string') return undefined;
   const direct = catalog.get(query);
   if (direct) return direct;
   const needle = query
     .trim()
     .toLowerCase()
     .replace(/[\s_]+/g, '-');
+  if (needle.length < 2 || !/[a-z0-9]/.test(needle)) return undefined;
   const all = catalog.models;
   return (
     all.find((m) => m.id.toLowerCase() === needle) ??
@@ -159,6 +161,8 @@ export interface EstimateInput {
 }
 
 export function estimateCost(catalog: Catalog, generatedAt: string, input: EstimateInput) {
+  const invalid = validateEstimateInput(input);
+  if (invalid) return { error: invalid };
   const resolved: Model[] = [];
   const unknown: string[] = [];
   for (const name of input.models) {
@@ -208,7 +212,7 @@ export function estimateCost(catalog: Catalog, generatedAt: string, input: Estim
       cost_per_year_usd: Number(r.scaled.perYear.toFixed(2)),
       input_share_of_cost: Number((r.breakdown.inputCost / (r.breakdown.total || 1)).toFixed(3)),
       extra_per_month_vs_cheapest_usd: Number(r.deltaPerMonth.toFixed(2)),
-      multiple_of_cheapest: Number(r.multipleOfCheapest.toFixed(2)),
+      multiple_of_cheapest: r.multipleOfCheapest === null ? null : Number(r.multipleOfCheapest.toFixed(2)),
       is_cheapest: r.isCheapest,
       provenance: provenanceOf(r.model),
     })),
@@ -232,6 +236,8 @@ export interface CheaperInput {
 }
 
 export function findCheaper(catalog: Catalog, generatedAt: string, input: CheaperInput) {
+  const invalid = validateCheaperInput(input);
+  if (invalid) return { error: invalid };
   const target = resolveModel(catalog, input.model);
   if (!target) return notFound(catalog, input.model);
 
@@ -278,4 +284,49 @@ export function findCheaper(catalog: Catalog, generatedAt: string, input: Cheape
       'The capability index is an illustrative estimate, not a benchmark. A cheaper model ' +
       'clearing the bar is a candidate to TEST, not a decision. Testing it costs pennies.',
   };
+}
+
+function validateEstimateInput(input: EstimateInput): string | null {
+  if (!input || !Array.isArray(input.models)) return 'models must be an array of model names.';
+  if (input.models.length < 1 || input.models.length > 20)
+    return 'models must contain between 1 and 20 model names.';
+  if (input.models.some((value) => typeof value !== 'string' || value.trim().length < 2))
+    return 'Every model name must be a non-blank string.';
+  return validateNumbers(input);
+}
+
+function validateCheaperInput(input: CheaperInput): string | null {
+  if (!input || typeof input.model !== 'string' || input.model.trim().length < 2)
+    return 'model must be a non-blank model name.';
+  return validateNumbers(input);
+}
+
+function validateNumbers(input: EstimateInput | CheaperInput): string | null {
+  type NumericField =
+    | 'system_tokens'
+    | 'user_tokens'
+    | 'output_tokens'
+    | 'turns'
+    | 'conversations_per_day'
+    | 'cached_input_share'
+    | 'reasoning_multiplier'
+    | 'min_capability';
+  const fields: Array<[NumericField, number, number]> = [
+    ['system_tokens', 0, 200_000],
+    ['user_tokens', 0, 200_000],
+    ['output_tokens', 0, 200_000],
+    ['turns', 1, 200],
+    ['conversations_per_day', 0, 100_000_000],
+    ['cached_input_share', 0, 1],
+    ['reasoning_multiplier', 1, 5],
+    ['min_capability', 0, 100],
+  ];
+  for (const [field, min, max] of fields) {
+    const value = (input as Partial<Record<NumericField, unknown>>)[field];
+    if (value === undefined) continue;
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max) {
+      return `${String(field)} must be a finite number from ${min} to ${max}.`;
+    }
+  }
+  return null;
 }

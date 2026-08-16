@@ -96,7 +96,19 @@ self.addEventListener('pushsubscriptionchange', (event) => {
       // file would be one more artifact that can go stale.
       const api = new URL(self.location.href).searchParams.get('api');
       if (!api) return;
-      await fetch(`${api}/v1/push/subscribe`, {
+      let apiOrigin;
+      try {
+        apiOrigin = new URL(api).origin;
+      } catch {
+        return;
+      }
+      const allowedOrigins = new Set([
+        'https://api.promptspend.dev',
+        'http://localhost:8787',
+        'http://127.0.0.1:8787',
+      ]);
+      if (!allowedOrigins.has(apiOrigin)) return;
+      await fetch(`${apiOrigin}/v1/push/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -33,6 +33,8 @@ export function corsHeaders(): Record<string, string> {
     // Callers reading freshness from headers rather than the body need these
     // to survive a cross-origin fetch.
     'Access-Control-Expose-Headers': 'ETag, X-PromptSpend-Generated-At, X-PromptSpend-Stale',
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'no-referrer',
   };
 }
 
@@ -65,7 +67,9 @@ export function json(body: unknown, options: JsonOptions = {}): Response {
   const { status = 200, freshness, maxAge = 300, etag } = options;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json; charset=utf-8',
-    'Cache-Control': `public, max-age=${maxAge}, stale-while-revalidate=3600`,
+    'Cache-Control': freshness?.stale
+      ? 'public, max-age=0, must-revalidate'
+      : `public, max-age=${maxAge}, stale-while-revalidate=3600`,
     ...corsHeaders(),
   };
   if (etag) headers.ETag = etag;
@@ -82,7 +86,9 @@ export function text(body: string, contentType: string, options: JsonOptions = {
   const { status = 200, freshness, maxAge = 300, etag } = options;
   const headers: Record<string, string> = {
     'Content-Type': contentType,
-    'Cache-Control': `public, max-age=${maxAge}, stale-while-revalidate=3600`,
+    'Cache-Control': freshness?.stale
+      ? 'public, max-age=0, must-revalidate'
+      : `public, max-age=${maxAge}, stale-while-revalidate=3600`,
     ...corsHeaders(),
   };
   if (etag) headers.ETag = etag;
@@ -124,9 +130,16 @@ export function html(body: string, maxAge = 3600): Response {
 }
 
 /** 304 when the caller already has this exact version. */
-export function notModified(etag: string): Response {
+export function notModified(etag: string, freshness: Freshness): Response {
+  const headers: Record<string, string> = {
+    ETag: etag,
+    'Cache-Control': freshness.stale ? 'public, max-age=0, must-revalidate' : 'public, max-age=300',
+    'X-PromptSpend-Generated-At': freshness.generatedAt,
+    ...corsHeaders(),
+  };
+  if (freshness.stale) headers['X-PromptSpend-Stale'] = 'true';
   return new Response(null, {
     status: 304,
-    headers: { ETag: etag, 'Cache-Control': 'public, max-age=300', ...corsHeaders() },
+    headers,
   });
 }

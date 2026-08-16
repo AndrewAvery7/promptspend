@@ -31,6 +31,18 @@ describe('mobile appearance and contrast', () => {
         expect(contrast(theme.text, theme.surface)).toBeGreaterThanOrEqual(4.5);
         expect(contrast(theme.mutedText, theme.surface)).toBeGreaterThanOrEqual(4.5);
         expect(contrast(theme.onAccent, theme.accent)).toBeGreaterThanOrEqual(4.5);
+        for (const foreground of [
+          theme.accent,
+          theme.danger,
+          theme.information,
+          theme.savings,
+          theme.warning,
+        ]) {
+          expect(contrast(foreground, theme.background)).toBeGreaterThanOrEqual(4.5);
+          expect(contrast(foreground, theme.surface)).toBeGreaterThanOrEqual(4.5);
+        }
+        expect(contrast(theme.borderStrong, theme.background)).toBeGreaterThanOrEqual(3);
+        expect(contrast(theme.borderStrong, theme.surface)).toBeGreaterThanOrEqual(3);
       }
     }
   });

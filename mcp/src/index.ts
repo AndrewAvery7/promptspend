@@ -16,17 +16,30 @@ import { INSTRUCTIONS, SERVER_INFO, TOOLS } from './schema';
 import { estimateCost, findCheaper, getPrice, type CheaperInput, type EstimateInput } from './tools';
 
 export async function dispatch(name: string, args: Record<string, unknown>): Promise<unknown> {
-  const { catalog, generatedAt } = await getCatalog();
+  const { catalog, generatedAt, fetchedAt, servedFromFallback, warning } = await getCatalog();
+  let result: unknown;
   switch (name) {
     case 'get_price':
-      return getPrice(catalog, generatedAt, String(args.model_name ?? ''));
+      result = getPrice(catalog, generatedAt, typeof args.model_name === 'string' ? args.model_name : '');
+      break;
     case 'estimate_cost':
-      return estimateCost(catalog, generatedAt, args as unknown as EstimateInput);
+      result = estimateCost(catalog, generatedAt, args as unknown as EstimateInput);
+      break;
     case 'find_cheaper':
-      return findCheaper(catalog, generatedAt, args as unknown as CheaperInput);
+      result = findCheaper(catalog, generatedAt, args as unknown as CheaperInput);
+      break;
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
+  if (!servedFromFallback || typeof result !== 'object' || result === null) return result;
+  return {
+    ...result,
+    catalog_status: {
+      served_from: 'cached_or_delayed_copy',
+      fetched_at: new Date(fetchedAt).toISOString(),
+      warning,
+    },
+  };
 }
 
 /**
@@ -79,10 +92,8 @@ async function main(): Promise<void> {
       const result = await dispatch(name, (args ?? {}) as Record<string, unknown>);
       return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
     } catch (error) {
-      // An unreachable catalog is reported as a failure, never papered over with
-      // a cached-but-old number. In an agent context a stale price is repeated
-      // to the user with full confidence, which is the failure this project
-      // exists to prevent.
+      // A bounded fallback is explicitly labelled by dispatch. Past that grace
+      // period, an unreachable catalog is reported as a failure.
       const message =
         error instanceof CatalogUnavailableError
           ? error.message

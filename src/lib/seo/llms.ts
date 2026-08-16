@@ -34,6 +34,10 @@ export interface LlmsTxtInput {
 /** Models worth naming individually, so an agent can jump straight to one. */
 const HIGHLIGHT_COUNT = 12;
 
+function markdownLabel(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+}
+
 export function renderLlmsTxt(set: PageSet, input: LlmsTxtInput): string {
   const { siteUrl, apiUrl, generatedAt } = input;
 
@@ -45,12 +49,15 @@ export function renderLlmsTxt(set: PageSet, input: LlmsTxtInput): string {
     .slice(0, HIGHLIGHT_COUNT)
     .map(
       (page) =>
-        `- [${page.model.displayName}](${siteUrl}${page.path}): $${Number(page.effective.input.toFixed(4))} in / $${Number(page.effective.output.toFixed(4))} out per 1M tokens, ${page.providerName}`,
+        `- [${markdownLabel(page.model.displayName)}](${siteUrl}${page.path}): $${Number(page.effective.input.toFixed(4))} in / $${Number(page.effective.output.toFixed(4))} out per 1M tokens, ${markdownLabel(page.providerName)}`,
     )
     .join('\n');
 
   const providers = set.providers
-    .map((page) => `- [${page.provider.name}](${siteUrl}${page.path}): ${page.models.length} models`)
+    .map(
+      (page) =>
+        `- [${markdownLabel(page.provider.name)}](${siteUrl}${page.path}): ${page.models.length} models`,
+    )
     .join('\n');
 
   return `# PromptSpend

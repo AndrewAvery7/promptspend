@@ -41,9 +41,20 @@ export async function verifyTurnstile(
   try {
     const response = await fetch(VERIFY_URL, { method: 'POST', body });
     if (!response.ok) return { ok: false, errorCodes: [`http-${response.status}`] };
-    const result = (await response.json()) as { action?: string; success: boolean; 'error-codes'?: string[] };
+    const result = (await response.json()) as {
+      action?: string;
+      hostname?: string;
+      success: boolean;
+      'error-codes'?: string[];
+    };
     if (expectedAction && result.success && result.action !== expectedAction) {
       return { ok: false, errorCodes: ['action-mismatch'] };
+    }
+    const allowedHostnames = env.TURNSTILE_HOSTNAMES.split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+    if (result.success && (!result.hostname || !allowedHostnames.includes(result.hostname))) {
+      return { ok: false, errorCodes: ['hostname-mismatch'] };
     }
     return result.success ? { ok: true } : { ok: false, errorCodes: result['error-codes'] ?? [] };
   } catch {

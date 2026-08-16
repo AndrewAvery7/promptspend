@@ -87,34 +87,60 @@ export async function findEmailById(db: D1Database, id: string): Promise<EmailSu
  */
 export async function upsertPendingEmail(
   db: D1Database,
-  input: { email: string; cadence: Cadence; scope: Scope; consentIpHash: string | null },
+  input: {
+    email: string;
+    cadence: Cadence;
+    scope: Scope;
+    consentIpHash: string | null;
+    /** When supplied, subscriber state and follows are committed together. */
+    modelIds?: string[];
+  },
 ): Promise<EmailSubscriber> {
   const email = normaliseEmail(input.email);
   const existing = await findEmailByAddress(db, email);
   const timestamp = nowIso();
+  const follows = input.modelIds === undefined ? null : [...new Set(input.modelIds)].slice(0, MAX_FOLLOWS);
+
+  const followStatements = (subscriberId: string): D1PreparedStatement[] => {
+    if (follows === null) return [];
+    return [
+      db
+        .prepare(`DELETE FROM follows WHERE subscriber_kind = 'email' AND subscriber_id = ?`)
+        .bind(subscriberId),
+      ...follows.map((modelId) =>
+        db
+          .prepare(`INSERT INTO follows (subscriber_kind, subscriber_id, model_id) VALUES ('email', ?, ?)`)
+          .bind(subscriberId, modelId),
+      ),
+    ];
+  };
 
   if (existing) {
-    await db
+    const update = db
       .prepare(
         `UPDATE email_subscribers
             SET status = 'pending', cadence = ?, scope = ?, unsubscribed_at = NULL,
                 consent_ip_hash = ?, consent_at = ?
           WHERE id = ?`,
       )
-      .bind(input.cadence, input.scope, input.consentIpHash, timestamp, existing.id)
-      .run();
+      .bind(input.cadence, input.scope, input.consentIpHash, timestamp, existing.id);
+    const statements = [update, ...followStatements(existing.id)];
+    if (statements.length === 1) await update.run();
+    else await db.batch(statements);
     return (await findEmailById(db, existing.id))!;
   }
 
   const id = newId();
-  await db
+  const insert = db
     .prepare(
       `INSERT INTO email_subscribers
          (id, email, status, cadence, scope, created_at, consent_ip_hash, consent_at)
        VALUES (?, ?, 'pending', ?, ?, ?, ?, ?)`,
     )
-    .bind(id, email, input.cadence, input.scope, timestamp, input.consentIpHash, timestamp)
-    .run();
+    .bind(id, email, input.cadence, input.scope, timestamp, input.consentIpHash, timestamp);
+  const statements = [insert, ...followStatements(id)];
+  if (statements.length === 1) await insert.run();
+  else await db.batch(statements);
   return (await findEmailById(db, id))!;
 }
 
@@ -150,6 +176,7 @@ export async function activateEmail(db: D1Database, id: string): Promise<void> {
 export async function unsubscribeEmail(db: D1Database, id: string): Promise<void> {
   await db.batch([
     db.prepare(`DELETE FROM follows WHERE subscriber_kind = 'email' AND subscriber_id = ?`).bind(id),
+    db.prepare('DELETE FROM email_manage_codes WHERE subscriber_id = ?').bind(id),
     db.prepare('DELETE FROM email_subscribers WHERE id = ?').bind(id),
   ]);
 }
@@ -157,12 +184,23 @@ export async function unsubscribeEmail(db: D1Database, id: string): Promise<void
 export async function updateEmailPreferences(
   db: D1Database,
   id: string,
-  input: { cadence: Cadence; scope: Scope },
+  input: { cadence: Cadence; modelIds: string[]; scope: Scope },
 ): Promise<void> {
-  await db
-    .prepare('UPDATE email_subscribers SET cadence = ?, scope = ? WHERE id = ?')
-    .bind(input.cadence, input.scope, id)
-    .run();
+  const models = [...new Set(input.modelIds)].slice(0, MAX_FOLLOWS);
+  const statements: D1PreparedStatement[] = [
+    db
+      .prepare('UPDATE email_subscribers SET cadence = ?, scope = ? WHERE id = ?')
+      .bind(input.cadence, input.scope, id),
+    db.prepare(`DELETE FROM follows WHERE subscriber_kind = 'email' AND subscriber_id = ?`).bind(id),
+  ];
+  for (const modelId of models) {
+    statements.push(
+      db
+        .prepare(`INSERT INTO follows (subscriber_kind, subscriber_id, model_id) VALUES ('email', ?, ?)`)
+        .bind(id, modelId),
+    );
+  }
+  await db.batch(statements);
 }
 
 export async function storeEmailManageCode(
@@ -221,10 +259,14 @@ export async function pruneEmailManageCodes(db: D1Database): Promise<void> {
 
 export async function markEmailSent(db: D1Database, ids: string[]): Promise<void> {
   if (ids.length === 0) return;
-  await db
-    .prepare(`UPDATE email_subscribers SET last_sent_at = ? WHERE id IN (${ids.map(() => '?').join(',')})`)
-    .bind(nowIso(), ...ids)
-    .run();
+  const timestamp = nowIso();
+  await db.batch(
+    chunked([...new Set(ids)]).map((batch) =>
+      db
+        .prepare(`UPDATE email_subscribers SET last_sent_at = ? WHERE id IN (${placeholders(batch.length)})`)
+        .bind(timestamp, ...batch),
+    ),
+  );
 }
 
 /** Three hard bounces retires an address: it is costing quota and reputation. */
@@ -338,6 +380,14 @@ function placeholders(count: number): string {
   return new Array(count).fill('?').join(',');
 }
 
+const MAX_BOUND_VALUES_PER_QUERY = 80;
+
+function chunked<T>(values: T[], size = MAX_BOUND_VALUES_PER_QUERY): T[][] {
+  const chunks: T[][] = [];
+  for (let index = 0; index < values.length; index += size) chunks.push(values.slice(index, index + size));
+  return chunks;
+}
+
 /**
  * Who should hear about a change to these models?
  *
@@ -351,19 +401,23 @@ export async function emailRecipientsFor(
   cadence: Cadence,
 ): Promise<EmailSubscriber[]> {
   if (modelIds.length === 0) return [];
-  const { results } = await db
-    .prepare(
-      `SELECT DISTINCT s.*
-         FROM email_subscribers s
-         LEFT JOIN follows f
-           ON f.subscriber_kind = 'email' AND f.subscriber_id = s.id
-        WHERE s.status = 'active'
-          AND s.cadence = ?
-          AND (s.scope = 'all' OR f.model_id IN (${placeholders(modelIds.length)}))`,
-    )
-    .bind(cadence, ...modelIds)
-    .all<EmailSubscriber>();
-  return results;
+  const recipients = new Map<string, EmailSubscriber>();
+  for (const batch of chunked([...new Set(modelIds)])) {
+    const { results } = await db
+      .prepare(
+        `SELECT DISTINCT s.*
+           FROM email_subscribers s
+           LEFT JOIN follows f
+             ON f.subscriber_kind = 'email' AND f.subscriber_id = s.id
+          WHERE s.status = 'active'
+            AND s.cadence = ?
+            AND (s.scope = 'all' OR f.model_id IN (${placeholders(batch.length)}))`,
+      )
+      .bind(cadence, ...batch)
+      .all<EmailSubscriber>();
+    for (const result of results) recipients.set(result.id, result);
+  }
+  return [...recipients.values()];
 }
 
 export async function allActiveEmailSubscribers(
@@ -379,18 +433,22 @@ export async function allActiveEmailSubscribers(
 
 export async function pushRecipientsFor(db: D1Database, modelIds: string[]): Promise<PushSubscriptionRow[]> {
   if (modelIds.length === 0) return [];
-  const { results } = await db
-    .prepare(
-      `SELECT DISTINCT p.*
-         FROM push_subscriptions p
-         LEFT JOIN follows f
-           ON f.subscriber_kind = 'push' AND f.subscriber_id = p.id
-        WHERE p.failure_count < 5
-          AND (p.scope = 'all' OR f.model_id IN (${placeholders(modelIds.length)}))`,
-    )
-    .bind(...modelIds)
-    .all<PushSubscriptionRow>();
-  return results;
+  const recipients = new Map<string, PushSubscriptionRow>();
+  for (const batch of chunked([...new Set(modelIds)])) {
+    const { results } = await db
+      .prepare(
+        `SELECT DISTINCT p.*
+           FROM push_subscriptions p
+           LEFT JOIN follows f
+             ON f.subscriber_kind = 'push' AND f.subscriber_id = p.id
+          WHERE p.failure_count < 5
+            AND (p.scope = 'all' OR f.model_id IN (${placeholders(batch.length)}))`,
+      )
+      .bind(...batch)
+      .all<PushSubscriptionRow>();
+    for (const result of results) recipients.set(result.id, result);
+  }
+  return [...recipients.values()];
 }
 
 // ---------------------------------------------------------------- events
@@ -437,10 +495,14 @@ export async function undigestedEvents(db: D1Database): Promise<EventRow[]> {
 
 export async function markEventsDigested(db: D1Database, ids: string[]): Promise<void> {
   if (ids.length === 0) return;
-  await db
-    .prepare(`UPDATE events SET digested_at = ? WHERE id IN (${placeholders(ids.length)})`)
-    .bind(nowIso(), ...ids)
-    .run();
+  const timestamp = nowIso();
+  await db.batch(
+    chunked([...new Set(ids)]).map((batch) =>
+      db
+        .prepare(`UPDATE events SET digested_at = ? WHERE id IN (${placeholders(batch.length)})`)
+        .bind(timestamp, ...batch),
+    ),
+  );
 }
 
 /**
@@ -528,9 +590,20 @@ export async function pruneRateLimits(db: D1Database, olderThanSeconds = 3600): 
 /** Unconfirmed signups are deleted after a week rather than lingering as PII. */
 export async function prunePendingSubscribers(db: D1Database): Promise<number> {
   const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const result = await db
-    .prepare(`DELETE FROM email_subscribers WHERE status = 'pending' AND created_at < ?`)
+  const { results } = await db
+    .prepare(`SELECT id FROM email_subscribers WHERE status = 'pending' AND created_at < ?`)
     .bind(cutoff)
-    .run();
-  return result.meta.changes ?? 0;
+    .all<{ id: string }>();
+  if (results.length === 0) return 0;
+  for (const batch of chunked(results.map((row) => row.id))) {
+    const inList = placeholders(batch.length);
+    await db.batch([
+      db
+        .prepare(`DELETE FROM follows WHERE subscriber_kind = 'email' AND subscriber_id IN (${inList})`)
+        .bind(...batch),
+      db.prepare(`DELETE FROM email_manage_codes WHERE subscriber_id IN (${inList})`).bind(...batch),
+      db.prepare(`DELETE FROM email_subscribers WHERE id IN (${inList})`).bind(...batch),
+    ]);
+  }
+  return results.length;
 }

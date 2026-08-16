@@ -463,6 +463,13 @@ function EmailCard({
           <Turnstile siteKey={config.turnstileSiteKey} theme={theme} onToken={setTurnstileToken} />
         )}
 
+        {config.turnstileRequired && !config.turnstileSiteKey && (
+          <p className="alerts-error" role="alert">
+            Email confirmation is temporarily unavailable because secure verification is not configured.
+            Please try again later.
+          </p>
+        )}
+
         {error && (
           <p className="alerts-error" role="alert">
             {error}
@@ -476,7 +483,7 @@ function EmailCard({
           <button
             type="submit"
             className="button button--primary"
-            disabled={busy || (config.turnstileRequired && !turnstileToken)}
+            disabled={busy || (config.turnstileRequired && (!config.turnstileSiteKey || !turnstileToken))}
           >
             {busy ? 'Sending…' : 'Send me the confirmation'}
           </button>

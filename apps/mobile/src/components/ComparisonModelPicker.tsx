@@ -195,7 +195,8 @@ export function ComparisonModelPicker({
                   }
                   accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}, ${item.pricing.input} dollars per million input tokens and ${item.pricing.output} dollars per million output tokens${isSelected ? ', selected for comparison' : ''}`}
                   accessibilityRole="checkbox"
-                  accessibilityState={{ checked: isSelected }}
+                  accessibilityState={{ checked: isSelected, disabled: isAtLimit }}
+                  disabled={isAtLimit}
                   onPress={() => toggle(item.id)}
                   style={({ pressed }) => [
                     styles.modelRow,
@@ -217,7 +218,7 @@ export function ComparisonModelPicker({
                     <Text style={styles.rate}>
                       ${item.pricing.input} / ${item.pricing.output}
                     </Text>
-                    <Text style={styles.rateLabel}>input / output</Text>
+                    <Text style={styles.rateLabel}>{isAtLimit ? 'Limit reached' : 'input / output'}</Text>
                   </View>
                 </Pressable>
               );
@@ -236,7 +237,7 @@ function createStyles(theme: MobileTheme) {
     label: { color: theme.text, fontSize: 15, fontWeight: '600', lineHeight: 20 },
     count: { color: theme.accent, fontSize: 13, fontWeight: '800' },
     selectedList: {
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       overflow: 'hidden',
@@ -267,7 +268,7 @@ function createStyles(theme: MobileTheme) {
     removeLabel: { color: theme.accent, fontSize: 12, fontWeight: '700' },
     emptySelection: {
       backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderStyle: 'dashed',
       borderWidth: 1,
@@ -319,7 +320,7 @@ function createStyles(theme: MobileTheme) {
     doneText: { color: theme.accent, fontSize: 16, fontWeight: '700' },
     search: {
       backgroundColor: theme.surface,
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 12,
       borderWidth: 1,
       color: theme.text,
@@ -342,10 +343,10 @@ function createStyles(theme: MobileTheme) {
       paddingVertical: 12,
     },
     modelRowSelected: { backgroundColor: theme.accentSoft, borderRadius: 10 },
-    modelRowAtLimit: { opacity: 0.56 },
+    modelRowAtLimit: { backgroundColor: theme.surfaceRaised },
     checkbox: {
       alignItems: 'center',
-      borderColor: theme.border,
+      borderColor: theme.borderStrong,
       borderRadius: 7,
       borderWidth: 1,
       height: 28,

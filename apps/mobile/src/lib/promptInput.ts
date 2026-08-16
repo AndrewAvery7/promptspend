@@ -78,10 +78,15 @@ export function compareModelsForInputs(
   const cheapest = rows[0];
   if (!cheapest) return [];
 
-  return rows.map((row, index) => ({
+  return rows.map((row) => ({
     ...row,
     deltaPerMonth: row.scaled.perMonth - cheapest.scaled.perMonth,
-    multipleOfCheapest: cheapest.scaled.perMonth > 0 ? row.scaled.perMonth / cheapest.scaled.perMonth : 1,
-    isCheapest: index === 0,
+    multipleOfCheapest:
+      cheapest.scaled.perMonth > 0
+        ? row.scaled.perMonth / cheapest.scaled.perMonth
+        : row.scaled.perMonth === 0
+          ? 1
+          : null,
+    isCheapest: row.scaled.perMonth === cheapest.scaled.perMonth,
   }));
 }

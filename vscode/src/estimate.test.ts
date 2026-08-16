@@ -53,6 +53,24 @@ describe('estimateSelection', () => {
     expect([...costs].sort((a, b) => a - b)).toEqual(costs);
   });
 
+  it('uses the long-context tier when the selected input crosses its threshold', async () => {
+    const approximate = catalog.models.find((candidate) => candidate.tokenizer.kind === 'approx');
+    expect(approximate).toBeDefined();
+    const model: Model = {
+      ...approximate!,
+      id: 'long-context-test',
+      pricing: {
+        input: 1,
+        output: 2,
+        longContext: { thresholdTokens: 10, input: 2, output: 3 },
+      },
+      tokenizer: { kind: 'approx', charsPerToken: 1, cjkCharsPerToken: 1 },
+    };
+    const [row] = await estimateSelection('abcdefghijk', [model]);
+    expect(row?.tokens).toBe(11);
+    expect(row?.inputCostUsd).toBe(0.000022);
+  });
+
   it('returns nothing for no models rather than throwing', async () => {
     expect(await estimateSelection(PROMPT, [])).toEqual([]);
   });

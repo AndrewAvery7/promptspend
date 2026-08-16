@@ -2,29 +2,36 @@
 
 Status: active test protocol
 
-Last reviewed: 2026-08-13
+Last reviewed: 2026-08-16
+
+> **Current hardened private-QA binaries.** iOS build 14 and Android EAS build
+> `391818eb-a439-4d8c-ad39-fb554fbb24e9` contain the August 16 audit hardening
+> from the same source revision. Build 12 and the earlier Android versionCode 3
+> APK remain historical and must not be recorded as current QA evidence.
 
 ## Current installable baseline
 
-- iOS TestFlight baseline: version 0.1.0, build 12, EAS build
-  `a682ed35-1e2f-4448-a430-b088d27d61cd`, built from merge commit
-  `5fcdc0d28ff0f8d85ab355b6ddc3abca8d300625`. Verified IPA SHA-256:
-  `67130DFFBBDB9C5D4BFE73611C07002B7C3C020F74CDB87504114BED0E168C3B`.
+- iOS TestFlight candidate: version 0.1.0, build 14, EAS build
+  `e75b93f4-6d23-4dd0-ac78-930cdaf2ad48`, built from commit
+  `f4318b4ade8f5937727e0741c337103c64a189b7`. Verified IPA SHA-256:
+  `5CD6C6B07111D2E0BA3A00AC7D93862A92BA394D108E829BF4FDE0E891A662FF`.
+  EAS submission `5cf00ebb-8624-4ff9-a8a7-bc7c84e6e031` was accepted by
+  App Store Connect and is awaiting Apple's TestFlight processing.
 - Android internal APK baseline: version 0.1.0, versionCode 3, EAS build
-  `9e49ea20-d18b-4bac-be85-f52fdebe20b7`, built from merge commit
-  `5fcdc0d28ff0f8d85ab355b6ddc3abca8d300625`. Verified APK SHA-256:
-  `DBE85568B5908B860D0171E768F6D5D6D4CD20CD294199CDBBF3A87226D960F4`.
+  `391818eb-a439-4d8c-ad39-fb554fbb24e9`, built from commit
+  `f4318b4ade8f5937727e0741c337103c64a189b7`. Verified APK SHA-256:
+  `22430D45DC88F10A1ED18150D5A8E02DF7E7A635F23613A0BB99FEE33B9FDBDF`.
 
 These identify the last known baseline, not the eventual release candidate.
 Every test record must name the exact installed build.
 
 Per-build execution records:
 
-- `docs/qa/IOS_TESTFLIGHT_BUILD_12.md`
-- `docs/qa/ANDROID_GALAXY_A15_BUILD_3.md`
+- `docs/qa/IOS_TESTFLIGHT_BUILD_14.md`
+- `docs/qa/ANDROID_GALAXY_A15_F4318B4.md`
 
 Apple public-release and Google developer-platform work remain gated by the
-account/D-U-N-S process and separate explicit approvals. Build 12 was uploaded
+account/D-U-N-S process and separate explicit approvals. Build 14 was uploaded
 to App Store Connect for private internal TestFlight QA only. The Android
 baseline may be installed directly for private physical-device QA. Neither
 action authorizes a Play Console upload, store review, or public distribution.

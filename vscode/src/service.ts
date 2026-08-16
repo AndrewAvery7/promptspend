@@ -20,6 +20,7 @@ export interface ScanOutcome {
 export class PricingService {
   private index: ModelIndex | null = null;
   private indexBuiltFor: string | null = null;
+  private lastScan: { key: string; outcome: ScanOutcome } | null = null;
 
   constructor(private readonly source: CatalogSource = new CatalogSource()) {}
 
@@ -31,7 +32,14 @@ export class PricingService {
    * way to make typing in a large file stutter, and the daily artifact changes
    * about as often as its name suggests.
    */
-  async scan(text: string, options: ScanOptions = {}, now: number = Date.now()): Promise<ScanOutcome> {
+  async scan(
+    text: string,
+    options: ScanOptions = {},
+    now: number = Date.now(),
+    cacheKey?: string,
+  ): Promise<ScanOutcome> {
+    const key = cacheKey === undefined ? undefined : `${cacheKey}:${JSON.stringify(options)}`;
+    if (key !== undefined && this.lastScan?.key === key) return this.lastScan.outcome;
     const state = await this.source.get(now);
     if (state.status !== 'ready') return { matches: [], state, skipped: false };
 
@@ -41,7 +49,9 @@ export class PricingService {
     }
 
     const { matches, skipped } = this.index!.scan(text, options);
-    return { matches, state, skipped };
+    const outcome = { matches, state, skipped };
+    if (key !== undefined) this.lastScan = { key, outcome };
+    return outcome;
   }
 
   /** The current state without triggering a fetch — for the status bar. */
@@ -59,6 +69,7 @@ export class PricingService {
     this.source.reset();
     this.index = null;
     this.indexBuiltFor = null;
+    this.lastScan = null;
   }
 }
 

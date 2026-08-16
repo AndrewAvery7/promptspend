@@ -20,4 +20,17 @@ describe('AppText', () => {
     expect(text.props.allowFontScaling).toBe(true);
     expect(StyleSheet.flatten(text.props.style).fontFamily).toBe('System');
   });
+
+  test('maps requested heavy weights to font files that are actually embedded', async () => {
+    const { getByRole, getByText } = await render(
+      <>
+        <AppText accessibilityRole="header" style={{ fontWeight: '900' }}>
+          Headline
+        </AppText>
+        <AppText style={{ fontWeight: '800' }}>Body label</AppText>
+      </>,
+    );
+    expect(StyleSheet.flatten(getByRole('header').props.style).fontWeight).toBe('700');
+    expect(StyleSheet.flatten(getByText('Body label').props.style).fontWeight).toBe('600');
+  });
 });

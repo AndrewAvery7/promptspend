@@ -5,7 +5,12 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LaunchStateProvider } from '@/state/useLaunchState';
 import { GuidedTourProvider } from '@/components/GuidedTour';
+import { FONT_FAMILIES } from '@/components/AppText';
 import { MobileThemeProvider, useMobileTheme } from '@/theme/useMobileTheme';
+
+// Expo Router reads this before the tab navigator mounts. Keeping Home as the
+// anchor here makes cold starts and deep-link back navigation deterministic.
+export const unstable_settings = { initialRouteName: 'home' };
 
 export default function RootLayout() {
   return (
@@ -36,7 +41,7 @@ function ThemedTabs() {
           tabBarHideOnKeyboard: true,
           tabBarInactiveTintColor: theme.mutedText,
           tabBarItemStyle: { minHeight: 52, paddingVertical: 4 },
-          tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+          tabBarLabelStyle: { fontFamily: FONT_FAMILIES.body, fontSize: 11, fontWeight: '600' },
           tabBarStyle: {
             backgroundColor: theme.surface,
             borderTopColor: theme.border,

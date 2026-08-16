@@ -322,7 +322,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
           </div>
           <div className="mono">
             {catalog.primaryModels.length} models · prices last changed{' '}
-            {catalog.pricesLastChanged() ?? 'not yet recorded'}
+            {catalog.pricesLastChanged() ?? 'no change recorded since tracking began'}
             {catalog.sourcesLastChecked() ? ` · sources checked ${catalog.sourcesLastChecked()}` : ''}
           </div>
         </div>

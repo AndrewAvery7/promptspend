@@ -257,7 +257,7 @@ export function EstimatorWorkspace({ alertToken, section }: { alertToken?: strin
         description="Estimate, compare, and understand LLM API costs with validated pricing evidence."
         title="PromptSpend — LLM cost estimator"
       />
-      <SafeAreaView role="main" style={styles.safeArea} edges={['top', 'right', 'bottom', 'left']}>
+      <SafeAreaView role="main" style={styles.safeArea} edges={['top', 'right', 'left']}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={0}
@@ -704,7 +704,7 @@ export function EstimatorWorkspace({ alertToken, section }: { alertToken?: strin
             )}
 
             <Text style={styles.footer}>
-              PromptSpend mobile · Estimate · Compare · Learn · Data &amp; Alerts
+              PromptSpend mobile · Home · Estimate · Compare · Learn · Data &amp; Alerts
             </Text>
           </ScrollView>
 
@@ -714,6 +714,7 @@ export function EstimatorWorkspace({ alertToken, section }: { alertToken?: strin
               catalog={catalog}
               favoriteIds={favorites}
               onClose={() => setCommandOpen(false)}
+              onHome={() => router.navigate(APP_ROUTES.home)}
               onReset={resetScenario}
               onSection={navigateToSection}
               onSelectModel={(id) => {

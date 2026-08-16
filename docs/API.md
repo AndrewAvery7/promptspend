@@ -42,11 +42,20 @@ themselves, cross-links between them.
 | `GET /v1/health`     | Whether a valid catalog is readable, and how many rows are flagged |
 | `GET /openapi.json`  | OpenAPI 3.1, with the server URL taken from the request            |
 | `GET /llms.txt`      | The same index in the form an agent reads first                    |
-| `GET /robots.txt`    | Index the hub, stay out of `/v1/`                                  |
+| `GET /robots.txt`    | Allow fetching; `/v1/` stays out of search via `X-Robots-Tag`      |
+| `GET /sitemap.xml`   | The single indexable developer-hub URL                             |
+| `GET /style.css`     | The developer-hub stylesheet                                       |
 
 `/v1/models`, `/v1/prices` and `/v1/prices.csv` accept `?provider=`, `?status=`
 and `?aliases=include`. Routing aliases are excluded by default so one
 purchasable model is never counted twice.
+
+When an automated source stops listing a model, the retained last-known row is
+both marked `provenance.stale: true` and demoted from `status: "current"` to
+`"legacy"`. Raw consumers may therefore use `status` safely without knowing the
+provenance schema; clients that display evidence should still surface the stale
+flag and review note. If the feed recovers, the pipeline restores the row's
+prior status.
 
 ### Deliberate choices worth not undoing
 
@@ -78,9 +87,10 @@ Fetching costs one origin request per edge location per five minutes.
 
 There is deliberately **no bundled fallback**. A snapshot baked in at deploy time
 could be months old, and "here are some prices, they might be from March" is
-worse than an honest 503. What there is instead: a cached copy retained for a
-day and served with `X-PromptSpend-Stale: true` if the origin cannot be reached.
-Stale and dated beats absent; stale and undated does not.
+worse than an honest 503. What there is instead: a validated edge-cached copy
+retained for a day. If the origin briefly fails, that copy may be served only
+inside the API's 48-hour freshness ceiling and is labelled with
+`X-PromptSpend-Stale: true`. Beyond that ceiling the API fails honestly with 503. Stale and dated beats absent; stale and undated does not.
 
 Every fetched catalog is run through `validateCatalog` — the same rules the site
 enforces at load — before anything is served. An API that will serve whatever
@@ -200,3 +210,9 @@ The naming reads backwards, and it is not worth fixing: `api.promptspend.dev` is
 baked into the deployed site's configuration, its Content Security Policy and
 every existing push subscription, and renaming it would invalidate all three to
 buy nothing but a tidier hostname.
+When an automated source stops listing a model, the retained last-known row is
+both marked `provenance.stale: true` and demoted from `status: "current"` to
+`"legacy"`. Raw consumers may therefore use `status` safely without knowing the
+provenance schema; clients that display evidence should still surface the stale
+flag and review note. If the feed recovers, the pipeline restores the row's
+prior status.

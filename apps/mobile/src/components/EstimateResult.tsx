@@ -135,10 +135,17 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
             styles={styles}
           />
           <DetailRow
-            label="Output tokens"
+            label="Generated output tokens"
             value={Math.round(breakdown.outputTokens).toLocaleString('en-US')}
             styles={styles}
           />
+          {breakdown.billedOutputTokens !== breakdown.outputTokens && (
+            <DetailRow
+              label="Billed output tokens"
+              value={Math.round(breakdown.billedOutputTokens).toLocaleString('en-US')}
+              styles={styles}
+            />
+          )}
           {breakdown.assumptions.length > 0 && (
             <View style={styles.assumptions}>
               <Text style={styles.assumptionsTitle}>Assumptions</Text>

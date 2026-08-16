@@ -23,12 +23,26 @@ export function FreshnessChip({ freshness, pricesChangedOn = null }: FreshnessCh
   const changeLabel = pricesChangedOn
     ? `prices changed ${formatDate(pricesChangedOn)}`
     : 'no price change recorded';
+  const statusLabel =
+    freshness.level === 'fresh'
+      ? 'Current'
+      : freshness.level === 'stale'
+        ? 'Refresh needed'
+        : 'Status unknown';
+  const statusIcon = freshness.level === 'fresh' ? '✓' : freshness.level === 'stale' ? '!' : '?';
 
   return (
-    <View accessibilityLabel={`${label}. ${changeLabel}. Status ${freshness.level}.`} style={styles.chip}>
-      <View style={[styles.dot, { backgroundColor: tone }]} />
+    <View
+      accessible
+      accessibilityLabel={`${statusLabel}. ${label}. ${changeLabel}.`}
+      accessibilityRole="text"
+      style={styles.chip}
+    >
+      <View style={[styles.status, { borderColor: tone }]}>
+        <Text style={[styles.statusText, { color: tone }]}>{statusIcon}</Text>
+      </View>
       <Text style={styles.label}>
-        {label} · {changeLabel}
+        {statusLabel} · {label} · {changeLabel}
       </Text>
     </View>
   );
@@ -56,11 +70,15 @@ function createStyles(theme: MobileTheme) {
       minHeight: 32,
       paddingHorizontal: 12,
     },
-    dot: {
-      borderRadius: 4,
-      height: 8,
-      width: 8,
+    status: {
+      alignItems: 'center',
+      borderRadius: 8,
+      borderWidth: 1.5,
+      height: 16,
+      justifyContent: 'center',
+      width: 16,
     },
+    statusText: { fontSize: 10, fontWeight: '900', lineHeight: 12 },
     label: {
       color: theme.mutedText,
       fontSize: 12,

@@ -140,6 +140,18 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(catalog.models).toHaveLength(2);
   });
 
+  it('rejects duplicate overrides instead of silently letting the last one win', () => {
+    expect(() =>
+      mergeCatalog({
+        litellm,
+        openrouter: new Map(),
+        allowlist: ALLOWLIST,
+        overrides: [{ id: 'claude-sonnet-5' }, { id: 'claude-sonnet-5' }],
+        generatedAt,
+      }),
+    ).toThrow(/duplicate pricing override id/);
+  });
+
   it('lets a hand-verified override beat the automated feed', () => {
     const { catalog } = mergeCatalog({
       litellm,
@@ -150,6 +162,8 @@ describe('mergeCatalog — the trust ladder', () => {
           id: 'claude-sonnet-5',
           displayName: 'Claude Sonnet 5',
           vendorVerified: true,
+          lastVerified: '2026-08-01',
+          verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
           pricing: { input: 3, output: 15, intro: { input: 2, output: 10, until: '2026-08-31' } },
         },
       ],
@@ -268,8 +282,84 @@ describe('mergeCatalog — the trust ladder', () => {
     for (const model of empty.catalog.models) {
       expect(model.provenance.stale).toBe(true);
       expect(model.provenance.needsReview).toBe(true);
+      expect(model.status).toBe('legacy');
+      expect(model.provenance.statusBeforeStale).toBe('current');
     }
     expect(empty.review.every((item) => item.isNew)).toBe(true);
+
+    const recovered = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: empty.catalog,
+      generatedAt: new Date('2026-08-02T06:00:00.000Z'),
+    });
+    for (const model of recovered.catalog.models) {
+      expect(model.status).toBe('current');
+      expect(model.provenance.stale).toBeUndefined();
+      expect(model.provenance.statusBeforeStale).toBeUndefined();
+    }
+  });
+
+  it('keeps a vendor override but flags feed drift and does not re-raise it', () => {
+    const overrides = [
+      {
+        id: 'claude-sonnet-5',
+        vendorVerified: true,
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+        pricing: { input: 1, output: 5 },
+      },
+    ];
+    const first = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides,
+      generatedAt,
+    });
+    const item = first.review.find((candidate) => candidate.code === 'override-drift');
+    expect(first.catalog.models.find((model) => model.id === 'claude-sonnet-5')?.pricing.input).toBe(1);
+    expect(item?.isNew).toBe(true);
+
+    const second = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides,
+      previous: first.catalog,
+      generatedAt: new Date('2026-08-02T06:00:00.000Z'),
+    });
+    expect(second.review.find((candidate) => candidate.code === 'override-drift')?.isNew).toBe(false);
+  });
+
+  it('flags old vendor verification and rejects invented provenance', () => {
+    const stale = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [
+        {
+          id: 'claude-sonnet-5',
+          vendorVerified: true,
+          lastVerified: '2026-06-01',
+          verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+        },
+      ],
+      generatedAt,
+    });
+    expect(stale.review.some((item) => item.code === 'vendor-verification-stale')).toBe(true);
+
+    expect(() =>
+      mergeCatalog({
+        litellm,
+        openrouter: new Map(),
+        allowlist: ALLOWLIST,
+        overrides: [{ id: 'claude-sonnet-5', vendorVerified: true }],
+        generatedAt,
+      }),
+    ).toThrow(/require both lastVerified and verifiedUrl/);
   });
 
   it('does not re-raise a flag it already recorded', () => {
@@ -544,6 +634,7 @@ describe('mergeCatalog — the trust ladder', () => {
       {
         id: 'claude-sonnet-5',
         vendorVerified: true,
+        lastVerified: '2026-08-15',
         verifiedUrl: url,
         pricing: { input: 3, output: 15, cachedInput },
       },
@@ -634,6 +725,7 @@ describe('mergeCatalog — the trust ladder', () => {
         {
           id: 'claude-sonnet-5',
           vendorVerified: true,
+          lastVerified: '2026-08-01',
           verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
           pricing: {
             input: 3,
@@ -676,6 +768,8 @@ describe('mergeCatalog — the trust ladder', () => {
           providerId: 'anthropic',
           displayName: 'Claude Opus 5',
           vendorVerified: true,
+          lastVerified: '2026-08-01',
+          verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
           pricing: { input: 5, output: 25 },
         },
       ],

@@ -70,7 +70,7 @@ export function DataSection({
         <Metric
           styles={styles}
           label="Prices last changed"
-          value={catalog.pricesLastChanged() ?? 'Not recorded'}
+          value={catalog.pricesLastChanged() ?? 'No price change recorded since tracking began'}
         />
         <Metric
           styles={styles}

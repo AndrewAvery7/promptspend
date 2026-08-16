@@ -17,6 +17,8 @@ import type { ModelMatch } from './scan';
 export interface Reference {
   /** Workspace-relative, for display. */
   path: string;
+  /** Exact URI, so multi-root and virtual workspaces open the right file. */
+  uri: string;
   /** Zero-based, so the caller can turn it into a position directly. */
   line: number;
   /** The literal text found, which may be a routing alias. */
@@ -46,6 +48,7 @@ export interface Inventory {
 
 export interface ScannedFile {
   path: string;
+  uri: string;
   matches: readonly ModelMatch[];
   /** Offsets of every line start, so references can report a line number. */
   lineStarts: readonly number[];
@@ -89,6 +92,7 @@ export function buildInventory(files: readonly ScannedFile[], filesSkipped = 0):
       };
       existing.references.push({
         path: file.path,
+        uri: file.uri,
         line: lineAt(file.lineStarts, match.start),
         written: match.written,
       });

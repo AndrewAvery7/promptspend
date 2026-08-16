@@ -2,6 +2,11 @@
 
 Status: automated gates passed; physical-device evidence pending
 
+> **Historical evidence.** This document records the August 13 source and the
+> test totals that were true on that date. It predates the native Alert Center
+> and the August 16 full-system audit. It must not be used as current
+> release-candidate evidence; see `CLAUDE_AUDIT_DISPOSITION_2026-08-16.md`.
+
 ## Scope and release boundary
 
 This record covers source changes on `mobile/android-device-qa` in draft PR

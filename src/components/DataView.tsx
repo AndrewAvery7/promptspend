@@ -53,7 +53,7 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
               <div>
                 <span className="health-grid__label">Prices last changed</span>
                 <span className="health-grid__value mono">
-                  {catalog.pricesLastChanged() ?? 'not yet recorded'}
+                  {catalog.pricesLastChanged() ?? 'No price change recorded since tracking began'}
                 </span>
               </div>
               <div>

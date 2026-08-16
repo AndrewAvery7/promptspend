@@ -39,6 +39,7 @@ const CATALOG = resolve(ROOT, 'public/data/pricing.json');
 const PAGES_DOC = resolve(ROOT, 'docs/PAGES.md');
 const README = resolve(ROOT, 'README.md');
 const PAGES_SRC = resolve(ROOT, 'src/lib/seo/pages.ts');
+const MANIFEST = resolve(ROOT, 'public/manifest.webmanifest');
 
 const problems: string[] = [];
 const fail = (msg: string): void => void problems.push(msg);
@@ -95,6 +96,33 @@ if (models + providers + comparisons + INDEXES !== total) {
 const pagesDoc = await readFile(PAGES_DOC, 'utf8');
 const readme = await readFile(README, 'utf8');
 const pagesSrc = await readFile(PAGES_SRC, 'utf8');
+
+/* ── PWA install identity and adaptive icon safety ──
+   A maskable icon is a different rendering contract from a regular icon: the
+   platform may crop it into a circle, squircle or other device shape. Keep a
+   stable app id and a dedicated asset so a later manifest cleanup cannot
+   accidentally send the edge-to-edge icon through that crop path. */
+const manifest = JSON.parse(await readFile(MANIFEST, 'utf8')) as {
+  id?: unknown;
+  icons?: Array<{ src?: unknown; purpose?: unknown }>;
+};
+if (manifest.id !== '/') fail('public/manifest.webmanifest: id must remain "/" for stable install identity');
+const icons = Array.isArray(manifest.icons) ? manifest.icons : [];
+const anyIcon = icons.find((icon) =>
+  String(icon.purpose ?? '')
+    .split(/\s+/)
+    .includes('any'),
+);
+const maskableIcon = icons.find((icon) =>
+  String(icon.purpose ?? '')
+    .split(/\s+/)
+    .includes('maskable'),
+);
+if (!anyIcon) fail('public/manifest.webmanifest: no icon declares purpose "any"');
+if (!maskableIcon) fail('public/manifest.webmanifest: no icon declares purpose "maskable"');
+if (anyIcon?.src === maskableIcon?.src) {
+  fail('public/manifest.webmanifest: regular and maskable purposes must use distinct asset paths');
+}
 
 /* ── docs/PAGES.md: the prose total and its four parts ──
    "159 of them today: 69 models, 12 providers, 75 comparisons, 3 indexes" */
