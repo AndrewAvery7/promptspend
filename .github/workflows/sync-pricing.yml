@@ -124,9 +124,11 @@ jobs:
           # opening another. A per-run name (`pricing-sync/${{ github.run_id }}`)
           # made every re-raise a separate pull request, so an unreviewed flag
           # accumulated one per morning — #51 and #57 were the same catalog
-          # twice, identical hash. Worst case here is one rolling pull request
-          # that always carries the freshest catalog.
-          branch: pricing-sync
+          # twice, identical hash. `pricing-sync` itself cannot be used: Git
+          # stores those historical branches under that ref prefix and rejects
+          # a file/directory conflict. Worst case here is one rolling pull
+          # request that always carries the freshest catalog.
+          branch: pricing-review
           commit-message: 'data: ${{ steps.sync.outputs.summary }} (needs review)'
           title: 'Pricing sync needs review: ${{ steps.sync.outputs.summary }}'
           body: |
