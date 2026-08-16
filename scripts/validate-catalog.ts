@@ -99,15 +99,17 @@ console.log('✓ sync status describes the exact published catalog');
  * anyone editing the README, so a hand-written count is wrong the first morning
  * a provider ships something. Three separate numbers in this repository had
  * already gone stale that way — the test total, the bundle size, and these.
- * The script that knows the real figure is the only thing that can hold a
- * README to it.
+ * The sync updates these derived claims before validation. This independent
+ * check makes a missing replacement or a future README redesign fail closed.
  */
 const primary = catalog.models.filter((model) => model.aliasOf === undefined).length;
 const readme = await readFile(resolve(ROOT, 'README.md'), 'utf8');
 
 const badges: [label: string, pattern: RegExp, actual: number][] = [
   ['models', /badge\/models-(\d+)-/, primary],
+  ['models alt text', /alt="(\d+) models tracked"/, primary],
   ['providers', /badge\/providers-(\d+)-/, catalog.providers.length],
+  ['providers alt text', /alt="(\d+) providers"/, catalog.providers.length],
 ];
 
 const stale = badges.flatMap(([label, pattern, actual]) => {

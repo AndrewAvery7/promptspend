@@ -15,7 +15,7 @@ to publish past it.
 
 ## What the suite covers
 
-**942 tests in all**: 413 unit and integration tests in this package, 91 in
+**945 tests in all**: 416 unit and integration tests in this package, 91 in
 `apps/mobile/`, 98 in `worker/`, 44 in `api/`, 47 in `mcp/`, 137 in `vscode/`,
 and 112 browser tests across four viewports. Those seven figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
@@ -48,6 +48,7 @@ anyone adding them up.
 | Suite                                 | Tests | Guards                                                                                                                                                                                                                                                                                                                                                        |
 | ------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `scripts/lib/pipeline.test.ts`        | 62    | The whole pipeline against fixtures: the trust ladder, both sanity thresholds, cold start, stale retention, flag-once semantics — including a standing flag whose _figures_ drift, which is what re-opened a pull request every morning — full-field diffing, coverage versus a price move versus a source correction, the content hash, changelog rendering. |
+| `scripts/lib/readme-badges.test.ts`   | 3     | The daily catalog sync updates both badge URLs and accessible alt text, leaves unrelated prose untouched, and fails closed if a README redesign removes or duplicates a derived claim.                                                                                                                                                                        |
 | `src/lib/contrast.test.ts`            | 49    | Every accent × theme × canvas combination against every surface it can appear on, plus the status colours on their own soft fills — the pairing the accent matrix does not reach.                                                                                                                                                                             |
 | `src/lib/engine/cost.test.ts`         | 44    | Compounding history, per-turn long-context tiers, cache reads and writes, promotional windows, reasoning multipliers, margins, break-even, and the scenarios that cannot physically run.                                                                                                                                                                      |
 | `src/App.test.tsx`                    | 29    | The views render, the URL round-trips, the tour and palette work — plus a named regression test for every defect the pre-publication audit found.                                                                                                                                                                                                             |
