@@ -130,6 +130,7 @@
         "^dashscope/qwen3-next-80b-a3b-(instruct|thinking)$",
         "^dashscope/qwen3-vl-235b-a22b-instruct$"
       ],
+      "exclude": ["^dashscope/qwen3\\.8-max$"],
       "stripPrefix": "dashscope/",
       "tokenizer": {
         "kind": "approx",

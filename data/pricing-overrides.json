@@ -3,6 +3,7 @@
   "$displayNames": "Some entries carry a `displayName` and nothing else. Those are NOT price claims — they deliberately omit `vendorVerified`, so the rate and its provenance keep coming from whichever source the trust ladder chose. They exist because upstream ids get title-cased into names like `GPT 5`, `O3 Mini` and `Qwen3 Vl 235b A22b Instruct`, and since every model now has a public page those strings are its <h1> and its search-result title. A name is presentation; correcting one must not quietly upgrade a price to `vendor`.",
   "$coverage": "The catalog tracks what the automated feed carries. Vendors ship models before LiteLLM catalogues them — Z.ai published GLM-5.2 and GLM-5-Turbo on 2026-08-02 while the feed had neither — and the deliberate answer is to wait rather than hand-add. An override with a full `pricing` block CAN create a model the feed lacks, but that price is then frozen: no feed row exists to correct it, so it silently rots. Seeding from OpenRouter instead would publish a reseller's price as the vendor's, which for these providers runs 20-50% adrift. Missing a model for a few days costs less than publishing a number that is wrong and cannot self-correct. New models arrive on their own the morning the feed catches up.",
   "$scope": "These are standard-tier, global-endpoint list prices in USD. Not modelled: regional/data-residency premiums (OpenAI and Anthropic both charge 1.1x), fast/priority tiers, server-side tool call fees, fine-tuning, and negotiated volume discounts. The UI states this boundary rather than implying the figure is a whole invoice.",
+  "$timeOfDay": "DeepSeek V4 publishes peak and off-peak rates but the current schema has no time-of-day tier. PromptSpend uses the higher peak rate so an estimate cannot silently understate the bill; off-peak usage can cost 50% less. Revisit this conservative representation when the engine can model a schedule explicitly.",
   "models": [
     {
       "id": "claude-fable-5",
@@ -63,24 +64,17 @@
       "providerId": "anthropic",
       "displayName": "Claude Sonnet 5",
       "vendorVerified": true,
-      "lastVerified": "2026-08-01",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 90,
       "pricing": {
-        "input": 3,
-        "output": 15,
-        "cachedInput": 0.3,
-        "cacheWrite": 3.75,
-        "batchDiscount": 0.5,
-        "intro": {
-          "input": 2,
-          "output": 10,
-          "cachedInput": 0.2,
-          "cacheWrite": 2.5,
-          "until": "2026-08-31"
-        }
+        "input": 2,
+        "output": 10,
+        "cachedInput": 0.2,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5
       }
     },
     {
@@ -390,8 +384,40 @@
       "id": "gemini-gemini-3.6-flash",
       "displayName": "Gemini 3.6 Flash",
       "capabilityIndex": 82,
+      "pricing": {
+        "input": 1.5,
+        "output": 7.5,
+        "cachedInput": 0.15,
+        "cacheStoragePerMillionTokenHour": 1,
+        "intro": {
+          "input": 0.75,
+          "output": 3.75,
+          "cachedInput": 0.075,
+          "until": "2026-12-31"
+        }
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "id": "gemini-gemini-3.7-flash",
+      "providerId": "google",
+      "displayName": "Gemini 3.7 Flash",
+      "pricing": {
+        "input": 1.5,
+        "output": 7.5,
+        "cachedInput": 0.15,
+        "cacheStoragePerMillionTokenHour": 1,
+        "intro": {
+          "input": 0.75,
+          "output": 3.75,
+          "cachedInput": 0.075,
+          "until": "2026-12-31"
+        }
+      },
+      "vendorVerified": true,
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -429,16 +455,30 @@
       "id": "deepseek-deepseek-v4-pro",
       "displayName": "DeepSeek V4 Pro",
       "capabilityIndex": 79,
+      "contextWindow": 1000000,
+      "maxOutput": 384000,
+      "pricing": {
+        "input": 1.32,
+        "output": 3.96,
+        "cachedInput": 0.044
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
     },
     {
       "id": "deepseek-deepseek-v4-flash",
       "displayName": "DeepSeek V4 Flash",
       "capabilityIndex": 68,
+      "contextWindow": 1000000,
+      "maxOutput": 384000,
+      "pricing": {
+        "input": 0.44,
+        "output": 1.32,
+        "cachedInput": 0.014
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
     },
     {
@@ -460,8 +500,14 @@
       "id": "moonshot-kimi-k2.6",
       "displayName": "Kimi K2.6",
       "capabilityIndex": 82,
+      "contextWindow": 262144,
+      "pricing": {
+        "input": 0.95,
+        "output": 4,
+        "cachedInput": 0.16
+      },
       "vendorVerified": true,
-      "lastVerified": "2026-08-09",
+      "lastVerified": "2026-08-16",
       "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k26"
     },
     {
@@ -546,6 +592,26 @@
       "id": "minimax-minimax-m3",
       "displayName": "MiniMax M3",
       "capabilityIndex": 72
+    },
+    {
+      "id": "xai-grok-4.6",
+      "providerId": "xai",
+      "displayName": "Grok 4.6",
+      "contextWindow": 500000,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-16",
+      "verifiedUrl": "https://docs.x.ai/developers/pricing",
+      "pricing": {
+        "input": 2,
+        "output": 6,
+        "cachedInput": 0.5,
+        "longContext": {
+          "thresholdTokens": 200000,
+          "input": 4,
+          "output": 12,
+          "cachedInput": 1
+        }
+      }
     },
     {
       "id": "xai-grok-4.5",
