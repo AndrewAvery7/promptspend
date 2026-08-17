@@ -450,3 +450,7 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `deepseek-deepseek-v4-pro` — provenance.reviewNote: vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96; price moved 78% in one day ($0.435/$0.87 -> $1.32/$3.96) → vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96
 - **Review** `minimax-minimax-m2.5` — provenance.source: litellm → vendor
 - **Review** `minimax-minimax-m2.5` — provenance.verifiedUrl: — → https://platform.minimax.io/docs/guides/pricing-paygo
+
+## 2026-08-17
+
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: OpenRouter disagrees (35%): $0.26/$1.04 vs $0.4/$1.6 → OpenRouter disagrees (48%): $0.21/$1.9 vs $0.4/$1.6

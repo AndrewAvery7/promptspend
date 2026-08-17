@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-16T18:45:25.044Z",
+  "generatedAt": "2026-08-17T11:06:32.805Z",
   "providers": [
     {
       "id": "anthropic",
@@ -99,7 +99,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 64000,
       "capabilityIndex": 64
@@ -127,7 +127,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 64000,
       "capabilityIndex": 80
@@ -484,7 +484,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 8000,
       "capabilityIndex": 75
@@ -544,7 +544,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 65536
     },
@@ -573,7 +573,7 @@
         "lastVerified": "2026-08-12",
         "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
         "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (35%): $0.26/$1.04 vs $0.4/$1.6",
+        "reviewNote": "OpenRouter disagrees (48%): $0.21/$1.9 vs $0.4/$1.6",
         "reviewCodes": [
           "openrouter-disagreement"
         ]
@@ -636,7 +636,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16",
+        "lastVerified": "2026-08-17",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19",
         "reviewCodes": [
@@ -669,7 +669,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 8192
     },
@@ -695,7 +695,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 163840,
       "capabilityIndex": 74
@@ -887,7 +887,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 65535
     },
@@ -943,7 +943,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 65536
     },
@@ -1393,7 +1393,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16",
+        "lastVerified": "2026-08-17",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
       "aliasOf": "gpt-5.6-sol",
@@ -1531,7 +1531,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 8192
     },
@@ -1558,7 +1558,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 8192
     },
@@ -1619,7 +1619,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1646,7 +1646,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 262144,
       "capabilityIndex": 71
@@ -1673,7 +1673,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 262144,
       "capabilityIndex": 68
@@ -1701,7 +1701,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 262144
     },
@@ -1728,7 +1728,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 262144,
       "capabilityIndex": 78
@@ -1889,7 +1889,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 131072
     },
@@ -1916,7 +1916,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 131072
     },
@@ -1942,7 +1942,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 256000
     },
@@ -1969,7 +1969,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 2000000,
       "capabilityIndex": 66
@@ -2186,7 +2186,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-16"
+        "lastVerified": "2026-08-17"
       },
       "maxOutput": 128000,
       "capabilityIndex": 78
