@@ -2,8 +2,8 @@ name: CI
 
 on:
   push:
-    # `pricing-sync/**` is here because the pull_request event never fires for
-    # those branches, and the reason is not obvious.
+    # `pricing-review` is here because the pull_request event never fires for
+    # that branch, and the reason is not obvious.
     #
     # GitHub deliberately does not trigger workflows for events created with
     # `GITHUB_TOKEN`, to stop a workflow triggering itself forever. The daily
@@ -17,7 +17,12 @@ on:
     # the token restriction entirely and needs no credentials, where the
     # alternative — a fine-grained PAT passed to the action — needs a secret
     # that can open pull requests.
-    branches: [main, 'pricing-sync/**']
+    #
+    # The branch name must track sync-pricing.yml's `branch:` value exactly —
+    # `pricing-sync/**` never matched the actual `pricing-review` branch that
+    # workflow pushes to, so this trigger silently never fired. Found on
+    # 2026-08-19 when PR #77 merged carrying only CodeQL, no `verify`.
+    branches: [main, pricing-review]
   pull_request:
 
 # Least privilege for GITHUB_TOKEN. Without this block a job inherits the
