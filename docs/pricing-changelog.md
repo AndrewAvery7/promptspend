@@ -454,3 +454,11 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-08-17
 
 - **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: OpenRouter disagrees (35%): $0.26/$1.04 vs $0.4/$1.6 → OpenRouter disagrees (48%): $0.21/$1.9 vs $0.4/$1.6
+
+## 2026-08-19
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2 → OpenRouter disagrees (40%): $0.09/$1.1 vs $0.15/$1.2
+- **Review** `gemini-gemini-3.6-flash` — provenance.needsReview: — → true
+- **Review** `gemini-gemini-3.6-flash` — provenance.reviewNote: — → vendor override differs from the automated feed (50%): $0.75/$3.75 vs $1.5/$7.5
+- **Review** `moonshot-kimi-k2.5` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k2.5` — provenance.reviewNote: — → OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3

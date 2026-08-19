@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-18T11:06:13.895Z",
+  "generatedAt": "2026-08-19T11:06:01.480Z",
   "providers": [
     {
       "id": "anthropic",
@@ -99,7 +99,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 64000,
       "capabilityIndex": 64
@@ -127,7 +127,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 64000,
       "capabilityIndex": 80
@@ -484,7 +484,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 8000,
       "capabilityIndex": 75
@@ -514,7 +514,7 @@
         "lastVerified": "2026-08-12",
         "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
         "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2",
+        "reviewNote": "OpenRouter disagrees (40%): $0.09/$1.1 vs $0.15/$1.2",
         "reviewCodes": [
           "openrouter-disagreement"
         ]
@@ -544,7 +544,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 65536
     },
@@ -636,7 +636,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18",
+        "lastVerified": "2026-08-19",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19",
         "reviewCodes": [
@@ -669,7 +669,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 8192
     },
@@ -695,7 +695,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 163840,
       "capabilityIndex": 74
@@ -887,7 +887,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 65535
     },
@@ -943,7 +943,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 65536
     },
@@ -1071,7 +1071,12 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-08-16",
-        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+        "needsReview": true,
+        "reviewNote": "vendor override differs from the automated feed (50%): $0.75/$3.75 vs $1.5/$7.5",
+        "reviewCodes": [
+          "override-drift"
+        ]
       },
       "maxOutput": 65536,
       "capabilityIndex": 82
@@ -1393,7 +1398,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18",
+        "lastVerified": "2026-08-19",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
       "aliasOf": "gpt-5.6-sol",
@@ -1531,7 +1536,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 8192
     },
@@ -1558,7 +1563,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 8192
     },
@@ -1619,7 +1624,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1646,7 +1651,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 262144,
       "capabilityIndex": 71
@@ -1673,7 +1678,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 262144,
       "capabilityIndex": 68
@@ -1701,7 +1706,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 262144
     },
@@ -1728,7 +1733,12 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19",
+        "needsReview": true,
+        "reviewNote": "OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3",
+        "reviewCodes": [
+          "openrouter-disagreement"
+        ]
       },
       "maxOutput": 262144,
       "capabilityIndex": 78
@@ -1889,7 +1899,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 131072
     },
@@ -1916,7 +1926,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 131072
     },
@@ -1942,7 +1952,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 256000
     },
@@ -1969,7 +1979,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 2000000,
       "capabilityIndex": 66
@@ -2186,7 +2196,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-18"
+        "lastVerified": "2026-08-19"
       },
       "maxOutput": 128000,
       "capabilityIndex": 78
