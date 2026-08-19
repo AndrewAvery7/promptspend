@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-19T11:06:01.480Z",
+  "generatedAt": "2026-08-19T14:35:22.024Z",
   "providers": [
     {
       "id": "anthropic",
@@ -1732,8 +1732,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-08-19",
+        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k25",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3",
         "reviewCodes": [
