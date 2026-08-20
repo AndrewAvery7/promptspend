@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-19T11:06:01.480Z",
+  "generatedAt": "2026-08-20T11:06:55.033Z",
   "providers": [
     {
       "id": "anthropic",
@@ -99,7 +99,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 64000,
       "capabilityIndex": 64
@@ -127,7 +127,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 64000,
       "capabilityIndex": 80
@@ -484,7 +484,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 8000,
       "capabilityIndex": 75
@@ -544,7 +544,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 65536
     },
@@ -636,7 +636,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19",
+        "lastVerified": "2026-08-20",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19",
         "reviewCodes": [
@@ -669,7 +669,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 8192
     },
@@ -695,7 +695,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 163840,
       "capabilityIndex": 74
@@ -887,7 +887,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 65535
     },
@@ -943,7 +943,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 65536
     },
@@ -1398,7 +1398,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19",
+        "lastVerified": "2026-08-20",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
       "aliasOf": "gpt-5.6-sol",
@@ -1536,7 +1536,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 8192
     },
@@ -1563,7 +1563,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 8192
     },
@@ -1594,7 +1594,7 @@
         "lastVerified": "2026-08-12",
         "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
         "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (27%): $0.22/$0.9 vs $0.3/$1.2",
+        "reviewNote": "OpenRouter disagrees (25%): $0.225/$0.9 vs $0.3/$1.2",
         "reviewCodes": [
           "openrouter-disagreement"
         ]
@@ -1624,7 +1624,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1651,7 +1651,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 262144,
       "capabilityIndex": 71
@@ -1678,7 +1678,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 262144,
       "capabilityIndex": 68
@@ -1706,7 +1706,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 262144
     },
@@ -1733,7 +1733,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19",
+        "lastVerified": "2026-08-20",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3",
         "reviewCodes": [
@@ -1899,7 +1899,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 131072
     },
@@ -1926,7 +1926,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 131072
     },
@@ -1952,7 +1952,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 256000
     },
@@ -1979,7 +1979,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 2000000,
       "capabilityIndex": 66
@@ -2196,7 +2196,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 128000,
       "capabilityIndex": 78

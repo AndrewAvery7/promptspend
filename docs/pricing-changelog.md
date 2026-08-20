@@ -462,3 +462,7 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `gemini-gemini-3.6-flash` — provenance.reviewNote: — → vendor override differs from the automated feed (50%): $0.75/$3.75 vs $1.5/$7.5
 - **Review** `moonshot-kimi-k2.5` — provenance.needsReview: — → true
 - **Review** `moonshot-kimi-k2.5` — provenance.reviewNote: — → OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3
+
+## 2026-08-20
+
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (27%): $0.22/$0.9 vs $0.3/$1.2 → OpenRouter disagrees (25%): $0.225/$0.9 vs $0.3/$1.2
