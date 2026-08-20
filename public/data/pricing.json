@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-19T14:35:22.024Z",
+  "generatedAt": "2026-08-20T15:44:59.247Z",
   "providers": [
     {
       "id": "anthropic",
@@ -12,13 +12,13 @@
       "id": "openai",
       "name": "OpenAI",
       "country": "US",
-      "pricingUrl": "https://openai.com/api/pricing/"
+      "pricingUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "google",
       "name": "Google",
       "country": "US",
-      "pricingUrl": "https://ai.google.dev/pricing"
+      "pricingUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
       "id": "deepseek",
@@ -30,7 +30,7 @@
       "id": "moonshot",
       "name": "Moonshot AI",
       "country": "CN",
-      "pricingUrl": "https://platform.moonshot.ai/docs/pricing"
+      "pricingUrl": "https://platform.kimi.ai/docs/pricing/chat"
     },
     {
       "id": "alibaba",
@@ -48,13 +48,13 @@
       "id": "minimax",
       "name": "MiniMax",
       "country": "CN",
-      "pricingUrl": "https://www.minimax.io/platform/document/pricing"
+      "pricingUrl": "https://platform.minimax.io/docs/guides/pricing-paygo"
     },
     {
       "id": "xai",
       "name": "xAI",
       "country": "US",
-      "pricingUrl": "https://docs.x.ai/docs/models"
+      "pricingUrl": "https://docs.x.ai/developers/pricing"
     },
     {
       "id": "mistral",
@@ -99,7 +99,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 64000,
       "capabilityIndex": 64
@@ -127,7 +127,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 64000,
       "capabilityIndex": 80
@@ -437,11 +437,18 @@
       "status": "current",
       "contextWindow": 1000000,
       "pricing": {
-        "input": 2,
-        "output": 10,
-        "cachedInput": 0.2,
-        "cacheWrite": 2.5,
-        "batchDiscount": 0.5
+        "input": 3,
+        "output": 15,
+        "cachedInput": 0.3,
+        "cacheWrite": 3.75,
+        "batchDiscount": 0.5,
+        "intro": {
+          "input": 2,
+          "output": 10,
+          "cachedInput": 0.2,
+          "cacheWrite": 2.5,
+          "until": "2026-08-31"
+        }
       },
       "tokenizer": {
         "kind": "approx",
@@ -455,9 +462,14 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-16",
-        "lastChanged": "2026-08-16",
-        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
+        "lastVerified": "2026-08-20",
+        "lastChanged": "2026-08-20",
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+        "needsReview": true,
+        "reviewNote": "vendor override differs from the automated feed (33%): $2/$10 vs $3/$15",
+        "reviewCodes": [
+          "override-drift"
+        ]
       },
       "maxOutput": 128000,
       "capabilityIndex": 90
@@ -484,7 +496,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 8000,
       "capabilityIndex": 75
@@ -544,7 +556,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 65536
     },
@@ -636,7 +648,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19",
+        "lastVerified": "2026-08-20",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19",
         "reviewCodes": [
@@ -669,7 +681,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 8192
     },
@@ -695,7 +707,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 163840,
       "capabilityIndex": 74
@@ -887,7 +899,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 65535
     },
@@ -943,7 +955,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 65536
     },
@@ -1398,7 +1410,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19",
+        "lastVerified": "2026-08-20",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
       "aliasOf": "gpt-5.6-sol",
@@ -1536,7 +1548,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 8192
     },
@@ -1563,7 +1575,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 8192
     },
@@ -1594,7 +1606,7 @@
         "lastVerified": "2026-08-12",
         "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
         "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (27%): $0.22/$0.9 vs $0.3/$1.2",
+        "reviewNote": "OpenRouter disagrees (25%): $0.225/$0.9 vs $0.3/$1.2",
         "reviewCodes": [
           "openrouter-disagreement"
         ]
@@ -1624,7 +1636,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1651,7 +1663,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 262144,
       "capabilityIndex": 71
@@ -1678,7 +1690,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 262144,
       "capabilityIndex": 68
@@ -1706,7 +1718,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 262144
     },
@@ -1900,7 +1912,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 131072
     },
@@ -1927,7 +1939,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 131072
     },
@@ -1953,7 +1965,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 256000
     },
@@ -1980,7 +1992,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 2000000,
       "capabilityIndex": 66
@@ -2197,7 +2209,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-19"
+        "lastVerified": "2026-08-20"
       },
       "maxOutput": 128000,
       "capabilityIndex": 78

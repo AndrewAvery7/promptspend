@@ -7,8 +7,18 @@
       "country": "US",
       "pricingUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
-    { "id": "openai", "name": "OpenAI", "country": "US", "pricingUrl": "https://openai.com/api/pricing/" },
-    { "id": "google", "name": "Google", "country": "US", "pricingUrl": "https://ai.google.dev/pricing" },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "country": "US",
+      "pricingUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "google",
+      "name": "Google",
+      "country": "US",
+      "pricingUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
     {
       "id": "deepseek",
       "name": "DeepSeek",
@@ -19,7 +29,7 @@
       "id": "moonshot",
       "name": "Moonshot AI",
       "country": "CN",
-      "pricingUrl": "https://platform.moonshot.ai/docs/pricing"
+      "pricingUrl": "https://platform.kimi.ai/docs/pricing/chat"
     },
     {
       "id": "alibaba",
@@ -37,9 +47,9 @@
       "id": "minimax",
       "name": "MiniMax",
       "country": "CN",
-      "pricingUrl": "https://www.minimax.io/platform/document/pricing"
+      "pricingUrl": "https://platform.minimax.io/docs/guides/pricing-paygo"
     },
-    { "id": "xai", "name": "xAI", "country": "US", "pricingUrl": "https://docs.x.ai/docs/models" },
+    { "id": "xai", "name": "xAI", "country": "US", "pricingUrl": "https://docs.x.ai/developers/pricing" },
     { "id": "mistral", "name": "Mistral AI", "country": "FR", "pricingUrl": "https://mistral.ai/pricing" },
     { "id": "cohere", "name": "Cohere", "country": "CA", "pricingUrl": "https://cohere.com/pricing" },
     {

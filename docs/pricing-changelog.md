@@ -467,3 +467,28 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `moonshot-kimi-k2.5` — provenance.source: litellm → vendor
 - **Review** `moonshot-kimi-k2.5` — provenance.verifiedUrl: — → https://platform.kimi.ai/docs/pricing/chat-k25
+
+## 2026-08-20
+
+> **Not a vendor price rise.** Anthropic did not change Sonnet 5's price today. On
+> 2026-08-16 its introductory rate was recorded as the base price, which deleted
+> the expiry; the rows below restore the $3/$15 list price with the $2/$10
+> introductory rate running to 2026-08-31. What you are charged today is
+> unchanged — the step-up now happens on 2026-09-01 instead of never.
+
+- **Price** `claude-sonnet-5` — input up 2 → 3
+- **Price** `claude-sonnet-5` — output up 10 → 15
+- **Price** `claude-sonnet-5` — cachedInput up 0.2 → 0.3
+- **Price** `claude-sonnet-5` — cacheWrite up 2.5 → 3.75
+- **Coverage** `claude-sonnet-5` — intro.input now tracked: — → 2
+- **Coverage** `claude-sonnet-5` — intro.output now tracked: — → 10
+- **Coverage** `claude-sonnet-5` — intro.until now tracked: — → 2026-08-31
+- **Review** `claude-sonnet-5` — provenance.needsReview: — → true
+- **Review** `claude-sonnet-5` — provenance.reviewNote: — → vendor override differs from the automated feed (33%): $2/$10 vs $3/$15
+- **Review** `claude-sonnet-5` — provenance.lastChanged: 2026-08-16 → 2026-08-20
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (27%): $0.22/$0.9 vs $0.3/$1.2 → OpenRouter disagrees (25%): $0.225/$0.9 vs $0.3/$1.2
+- **Provider** `openai` — pricingUrl: https://openai.com/api/pricing/ → https://developers.openai.com/api/docs/pricing
+- **Provider** `google` — pricingUrl: https://ai.google.dev/pricing → https://ai.google.dev/gemini-api/docs/pricing
+- **Provider** `moonshot` — pricingUrl: https://platform.moonshot.ai/docs/pricing → https://platform.kimi.ai/docs/pricing/chat
+- **Provider** `minimax` — pricingUrl: https://www.minimax.io/platform/document/pricing → https://platform.minimax.io/docs/guides/pricing-paygo
+- **Provider** `xai` — pricingUrl: https://docs.x.ai/docs/models → https://docs.x.ai/developers/pricing
