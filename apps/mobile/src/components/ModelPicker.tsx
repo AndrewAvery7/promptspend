@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { Catalog, Model } from '@promptspend/core';
 
+import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
@@ -22,13 +23,15 @@ export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, s
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [countries, setCountries] = useState<string[]>([]);
   const models = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return catalog.primaryModels.filter((model) => {
+      if (!catalog.inCountries(model, countries)) return false;
       if (!needle) return true;
       return `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase().includes(needle);
     });
-  }, [catalog, query]);
+  }, [catalog, countries, query]);
 
   return (
     <>
@@ -44,8 +47,9 @@ export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, s
           <View style={styles.selectorCopy}>
             <Text style={styles.modelName}>{selected.displayName}</Text>
             <Text style={styles.providerName}>
-              {catalog.providerName(selected)} · ${selected.pricing.input}/M input · $
-              {selected.pricing.output}/M output
+              {catalog.providerName(selected)}
+              {catalog.provider(selected)?.country ? ` · ${catalog.provider(selected)?.country}` : ''} · $
+              {selected.pricing.input}/M input · ${selected.pricing.output}/M output
             </Text>
           </View>
           <Text accessibilityElementsHidden style={styles.changeLabel}>
@@ -107,18 +111,28 @@ export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, s
             value={query}
           />
 
+          <View style={styles.countryFilter}>
+            <CountryFilter
+              countries={catalog.countries()}
+              label="Show estimate models from these countries"
+              onChange={setCountries}
+              selected={countries}
+            />
+          </View>
+
           <FlatList
             contentContainerStyle={styles.listContent}
             data={models}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="handled"
             keyExtractor={(model) => model.id}
-            ListEmptyComponent={<Text style={styles.empty}>No models match “{query}”.</Text>}
+            ListEmptyComponent={<Text style={styles.empty}>{emptyReason(query, countries)}</Text>}
             renderItem={({ item }) => {
               const isSelected = item.id === selected.id;
+              const country = catalog.provider(item)?.country;
               return (
                 <Pressable
-                  accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}, ${item.pricing.input} dollars per million input tokens and ${item.pricing.output} dollars per million output tokens${isSelected ? ', selected' : ''}`}
+                  accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}${country ? `, ${countryName(country)}` : ''}, ${item.pricing.input} dollars per million input tokens and ${item.pricing.output} dollars per million output tokens${isSelected ? ', selected' : ''}`}
                   accessibilityRole="button"
                   onPress={() => {
                     onChange(item);
@@ -134,7 +148,8 @@ export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, s
                   <View style={styles.modelRowCopy}>
                     <Text style={styles.rowName}>{item.displayName}</Text>
                     <Text style={styles.rowMeta}>
-                      {catalog.providerName(item)} · {item.contextWindow.toLocaleString('en-US')} context
+                      {catalog.providerName(item)}
+                      {country ? ` · ${country}` : ''} · {item.contextWindow.toLocaleString('en-US')} context
                     </Text>
                   </View>
                   <View style={styles.rateBlock}>
@@ -260,6 +275,7 @@ function createStyles(theme: MobileTheme) {
       paddingHorizontal: 14,
       paddingVertical: 12,
     },
+    countryFilter: { paddingHorizontal: 20 },
     listContent: {
       paddingBottom: 32,
       paddingHorizontal: 20,
