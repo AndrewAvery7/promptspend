@@ -24,6 +24,7 @@ import {
   unsubscribeLocally,
 } from '@/lib/alerts/push';
 import { Turnstile } from '@/components/Turnstile';
+import { CountryFilter, emptyReason } from '@/components/CountryFilter';
 import { Flag } from '@/components/Flag';
 
 type Scope = 'all' | 'followed';
@@ -765,17 +766,22 @@ function ModelPicker({
   onChange: (models: string[]) => void;
 }) {
   const [query, setQuery] = useState('');
+  /* Following every model from one country is a real subscription — "tell me
+     when anything Chinese moves" — and picking those rows out of a flat list of
+     seventy by reading the flags is the tedious version of it. */
+  const [countries, setCountries] = useState<string[]>([]);
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return catalog.primaryModels.filter((model) => {
+      if (!catalog.inCountries(model, countries)) return false;
       if (!needle) return true;
       return (
         model.displayName.toLowerCase().includes(needle) ||
         catalog.providerName(model).toLowerCase().includes(needle)
       );
     });
-  }, [catalog, query]);
+  }, [catalog, query, countries]);
 
   const toggle = (id: string) => {
     if (selected.includes(id)) onChange(selected.filter((entry) => entry !== id));
@@ -791,6 +797,12 @@ function ModelPicker({
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         aria-label="Filter the model list"
+      />
+      <CountryFilter
+        countries={catalog.countries()}
+        selected={countries}
+        onChange={setCountries}
+        label="Follow models from these countries"
       />
       <p className="alerts-hint" aria-live="polite">
         {selected.length} of {MAX_FOLLOWS} selected
@@ -815,7 +827,7 @@ function ModelPicker({
             </li>
           );
         })}
-        {visible.length === 0 && <li className="alerts-picker__empty">No model matches “{query}”.</li>}
+        {visible.length === 0 && <li className="alerts-picker__empty">{emptyReason(query, countries)}</li>}
       </ul>
     </div>
   );

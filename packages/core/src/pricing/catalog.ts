@@ -40,6 +40,13 @@ export interface Freshness {
   ageDays: number | null;
 }
 
+/** A country the catalog carries, and how many purchasable models sit behind
+ *  it. The code is ISO-3166 alpha-2, exactly as the provider records it. */
+export interface CountryCount {
+  code: string;
+  count: number;
+}
+
 /** Index a catalog for the lookups the UI does on every render. */
 export class Catalog {
   readonly generatedAt: Date;
@@ -145,13 +152,53 @@ export class Catalog {
     return { level: ageDays >= 2 ? 'aging' : 'fresh', checkedOn, ageDays };
   }
 
+  /**
+   * The countries actually represented in the catalog, biggest first.
+   *
+   * Derived rather than listed, for the same reason the hero's counts are: a
+   * hand-written list of countries is correct until the morning a sync adds a
+   * provider from a new one, and nothing would fail loudly when it stopped
+   * being. Counting only primary models means the number beside each flag is
+   * the number of rows the filter will actually leave behind — an alias is not
+   * a separate thing you can buy, and counting it would overstate every total.
+   *
+   * Ordered by count so the reader scans the largest first, then by code so the
+   * order is a function of the catalog alone and does not shuffle between two
+   * countries that happen to tie.
+   */
+  countries(): CountryCount[] {
+    const counts = new Map<string, number>();
+    for (const model of this.primaryModels) {
+      const code = this.providerById.get(model.providerId)?.country;
+      if (!code) continue;
+      counts.set(code, (counts.get(code) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .map(([code, count]) => ({ code, count }))
+      .sort((a, b) => b.count - a.count || a.code.localeCompare(b.code));
+  }
+
+  /**
+   * Whether a model's provider is based in one of `countries`.
+   *
+   * An empty list means "every country", not "no country". The filter is a
+   * narrowing the reader opts into, so its resting state has to be the whole
+   * catalog — the alternative is a picker that starts empty and looks broken.
+   */
+  inCountries(model: Model, countries: readonly string[]): boolean {
+    if (countries.length === 0) return true;
+    const code = this.providerById.get(model.providerId)?.country;
+    return code !== undefined && countries.includes(code);
+  }
+
   /** Models grouped by provider, in display order. Aliases are left out: one
    *  purchasable model should appear in the picker once. */
-  byProvider(filter = ''): { provider: Provider; models: Model[] }[] {
+  byProvider(filter = '', countries: readonly string[] = []): { provider: Provider; models: Model[] }[] {
     const needle = filter.trim().toLowerCase();
     const groups = new Map<string, Model[]>();
 
     for (const model of this.primaryModels) {
+      if (!this.inCountries(model, countries)) continue;
       if (needle) {
         const haystack = `${model.displayName} ${this.providerName(model)} ${model.id}`.toLowerCase();
         if (!haystack.includes(needle)) continue;
