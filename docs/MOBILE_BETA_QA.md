@@ -2,36 +2,36 @@
 
 Status: active test protocol
 
-Last reviewed: 2026-08-16
+Last reviewed: 2026-08-22
 
-> **Current hardened private-QA binaries.** iOS build 14 and Android EAS build
-> `391818eb-a439-4d8c-ad39-fb554fbb24e9` contain the August 16 audit hardening
-> from the same source revision. Build 12 and the earlier Android versionCode 3
-> APK remain historical and must not be recorded as current QA evidence.
+> **Current private-QA binaries.** iOS build 15 and Android versionCode 4 contain
+> the complete August 22 country-filter release from the same merged source
+> revision. All earlier binaries are historical and must not be recorded as
+> current QA evidence.
 
 ## Current installable baseline
 
-- iOS TestFlight candidate: version 0.1.0, build 14, EAS build
-  `e75b93f4-6d23-4dd0-ac78-930cdaf2ad48`, built from commit
-  `f4318b4ade8f5937727e0741c337103c64a189b7`. Verified IPA SHA-256:
-  `5CD6C6B07111D2E0BA3A00AC7D93862A92BA394D108E829BF4FDE0E891A662FF`.
-  EAS submission `5cf00ebb-8624-4ff9-a8a7-bc7c84e6e031` was accepted by
-  App Store Connect and is awaiting Apple's TestFlight processing.
-- Android internal APK baseline: version 0.1.0, versionCode 3, EAS build
-  `391818eb-a439-4d8c-ad39-fb554fbb24e9`, built from commit
-  `f4318b4ade8f5937727e0741c337103c64a189b7`. Verified APK SHA-256:
-  `22430D45DC88F10A1ED18150D5A8E02DF7E7A635F23613A0BB99FEE33B9FDBDF`.
+- iOS TestFlight candidate: version 0.1.0, build 15, EAS build
+  `7416e483-86aa-49fd-a343-5eaed1e2d25e`, built from commit
+  `f944544f34ba14ff97f934cccc5afcd86a8fcf8e`. Verified IPA SHA-256:
+  `A4363B711FDB4C89CAD3BD6DD6843BDDCA6EE9EA80C43918ED5E627E980752AE`.
+  EAS submission `b2a12bc1-c792-4931-85a0-237992505a04` successfully uploaded
+  the binary to App Store Connect; install only after TestFlight displays build 15.
+- Android internal APK baseline: version 0.1.0, versionCode 4, EAS build
+  `c21e5975-fb91-4dac-b064-0b56f90a8a98`, built from commit
+  `f944544f34ba14ff97f934cccc5afcd86a8fcf8e`. Verified APK SHA-256:
+  `9D893EB7FE7C45741423698F781957BF7EC9F6332D7638A61A35201B3A22CCFC`.
 
 These identify the last known baseline, not the eventual release candidate.
 Every test record must name the exact installed build.
 
 Per-build execution records:
 
-- `docs/qa/IOS_TESTFLIGHT_BUILD_14.md`
-- `docs/qa/ANDROID_GALAXY_A15_F4318B4.md`
+- `docs/qa/IOS_TESTFLIGHT_BUILD_15.md`
+- `docs/qa/ANDROID_GALAXY_A15_BUILD_4.md`
 
 Apple public-release and Google developer-platform work remain gated by the
-account/D-U-N-S process and separate explicit approvals. Build 14 was uploaded
+account/D-U-N-S process and separate explicit approvals. Build 15 was uploaded
 to App Store Connect for private internal TestFlight QA only. The Android
 baseline may be installed directly for private physical-device QA. Neither
 action authorizes a Play Console upload, store review, or public distribution.
@@ -59,16 +59,19 @@ size, light/dark setting, and assistive technology.
 4. Estimate by pasting system, user, and response text separately; confirm each
    private-text notice and derived count.
 5. Compare one, two, and four models; reject a fifth without losing state.
-6. Exercise caching, reasoning, batch, scale, turns, conversation growth, and
+6. Filter the Estimate picker, Compare picker, Compare catalog/Value Map, and
+   Data & Alerts model picker by one and multiple countries. Combine country
+   filters with search, restore All, and confirm hidden selections remain saved.
+7. Exercise caching, reasoning, batch, scale, turns, conversation growth, and
    long-context warnings against known engine fixtures.
-7. Save, rename, duplicate, restore, delete, and undo a scenario.
-8. Share estimate, comparison, scenario link, CSV, receipt image, and receipt
+8. Save, rename, duplicate, restore, delete, and undo a scenario.
+9. Share estimate, comparison, scenario link, CSV, receipt image, and receipt
    text to at least Messages, Mail/Gmail, Files/Drive, and one third-party target.
-9. Search for a model and command; complete Guided Tour and confirm every step
-   navigates, scrolls, spotlights, and announces the surface it describes; test
-   Back, Exit, Finish, Reduce Motion, and replay; change appearance.
-10. Read every Learn lesson and use the private token lab.
-11. In Data & Alerts, complete email subscribe and double opt-in; request and
+10. Search for a model and command; complete Guided Tour and confirm every step
+    navigates, scrolls, spotlights, and announces the surface it describes; test
+    Back, Exit, Finish, Reduce Motion, and replay; change appearance.
+11. Read every Learn lesson and use the private token lab.
+12. In Data & Alerts, complete email subscribe and double opt-in; request and
     verify a management code; update cadence/scope/models; exercise an invalid
     and expired code; unsubscribe and confirm deletion. Then open every source,
     support, privacy, API, MCP, VS Code, and Open VSX link and cancel each
