@@ -2,10 +2,22 @@ name: Sync pricing
 
 # The feature this project exists for: prices refresh themselves.
 #
-#   degraded run             -> nothing published; the health manifest records
-#                               why and the job fails so it is visible
-#   new review flag          -> raised as a pull request for a human
-#   clean diff, no new flags -> committed to main, which redeploys the site
+#   degraded run  -> the catalog is held back, the manifest records why, and
+#                    the job fails so it is visible
+#   anything else -> committed straight to main, which redeploys the site
+#
+# **There is no human gate on publication, deliberately.** There used to be: a
+# diff that tripped a sanity rule was diverted into a rolling pull request and
+# waited to be reviewed. That guarded against publishing one bad price and
+# traded away the claim the whole site rests on. On 2026-08-21 a flagged diff
+# opened #80; nothing reached main for two days, and the header went on saying
+# "sources checked 2026-08-20" while the sources had in fact been read every
+# morning. A date that lags because nobody has read a diff is the worse
+# failure of the two, because a flagged price is *already* marked disputed in
+# the UI and on its generated page, and a stale date is marked nowhere at all.
+#
+# So a new flag now publishes with everything else and files an issue beside
+# it. The review still happens; it has stopped holding the queue.
 #
 # Actions are pinned to commit SHAs, not tags: a tag is mutable, and this
 # workflow has write access to the branch the site deploys from.
@@ -17,7 +29,9 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+  # Issues, not pull requests. Nothing here opens a PR any more, and a token
+  # that can still do it is a gate somebody can reintroduce by accident.
+  issues: write
   # To dispatch the deploy for a commit this job pushes — see the last step.
   actions: write
 
@@ -96,59 +110,75 @@ jobs:
             echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Commit clean updates
+      # Every non-degraded change, flagged or not. `needs_review` no longer
+      # decides *whether* to publish — only whether to say something afterwards,
+      # in the step below. It stays in the commit subject so `git log` still
+      # distinguishes a morning that tripped a rule from one that did not.
+      - name: Commit the day's updates
         id: publish-updates
         if: >-
           steps.sync.outputs.degraded != 'true' &&
-          steps.sync.outputs.changed == 'true' &&
-          steps.sync.outputs.needs_review != 'true'
+          steps.sync.outputs.changed == 'true'
         env:
           SYNC_SUMMARY: ${{ steps.sync.outputs.summary }}
+          NEEDS_REVIEW: ${{ steps.sync.outputs.needs_review }}
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
           git add public/data/pricing.json public/data/sync-status.json docs/pricing-changelog.md README.md
-          git commit -m "data: $SYNC_SUMMARY"
+          note=""
+          if [ "$NEEDS_REVIEW" = "true" ]; then note=" (flagged)"; fi
+          git commit -m "data: $SYNC_SUMMARY$note"
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Open a pull request when a human should look
+      # After the push, not instead of it. The data is already live by the time
+      # this runs; this is the note saying a row in it disagrees with itself.
+      #
+      # One rolling issue, commented rather than replaced each morning — the
+      # discipline the freshness monitor next door already uses, for the same
+      # reason: a bot that files a duplicate daily is a bot people mute. It
+      # does not close itself either, because unlike a stale catalog a flag
+      # does not clear on its own; somebody resolves it.
+      - name: Note a new review flag, without holding the data back
         if: >-
           steps.sync.outputs.degraded != 'true' &&
-          steps.sync.outputs.changed == 'true' &&
           steps.sync.outputs.needs_review == 'true'
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
-        with:
-          # A FIXED branch on purpose. The action keys on the branch name: same
-          # branch means it force-updates the open pull request instead of
-          # opening another. A per-run name (`pricing-sync/${{ github.run_id }}`)
-          # made every re-raise a separate pull request, so an unreviewed flag
-          # accumulated one per morning — #51 and #57 were the same catalog
-          # twice, identical hash. `pricing-sync` itself cannot be used: Git
-          # stores those historical branches under that ref prefix and rejects
-          # a file/directory conflict. Worst case here is one rolling pull
-          # request that always carries the freshest catalog.
-          branch: pricing-review
-          commit-message: 'data: ${{ steps.sync.outputs.summary }} (needs review)'
-          title: 'Pricing sync needs review: ${{ steps.sync.outputs.summary }}'
-          body: |
-            The daily sync produced a change that tripped a sanity rule **for the first time**.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SUMMARY: ${{ steps.sync.outputs.summary }}
+          NEW_REVIEW: ${{ steps.sync.outputs.new_review }}
+          MODEL_COUNT: ${{ steps.sync.outputs.model_count }}
+          FLAGGED_COUNT: ${{ steps.sync.outputs.flagged_count }}
+        run: |
+          set -euo pipefail
+          title='Pricing rows flagged for review'
 
-            **Summary:** ${{ steps.sync.outputs.summary }}
-            **Models tracked:** ${{ steps.sync.outputs.model_count }}
-            **Currently flagged:** ${{ steps.sync.outputs.flagged_count }}
+          body=$(cat <<EOF
+          Today's sync published a change that tripped a sanity rule. **The data is already live** — this is a note to check it, not a gate in front of it.
 
-            A model is flagged when the two independent sources disagree by more
-            than 20%, when a published price moved by more than 50% in a single
-            day, or when it stopped appearing upstream. Long-standing flags do
-            not re-open this PR every morning — only a reason that was not
-            already recorded does.
+          **Newly flagged:** $NEW_REVIEW
+          **Summary:** $SUMMARY
+          **Models tracked:** $MODEL_COUNT
+          **Currently flagged:** $FLAGGED_COUNT
 
-            Check the flagged rows against the vendor's own pricing page before
-            merging; if the vendor number is authoritative, add it to
-            `data/pricing-overrides.json` (with `verifiedUrl`) rather than
-            editing `pricing.json` directly.
-          labels: pricing, needs-review
+          A model is flagged when the two independent sources disagree by more than 20%, when a published price moved by more than 50% in a single day, or when it stopped appearing upstream. Every flagged row is marked disputed in the UI and on its generated page, so a visitor sees the doubt rather than inheriting it silently.
+
+          Check the flagged rows against the vendor's own pricing page. If the vendor's number is authoritative, add it to \`data/pricing-overrides.json\` with its \`verifiedUrl\` — not by editing \`pricing.json\`, which the next sync overwrites.
+
+          Long-standing flags do not comment here every morning; only a reason that was not already recorded does.
+          EOF
+          )
+
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+            echo "  commented on issue #$existing"
+          else
+            gh issue create --title "$title" --body "$body" --label pricing --label needs-review >/dev/null
+            echo "  opened a new review issue"
+          fi
 
       # A push made with GITHUB_TOKEN deliberately does not start another
       # workflow run, so a commit from the steps above lands on main and the
@@ -167,6 +197,12 @@ jobs:
       # was actually pushed: Pages keys a deployment by commit SHA and rejects a
       # second one for a SHA already deployed, so firing on every sync would turn
       # a quiet morning into a red deploy.
+      #
+      # Since the review gate was removed this step carries more weight than it
+      # used to. A flagged diff no longer reaches the site by way of somebody
+      # merging a pull request — there is no user push in the loop at all any
+      # more — so if this dispatch fails, nothing else publishes the catalog.
+      # The freshness monitor is what notices.
       - name: Deploy and notify what this run published
         if: >-
           steps.publish-stable.outputs.pushed == 'true' ||
