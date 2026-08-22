@@ -490,3 +490,19 @@ value that moves in the same run as its source URL is a correction.
 - **Provider** `moonshot` — pricingUrl: https://platform.moonshot.ai/docs/pricing → https://platform.kimi.ai/docs/pricing/chat
 - **Provider** `minimax` — pricingUrl: https://www.minimax.io/platform/document/pricing → https://platform.minimax.io/docs/guides/pricing-paygo
 - **Provider** `xai` — pricingUrl: https://docs.x.ai/docs/models → https://docs.x.ai/developers/pricing
+
+## 2026-08-22
+
+- **Added** `moonshot-kimi-k3` — Kimi K3 ($3 in / $15 out per 1M)
+- **Metadata** `claude-sonnet-4-6` — maxOutput: 64000 → 128000
+- **Metadata** `gpt-5.6` — contextWindow: 1050000 → 922000
+- **Metadata** `gpt-5.6-luna` — contextWindow: 1050000 → 922000
+- **Metadata** `gpt-5.6-sol` — contextWindow: 1050000 → 922000
+- **Metadata** `gpt-5.6-terra` — contextWindow: 1050000 → 922000
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: OpenRouter disagrees (40%): $0.09/$1.1 vs $0.15/$1.2 → OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2
+- **Review** `deepseek-deepseek-v4-flash` — provenance.needsReview: true → —
+- **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: vendor override differs from the automated feed (79%): $0.14/$0.28 vs $0.44/$1.32 → —
+- **Review** `deepseek-deepseek-v4-pro` — provenance.needsReview: true → —
+- **Review** `deepseek-deepseek-v4-pro` — provenance.reviewNote: vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96 → —
+- **Review** `minimax-minimax-m2.5` — provenance.needsReview: true → —
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (25%): $0.225/$0.9 vs $0.3/$1.2 → —
