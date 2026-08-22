@@ -59,6 +59,18 @@ jobs:
         id: sync
         run: npm run sync:pricing
 
+      # A model arriving or leaving changes how many pages the build emits, and
+      # that count is written into prose in three files. They were maintained by
+      # hand, so the morning `moonshot-kimi-k3` appeared — 2026-08-22 — the sync
+      # published a correct catalogue and then failed its own deploy on
+      # `check:pages`, describing 161 pages while building 162.
+      #
+      # Before validation, so a run that cannot publish does not leave the
+      # documentation rewritten for a catalogue nobody will see.
+      - name: Bring the generated-page counts with it
+        if: steps.sync.outputs.degraded != 'true'
+        run: npx tsx scripts/check-pages.ts --fix
+
       # The published data must satisfy the same schema the app enforces at
       # load, before anything is committed — not after.
       - name: Validate the merged catalog
@@ -84,7 +96,7 @@ jobs:
           echo "Sources stable — recording the verification."
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json README.md
+          git add public/data/pricing.json public/data/sync-status.json README.md docs/PAGES.md src/lib/seo/pages.ts
           if git diff --staged --quiet; then
             echo "Nothing staged — nothing to record."
           else
@@ -125,7 +137,7 @@ jobs:
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json docs/pricing-changelog.md README.md
+          git add public/data/pricing.json public/data/sync-status.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
           note=""
           if [ "$NEEDS_REVIEW" = "true" ]; then note=" (flagged)"; fi
           git commit -m "data: $SYNC_SUMMARY$note"
