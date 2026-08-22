@@ -506,3 +506,10 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `deepseek-deepseek-v4-pro` — provenance.reviewNote: vendor override differs from the automated feed (78%): $0.435/$0.87 vs $1.32/$3.96 → —
 - **Review** `minimax-minimax-m2.5` — provenance.needsReview: true → —
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (25%): $0.225/$0.9 vs $0.3/$1.2 → —
+
+## 2026-08-22
+
+- **Review** `moonshot-kimi-k3` — provenance.source: litellm → vendor
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `moonshot-kimi-k3` — provenance.verifiedUrl: — → https://platform.kimi.ai/docs/pricing/chat-k3

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-22T18:41:24.290Z",
+  "generatedAt": "2026-08-22T19:44:42.587Z",
   "providers": [
     {
       "id": "anthropic",
@@ -1730,7 +1730,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-19",
+        "lastVerified": "2026-08-22",
         "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k25",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3",
@@ -1792,13 +1792,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-08-22",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k3"
       },
       "maxOutput": 1048576
     },
