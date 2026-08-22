@@ -2,9 +2,10 @@ import { fireEvent, render } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
 import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
+import { lightTheme as mockLightTheme } from '@/theme/tokens';
 
 jest.mock('@/theme/useMobileTheme', () => ({
-  useMobileTheme: () => ({ theme: require('@/theme/tokens').lightTheme }),
+  useMobileTheme: () => ({ theme: mockLightTheme }),
 }));
 
 const COUNTRIES = [
