@@ -332,13 +332,37 @@ async function main(): Promise<void> {
     }
   }
 
-  // Surface results to the workflow so it can decide commit-vs-pull-request.
+  /**
+   * The newly-flagged rows, named.
+   *
+   * `needs_review` says only *that* something tripped a rule, which was enough
+   * while a flag diverted the entire run into a pull request whose diff you
+   * would read anyway. It no longer does: a flagged diff publishes with
+   * everything else and the workflow files an issue beside it. That issue is
+   * worth opening only if it says which row and why, so the detail is produced
+   * here rather than left in a run log nobody reads.
+   *
+   * One line on purpose — a GITHUB_OUTPUT value containing a newline needs a
+   * delimiter block, and a list of flags is not worth one. The cap guards
+   * against a pathological run writing an essay into an issue; the log above
+   * still prints every flag in full.
+   */
+  const newReviewLine =
+    newReview
+      .map((item) => `${item.id} (${item.reason})`)
+      .join('; ')
+      .replace(/\s+/g, ' ')
+      .slice(0, 900) || 'none';
+
+  // Surface results to the workflow so it can decide what to publish, and what
+  // to say alongside it.
   const githubOutput = process.env.GITHUB_OUTPUT;
   if (githubOutput) {
     const lines = [
       `changed=${!degraded && !diff.isEmpty ? 'true' : 'false'}`,
       `price_changed=${!degraded && diff.hasPriceChange ? 'true' : 'false'}`,
       `needs_review=${newReview.length > 0 ? 'true' : 'false'}`,
+      `new_review=${newReviewLine}`,
       `degraded=${degraded ? 'true' : 'false'}`,
       `summary=${summary}`,
       `model_count=${catalog.models.length}`,

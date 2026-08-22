@@ -2269,6 +2269,75 @@ table.catalog tbody tr:hover {
   padding: 2px 8px 2px 5px;
 }
 
+/* ------------------------------------------------------- country filter */
+
+/* Chips, not a multi-select listbox. A native <select multiple> is the obvious
+   control and it is the wrong one here: it hides the options until it is
+   opened, so nobody discovers that filtering by country is possible, and on a
+   phone it becomes a modal wheel that cannot show a flag at all. Four chips in
+   a row announce themselves and their state at rest.
+
+   The pressed styling is the canvas chip's, deliberately — pressed accent on
+   accent-soft is the pairing this app already uses for "this one is on", and
+   it is the pairing the contrast matrix already covers. */
+.country-filter {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 2px;
+}
+.country-filter__label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: 2px;
+}
+.country-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 5px 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+.country-toggle:hover {
+  color: var(--ink);
+  border-color: var(--muted);
+}
+.country-toggle.is-on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+/* A 31px chip clears WCAG 2.5.8's 24px floor and is still a poor target for a
+   thumb. Same bump the alert rows and the copy button already take. */
+@media (pointer: coarse) {
+  .country-toggle {
+    min-height: 44px;
+  }
+}
+/* The count is the quieter half of the chip, and weight is the only lever it
+   gets — fading it would composite a token whose contrast is guaranteed at
+   full strength and throw that guarantee away. Same rule as the sync chip. */
+.country-toggle__count {
+  font-weight: 500;
+}
+
 /* The Use column is not a sort button, so it does not inherit the padding the
    other headers get from theirs — set it explicitly on both cells so the label
    and the checkboxes under it share an edge. */
@@ -2552,6 +2621,8 @@ input[type='range'] {
 .learn-card__meta,
 .palette__label,
 .canvas-chip,
+.country-filter__label,
+.country-toggle,
 .selection-count,
 .trust-list,
 .sync-log,

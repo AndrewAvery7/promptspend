@@ -26,8 +26,18 @@ before any of it means anything. What to look for when it does:
 indexed count below 160 is normal selectivity, not a fault — Google is
 deliberately choosy with programmatically generated pages. Large counts under
 _Duplicate, Google chose different canonical_ or _Crawled – currently not
-indexed_ are the two signals that would mean a real content problem, and the
-comparison pages are the likeliest culprits since they are the most template-like.
+indexed_ are the two signals that would mean a real content problem.
+
+Checked 2026-08-17: 144 indexed / 39 not indexed. Zero pages under _Duplicate,
+Google chose different canonical than user_ — that risk hasn't materialized.
+_Crawled – currently not indexed_ is 12 pages, the largest single reason, and
+the comparison-pages hypothesis above turned out wrong: 8 of the 12 are single
+`/models/` pages (`o1`, `deepseek-v4-pro`, `zai-glm-4-6`, `gemini-3-5-flash`,
+`claude-opus-4-1`, `minimax-m2`, `minimax-m2-5`, `moonshot-kimi-k2-thinking`)
+and only 4 are `/compare/` pages. All 12 were last crawled Aug 14–15, roughly
+two weeks after the 8/2 launch, so this may still be new-site indexing lag
+rather than confirmed thin content — recheck next month before assuming a
+content fix is needed.
 
 The weekly `promptspend-seo-review` scheduled task carries both.
 
@@ -67,6 +77,45 @@ feed row exists to correct it. Seeding from OpenRouter instead would publish a
 reseller's price as the vendor's, which for these providers runs 20–50% adrift.
 Missing a model for a few days costs less than publishing a number that is wrong
 and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
+
+**Analytics on either host, for launch measurement.** Considered because a
+launch is the one moment traffic is worth watching closely, and rejected
+because the site makes an explicit, unscoped promise not to. README.md:434
+says "No accounts, no analytics, no cookies"; SECURITY.md:80's Data handling
+section — which covers the whole project, not just the calculator page — says
+"There is no analytics and no cookie"; the `og:description` every share
+renders (index.html:52) tells the reader the same thing before they have even
+clicked through. None of the three scope the promise to `promptspend.com`, so
+it binds `promptspend.dev` too, not just the page people land on.
+
+Both hosts also make the technical cost of breaking the promise visible rather
+than free. `promptspend.com` is static on GitHub Pages, so its CSP is a
+`<meta>` tag (`vite.config.ts`) with `script-src` already narrowed to `'self'`
+plus `challenges.cloudflare.com` only when the alerts API is configured — an
+analytics origin is not on that list and adding one is a deliberate,
+reviewable diff, not an oversight. `promptspend.dev` is stricter still: it is
+served by a Worker that sets a real header (`api/src/http.ts`), and that
+header is `script-src 'none'` because the docs pages "have no scripts at all —
+not even a data block." Putting a beacon there means weakening a header that
+currently states, correctly, that the page cannot run a script — on a surface
+that is an API reference, not the thing a launch post drives traffic to.
+
+Checked rather than assumed: Cloudflare markets Web Analytics as
+privacy-first, but its own setup docs
+(`developers.cloudflare.com/web-analytics/get-started/`) never use the word
+"cookieless" and make no privacy claim at all — that page is instructions
+only. So "it's cookieless, Cloudflare says so" is not a citable fact from the
+page a build would actually follow; treat it as marketing copy, not
+documentation, if it comes up again.
+
+Decision: launch measurement stays confined to the two instruments already in
+place — Search Console (organic impressions and clicks, already tracked
+weekly per the section above) and the GitHub traffic API (views, clones,
+referrers, 14-day retention). That means no visibility into on-site
+conversion, session paths, or which page a visitor left from, and that gap is
+accepted rather than papered over. Revisit only if one of the hosts changes
+CSP for an unrelated reason — the day either header moves is the day to
+re-ask this question, not before.
 
 ---
 

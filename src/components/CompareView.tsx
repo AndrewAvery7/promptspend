@@ -4,16 +4,21 @@ import type { Model } from '@/lib/pricing/types';
 import { formatContext, formatCount, formatMoney, formatRate } from '@/lib/engine/format';
 import type { ComparisonRow } from '@/lib/engine/cost';
 import { HelpTip, ReviewBadge } from './Disclosure';
-import { CountryTag } from './Flag';
+import { CountryFilter } from './CountryFilter';
+import { CountryTag, countryName } from './Flag';
 
 interface CompareViewProps {
   catalog: Catalog;
   selectedIds: string[];
   onToggle: (id: string) => void;
+  /** Selected ISO-3166 alpha-2 codes; empty means every country. */
+  countries: string[];
 }
 
-/** What the shortlist panel needs, on top of what the chart already takes. */
-interface ComparePageProps extends CompareViewProps {
+/** What the shortlist panel needs, on top of what the chart already takes.
+ *  The country selection is this component's own state, not something handed
+ *  down to it, which is why it is the one field omitted here. */
+interface ComparePageProps extends Omit<CompareViewProps, 'countries'> {
   rows: ComparisonRow[];
   conversationsPerDay: number;
   onOpenEstimate: () => void;
@@ -27,6 +32,10 @@ export function CompareView({
   onOpenEstimate,
   onToggle,
 }: ComparePageProps) {
+  /* One selection for the whole view. The chart and the table are two readings
+     of the same list — filtering one and not the other would show a model as a
+     dot you could not find in the rows underneath it. */
+  const [countries, setCountries] = useState<string[]>([]);
   const spread = catalog.rateSpread();
   const priciest = rows.length > 1 ? rows[rows.length - 1] : undefined;
 
@@ -53,6 +62,15 @@ export function CompareView({
         Every model we track, mapped by what it costs. Choose a dot or a table row to add it to your estimate,
         and sort the table on any column.
       </p>
+      {/* Above the chart, not beside the table: it governs both, and a control
+          that sits under the thing it filters reads as belonging to the table
+          alone. */}
+      <CountryFilter
+        countries={catalog.countries()}
+        selected={countries}
+        onChange={setCountries}
+        label="Show models from these countries"
+      />
       {/* The chart and the shortlist share a row, and the shortlist is sticky.
           They were stacked: the panel sat in the hero and the chart below it,
           so by the time you were clicking dots the numbers you were changing
@@ -61,7 +79,7 @@ export function CompareView({
           fix, reintroduced by where it was put. */}
       <div className="compare-layout">
         <div className="compare-layout__main">
-          <ValueMap catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} />
+          <ValueMap catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} countries={countries} />
         </div>
         <aside className="hero__aside compare-layout__side" aria-labelledby="shortlist-title">
           <p className="hero__aside-eyebrow">Your shortlist</p>
@@ -103,7 +121,7 @@ export function CompareView({
         </aside>
       </div>
 
-      <CatalogTable catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} />
+      <CatalogTable catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} countries={countries} />
     </section>
   );
 }
@@ -127,7 +145,7 @@ const LABEL_SPOTS = [
   { dx: -12, dy: 5, anchor: 'end' as const },
 ];
 
-function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
+function ValueMap({ catalog, selectedIds, onToggle, countries }: CompareViewProps) {
   const [hover, setHover] = useState<{ model: Model; x: number; y: number } | null>(null);
 
   const points = useMemo(() => {
@@ -136,9 +154,13 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
     // Substituting a default for the rest drew 26 models along one flat line at
     // exactly 70, which reads as a finding and is an artefact. A model without
     // a score is not in the middle of the axis; it is not on the axis.
-    const models = catalog.primaryModels.filter(
-      (m) => Catalog.blendedRate(m) > 0 && m.capabilityIndex !== undefined,
-    );
+    //
+    // The country filter narrows the pool *before* the axes are scaled, which
+    // is the point of filtering a chart at all: with only the Chinese models
+    // left, the price axis spans their range rather than leaving them bunched
+    // against one edge of a scale drawn for models that are no longer shown.
+    const inScope = catalog.primaryModels.filter((m) => catalog.inCountries(m, countries));
+    const models = inScope.filter((m) => Catalog.blendedRate(m) > 0 && m.capabilityIndex !== undefined);
     if (models.length === 0) return null;
 
     const rates = models.map((m) => Catalog.blendedRate(m));
@@ -165,9 +187,10 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
         .filter((v) => v >= min && v <= max)
         .map((v) => ({ v, x: x(v) })),
       yTicks: tickRange(capMin, capMax).map((v) => ({ v, y: y(v) })),
-      unscored: catalog.primaryModels.length - models.length,
+      unscored: inScope.length - models.length,
+      scoped: inScope.length,
     };
-  }, [catalog]);
+  }, [catalog, countries]);
 
   /**
    * Where each label goes, or whether it goes at all.
@@ -245,7 +268,22 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
     return placements;
   }, [points, selectedIds]);
 
-  if (!points) return null;
+  // Rendering nothing is right when the catalog simply carries no capability
+  // estimates. It is wrong when the reader's own filter is what emptied the
+  // chart: a control that makes a whole panel vanish without saying so looks
+  // like a fault, and the way back out is no longer on screen.
+  if (!points) {
+    if (countries.length === 0) return null;
+    return (
+      <div className="value-map" id="panel-valuemap">
+        <h2 className="panel__title">Value map — blended $/1M tokens (log) vs capability</h2>
+        <p className="state-message">
+          No model from {countries.map(countryName).join(' or ')} carries a capability estimate, so there is
+          nothing to plot. They are all in the table below.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="value-map" id="panel-valuemap">
@@ -406,8 +444,8 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
         price weights input 75% / output 25%.{' '}
         {points.unscored > 0 && (
           <>
-            <b>{points.unscored}</b> of {catalog.primaryModels.length} models have no capability estimate and
-            so are not plotted; every one of them is in the table below.
+            <b>{points.unscored}</b> of {points.scoped} models have no capability estimate and so are not
+            plotted; every one of them is in the table below.
           </>
         )}
       </p>
@@ -424,9 +462,18 @@ function ValueMap({ catalog, selectedIds, onToggle }: CompareViewProps) {
 
 type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context';
 
-function CatalogTable({ catalog, selectedIds, onToggle }: CompareViewProps) {
+function CatalogTable({ catalog, selectedIds, onToggle, countries }: CompareViewProps) {
   const [sort, setSort] = useState<{ key: SortKey; asc: boolean }>({ key: 'input', asc: true });
   const [showRetired, setShowRetired] = useState(false);
+
+  /* The country filter is the outer of the two, and the "(N hidden)" count
+     beside the retired checkbox is counted inside it. Measuring that against
+     the whole catalog would report the country filter's work as the retired
+     filter's, and offer a checkbox that cannot bring those rows back. */
+  const inScope = useMemo(
+    () => catalog.models.filter((model) => catalog.inCountries(model, countries)),
+    [catalog, countries],
+  );
 
   const rows = useMemo(() => {
     const value = (model: Model): string | number => {
@@ -445,7 +492,7 @@ function CatalogTable({ catalog, selectedIds, onToggle }: CompareViewProps) {
     };
     // Retired and unlisted rows are kept but hidden by default: they inflate
     // the count and invite someone to price a model they cannot call.
-    const visible = catalog.models.filter(
+    const visible = inScope.filter(
       (m) => showRetired || (m.status === 'current' && m.provenance.stale !== true),
     );
     return visible.sort((a, b) => {
@@ -455,9 +502,9 @@ function CatalogTable({ catalog, selectedIds, onToggle }: CompareViewProps) {
         typeof va === 'string' && typeof vb === 'string' ? va.localeCompare(vb) : Number(va) - Number(vb);
       return comparison * (sort.asc ? 1 : -1);
     });
-  }, [catalog, sort, showRetired]);
+  }, [catalog, inScope, sort, showRetired]);
 
-  const hidden = catalog.models.length - rows.length;
+  const hidden = inScope.length - rows.length;
 
   const header = (key: SortKey, label: string, alignLeft = false) => (
     <th
@@ -570,6 +617,15 @@ function CatalogTable({ catalog, selectedIds, onToggle }: CompareViewProps) {
                 </tr>
               );
             })}
+            {rows.length === 0 && (
+              <tr>
+                <td className="align-left" colSpan={7}>
+                  {countries.length > 0
+                    ? `No models from ${countries.map(countryName).join(' or ')} are listed.`
+                    : 'No models to list.'}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
