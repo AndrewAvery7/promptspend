@@ -61,21 +61,29 @@
       }
     },
     {
+      "$note": "The intro block was flattened away on 2026-08-16 (commit a43fcc6) and restored on 2026-08-20. The list price is $3/$15; $2/$10 is introductory and ends 2026-08-31. Recording the in-force rate as THE price is the specific trap here: it reads correct on the day it is written, the weekly audit still says `agree` because LiteLLM lags the same way, and the row then silently understates by 33% from the moment the window closes. An intro rate must always be written as `intro` + `until`, never as the base `pricing`.",
       "id": "claude-sonnet-5",
       "providerId": "anthropic",
       "displayName": "Claude Sonnet 5",
       "vendorVerified": true,
-      "lastVerified": "2026-08-16",
+      "lastVerified": "2026-08-20",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
       "capabilityIndex": 90,
       "pricing": {
-        "input": 2,
-        "output": 10,
-        "cachedInput": 0.2,
-        "cacheWrite": 2.5,
-        "batchDiscount": 0.5
+        "input": 3,
+        "output": 15,
+        "cachedInput": 0.3,
+        "cacheWrite": 3.75,
+        "batchDiscount": 0.5,
+        "intro": {
+          "input": 2,
+          "output": 10,
+          "cachedInput": 0.2,
+          "cacheWrite": 2.5,
+          "until": "2026-08-31"
+        }
       }
     },
     {
@@ -512,9 +520,13 @@
       "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k26"
     },
     {
+      "$note": "Read against Moonshot's own per-model page on 2026-08-19. All three published fields match the feed exactly - $0.60 input on a cache miss, $3.00 output, $0.10 on a cache hit - so this row records provenance ONLY and its rate keeps flowing from the feed. Its openrouter-disagreement flag is expected to survive this and is correct: a provenance-only override does not supply a base price, so the cross-check still runs, and OpenRouter's $0.45/$2.25 is a reseller-routed price - the same structural gap already documented on K2.6. This CORRECTS the 2026-08-09 conclusion that K2.5 was unverifiable because the vendor's pricing index no longer lists it. The index is not the whole site: /docs/pricing/chat-k25 still exists and still renders a full price table, it is merely unlinked now that K3, K2.7 Code and K2.6 occupy the index. Worth keeping as a general rule - a model vanishing from a vendor's index is not evidence its pricing page is gone; try the per-model URL pattern directly before recording something as unreadable.",
       "id": "moonshot-kimi-k2.5",
       "displayName": "Kimi K2.5",
-      "capabilityIndex": 78
+      "capabilityIndex": 78,
+      "vendorVerified": true,
+      "lastVerified": "2026-08-19",
+      "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k25"
     },
     {
       "id": "dashscope-qwen3.7-max",

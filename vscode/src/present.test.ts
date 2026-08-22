@@ -25,8 +25,20 @@ const matchIn = (text: string): ModelMatch => {
 };
 
 describe('inlineText', () => {
+  // "Terse" means the confirmation date is dropped — that is the only thing
+  // `compact` withholds. The disputed marker is not verbosity and is appended
+  // in both modes on purpose, so the pattern has to admit it.
+  //
+  // It did not, and the assertion passed for months on an accident: this suite
+  // reads the real published catalog, and Sonnet 5 simply happened not to be
+  // flagged. The moment its vendor override was restored and the row went
+  // disputed, a test named "is terse" failed because a price carried the
+  // warning this project exists to show. Pinning the end of the string to the
+  // rate asserted the catalog's review state, not the renderer's behaviour.
   it('is terse in compact mode', () => {
-    expect(inlineText(matchIn('"claude-sonnet-5"'), 'compact')).toMatch(/^\$[\d.]+ \/ \$[\d.]+ per M$/);
+    expect(inlineText(matchIn('"claude-sonnet-5"'), 'compact')).toMatch(
+      /^\$[\d.]+ \/ \$[\d.]+ per M(?: {2}⚠ disputed)?$/,
+    );
   });
 
   it('carries the confirmation date in full mode', () => {
