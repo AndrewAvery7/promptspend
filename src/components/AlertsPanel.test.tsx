@@ -285,7 +285,32 @@ describe('the model picker', () => {
     await user.click(within(emailCard).getByRole('radio', { name: /Just these/ }));
     await user.type(within(emailCard).getByLabelText('Filter the model list'), 'llama');
 
-    expect(within(emailCard).getByText(/No model matches/)).toBeInTheDocument();
+    expect(within(emailCard).getByText(/No models match/)).toBeInTheDocument();
+  });
+
+  /**
+   * "Follow everything from one country" is a real subscription, and picking
+   * those rows out of a flat list by reading the flags was the only way to make
+   * it. The empty state has to name the country as well as the search term —
+   * with both filters on, "no model matches your search" is only half true, and
+   * the half it omits is the one the reader has forgotten about.
+   */
+  it('follows a whole country, and says which filter emptied the list', async () => {
+    const user = userEvent.setup();
+    renderPanel();
+
+    const email = await screen.findByLabelText('Email address');
+    const emailCard = email.closest('article')!;
+    await user.click(within(emailCard).getByRole('radio', { name: /Just these/ }));
+
+    const filter = within(emailCard).getByRole('group', { name: 'Follow models from these countries' });
+    await user.click(within(filter).getByRole('button', { name: /^CN/ }));
+
+    expect(within(emailCard).getByRole('checkbox', { name: /DeepSeek V3.2/ })).toBeInTheDocument();
+    expect(within(emailCard).queryByRole('checkbox', { name: /Claude Sonnet 5/ })).not.toBeInTheDocument();
+
+    await user.type(within(emailCard).getByLabelText('Filter the model list'), 'claude');
+    expect(within(emailCard).getByText(/No model from China matches/)).toBeInTheDocument();
   });
 });
 

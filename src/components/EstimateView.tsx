@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Catalog } from '@/lib/pricing/catalog';
 import { PRICING_SCOPE } from '@/config';
 import { csvDocument } from '@/lib/engine/csv';
@@ -7,6 +8,7 @@ import { MAX_MODELS } from '@/lib/url/scenario';
 import { MAX_PASTE_CHARS, type FieldKey, type useEstimator } from '@/state/useEstimator';
 import { AssumptionList, CostCards, InsightList, WarningList } from './CostCards';
 import { HelpTip, ReviewBadge } from './Disclosure';
+import { CountryFilter, emptyReason } from './CountryFilter';
 import { CountryTag } from './Flag';
 import { SyncChip } from './SyncChip';
 
@@ -73,7 +75,11 @@ export function EstimateView({
   onOpenData,
 }: EstimateViewProps) {
   const { scenario, fields, rows, insights } = estimator;
-  const groups = catalog.byProvider(search);
+  /* Local, like the search box beside it, and deliberately not persisted: a
+     country filter that survives a reload is a filter somebody has to remember
+     setting weeks ago to explain why half the catalog is missing. */
+  const [countries, setCountries] = useState<string[]>([]);
+  const groups = catalog.byProvider(search, countries);
   const primaryModel = catalog.get(scenario.modelIds[0] ?? '');
   const primaryTokens = primaryModel ? estimator.tokensForModel(primaryModel) : null;
   const conversationsPerMonth = scenario.conversationsPerDay * 30;
@@ -207,6 +213,12 @@ export function EstimateView({
                 aria-label="Search models"
                 onChange={(event) => onSearch(event.target.value)}
               />
+              <CountryFilter
+                countries={catalog.countries()}
+                selected={countries}
+                onChange={setCountries}
+                label="Show models from these countries"
+              />
               <div className="model-list" role="group" aria-label="Available models">
                 {groups.map((group) => (
                   <div key={group.provider.id}>
@@ -255,7 +267,7 @@ export function EstimateView({
                     })}
                   </div>
                 ))}
-                {groups.length === 0 && <p className="state-message">No models match “{search}”.</p>}
+                {groups.length === 0 && <p className="state-message">{emptyReason(search, countries)}</p>}
               </div>
               <p className="selection-count">
                 <span>

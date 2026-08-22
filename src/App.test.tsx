@@ -166,6 +166,36 @@ describe('App', () => {
     await waitFor(() => expect(screen.getAllByRole('article')).toHaveLength(2));
   });
 
+  /**
+   * The country filter, from the reader's side.
+   *
+   * The flag beside every provider answered "where is this one from?" and
+   * nothing else; the question people actually arrive with is "show me only the
+   * ones from China". Filtering is a *view*: the models already ticked stay
+   * ticked and keep their cost cards, because hiding a row is not the same as
+   * deciding it is no longer wanted.
+   */
+  it('narrows the model picker to a chosen country and back', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+
+    const list = screen.getByRole('group', { name: 'Available models' });
+    const filter = screen.getByRole('group', { name: 'Show models from these countries' });
+    expect(within(list).getByText('Claude Sonnet 5')).toBeInTheDocument();
+    expect(within(filter).getByRole('button', { name: 'All' })).toHaveAttribute('aria-pressed', 'true');
+
+    await user.click(within(filter).getByRole('button', { name: /^CN/ }));
+
+    expect(within(list).queryByText('Claude Sonnet 5')).not.toBeInTheDocument();
+    expect(within(list).getByText('DeepSeek V3.2')).toBeInTheDocument();
+    expect(within(filter).getByRole('button', { name: 'All' })).toHaveAttribute('aria-pressed', 'false');
+    // Hidden, not unpicked: both cost cards are still there.
+    expect(screen.getAllByRole('article')).toHaveLength(2);
+
+    await user.click(within(filter).getByRole('button', { name: 'All' }));
+    expect(within(list).getByText('Claude Sonnet 5')).toBeInTheDocument();
+  });
+
   it('opens the command palette on Ctrl+K', async () => {
     const user = userEvent.setup();
     await renderApp();

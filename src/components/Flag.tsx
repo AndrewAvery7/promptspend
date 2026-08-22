@@ -79,6 +79,27 @@ function Ca() {
 
 const FLAGS: Record<string, () => JSX.Element> = { US: Us, CN: Cn, FR: Fr, CA: Ca };
 
+/**
+ * The written-out name, for the places a two-letter code is not enough.
+ *
+ * The code is the accessible name everywhere a flag merely decorates a row.
+ * A country *control* is different: "CN" is a label you have to already know,
+ * and the country filter is the one place in the app where somebody is looking
+ * for China by name. Unknown codes fall through to the code itself, so a
+ * provider from a country with no flag drawn still gets a usable button.
+ */
+const COUNTRY_NAMES: Record<string, string> = {
+  US: 'United States',
+  CN: 'China',
+  FR: 'France',
+  CA: 'Canada',
+};
+
+export function countryName(code: string): string {
+  const upper = code.toUpperCase();
+  return COUNTRY_NAMES[upper] ?? upper;
+}
+
 interface FlagProps {
   /** ISO-3166 alpha-2 code. Anything unrecognised renders nothing. */
   country: string | undefined;

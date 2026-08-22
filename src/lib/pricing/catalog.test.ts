@@ -246,6 +246,56 @@ describe('Catalog', () => {
     expect(catalog.byProvider('anthropic')[0]!.models[0]!.id).toBe('claude-sonnet-5');
   });
 
+  it('reports the countries it actually carries, with a count behind each', () => {
+    expect(catalog.countries()).toEqual([
+      { code: 'CN', count: 1 },
+      { code: 'US', count: 1 },
+    ]);
+  });
+
+  it('orders countries by size, so the largest is the first chip', () => {
+    const withSecondUsProvider = new Catalog({
+      ...CATALOG,
+      providers: [...CATALOG.providers, { id: 'openai', name: 'OpenAI', country: 'US' }],
+      models: [...CATALOG.models, { ...CATALOG.models[0]!, id: 'gpt-5', providerId: 'openai' }],
+    });
+    expect(withSecondUsProvider.countries()).toEqual([
+      { code: 'US', count: 2 },
+      { code: 'CN', count: 1 },
+    ]);
+  });
+
+  it('counts purchasable models per country, not alias rows', () => {
+    const withAlias = new Catalog({
+      ...CATALOG,
+      models: [...CATALOG.models, { ...CATALOG.models[1]!, id: 'deepseek-chat', aliasOf: 'deepseek-v3.2' }],
+    });
+    // The alias routes to a model already counted; counting it would promise
+    // the filter leaves two rows behind where it leaves one.
+    expect(withAlias.countries()).toContainEqual({ code: 'CN', count: 1 });
+  });
+
+  it('narrows the picker to the chosen countries', () => {
+    const chinese = catalog.byProvider('', ['CN']);
+    expect(chinese).toHaveLength(1);
+    expect(chinese[0]!.models[0]!.id).toBe('deepseek-v3.2');
+    expect(catalog.byProvider('', ['CN', 'US'])).toHaveLength(2);
+  });
+
+  it('applies the country filter and the search term together', () => {
+    // Searching for a US model while filtered to China is a legitimate empty
+    // result, not a match on either half.
+    expect(catalog.byProvider('claude', ['CN'])).toHaveLength(0);
+    expect(catalog.byProvider('deepseek', ['CN'])).toHaveLength(1);
+  });
+
+  it('treats an empty country list as every country, never as none', () => {
+    expect(catalog.byProvider('', [])).toHaveLength(2);
+    expect(catalog.inCountries(CATALOG.models[0]!, [])).toBe(true);
+    expect(catalog.inCountries(CATALOG.models[0]!, ['CN'])).toBe(false);
+    expect(catalog.inCountries(CATALOG.models[1]!, ['CN'])).toBe(true);
+  });
+
   it('weights the blended rate towards input, as real workloads do', () => {
     expect(Catalog.blendedRate(CATALOG.models[0]!)).toBeCloseTo(0.75 * 3 + 0.25 * 15, 10);
   });
