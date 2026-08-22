@@ -5,8 +5,8 @@ for a tool and the wrong shape for search: nobody types "LLM cost estimator" int
 Google. They type **"gpt-5.6 pricing"** and **"claude opus vs gemini pro cost"**.
 
 `scripts/build-pages.ts` gives every one of those questions a real page, built
-from the same catalog and costed by the same engine as the app. 161 of them
-today: 71 models, 12 providers, 75 comparisons, 3 indexes.
+from the same catalog and costed by the same engine as the app. 162 of them
+today: 72 models, 12 providers, 75 comparisons, 3 indexes.
 
 ---
 
@@ -15,7 +15,7 @@ today: 71 models, 12 providers, 75 comparisons, 3 indexes.
 | URL                    | Count | Contains                                                            |
 | ---------------------- | ----- | ------------------------------------------------------------------- |
 | `/models/`             | 1     | Every model by blended rate, with one workload costed on each       |
-| `/models/<slug>/`      | 71    | Full rate card, three monthly bills, rank, alternatives, provenance |
+| `/models/<slug>/`      | 72    | Full rate card, three monthly bills, rank, alternatives, provenance |
 | `/providers/`          | 1     | Every provider, model counts, cheapest model                        |
 | `/providers/<slug>/`   | 12    | That provider's models, cheapest first                              |
 | `/compare/`            | 1     | Every head-to-head                                                  |
@@ -38,7 +38,7 @@ description.
 
 ### Why the comparison set is curated
 
-The combinatorial answer is 71 × 70 ÷ 2 = 2,485 pages, nearly all comparing
+The combinatorial answer is 72 × 71 ÷ 2 = 2,556 pages, nearly all comparing
 things nobody would choose between. A $0.14 flash model against a $75 frontier
 model is not a decision, it is a category difference.
 
