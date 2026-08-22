@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { Catalog, Model } from '@promptspend/core';
 
+import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
 import { MAX_COMPARISON_MODELS } from '@/lib/comparison';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
@@ -31,6 +32,7 @@ export function ComparisonModelPicker({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [countries, setCountries] = useState<string[]>([]);
   const selectedModels = useMemo(
     () => selectedIds.map((id) => catalog.get(id)).filter((model): model is Model => model !== undefined),
     [catalog, selectedIds],
@@ -38,10 +40,11 @@ export function ComparisonModelPicker({
   const models = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return catalog.primaryModels.filter((model) => {
+      if (!catalog.inCountries(model, countries)) return false;
       if (!needle) return true;
       return `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase().includes(needle);
     });
-  }, [catalog, query]);
+  }, [catalog, countries, query]);
   const allSelectedWatched = selectedIds.length > 0 && selectedIds.every((id) => favoriteIds.includes(id));
 
   const toggle = (id: string) => {
@@ -78,7 +81,10 @@ export function ComparisonModelPicker({
                 </View>
                 <View style={styles.selectedCopy}>
                   <Text style={styles.selectedName}>{model.displayName}</Text>
-                  <Text style={styles.selectedMeta}>{catalog.providerName(model)}</Text>
+                  <Text style={styles.selectedMeta}>
+                    {catalog.providerName(model)}
+                    {catalog.provider(model)?.country ? ` · ${catalog.provider(model)?.country}` : ''}
+                  </Text>
                 </View>
                 <Text accessibilityElementsHidden style={styles.removeLabel}>
                   Remove
@@ -173,16 +179,26 @@ export function ComparisonModelPicker({
             value={query}
           />
 
+          <View style={styles.countryFilter}>
+            <CountryFilter
+              countries={catalog.countries()}
+              label="Show comparison models from these countries"
+              onChange={setCountries}
+              selected={countries}
+            />
+          </View>
+
           <FlatList
             contentContainerStyle={styles.listContent}
             data={models}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="handled"
             keyExtractor={(model) => model.id}
-            ListEmptyComponent={<Text style={styles.empty}>No models match “{query}”.</Text>}
+            ListEmptyComponent={<Text style={styles.empty}>{emptyReason(query, countries)}</Text>}
             renderItem={({ item }) => {
               const isSelected = selectedIds.includes(item.id);
               const isAtLimit = selectedIds.length >= MAX_COMPARISON_MODELS && !isSelected;
+              const country = catalog.provider(item)?.country;
               return (
                 <Pressable
                   aria-checked={isSelected}
@@ -193,7 +209,7 @@ export function ComparisonModelPicker({
                         ? 'Removes this model from the comparison'
                         : 'Adds this model to the comparison'
                   }
-                  accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}, ${item.pricing.input} dollars per million input tokens and ${item.pricing.output} dollars per million output tokens${isSelected ? ', selected for comparison' : ''}`}
+                  accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}${country ? `, ${countryName(country)}` : ''}, ${item.pricing.input} dollars per million input tokens and ${item.pricing.output} dollars per million output tokens${isSelected ? ', selected for comparison' : ''}`}
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: isSelected, disabled: isAtLimit }}
                   disabled={isAtLimit}
@@ -211,7 +227,8 @@ export function ComparisonModelPicker({
                   <View style={styles.modelRowCopy}>
                     <Text style={styles.rowName}>{item.displayName}</Text>
                     <Text style={styles.rowMeta}>
-                      {catalog.providerName(item)} · {item.contextWindow.toLocaleString('en-US')} context
+                      {catalog.providerName(item)}
+                      {country ? ` · ${country}` : ''} · {item.contextWindow.toLocaleString('en-US')} context
                     </Text>
                   </View>
                   <View style={styles.rateBlock}>
@@ -331,6 +348,7 @@ function createStyles(theme: MobileTheme) {
       paddingHorizontal: 14,
       paddingVertical: 12,
     },
+    countryFilter: { paddingHorizontal: 20 },
     listContent: { paddingBottom: 32, paddingHorizontal: 20 },
     modelRow: {
       alignItems: 'center',

@@ -6,6 +6,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } fro
 import { AppText as Text } from '@/components/AppText';
 import { Catalog, formatContext, formatRate, type Model } from '@promptspend/core';
 
+import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
@@ -29,6 +30,7 @@ export function CatalogExplorer({
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [query, setQuery] = useState('');
+  const [countries, setCountries] = useState<string[]>([]);
   const [sort, setSort] = useState<SortKey>('name');
   const [showInactive, setShowInactive] = useState(false);
   const [detail, setDetail] = useState<Model | null>(null);
@@ -38,6 +40,7 @@ export function CatalogExplorer({
     const needle = query.trim().toLowerCase();
     return catalog.models
       .filter((model) => !model.aliasOf)
+      .filter((model) => catalog.inCountries(model, countries))
       .filter((model) => showInactive || (model.status === 'current' && model.provenance.stale !== true))
       .filter(
         (model) =>
@@ -45,18 +48,22 @@ export function CatalogExplorer({
           `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase().includes(needle),
       )
       .sort((a, b) => compareModel(a, b, sort, catalog));
-  }, [catalog, query, showInactive, sort]);
+  }, [catalog, countries, query, showInactive, sort]);
+  const inScopePrimary = useMemo(
+    () => catalog.primaryModels.filter((model) => catalog.inCountries(model, countries)),
+    [catalog, countries],
+  );
   const scored = useMemo(
     () =>
-      catalog.primaryModels.filter(
+      inScopePrimary.filter(
         (model) =>
           model.capabilityIndex !== undefined &&
           Catalog.blendedRate(model) > 0 &&
           model.provenance.stale !== true,
       ),
-    [catalog],
+    [inScopePrimary],
   );
-  const unscored = catalog.primaryModels.length - scored.length;
+  const unscored = inScopePrimary.length - scored.length;
 
   return (
     <View style={styles.section}>
@@ -71,6 +78,13 @@ export function CatalogExplorer({
         </Text>
       </View>
 
+      <CountryFilter
+        countries={catalog.countries()}
+        label="Show catalog models from these countries"
+        onChange={setCountries}
+        selected={countries}
+      />
+
       <View style={styles.card}>
         <Text accessibilityRole="header" style={styles.cardTitle}>
           Capability versus price
@@ -79,41 +93,58 @@ export function CatalogExplorer({
           Horizontal: blended list price per 1M tokens on a logarithmic scale. Vertical: an illustrative 0–100
           capability index, not a benchmark guarantee.
         </Text>
-        <View
-          accessibilityLabel={`Value map with ${scored.length} scored models. ${unscored} models are not scored and remain available in the list.`}
-          onLayout={(event) => setChartWidth(event.nativeEvent.layout.width)}
-          style={styles.chart}
-        >
-          <Text style={styles.chartTop}>Higher illustrative capability</Text>
-          {chartWidth > 0 &&
-            scored.map((model) => {
-              const point = chartPoint(model, scored, chartWidth);
-              const selected = selectedIds.includes(model.id);
-              const disabled = !selected && selectedIds.length >= 4;
-              return (
-                <Pressable
-                  accessibilityHint="Adds or removes this model from the four-model shortlist"
-                  accessibilityLabel={`${model.displayName}, capability ${model.capabilityIndex}, blended rate ${formatRate(Catalog.blendedRate(model))} per million tokens${selected ? ', selected' : ''}`}
-                  accessibilityRole="button"
-                  accessibilityState={{ disabled, selected }}
-                  disabled={disabled}
-                  key={model.id}
-                  onPress={() => onToggle(model.id)}
-                  style={[styles.pointTarget, { left: point.left - 14, top: point.top - 14 }]}
-                >
-                  <View style={[styles.point, selected && styles.pointSelected]} />
-                </Pressable>
-              );
-            })}
-          <Text style={styles.chartBottom}>Lower cost ← blended price → Higher cost</Text>
-        </View>
-        <Text style={styles.note}>
-          {scored.length} scored · {unscored} unscored. The structured catalog below is the accessible source
-          of truth for every model.
-        </Text>
+        {scored.length > 0 ? (
+          <>
+            <View
+              accessibilityLabel={`Value map with ${scored.length} scored models. ${unscored} models are not scored and remain available in the list.`}
+              onLayout={(event) => setChartWidth(event.nativeEvent.layout.width)}
+              style={styles.chart}
+            >
+              <Text style={styles.chartTop}>Higher illustrative capability</Text>
+              {chartWidth > 0 &&
+                scored.map((model) => {
+                  const point = chartPoint(model, scored, chartWidth);
+                  const selected = selectedIds.includes(model.id);
+                  const disabled = !selected && selectedIds.length >= 4;
+                  return (
+                    <Pressable
+                      accessibilityHint="Adds or removes this model from the four-model shortlist"
+                      accessibilityLabel={`${model.displayName}, capability ${model.capabilityIndex}, blended rate ${formatRate(Catalog.blendedRate(model))} per million tokens${selected ? ', selected' : ''}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ disabled, selected }}
+                      disabled={disabled}
+                      key={model.id}
+                      onPress={() => onToggle(model.id)}
+                      style={[styles.pointTarget, { left: point.left - 14, top: point.top - 14 }]}
+                    >
+                      <View style={[styles.point, selected && styles.pointSelected]} />
+                    </Pressable>
+                  );
+                })}
+              <Text style={styles.chartBottom}>Lower cost ← blended price → Higher cost</Text>
+            </View>
+            <Text style={styles.note}>
+              {scored.length} scored · {unscored} unscored. The structured catalog below is the accessible
+              source of truth for every model.
+            </Text>
+          </>
+        ) : (
+          <Text accessibilityLiveRegion="polite" style={styles.empty}>
+            {countries.length > 0
+              ? `No model from ${countries.map(countryName).join(' or ')} carries a capability estimate.`
+              : 'No catalog model carries a capability estimate.'}{' '}
+            Every matching model remains available in the catalog below.
+          </Text>
+        )}
       </View>
 
       <View style={styles.card}>
+        <CountryFilter
+          countries={catalog.countries()}
+          label="Show catalog models from these countries, repeated beside the list"
+          onChange={setCountries}
+          selected={countries}
+        />
         <TextInput
           accessibilityLabel="Search the model catalog"
           autoCapitalize="none"
@@ -158,13 +189,15 @@ export function CatalogExplorer({
         </Text>
         {models.map((model) => {
           const selected = selectedIds.includes(model.id);
+          const country = catalog.provider(model)?.country;
           return (
             <View key={model.id} style={styles.modelRow}>
               <View style={styles.modelHeader}>
                 <View style={styles.modelCopy}>
                   <Text style={styles.modelName}>{model.displayName}</Text>
                   <Text style={styles.provider}>
-                    {catalog.providerName(model)} · {model.status}
+                    {catalog.providerName(model)}
+                    {country ? ` · ${country}` : ''} · {model.status}
                     {model.provenance.stale ? ' · unlisted' : ''}
                   </Text>
                 </View>
@@ -233,6 +266,12 @@ export function CatalogExplorer({
             </View>
           );
         })}
+        {models.length === 0 && (
+          <Text accessibilityLiveRegion="polite" style={styles.empty}>
+            {emptyReason(query, countries)}
+            {!showInactive ? ' Turn on legacy models to include retired and unlisted entries.' : ''}
+          </Text>
+        )}
       </View>
 
       <Modal
@@ -346,6 +385,7 @@ function createStyles(theme: MobileTheme) {
     },
     cardTitle: { color: theme.text, fontSize: 19, fontWeight: '800', lineHeight: 25 },
     note: { color: theme.mutedText, fontSize: 11, lineHeight: 16 },
+    empty: { color: theme.mutedText, fontSize: 14, lineHeight: 21, paddingVertical: 16, textAlign: 'center' },
     chart: {
       backgroundColor: theme.surfaceRaised,
       borderColor: theme.borderStrong,

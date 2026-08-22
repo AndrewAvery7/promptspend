@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
 import { AppText as Text } from '@/components/AppText';
+import { CountryFilter, emptyReason } from '@/components/CountryFilter';
 import { TourTarget } from '@/components/GuidedTour';
 import {
   alertDraftValidationMessage,
@@ -739,9 +740,12 @@ function ModelAlertPicker({
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [query, setQuery] = useState('');
+  const [countries, setCountries] = useState<string[]>([]);
   const selected = new Set(selectedIds);
-  const visibleModels = catalog.primaryModels.filter((model) =>
-    modelSearchText(catalog, model).includes(query.trim().toLowerCase()),
+  const visibleModels = catalog.primaryModels.filter(
+    (model) =>
+      catalog.inCountries(model, countries) &&
+      modelSearchText(catalog, model).includes(query.trim().toLowerCase()),
   );
   const toggle = (id: string) =>
     onChange(
@@ -774,6 +778,14 @@ function ModelAlertPicker({
           style={styles.searchInput}
           value={query}
         />
+        <View style={styles.pickerFilter}>
+          <CountryFilter
+            countries={catalog.countries()}
+            label="Show alert models from these countries"
+            onChange={setCountries}
+            selected={countries}
+          />
+        </View>
         <ScrollView contentContainerStyle={styles.modelList} keyboardShouldPersistTaps="handled">
           {visibleModels.map((model) => {
             const checked = selected.has(model.id);
@@ -792,7 +804,10 @@ function ModelAlertPicker({
               >
                 <View style={styles.flex}>
                   <Text style={styles.modelName}>{model.displayName}</Text>
-                  <Text style={styles.modelProvider}>{catalog.providerName(model)}</Text>
+                  <Text style={styles.modelProvider}>
+                    {catalog.providerName(model)}
+                    {catalog.provider(model)?.country ? ` · ${catalog.provider(model)?.country}` : ''}
+                  </Text>
                 </View>
                 <Ionicons
                   color={checked ? theme.accent : theme.mutedText}
@@ -802,7 +817,7 @@ function ModelAlertPicker({
               </Pressable>
             );
           })}
-          {visibleModels.length === 0 && <Text style={styles.empty}>No model matches “{query}”.</Text>}
+          {visibleModels.length === 0 && <Text style={styles.empty}>{emptyReason(query, countries)}</Text>}
         </ScrollView>
       </SafeAreaView>
     </Modal>
@@ -1084,6 +1099,7 @@ function createStyles(theme: MobileTheme) {
       minHeight: 48,
       paddingHorizontal: 14,
     },
+    pickerFilter: { paddingHorizontal: 14 },
     modelList: { gap: 8, padding: 14, paddingBottom: 40 },
     modelRow: {
       alignItems: 'center',
