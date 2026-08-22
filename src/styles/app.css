@@ -2376,8 +2376,23 @@ table.catalog tbody tr:hover {
 }
 .table-controls {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
   margin: 14px 0 6px;
+}
+/* `margin-left: auto` rather than `justify-content: space-between`, because the
+   country chips beside it are conditional — a catalogue with one country
+   renders none. Space-between would then send the lone checkbox to the left
+   edge; auto keeps it right whatever it is sharing the row with, and keeps it
+   right again once the row wraps on a narrow screen. */
+.table-controls .check-inline {
+  margin-left: auto;
+}
+/* The filter carries its own top margin where it opens a panel. Here it is one
+   item in a row that already has spacing of its own. */
+.table-controls .country-filter {
+  margin: 0;
 }
 
 .warning-list {

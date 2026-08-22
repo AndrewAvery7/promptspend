@@ -121,7 +121,13 @@ export function CompareView({
         </aside>
       </div>
 
-      <CatalogTable catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} countries={countries} />
+      <CatalogTable
+        catalog={catalog}
+        selectedIds={selectedIds}
+        onToggle={onToggle}
+        countries={countries}
+        onCountries={setCountries}
+      />
     </section>
   );
 }
@@ -462,7 +468,12 @@ function ValueMap({ catalog, selectedIds, onToggle, countries }: CompareViewProp
 
 type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context';
 
-function CatalogTable({ catalog, selectedIds, onToggle, countries }: CompareViewProps) {
+/** The table also *sets* the country filter, where the chart only reads it. */
+interface CatalogTableProps extends CompareViewProps {
+  onCountries: (next: string[]) => void;
+}
+
+function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries }: CatalogTableProps) {
   const [sort, setSort] = useState<{ key: SortKey; asc: boolean }>({ key: 'input', asc: true });
   const [showRetired, setShowRetired] = useState(false);
 
@@ -530,7 +541,20 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries }: CompareView
 
   return (
     <>
+      {/* The same control as the one above the chart, driving the same state.
+          Repeated rather than moved: this table is the full catalogue, so by
+          the time you have scrolled far enough to want a different country the
+          chips at the top of the page are long gone — and scrolling back up to
+          a control you cannot see, to change something you are looking at down
+          here, is the kind of small friction that stops people using a filter
+          at all. Both instances stay in step because neither owns the state. */}
       <div className="table-controls">
+        <CountryFilter
+          countries={catalog.countries()}
+          selected={countries}
+          onChange={onCountries}
+          label="Show models from these countries, repeated beside the table"
+        />
         <label className="check-inline">
           <input
             type="checkbox"
