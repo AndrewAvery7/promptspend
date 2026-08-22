@@ -1,17 +1,17 @@
 # Mobile dependency security notes
 
-Last reviewed: August 16, 2026
+Last reviewed: August 22, 2026
 
 ## Current scaffold audit
 
-The lockfile currently uses Expo 57.0.13 and the exact patch versions selected
+The lockfile currently uses Expo 57.0.15 and the exact patch versions selected
 by `npx expo install`. Expo Doctor passes all 21 checks. `npm audit --json`
-reports 25 expanded findings (9 moderate, 16 high, 0 critical); most entries
-are dependency-graph propagation from these two leaf advisories:
+reports 16 expanded findings (12 moderate, 4 high, 0 critical); every entry is
+dependency-graph propagation from these two leaf advisories:
 
 1. `image-size@1.2.1` can loop indefinitely while parsing specially crafted
    ICNS, JXL, or HEIF images. It is pulled into Metro's development/build
-   toolchain through `expo > @expo/metro > metro`.
+   toolchain through React Native's community CLI plugin.
 2. `uuid@7.0.3` can miss a destination-buffer bounds check in specific v3/v5/v6
    API usage. It is pulled into Expo configuration/build tooling through
    `expo-sharing > @expo/config-plugins > xcode`.
@@ -29,7 +29,10 @@ selection, scenario data, or prompt text.
 
 ## Why `npm audit fix --force` is prohibited
 
-npm currently proposes incompatible forced downgrades, including Expo SDK 53 and React Native 0.72. Those versions do not match the SDK 57 project and would replace the verified platform foundation with an unsupported dependency combination.
+npm's non-writing fix preview leaves the `image-size` advisories unresolved and
+the forced path proposes an incompatible Expo SDK 46 downgrade. That version
+does not match the SDK 57 project and would replace the verified platform
+foundation with an unsupported dependency combination.
 
 Do not run `npm audit fix --force`.
 
