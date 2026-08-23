@@ -513,3 +513,12 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
 - **Review** `moonshot-kimi-k3` — provenance.verifiedUrl: — → https://platform.kimi.ai/docs/pricing/chat-k3
+
+## 2026-08-23
+
+- **Price** `gpt-5.6` — input down 5 → 4
+- **Price** `gpt-5.6` — output down 30 → 20
+- **Price** `gpt-5.6` — cachedInput down 0.5 → 0.4
+- **Review** `gpt-5.6` — provenance.lastChanged: — → 2026-08-23
+- **Review** `gpt-5.6-sol` — provenance.needsReview: — → true
+- **Review** `gpt-5.6-sol` — provenance.reviewNote: — → vendor override differs from the automated feed (33%): $4/$20 vs $5/$30
