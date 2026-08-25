@@ -71,6 +71,14 @@ When the apps ship, the send marks each row `notified`; a row in that state is
 never reset to `pending`, so re-submitting the form cannot produce a second
 announcement. After the announcement the whole table is dropped.
 
+Deploying it is `npm run release` from `worker/`, which is
+`migrate:remote` then `deploy`, in that order and only continuing if the first
+succeeds. The order is not cosmetic: the new handlers query
+`launch_subscribers`, so deploying the code first opens a window where every
+request to `/v1/launch/subscribe` fails on a missing table. Applying the
+migration first is harmless in the other direction — the running Worker simply
+does not know the table is there yet.
+
 ---
 
 ## Switching it on
