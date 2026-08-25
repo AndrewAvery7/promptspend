@@ -96,6 +96,24 @@ export function subscribeEmail(input: {
   });
 }
 
+/**
+ * Join the one-message list for the iPhone and Android launch.
+ *
+ * Deliberately its own endpoint rather than a flag on `subscribeEmail`: the
+ * two lists have separate consent, separate tables and separate unsubscribe
+ * links, and folding them together here would be the first step to losing that
+ * separation everywhere else.
+ */
+export function subscribeLaunchNotify(input: {
+  email: string;
+  turnstileToken?: string;
+}): Promise<{ ok: true; pending: true }> {
+  return call('/v1/launch/subscribe', {
+    method: 'POST',
+    body: JSON.stringify({ ...input, client: 'web', turnstileAction: 'web_launch_notify' }),
+  });
+}
+
 export function fetchPreferences(token: string): Promise<EmailPreferences> {
   return call(`/v1/preferences?t=${encodeURIComponent(token)}`);
 }

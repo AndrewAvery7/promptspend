@@ -177,6 +177,49 @@ ${links.siteUrl}`;
   };
 }
 
+/**
+ * Double opt-in for the mobile-launch list.
+ *
+ * Deliberately explicit that this is a single message and not a subscription,
+ * because the reader has no other way to tell: an address that also gets price
+ * alerts would otherwise see two near-identical confirmation mails and have no
+ * idea they authorise different things.
+ */
+export function renderLaunchConfirmation(confirmUrl: string, siteUrl: string): RenderedEmail {
+  const body = `<h1 class="ps-ink" style="margin:0 0 14px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">Confirm and we'll tell you once</h1>
+<p style="margin:0 0 4px;">Confirm this address and PromptSpend will email you when the iPhone and Android apps are available to download — one message, then nothing more.</p>
+${button(confirmUrl, 'Confirm my address')}
+<p class="ps-muted" style="margin:14px 0 0;font-size:13.5px;color:${MUTED};">This is not a price-alert subscription and does not change any alerts you already receive. The link works for 48 hours. If you did not ask for this, ignore this message — nothing was recorded and the address is deleted within a week.</p>`;
+
+  const text = `Confirm and we'll tell you once
+
+Confirm this address and PromptSpend will email you when the iPhone and
+Android apps are available to download — one message, then nothing more.
+
+${confirmUrl}
+
+This is not a price-alert subscription and does not change any alerts you
+already receive. The link works for 48 hours. If you did not ask for this,
+ignore this message — nothing was recorded and the address is deleted
+within a week.
+
+--
+${siteUrl}`;
+
+  return {
+    subject: 'Confirm: tell me when the PromptSpend apps launch',
+    html: layout({
+      title: 'Confirm: tell me when the PromptSpend apps launch',
+      preheader: 'One click to confirm — the link works for 48 hours.',
+      body,
+      // No unsubscribe footer, for the same reason as the price-alert
+      // confirmation: there is nothing on a list yet to leave.
+      footer: `<p style="margin:0;">Sent because someone entered this address at <a href="${escapeHtml(siteUrl)}" style="color:${BRAND};">${escapeHtml(siteUrl.replace(/^https:\/\//, ''))}</a>. No other mail will arrive unless you confirm.</p>`,
+    }),
+    text,
+  };
+}
+
 /** Passwordless native preference access. The code is short-lived and single-use. */
 export function renderManageCode(code: string, siteUrl: string): RenderedEmail {
   const body = `<h1 class="ps-ink" style="margin:0 0 14px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">Your alert management code</h1>

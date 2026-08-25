@@ -33,32 +33,45 @@ import {
 } from './lib/validate';
 import {
   activateEmail,
+  activateLaunch,
   deleteEmailManageCode,
   deletePushSubscription,
   findEmailByAddress,
   findEmailById,
+  findLaunchById,
   getFollows,
   insertEvent,
   latestEmailManageCode,
   pruneEmailManageCodes,
+  prunePendingLaunch,
   prunePendingSubscribers,
   pruneRateLimits,
   rejectEmailManageCode,
   setFollows,
   storeEmailManageCode,
   unsubscribeEmail,
+  unsubscribeLaunch,
   updateEmailPreferences,
   upsertPendingEmail,
+  upsertPendingLaunch,
   upsertPushSubscription,
   withinRateLimit,
 } from './db/queries';
 import { changedModelIds, validateChangeSet, type ChangeSet } from './changes';
 import { createTransport } from './email/transport';
-import { renderConfirmation, renderManageCode } from './email/render';
+import { renderConfirmation, renderLaunchConfirmation, renderManageCode } from './email/render';
 import { buildNotificationPayload, sendPush } from './push/send';
 import { assertKeyPairMatches } from './push/vapid';
 import { fanoutDigest, fanoutInstantEmail, fanoutPush } from './fanout';
-import { confirmUnsubscribePage, expiredLinkPage, page, unsubscribedPage } from './pages';
+import {
+  confirmLaunchUnsubscribePage,
+  confirmUnsubscribePage,
+  expiredLinkPage,
+  launchConfirmedPage,
+  launchUnsubscribedPage,
+  page,
+  unsubscribedPage,
+} from './pages';
 import { mobileTurnstilePage } from './turnstile-page';
 
 export default {
@@ -88,6 +101,8 @@ export default {
           await pruneEmailManageCodes(env.DB);
           const pruned = await prunePendingSubscribers(env.DB);
           if (pruned > 0) console.log(`pruned ${pruned} unconfirmed signups`);
+          const prunedLaunch = await prunePendingLaunch(env.DB);
+          if (prunedLaunch > 0) console.log(`pruned ${prunedLaunch} unconfirmed launch signups`);
         })(),
       ),
     );
@@ -129,6 +144,14 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
       return handleUnsubscribeGet(request, env);
     case 'POST /v1/email/unsubscribe':
       return handleUnsubscribePost(request, env);
+    case 'POST /v1/launch/subscribe':
+      return handleLaunchSubscribe(request, env);
+    case 'GET /v1/launch/confirm':
+      return handleLaunchConfirm(request, env);
+    case 'GET /v1/launch/unsubscribe':
+      return handleLaunchUnsubscribeGet(request, env);
+    case 'POST /v1/launch/unsubscribe':
+      return handleLaunchUnsubscribePost(request, env);
     case 'GET /v1/preferences':
       return handleGetPreferences(request, env);
     case 'POST /v1/preferences':
@@ -492,6 +515,114 @@ async function handleUnsubscribePost(request: Request, env: Env): Promise<Respon
 
   await unsubscribeEmail(env.DB, result.subjectId);
   return unsubscribedPage(siteUrl(env));
+}
+
+// --------------------------------------------------- mobile launch notify
+
+/**
+ * "Tell me when the apps are out" — a single-message list, kept apart from
+ * price alerts at every layer: its own table, its own token purposes, its own
+ * Turnstile action, its own confirmation copy.
+ *
+ * The one behavioural difference from `handleEmailSubscribe` worth calling out:
+ * there is no "already active, send a management code instead" branch. There
+ * are no preferences to manage — the only states are on the list and not on it
+ * — so re-submitting simply re-sends the confirmation for a pending row and is
+ * a no-op for a confirmed one. The HTTP response is identical either way, so
+ * the endpoint still cannot be used to test whether an address is on the list.
+ */
+async function handleLaunchSubscribe(request: Request, env: Env): Promise<Response> {
+  if (!emailEnabled(env)) throw new HttpError(503, 'Email is not configured yet.');
+  const ipHash = await guard(request, env, 'launch-subscribe', 10);
+
+  const body = await readJson<Record<string, unknown>>(request);
+  const turnstile = await verifyTurnstile(
+    env,
+    typeof body.turnstileToken === 'string' ? body.turnstileToken : undefined,
+    request.headers.get('CF-Connecting-IP'),
+    'web_launch_notify',
+  );
+  if (!turnstile.ok) {
+    throw badRequest(
+      'We could not verify that you are human. Refresh the page and try again.',
+      (turnstile.errorCodes ?? []).join(','),
+    );
+  }
+
+  const email = requireEmail(body.email);
+  const subscriber = await upsertPendingLaunch(env.DB, { email, consentIpHash: ipHash });
+
+  // A row that has already had its one message stays untouched, and no second
+  // confirmation goes out. Returning the same shape keeps that indistinguishable
+  // from a fresh signup.
+  if (subscriber.status === 'notified') return json({ ok: true, pending: true }, request, env);
+
+  if (subscriber.status === 'pending') {
+    const token = await issueToken(requireSecret(env, 'TOKEN_SECRET'), 'launch-confirm', subscriber.id);
+    const confirmUrl = `${new URL(request.url).origin}/v1/launch/confirm?t=${encodeURIComponent(token)}`;
+    const message = renderLaunchConfirmation(confirmUrl, siteUrl(env));
+
+    const result = await createTransport(env).send({
+      to: subscriber.email,
+      subject: message.subject,
+      html: message.html,
+      text: message.text,
+    });
+    if (!result.ok) {
+      throw new HttpError(502, 'We could not send the confirmation email. Please try again.', result.detail);
+    }
+  }
+
+  return json({ ok: true, pending: true }, request, env);
+}
+
+async function handleLaunchConfirm(request: Request, env: Env): Promise<Response> {
+  const token = new URL(request.url).searchParams.get('t') ?? '';
+  const result = await verifyToken(requireSecret(env, 'TOKEN_SECRET'), 'launch-confirm', token);
+  if (!result.ok) {
+    return expiredLinkPage(
+      result.reason === 'expired'
+        ? 'Confirmation links are valid for 48 hours. Sign up again and we will send a fresh one.'
+        : 'That confirmation link could not be verified.',
+    );
+  }
+
+  await activateLaunch(env.DB, result.subjectId);
+  const subscriber = await findLaunchById(env.DB, result.subjectId);
+  if (!subscriber) return expiredLinkPage('That signup no longer exists.');
+
+  const unsubscribe = await issueToken(
+    requireSecret(env, 'TOKEN_SECRET'),
+    'launch-unsubscribe',
+    result.subjectId,
+  );
+  const unsubscribeUrl = `${new URL(request.url).origin}/v1/launch/unsubscribe?t=${encodeURIComponent(unsubscribe)}`;
+
+  return launchConfirmedPage(siteUrl(env), unsubscribeUrl);
+}
+
+async function handleLaunchUnsubscribeGet(request: Request, env: Env): Promise<Response> {
+  const token = new URL(request.url).searchParams.get('t') ?? '';
+  const result = await verifyToken(requireSecret(env, 'TOKEN_SECRET'), 'launch-unsubscribe', token);
+  if (!result.ok) return expiredLinkPage('That unsubscribe link could not be verified.');
+  return confirmLaunchUnsubscribePage(token);
+}
+
+async function handleLaunchUnsubscribePost(request: Request, env: Env): Promise<Response> {
+  // Two shapes, same as the price-alert unsubscribe: our own form posts the
+  // token in an urlencoded body, RFC 8058 one-click puts it in the query string.
+  const url = new URL(request.url);
+  let token = url.searchParams.get('t') ?? '';
+  if (!token) {
+    const form = await request.formData().catch(() => null);
+    token = typeof form?.get('t') === 'string' ? (form.get('t') as string) : '';
+  }
+
+  const result = await verifyToken(requireSecret(env, 'TOKEN_SECRET'), 'launch-unsubscribe', token);
+  if (!result.ok) return expiredLinkPage('That unsubscribe link could not be verified.');
+
+  await unsubscribeLaunch(env.DB, result.subjectId);
+  return launchUnsubscribedPage(siteUrl(env));
 }
 
 // ----------------------------------------------------------- preferences

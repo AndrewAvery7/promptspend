@@ -607,3 +607,98 @@ export async function prunePendingSubscribers(db: D1Database): Promise<number> {
   }
   return results.length;
 }
+
+// -------------------------------------------------- mobile launch notify
+
+export type LaunchStatus = 'pending' | 'active' | 'unsubscribed' | 'notified';
+
+export interface LaunchSubscriber {
+  id: string;
+  email: string;
+  status: LaunchStatus;
+  created_at: string;
+  confirmed_at: string | null;
+  unsubscribed_at: string | null;
+  notified_at: string | null;
+}
+
+export async function findLaunchByAddress(db: D1Database, email: string): Promise<LaunchSubscriber | null> {
+  return db
+    .prepare('SELECT * FROM launch_subscribers WHERE email = ?')
+    .bind(normaliseEmail(email))
+    .first<LaunchSubscriber>();
+}
+
+export async function findLaunchById(db: D1Database, id: string): Promise<LaunchSubscriber | null> {
+  return db.prepare('SELECT * FROM launch_subscribers WHERE id = ?').bind(id).first<LaunchSubscriber>();
+}
+
+/**
+ * Create a pending launch signup, or revive an existing row.
+ *
+ * Same upsert-on-address shape as `upsertPendingEmail`, and for the same
+ * reasons: submitting the form twice must not create two rows, and signing up
+ * again after unsubscribing must work. One deliberate difference — a row
+ * already `notified` is left alone and returned as-is. Its one message has been
+ * sent; resetting it to `pending` would mail the same person the same launch
+ * announcement a second time.
+ */
+export async function upsertPendingLaunch(
+  db: D1Database,
+  input: { email: string; consentIpHash: string | null },
+): Promise<LaunchSubscriber> {
+  const email = normaliseEmail(input.email);
+  const existing = await findLaunchByAddress(db, email);
+  const timestamp = nowIso();
+
+  if (existing?.status === 'notified') return existing;
+
+  if (existing) {
+    await db
+      .prepare(
+        `UPDATE launch_subscribers
+            SET status = 'pending', unsubscribed_at = NULL,
+                consent_ip_hash = ?, consent_at = ?
+          WHERE id = ?`,
+      )
+      .bind(input.consentIpHash, timestamp, existing.id)
+      .run();
+    return (await findLaunchById(db, existing.id))!;
+  }
+
+  const id = newId();
+  await db
+    .prepare(
+      `INSERT INTO launch_subscribers (id, email, status, created_at, consent_ip_hash, consent_at)
+       VALUES (?, ?, 'pending', ?, ?, ?)`,
+    )
+    .bind(id, email, timestamp, input.consentIpHash, timestamp)
+    .run();
+  return (await findLaunchById(db, id))!;
+}
+
+export async function activateLaunch(db: D1Database, id: string): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE launch_subscribers
+          SET status = 'active', confirmed_at = COALESCE(confirmed_at, ?)
+        WHERE id = ? AND status = 'pending'`,
+    )
+    .bind(nowIso(), id)
+    .run();
+}
+
+/** Same rule as price alerts: unsubscribing deletes the address, it does not flag it. */
+export async function unsubscribeLaunch(db: D1Database, id: string): Promise<void> {
+  await db.prepare('DELETE FROM launch_subscribers WHERE id = ?').bind(id).run();
+}
+
+/** Unconfirmed launch signups are deleted after a week, matching price alerts. */
+export async function prunePendingLaunch(db: D1Database): Promise<number> {
+  const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { meta } = await db
+    .prepare(`DELETE FROM launch_subscribers WHERE status = 'pending' AND created_at < ?`)
+    .bind(cutoff)
+    .run();
+  return meta.changes ?? 0;
+}

@@ -14,6 +14,7 @@
     "keygen": "tsx scripts/keygen.ts",
     "migrate:local": "wrangler d1 migrations apply promptspend-alerts --local",
     "migrate:remote": "wrangler d1 migrations apply promptspend-alerts --remote",
+    "release": "npm run migrate:remote && npm run deploy",
     "verify": "npm run typecheck && npm run test"
   },
   "devDependencies": {

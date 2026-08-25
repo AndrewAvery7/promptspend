@@ -41,7 +41,53 @@ used by anything.
 | `GET`        | `/v1/email/confirm`        | Activate a subscription                               |
 | `GET`/`POST` | `/v1/email/unsubscribe`    | GET asks, POST acts (see below)                       |
 | `GET`/`POST` | `/v1/preferences`          | Read and update, authenticated by a signed token      |
+| `POST`       | `/v1/launch/subscribe`     | Join the one-message mobile-launch list               |
+| `GET`        | `/v1/launch/confirm`       | Activate a launch signup                              |
+| `GET`/`POST` | `/v1/launch/unsubscribe`   | GET asks, POST acts                                   |
 | `POST`       | `/v1/notify`               | HMAC-signed, called by CI when prices move            |
+
+### The mobile-launch list
+
+A second, deliberately separate list that exists to send exactly one message:
+an email when the iPhone and Android apps are downloadable. It has its own
+table (`launch_subscribers`, migration `0003`), its own token purposes
+(`launch-confirm`, `launch-unsubscribe`), its own Turnstile action
+(`web_launch_notify`) and its own confirmation copy.
+
+Nothing about it is shared with price alerts, and that is the point. The two
+opt-ins are legally and practically distinct: someone who asked to hear about a
+price move has not asked to hear about an app release. Sharing a row or a token
+purpose would make either opt-in silently authorise the other, and would make
+one unsubscribe link quietly remove someone from both.
+
+One behaviour differs from `/v1/email/subscribe` and is worth knowing before
+changing either: that endpoint treats a repeat signup from an already-active
+address as a _management request_ and mails a code instead of subscribing.
+Correct there, and wrong here — it would silently drop a launch signup from
+everyone who already receives price alerts, which is the group most likely to
+want the app. `/v1/launch/subscribe` has no such branch.
+
+**The announcement itself is not built.** Collecting the list, confirming it and
+leaving it are complete and tested; the code that actually mails everyone on
+launch day is not, and is deliberately deferred — see
+[DEFERRED.md](DEFERRED.md). It needs the two store URLs, which do not exist
+until the listings do, and writing a send against placeholder links would be a
+send nobody can test. The `notified` status and the "never reset a notified row"
+rule in `upsertPendingLaunch` are the hooks it will use, and they are tested
+now so that the send can be written later without revisiting the signup path.
+
+Until it exists, the list accumulates and nothing is ever sent to it. That is
+the correct failure mode — an unsent announcement is a task, a wrongly-sent one
+is an apology — but it does mean the promise on the banner is only as good as
+remembering to do it.
+
+Deploying it is `npm run release` from `worker/`, which is
+`migrate:remote` then `deploy`, in that order and only continuing if the first
+succeeds. The order is not cosmetic: the new handlers query
+`launch_subscribers`, so deploying the code first opens a window where every
+request to `/v1/launch/subscribe` fails on a missing table. Applying the
+migration first is harmless in the other direction — the running Worker simply
+does not know the table is there yet.
 
 ---
 
@@ -215,7 +261,7 @@ count stops being zero, and not before.
 cd worker && npm test
 ```
 
-98 tests run inside workerd against a real D1, so the query layer
+108 tests run inside workerd against a real D1, so the query layer
 is exercised against genuine SQLite and the migrations are proved to apply. The
 full subscribe → confirm → change preferences → unsubscribe lifecycle is
 covered, as are signature rejection, replay rejection, CORS, and the SSRF

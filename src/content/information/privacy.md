@@ -34,6 +34,12 @@ You may subscribe to email price alerts from the native app or website. The aler
 
 New subscriptions require email confirmation. Unconfirmed subscriptions are deleted after seven days. Short-lived management codes expire after 10 minutes, and an in-app management credential expires after 30 minutes. A confirmed email subscription remains until you unsubscribe; unsubscribing deletes the address, preferences, follows, and active management codes from the alert database. Alert emails use no tracking pixels or click tracking. Native push notifications are not included in the current app release.
 
+## Mobile app launch notification
+
+The website offers a separate, optional list for one announcement: an email when the iPhone and Android apps become available to download. It is not a price-alert subscription. Joining it does not subscribe you to price alerts, does not change any alert preferences you already have, and asking for price alerts does not add you here.
+
+This list stores only the email address, confirmation status, consent time, and the same keyed hash of the connection address used for abuse prevention. It stores no model choices, no cadence, and no delivery history. Confirmation is required before the address is on the list at all, and unconfirmed signups are deleted after seven days. The address is deleted when you unsubscribe, and the entire list is deleted once the launch announcement has been sent. Every message carries a one-click unsubscribe that removes the address from this list only.
+
 ## Support and security reports
 
 If you contact us, we receive the information you choose to send, such as your email address and message. Please do not include private prompt text, credentials, API keys, or other secrets in a support request. Support messages are used to respond, investigate problems, prevent abuse, and maintain the service.

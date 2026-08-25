@@ -1974,6 +1974,155 @@ table.catalog tbody tr:hover {
 }
 
 /* ------------------------------------------------------ tour / palette / toast */
+/* The mobile-app announcement.
+ *
+ * Deliberately a raised card rather than the flat accent-soft strip the tour
+ * invitation uses. Both can be on screen at once for a first-time visitor, and
+ * two tinted bars stacked read as one confused element — the white surface, the
+ * heavier accent border and the glyph pair give this its own weight without
+ * inventing a colour that is not already in the token set. */
+/* Matches `.main`'s column exactly so the card's edges line up with the panels
+   below it rather than floating at a different width. */
+.launch-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 22px 24px 0;
+}
+.launch {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  box-shadow: var(--shadow);
+}
+.launch__glyphs {
+  display: flex;
+  gap: 8px;
+}
+.launch__glyph {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.launch__copy {
+  min-width: 0;
+}
+.launch__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.launch__sub {
+  margin: 3px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.launch__form {
+  min-width: 0;
+}
+/* The label is for screen readers and autofill; the placeholder carries the
+   visible hint. A visible label here would push the row to two lines on the
+   widths where this banner is already tightest. */
+.launch__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.launch__row {
+  display: flex;
+  gap: 8px;
+}
+.launch__input {
+  width: 210px;
+  padding: 9px 12px;
+  font-size: 0.86rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.launch__submit {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+  font-weight: 600;
+  font-size: 0.86rem;
+  white-space: nowrap;
+}
+.launch__submit:disabled {
+  opacity: 0.55;
+}
+.launch__fine {
+  margin: 8px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 320px;
+}
+.launch__error {
+  margin: 8px 0 0;
+  font-size: 0.76rem;
+  color: var(--cost);
+}
+.launch__done {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 300px;
+}
+.launch__done b {
+  color: var(--accent);
+}
+.launch__dismiss {
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 4px;
+}
+/* Below this the three-column grid stops fitting: the glyph pair moves above
+   the copy and the form takes the full width rather than being squeezed into a
+   column too narrow for an email address. */
+@media (max-width: 860px) {
+  .launch {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  .launch__input {
+    width: 100%;
+  }
+  .launch__row {
+    max-width: 420px;
+  }
+  .launch__fine,
+  .launch__done {
+    max-width: none;
+  }
+}
+
 .welcome {
   margin-top: 22px;
   display: flex;
