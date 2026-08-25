@@ -186,12 +186,12 @@ ${links.siteUrl}`;
  * idea they authorise different things.
  */
 export function renderLaunchConfirmation(confirmUrl: string, siteUrl: string): RenderedEmail {
-  const body = `<h1 class="ps-ink" style="margin:0 0 14px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">Confirm and we'll tell you once</h1>
+  const body = `<h1 class="ps-ink" style="margin:0 0 14px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">Confirm and you're on the launch list</h1>
 <p style="margin:0 0 4px;">Confirm this address and PromptSpend will email you when the iPhone and Android apps are available to download — one message, then nothing more.</p>
 ${button(confirmUrl, 'Confirm my address')}
 <p class="ps-muted" style="margin:14px 0 0;font-size:13.5px;color:${MUTED};">This is not a price-alert subscription and does not change any alerts you already receive. The link works for 48 hours. If you did not ask for this, ignore this message — nothing was recorded and the address is deleted within a week.</p>`;
 
-  const text = `Confirm and we'll tell you once
+  const text = `Confirm and you're on the launch list
 
 Confirm this address and PromptSpend will email you when the iPhone and
 Android apps are available to download — one message, then nothing more.
@@ -207,9 +207,9 @@ within a week.
 ${siteUrl}`;
 
   return {
-    subject: 'Confirm: tell me when the PromptSpend apps launch',
+    subject: 'Confirm: Tell me when the PromptSpend apps launch',
     html: layout({
-      title: 'Confirm: tell me when the PromptSpend apps launch',
+      title: 'Confirm: Tell me when the PromptSpend apps launch',
       preheader: 'One click to confirm — the link works for 48 hours.',
       body,
       // No unsubscribe footer, for the same reason as the price-alert

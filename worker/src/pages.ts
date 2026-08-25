@@ -115,7 +115,11 @@ export function launchConfirmedPage(siteUrl: string, unsubscribeUrl: string): Re
   // between confirming and shipping.
   return page({
     title: 'Confirmed',
-    heading: "We'll tell you once",
+    // Not "We'll tell you once" — "once" reads as "as soon as" before it reads
+    // as "one time", so the heading lands as an unfinished clause. And not
+    // "You're on the list", which is the price-alert page's heading; these two
+    // pages must not be mistakable for each other.
+    heading: "You're on the launch list",
     body: `<p>When the PromptSpend apps are live on the App Store and Google Play, this address gets one email with the links. That is the only message this list sends.</p>
       <p class="muted">It is separate from price alerts — confirming here did not subscribe you to those, and if you already get them nothing has changed.</p>
       <a class="btn" href="${escapeHtml(siteUrl)}">Back to PromptSpend</a>

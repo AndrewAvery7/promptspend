@@ -175,25 +175,44 @@ export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
                 {busy ? 'Sending…' : 'Notify me'}
               </button>
             </div>
+          </form>
+        ) : null}
+
+        {/* Second row, spanning the grid. The anti-abuse check and the fine
+            print used to stack under the input, which made the card three
+            times taller than the sentence it exists to carry. Side by side down
+            here they cost one line, and the widget itself is usually zero
+            pixels — see the `appearance` note below. */}
+        {!sent && canSubmit && (
+          <div className="launch__foot">
             {turnstileNeeded && config?.turnstileSiteKey && (
               <Turnstile
                 siteKey={config.turnstileSiteKey}
                 theme={theme}
                 action="web_launch_notify"
+                appearance="interaction-only"
                 onToken={setTurnstileToken}
               />
             )}
-            {error && (
+            {error ? (
               <p className="launch__error" role="alert">
                 {error}
               </p>
+            ) : turnstileNeeded && !turnstileToken ? (
+              /* The widget is invisible while it passes, so without this the
+                 submit button would sit greyed out with nothing on screen
+                 saying why. */
+              <p className="launch__fine" role="status">
+                Checking you&apos;re human — the button enables in a moment.
+              </p>
+            ) : (
+              <p className="launch__fine">
+                One email, then your address is deleted, and it is separate from price alerts.{' '}
+                <a href="/privacy/">How we handle it</a>.
+              </p>
             )}
-            <p className="launch__fine">
-              One email, then your address is deleted. Separate from price alerts — this does not subscribe
-              you to those. <a href="/privacy/">How we handle it</a>.
-            </p>
-          </form>
-        ) : null}
+          </div>
+        )}
       </section>
     </div>
   );

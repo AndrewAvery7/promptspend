@@ -1993,12 +1993,28 @@ table.catalog tbody tr:hover {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 18px;
+  gap: 8px 18px;
   background: var(--surface);
   border: 1.5px solid var(--accent);
   border-radius: var(--radius-lg);
-  padding: 16px 20px;
+  padding: 14px 18px;
   box-shadow: var(--shadow);
+}
+/* Row two, spanning every column. The anti-abuse check and the fine print sit
+   side by side here rather than stacking under the input, which is what made
+   the first version three times taller than its own sentence. The Turnstile
+   widget is mounted `interaction-only`, so in the ordinary case it occupies no
+   height at all and this row is a single line of grey text. */
+.launch__foot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  min-height: 0;
+}
+.launch__foot .turnstile:empty {
+  display: none;
 }
 .launch__glyphs {
   display: flex;
@@ -2069,15 +2085,16 @@ table.catalog tbody tr:hover {
 .launch__submit:disabled {
   opacity: 0.55;
 }
+/* No `max-width` and no top margin: this now lives in the full-width foot row
+   beside the check, not stacked in the narrow form column. */
 .launch__fine {
-  margin: 8px 0 0;
+  margin: 0;
   font-size: 0.72rem;
   line-height: 1.5;
   color: var(--muted);
-  max-width: 320px;
 }
 .launch__error {
-  margin: 8px 0 0;
+  margin: 0;
   font-size: 0.76rem;
   color: var(--cost);
 }
