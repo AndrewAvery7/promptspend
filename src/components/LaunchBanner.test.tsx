@@ -130,6 +130,26 @@ describe('the launch banner', () => {
     await waitFor(() => expect(screen.queryByRole('button', { name: /notify me/i })).not.toBeInTheDocument());
   });
 
+  /**
+   * Signing up is an answer to this banner, the same as closing it. Showing the
+   * form again on the next visit asks someone who already handed over an
+   * address to hand it over a second time.
+   */
+  it('does not come back on the next visit once an address is given', async () => {
+    const { unmount } = render(<LaunchBanner theme="light" />);
+    await waitFor(() => expect(screen.getByRole('button', { name: /notify me/i })).toBeInTheDocument());
+
+    await userEvent.type(screen.getByLabelText(/email address/i), 'reader@example.com');
+    await userEvent.click(screen.getByRole('button', { name: /notify me/i }));
+    // The confirmation stays up for the rest of this visit — it is the
+    // instruction to go and click the link.
+    await waitFor(() => expect(screen.getByText(/check your inbox/i)).toBeInTheDocument());
+
+    unmount();
+    render(<LaunchBanner theme="light" />);
+    expect(screen.queryByText(/coming to iPhone and Android/i)).not.toBeInTheDocument();
+  });
+
   it('stays dismissed on the next visit', async () => {
     const { unmount } = render(<LaunchBanner theme="light" />);
     await userEvent.click(screen.getByRole('button', { name: /dismiss/i }));

@@ -38,13 +38,24 @@ function AppleGlyph() {
   );
 }
 
+/**
+ * Google Play, in its own four colours.
+ *
+ * Fixed hex rather than a token, because these are Google's colours and not
+ * ours to re-theme — and unlike the rest of the palette they do not flip with
+ * the theme. They read correctly on both canvases, which is why the tile behind
+ * them is neutral rather than accent-tinted.
+ *
+ * Note this is the Play *mark*, not the "Get it on Google Play" badge. The
+ * badge may only be used to link to a live listing, which does not exist yet.
+ */
 function PlayGlyph() {
   return (
     <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false">
-      <path
-        fill="currentColor"
-        d="M3.9 2.4c-.3.3-.5.8-.5 1.4v16.4c0 .6.2 1.1.5 1.4l.1.1 9.2-9.2v-.2L3.9 2.4zm12 5.9L5.9 2.6l7.6 7.6 2.4-1.9zM17.9 10c.7.4 1.1.9 1.1 1.5s-.4 1.1-1.1 1.5l-1.7 1-2.6-2.5 2.6-2.5 1.7 1zM5.9 21.4l10-5.7-2.4-2.4-7.6 8.1z"
-      />
+      <path fill="#00A0FF" d="M3.6 2.3c-.3.3-.5.8-.5 1.4v16.6c0 .6.2 1.1.5 1.4l.1.1L13 12.1v-.2L3.7 2.2z" />
+      <path fill="#FFCE00" d="M16 15.2l-3-3v-.2l3-3 .1.1 3.7 2.1c1 .6 1 1.6 0 2.2l-3.7 2.1z" />
+      <path fill="#FF3A44" d="M16.1 15.1L13 12 3.6 21.7c.3.4.9.4 1.5.1l11-6.7" />
+      <path fill="#00E676" d="M16.1 8.9L5.1 2.2c-.6-.4-1.2-.3-1.5.1L13 12z" />
     </svg>
   );
 }
@@ -81,13 +92,18 @@ export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
     };
   }, [dismissed]);
 
-  const dismiss = () => {
-    setDismissed(true);
+  /** Record that this banner has been answered, by either route. */
+  const remember = () => {
     try {
       localStorage.setItem(DISMISSED_KEY, '1');
     } catch {
       /* ignore */
     }
+  };
+
+  const dismiss = () => {
+    setDismissed(true);
+    remember();
   };
 
   if (dismissed) return null;
@@ -105,6 +121,11 @@ export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
     try {
       await subscribeLaunchNotify({ email, ...(turnstileToken ? { turnstileToken } : {}) });
       setSent(true);
+      // Remembered the same way a dismissal is. Someone who has handed over an
+      // address has answered this banner; asking again on their next visit
+      // reads as not having listened. The confirmation stays visible for the
+      // rest of this visit — that is the instruction to go and click the link.
+      remember();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not sign you up.');
     } finally {
@@ -117,15 +138,6 @@ export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
   return (
     <div className="launch-wrap">
       <section className="launch" aria-labelledby="launch-title">
-        <button
-          type="button"
-          className="launch__dismiss"
-          aria-label="Dismiss the app announcement"
-          onClick={dismiss}
-        >
-          ✕
-        </button>
-
         <div className="launch__glyphs" aria-hidden="true">
           <span className="launch__glyph">
             <AppleGlyph />
@@ -178,21 +190,40 @@ export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
           </form>
         ) : null}
 
+        {/* The dismiss sits inline at the end of the row, matching the guided
+            tour's strip, rather than floating in the corner. */}
+        <button
+          type="button"
+          className="launch__dismiss"
+          aria-label="Dismiss the app announcement"
+          onClick={dismiss}
+        >
+          ✕
+        </button>
+
         {/* Second row, spanning the grid. The anti-abuse check and the fine
             print used to stack under the input, which made the card three
-            times taller than the sentence it exists to carry. Side by side down
-            here they cost one line, and the widget itself is usually zero
-            pixels — see the `appearance` note below. */}
+            times taller than the sentence it exists to carry. */}
         {!sent && canSubmit && (
           <div className="launch__foot">
             {turnstileNeeded && config?.turnstileSiteKey && (
-              <Turnstile
-                siteKey={config.turnstileSiteKey}
-                theme={theme}
-                action="web_launch_notify"
-                appearance="interaction-only"
-                onToken={setTurnstileToken}
-              />
+              /* Collapsed once a token exists, and that is what actually keeps
+                 this row one line tall. `interaction-only` stops Cloudflare
+                 *drawing* a checkbox, but the container it renders into still
+                 reserves its height, so the row stayed ~65px with nothing
+                 visible in it. Hiding it is safe only after the token is in
+                 hand: before that a challenge may genuinely need to be shown,
+                 and a hidden challenge is an unsubmittable form. If the token
+                 later expires, `onToken(null)` brings it straight back. */
+              <div className={`launch__check${turnstileToken ? ' launch__check--passed' : ''}`}>
+                <Turnstile
+                  siteKey={config.turnstileSiteKey}
+                  theme={theme}
+                  action="web_launch_notify"
+                  appearance="interaction-only"
+                  onToken={setTurnstileToken}
+                />
+              </div>
             )}
             {error ? (
               <p className="launch__error" role="alert">
