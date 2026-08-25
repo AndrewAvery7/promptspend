@@ -30,6 +30,10 @@ const STYLE = `
     background: #2456e6; color: #fff; text-decoration: none; font-weight: 600;
   }
   a { color: #2456e6; }
+  /* A paragraph directly after the button — the launch page's "changed your
+     mind" line — otherwise sits against it, reading as the button's caption
+     rather than as the separate afterthought it is. */
+  a.btn + p { margin-top: 20px; }
   form { margin-top: 12px; }
   button {
     padding: 13px 26px; border: 0; border-radius: 10px; background: #2456e6; color: #fff;
