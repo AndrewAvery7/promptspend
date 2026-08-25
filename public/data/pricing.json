@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-24T11:08:39.535Z",
+  "generatedAt": "2026-08-25T11:07:01.247Z",
   "providers": [
     {
       "id": "anthropic",
@@ -99,7 +99,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 64000,
       "capabilityIndex": 64
@@ -127,7 +127,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 64000,
       "capabilityIndex": 80
@@ -496,7 +496,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 8000,
       "capabilityIndex": 75
@@ -556,7 +556,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 65536
     },
@@ -648,7 +648,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24",
+        "lastVerified": "2026-08-25",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19",
         "reviewCodes": [
@@ -681,7 +681,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 8192
     },
@@ -707,7 +707,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 163840,
       "capabilityIndex": 74
@@ -889,7 +889,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 65535
     },
@@ -945,7 +945,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 65536
     },
@@ -1400,7 +1400,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24",
+        "lastVerified": "2026-08-25",
         "lastChanged": "2026-08-23",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
@@ -1544,7 +1544,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 8192
     },
@@ -1571,7 +1571,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 8192
     },
@@ -1627,7 +1627,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1654,7 +1654,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 262144,
       "capabilityIndex": 71
@@ -1681,7 +1681,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 262144,
       "capabilityIndex": 68
@@ -1709,7 +1709,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 262144
     },
@@ -1737,12 +1737,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-08-22",
-        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k25",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k25"
       },
       "maxOutput": 262144,
       "capabilityIndex": 78
@@ -1931,7 +1926,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 131072
     },
@@ -1958,7 +1953,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 131072
     },
@@ -1984,7 +1979,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 256000
     },
@@ -2011,7 +2006,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 2000000,
       "capabilityIndex": 66
@@ -2228,7 +2223,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-24"
+        "lastVerified": "2026-08-25"
       },
       "maxOutput": 128000,
       "capabilityIndex": 78

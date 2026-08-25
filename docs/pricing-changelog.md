@@ -522,3 +522,8 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `gpt-5.6` — provenance.lastChanged: — → 2026-08-23
 - **Review** `gpt-5.6-sol` — provenance.needsReview: — → true
 - **Review** `gpt-5.6-sol` — provenance.reviewNote: — → vendor override differs from the automated feed (33%): $4/$20 vs $5/$30
+
+## 2026-08-25
+
+- **Review** `moonshot-kimi-k2.5` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k2.5` — provenance.reviewNote: OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3 → —
