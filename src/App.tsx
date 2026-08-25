@@ -24,6 +24,7 @@ import { LearnView } from '@/components/LearnView';
 import { DataView } from '@/components/DataView';
 import { GuidedTour, TOUR_STEPS } from '@/components/GuidedTour';
 import { CommandPalette, type Command } from '@/components/CommandPalette';
+import { LaunchBanner } from '@/components/LaunchBanner';
 
 const WELCOME_KEY = 'ps.welcomeDismissed';
 
@@ -256,6 +257,11 @@ function Workspace({ catalog }: { catalog: Catalog }) {
         onAccent={appearance.setAccent}
         onCanvas={appearance.setCanvas}
       />
+
+      {/* Above the view rather than inside one: the apps are not a feature of
+          the estimator, and a visitor who lands on Compare or Data should see
+          the announcement too. Dismissing it is remembered. */}
+      <LaunchBanner theme={appearance.theme} />
 
       <main className="main">
         {view === 'estimate' && (

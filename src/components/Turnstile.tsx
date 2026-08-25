@@ -68,10 +68,17 @@ function loadScript(): Promise<void> {
 interface TurnstileProps {
   siteKey: string;
   theme: 'light' | 'dark';
+  /**
+   * Which form this widget guards. The worker verifies the action alongside the
+   * token and rejects a mismatch, so a token minted for one form cannot be
+   * replayed against another — which means this has to match the action the
+   * endpoint expects, not merely be unique.
+   */
+  action?: 'web_email_alerts' | 'web_launch_notify';
   onToken: (token: string | null) => void;
 }
 
-export function Turnstile({ siteKey, theme, onToken }: TurnstileProps) {
+export function Turnstile({ siteKey, theme, action = 'web_email_alerts', onToken }: TurnstileProps) {
   const container = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
 
@@ -98,7 +105,7 @@ export function Turnstile({ siteKey, theme, onToken }: TurnstileProps) {
         widgetId = window.turnstile.render(container.current, {
           sitekey: siteKey,
           theme,
-          action: 'web_email_alerts',
+          action,
           callback: (token) => callback.current(token),
           'expired-callback': () => callback.current(null),
           'error-callback': () => callback.current(null),
@@ -112,7 +119,7 @@ export function Turnstile({ siteKey, theme, onToken }: TurnstileProps) {
       cancelled = true;
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
     };
-  }, [siteKey, theme]);
+  }, [siteKey, theme, action]);
 
   if (failed) {
     return (

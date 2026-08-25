@@ -108,6 +108,41 @@ export function confirmUnsubscribePage(token: string): Response {
   });
 }
 
+export function launchConfirmedPage(siteUrl: string): Response {
+  return page({
+    title: 'Confirmed',
+    heading: "We'll tell you once",
+    body: `<p>When the PromptSpend apps are live on the App Store and Google Play, this address gets one email with the links. That is the only message this list sends.</p>
+      <p class="muted">It is separate from price alerts — confirming here did not subscribe you to those, and if you already get them nothing has changed. Every message carries a one-click unsubscribe.</p>
+      <a class="btn" href="${escapeHtml(siteUrl)}">Back to PromptSpend</a>`,
+  });
+}
+
+export function launchUnsubscribedPage(siteUrl: string): Response {
+  return page({
+    title: 'Removed',
+    heading: "You're off the list",
+    body: `<p>That address has been deleted from the app-launch list and will not receive the release announcement.</p>
+      <p class="muted">If you also receive PromptSpend price alerts, those are a separate list and are unaffected.</p>
+      <a class="btn" href="${escapeHtml(siteUrl)}">Back to PromptSpend</a>`,
+  });
+}
+
+export function confirmLaunchUnsubscribePage(token: string): Response {
+  // Same GET-asks / POST-acts split as price alerts, and for the same reason:
+  // mail scanners prefetch links, and a GET that acted on sight would let one
+  // quietly remove someone from the list.
+  return page({
+    title: 'Unsubscribe',
+    heading: 'Leave the app-launch list?',
+    body: `<p>Confirm and PromptSpend will not email this address when the apps go live.</p>
+      <form method="POST" action="/v1/launch/unsubscribe">
+        <input type="hidden" name="t" value="${escapeHtml(token)}">
+        <button type="submit">Yes, remove me</button>
+      </form>`,
+  });
+}
+
 export function expiredLinkPage(what: string): Response {
   return page({
     status: 410,

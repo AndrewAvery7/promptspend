@@ -14,18 +14,26 @@
 
 import { b64urlToBytes, bytesToB64url, timingSafeEqual, utf8 } from './bytes';
 
-export type TokenPurpose = 'confirm' | 'unsubscribe' | 'preferences' | 'mobile-preferences';
+export type TokenPurpose =
+  'confirm' | 'unsubscribe' | 'preferences' | 'mobile-preferences' | 'launch-confirm' | 'launch-unsubscribe';
 
 /**
  * Confirmation has to happen soon or not at all. Unsubscribe and preference
  * links live in mail the reader may come back to months later, so they last a
  * year — an expired unsubscribe link is a compliance problem, not a nicety.
+ *
+ * The launch pair is separate from the price-alert pair rather than reusing it,
+ * which is the whole point of `purpose`: a confirm link for the app-launch list
+ * must not also confirm a price-alert subscription, and an unsubscribe link
+ * from one list must not silently remove someone from the other.
  */
 const LIFETIMES: Record<TokenPurpose, number> = {
   confirm: 48 * 60 * 60,
   unsubscribe: 365 * 24 * 60 * 60,
   preferences: 365 * 24 * 60 * 60,
   'mobile-preferences': 30 * 60,
+  'launch-confirm': 48 * 60 * 60,
+  'launch-unsubscribe': 365 * 24 * 60 * 60,
 };
 
 interface TokenClaims {
