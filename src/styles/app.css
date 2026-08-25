@@ -1991,7 +1991,10 @@ table.catalog tbody tr:hover {
 .launch {
   position: relative;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  /* Four columns: glyphs, copy, form, dismiss. The dismiss is a column rather
+     than an absolutely-positioned corner button so it sits inline at the end of
+     the row, matching `.welcome__dismiss` on the guided-tour strip. */
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 8px 18px;
   background: var(--surface);
@@ -2013,21 +2016,30 @@ table.catalog tbody tr:hover {
   flex-wrap: wrap;
   min-height: 0;
 }
-.launch__foot .turnstile:empty {
+/* See the comment beside `launch__check` in LaunchBanner.tsx: the widget's own
+   container holds ~65px even when `interaction-only` draws nothing, so it is
+   collapsed once the token is in hand rather than left holding the row open. */
+.launch__check--passed {
   display: none;
 }
 .launch__glyphs {
   display: flex;
   gap: 8px;
 }
+/* Neutral tiles, not accent-tinted: the Play mark carries Google's own four
+   colours and an accent wash behind it muddies them. The Apple mark takes
+   `--ink`, which is the only correct treatment — Apple's identity guidelines
+   allow the logo in black or white and nothing else, so it cannot be given a
+   colour to match Play. */
 .launch__glyph {
   display: grid;
   place-items: center;
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--ink);
 }
 .launch__copy {
   min-width: 0;
@@ -2108,18 +2120,19 @@ table.catalog tbody tr:hover {
 .launch__done b {
   color: var(--accent);
 }
+/* Deliberately identical to `.welcome__dismiss`. Two dismissible strips that
+   close differently is the kind of small inconsistency that reads as two
+   different products. */
 .launch__dismiss {
-  position: absolute;
-  top: 7px;
-  right: 9px;
+  align-self: center;
   background: none;
   border: none;
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 1;
   padding: 4px;
 }
-/* Below this the three-column grid stops fitting: the glyph pair moves above
+/* Below this the multi-column grid stops fitting: the glyph pair moves above
    the copy and the form takes the full width rather than being squeezed into a
    column too narrow for an email address. */
 @media (max-width: 860px) {
@@ -2127,6 +2140,17 @@ table.catalog tbody tr:hover {
     grid-template-columns: 1fr;
     gap: 12px;
     padding: 16px;
+  }
+  /* One column means an inline dismiss would claim a whole row to itself, so
+     here it does go back to the corner — the tour strip wraps it the same way
+     at this width. */
+  .launch__dismiss {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+  }
+  .launch__copy {
+    padding-right: 24px;
   }
   .launch__input {
     width: 100%;
