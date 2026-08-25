@@ -101,7 +101,7 @@ describe('mobile launch notify', () => {
     const token = await tokenFor('launch-confirm', await launchId('reader@example.com'));
     const confirmed = await SELF.fetch(`${API}/v1/launch/confirm?t=${encodeURIComponent(token)}`);
     expect(confirmed.status).toBe(200);
-    expect(await confirmed.text()).toContain("We'll tell you once");
+    expect(await confirmed.text()).toContain("You're on the launch list");
     expect((await launchRow('reader@example.com'))?.status).toBe('active');
 
     const unsubToken = await tokenFor('launch-unsubscribe', await launchId('reader@example.com'));

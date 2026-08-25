@@ -26,6 +26,7 @@ interface TurnstileApi {
       action: string;
       sitekey: string;
       theme: 'light' | 'dark' | 'auto';
+      appearance?: 'always' | 'interaction-only';
       callback: (token: string) => void;
       'expired-callback': () => void;
       'error-callback': () => void;
@@ -75,10 +76,28 @@ interface TurnstileProps {
    * endpoint expects, not merely be unique.
    */
   action?: 'web_email_alerts' | 'web_launch_notify';
+  /**
+   * `interaction-only` keeps the widget at zero height unless Cloudflare
+   * actually wants the visitor to do something; most visitors are cleared
+   * silently and never see a box. Verification is unchanged either way — the
+   * token is still issued and still checked server-side — so this is purely
+   * how much room the check occupies while it passes.
+   *
+   * Whatever mounts it with this value owes the reader an explanation for the
+   * disabled submit in the seconds before the token lands, because with no
+   * visible widget there is otherwise nothing on screen accounting for it.
+   */
+  appearance?: 'always' | 'interaction-only';
   onToken: (token: string | null) => void;
 }
 
-export function Turnstile({ siteKey, theme, action = 'web_email_alerts', onToken }: TurnstileProps) {
+export function Turnstile({
+  siteKey,
+  theme,
+  action = 'web_email_alerts',
+  appearance = 'always',
+  onToken,
+}: TurnstileProps) {
   const container = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
 
@@ -106,6 +125,7 @@ export function Turnstile({ siteKey, theme, action = 'web_email_alerts', onToken
           sitekey: siteKey,
           theme,
           action,
+          appearance,
           callback: (token) => callback.current(token),
           'expired-callback': () => callback.current(null),
           'error-callback': () => callback.current(null),
@@ -119,7 +139,7 @@ export function Turnstile({ siteKey, theme, action = 'web_email_alerts', onToken
       cancelled = true;
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
     };
-  }, [siteKey, theme, action]);
+  }, [siteKey, theme, action, appearance]);
 
   if (failed) {
     return (
