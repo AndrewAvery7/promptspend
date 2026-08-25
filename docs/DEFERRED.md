@@ -200,3 +200,24 @@ catalog accepts. The weekly `promptspend-verify-price-flags` task retries.
 
 **Tightening DMARC further.** `p=reject` is already the strong setting, so this
 is close to done and low value.
+
+**Sending the mobile-launch announcement.** The signup list is live and tested —
+banner, double opt-in, unsubscribe, the lot — but the code that mails everyone
+on it when the apps ship is not written. It is blocked on the two things that do
+not exist yet: the App Store and Google Play listing URLs. A send built against
+placeholder links is a send nobody can test, and this list gets exactly one
+message, so there is no second attempt to correct.
+
+What it needs when the listings are real: a render function beside
+`renderLaunchConfirmation`, a fan-out over `status = 'active'` reusing the
+batching in `fanout.ts`, a `launch-unsubscribe` token in every message per RFC
+8058, and marking each row `notified` as it sends. `upsertPendingLaunch` already
+refuses to reset a `notified` row, so a re-run cannot double-send — that rule is
+tested today precisely so this can be written later without re-reading the
+signup path.
+
+**This is the one deferred item with a promise attached.** Everything else here
+is work nobody was told about. People will have handed over an address on the
+strength of the banner saying they will be told. Not building the send is fine;
+forgetting it is a broken promise, so it wants a reminder against the store
+submission, not just a line in this file.

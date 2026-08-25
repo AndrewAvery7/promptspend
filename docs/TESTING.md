@@ -15,8 +15,8 @@ to publish past it.
 
 ## What the suite covers
 
-**979 tests in all**: 432 unit and integration tests in this package, 100 in
-`apps/mobile/`, 107 in `worker/`, 44 in `api/`, 47 in `mcp/`, 137 in `vscode/`,
+**980 tests in all**: 432 unit and integration tests in this package, 100 in
+`apps/mobile/`, 108 in `worker/`, 44 in `api/`, 47 in `mcp/`, 137 in `vscode/`,
 and 112 browser tests across four viewports. Those seven figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
 of its own list nor inclusive of `mcp/` at all; the next claimed 580, which was
@@ -82,7 +82,7 @@ browser run:
 
 | Package        | Tests | Guards                                                                                                                                                                                                                                                                                                                                                                                                          |
 | -------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `worker/`      | 107   | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself.                                                                                                                                                                                                                                                       |
+| `worker/`      | 108   | The alerts API inside workerd against a real D1 — including the RFC 8291 push crypto, checked byte-for-byte against the worked example in the RFC itself.                                                                                                                                                                                                                                                       |
 | `apps/mobile/` | 100   | The native launch product: all five route outcomes, private prompt conversion, pricing-cache resilience, state recovery, sharing privacy, accessible country filtering, alert requests, and the Turnstile message boundary.                                                                                                                                                                                     |
 | `api/`         | 44    | The public pricing API: filters, ETags, CORS, CSV quoting, that a catalog failing validation is refused rather than passed through, and that an origin answering with HTML is reported as such rather than as a JSON syntax error.                                                                                                                                                                              |
 | `mcp/`         | 47    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, that `get_price` quotes the rate actually in force and cannot drift from what `estimate_cost` bills, that the server reports the version it was published as, and that the real fetch path names what arrived when the catalog is not JSON.                                                         |

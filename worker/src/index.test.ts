@@ -113,6 +113,26 @@ describe('mobile launch notify', () => {
     expect(await launchRow('reader@example.com')).toBeNull();
   });
 
+  /**
+   * Months can pass between confirming and the apps shipping. If the only
+   * unsubscribe link lived in the launch email, the single message would also
+   * be the first chance to leave — consent that cannot be withdrawn until it
+   * has already been acted on.
+   */
+  it('offers a working unsubscribe on the confirmation page itself', async () => {
+    await post('/v1/launch/subscribe', { email: 'leaver@example.com' });
+    const token = await tokenFor('launch-confirm', await launchId('leaver@example.com'));
+    const confirmed = await SELF.fetch(`${API}/v1/launch/confirm?t=${encodeURIComponent(token)}`);
+
+    const html = await confirmed.text();
+    const href = /href="([^"]*\/v1\/launch\/unsubscribe\?t=[^"]+)"/.exec(html)?.[1];
+    expect(href).toBeTruthy();
+
+    const gone = await SELF.fetch(href!.replace(/&amp;/g, '&'), { method: 'POST' });
+    expect(gone.status).toBe(200);
+    expect(await launchRow('leaver@example.com')).toBeNull();
+  });
+
   it('asks before unsubscribing on GET, so a link scanner cannot remove someone', async () => {
     await post('/v1/launch/subscribe', { email: 'scanner@example.com' });
     const token = await tokenFor('launch-unsubscribe', await launchId('scanner@example.com'));

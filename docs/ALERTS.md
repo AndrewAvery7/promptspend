@@ -67,9 +67,19 @@ Correct there, and wrong here — it would silently drop a launch signup from
 everyone who already receives price alerts, which is the group most likely to
 want the app. `/v1/launch/subscribe` has no such branch.
 
-When the apps ship, the send marks each row `notified`; a row in that state is
-never reset to `pending`, so re-submitting the form cannot produce a second
-announcement. After the announcement the whole table is dropped.
+**The announcement itself is not built.** Collecting the list, confirming it and
+leaving it are complete and tested; the code that actually mails everyone on
+launch day is not, and is deliberately deferred — see
+[DEFERRED.md](DEFERRED.md). It needs the two store URLs, which do not exist
+until the listings do, and writing a send against placeholder links would be a
+send nobody can test. The `notified` status and the "never reset a notified row"
+rule in `upsertPendingLaunch` are the hooks it will use, and they are tested
+now so that the send can be written later without revisiting the signup path.
+
+Until it exists, the list accumulates and nothing is ever sent to it. That is
+the correct failure mode — an unsent announcement is a task, a wrongly-sent one
+is an apology — but it does mean the promise on the banner is only as good as
+remembering to do it.
 
 Deploying it is `npm run release` from `worker/`, which is
 `migrate:remote` then `deploy`, in that order and only continuing if the first
@@ -251,7 +261,7 @@ count stops being zero, and not before.
 cd worker && npm test
 ```
 
-107 tests run inside workerd against a real D1, so the query layer
+108 tests run inside workerd against a real D1, so the query layer
 is exercised against genuine SQLite and the migrations are proved to apply. The
 full subscribe → confirm → change preferences → unsubscribe lifecycle is
 covered, as are signature rejection, replay rejection, CORS, and the SSRF

@@ -591,7 +591,14 @@ async function handleLaunchConfirm(request: Request, env: Env): Promise<Response
   const subscriber = await findLaunchById(env.DB, result.subjectId);
   if (!subscriber) return expiredLinkPage('That signup no longer exists.');
 
-  return launchConfirmedPage(siteUrl(env));
+  const unsubscribe = await issueToken(
+    requireSecret(env, 'TOKEN_SECRET'),
+    'launch-unsubscribe',
+    result.subjectId,
+  );
+  const unsubscribeUrl = `${new URL(request.url).origin}/v1/launch/unsubscribe?t=${encodeURIComponent(unsubscribe)}`;
+
+  return launchConfirmedPage(siteUrl(env), unsubscribeUrl);
 }
 
 async function handleLaunchUnsubscribeGet(request: Request, env: Env): Promise<Response> {

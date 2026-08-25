@@ -108,13 +108,18 @@ export function confirmUnsubscribePage(token: string): Response {
   });
 }
 
-export function launchConfirmedPage(siteUrl: string): Response {
+export function launchConfirmedPage(siteUrl: string, unsubscribeUrl: string): Response {
+  // The unsubscribe link is on this page, not only in the eventual launch
+  // email. Otherwise the one message is also the first opportunity to leave,
+  // which means consent cannot be withdrawn for however many months sit
+  // between confirming and shipping.
   return page({
     title: 'Confirmed',
     heading: "We'll tell you once",
     body: `<p>When the PromptSpend apps are live on the App Store and Google Play, this address gets one email with the links. That is the only message this list sends.</p>
-      <p class="muted">It is separate from price alerts — confirming here did not subscribe you to those, and if you already get them nothing has changed. Every message carries a one-click unsubscribe.</p>
-      <a class="btn" href="${escapeHtml(siteUrl)}">Back to PromptSpend</a>`,
+      <p class="muted">It is separate from price alerts — confirming here did not subscribe you to those, and if you already get them nothing has changed.</p>
+      <a class="btn" href="${escapeHtml(siteUrl)}">Back to PromptSpend</a>
+      <p class="muted">Changed your mind? <a href="${escapeHtml(unsubscribeUrl)}">Remove this address</a> — it works now and for a year, and the launch email carries the same link.</p>`,
   });
 }
 
