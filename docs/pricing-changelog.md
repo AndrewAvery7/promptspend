@@ -527,3 +527,16 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `moonshot-kimi-k2.5` — provenance.needsReview: true → —
 - **Review** `moonshot-kimi-k2.5` — provenance.reviewNote: OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3 → —
+
+## 2026-08-26
+
+- **Coverage** `gpt-5.6-sol` — intro.input now tracked: — → 4
+- **Coverage** `gpt-5.6-sol` — intro.output now tracked: — → 20
+- **Coverage** `gpt-5.6-sol` — intro.until now tracked: — → 2026-11-21
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2 → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: OpenRouter disagrees (48%): $0.21/$1.9 vs $0.4/$1.6 → —
+- **Review** `dashscope-qwen3.7-max` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3.7-max` — provenance.reviewNote: OpenRouter disagrees (41%): $1.475/$4.425 vs $2.5/$7.5 → —
+- **Review** `dashscope-qwen3.7-max` — provenance.verifiedUrl: https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max → https://www.alibabacloud.com/help/en/model-studio/model-pricing

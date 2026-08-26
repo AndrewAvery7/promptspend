@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-26T11:08:27.225Z",
+  "generatedAt": "2026-08-26T14:30:57.093Z",
   "providers": [
     {
       "id": "anthropic",
@@ -523,13 +523,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-12",
-        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (33%): $0.1/$1.1 vs $0.15/$1.2",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "lastVerified": "2026-08-26",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 65536,
       "capabilityIndex": 70
@@ -582,13 +577,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-12",
-        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (48%): $0.21/$1.9 vs $0.4/$1.6",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "lastVerified": "2026-08-26",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 32768
     },
@@ -615,13 +605,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-12",
-        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (41%): $1.475/$4.425 vs $2.5/$7.5",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "lastVerified": "2026-08-26",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 65536,
       "capabilityIndex": 83
@@ -1455,6 +1440,13 @@
         "cachedInput": 0.5,
         "cacheWrite": 6.25,
         "batchDiscount": 0.5,
+        "intro": {
+          "input": 4,
+          "output": 20,
+          "cachedInput": 0.4,
+          "cacheWrite": 5,
+          "until": "2026-11-21"
+        },
         "longContext": {
           "thresholdTokens": 272000,
           "input": 10,
@@ -1473,7 +1465,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
+        "lastVerified": "2026-08-26",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
         "reviewNote": "vendor override differs from the automated feed (33%): $4/$20 vs $5/$30",

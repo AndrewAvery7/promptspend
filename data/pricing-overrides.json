@@ -163,11 +163,12 @@
       "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
     },
     {
+      "$note": "Read on 2026-08-26. OpenAI’s pricing page now prints $4/$0.40/$5.00/$20 short-context and $8/$0.80/$10/$30 long-context for gpt-5.6-sol, and states: \"GPT-5.6 Sol’s promotional pricing is available at least through November 21, 2026.\" Those are promotional rates, not a repricing, so per the rule recorded on claude-sonnet-5 they go in `intro` and the list price stays as `pricing`. The list price is not reprinted on the page, but every promotional figure is exactly a uniform 20% off input and 33% off output of the recorded list set — 5→4, 30→20, 0.5→0.4, 6.25→5, 10→8, 45→30, 1→0.8, 12.5→10 — all eight reconcile, which is what confirms $5/$30 is still the correct base. Note \"at least through\": the window may be extended, so treat 2026-11-21 as a floor and re-read before it lapses. Schema limit: `intro` carries no long-context variant, so the promotional $8/$30 long-context tier cannot be expressed and `longContext` still shows list. This row stays flagged as `override-drift` by design — the feed reports the promotional $4/$20 while the base is $5/$30, exactly as it does for claude-sonnet-5.",
       "id": "gpt-5.6-sol",
       "providerId": "openai",
       "displayName": "GPT-5.6 Sol",
       "vendorVerified": true,
-      "lastVerified": "2026-08-01",
+      "lastVerified": "2026-08-26",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 95,
       "pricing": {
@@ -176,6 +177,13 @@
         "cachedInput": 0.5,
         "cacheWrite": 6.25,
         "batchDiscount": 0.5,
+        "intro": {
+          "input": 4,
+          "output": 20,
+          "cachedInput": 0.4,
+          "cacheWrite": 5,
+          "until": "2026-11-21"
+        },
         "longContext": {
           "thresholdTokens": 272000,
           "input": 10,
@@ -537,31 +545,46 @@
       "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k25"
     },
     {
+      "$note": "Read on 2026-08-26 in the Singapore/International section of the Model Studio pricing page, which prints \"List price $2.5 / Limited-time 50% off\" for input and \"List price $7.5 / Limited-time 50% off\" for output. The list price is what is recorded here. The 50% discount is deliberately NOT written as `intro`: Alibaba states no end date for it anywhere on the page, and `intro` requires `until` — inventing a deadline would be fabricated provenance. Consequence: while the promotion runs, this row overstates the in-force rate by 50%. That is the safe direction to be wrong, but it is wrong; if Alibaba ever publishes an end date, add `intro` at $1.25/$3.75 with that date. Separately, the per-model page /model-studio/qwen3-7-max shows $1.65/$4.951 — that is the China/Global regional rate, NOT the International (Singapore) rate this catalog uses, so it must not be copied here. That page has no International table at all, which is why the earlier verification against it never settled anything.",
       "id": "dashscope-qwen3.7-max",
       "displayName": "Qwen 3.7 Max",
       "capabilityIndex": 83,
       "vendorVerified": true,
-      "lastVerified": "2026-08-12",
-      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max"
+      "lastVerified": "2026-08-26",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "pricing": {
+        "input": 2.5,
+        "output": 7.5
+      }
     },
     {
+      "$note": "Read on 2026-08-26: the Model Studio pricing page lists qwen3-next-80b-a3b-instruct (International/Singapore, non-thinking) at $0.15 input / $1.2 output per 1M tokens, matching what was already published. The numbers are written out explicitly rather than left to the feed because a bare `vendorVerified` does NOT silence the OpenRouter cross-check — that check only stands down when the override supplies a base price. OpenRouter resells this at $0.1/$1.1; the gap is its own routing margin, not a vendor repricing.",
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "displayName": "Qwen3 Next 80B",
       "capabilityIndex": 70,
       "vendorVerified": true,
-      "lastVerified": "2026-08-12",
-      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
+      "lastVerified": "2026-08-26",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "pricing": {
+        "input": 0.15,
+        "output": 1.2
+      }
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-thinking",
       "displayName": "Qwen3 Next 80B Thinking"
     },
     {
+      "$note": "Read on 2026-08-26: the Model Studio pricing page lists qwen3-vl-235b-a22b-instruct (International/Singapore, non-thinking) at $0.4 input / $1.6 output per 1M tokens, matching what was already published. Written out explicitly for the same reason as the sibling Qwen row — `vendorVerified` alone does not stand the OpenRouter cross-check down, only a supplied base price does. OpenRouter resells at $0.21/$1.9, which is its own margin rather than a vendor move.",
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "displayName": "Qwen3 VL 235B",
       "vendorVerified": true,
-      "lastVerified": "2026-08-12",
-      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
+      "lastVerified": "2026-08-26",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "pricing": {
+        "input": 0.4,
+        "output": 1.6
+      }
     },
     {
       "id": "zai-glm-5.1",
