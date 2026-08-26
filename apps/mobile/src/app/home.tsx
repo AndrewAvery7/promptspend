@@ -25,12 +25,13 @@ import {
   type AppSection,
 } from '@/components/AppChrome';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { ContextualHelpLink } from '@/components/HelpCenter';
 import { TourTarget, useGuidedTour } from '@/components/GuidedTour';
 import { SavedScenarioSheet } from '@/components/SavedScenarioSheet';
 import { WebDocumentHead } from '@/components/WebDocumentHead';
 import { toggleComparisonSelection } from '@/lib/comparison';
 import { compareModelsForInputs, workloadForModel } from '@/lib/promptInput';
-import { APP_ROUTES } from '@/lib/routes';
+import { APP_ROUTES, helpHref } from '@/lib/routes';
 import {
   SCENARIO_PRESETS,
   type SavedScenario,
@@ -196,6 +197,10 @@ export default function HomeScreen() {
                 One private view of the estimate you are shaping, the models you watch, and the next place to
                 save.
               </Text>
+              <ContextualHelpLink
+                label="How to use Home"
+                onPress={() => router.navigate(helpHref('home-overview'))}
+              />
               {catalog && (
                 <FreshnessChip
                   freshness={catalog.freshness()}
@@ -543,6 +548,7 @@ export default function HomeScreen() {
             favoriteIds={launch.favorites}
             onClose={() => setCommandOpen(false)}
             onHome={() => router.navigate(APP_ROUTES.home)}
+            onHelp={(id) => router.navigate(helpHref(id))}
             onReset={() => {
               launch.resetScenario();
               router.navigate(APP_ROUTES.estimate);
@@ -778,7 +784,13 @@ function createStyles(theme: MobileTheme) {
       width: '100%',
     },
     flex: { flex: 1 },
-    brandRow: { alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between' },
+    brandRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+      justifyContent: 'space-between',
+    },
     brandIdentity: { alignItems: 'center', flexDirection: 'row', gap: 11 },
     brandMark: {
       alignItems: 'center',

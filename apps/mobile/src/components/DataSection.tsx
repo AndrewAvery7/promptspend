@@ -6,6 +6,7 @@ import { Pressable, type ScrollView, StyleSheet, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { EmailAlertCenter } from '@/components/EmailAlertCenter';
+import { ContextualHelpLink } from '@/components/HelpCenter';
 import { type Catalog, formatRate } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';
@@ -24,10 +25,12 @@ const SUPPORT_URL = `${SITE_URL}support/`;
 
 export function DataSection({
   catalog,
+  onOpenHelp,
   preferencesToken,
   tourScrollRef,
 }: {
   catalog: Catalog;
+  onOpenHelp: () => void;
   preferencesToken?: string;
   tourScrollRef?: RefObject<ScrollView | null>;
 }) {
@@ -56,6 +59,7 @@ export function DataSection({
         <Text style={styles.summary}>
           Trace every rate to its source, inspect pipeline health, and choose how to follow changes.
         </Text>
+        <ContextualHelpLink label="How to use Data & Alerts" onPress={onOpenHelp} />
       </View>
 
       <EmailAlertCenter catalog={catalog} preferencesToken={preferencesToken} tourScrollRef={tourScrollRef} />

@@ -23,19 +23,18 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText as Text } from '@/components/AppText';
-import { GUIDED_TOUR_STEPS, type GuidedTourStep, type GuidedTourTargetId } from '@/lib/guidedTour';
+import {
+  GUIDED_TOUR_STEPS,
+  padAndClamp,
+  type GuidedTourStep,
+  type GuidedTourTargetId,
+  type GuidedTourTargetRect,
+} from '@/lib/guidedTour';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
-interface TargetRect {
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-}
-
 interface RegisteredTarget {
-  measure: (callback: (rect: TargetRect | null) => void) => void;
+  measure: (callback: (rect: GuidedTourTargetRect | null) => void) => void;
   reveal?: () => void;
 }
 
@@ -53,7 +52,7 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
   const router = useRouter();
   const [active, setActive] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
-  const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
+  const [targetRect, setTargetRect] = useState<GuidedTourTargetRect | null>(null);
   const [targetUnavailable, setTargetUnavailable] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const targets = useRef(new Map<GuidedTourTargetId, RegisteredTarget>());
@@ -188,9 +187,7 @@ export function TourTarget({
   onReveal?: () => void;
   scrollRef?: RefObject<ScrollView | null>;
 }>) {
-  const { currentTargetId, reduceMotion, registerTarget } = useGuidedTour();
-  const { theme } = useMobileTheme();
-  const styles = useMemo(() => createStyles(theme), [theme]);
+  const { reduceMotion, registerTarget } = useGuidedTour();
   const container = useRef<View>(null);
   const contentY = useRef(0);
 
@@ -217,7 +214,6 @@ export function TourTarget({
     });
   }, [enabled, id, onReveal, reduceMotion, registerTarget, scrollRef]);
 
-  const active = enabled && currentTargetId === id;
   return (
     <View
       collapsable={false}
@@ -227,7 +223,6 @@ export function TourTarget({
       ref={container}
     >
       {children}
-      {active && <View pointerEvents="none" style={styles.targetOutline} />}
     </View>
   );
 }
@@ -250,7 +245,7 @@ function GuidedTourOverlay({
   reduceMotion: boolean;
   step: GuidedTourStep;
   stepIndex: number;
-  targetRect: TargetRect | null;
+  targetRect: GuidedTourTargetRect | null;
   targetUnavailable: boolean;
 }) {
   const { theme } = useMobileTheme();
@@ -310,6 +305,13 @@ function GuidedTourOverlay({
               ]}
             />
             <View pointerEvents="auto" style={[styles.targetBlocker, padded]} />
+            <View
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+              pointerEvents="none"
+              style={[styles.targetOutline, padded]}
+              testID="guided-tour-highlight"
+            />
           </>
         ) : (
           <View
@@ -391,31 +393,16 @@ function GuidedTourOverlay({
   );
 }
 
-function padAndClamp(rect: TargetRect, width: number, height: number, padding: number): TargetRect {
-  const x = Math.min(width, Math.max(0, rect.x - padding));
-  const y = Math.min(height, Math.max(0, rect.y - padding));
-  return {
-    x,
-    y,
-    width: Math.max(0, Math.min(width - x, rect.width + padding * 2)),
-    height: Math.max(0, Math.min(height - y, rect.height + padding * 2)),
-  };
-}
-
 function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
     scrim: { backgroundColor: 'rgba(5, 8, 14, 0.62)', position: 'absolute' },
     scrimUnavailable: { backgroundColor: 'rgba(5, 8, 14, 0.30)', position: 'absolute' },
     targetBlocker: { position: 'absolute' },
     targetOutline: {
-      bottom: 0,
       borderColor: theme.accent,
       borderRadius: 18,
       borderWidth: 3,
-      left: 0,
       position: 'absolute',
-      right: 0,
-      top: 0,
       zIndex: 20,
     },
     tourCard: {

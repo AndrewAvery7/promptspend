@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { EstimatorWorkspace } from './index';
+import { EstimatorWorkspace } from './estimate';
 
 export default function DataAndAlertsScreen() {
   const router = useRouter();
