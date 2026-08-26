@@ -4,6 +4,13 @@
 # only safe if something keeps the pins current, which is what this file is for:
 # Dependabot rewrites the SHA *and* the trailing `# v4` comment when a new
 # release lands, so the pin stays both immutable and readable.
+#
+# `directory` is not recursive and this repository is not an npm workspace, so
+# the root entry below sees only the root package.json. Every other package
+# installs from its own lockfile and needs its own entry, or its dependencies
+# drift untouched until a CVE forces the issue — which is exactly what happened
+# in apps/mobile. packages/core is the one exception: it declares no
+# dependencies and ships no lockfile, so there is nothing there to update.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -21,6 +28,96 @@ updates:
       prefix: 'deps'
     # Majors arrive as their own pull requests rather than in a weekly batch:
     # a React or Vite major is a deliberate migration, not a routine bump.
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # The Expo client. Its runtime is not the website's, and verify.yml gives it
+  # its own job — install, tests, typecheck, lint, expo-doctor and a full
+  # export for all three platforms — so a bump here is properly exercised.
+  - package-ecosystem: npm
+    directory: /apps/mobile
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'deps'
+    # Everything Expo ships as a set is excluded, and deliberately so. The
+    # versions of expo, expo-*, react, react-native* and their type packages
+    # are not free choices: they are dictated by the SDK 57 version map that
+    # `npx expo-doctor` fetches at run time and checks the install against.
+    # Dependabot does not read that map, so a bump it considers routine is a
+    # bump expo-doctor considers drift — a red pull request describing a
+    # problem that does not exist. These move together, via `expo install
+    # --fix`, when the SDK itself is upgraded.
+    ignore:
+      - dependency-name: 'expo'
+      - dependency-name: 'expo-*'
+      - dependency-name: '@expo/*'
+      - dependency-name: 'eslint-config-expo'
+      - dependency-name: 'jest-expo'
+      - dependency-name: 'react'
+      - dependency-name: 'react-dom'
+      - dependency-name: '@types/react'
+      - dependency-name: 'react-native'
+      - dependency-name: 'react-native-*'
+      - dependency-name: '@react-native-async-storage/*'
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # The three Workers below share a toolchain — wrangler, vitest and its
+  # workerd pool, typescript — and wrangler in particular moves fast enough
+  # that an unwatched pin goes stale in weeks. Each has its own lockfile and
+  # its own verify.yml job running its tests inside workerd.
+  - package-ecosystem: npm
+    directory: /worker
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'deps'
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /api
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'deps'
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /mcp
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'deps'
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # The VS Code extension. Published to a marketplace rather than deployed, so
+  # nothing else in the repository fails when its dependencies age — which is
+  # precisely why it needs watching rather than trusting to notice.
+  - package-ecosystem: npm
+    directory: /vscode
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'deps'
     groups:
       minor-and-patch:
         update-types:

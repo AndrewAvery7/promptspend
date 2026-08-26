@@ -1,9 +1,12 @@
-import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useMemo, useState, type RefObject } from 'react';
+import { Pressable, type ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { estimateTokens, formatCount, LEARN_MODULES, type Catalog, type Model } from '@promptspend/core';
 
+import { HelpCenter } from '@/components/HelpCenter';
+import { TourTarget } from '@/components/GuidedTour';
+import type { HelpDestination } from '@/lib/helpCenter';
 import { MAX_PASTE_CHARS } from '@/lib/promptInput';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
@@ -11,61 +14,92 @@ import { useMobileTheme } from '@/theme/useMobileTheme';
 const SAMPLE =
   'Compare the cost of running this prompt on several AI models at one million requests per month.';
 
-export function LearnSection({ catalog }: { catalog: Catalog }) {
+export function LearnSection({
+  catalog,
+  initialHelpEntryId,
+  onNavigate,
+  tourScrollRef,
+}: {
+  catalog?: Catalog;
+  initialHelpEntryId?: string;
+  onNavigate: (destination: HelpDestination) => void;
+  tourScrollRef?: RefObject<ScrollView | null>;
+}) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [openId, setOpenId] = useState<string | null>('tokens-101');
   const [text, setText] = useState(SAMPLE);
-  const samples = useMemo(() => pickSampleModels(catalog), [catalog]);
+  const samples = useMemo(() => (catalog ? pickSampleModels(catalog) : []), [catalog]);
 
   return (
     <View style={styles.section}>
       <View style={styles.hero}>
         <Text style={styles.eyebrow}>LEARN</Text>
         <Text accessibilityRole="header" style={styles.title}>
-          Seven lessons that pay for themselves.
+          Understand the cost. Master the app.
         </Text>
         <Text style={styles.summary}>
-          Each lesson is one idea, the number that proves it, and what to do about it.
+          Find step-by-step help, test how tokenizers see the same text, and learn the ideas that move your AI
+          bill.
         </Text>
       </View>
 
-      <View style={styles.lab}>
-        <Text accessibilityRole="header" style={styles.cardTitle}>
-          Try it: the same text is a different token count on every model
-        </Text>
-        <Text style={styles.body}>
-          Paste any sample below. Counts are private, calculated on this device, and deliberately labelled as
-          estimates until exact tokenizers pass physical-device parity tests.
-        </Text>
-        <TextInput
-          accessibilityHint="Counts update while you type and the text never leaves this device"
-          accessibilityLabel="Sample text to tokenize"
-          autoCapitalize="none"
-          autoComplete="off"
-          autoCorrect={false}
-          importantForAutofill="no"
-          maxLength={MAX_PASTE_CHARS}
-          multiline
-          onChangeText={setText}
-          placeholder="Paste text to compare token estimates…"
-          placeholderTextColor={theme.mutedText}
-          spellCheck={false}
-          style={styles.input}
-          textAlignVertical="top"
-          value={text}
-        />
-        <Text style={styles.privateText}>Private: this text is not saved, logged, shared, or uploaded.</Text>
-        <View accessibilityLiveRegion="polite" style={styles.tokenGrid}>
-          {samples.map((model) => (
-            <View key={model.id} style={styles.tokenCell}>
-              <Text style={styles.tokenCount}>≈ {formatCount(estimateTokens(text, model.tokenizer))}</Text>
-              <Text style={styles.tokenModel}>{model.displayName}</Text>
-              <Text style={styles.tokenMethod}>calibrated estimate</Text>
+      <HelpCenter initialEntryId={initialHelpEntryId} onNavigate={onNavigate} />
+
+      {catalog ? (
+        <TourTarget id="learn-token-lab" scrollRef={tourScrollRef}>
+          <View style={styles.lab}>
+            <Text accessibilityRole="header" style={styles.cardTitle}>
+              Try it: the same text is a different token count on every model
+            </Text>
+            <Text style={styles.body}>
+              Paste any sample below. Counts are private, calculated on this device, and deliberately labelled
+              as estimates until exact tokenizers pass physical-device parity tests.
+            </Text>
+            <TextInput
+              accessibilityHint="Counts update while you type and the text never leaves this device"
+              accessibilityLabel="Sample text to tokenize"
+              autoCapitalize="none"
+              autoComplete="off"
+              autoCorrect={false}
+              importantForAutofill="no"
+              maxLength={MAX_PASTE_CHARS}
+              multiline
+              onChangeText={setText}
+              placeholder="Paste text to compare token estimates…"
+              placeholderTextColor={theme.mutedText}
+              spellCheck={false}
+              style={styles.input}
+              textAlignVertical="top"
+              value={text}
+            />
+            <Text style={styles.privateText}>
+              Private: this text is not saved, logged, shared, or uploaded.
+            </Text>
+            <View accessibilityLiveRegion="polite" style={styles.tokenGrid}>
+              {samples.map((model) => (
+                <View key={model.id} style={styles.tokenCell}>
+                  <Text style={styles.tokenCount}>
+                    ≈ {formatCount(estimateTokens(text, model.tokenizer))}
+                  </Text>
+                  <Text style={styles.tokenModel}>{model.displayName}</Text>
+                  <Text style={styles.tokenMethod}>calibrated estimate</Text>
+                </View>
+              ))}
             </View>
-          ))}
+          </View>
+        </TourTarget>
+      ) : (
+        <View accessibilityLiveRegion="polite" style={styles.lab}>
+          <Text accessibilityRole="header" style={styles.cardTitle}>
+            Token Lab is temporarily paused
+          </Text>
+          <Text style={styles.body}>
+            Help and lessons remain available offline. Reconnect and refresh the validated pricing catalog to
+            compare tokenizer estimates.
+          </Text>
         </View>
-      </View>
+      )}
 
       {LEARN_MODULES.map((module) => {
         const expanded = module.id === openId;

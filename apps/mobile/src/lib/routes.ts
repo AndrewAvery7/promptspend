@@ -5,7 +5,11 @@ import type { Href } from 'expo-router';
 export const APP_ROUTES = {
   compare: '/compare' as Href,
   data: '/data' as Href,
-  estimate: '/' as Href,
+  estimate: '/estimate' as Href,
   home: '/home' as Href,
   learn: '/learn' as Href,
 } as const;
+
+export function helpHref(entryId: string): Href {
+  return `${String(APP_ROUTES.learn)}?help=${encodeURIComponent(entryId)}` as Href;
+}
