@@ -1,6 +1,6 @@
 import type { Catalog, Model } from '@promptspend/core';
 
-import { buildTickerItems } from '@/components/AppChrome';
+import { buildTickerItems, isCompactAppChrome, matchesCommandSearch } from '@/components/AppChrome';
 
 const models = [
   {
@@ -47,5 +47,22 @@ describe('mobile pricing ticker', () => {
     } as unknown as Catalog;
 
     expect(buildTickerItems(freeCatalog).some((item) => item.key === 'cheapest')).toBe(false);
+  });
+});
+
+describe('responsive app chrome', () => {
+  test('moves global actions to their own row on phone widths', () => {
+    expect(isCompactAppChrome(360)).toBe(true);
+    expect(isCompactAppChrome(430)).toBe(true);
+    expect(isCompactAppChrome(768)).toBe(false);
+  });
+
+  test('matches natural Help questions without requiring an exact phrase', () => {
+    expect(
+      matchesCommandSearch(
+        'How do I select up to four models? Compare four selected models in one workload.',
+        'how do I compare four models',
+      ),
+    ).toBe(true);
   });
 });

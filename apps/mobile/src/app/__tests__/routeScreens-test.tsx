@@ -3,8 +3,8 @@ import { Catalog, type PricingCatalog } from '@promptspend/core';
 
 import CompareScreen from '../compare';
 import DataAndAlertsScreen from '../data';
+import EstimateScreen from '../estimate';
 import HomeScreen from '../home';
-import EstimateScreen from '../index';
 import LearnScreen from '../learn';
 
 const mockNavigate = jest.fn();
@@ -157,7 +157,7 @@ describe('top-level route screens', () => {
     ['Home', HomeScreen, /Know what your AI decision costs/],
     ['Estimate', EstimateScreen, /Know the tab before you build/],
     ['Compare', CompareScreen, /See the price difference/],
-    ['Learn', LearnScreen, /Seven lessons that pay for themselves/],
+    ['Learn', LearnScreen, /Understand the cost. Master the app/],
     ['Data & Alerts', DataAndAlertsScreen, /Every number shows its work/],
   ])('%s renders its defining product outcome', async (_name, Screen, heading) => {
     const view = await render(<Screen />);

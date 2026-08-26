@@ -7,12 +7,14 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { formatRate, type Catalog } from '@promptspend/core';
 
+import { HELP_ENTRIES, helpSearchText } from '@/lib/helpCenter';
 import type { AccentName, CanvasName, MobileTheme, ThemeMode } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
@@ -21,8 +23,8 @@ export type AppSection = 'estimate' | 'compare' | 'learn' | 'data';
 const SECTIONS: { id: AppSection; label: string }[] = [
   { id: 'estimate', label: 'Estimate' },
   { id: 'compare', label: 'Compare' },
-  { id: 'learn', label: 'Learn' },
   { id: 'data', label: 'Data & Alerts' },
+  { id: 'learn', label: 'Learn' },
 ];
 
 export function PricingTicker({ catalog, onOpenData }: { catalog: Catalog; onOpenData: () => void }) {
@@ -96,13 +98,19 @@ export function GlobalActions({
 }) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const { width } = useWindowDimensions();
+  const compact = isCompactAppChrome(width);
   return (
-    <View style={styles.globalActions}>
-      <MiniAction label="Search" onPress={onSearch} styles={styles} />
-      <MiniAction label="Guide" onPress={onTour} styles={styles} />
-      <MiniAction label="Color" onPress={onAppearance} styles={styles} />
+    <View style={[styles.globalActions, compact && styles.globalActionsCompact]}>
+      <MiniAction compact={compact} label="Search" onPress={onSearch} styles={styles} />
+      <MiniAction compact={compact} label="Guide" onPress={onTour} styles={styles} />
+      <MiniAction compact={compact} label="Color" onPress={onAppearance} styles={styles} />
     </View>
   );
+}
+
+export function isCompactAppChrome(width: number): boolean {
+  return width < 520;
 }
 
 export function AppearanceSheet({ onClose, visible }: { onClose: () => void; visible: boolean }) {
@@ -152,6 +160,7 @@ interface CommandSheetProps {
   catalog: Catalog;
   favoriteIds: readonly string[];
   onClose: () => void;
+  onHelp: (id: string) => void;
   onHome: () => void;
   onReset: () => void;
   onSection: (section: AppSection) => void;
@@ -167,6 +176,7 @@ export function CommandSheet({
   catalog,
   favoriteIds,
   onClose,
+  onHelp,
   onHome,
   onReset,
   onSection,
@@ -185,7 +195,7 @@ export function CommandSheet({
     onClose();
   };
   const commands = useMemo(() => {
-    const base = [
+    const base: CommandItem[] = [
       { id: 'view-home', kind: 'View', label: 'Go to Home Cost Brief', run: onHome },
       ...SECTIONS.map((item) => ({
         id: `view-${item.id}`,
@@ -194,6 +204,13 @@ export function CommandSheet({
         run: () => onSection(item.id),
       })),
       { id: 'tour', kind: 'Guide', label: 'Start the guided tour', run: onTour },
+      {
+        id: 'help-center',
+        kind: 'Help & FAQs',
+        label: 'Open Help & FAQs',
+        terms: 'help support instructions how do I use PromptSpend',
+        run: () => onHelp('start-first-estimate'),
+      },
       { id: 'reset', kind: 'Scenario', label: 'Reset the scenario', run: onReset },
       { id: 'light', kind: 'Appearance', label: 'Use light mode', run: () => appearance.setMode('light') },
       { id: 'dark', kind: 'Appearance', label: 'Use dark mode', run: () => appearance.setMode('dark') },
@@ -240,7 +257,14 @@ export function CommandSheet({
         run: () => appearance.setAccent('violet'),
       },
     ];
-    const models = catalog.primaryModels.flatMap((model) => {
+    const help: CommandItem[] = HELP_ENTRIES.map((entry) => ({
+      id: `help-${entry.id}`,
+      kind: 'Help & FAQs',
+      label: entry.question,
+      terms: helpSearchText(entry),
+      run: () => onHelp(entry.id),
+    }));
+    const models: CommandItem[] = catalog.primaryModels.flatMap((model) => {
       const selected = selectedComparisonIds.includes(model.id);
       const watched = favoriteIds.includes(model.id);
       return [
@@ -264,13 +288,14 @@ export function CommandSheet({
         },
       ];
     });
-    return [...base, ...models];
+    return [...base, ...help, ...models];
   }, [
     appearance,
     catalog,
     favoriteIds,
     onReset,
     onHome,
+    onHelp,
     onSection,
     onSelectModel,
     onToggleComparison,
@@ -280,7 +305,7 @@ export function CommandSheet({
   ]);
   const matches = commands
     .filter((command) =>
-      `${command.label} ${command.kind}`.toLowerCase().includes(query.trim().toLowerCase()),
+      matchesCommandSearch(`${command.label} ${command.kind} ${command.terms ?? ''}`, query),
     )
     .slice(0, 15);
 
@@ -297,7 +322,14 @@ export function CommandSheet({
         value={query}
       />
       <ScrollView keyboardShouldPersistTaps="handled" style={styles.commandList}>
-        {matches.length === 0 && <Text style={styles.sheetNote}>No matches.</Text>}
+        {matches.length === 0 && (
+          <View style={styles.noMatches}>
+            <Text style={styles.sheetNote}>No exact match.</Text>
+            <Text style={styles.sheetNote}>
+              Try tokens, compare, country, alerts, privacy, sharing, or saved work.
+            </Text>
+          </View>
+        )}
         {matches.map((command) => (
           <Pressable
             accessibilityRole="button"
@@ -354,12 +386,52 @@ export function buildTickerItems(catalog: Catalog): { key: string; text: string 
   return items;
 }
 
-function MiniAction({ label, onPress, styles }: { label: string; onPress: () => void; styles: Styles }) {
+interface CommandItem {
+  id: string;
+  kind: string;
+  label: string;
+  run: () => void;
+  terms?: string;
+}
+
+const SEARCH_STOP_WORDS = new Set(['a', 'an', 'and', 'do', 'how', 'i', 'is', 'of', 'the', 'to', 'what']);
+
+export function matchesCommandSearch(haystack: string, query: string): boolean {
+  const normalizedQuery = normalizeSearch(query);
+  if (!normalizedQuery) return true;
+  const normalizedHaystack = normalizeSearch(haystack);
+  if (normalizedHaystack.includes(normalizedQuery)) return true;
+  const terms = normalizedQuery.split(' ').filter((term) => term.length > 1 && !SEARCH_STOP_WORDS.has(term));
+  return terms.length > 0 && terms.every((term) => normalizedHaystack.includes(term));
+}
+
+function normalizeSearch(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function MiniAction({
+  compact,
+  label,
+  onPress,
+  styles,
+}: {
+  compact: boolean;
+  label: string;
+  onPress: () => void;
+  styles: Styles;
+}) {
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
-      style={({ pressed }) => [styles.miniAction, pressed && styles.pressed]}
+      style={({ pressed }) => [
+        styles.miniAction,
+        compact && styles.miniActionCompact,
+        pressed && styles.pressed,
+      ]}
     >
       <Text style={styles.miniActionText}>{label}</Text>
     </Pressable>
@@ -487,6 +559,7 @@ function createStyles(theme: MobileTheme) {
     },
     tickerPauseText: { color: theme.accent, fontSize: 10, fontWeight: '800' },
     globalActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'flex-end' },
+    globalActionsCompact: { alignSelf: 'stretch', flexGrow: 1, flexWrap: 'nowrap', width: '100%' },
     miniAction: {
       alignItems: 'center',
       borderColor: theme.borderStrong,
@@ -496,6 +569,7 @@ function createStyles(theme: MobileTheme) {
       minHeight: 44,
       paddingHorizontal: 10,
     },
+    miniActionCompact: { flex: 1, minWidth: 0, paddingHorizontal: 6 },
     miniActionText: { color: theme.text, fontSize: 11, fontWeight: '800' },
     backdrop: { backgroundColor: 'rgba(0,0,0,0.48)', flex: 1, justifyContent: 'flex-end' },
     sheet: {
@@ -540,6 +614,7 @@ function createStyles(theme: MobileTheme) {
       paddingHorizontal: 14,
     },
     commandList: { maxHeight: 440 },
+    noMatches: { gap: 5, paddingVertical: 12 },
     command: {
       alignItems: 'center',
       borderBottomColor: theme.border,

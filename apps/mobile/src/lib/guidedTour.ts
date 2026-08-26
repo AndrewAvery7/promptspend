@@ -17,6 +17,13 @@ export interface GuidedTourStep {
   title: string;
 }
 
+export interface GuidedTourTargetRect {
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+}
+
 export const GUIDED_TOUR_STEPS: readonly GuidedTourStep[] = [
   {
     id: 'cost-brief',
@@ -43,14 +50,6 @@ export const GUIDED_TOUR_STEPS: readonly GuidedTourStep[] = [
     body: 'Compare ranks as many as four models from lowest to highest cost, while keeping every workload assumption identical and every pricing source inspectable.',
   },
   {
-    id: 'learn',
-    route: APP_ROUTES.learn,
-    section: 'Learn',
-    targetId: 'learn-token-lab',
-    title: 'See why the numbers move',
-    body: 'The Token Lab and short lessons explain tokenization, output premiums, conversation growth, caching, and the assumptions behind an estimate.',
-  },
-  {
     id: 'alerts',
     route: APP_ROUTES.data,
     section: 'Data & Alerts',
@@ -59,11 +58,35 @@ export const GUIDED_TOUR_STEPS: readonly GuidedTourStep[] = [
     body: 'Inspect catalog health and provenance, then configure private email alerts for every model or only the models that matter to you.',
   },
   {
+    id: 'learn',
+    route: APP_ROUTES.learn,
+    section: 'Learn',
+    targetId: 'learn-token-lab',
+    title: 'See why the numbers move',
+    body: 'Search step-by-step Help and FAQs, use the Token Lab, and explore seven short lessons about tokenization, output premiums, conversation growth, and caching.',
+  },
+  {
     id: 'global-tools',
-    route: APP_ROUTES.data,
+    route: APP_ROUTES.learn,
     section: 'Every screen',
     targetId: 'global-tools',
     title: 'Search, revisit the guide, or make it yours',
     body: 'Search jumps to models and commands, Guide is always replayable, and Color controls light, dark, accent, and canvas preferences stored only on this device.',
   },
 ] as const;
+
+export function padAndClamp(
+  rect: GuidedTourTargetRect,
+  width: number,
+  height: number,
+  padding: number,
+): GuidedTourTargetRect {
+  const x = Math.min(width, Math.max(0, rect.x - padding));
+  const y = Math.min(height, Math.max(0, rect.y - padding));
+  return {
+    x,
+    y,
+    width: Math.max(0, Math.min(width - x, rect.width + padding * 2)),
+    height: Math.max(0, Math.min(height - y, rect.height + padding * 2)),
+  };
+}

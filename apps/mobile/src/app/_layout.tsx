@@ -1,11 +1,12 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import type { ColorValue } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LaunchStateProvider } from '@/state/useLaunchState';
 import { GuidedTourProvider } from '@/components/GuidedTour';
-import { FONT_FAMILIES } from '@/components/AppText';
+import { AppText, FONT_FAMILIES } from '@/components/AppText';
 import { MobileThemeProvider, useMobileTheme } from '@/theme/useMobileTheme';
 
 // Expo Router reads this before the tab navigator mounts. Keeping Home as the
@@ -40,15 +41,21 @@ function ThemedTabs() {
           tabBarActiveTintColor: theme.accent,
           tabBarHideOnKeyboard: true,
           tabBarInactiveTintColor: theme.mutedText,
-          tabBarItemStyle: { minHeight: 52, paddingVertical: 4 },
-          tabBarLabelStyle: { fontFamily: FONT_FAMILIES.body, fontSize: 11, fontWeight: '600' },
+          tabBarItemStyle: { minHeight: 58, paddingHorizontal: 0, paddingVertical: 4 },
+          tabBarLabelStyle: {
+            fontFamily: FONT_FAMILIES.body,
+            fontSize: 11,
+            fontWeight: '600',
+            lineHeight: 13,
+          },
           tabBarStyle: {
             backgroundColor: theme.surface,
             borderTopColor: theme.border,
-            minHeight: 64,
+            minHeight: 72,
           },
         }}
       >
+        <Tabs.Screen name="index" options={{ href: null }} />
         <Tabs.Screen
           name="home"
           options={{
@@ -60,7 +67,7 @@ function ThemedTabs() {
           }}
         />
         <Tabs.Screen
-          name="index"
+          name="estimate"
           options={{
             tabBarAccessibilityLabel: 'Estimate one model',
             tabBarIcon: ({ color, focused, size }) => (
@@ -80,6 +87,17 @@ function ThemedTabs() {
           }}
         />
         <Tabs.Screen
+          name="data"
+          options={{
+            tabBarAccessibilityLabel: 'Data and Alerts',
+            tabBarIcon: ({ color, focused, size }) => (
+              <Ionicons color={color} name={focused ? 'pulse' : 'pulse-outline'} size={size} />
+            ),
+            tabBarLabel: ({ color }) => <DataAlertsTabLabel color={color} />,
+            title: 'Data & Alerts',
+          }}
+        />
+        <Tabs.Screen
           name="learn"
           options={{
             tabBarAccessibilityLabel: 'Learn about AI costs',
@@ -89,17 +107,19 @@ function ThemedTabs() {
             title: 'Learn',
           }}
         />
-        <Tabs.Screen
-          name="data"
-          options={{
-            tabBarAccessibilityLabel: 'Data and Alerts',
-            tabBarIcon: ({ color, focused, size }) => (
-              <Ionicons color={color} name={focused ? 'pulse' : 'pulse-outline'} size={size} />
-            ),
-            title: 'Data & Alerts',
-          }}
-        />
       </Tabs>
     </>
+  );
+}
+
+function DataAlertsTabLabel({ color }: { color: ColorValue }) {
+  return (
+    <AppText
+      maxFontSizeMultiplier={1.35}
+      numberOfLines={2}
+      style={{ color, fontSize: 10, fontWeight: '600', lineHeight: 11, textAlign: 'center' }}
+    >
+      Data &amp;{`\n`}Alerts
+    </AppText>
   );
 }
