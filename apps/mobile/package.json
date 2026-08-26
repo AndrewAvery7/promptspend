@@ -63,6 +63,10 @@
     ]
   },
   "private": true,
+  "overrides": {
+    "react-native-reanimated": "4.5.3",
+    "react-native-worklets": "0.10.1"
+  },
   "allowScripts": {
     "unrs-resolver@1.12.2": true
   }
