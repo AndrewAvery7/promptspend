@@ -540,3 +540,13 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `dashscope-qwen3.7-max` — provenance.needsReview: true → —
 - **Review** `dashscope-qwen3.7-max` — provenance.reviewNote: OpenRouter disagrees (41%): $1.475/$4.425 vs $2.5/$7.5 → —
 - **Review** `dashscope-qwen3.7-max` — provenance.verifiedUrl: https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max → https://www.alibabacloud.com/help/en/model-studio/model-pricing
+
+## 2026-08-28
+
+- **Added** `mistral-mistral-medium-3` — Mistral Medium 3 ($1.5 in / $7.5 out per 1M)
+- **Added** `zai-glm-5.3` — GLM 5.3 ($1.4 in / $4.4 out per 1M)
+- **Metadata** `xai-grok-2` — status: current → legacy
+- **Review** `xai-grok-2` — provenance.needsReview: — → true
+- **Review** `xai-grok-2` — provenance.reviewNote: — → no longer listed upstream — confirm retirement before removing
+- **Review** `xai-grok-2` — provenance.stale: — → true
+- **Review** `xai-grok-2` — provenance.statusBeforeStale: — → current

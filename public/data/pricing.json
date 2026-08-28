@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-27T14:39:34.480Z",
+  "generatedAt": "2026-08-28T14:59:33.154Z",
   "providers": [
     {
       "id": "anthropic",
@@ -99,7 +99,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 64000,
       "capabilityIndex": 64
@@ -127,7 +127,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 64000,
       "capabilityIndex": 80
@@ -496,7 +496,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 8000,
       "capabilityIndex": 75
@@ -551,7 +551,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 65536
     },
@@ -633,7 +633,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27",
+        "lastVerified": "2026-08-28",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19",
         "reviewCodes": [
@@ -666,7 +666,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 8192
     },
@@ -692,7 +692,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 163840,
       "capabilityIndex": 74
@@ -874,7 +874,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 65535
     },
@@ -930,7 +930,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 65536
     },
@@ -1385,7 +1385,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27",
+        "lastVerified": "2026-08-28",
         "lastChanged": "2026-08-23",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
@@ -1536,7 +1536,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 8192
     },
@@ -1563,7 +1563,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 8192
     },
@@ -1619,7 +1619,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1646,10 +1646,42 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 262144,
       "capabilityIndex": 71
+    },
+    {
+      "id": "mistral-mistral-medium-3",
+      "providerId": "mistral",
+      "displayName": "Mistral Medium 3",
+      "status": "current",
+      "contextWindow": 262144,
+      "pricing": {
+        "input": 1.5,
+        "output": 7.5
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.7,
+        "cjkCharsPerToken": 1.8,
+        "note": "Estimate — Mistral tokenizer"
+      },
+      "capabilities": {
+        "reasoning": false,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-08-28",
+        "needsReview": true,
+        "reviewNote": "OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5; new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "openrouter-disagreement",
+          "new-model"
+        ]
+      },
+      "maxOutput": 262144
     },
     {
       "id": "mistral-mistral-medium-3-5",
@@ -1673,7 +1705,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 262144,
       "capabilityIndex": 68
@@ -1701,7 +1733,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 262144
     },
@@ -1900,7 +1932,7 @@
       "id": "xai-grok-2",
       "providerId": "xai",
       "displayName": "Grok 2",
-      "status": "current",
+      "status": "legacy",
       "contextWindow": 131072,
       "pricing": {
         "input": 2,
@@ -1918,7 +1950,14 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-27",
+        "statusBeforeStale": "current",
+        "stale": true,
+        "needsReview": true,
+        "reviewNote": "no longer listed upstream — confirm retirement before removing",
+        "reviewCodes": [
+          "upstream-missing"
+        ]
       },
       "maxOutput": 131072
     },
@@ -1945,7 +1984,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 131072
     },
@@ -1971,7 +2010,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 256000
     },
@@ -1998,7 +2037,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 2000000,
       "capabilityIndex": 66
@@ -2215,7 +2254,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27"
+        "lastVerified": "2026-08-28"
       },
       "maxOutput": 128000,
       "capabilityIndex": 78
@@ -2248,6 +2287,38 @@
       },
       "maxOutput": 128000,
       "capabilityIndex": 80
+    },
+    {
+      "id": "zai-glm-5.3",
+      "providerId": "zai",
+      "displayName": "GLM 5.3",
+      "status": "current",
+      "contextWindow": 1000000,
+      "pricing": {
+        "input": 1.4,
+        "output": 4.4,
+        "cachedInput": 0.26
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — GLM tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-08-28",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 128000
     }
   ]
 }
