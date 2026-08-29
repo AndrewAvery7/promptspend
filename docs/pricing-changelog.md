@@ -550,3 +550,9 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `xai-grok-2` — provenance.reviewNote: — → no longer listed upstream — confirm retirement before removing
 - **Review** `xai-grok-2` — provenance.stale: — → true
 - **Review** `xai-grok-2` — provenance.statusBeforeStale: — → current
+
+## 2026-08-29
+
+- **Review** `mistral-mistral-medium-3` — provenance.reviewNote: OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5; new model discovered by pattern match — confirm name and rates → OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5
+- **Review** `zai-glm-5.3` — provenance.needsReview: true → —
+- **Review** `zai-glm-5.3` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
