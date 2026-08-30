@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
-  <img src="https://img.shields.io/badge/models-74-2456E6.svg" alt="74 models tracked">
+  <img src="https://img.shields.io/badge/models-75-2456E6.svg" alt="75 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
   <img src="https://img.shields.io/badge/tests-997-blue.svg" alt="997 tests">
   <img src="https://img.shields.io/badge/initial%20payload-87%20KB%20gzip-blue.svg" alt="87 KB gzip initial payload">

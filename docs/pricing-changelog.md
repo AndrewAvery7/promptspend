@@ -556,3 +556,27 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `mistral-mistral-medium-3` — provenance.reviewNote: OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5; new model discovered by pattern match — confirm name and rates → OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5
 - **Review** `zai-glm-5.3` — provenance.needsReview: true → —
 - **Review** `zai-glm-5.3` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+
+## 2026-08-30
+
+- **Added** `xai-grok-4.20` — Grok 4.20 ($1.25 in / $2.5 out per 1M)
+- **Coverage** `mistral-mistral-large-3` — cachedInput now tracked: — → 0.05
+- **Coverage** `mistral-mistral-medium-3-5` — cachedInput now tracked: — → 0.15
+- **Price** `xai-grok-3` — input down 3 → 1.25
+- **Price** `xai-grok-3` — output down 15 → 2.5
+- **Price** `xai-grok-3` — cachedInput down 0.75 → 0.2
+- **Price** `xai-grok-4` — input down 3 → 1.25
+- **Price** `xai-grok-4` — output down 15 → 2.5
+- **Coverage** `xai-grok-4` — cachedInput now tracked: — → 0.2
+- **Price** `xai-grok-4-1-fast` — input up 0.2 → 1.25
+- **Price** `xai-grok-4-1-fast` — output up 0.5 → 2.5
+- **Price** `xai-grok-4-1-fast` — cachedInput up 0.05 → 0.2
+- **Review** `xai-grok-3` — provenance.needsReview: — → true
+- **Review** `xai-grok-3` — provenance.reviewNote: — → price moved 83% in one day ($3/$15 -> $1.25/$2.5)
+- **Review** `xai-grok-3` — provenance.lastChanged: — → 2026-08-30
+- **Review** `xai-grok-4` — provenance.needsReview: — → true
+- **Review** `xai-grok-4` — provenance.reviewNote: — → price moved 83% in one day ($3/$15 -> $1.25/$2.5)
+- **Review** `xai-grok-4` — provenance.lastChanged: — → 2026-08-30
+- **Review** `xai-grok-4-1-fast` — provenance.needsReview: — → true
+- **Review** `xai-grok-4-1-fast` — provenance.reviewNote: — → price moved 84% in one day ($0.2/$0.5 -> $1.25/$2.5)
+- **Review** `xai-grok-4-1-fast` — provenance.lastChanged: — → 2026-08-30
