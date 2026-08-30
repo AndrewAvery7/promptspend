@@ -7,9 +7,17 @@ on their own schedule and are not releases.
 
 ## Unreleased
 
-Work that landed after `v0.6.0` was tagged. The tag points at `fd54a49` and
-these commits came after it, so they are recorded here rather than folded into
-a release that does not contain them.
+## [0.7.0] — 2026-08-30
+
+Everything below landed after `v0.6.0` was tagged at `fd54a49`. A minor rather
+than a patch release: the mobile foundation, country filters, cost receipts,
+scenario intelligence, the launch notify list and private pasted-prompt
+estimation are all new capability, not repairs.
+
+This is also the first release the project can be **cited** by. `CITATION.cff`
+and `.zenodo.json` mean the tag is archived and given a DOI, so a cost estimate
+published elsewhere can point at the exact version of the engine and the price
+catalog it relied on.
 
 ### Added
 
