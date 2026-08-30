@@ -17,7 +17,7 @@ authors:
 repository-code: 'https://github.com/AndrewAvery7/promptspend'
 url: 'https://promptspend.com'
 license: MIT
-version: 0.6.1
+version: 0.7.0
 date-released: '2026-08-30'
 keywords:
   - large language models
