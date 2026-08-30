@@ -257,6 +257,70 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(warm.review.map((item) => item.id)).toEqual(['moonshot-kimi-k2.6']);
   });
 
+  it('folds a re-keyed upstream duplicate into the existing id instead of colliding on URL slug', () => {
+    // LiteLLM occasionally lists the same model under a differently-punctuated
+    // key (a dot where a dash used to be). Both are valid catalog ids on their
+    // own, but they collapse to the identical URL slug — assertUniqueSlugs in
+    // src/lib/seo/slug.ts is what catches that at build time — so a same-priced
+    // dot-form arriving later must be folded into the id already published,
+    // not minted as a second "new" model.
+    const mistralAllowlist: Allowlist = {
+      ...ALLOWLIST,
+      providers: [...ALLOWLIST.providers, { id: 'mistral', name: 'Mistral AI', country: 'FR' }],
+      families: [
+        ...ALLOWLIST.families,
+        {
+          id: 'mistral',
+          providerId: 'mistral',
+          include: ['^mistral/mistral-medium-\\d(\\.\\d|-\\d)?$'],
+          stripPrefix: 'mistral/',
+          tokenizer: { kind: 'approx', charsPerToken: 3.7, cjkCharsPerToken: 1.8 },
+          capabilities: { reasoning: false, vision: true },
+        },
+      ],
+    };
+    const previous: PricingCatalog = {
+      schemaVersion: SCHEMA_VERSION,
+      generatedAt: '2026-08-01T06:00:00.000Z',
+      providers: mistralAllowlist.providers,
+      models: [
+        {
+          id: 'mistral-mistral-medium-3-5',
+          providerId: 'mistral',
+          displayName: 'Mistral Medium 3.5',
+          status: 'current',
+          contextWindow: 262_144,
+          pricing: { input: 1.5, output: 7.5 },
+          tokenizer: { kind: 'approx', charsPerToken: 3.7, cjkCharsPerToken: 1.8 },
+          capabilities: { reasoning: false, vision: true },
+          provenance: { source: 'litellm', lastVerified: '2026-08-01' },
+        },
+      ],
+    };
+    const feed = fromLiteLLM(
+      {
+        'mistral/mistral-medium-3.5': {
+          mode: 'chat',
+          input_cost_per_token: 1.5e-6,
+          output_cost_per_token: 7.5e-6,
+        },
+      },
+      mistralAllowlist,
+    );
+    const { catalog, review } = mergeCatalog({
+      litellm: feed,
+      openrouter: new Map(),
+      allowlist: mistralAllowlist,
+      overrides: [],
+      previous,
+      generatedAt,
+    });
+    const mistralModels = catalog.models.filter((m) => m.providerId === 'mistral');
+    expect(mistralModels).toHaveLength(1);
+    expect(mistralModels[0]!.id).toBe('mistral-mistral-medium-3-5');
+    expect(review).toEqual([]);
+  });
+
   it('keeps a previously published model when the feed stops listing it', () => {
     // One truncated upstream response used to be enough to delete most of the
     // catalog — and because removals did not trip the review rule, the deletion

@@ -20,6 +20,7 @@
  */
 import type { Model, PricingCatalog } from '../../src/lib/pricing/types';
 import { SCHEMA_VERSION } from '../../src/lib/pricing/types';
+import { modelSlug } from '../../src/lib/seo/slug';
 import { pricingChanged } from './diff';
 import {
   comparisonKey,
@@ -105,7 +106,20 @@ export function mergeCatalog(input: MergeInput): MergeResult {
   }
   const overrideById = new Map(overrides.map((o) => [o.id, o]));
   const previousById = new Map((previous?.models ?? []).map((m) => [m.id, m]));
-  const feedById = new Map(litellm.map((r) => [r.id, r]));
+
+  // Upstream occasionally re-keys a model with different punctuation (a dot
+  // where a dash used to be, or vice versa) without it being a new model at
+  // all. Ids are permanent once published (see src/lib/seo/slug.ts), so when
+  // a feed row we don't already publish collides on URL slug with one we do,
+  // treat it as that same model rather than minting a second, colliding id.
+  const publishedIdBySlug = new Map<string, string>();
+  for (const id of previousById.keys()) publishedIdBySlug.set(modelSlug(id), id);
+  const reconciledLitellm = litellm.map((rate) => {
+    if (previousById.has(rate.id)) return rate;
+    const knownId = publishedIdBySlug.get(modelSlug(rate.id));
+    return knownId ? { ...rate, id: knownId } : rate;
+  });
+  const feedById = new Map(reconciledLitellm.map((r) => [r.id, r]));
   const review: ReviewItem[] = [];
   const corrections: CorrectionItem[] = [];
   const staleIds: string[] = [];
