@@ -1,7 +1,7 @@
 cff-version: 1.2.0
-message: "If you use PromptSpend or its pricing catalog in your work, please cite it as below."
+message: 'If you use PromptSpend or its pricing catalog in your work, please cite it as below.'
 type: software
-title: "PromptSpend"
+title: 'PromptSpend'
 abstract: >-
   A web application and open dataset for estimating, comparing and understanding
   what large language model API usage will cost. Prices are re-checked every
@@ -13,12 +13,12 @@ abstract: >-
 authors:
   - family-names: Avery
     given-names: Andrew
-    orcid: "https://orcid.org/0009-0005-5476-1213"
-repository-code: "https://github.com/AndrewAvery7/promptspend"
-url: "https://promptspend.com"
+    orcid: 'https://orcid.org/0009-0005-5476-1213'
+repository-code: 'https://github.com/AndrewAvery7/promptspend'
+url: 'https://promptspend.com'
 license: MIT
 version: 0.6.1
-date-released: "2026-08-30"
+date-released: '2026-08-30'
 keywords:
   - large language models
   - api pricing
