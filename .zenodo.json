@@ -1,0 +1,22 @@
+{
+  "title": "PromptSpend: an LLM cost estimator over a self-verifying pricing catalog",
+  "description": "<p>A web application and open dataset for estimating, comparing and understanding what large language model API usage will cost.</p><p>Prices are re-checked every morning by an automated pipeline that reconciles two independent upstream sources against hand-verified vendor overrides. Every price carries its source URL and the date it was last confirmed, disagreements between sources are surfaced for review rather than silently resolved, and every change to the catalog lands as a reviewable commit &mdash; so the provenance of any figure can be reconstructed from the repository history.</p><p>The release ships the web application, a public keyless pricing API, an MCP (Model Context Protocol) server for coding agents, and a VS Code extension that shows model prices and their last-confirmed date inline in the editor.</p>",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Avery, Andrew",
+      "orcid": "0009-0005-5476-1213"
+    }
+  ],
+  "keywords": [
+    "large language models",
+    "API pricing",
+    "cost estimation",
+    "tokenization",
+    "open dataset",
+    "data provenance",
+    "reproducibility"
+  ]
+}

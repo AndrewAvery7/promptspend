@@ -11,6 +11,15 @@ Work that landed after `v0.6.0` was tagged. The tag points at `fd54a49` and
 these commits came after it, so they are recorded here rather than folded into
 a release that does not contain them.
 
+### Added
+
+- **`CITATION.cff` and `.zenodo.json`.** The project can now be cited. GitHub
+  renders a "Cite this repository" button from the first; the second tells
+  Zenodo how to describe each release it archives, so releases receive a DOI
+  attributed to an ORCID iD rather than to a bare GitHub username. The pricing
+  catalog is deposited separately as a dated dataset, so that published cost
+  estimates can cite the price basis they actually relied on.
+
 ### Fixed
 
 - **The results panel announced a price change no vendor had made.** The chip
