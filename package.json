@@ -1,6 +1,6 @@
 {
   "name": "promptspend",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": false,
   "description": "Estimate, compare and understand LLM API costs — with pricing that syncs itself daily.",
   "license": "MIT",
