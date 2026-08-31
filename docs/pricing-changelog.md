@@ -580,3 +580,16 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `xai-grok-4-1-fast` — provenance.needsReview: — → true
 - **Review** `xai-grok-4-1-fast` — provenance.reviewNote: — → price moved 84% in one day ($0.2/$0.5 -> $1.25/$2.5)
 - **Review** `xai-grok-4-1-fast` — provenance.lastChanged: — → 2026-08-30
+
+## 2026-08-31
+
+- **Review** `moonshot-kimi-k2.5` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k2.5` — provenance.reviewNote: — → OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3
+- **Review** `xai-grok-3` — provenance.needsReview: true → —
+- **Review** `xai-grok-3` — provenance.reviewNote: price moved 83% in one day ($3/$15 -> $1.25/$2.5) → —
+- **Review** `xai-grok-4` — provenance.needsReview: true → —
+- **Review** `xai-grok-4` — provenance.reviewNote: price moved 83% in one day ($3/$15 -> $1.25/$2.5) → —
+- **Review** `xai-grok-4-1-fast` — provenance.needsReview: true → —
+- **Review** `xai-grok-4-1-fast` — provenance.reviewNote: price moved 84% in one day ($0.2/$0.5 -> $1.25/$2.5) → —
+- **Review** `xai-grok-4.20` — provenance.needsReview: true → —
+- **Review** `xai-grok-4.20` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
