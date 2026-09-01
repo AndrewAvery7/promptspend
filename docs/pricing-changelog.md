@@ -593,3 +593,36 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `xai-grok-4-1-fast` — provenance.reviewNote: price moved 84% in one day ($0.2/$0.5 -> $1.25/$2.5) → —
 - **Review** `xai-grok-4.20` — provenance.needsReview: true → —
 - **Review** `xai-grok-4.20` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+
+## 2026-09-01
+
+- **Price** `claude-sonnet-5` — input down 3 → 2
+- **Price** `claude-sonnet-5` — output down 15 → 10
+- **Price** `claude-sonnet-5` — cachedInput down 0.3 → 0.2
+- **Price** `claude-sonnet-5` — cacheWrite down 3.75 → 2.5
+- **Coverage** `claude-sonnet-5` — intro.input no longer published: 2 → —
+- **Coverage** `claude-sonnet-5` — intro.output no longer published: 10 → —
+- **Coverage** `claude-sonnet-5` — intro.until no longer published: 2026-08-31 → —
+- **Review** `claude-fable-5` — provenance.needsReview: — → true
+- **Review** `claude-fable-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-haiku-4-5` — provenance.needsReview: — → true
+- **Review** `claude-haiku-4-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-8` — provenance.needsReview: — → true
+- **Review** `claude-opus-4-8` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-opus-5` — provenance.needsReview: — → true
+- **Review** `claude-opus-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-5` — provenance.needsReview: true → —
+- **Review** `claude-sonnet-5` — provenance.reviewNote: vendor override differs from the automated feed (33%): $2/$10 vs $3/$15 → —
+- **Review** `claude-sonnet-5` — provenance.lastChanged: 2026-08-20 → 2026-09-01
+- **Review** `gpt-5.4` — provenance.needsReview: — → true
+- **Review** `gpt-5.4` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4-mini` — provenance.needsReview: — → true
+- **Review** `gpt-5.4-mini` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4-nano` — provenance.needsReview: — → true
+- **Review** `gpt-5.4-nano` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.5` — provenance.needsReview: — → true
+- **Review** `gpt-5.5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.6-luna` — provenance.needsReview: — → true
+- **Review** `gpt-5.6-luna` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.6-terra` — provenance.needsReview: — → true
+- **Review** `gpt-5.6-terra` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
