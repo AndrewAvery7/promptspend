@@ -24,6 +24,7 @@
   <a href="https://promptspend.com"><b>&rarr; Open PromptSpend</b></a>
   &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no tracking
   &nbsp;·&nbsp; <a href="https://promptspend.com/writing/what-llm-cost-calculators-get-wrong/">Writing: What LLM Cost Calculators Get Wrong</a>
+  &nbsp;·&nbsp; <a href="https://promptspend.com/writing/2026-08-price-movement-report/">August 2026 Price Movement Report</a>
 </p>
 
 <!-- PROMO-VIDEO. A bare user-attachments URL on its own line: GitHub turns that
