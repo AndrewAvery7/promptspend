@@ -596,6 +596,15 @@ value that moves in the same run as its source URL is a correction.
 
 ## 2026-09-01
 
+> **Not a vendor price cut.** Anthropic did not lower Sonnet 5's price today.
+> The $2/$10 introductory window ran through 2026-08-31 with a step-up to
+> $3/$15 planned for this morning; the vendor cancelled it — the pricing page
+> now states the introductory rate "is now the standard price" and the increase
+> "will not occur". The rows below fold the intro into the base price and drop
+> the expired block (which is also what had failed the morning's catalog
+> validation, holding the whole sync back). What you are charged is unchanged:
+> $2/$10 yesterday, $2/$10 today.
+
 - **Price** `claude-sonnet-5` — input down 3 → 2
 - **Price** `claude-sonnet-5` — output down 15 → 10
 - **Price** `claude-sonnet-5` — cachedInput down 0.3 → 0.2
