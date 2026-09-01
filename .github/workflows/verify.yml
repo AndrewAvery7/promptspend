@@ -11,18 +11,21 @@ name: Verify
 # The Expo app in apps/mobile is not part of what deploy.yml publishes: the
 # artifact is dist/, built by the `verify` job below. But the deploy depended
 # on this whole workflow, so the mobile job gated it too — and the mobile job
-# ends in `npx expo-doctor`, unpinned, checking installed versions against a
-# version map fetched from Expo at run time. That check can turn red on a
-# morning when nothing in the repository changed, and it did: it failed the
-# Pages deploy on 2026-08-17, 08-18, 08-19 and 08-22, each time skipping
-# `package` and `deploy` and leaving the site serving a stale catalog while
-# every sync went green. Ambient drift in a mobile app's patch versions is not
-# a reason to stop publishing prices.
+# used to end in `npx expo-doctor`, unpinned, checking installed versions
+# against a version map fetched from Expo at run time. That check can turn
+# red on a morning when nothing in the repository changed, and it did: it
+# failed the Pages deploy on 2026-08-17, 08-18, 08-19 and 08-22, each time
+# skipping `package` and `deploy` and leaving the site serving a stale catalog
+# while every sync went green. Ambient drift in a mobile app's patch versions
+# is not a reason to stop publishing prices.
 #
-# So deploy.yml passes `site_only: true` and the mobile job sits it out. It
-# still runs on every push and pull request through ci.yml, so the drift is as
-# visible as it ever was — it just cannot hold the catalog hostage. Nothing
-# that gates the published artifact was relaxed.
+# Two changes came of that. deploy.yml passes `site_only: true`, so the
+# mobile job cannot hold the catalog hostage; and on 2026-09-01, after drift
+# marked red the merge of a content-only report and every push to main with
+# it, expo-doctor left this workflow for expo-drift.yml and a weekly
+# schedule. Every job here is now decided by the commit alone. The drift is
+# still caught, weekly, where its red cannot be mistaken for a broken push —
+# and nothing that gates the published artifact was relaxed.
 on:
   workflow_call:
     inputs:
@@ -185,9 +188,11 @@ jobs:
   # successful website build says nothing about whether Metro can bundle the
   # same shared engine for Hermes, so typecheck/lint alone are not enough here.
   mobile:
-    # The only job deploy.yml skips. It verifies an app that deploy.yml does
-    # not publish, and it is the one job whose verdict depends on a registry
-    # rather than on the commit — see the note at the top of this file.
+    # The only job deploy.yml skips: it verifies an app that deploy.yml does
+    # not publish. Every step here is decided by the commit alone — the one
+    # that was not, expo-doctor's registry-fetched version map, moved to its
+    # own weekly workflow in expo-drift.yml. See the note at the top of this
+    # file.
     if: ${{ !inputs.site_only }}
     runs-on: ubuntu-latest
     defaults:
@@ -207,13 +212,12 @@ jobs:
           npm ci --ignore-scripts
           npm rebuild unrs-resolver
 
-      - name: Verify Expo configuration and source
+      - name: Verify source and release contract
         run: |
           npm run test -- --ci
           npm run typecheck
           npm run lint
           npm run check:release
-          npx expo-doctor
 
       - name: Bundle iOS, Android and web
         run: npx expo export --platform all --output-dir .expo/ci-export

@@ -39,9 +39,10 @@ concurrency:
 jobs:
   # Everything that gates what is about to be published, and nothing that does
   # not. `site_only` drops the Expo app's job — it verifies an app this deploy
-  # never publishes, and its dependency check consults a remote version map, so
-  # it went red and skipped this deploy on four separate days without a single
-  # line of the site changing. See the note at the top of verify.yml.
+  # never publishes, and it used to close with expo-doctor, whose
+  # registry-fetched version map went red and skipped this deploy on four
+  # separate days without a single line of the site changing. That check now
+  # runs weekly in expo-drift.yml. See the note at the top of verify.yml.
   verify:
     uses: ./.github/workflows/verify.yml
     with:

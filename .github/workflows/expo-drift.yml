@@ -1,0 +1,52 @@
+name: Expo drift check
+
+# The one check in this repository whose verdict is decided by a registry
+# rather than by the commit: `npx expo-doctor` compares the versions pinned
+# in apps/mobile against a version map Expo serves at run time, so the day
+# Expo ships new SDK 57 patch releases, this goes red without anything in the
+# repository having changed.
+#
+# It used to close the mobile verify job, and through it every push and pull
+# request: 2026-08-17, 08-18, 08-19 and 08-22 (when it still gated the Pages
+# deploy), and again on 2026-09-01, the morning after a content-only report
+# merged. A red X that appears for that reason is noise, and noise is how the
+# real ones get missed — so it runs here, weekly, on its own.
+#
+# Red here means exactly one thing: take the patch releases. In apps/mobile,
+#
+#   npx expo install --fix
+#
+# then commit package.json and package-lock.json together (a54782b, 3231809
+# and ca8d2e4 are the shape). Nothing deploys from this workflow and nothing
+# gates on it — the site's daily update path does not know it exists.
+on:
+  schedule:
+    # Monday 14:00 UTC — 09:00 America/Chicago, give or take daylight saving.
+    - cron: '0 14 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  doctor:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild unrs-resolver
+
+      - name: expo-doctor
+        run: npx expo-doctor
