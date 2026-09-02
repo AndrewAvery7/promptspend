@@ -21,52 +21,56 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const INDEX = resolve(ROOT, 'dist/index.html');
+const PAGES = [
+  { name: 'calculator', path: resolve(ROOT, 'dist/index.html'), strictStyle: false },
+  { name: 'receipt', path: resolve(ROOT, 'dist/receipt/index.html'), strictStyle: true },
+] as const;
 
 /** Directives that must be present and non-empty, whatever else changes. */
 const REQUIRED = ['default-src', 'script-src', 'connect-src', 'base-uri', 'object-src'] as const;
 
 async function main(): Promise<void> {
-  if (!existsSync(INDEX)) {
-    console.error(`✗ ${INDEX} does not exist — run \`npm run build\` first.`);
-    process.exitCode = 1;
-    return;
-  }
-
-  const html = await readFile(INDEX, 'utf8');
   const problems: string[] = [];
 
-  if (html.includes('%CSP%')) {
-    problems.push('the %CSP% placeholder survived the build — the policy was never substituted');
-  }
+  for (const page of PAGES) {
+    if (!existsSync(page.path)) {
+      problems.push(`${page.name}: ${page.path} does not exist — run \`npm run build\` first`);
+      continue;
+    }
 
-  const match = /<meta http-equiv="Content-Security-Policy" content="([^"]*)"/.exec(html);
-  const policy = match?.[1];
-  if (policy === undefined) {
-    problems.push('no Content-Security-Policy meta tag in the built page');
-  } else {
+    const html = await readFile(page.path, 'utf8');
+    if (html.includes('%CSP%')) {
+      problems.push(`${page.name}: the %CSP% placeholder survived the build`);
+    }
+
+    const policy = /<meta http-equiv="Content-Security-Policy" content="([^"]*)"/.exec(html)?.[1];
+    if (policy === undefined) {
+      problems.push(`${page.name}: no Content-Security-Policy meta tag in the built page`);
+      continue;
+    }
     if (/(^|;)\s*frame-ancestors\b/.test(policy)) {
-      console.log('  note: meta-delivered frame-ancestors is ignored by browsers; no protection is claimed');
+      console.log(
+        `  note: ${page.name} meta-delivered frame-ancestors is ignored by browsers; no protection is claimed`,
+      );
     }
     for (const directive of REQUIRED) {
       const found = new RegExp(`(^|;)\\s*${directive}\\s+\\S`).test(policy);
-      if (!found) problems.push(`policy is missing a non-empty \`${directive}\``);
+      if (!found) problems.push(`${page.name}: policy is missing a non-empty \`${directive}\``);
     }
-
-    // The one directive whose whole purpose is to stop a compromised dependency
-    // posting a pasted prompt somewhere. A wildcard here would defeat it.
     if (/connect-src[^;]*[\s"]\*/.test(policy)) {
-      problems.push('connect-src contains a wildcard, which defeats the point of having it');
+      problems.push(`${page.name}: connect-src contains a wildcard`);
     }
     if (/script-src[^;]*'unsafe-eval'/.test(policy)) {
-      problems.push("script-src allows 'unsafe-eval'");
+      problems.push(`${page.name}: script-src allows 'unsafe-eval'`);
+    }
+    if (page.strictStyle && /style-src[^;]*'unsafe-inline'/.test(policy)) {
+      problems.push(`${page.name}: style-src unnecessarily allows 'unsafe-inline'`);
     }
 
-    if (problems.length === 0) {
-      const directives = policy.split(';').filter(Boolean).length;
-      console.log(`✓ Content Security Policy applied — ${directives} directives`);
-      console.log(`  connect-src ${/connect-src ([^;]*)/.exec(policy)?.[1]?.trim() ?? '(none)'}`);
-    }
+    console.log(
+      `✓ ${page.name} Content Security Policy — ${policy.split(';').filter(Boolean).length} directives`,
+    );
+    console.log(`  connect-src ${/connect-src ([^;]*)/.exec(policy)?.[1]?.trim() ?? '(none)'}`);
   }
 
   for (const problem of problems) console.error(`✗ ${problem}`);

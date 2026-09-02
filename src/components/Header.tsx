@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ACCENTS, type Accent, type Canvas, type Theme } from '@/state/useAppearance';
+import { RECEIPT_URL } from '@/config';
 
 export type ViewId = 'estimate' | 'compare' | 'learn' | 'data';
 
@@ -89,6 +90,7 @@ export function Header(props: HeaderProps) {
               {view.label}
             </button>
           ))}
+          <a href={RECEIPT_URL}>Receipt</a>
         </nav>
 
         <div className="header__spacer" />

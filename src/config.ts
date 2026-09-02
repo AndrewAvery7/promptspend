@@ -40,6 +40,9 @@ export const MODELS_INDEX_URL = `${import.meta.env.BASE_URL}models/`;
 export const PROVIDERS_INDEX_URL = `${import.meta.env.BASE_URL}providers/`;
 export const COMPARE_INDEX_URL = `${import.meta.env.BASE_URL}compare/`;
 
+/** A real multi-page entry, not one of the calculator's client-state views. */
+export const RECEIPT_URL = `${import.meta.env.BASE_URL}receipt/`;
+
 /** The public pricing API, served from the .dev developer hub. */
 export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
 

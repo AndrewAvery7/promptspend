@@ -14,8 +14,8 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-77-2456E6.svg" alt="77 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-997-blue.svg" alt="997 tests">
-  <img src="https://img.shields.io/badge/initial%20payload-87%20KB%20gzip-blue.svg" alt="87 KB gzip initial payload">
+  <img src="https://img.shields.io/badge/tests-1036-blue.svg" alt="1036 tests">
+  <img src="https://img.shields.io/badge/initial%20payload-92%20KB%20gzip-blue.svg" alt="92 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
 </p>
@@ -62,6 +62,9 @@ automatically without anyone touching code.
 
 ## What it does
 
+- **Receipt** — copy a fully visible, one-response cost-audit object into an existing AI conversation.
+  It estimates the visible workload, retrieves current PromptSpend prices, names the two largest cost
+  drivers and suggests cheaper models worth testing without pretending price proves equal quality.
 - **Estimate** — describe one interaction (paste your real prompt or move the sliders), set your scale,
   and see the monthly, yearly, per-user and margin numbers for up to four models side by side.
 - **Compare** — every tracked model on a price-versus-capability value map, plus a sortable catalog you
@@ -337,6 +340,8 @@ It does **not** run the other four packages' suites — CI has a job each for `a
 
 ```
 src/lib/engine/     the cost engine — pure functions, no React, heavily tested
+src/receipt/        the transparent Receipt object, page and versioned instruction contract
+receipt/            the second Vite HTML entry, published as /receipt/
 src/lib/tokenize/   exact tokenizer (lazy-loaded) + calibrated ratios
 src/lib/pricing/    catalog schema, validation, lookups
 src/lib/alerts/     browser-side push and alerts API client
@@ -355,7 +360,7 @@ mcp/                the MCP server — imports the engine above, so it cannot di
 vscode/             the VS Code extension — imports it too, for the same reason
 ```
 
-Beyond the calculator, the build writes 164 crawlable pages — one per model, one per provider, and a
+Beyond the calculator and Receipt, the build writes 164 crawlable pages — one per model, one per provider, and a
 curated set of head-to-heads — from the same catalog and the same cost engine. See
 [docs/PAGES.md](docs/PAGES.md).
 
@@ -375,23 +380,23 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 
 ## Documentation
 
-| Document                                               | What is in it                                                                                            |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way               |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 997 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                |
-| [docs/PAGES.md](docs/PAGES.md)                         | The 164 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline     |
-| [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live  |
-| [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                 |
-| [docs/ALERTS.md](docs/ALERTS.md)                       | The price-alerts Worker — push and email architecture, the cost model, the domain cutover                |
-| [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                          |
-| [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                       |
-| [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                     |
-| [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                |
-| [mcp/README.md](mcp/README.md)                         | The MCP server — pricing for coding agents, with the source and date on every number                     |
-| [vscode/README.md](vscode/README.md)                   | The VS Code extension — prices on the line of code that chooses the model                                |
-| [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                   |
-| [SECURITY.md](SECURITY.md)                             | What is in scope — including a wrong price, which is treated as the most serious class of bug            |
+| Document                                               | What is in it                                                                                             |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1036 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                 |
+| [docs/PAGES.md](docs/PAGES.md)                         | The 164 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline      |
+| [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live   |
+| [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                  |
+| [docs/ALERTS.md](docs/ALERTS.md)                       | The price-alerts Worker — push and email architecture, the cost model, the domain cutover                 |
+| [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                           |
+| [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                        |
+| [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                      |
+| [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                 |
+| [mcp/README.md](mcp/README.md)                         | The MCP server — pricing for coding agents, with the source and date on every number                      |
+| [vscode/README.md](vscode/README.md)                   | The VS Code extension — prices on the line of code that chooses the model                                 |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                    |
+| [SECURITY.md](SECURITY.md)                             | What is in scope — including a wrong price, which is treated as the most serious class of bug             |
 
 ## Contributing
 
@@ -430,6 +435,10 @@ just a confident guess.
   the estimate until a retention duration is known, and enabling caching raises an explicit warning.
 - **Long-context tiers are modelled where they are published** (per request, not per conversation). Where
   a provider has a tier we have not recorded, the estimate says so instead of quietly using the flat rate.
+- **The Receipt sees a transcript, not an invoice.** It cannot see hidden system prompts, provider-side
+  tools or media, cache usage, hidden reasoning, or an exact billable model unless the conversation exposes
+  them. It reports ranges and exclusions, and refuses to invent a dollar amount when current pricing is
+  unavailable.
 - **Exact counting downloads a ~3 MB tokenizer chunk**, and only when you paste text for an OpenAI-family
   model. The initial page is under 100 KB gzipped, and CI fails if that stops being true.
 

@@ -18,6 +18,7 @@ const VIEWS = ['Estimate', 'Compare', 'Learn', 'Data & Alerts'] as const;
 
 /** Generated pages — now the majority of what a visitor lands on. */
 const GENERATED = [
+  { path: '/receipt/', name: 'the Receipt page' },
   { path: '/models/', name: 'model index' },
   { path: '/models/claude-opus-5/', name: 'a model page' },
   { path: '/providers/anthropic/', name: 'a provider page' },

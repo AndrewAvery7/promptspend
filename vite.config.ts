@@ -3,6 +3,8 @@ import { loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { renderReceiptInstructions, renderReceiptSpecJson } from './src/receipt/receiptSpec';
 
 // GitHub Pages serves the site from /<repo>/ unless a custom domain is configured;
 // set BASE_PATH=/ in the workflow when deploying to one. The dev server always
@@ -108,6 +110,26 @@ function seoAssets(url: string): Plugin {
 }
 
 /**
+ * The public Receipt contract, emitted from the same source the copy button
+ * imports. Keeping the plain-text and JSON artifacts in the build avoids a
+ * second hand-maintained prompt that can quietly drift from what users see.
+ */
+function receiptAssets(): Plugin {
+  return {
+    name: 'promptspend-receipt-assets',
+    apply: 'build',
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'receipt/instructions.txt',
+        source: `${renderReceiptInstructions()}\n`,
+      });
+      this.emitFile({ type: 'asset', fileName: 'receipt/spec.json', source: renderReceiptSpecJson() });
+    },
+  };
+}
+
+/**
  * Build the Content Security Policy from the same configuration the app reads.
  *
  * GitHub Pages cannot set response headers, so the policy lives in a meta tag —
@@ -128,6 +150,9 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
       const connect = ["'self'", api].filter(Boolean);
       const script = ["'self'"];
       const frame = ["'none'"];
+      // The Receipt uses a stylesheet and no style attributes, so it can carry
+      // a stricter policy than the calculator, whose charts use inline geometry.
+      const style = html.includes('data-page="receipt"') ? "'self'" : "'self' 'unsafe-inline'";
 
       if (api) {
         // Turnstile is permitted whenever an API exists, because whether it is
@@ -142,7 +167,7 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
       const policy = [
         "default-src 'self'",
         `script-src ${script.join(' ')}`,
-        "style-src 'self' 'unsafe-inline'",
+        `style-src ${style}`,
         "img-src 'self' data:",
         "font-src 'self'",
         `connect-src ${connect.join(' ')}`,
@@ -173,7 +198,7 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
           `index.html has no ${SITE_URL_PLACEHOLDER} placeholder — canonical and Open Graph URLs would ship relative.`,
         );
       }
-      if (!html.includes(MODEL_COUNT_PLACEHOLDER)) {
+      if (!html.includes(MODEL_COUNT_PLACEHOLDER) && !html.includes('data-page="receipt"')) {
         throw new Error(
           `index.html has no ${MODEL_COUNT_PLACEHOLDER} placeholder — the title and description would ship a ` +
             'hand-written model count, which is the one that goes stale without anybody reading it.',
@@ -211,7 +236,7 @@ export default defineConfig(({ mode }) => {
     // Pin both to this file's directory for the same reason.
     root: projectRoot,
     envDir: projectRoot,
-    plugins: [react(), contentSecurityPolicy(alertsApi), seoAssets(siteUrl)],
+    plugins: [react(), contentSecurityPolicy(alertsApi), seoAssets(siteUrl), receiptAssets()],
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },
@@ -227,6 +252,10 @@ export default defineConfig(({ mode }) => {
       // actually matters — the size of the initial payload.
       chunkSizeWarningLimit: 4096,
       rollupOptions: {
+        input: {
+          app: resolve(projectRoot, 'index.html'),
+          receipt: resolve(projectRoot, 'receipt/index.html'),
+        },
         output: {
           // Keep the tokenizer out of the initial bundle — it is only fetched
           // when a visitor pastes text for an OpenAI-family model.
