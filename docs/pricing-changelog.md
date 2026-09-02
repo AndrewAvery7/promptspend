@@ -635,3 +635,26 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `gpt-5.6-luna` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
 - **Review** `gpt-5.6-terra` — provenance.needsReview: — → true
 - **Review** `gpt-5.6-terra` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-09-02
+
+- **Added** `claude-fable-5-1` — Claude Fable 5 1 ($10 in / $50 out per 1M)
+- **Added** `zai-glm-5.2` — GLM 5.2 ($1.4 in / $4.4 out per 1M)
+- **Review** `claude-fable-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-haiku-4-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-8` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-opus-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4-mini` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4-nano` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.6-luna` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.6-terra` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `zai-glm-4.6` — provenance.needsReview: — → true
+- **Review** `zai-glm-4.6` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `zai-glm-4.7` — provenance.needsReview: — → true
+- **Review** `zai-glm-4.7` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `zai-glm-5` — provenance.needsReview: — → true
+- **Review** `zai-glm-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `zai-glm-5.1` — provenance.needsReview: — → true
+- **Review** `zai-glm-5.1` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
