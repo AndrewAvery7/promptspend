@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Catalog } from '@/lib/pricing/catalog';
-import { PRICING_SCOPE } from '@/config';
+import { PRICING_SCOPE, RECEIPT_URL } from '@/config';
 import { csvDocument } from '@/lib/engine/csv';
 import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
 import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
@@ -142,6 +142,9 @@ export function EstimateView({
               Safari, and four items are worth announcing as four. */}
           <ul className="hero__aside-list" role="list">
             <li>
+              <b>AI Cost Receipt</b> — bring current PromptSpend pricing into an existing AI conversation
+            </li>
+            <li>
               <b>MCP server</b> — for Claude Code, Cursor and Windsurf
             </li>
             <li>
@@ -154,6 +157,9 @@ export function EstimateView({
               <b>Pricing API</b> — keyless and CORS-open, as JSON or CSV
             </li>
           </ul>
+          <a className="button button--primary hero__receipt-cta" href={RECEIPT_URL}>
+            Copy the PromptSpend Receipt
+          </a>
           <p className="hero__aside-note">
             <button type="button" className="linklike" onClick={onOpenData}>
               How to install each &rarr;

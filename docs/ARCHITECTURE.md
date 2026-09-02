@@ -142,6 +142,9 @@ would be most expensive, so it gets the deepest investment.
 - **`csv.ts`** — quoting and formula neutralisation for the export. Display names come partly from an
   upstream feed, so a downloaded estimate must not be able to execute anything when it is opened.
 - **`insights.ts`** — turns a comparison into the plain-language diagnosis shown beside the cards.
+- **`observed-session-cost.ts`** — prices request-by-request totals for a conversation that already happened.
+  Cache reads/writes, hidden reasoning when known, promotional windows and long-context tiers remain separate.
+  It must not synthesize history: the observed request totals already contain the history each turn re-sent.
 
 **Why per turn.** A long-context tier is a property of a single request. Pricing the conversation in
 aggregate and applying one rate gets every turn wrong in one direction or the other, and — because the
@@ -186,6 +189,18 @@ Four views behind a single state hook. No router: the app is small enough that v
 and the shareable state lives in the query string. Styling is plain CSS with custom properties on two
 independent axes (`data-theme`, `data-accent`) plus a canvas variant — no utility framework, because the
 design system is token-driven and a translation layer would only add a build step.
+
+The Receipt is the deliberate exception to the single-entry shape. `receipt/index.html` is a second Vite
+input so `/receipt/` is a real deep link on GitHub Pages, not a client-side route that depends on a 404
+fallback Pages does not provide. It imports the same tokens and catalog loader, but has a stricter CSP because
+it uses no inline geometry. `src/receipt/receiptSpec.ts` is the source for all three representations of the
+object: the text shown on the page, the clipboard value, and the generated `instructions.txt`/`spec.json`
+artifacts. `scripts/check-receipt.ts` fails the build if they disagree.
+
+The Receipt never transmits the preceding conversation. The user copies a visible, temporary request into
+their existing assistant, and that assistant reads current facts from the public API. If the assistant cannot
+reach the API or cannot establish an exact model, the contract requires a limitation instead of a remembered
+price. The site itself fetches the same-origin static catalog only to show whether the price source is ready.
 
 ## The other four packages
 
@@ -244,7 +259,7 @@ runners actually report rather than to what anyone remembers.
 
 **What closed, and what did not.** This section used to name three gaps — no browser suite, no automated
 axe pass, no visual-regression snapshots — and call Playwright plus axe the obvious next investment. Both
-landed: 112 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
+landed: 140 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
 two real defects, each a scrollable region no keyboard could reach.
 
 Screenshot diffing is still absent, and now deliberately rather than pending. A visual suite has a real

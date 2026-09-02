@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" data-page="receipt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PromptSpend Receipt — Find What Your AI Conversation Costs</title>
+    <meta
+      name="description"
+      content="Copy a transparent PromptSpend Receipt into an AI conversation to estimate its visible token use, current model cost, cost drivers, and alternatives worth testing."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="canonical" href="%SITE_URL%/receipt/" />
+    <meta http-equiv="Content-Security-Policy" content="%CSP%" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+    <meta name="theme-color" content="#2456e6" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1.5' y='1.5' width='23' height='23' rx='6' fill='none' stroke='%232456E6' stroke-width='2'/%3E%3Cpath d='M7 9.5h12M7 13.5h8M7 17.5h10' stroke='%232456E6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PromptSpend" />
+    <meta property="og:url" content="%SITE_URL%/receipt/" />
+    <meta property="og:title" content="Your prompt has a price tag." />
+    <meta
+      property="og:description"
+      content="Copy a transparent receipt into your AI conversation. PromptSpend checks the visible workload against current model prices."
+    />
+    <meta property="og:image" content="%SITE_URL%/social-card.png?v=f66bdb7e" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content="PromptSpend — know the tab before you build." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="%SITE_URL%/social-card.png?v=f66bdb7e" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PromptSpend Receipt",
+        "url": "%SITE_URL%/receipt/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "description": "A transparent, user-initiated AI conversation cost-audit object backed by current PromptSpend pricing.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "isAccessibleForFree": true,
+        "isPartOf": { "@type": "WebSite", "name": "PromptSpend", "url": "%SITE_URL%/" }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="receipt-root"></div>
+    <noscript>
+      The interactive copy button needs JavaScript. The complete, inspectable instructions are available at
+      <a href="./instructions.txt">receipt/instructions.txt</a>.
+    </noscript>
+    <script type="module" src="/src/receipt/main.tsx"></script>
+  </body>
+</html>

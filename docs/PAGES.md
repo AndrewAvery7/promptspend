@@ -8,6 +8,10 @@ Google. They type **"gpt-5.6 pricing"** and **"claude opus vs gemini pro cost"**
 from the same catalog and costed by the same engine as the app. 164 of them
 today: 76 models, 12 providers, 73 comparisons, 3 indexes.
 
+`/receipt/` is also a real crawlable page, but it is a product route rather than a catalog-generated page and
+is therefore not included in the 164-page arithmetic below. Vite builds it from `receipt/index.html`; the
+post-build step adds it to the sitemap and `llms.txt`.
+
 ---
 
 ## What gets built

@@ -162,7 +162,8 @@ textarea {
   gap: 2px;
   margin-left: 10px;
 }
-.nav button {
+.nav button,
+.nav a {
   background: none;
   border: none;
   color: var(--muted);
@@ -171,8 +172,10 @@ textarea {
   font-weight: 600;
   font-size: 0.93rem;
   transition: all 0.18s;
+  text-decoration: none;
 }
-.nav button:hover {
+.nav button:hover,
+.nav a:hover {
   color: var(--ink);
   background: var(--surface-2);
 }
@@ -592,6 +595,14 @@ body.tour-active .main {
 }
 .hero__aside-note {
   font-size: 0.76rem;
+}
+.hero__receipt-cta {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+  margin-top: 14px;
+  text-align: center;
+  text-decoration: none;
 }
 
 /* Compare's working row: the chart on the left, the shortlist beside it.

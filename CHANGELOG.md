@@ -7,6 +7,19 @@ on their own schedule and are not releases.
 
 ## Unreleased
 
+### Added
+
+- **PromptSpend Receipt at `/receipt/`.** The new product route gives people one fully visible, temporary
+  instruction object to paste after an AI conversation. It asks for a request-by-request visible-workload
+  estimate, requires current PromptSpend API evidence, preserves unknown model and hidden-usage states, and
+  compares lower-cost candidates without claiming equal quality.
+- **A public Receipt contract.** `/receipt/instructions.txt` and `/receipt/spec.json` are generated from the
+  same source as the visible page and clipboard value. A build check fails if any representation drifts or
+  introduces authority-escalation language.
+- **Observed-session cost arithmetic.** The shared core can now price already-observed request totals without
+  double-counting accumulated history, while keeping cache reads, cache writes, hidden reasoning,
+  promotional windows, and long-context tiers explicit.
+
 ## [0.7.0] — 2026-08-30
 
 Everything below landed after `v0.6.0` was tagged at `fd54a49`. A minor rather
