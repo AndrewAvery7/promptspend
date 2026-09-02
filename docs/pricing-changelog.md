@@ -658,3 +658,64 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `zai-glm-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
 - **Review** `zai-glm-5.1` — provenance.needsReview: — → true
 - **Review** `zai-glm-5.1` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-09-02
+
+- **Coverage** `claude-fable-5-1` — cacheWrite now tracked: — → 12.5
+- **Coverage** `claude-fable-5-1` — batchDiscount now tracked: — → 0.5
+- **Coverage** `xai-grok-4.20` — longContext.thresholdTokens now tracked: — → 200000
+- **Coverage** `xai-grok-4.20` — longContext.input now tracked: — → 2.5
+- **Coverage** `xai-grok-4.20` — longContext.output now tracked: — → 5
+- **Coverage** `xai-grok-4.20` — longContext.cachedInput now tracked: — → 0.4
+- **Metadata** `claude-fable-5-1` — displayName: Claude Fable 5 1 → Claude Fable 5.1
+- **Metadata** `xai-grok-3` — status: current → legacy
+- **Metadata** `xai-grok-4` — status: current → legacy
+- **Metadata** `xai-grok-4-1-fast` — status: current → legacy
+- **Metadata** `zai-glm-5.2` — displayName: GLM 5.2 → GLM-5.2
+- **Metadata** `zai-glm-5.3` — displayName: GLM 5.3 → GLM-5.3
+- **Review** `claude-fable-5` — provenance.needsReview: true → —
+- **Review** `claude-fable-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `claude-fable-5-1` — provenance.source: litellm → vendor
+- **Review** `claude-fable-5-1` — provenance.needsReview: true → —
+- **Review** `claude-fable-5-1` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `claude-fable-5-1` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-haiku-4-5` — provenance.needsReview: true → —
+- **Review** `claude-haiku-4-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `claude-opus-4-8` — provenance.needsReview: true → —
+- **Review** `claude-opus-4-8` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `claude-opus-5` — provenance.needsReview: true → —
+- **Review** `claude-opus-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.4` — provenance.needsReview: true → —
+- **Review** `gpt-5.4` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.4-mini` — provenance.needsReview: true → —
+- **Review** `gpt-5.4-mini` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.4-nano` — provenance.needsReview: true → —
+- **Review** `gpt-5.4-nano` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.5` — provenance.needsReview: true → —
+- **Review** `gpt-5.5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.6-luna` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-luna` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.6-terra` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-terra` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `xai-grok-3` — provenance.source: litellm → vendor
+- **Review** `xai-grok-3` — provenance.verifiedUrl: — → https://docs.x.ai/developers/migration/may-15-retirement
+- **Review** `xai-grok-4` — provenance.source: litellm → vendor
+- **Review** `xai-grok-4` — provenance.verifiedUrl: — → https://docs.x.ai/developers/migration/may-15-retirement
+- **Review** `xai-grok-4-1-fast` — provenance.source: litellm → vendor
+- **Review** `xai-grok-4-1-fast` — provenance.verifiedUrl: — → https://docs.x.ai/developers/migration/may-15-retirement
+- **Review** `xai-grok-4.20` — provenance.source: litellm → vendor
+- **Review** `xai-grok-4.20` — provenance.verifiedUrl: — → https://docs.x.ai/developers/pricing
+- **Review** `zai-glm-4.6` — provenance.needsReview: true → —
+- **Review** `zai-glm-4.6` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `zai-glm-4.7` — provenance.needsReview: true → —
+- **Review** `zai-glm-4.7` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `zai-glm-5` — provenance.needsReview: true → —
+- **Review** `zai-glm-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `zai-glm-5.1` — provenance.needsReview: true → —
+- **Review** `zai-glm-5.1` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `zai-glm-5.2` — provenance.source: litellm → vendor
+- **Review** `zai-glm-5.2` — provenance.needsReview: true → —
+- **Review** `zai-glm-5.2` — provenance.reviewNote: OpenRouter disagrees (31%): $0.966/$3.036 vs $1.4/$4.4; new model discovered by pattern match — confirm name and rates → —
+- **Review** `zai-glm-5.2` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing
+- **Review** `zai-glm-5.3` — provenance.source: litellm → vendor
+- **Review** `zai-glm-5.3` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing

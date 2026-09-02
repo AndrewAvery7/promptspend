@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-02T11:05:50.975Z",
+  "generatedAt": "2026-09-02T14:42:41.003Z",
   "providers": [
     {
       "id": "anthropic",
@@ -157,13 +157,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 100
@@ -171,13 +166,15 @@
     {
       "id": "claude-fable-5-1",
       "providerId": "anthropic",
-      "displayName": "Claude Fable 5 1",
+      "displayName": "Claude Fable 5.1",
       "status": "current",
       "contextWindow": 1000000,
       "pricing": {
         "input": 10,
         "output": 50,
-        "cachedInput": 0.25
+        "cachedInput": 0.25,
+        "cacheWrite": 12.5,
+        "batchDiscount": 0.5
       },
       "tokenizer": {
         "kind": "approx",
@@ -190,13 +187,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-09-02",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000
     },
@@ -225,13 +218,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 64000,
       "capabilityIndex": 74
@@ -377,13 +365,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 94
@@ -413,13 +396,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 96
@@ -1308,13 +1286,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 87
@@ -1341,13 +1314,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 76
@@ -1374,13 +1342,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 62
@@ -1413,13 +1376,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 93
@@ -1482,13 +1440,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1530,7 +1483,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-26",
+        "lastVerified": "2026-09-02",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
         "reviewNote": "vendor override differs from the automated feed (33%): $4/$20 vs $5/$30",
@@ -1572,13 +1525,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-01",
-        "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 86
@@ -2041,7 +1989,7 @@
       "id": "xai-grok-3",
       "providerId": "xai",
       "displayName": "Grok 3",
-      "status": "current",
+      "status": "legacy",
       "contextWindow": 131072,
       "pricing": {
         "input": 1.25,
@@ -2059,9 +2007,10 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-09-02",
-        "lastChanged": "2026-08-30"
+        "lastChanged": "2026-08-30",
+        "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement"
       },
       "maxOutput": 131072
     },
@@ -2069,7 +2018,7 @@
       "id": "xai-grok-4",
       "providerId": "xai",
       "displayName": "Grok 4",
-      "status": "current",
+      "status": "legacy",
       "contextWindow": 256000,
       "pricing": {
         "input": 1.25,
@@ -2087,9 +2036,10 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-09-02",
-        "lastChanged": "2026-08-30"
+        "lastChanged": "2026-08-30",
+        "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement"
       },
       "maxOutput": 256000
     },
@@ -2097,7 +2047,7 @@
       "id": "xai-grok-4-1-fast",
       "providerId": "xai",
       "displayName": "Grok 4.1 Fast",
-      "status": "current",
+      "status": "legacy",
       "contextWindow": 2000000,
       "pricing": {
         "input": 1.25,
@@ -2115,9 +2065,10 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-09-02",
-        "lastChanged": "2026-08-30"
+        "lastChanged": "2026-08-30",
+        "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement"
       },
       "maxOutput": 2000000,
       "capabilityIndex": 66
@@ -2131,7 +2082,13 @@
       "pricing": {
         "input": 1.25,
         "output": 2.5,
-        "cachedInput": 0.2
+        "cachedInput": 0.2,
+        "longContext": {
+          "thresholdTokens": 200000,
+          "input": 2.5,
+          "output": 5,
+          "cachedInput": 0.4
+        }
       },
       "tokenizer": {
         "kind": "approx",
@@ -2144,8 +2101,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-09-02"
+        "source": "vendor",
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 1000000
     },
@@ -2276,13 +2234,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-02",
-        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 31 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
     },
@@ -2309,13 +2262,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-02",
-        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 31 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
     },
@@ -2342,13 +2290,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-02",
-        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 31 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 76
@@ -2404,13 +2347,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-08-02",
-        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 31 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
       "capabilityIndex": 80
@@ -2418,7 +2356,7 @@
     {
       "id": "zai-glm-5.2",
       "providerId": "zai",
-      "displayName": "GLM 5.2",
+      "displayName": "GLM-5.2",
       "status": "current",
       "contextWindow": 1000000,
       "pricing": {
@@ -2437,21 +2375,16 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-09-02",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (31%): $0.966/$3.036 vs $1.4/$4.4; new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "openrouter-disagreement",
-          "new-model"
-        ]
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
     },
     {
       "id": "zai-glm-5.3",
       "providerId": "zai",
-      "displayName": "GLM 5.3",
+      "displayName": "GLM-5.3",
       "status": "current",
       "contextWindow": 1000000,
       "pricing": {
@@ -2470,8 +2403,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-09-02"
+        "source": "vendor",
+        "lastVerified": "2026-09-02",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
     }
