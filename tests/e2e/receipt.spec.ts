@@ -7,7 +7,7 @@ test.describe('PromptSpend Receipt', () => {
     expect(response?.status()).toBe(200);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your prompt has a price tag.');
     await expect(page.getByRole('status').filter({ hasText: 'Pricing source ready' })).toBeVisible();
-    await expect(page.locator('.receipt-instructions')).toContainText('PROMPTSPEND RECEIPT · v1.0.0');
+    await expect(page.locator('.receipt-instructions')).toContainText('PROMPTSPEND RECEIPT · v1.1.0');
     await expect(page.locator('.receipt-instructions')).toContainText('Current pricing unavailable');
     await expect(page.getByRole('link', { name: 'Machine-readable specification' })).toHaveAttribute(
       'href',
@@ -63,7 +63,48 @@ test.describe('PromptSpend Receipt', () => {
 
     const spec = (await specResponse.json()) as { version: string; instructions: string };
     const instructions = (await textResponse.text()).trimEnd();
-    expect(spec.version).toBe('1.0.0');
+    expect(spec.version).toBe('1.1.0');
     expect(spec.instructions).toBe(instructions);
+  });
+
+  test('imports the assistant share block and keeps estimates explicit', async ({ page }) => {
+    await page.goto('/receipt/');
+    await page.getByLabel('Assistant receipt JSON').fill(
+      JSON.stringify({
+        conversation: '47 visible turns',
+        estimatedTokens: '120,000–136,000 estimated',
+        currentModel: 'Example Model',
+        estimatedCost: '$1.62–$1.88 estimated',
+        alternativeModel: 'Example Mini — test quality first',
+        alternativeCost: '$0.18–$0.22 estimated',
+        priceDifference: '8.5×–9×',
+        note: 'Estimate, not invoice. Quality equivalence is not assumed.',
+      }),
+    );
+    await page.getByRole('button', { name: 'Import assistant result' }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Receipt imported' })).toBeVisible();
+    await expect(page.getByLabel('Shareable PromptSpend receipt preview')).toContainText('8.5×–9×');
+    await expect(page.getByLabel('Shareable PromptSpend receipt preview')).toContainText(
+      'Quality equivalence',
+    );
+  });
+
+  test('reports invalid share data without replacing the safe preview', async ({ page }) => {
+    await page.goto('/receipt/');
+    await page.getByLabel('Assistant receipt JSON').fill('{"conversation":"one"}');
+    await page.getByRole('button', { name: 'Import assistant result' }).click();
+    await expect(page.getByRole('alert')).toContainText('missing receipt fields');
+    await expect(page.getByLabel('Shareable PromptSpend receipt preview')).toContainText('Not established');
+  });
+
+  test('exports a real PNG receipt without uploading its fields', async ({ page }) => {
+    const requests: string[] = [];
+    page.on('request', (request) => requests.push(request.url()));
+    await page.goto('/receipt/');
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Download PNG' }).click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^promptspend-ai-receipt-\d{4}-\d{2}-\d{2}\.png$/);
+    expect(requests.filter((url) => !url.startsWith('http://127.0.0.1:4173'))).toEqual([]);
   });
 });

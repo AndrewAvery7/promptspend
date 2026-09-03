@@ -90,7 +90,7 @@ export function Header(props: HeaderProps) {
               {view.label}
             </button>
           ))}
-          <a href={RECEIPT_URL}>Receipt</a>
+          <a href={RECEIPT_URL}>PromptSpend it</a>
         </nav>
 
         <div className="header__spacer" />

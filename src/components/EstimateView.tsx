@@ -158,7 +158,7 @@ export function EstimateView({
             </li>
           </ul>
           <a className="button button--primary hero__receipt-cta" href={RECEIPT_URL}>
-            Copy the PromptSpend Receipt
+            PromptSpend this conversation
           </a>
           <p className="hero__aside-note">
             <button type="button" className="linklike" onClick={onOpenData}>

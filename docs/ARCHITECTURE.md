@@ -259,7 +259,7 @@ runners actually report rather than to what anyone remembers.
 
 **What closed, and what did not.** This section used to name three gaps — no browser suite, no automated
 axe pass, no visual-regression snapshots — and call Playwright plus axe the obvious next investment. Both
-landed: 140 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
+landed: 152 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
 two real defects, each a scrollable region no keyboard could reach.
 
 Screenshot diffing is still absent, and now deliberately rather than pending. A visual suite has a real
