@@ -3,6 +3,7 @@ import { HEALTH_URL, PRICING_SCOPE, PRICING_URL } from '@/config';
 import { loadCatalog, type Catalog } from '@/lib/pricing/catalog';
 import { useAppearance } from '@/state/useAppearance';
 import { ReceiptObject } from './ReceiptObject';
+import { ShareReceiptBuilder, dispatchReceiptEvent } from './ShareReceiptBuilder';
 import {
   PRICING_API_URL,
   RECEIPT_INSTRUCTIONS_URL,
@@ -75,6 +76,7 @@ export function ReceiptPage() {
 
   const handleCopy = async () => {
     const copied = await copyReceipt(instructions);
+    dispatchReceiptEvent(copied ? 'instructions_copied' : 'instructions_copy_failed');
     setCopyState(copied ? 'copied' : 'failed');
     if (resetTimer.current !== null) window.clearTimeout(resetTimer.current);
     resetTimer.current = window.setTimeout(() => setCopyState('idle'), 3200);
@@ -82,6 +84,9 @@ export function ReceiptPage() {
 
   return (
     <>
+      <a className="receipt-skip-link" href="#receipt-main">
+        Skip to main content
+      </a>
       <header className="receipt-header">
         <a
           className="receipt-header__brand"
@@ -115,7 +120,7 @@ export function ReceiptPage() {
         </nav>
       </header>
 
-      <main>
+      <main id="receipt-main">
         <section className="receipt-hero" aria-labelledby="receipt-heading">
           <div className="receipt-hero__copy">
             <p className="receipt-eyebrow">PROMPTSPEND RECEIPT</p>
@@ -206,6 +211,31 @@ export function ReceiptPage() {
           </div>
         </section>
 
+        <ShareReceiptBuilder />
+
+        <section className="receipt-section receipt-section--split" aria-labelledby="examples-title">
+          <div>
+            <p className="receipt-eyebrow">PROMPTSPEND IT</p>
+            <h2 id="examples-title">A cost check, wherever the work already is.</h2>
+            <p>
+              “PromptSpend it” means bringing a visible, temporary cost-audit request into the
+              conversation—not handing control to a hidden agent.
+            </p>
+          </div>
+          <div className="receipt-examples">
+            <p>
+              <b>Long research thread?</b> PromptSpend the accumulated context.
+            </p>
+            <p>
+              <b>Choosing a model?</b> PromptSpend the same evidenced workload before you switch.
+            </p>
+            <p>
+              <b>Sharing a surprising result?</b> Export the reviewed receipt, with the estimate caveat
+              intact.
+            </p>
+          </div>
+        </section>
+
         <section className="receipt-section receipt-limitations" aria-labelledby="limits-title">
           <div>
             <p className="receipt-eyebrow">THE HONEST EDGE</p>
@@ -218,6 +248,10 @@ export function ReceiptPage() {
               inventing precision.
             </p>
             <p>
+              The instruction applies to one response. Anything you paste still remains in that
+              assistant&apos;s conversation under its provider&apos;s normal privacy and retention settings.
+            </p>
+            <p>
               {PRICING_SCOPE} Current list price does not prove equal capability, output quality, or total
               operating cost.
             </p>
@@ -227,7 +261,10 @@ export function ReceiptPage() {
 
       <footer className="receipt-footer">
         <span>PromptSpend · open source · no accounts · no tracking</span>
-        <a href="https://github.com/AndrewAvery7/promptspend">Source on GitHub</a>
+        <span className="receipt-footer__links">
+          <a href="https://averyresume.com/">Creator profile</a>
+          <a href="https://github.com/AndrewAvery7/promptspend">Source on GitHub</a>
+        </span>
       </footer>
     </>
   );

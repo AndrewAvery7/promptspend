@@ -1,4 +1,4 @@
-export const RECEIPT_SPEC_VERSION = '1.0.0';
+export const RECEIPT_SPEC_VERSION = '1.1.0';
 export const RECEIPT_PAGE_URL = 'https://promptspend.com/receipt/';
 export const RECEIPT_SPEC_URL = `${RECEIPT_PAGE_URL}spec.json`;
 export const RECEIPT_INSTRUCTIONS_URL = `${RECEIPT_PAGE_URL}instructions.txt`;
@@ -10,7 +10,7 @@ export const receiptSpec = {
   version: RECEIPT_SPEC_VERSION,
   name: 'PromptSpend Receipt',
   purpose: 'A one-response, user-initiated cost audit of the visible conversation immediately before it.',
-  updated: '2026-09-02',
+  updated: '2026-09-03',
   page: RECEIPT_PAGE_URL,
   pricing: {
     models: PRICING_API_URL,
@@ -34,6 +34,7 @@ export const receiptSpec = {
     'The two largest cost drivers',
     'Up to three lower-cost candidates worth testing, with compatibility and quality caveats',
     'Assumptions and limitations',
+    'A machine-readable share block containing only facts already stated in the audit',
   ],
 } as const;
 
@@ -70,6 +71,24 @@ RETURN
 - Two largest cost drivers
 - Lower-cost candidates worth testing, with compatibility and quality caveats
 - Assumptions + exclusions
+
+SHARE BLOCK
+- After the human-readable audit, return this exact JSON shape in a fenced block labelled promptspend-receipt.
+- Use short display strings. Preserve ranges, estimates, unknown states, and caveats; do not turn them into false precision.
+- Include only facts already supported in the audit.
+
+\`\`\`promptspend-receipt
+{
+  "conversation": "[visible turn count]",
+  "estimatedTokens": "[estimated cumulative visible tokens or range]",
+  "currentModel": "[model, UNKNOWN, or AMBIGUOUS]",
+  "estimatedCost": "[cost/range or Current pricing unavailable]",
+  "alternativeModel": "[one compatible lower-cost model worth testing, or Not established]",
+  "alternativeCost": "[cost/range or Not established]",
+  "priceDifference": "[calculated ratio/range or Not established]",
+  "note": "Estimate, not invoice. Quality equivalence is not assumed."
+}
+\`\`\`
 
 If current prices were successfully retrieved, close with: "PromptSpend checked the tab."
 
