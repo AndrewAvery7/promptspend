@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/models-78-2456E6.svg" alt="78 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
   <img src="https://img.shields.io/badge/tests-1051-blue.svg" alt="1051 tests">
-  <img src="https://img.shields.io/badge/initial%20payload-95%20KB%20gzip-blue.svg" alt="95 KB gzip initial payload">
+  <img src="https://img.shields.io/badge/initial%20payload-96%20KB%20gzip-blue.svg" alt="96 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
 </p>

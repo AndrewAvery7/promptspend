@@ -7,8 +7,14 @@ test.describe('PromptSpend Receipt', () => {
     expect(response?.status()).toBe(200);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your prompt has a price tag.');
     await expect(page.getByRole('status').filter({ hasText: 'Pricing source ready' })).toBeVisible();
-    await expect(page.locator('.receipt-instructions')).toContainText('PROMPTSPEND RECEIPT · v1.1.0');
+    await expect(page.locator('.receipt-instructions')).toContainText('PROMPTSPEND RECEIPT · v1.1.1');
     await expect(page.locator('.receipt-instructions')).toContainText('Current pricing unavailable');
+    await expect(page.locator('.receipt-instructions')).toContainText(
+      'Do not count this receipt message or the response it triggers',
+    );
+    await expect(page.locator('.receipt-instructions')).toContainText(
+      'Do not enumerate, estimate, or include internal model calls',
+    );
     await expect(page.getByRole('link', { name: 'Machine-readable specification' })).toHaveAttribute(
       'href',
       'https://promptspend.com/receipt/spec.json',
@@ -63,8 +69,10 @@ test.describe('PromptSpend Receipt', () => {
 
     const spec = (await specResponse.json()) as { version: string; instructions: string };
     const instructions = (await textResponse.text()).trimEnd();
-    expect(spec.version).toBe('1.1.0');
+    expect(spec.version).toBe('1.1.1');
     expect(spec.instructions).toBe(instructions);
+    expect(instructions).toContain('Never count this receipt message');
+    expect(instructions).toContain('function schemas');
   });
 
   test('imports the assistant share block and keeps estimates explicit', async ({ page }) => {
