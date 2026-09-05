@@ -118,6 +118,16 @@ export function EstimateView({
               <dd>read against the vendor&apos;s own page</dd>
             </div>
             <div>
+              <dt>{catalog.feedSourcedCount()}</dt>
+              <dd>read from a public price feed</dd>
+            </div>
+            {/* The number a competitor would hide. Two sources disagree, or a
+                price could not be settled, and the row says so. */}
+            <div>
+              <dt>{catalog.flaggedForReviewCount()}</dt>
+              <dd>prices flagged for review today</dd>
+            </div>
+            <div>
               <dt>0</dt>
               <dd>accounts, trackers or cookies</dd>
             </div>

@@ -17,6 +17,12 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAppearance, ACCENTS } from '@/state/useAppearance';
 import { useEstimator } from '@/state/useEstimator';
 import { Header, VIEWS, type ViewId } from '@/components/Header';
+
+/** `#compare` -> 'compare'; anything else -> null. */
+function viewFromHash(): ViewId | null {
+  const id = window.location.hash.replace(/^#/, '');
+  return VIEWS.some((v) => v.id === id) ? (id as ViewId) : null;
+}
 import { Ticker } from '@/components/Ticker';
 import { EstimateView } from '@/components/EstimateView';
 import { CompareView } from '@/components/CompareView';
@@ -80,9 +86,19 @@ function Workspace({ catalog }: { catalog: Catalog }) {
   // An emailed preferences link lands on `/?alerts=<token>`, and the panel that
   // reads it lives in Data & Alerts. Landing on Estimate meant the link
   // appeared to do nothing at all.
+  // Other pages of the site (the Receipt page's header, for one) link to a view
+  // as `/#compare`, `/#learn`, `/#data`, so the hash is honoured too.
   const [view, setView] = useState<ViewId>(() =>
-    new URLSearchParams(window.location.search).has('alerts') ? 'data' : 'estimate',
+    new URLSearchParams(window.location.search).has('alerts') ? 'data' : (viewFromHash() ?? 'estimate'),
   );
+  useEffect(() => {
+    const onHash = () => {
+      const next = viewFromHash();
+      if (next) setView(next);
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
   const [search, setSearch] = useState('');
   const [toast, setToast] = useState<string | null>(null);
 

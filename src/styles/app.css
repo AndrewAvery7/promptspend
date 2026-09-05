@@ -403,7 +403,13 @@ body.tour-active .main {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
   gap: 28px;
-  align-items: start;
+  /* Stretch, not start: the copy column runs the full height of the aside and
+   * its figures sit on the aside's baseline, so neither column ends early. */
+  align-items: stretch;
+}
+.hero__copy {
+  display: flex;
+  flex-direction: column;
 }
 /* Grid children default to `min-width: auto` and will not shrink below their
  * widest unbreakable token — an install command, for instance. This pair of
@@ -417,13 +423,20 @@ body.tour-active .main {
     gap: 18px;
   }
 }
-/* Four figures under the hero copy, filling the column the card sits beside.
- * Wraps rather than shrinking, so a long label never forces the row narrow. */
+/* Six figures under the hero copy, filling the column the card sits beside.
+ *
+ * Andrew's direction, 2026-09-05: the column ended well above the aside and
+ * the empty band under the figures looked like a mistake. Two rows of three,
+ * pushed to the foot of the column, so the figures end where the aside ends.
+ * Every figure is still derived from the catalog on screen; two of the six
+ * (feed-read rows, rows flagged for review) are the split behind the vendor
+ * count, said out loud. */
 .hero__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px 30px;
-  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 28px;
+  margin-top: auto;
+  padding-top: 26px;
 }
 .hero__stats div {
   min-width: 0;
@@ -437,7 +450,7 @@ body.tour-active .main {
    * taller aside. It was answering the wrong question: the column being shorter
    * than its neighbour is not a problem, and filling it pushed the figures back
    * into being one element among several. They carry the space on their own. */
-  font-size: 2.6rem;
+  font-size: 3rem;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -450,16 +463,23 @@ body.tour-active .main {
 }
 .hero__stats dd {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   margin: 2px 0 0;
-  max-width: 15ch;
+  max-width: 17ch;
+}
+@media (max-width: 1080px) {
+  .hero__stats {
+    margin-top: 22px;
+    padding-top: 0;
+  }
 }
 @media (max-width: 560px) {
   .hero__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px 20px;
   }
   .hero__stats dt {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
   }
 }
 

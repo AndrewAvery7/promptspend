@@ -123,6 +123,25 @@ export class Catalog {
     return this.primaryModels.filter((model) => model.provenance.source === 'vendor').length;
   }
 
+  /**
+   * How many primary rows come from a public price feed rather than the
+   * vendor's own page. The complement of `vendorVerifiedCount()` over primary
+   * rows, shown beside it so the split is visible rather than implied.
+   */
+  feedSourcedCount(): number {
+    return this.primaryModels.filter((model) => model.provenance.source !== 'vendor').length;
+  }
+
+  /**
+   * How many primary rows currently carry a review flag: two sources disagree,
+   * or a price could not be settled. Shown on the landing page on purpose. The
+   * project's claim is that it says so when it is not sure, and a count that
+   * is derived cannot quietly stay at a flattering number.
+   */
+  flaggedForReviewCount(): number {
+    return this.primaryModels.filter((model) => model.provenance.needsReview === true).length;
+  }
+
   /** The date the sources were last successfully checked, if we know it. */
   sourcesLastChecked(): string | null {
     return this.health?.succeededAt?.slice(0, 10) ?? null;
