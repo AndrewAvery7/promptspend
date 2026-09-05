@@ -423,63 +423,172 @@ body.tour-active .main {
     gap: 18px;
   }
 }
-/* Six figures under the hero copy, filling the column the card sits beside.
+/* Where each price was read — the hero's evidence block (Provenance.tsx).
  *
- * Andrew's direction, 2026-09-05: the column ended well above the aside and
- * the empty band under the figures looked like a mistake. Two rows of three,
- * pushed to the foot of the column, so the figures end where the aside ends.
- * Every figure is still derived from the catalog on screen; two of the six
- * (feed-read rows, rows flagged for review) are the split behind the vendor
- * count, said out loud. */
-.hero__stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px 28px;
+ * Andrew's direction, 2026-09-05, in two steps: first the column ended well
+ * above the aside and the empty band read as a mistake; then six numerals in
+ * a grid filled it but said nothing about how they related. This is the third
+ * form: one headline count, a bar that splits it into vendor-read and
+ * feed-read rows, the review flags said out loud. A card like the aside, so
+ * the two columns read as a matched pair. Pushed to the foot of the column so
+ * it ends where the aside ends. */
+.prov {
   margin-top: auto;
-  padding-top: 26px;
+  padding: 18px 20px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
 }
-.hero__stats div {
+.prov__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+.prov__lead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
   min-width: 0;
 }
-.hero__stats dt {
+.prov__big {
   font-family: var(--font-display);
-  /* 1.6rem, then 2.05rem, now this. These four figures are the strongest
-   * evidence on the page and were the quietest thing on it.
-   *
-   * A row of chips lived under them briefly, to level this column against the
-   * taller aside. It was answering the wrong question: the column being shorter
-   * than its neighbour is not a problem, and filling it pushed the figures back
-   * into being one element among several. They carry the space on their own. */
-  font-size: 3rem;
+  font-size: 3.4rem;
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  /* Follows the palette the reader picked, like the eyebrow and the emphasised
-   * word in the headline. Comfortably "large text" under WCAG at this size and
-   * weight, so the 3:1 threshold applies rather than 4.5:1 — and
-   * `contrast.test.ts` already checks every accent against every surface it can
-   * land on. */
+  line-height: 1;
+  letter-spacing: -0.03em;
+  /* Large text under WCAG at this size, so the 3:1 threshold applies, and
+   * contrast.test.ts already checks every accent against every surface. */
   color: var(--accent);
 }
-.hero__stats dd {
+.prov__lead-text {
   color: var(--muted);
+  font-size: 0.95rem;
+}
+.prov__lead-text b,
+.prov__key b,
+.prov__facts b {
+  color: var(--ink);
+  font-weight: 650;
+}
+.prov__eyebrow {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  /* 0.76rem, not the aside's 0.66rem: the browser suite fails any text that
+   * renders under 12px, and this one sits on the landing page's main column. */
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+/* The split. Two segments in one track; the feed segment is the accent
+ * mixed toward the surface so it reads as "the same thing, less settled"
+ * in both themes rather than as a second colour. */
+.prov__bar {
+  display: flex;
+  height: 16px;
+  margin: 14px 0 10px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.prov__seg {
+  display: block;
+  height: 100%;
+  transition: width 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.prov__seg--vendor {
+  background: var(--accent);
+}
+.prov__seg--feed {
+  background: color-mix(in srgb, var(--accent) 38%, var(--surface));
+}
+.prov__legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 20px;
+  margin: 0;
+}
+.prov__key {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-left: 17px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.prov__key::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+.prov__key--vendor::before {
+  background: var(--accent);
+}
+.prov__key--feed::before {
+  background: color-mix(in srgb, var(--accent) 38%, var(--surface));
+}
+.prov__key dt,
+.prov__key dd {
+  margin: 0;
+}
+.prov__key dd {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.prov__facts {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--border);
+}
+.prov__facts li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.prov__facts svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: var(--accent);
+}
+.prov__fact--warn svg {
+  color: var(--warn);
+}
+.prov__more {
+  margin: 10px 0 0;
   font-size: 0.8rem;
-  margin: 2px 0 0;
-  max-width: 17ch;
 }
 @media (max-width: 1080px) {
-  .hero__stats {
+  .prov {
     margin-top: 22px;
-    padding-top: 0;
   }
 }
 @media (max-width: 560px) {
-  .hero__stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px 20px;
+  .prov__big {
+    font-size: 2.4rem;
   }
-  .hero__stats dt {
-    font-size: 1.5rem;
+  .prov__legend {
+    grid-template-columns: 1fr;
   }
 }
 
