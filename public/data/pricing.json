@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-04T11:06:06.796Z",
+  "generatedAt": "2026-09-05T11:04:52.527Z",
   "providers": [
     {
       "id": "anthropic",
@@ -99,7 +99,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 64000,
       "capabilityIndex": 64
@@ -127,7 +127,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 64000,
       "capabilityIndex": 80
@@ -250,7 +250,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -284,7 +284,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -318,7 +318,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -352,7 +352,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -448,7 +448,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -482,7 +482,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -544,7 +544,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 8000,
       "capabilityIndex": 75
@@ -599,7 +599,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 65536
     },
@@ -681,7 +681,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04",
+        "lastVerified": "2026-09-05",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19",
         "reviewCodes": [
@@ -714,7 +714,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 8192
     },
@@ -740,7 +740,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 163840,
       "capabilityIndex": 74
@@ -922,7 +922,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 65535
     },
@@ -978,7 +978,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 65536
     },
@@ -1043,7 +1043,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -1184,12 +1184,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 65536
     },
@@ -1217,7 +1212,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -1248,7 +1243,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -1279,7 +1274,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -1310,7 +1305,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -1342,7 +1337,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -1495,7 +1490,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04",
+        "lastVerified": "2026-09-05",
         "lastChanged": "2026-08-23",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
@@ -1646,7 +1641,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 8192
     },
@@ -1673,7 +1668,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 8192
     },
@@ -1729,7 +1724,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1757,7 +1752,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 262144,
       "capabilityIndex": 71
@@ -1784,7 +1779,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04",
+        "lastVerified": "2026-09-05",
         "needsReview": true,
         "reviewNote": "OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5",
         "reviewCodes": [
@@ -1816,7 +1811,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 262144,
       "capabilityIndex": 68
@@ -1844,7 +1839,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 262144
     },
@@ -1963,7 +1958,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -1994,7 +1989,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -2025,7 +2020,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -2056,7 +2051,7 @@
         "lastVerified": "2026-08-03",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
         "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
+        "reviewNote": "vendor verification is 33 days old — re-read the first-party pricing page",
         "reviewCodes": [
           "vendor-verification-stale"
         ]
@@ -2431,7 +2426,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-04"
+        "lastVerified": "2026-09-05"
       },
       "maxOutput": 128000,
       "capabilityIndex": 78
