@@ -360,6 +360,28 @@ describe('Catalog', () => {
     expect(mixed.vendorVerifiedCount()).toBeLessThanOrEqual(mixed.primaryModels.length);
   });
 
+  // The two figures shown beside it on the landing page. Together with the
+  // vendor count they must partition the primary rows, and the review count
+  // must follow the flag rather than any literal.
+  it('splits primary rows into vendor-read and feed-read, and counts review flags', () => {
+    const mixed = new Catalog({
+      ...CATALOG,
+      models: CATALOG.models.map((m, index) => ({
+        ...m,
+        provenance: {
+          ...m.provenance,
+          source: index === 0 ? ('vendor' as const) : ('litellm' as const),
+          ...(index === 1 ? { needsReview: true, reviewNote: 'two sources disagree' } : {}),
+        },
+      })),
+    });
+    expect(mixed.vendorVerifiedCount() + mixed.feedSourcedCount()).toBe(mixed.primaryModels.length);
+    expect(mixed.flaggedForReviewCount()).toBe(
+      mixed.primaryModels.filter((m) => m.provenance.needsReview).length,
+    );
+    expect(mixed.flaggedForReviewCount()).toBeGreaterThanOrEqual(0);
+  });
+
   // This used to fall back to `generatedAt`. A catalog carrying no change
   // history therefore reported the build date, so the site announced a price
   // change every morning it was rebuilt and looked plausible doing it.

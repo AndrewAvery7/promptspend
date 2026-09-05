@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { HEALTH_URL, PRICING_SCOPE, PRICING_URL } from '@/config';
+import { HEALTH_URL, PRICING_SCOPE, PRICING_URL, RECEIPT_URL } from '@/config';
 import { loadCatalog, type Catalog } from '@/lib/pricing/catalog';
 import { useAppearance } from '@/state/useAppearance';
 import { ReceiptObject } from './ReceiptObject';
@@ -87,28 +87,38 @@ export function ReceiptPage() {
       <a className="receipt-skip-link" href="#receipt-main">
         Skip to main content
       </a>
+      {/* The same navigation as the calculator's header, so the Receipt reads as a
+          page of the site rather than a separate product (Andrew, 2026-09-05).
+          The view links go through the hash, which App.tsx honours. */}
       <header className="receipt-header">
-        <a
-          className="receipt-header__brand"
-          href={import.meta.env.BASE_URL}
-          aria-label="PromptSpend calculator"
-        >
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-            <rect x="1.5" y="1.5" width="23" height="23" rx="6" stroke="currentColor" strokeWidth="2" />
-            <path
-              d="M7 9.5h12M7 13.5h8M7 17.5h10"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-          <span>
-            Prompt<strong>Spend</strong>
-          </span>
-        </a>
-        <nav aria-label="Receipt page">
-          <a href={import.meta.env.BASE_URL}>Calculator</a>
-          <a href={PRICING_API_URL}>Pricing API</a>
+        <div className="receipt-header__inner">
+          <a className="receipt-header__brand" href={import.meta.env.BASE_URL} aria-label="PromptSpend home">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+              <rect x="1.5" y="1.5" width="23" height="23" rx="6" stroke="currentColor" strokeWidth="2" />
+              <path
+                d="M7 9.5h12M7 13.5h8M7 17.5h10"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            <span>
+              Prompt<strong>Spend</strong>
+            </span>
+          </a>
+          <nav className="receipt-nav" aria-label="Main">
+            <a href={import.meta.env.BASE_URL}>Estimate</a>
+            <a href={`${import.meta.env.BASE_URL}#compare`}>Compare</a>
+            <a href={`${import.meta.env.BASE_URL}#learn`}>Learn</a>
+            <a href={`${import.meta.env.BASE_URL}#data`}>Data &amp; Alerts</a>
+            <a href={RECEIPT_URL} aria-current="page">
+              PromptSpend it
+            </a>
+          </nav>
+          <div className="receipt-header__spacer" />
+          <a className="receipt-header__api" href={PRICING_API_URL}>
+            Pricing API
+          </a>
           <button
             type="button"
             className="receipt-header__theme"
@@ -117,7 +127,7 @@ export function ReceiptPage() {
           >
             {appearance.theme === 'light' ? 'Dark' : 'Light'} mode
           </button>
-        </nav>
+        </div>
       </header>
 
       <main id="receipt-main">
