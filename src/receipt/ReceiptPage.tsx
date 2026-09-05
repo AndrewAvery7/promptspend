@@ -170,6 +170,38 @@ export function ReceiptPage() {
           </div>
         </section>
 
+        <section className="receipt-section receipt-video" aria-labelledby="video-title">
+          <div className="receipt-section__heading">
+            <div>
+              <p className="receipt-eyebrow">SEVENTY SECONDS</p>
+              <h2 id="video-title">Watch it run on a real conversation.</h2>
+            </div>
+          </div>
+          <p className="receipt-video__intro">
+            A real Claude conversation, the Receipt pasted in, and the reply it gave, line by line. Every
+            figure on screen is the assistant&apos;s own; nothing is mocked.
+          </p>
+          <video
+            className="receipt-video__player"
+            controls
+            preload="none"
+            playsInline
+            width={1920}
+            height={1080}
+            poster={`${import.meta.env.BASE_URL}receipt/video-poster.png`}
+          >
+            <source src={`${import.meta.env.BASE_URL}receipt/promptspend-receipt.mp4`} type="video/mp4" />
+            <track
+              kind="captions"
+              srcLang="en"
+              label="English"
+              src={`${import.meta.env.BASE_URL}receipt/promptspend-receipt.en.vtt`}
+              default
+            />
+            Your browser cannot play this video. Download it: promptspend.com/receipt/promptspend-receipt.mp4
+          </video>
+        </section>
+
         <section className="receipt-section receipt-section--split" aria-labelledby="audit-title">
           <div>
             <p className="receipt-eyebrow">ONE NARROW TASK</p>

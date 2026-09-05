@@ -1,0 +1,43 @@
+WEBVTT
+
+00:00:05.700 --> 00:00:08.240
+Every AI conversation has a price.
+
+00:00:11.000 --> 00:00:13.380
+Almost none of them will tell you what it is.
+
+00:00:15.900 --> 00:00:19.950
+So we made a receipt you hand to the conversation itself.
+
+00:00:20.000 --> 00:00:24.050
+It's a short instruction. You can read every line before you copy it.
+
+00:00:24.900 --> 00:00:28.640
+Paste it after any chat in ChatGPT or Claude.
+
+00:00:29.500 --> 00:00:33.490
+The assistant counts the messages you can see, estimates the tokens,
+
+00:00:33.540 --> 00:00:37.530
+and checks PromptSpend's current prices, live.
+
+00:00:37.580 --> 00:00:41.570
+Then it tells you the cost range, and the two things driving it.
+
+00:00:42.900 --> 00:00:47.825
+And it says what it can't see. Hidden prompts. Tool calls. Cached context.
+
+00:00:47.875 --> 00:00:52.800
+It says "estimate," never "invoice."
+
+00:00:53.900 --> 00:00:57.820
+If it can't check a price, it says so, instead of guessing.
+
+00:00:59.000 --> 00:01:01.655
+Then turn the answer into a receipt you can share.
+
+00:01:01.705 --> 00:01:04.360
+Made on your machine, not ours.
+
+00:01:06.200 --> 00:01:09.080
+Your prompt has a price tag. PromptSpend it.

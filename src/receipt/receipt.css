@@ -436,6 +436,22 @@ main {
   margin-top: 16px;
 }
 
+/* The launch video: one 16:9 player, poster first, captions on, nothing autoplays. */
+.receipt-video__intro {
+  max-width: 68ch;
+  margin-bottom: 24px;
+}
+
+.receipt-video__player {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
 .receipt-checks {
   margin: 0;
   padding: 0;
