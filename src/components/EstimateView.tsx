@@ -6,6 +6,7 @@ import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
 import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
 import { MAX_MODELS } from '@/lib/url/scenario';
 import { MAX_PASTE_CHARS, type FieldKey, type useEstimator } from '@/state/useEstimator';
+import { Provenance } from '@/components/Provenance';
 import { AssumptionList, CostCards, InsightList, WarningList } from './CostCards';
 import { HelpTip, ReviewBadge } from './Disclosure';
 import { CountryFilter, emptyReason } from './CountryFilter';
@@ -101,37 +102,7 @@ export function EstimateView({
             Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s
             bill side by side — at your scale, from prices re-checked every morning.
           </p>
-          {/* Every figure here is derived from the catalog being displayed, not
-              written down beside it. A hand-typed count is the thing that goes
-              quietly wrong the morning after a sync adds a row. */}
-          <dl className="hero__stats">
-            <div>
-              <dt>{catalog.primaryModels.length}</dt>
-              <dd>models tracked</dd>
-            </div>
-            <div>
-              <dt>{catalog.providers.length}</dt>
-              <dd>providers</dd>
-            </div>
-            <div>
-              <dt>{catalog.vendorVerifiedCount()}</dt>
-              <dd>read against the vendor&apos;s own page</dd>
-            </div>
-            <div>
-              <dt>{catalog.feedSourcedCount()}</dt>
-              <dd>read from a public price feed</dd>
-            </div>
-            {/* The number a competitor would hide. Two sources disagree, or a
-                price could not be settled, and the row says so. */}
-            <div>
-              <dt>{catalog.flaggedForReviewCount()}</dt>
-              <dd>prices flagged for review today</dd>
-            </div>
-            <div>
-              <dt>0</dt>
-              <dd>accounts, trackers or cookies</dd>
-            </div>
-          </dl>
+          <Provenance catalog={catalog} onOpenData={onOpenData} />
         </div>
         <aside className="hero__aside" aria-labelledby="hero-aside-title">
           <p className="hero__aside-eyebrow">Beyond the browser</p>
