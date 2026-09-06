@@ -189,6 +189,91 @@ describe('rendered pages', () => {
     expect(html).toContain('$0.5');
   });
 
+  it('marks each promotional figure in the rate card, with the standard rate in its tooltip', () => {
+    const promo = model('promo', {
+      pricing: {
+        input: 1,
+        output: 4,
+        cachedInput: 0.1,
+        cacheWrite: 1.25,
+        intro: { input: 0.5, output: 2, cachedInput: 0.05, until: '2026-08-31' },
+      },
+    });
+    const set = buildPages(catalog([promo]), { asOf: ASOF });
+    const html = renderModelPage(set.models[0]!, recordingContext());
+
+    const cell = (figure: string) =>
+      new RegExp(`<td class="num">\\${figure}<span class="rate-promo" title="([^"]*)">`).exec(html)?.[1];
+
+    // Input, output and cached input are promoted; each cell says so and names
+    // what it will cost once the promotion ends.
+    expect(cell('$0.5')).toBe('Promotional rate until 2026-08-31 — standard rate $1/M');
+    expect(cell('$2')).toBe('Promotional rate until 2026-08-31 — standard rate $4/M');
+    expect(cell('$0.05')).toBe('Promotional rate until 2026-08-31 — standard rate $0.1/M');
+    // The vendor published no promotional write rate, so that cell is the
+    // standard one and carries no marker.
+    expect(html).toMatch(/<td class="num">\$1\.25<\/td>/);
+    expect(html.match(/class="rate-promo"/g)).toHaveLength(3);
+    // The glyph is decoration; the sentence reaches a screen reader as text.
+    expect(html).toContain('<span class="visually-hidden"> (Promotional rate until 2026-08-31');
+  });
+
+  it('drops the marker, and the promotional figure, once the window has closed', () => {
+    const promo = model('promo', {
+      pricing: { input: 1, output: 4, intro: { input: 0.5, output: 2, until: '2026-08-31' } },
+    });
+    const set = buildPages(catalog([promo]), { asOf: new Date('2026-09-01T00:00:00Z') });
+    const html = renderModelPage(set.models[0]!, recordingContext());
+
+    expect(html).not.toContain('rate-promo');
+    expect(html).not.toContain('promotional rates, in force');
+    expect(html).toMatch(/<td class="num">\$1<\/td>/);
+  });
+
+  it('marks the same promotion wherever the model is listed, not only on its own page', () => {
+    // Cheap enough to be the provider's cheapest and everyone else's alternative,
+    // scored highly enough to earn a comparison page.
+    const promo = model('promo', {
+      providerId: 'anthropic',
+      capabilityIndex: 80,
+      pricing: { input: 0.8, output: 3.2, intro: { input: 0.4, output: 1.6, until: '2026-08-31' } },
+    });
+    const set = buildPages(catalog([...SAMPLE, promo]), { asOf: ASOF });
+    const ctx = recordingContext();
+
+    const marked = (html: string) => (html.match(/class="rate-promo"/g) ?? []).length;
+    // Its own row in the index; the other model's page lists it as an alternative.
+    expect(marked(renderModelsIndex(set, ctx))).toBe(2);
+    expect(
+      marked(
+        renderModelPage(
+          set.models.find((page) => page.id === 'gpt-5')!,
+          ctx,
+        ),
+      ),
+    ).toBe(2);
+    // The provider table, and the providers index where it is the cheapest.
+    expect(
+      marked(
+        renderProviderPage(
+          set.providers.find((page) => page.id === 'anthropic')!,
+          ctx,
+        ),
+      ),
+    ).toBe(2);
+    expect(marked(renderProvidersIndex(set, ctx))).toBe(1);
+    // Both rate-card rows on a comparison against it.
+    const versus = set.comparisons.find((page) => page.left.id === 'promo' || page.right.id === 'promo')!;
+    expect(marked(renderComparisonPage(versus, ctx))).toBe(2);
+    // And never the standard figure alongside.
+    expect(
+      renderProviderPage(
+        set.providers.find((page) => page.id === 'anthropic')!,
+        ctx,
+      ),
+    ).not.toContain('$0.8<');
+  });
+
   it('surfaces a review flag instead of presenting a disputed price as settled', () => {
     const set = buildPages(
       catalog([

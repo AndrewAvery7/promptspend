@@ -43,6 +43,8 @@ export interface WorkedExample {
 export interface Alternative {
   model: Model;
   slug: string;
+  /** Rates in force on `asOf`, so the table prints what the reader would pay. */
+  effective: Pricing;
   blended: number;
   /** Fraction saved on the blended rate, 0–1. */
   saving: number;
@@ -94,7 +96,8 @@ export interface ProviderPage {
   description: string;
   heading: string;
   provider: Provider;
-  models: { model: Model; slug: string; path: string; blended: number }[];
+  models: { model: Model; slug: string; path: string; effective: Pricing; blended: number }[];
+  /** `models[0]`, by blended rate — its `effective` rates sit in that entry. */
   cheapest: Model | undefined;
   lastmod: string;
 }
@@ -120,6 +123,9 @@ export interface ComparisonPage {
   heading: string;
   left: Model;
   right: Model;
+  /** Each side's rates in force on `asOf` — what the workload rows were costed at. */
+  leftEffective: Pricing;
+  rightEffective: Pricing;
   leftSlug: string;
   rightSlug: string;
   leftProvider: string;
@@ -365,6 +371,8 @@ function comparisonPage(
 
   const leftProvider = catalog.providerName(left);
   const rightProvider = catalog.providerName(right);
+  const leftEffective = effectivePricing(left.pricing, asOf);
+  const rightEffective = effectivePricing(right.pricing, asOf);
 
   return {
     kind: 'comparison',
@@ -377,13 +385,15 @@ function comparisonPage(
       `${left.displayName} vs ${right.displayName} pricing`,
     ]),
     description: fitDescription([
-      `${left.displayName} costs ${rate(left.pricing.input)}/${rate(left.pricing.output)} per 1M tokens and ${right.displayName} ${rate(right.pricing.input)}/${rate(right.pricing.output)}. Here is the monthly bill for each on three real workloads.`,
+      `${left.displayName} costs ${rate(leftEffective.input)}/${rate(leftEffective.output)} per 1M tokens and ${right.displayName} ${rate(rightEffective.input)}/${rate(rightEffective.output)}. Here is the monthly bill for each on three real workloads.`,
       `${left.displayName} against ${right.displayName} on rates, context window and the monthly bill for three real workloads.`,
       `${left.displayName} vs ${right.displayName}: rates and monthly cost, side by side.`,
     ]),
     heading: `${left.displayName} vs ${right.displayName}`,
     left,
     right,
+    leftEffective,
+    rightEffective,
     leftSlug: slugById.get(left.id) ?? modelSlug(left.id),
     rightSlug: slugById.get(right.id) ?? modelSlug(right.id),
     leftProvider,
@@ -457,6 +467,7 @@ export function buildPages(raw: PricingCatalog, options: BuildOptions): PageSet 
         return {
           model: other,
           slug: otherSlug,
+          effective: effectivePricing(other.pricing, asOf),
           blended: blendedRate(other),
           saving: blended > 0 ? 1 - blendedRate(other) / blended : 0,
           comparisonPath: hasPage ? `${COMPARE_ROOT}${pairSlug}/` : null,
@@ -498,10 +509,12 @@ export function buildPages(raw: PricingCatalog, options: BuildOptions): PageSet 
           model,
           slug: slugById.get(model.id)!,
           path: `${MODELS_ROOT}${slugById.get(model.id)!}/`,
+          effective: effectivePricing(model.pricing, asOf),
           blended: blendedRate(model),
         }));
 
       const cheapest = owned[0]?.model;
+      const cheapestRate = owned[0]?.effective.input;
       return {
         kind: 'provider' as const,
         id: provider.id,
@@ -513,7 +526,7 @@ export function buildPages(raw: PricingCatalog, options: BuildOptions): PageSet 
           `${provider.name} API pricing`,
         ]),
         description: fitDescription([
-          `Current API prices for all ${owned.length} ${provider.name} models in one table${cheapest ? `, from ${cheapest.displayName} at ${rate(cheapest.pricing.input)} per 1M input tokens` : ''}. Re-checked every morning.`,
+          `Current API prices for all ${owned.length} ${provider.name} models in one table${cheapest && cheapestRate !== undefined ? `, from ${cheapest.displayName} at ${rate(cheapestRate)} per 1M input tokens` : ''}. Re-checked every morning.`,
           `Current API prices for every ${provider.name} model, re-checked every morning against ${provider.name}'s own pricing page.`,
           `${provider.name} API pricing for all ${owned.length} models.`,
         ]),

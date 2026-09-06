@@ -1095,6 +1095,29 @@ body.tour-active .main {
   background: var(--warn-soft);
   color: var(--warn);
 }
+/* The marker beside a figure that is a promotional rate (see PromoRate.tsx).
+   Same warn tokens as the INTRO badge so the two read as one fact; the tokens
+   are re-declared for the dark theme, so unlike .badge--cheapest there is no
+   hard-coded colour here to override. Sized in em so it follows the figure it
+   sits beside, from a ticker line to a table cell. */
+.rate-promo {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 0.3em;
+  padding: 0.1em;
+  vertical-align: -0.12em;
+  border-radius: 0.2em;
+  background: var(--warn-soft);
+  color: var(--warn);
+  line-height: 0;
+  cursor: help;
+}
+.rate-promo svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .badge--review {
   background: var(--warn-soft);
   color: var(--warn);

@@ -6,6 +6,8 @@ import type { ComparisonRow } from '@/lib/engine/cost';
 import { HelpTip, ReviewBadge } from './Disclosure';
 import { CountryFilter } from './CountryFilter';
 import { CountryTag, countryName } from './Flag';
+import { Rate, useAsOf } from './PromoRate';
+import { rateOn } from '@/lib/pricing/promo';
 
 interface CompareViewProps {
   catalog: Catalog;
@@ -36,6 +38,7 @@ export function CompareView({
      of the same list — filtering one and not the other would show a model as a
      dot you could not find in the rows underneath it. */
   const [countries, setCountries] = useState<string[]>([]);
+  const asOf = useAsOf();
   const spread = catalog.rateSpread();
   const priciest = rows.length > 1 ? rows[rows.length - 1] : undefined;
 
@@ -79,7 +82,13 @@ export function CompareView({
           fix, reintroduced by where it was put. */}
       <div className="compare-layout">
         <div className="compare-layout__main">
-          <ValueMap catalog={catalog} selectedIds={selectedIds} onToggle={onToggle} countries={countries} />
+          <ValueMap
+            catalog={catalog}
+            selectedIds={selectedIds}
+            onToggle={onToggle}
+            countries={countries}
+            asOf={asOf}
+          />
         </div>
         <aside className="hero__aside compare-layout__side" aria-labelledby="shortlist-title">
           <p className="hero__aside-eyebrow">Your shortlist</p>
@@ -127,6 +136,7 @@ export function CompareView({
         onToggle={onToggle}
         countries={countries}
         onCountries={setCountries}
+        asOf={asOf}
       />
     </section>
   );
@@ -151,7 +161,7 @@ const LABEL_SPOTS = [
   { dx: -12, dy: 5, anchor: 'end' as const },
 ];
 
-function ValueMap({ catalog, selectedIds, onToggle, countries }: CompareViewProps) {
+function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareViewProps & { asOf: Date }) {
   const [hover, setHover] = useState<{ model: Model; x: number; y: number } | null>(null);
 
   const points = useMemo(() => {
@@ -380,6 +390,12 @@ function ValueMap({ catalog, selectedIds, onToggle, countries }: CompareViewProp
 
           {points.models.map(({ model, cx, cy }) => {
             const selected = selectedIds.includes(model.id);
+            // The rates in force, not the catalog's standard ones — the same
+            // figures the tooltip and the table show. A promotion is named,
+            // since a bare number cannot carry a marker inside an aria-label.
+            const input = rateOn(model, 'input', asOf);
+            const output = rateOn(model, 'output', asOf);
+            const promo = input.promo ?? output.promo;
             return (
               <g key={model.id}>
                 {/* Each mark is a real control: focusable, activated by Enter or
@@ -390,9 +406,11 @@ function ValueMap({ catalog, selectedIds, onToggle, countries }: CompareViewProp
                   role="button"
                   tabIndex={0}
                   aria-pressed={selected}
-                  aria-label={`${model.displayName}, ${formatRate(model.pricing.input)} in and ${formatRate(
-                    model.pricing.output,
-                  )} out per million tokens. ${selected ? 'In your estimate' : 'Add to your estimate'}.`}
+                  aria-label={`${model.displayName}, ${formatRate(input.value ?? model.pricing.input)} in and ${formatRate(
+                    output.value ?? model.pricing.output,
+                  )} out per million tokens${promo ? ` (promotional rates until ${promo.until})` : ''}. ${
+                    selected ? 'In your estimate' : 'Add to your estimate'
+                  }.`}
                   onClick={() => onToggle(model.id)}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
@@ -459,7 +477,8 @@ function ValueMap({ catalog, selectedIds, onToggle, countries }: CompareViewProp
         <div className="chart-tooltip" style={{ left: hover.x + 14, top: hover.y - 10 }}>
           <b>{hover.model.displayName}</b> · {catalog.providerName(hover.model)}
           <br />
-          in {formatRate(hover.model.pricing.input)}/M · out {formatRate(hover.model.pricing.output)}/M
+          in <Rate model={hover.model} field="input" asOf={asOf} suffix="/M" /> · out{' '}
+          <Rate model={hover.model} field="output" asOf={asOf} suffix="/M" />
         </div>
       )}
     </div>
@@ -471,9 +490,10 @@ type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context';
 /** The table also *sets* the country filter, where the chart only reads it. */
 interface CatalogTableProps extends CompareViewProps {
   onCountries: (next: string[]) => void;
+  asOf: Date;
 }
 
-function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries }: CatalogTableProps) {
+function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, asOf }: CatalogTableProps) {
   const [sort, setSort] = useState<{ key: SortKey; asc: boolean }>({ key: 'input', asc: true });
   const [showRetired, setShowRetired] = useState(false);
 
@@ -487,6 +507,9 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries }
   );
 
   const rows = useMemo(() => {
+    // Sorted on the figure the cell prints. Ordering by the standard rate while
+    // showing the promotional one would put a $0.75 row where a $1.50 row
+    // belongs, in a column that claims to be sorted.
     const value = (model: Model): string | number => {
       switch (sort.key) {
         case 'name':
@@ -494,11 +517,11 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries }
         case 'provider':
           return catalog.providerName(model);
         case 'output':
-          return model.pricing.output;
+          return rateOn(model, 'output', asOf).value ?? model.pricing.output;
         case 'context':
           return model.contextWindow;
         default:
-          return model.pricing.input;
+          return rateOn(model, 'input', asOf).value ?? model.pricing.input;
       }
     };
     // Retired and unlisted rows are kept but hidden by default: they inflate
@@ -513,7 +536,7 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries }
         typeof va === 'string' && typeof vb === 'string' ? va.localeCompare(vb) : Number(va) - Number(vb);
       return comparison * (sort.asc ? 1 : -1);
     });
-  }, [catalog, inScope, sort, showRetired]);
+  }, [catalog, inScope, sort, showRetired, asOf]);
 
   const hidden = inScope.length - rows.length;
 
@@ -620,8 +643,12 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries }
                   <td className="align-left">
                     {catalog.providerName(model)} <CountryTag country={provider?.country} />
                   </td>
-                  <td className="mono">{formatRate(model.pricing.input)}</td>
-                  <td className="mono">{formatRate(model.pricing.output)}</td>
+                  <td className="mono">
+                    <Rate model={model} field="input" asOf={asOf} />
+                  </td>
+                  <td className="mono">
+                    <Rate model={model} field="output" asOf={asOf} />
+                  </td>
                   <td className="mono">{formatContext(model.contextWindow)}</td>
                   <td className="align-left source-cell">
                     {/* "Every number shows its work" is only true if the work is

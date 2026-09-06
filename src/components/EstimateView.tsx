@@ -12,6 +12,7 @@ import { HelpTip, ReviewBadge } from './Disclosure';
 import { CountryFilter, emptyReason } from './CountryFilter';
 import { CountryTag } from './Flag';
 import { SyncChip } from './SyncChip';
+import { Rate, useAsOf } from './PromoRate';
 
 type Estimator = ReturnType<typeof useEstimator>;
 
@@ -85,6 +86,7 @@ export function EstimateView({
   const primaryTokens = primaryModel ? estimator.tokensForModel(primaryModel) : null;
   const conversationsPerMonth = scenario.conversationsPerDay * 30;
   const cacheOn = scenario.cachedInputShare > 0;
+  const asOf = useAsOf();
 
   return (
     <section aria-labelledby="estimate-heading">
@@ -246,7 +248,8 @@ export function EstimateView({
                               />
                             )}
                             <span className="model-row__rate mono">
-                              ${model.pricing.input} / ${model.pricing.output}
+                              <Rate model={model} field="input" asOf={asOf} /> /{' '}
+                              <Rate model={model} field="output" asOf={asOf} />
                             </span>
                           </span>
                         </div>
@@ -555,6 +558,7 @@ export function EstimateView({
               catalog={catalog}
               cacheEnabled={cacheOn}
               conversationsPerMonth={conversationsPerMonth}
+              asOf={asOf}
             />
             {rows.length > 1 && <SavingsCallout rows={rows} />}
           </section>
