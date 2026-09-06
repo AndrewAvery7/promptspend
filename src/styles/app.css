@@ -1101,6 +1101,11 @@ body.tour-active .main {
    hard-coded colour here to override. Sized in em so it follows the figure it
    sits beside, from a ticker line to a table cell. */
 .rate-promo {
+  /* Positioned so the visually-hidden text inside is contained by the
+     marker, not by the page. Absolutely positioned against the page it
+     escaped the table's scroll container and widened the document to
+     wherever the rightmost rate cell sat — a 320px phone got a 900px page. */
+  position: relative;
   display: inline-block;
   width: 0.8em;
   height: 0.8em;

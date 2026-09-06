@@ -95,7 +95,7 @@ caption.cap { text-align: left; padding-bottom: 0.5rem; }
 /* The marker beside a promotional rate — the same one the app draws, on the
  * same warn tokens. Its tooltip is a title attribute, which needs no script. */
 .rate-promo {
-  display: inline-block; width: 0.8em; height: 0.8em; margin-left: 0.3em; padding: 0.1em;
+  position: relative; display: inline-block; width: 0.8em; height: 0.8em; margin-left: 0.3em; padding: 0.1em;
   vertical-align: -0.12em; border-radius: 0.2em; background: var(--warn-soft); color: var(--warn);
   line-height: 0; cursor: help;
 }
