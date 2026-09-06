@@ -1,6 +1,7 @@
 # Mobile dependency security notes
 
-Last reviewed: September 5, 2026
+Last reviewed: September 6, 2026
+<!-- audit-fingerprint: 0021a497e019 (3 findings: 3 moderate, 0 high, 0 critical) -->
 
 ## Current scaffold audit
 
@@ -51,3 +52,14 @@ Do not run `npm audit fix --force`.
 This is a dated triage record derived from the September 1 lockfile, not a
 permanent waiver. The dependency state must be re-derived whenever that
 lockfile changes, and within 14 days of any release check.
+
+## How this record stays current
+
+The comment under "Last reviewed" is a fingerprint of the `npm audit` findings
+this triage was written against. `scripts/audit-triage.mjs --refresh` re-runs
+the audit; when the findings are unchanged it moves the date, and when they
+are not it stops and prints them, because then a person has to re-read the
+findings and rewrite this file, then run `--stamp` to record the new
+fingerprint. The workflow `mobile-audit.yml` runs `--refresh` every Monday and
+commits the date when it moved. The release check enforces the 14-day rule
+when `RELEASE_CHECK=1`; on ordinary pushes it only warns.

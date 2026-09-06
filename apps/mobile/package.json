@@ -43,6 +43,7 @@
     "start": "expo start",
     "android": "expo start --android",
     "check:release": "node scripts/check-release.mjs",
+    "audit:triage": "node scripts/audit-triage.mjs --refresh",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint --max-warnings 0 --no-cache",
