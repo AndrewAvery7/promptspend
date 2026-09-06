@@ -122,6 +122,10 @@ describe('buildExtractionPrompt', () => {
     expect(listedAs(rows[0]!)).toBe('qwen3.7-max');
     // No prefix to strip: Anthropic ids never carried one.
     expect(listedAs(rows[1]!)).toBeUndefined();
+    // What the verifier wrote down beats any derivation: the page prices a
+    // dated build, and that is the line the row was read from.
+    const dated = { ...rows[0]!, override: { ...qwen, verifiedAs: 'grok-4-0709' } };
+    expect(listedAs(dated)).toBe('grok-4-0709');
     const prompt = buildExtractionPrompt(qwen.verifiedUrl!, rows, 'BODY');
     expect(prompt).toContain('- dashscope-qwen3.7-max — Qwen 3.7 Max (listed as "qwen3.7-max")');
     expect(prompt).toContain('- claude-opus-5 — Claude Opus 5\n');

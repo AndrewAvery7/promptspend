@@ -50,10 +50,12 @@ export interface Checkable {
   providerId?: string;
 }
 
-/** The name the vendor's page is likely to use: the catalog id without its
- *  provider prefix. `dashscope-qwen3.7-max` is Alibaba's `qwen3.7-max`;
+/** The name the vendor's page uses for this row: what the verifier wrote down
+ *  (`verifiedAs`) when the page's name differs, else the catalog id without
+ *  its provider prefix. `dashscope-qwen3.7-max` is Alibaba's `qwen3.7-max`;
  *  `claude-opus-5` carries no prefix and is left alone. */
 export function listedAs(row: Checkable): string | undefined {
+  if (row.override.verifiedAs) return row.override.verifiedAs;
   const { id } = row.override;
   const prefix = row.providerId ? `${row.providerId}-` : undefined;
   return prefix && id.startsWith(prefix) && id.length > prefix.length ? id.slice(prefix.length) : undefined;

@@ -765,6 +765,7 @@
       "vendorVerified": true,
       "lastVerified": "2026-09-02",
       "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement",
+      "verifiedAs": "grok-4-1-fast-reasoning",
       "pricing": {
         "input": 1.25,
         "output": 2.5,
@@ -793,6 +794,7 @@
       "vendorVerified": true,
       "lastVerified": "2026-09-02",
       "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement",
+      "verifiedAs": "grok-4-0709",
       "pricing": {
         "input": 1.25,
         "output": 2.5,
@@ -806,6 +808,7 @@
       "vendorVerified": true,
       "lastVerified": "2026-09-02",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
+      "verifiedAs": "grok-4.20-0309-reasoning",
       "pricing": {
         "input": 1.25,
         "output": 2.5,
