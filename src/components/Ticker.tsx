@@ -1,12 +1,13 @@
 import type { Catalog } from '@/lib/pricing/catalog';
-import { formatRate } from '@/lib/engine/format';
+import { Rate, useAsOf } from './PromoRate';
 
 /**
  * The freshness strip. Everything on it is derived from the live catalog, so it
  * cannot drift away from the data underneath.
  */
 export function Ticker({ catalog }: { catalog: Catalog }) {
-  const items = buildItems(catalog);
+  const asOf = useAsOf();
+  const items = buildItems(catalog, asOf);
   const lane = [...items, ...items];
 
   return (
@@ -22,7 +23,7 @@ export function Ticker({ catalog }: { catalog: Catalog }) {
   );
 }
 
-function buildItems(catalog: Catalog): { key: string; node: React.ReactNode }[] {
+function buildItems(catalog: Catalog, asOf: Date): { key: string; node: React.ReactNode }[] {
   const items: { key: string; node: React.ReactNode }[] = [];
   const spread = catalog.rateSpread();
 
@@ -37,7 +38,7 @@ function buildItems(catalog: Catalog): { key: string; node: React.ReactNode }[] 
         <>
           CHEAPEST INPUT TODAY{' '}
           <span className="ticker__dim">
-            {cheapestInput.displayName} {formatRate(cheapestInput.pricing.input)}/M
+            {cheapestInput.displayName} <Rate model={cheapestInput} field="input" asOf={asOf} suffix="/M" />
           </span>
         </>
       ),
@@ -69,7 +70,8 @@ function buildItems(catalog: Catalog): { key: string; node: React.ReactNode }[] 
         <>
           <span className="ticker__up">▲ TRACKED</span> {model.displayName}{' '}
           <span className="ticker__dim">
-            {formatRate(model.pricing.input)}/{formatRate(model.pricing.output)} per 1M
+            <Rate model={model} field="input" asOf={asOf} />/<Rate model={model} field="output" asOf={asOf} />{' '}
+            per 1M
           </span>
         </>
       ),

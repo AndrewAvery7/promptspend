@@ -2,6 +2,7 @@ dist
 coverage
 node_modules
 public/data/pricing.json
+public/data/vendor-check.json
 docs/pricing-changelog.md
 
 # Generated: the daily pipeline writes these, and `wrangler types` rewrites the

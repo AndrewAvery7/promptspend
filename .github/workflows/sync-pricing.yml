@@ -55,6 +55,30 @@ jobs:
           npm ci --ignore-scripts
           npm rebuild esbuild
 
+      # Rung 1 upkeep. A hand-verified override wins the trust ladder outright,
+      # and until 2026-09-05 nothing automated ever re-read the page behind it:
+      # `lastVerified` on an override moved only when a person edited the file,
+      # so sixteen rows verified in one sitting on 08-03 went stale in one
+      # morning on 09-05. This step reads every vendor's own pricing page, and
+      # where the page agrees with the record it moves the date; where it
+      # disagrees the sync raises `vendor-page-mismatch` with both figures.
+      # It never writes a price, and it never fails the morning — a page that
+      # cannot be read leaves its rows as they were, and the 30-day rule in
+      # merge.ts is still the backstop. Skipped, not failed, when no reader key
+      # is present, so a missing secret degrades to the old behaviour rather
+      # than stopping the catalog.
+      #
+      # The reader is DeepSeek when its key is set (a transcription job, done
+      # for a fraction of the cost) and Anthropic otherwise. The report records
+      # which one read the pages.
+      - name: Re-read the vendors' own pricing pages
+        id: vendors
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+        run: npm run verify:vendors
+
       - name: Fetch, merge and validate pricing
         id: sync
         run: npm run sync:pricing
@@ -96,7 +120,7 @@ jobs:
           echo "Sources stable — recording the verification."
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json README.md docs/PAGES.md src/lib/seo/pages.ts
+          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json README.md docs/PAGES.md src/lib/seo/pages.ts
           if git diff --staged --quiet; then
             echo "Nothing staged — nothing to record."
           else
@@ -113,7 +137,7 @@ jobs:
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/sync-status.json
+          git add public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json
           if git diff --staged --quiet; then
             echo "Nothing staged — the manifest is unchanged."
           else
@@ -137,7 +161,7 @@ jobs:
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
+          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
           note=""
           if [ "$NEEDS_REVIEW" = "true" ]; then note=" (flagged)"; fi
           git commit -m "data: $SYNC_SUMMARY$note"
@@ -175,9 +199,9 @@ jobs:
           **Models tracked:** $MODEL_COUNT
           **Currently flagged:** $FLAGGED_COUNT
 
-          A model is flagged when the two independent sources disagree by more than 20%, when a published price moved by more than 50% in a single day, or when it stopped appearing upstream. Every flagged row is marked disputed in the UI and on its generated page, so a visitor sees the doubt rather than inheriting it silently.
+          A model is flagged when the two independent sources disagree by more than 20%, when a published price moved by more than 50% in a single day, when it stopped appearing upstream, or when the vendor's own pricing page — re-read every morning for every hand-verified row — disagrees with what the override records. Every flagged row is marked disputed in the UI and on its generated page, so a visitor sees the doubt rather than inheriting it silently.
 
-          Check the flagged rows against the vendor's own pricing page. If the vendor's number is authoritative, add it to \`data/pricing-overrides.json\` with its \`verifiedUrl\` — not by editing \`pricing.json\`, which the next sync overwrites.
+          Check the flagged rows against the vendor's own pricing page. If the vendor's number is authoritative, add it to \`data/pricing-overrides.json\` with its \`verifiedUrl\` — not by editing \`pricing.json\`, which the next sync overwrites. A \`vendor-page-mismatch\` flag already quotes both figures; decide which is right and correct the override (or its \`intro\` block) accordingly.
 
           Long-standing flags do not comment here every morning; only a reason that was not already recorded does.
           EOF

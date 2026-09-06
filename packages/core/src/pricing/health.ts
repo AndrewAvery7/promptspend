@@ -40,6 +40,18 @@ export interface SyncStatus {
   catalogHash: string;
   /** ISO date the published rates last actually moved. */
   pricesLastChanged: string | null;
+  /** The morning's reading of the vendors' own pricing pages, when one ran. */
+  vendorCheck?: VendorCheckSummary;
+}
+
+export interface VendorCheckSummary {
+  checkedAt: string;
+  /** Hand-verified rows whose page agreed, and whose date therefore moved. */
+  confirmed: number;
+  /** Rows whose page disagreed; each carries a `vendor-page-mismatch` flag. */
+  mismatched: number;
+  /** Rows the page could not settle either way; their dates stand. */
+  unconfirmed: number;
 }
 
 export function isSyncStatus(value: unknown): value is SyncStatus {

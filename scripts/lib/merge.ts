@@ -21,7 +21,9 @@
 import type { Model, PricingCatalog } from '../../src/lib/pricing/types';
 import { SCHEMA_VERSION } from '../../src/lib/pricing/types';
 import { modelSlug } from '../../src/lib/seo/slug';
+import { effectivePricing } from '../../packages/core/src/engine/cost';
 import { pricingChanged } from './diff';
+import type { VendorCheckReport } from './vendor-check';
 import {
   comparisonKey,
   matchFamily,
@@ -46,6 +48,8 @@ export interface MergeInput {
   overrides: Override[];
   previous?: PricingCatalog | undefined;
   generatedAt: Date;
+  /** This morning's reading of the vendors' own pages, when there was one. */
+  vendorCheck?: VendorCheckReport | undefined;
 }
 
 /** A stable identifier for *why* review was raised.
@@ -59,6 +63,7 @@ export type ReviewCode =
   | 'openrouter-disagreement'
   | 'override-drift'
   | 'vendor-verification-stale'
+  | 'vendor-page-mismatch'
   | 'day-move'
   | 'new-model';
 
@@ -95,7 +100,10 @@ export interface MergeResult {
 }
 
 export function mergeCatalog(input: MergeInput): MergeResult {
-  const { litellm, openrouter, allowlist, overrides, previous, generatedAt } = input;
+  const { litellm, openrouter, allowlist, overrides, previous, generatedAt, vendorCheck } = input;
+  const vendorMismatchById = new Map(
+    (vendorCheck?.items ?? []).filter((item) => item.status === 'mismatch').map((item) => [item.id, item]),
+  );
   const duplicateOverrideIds = overrides
     .map((override) => override.id)
     .filter((id, index, ids) => ids.indexOf(id) !== index);
@@ -191,15 +199,19 @@ export function mergeCatalog(input: MergeInput): MergeResult {
     // Rung 1 still wins, but rung 2 must remain a drift detector. Without this
     // comparison a literal vendor override could mask a later repricing
     // forever while the daily run continued to report success.
+    //
+    // While a promotional window is open, third-party feeds report the
+    // promo rate (what is actually being billed), not the list price. Compare
+    // against whichever one is currently in force so an intentional intro
+    // rate doesn't read as drift for the entire length of the promotion.
     if (feed && overrideSuppliesBasePrice) {
-      const inputGap =
-        override?.pricing?.input === undefined
-          ? 0
-          : relativeGap(override.pricing.input, feed.inputPerMillion);
-      const outputGap =
-        override?.pricing?.output === undefined
-          ? 0
-          : relativeGap(override.pricing.output, feed.outputPerMillion);
+      const expected = override?.pricing
+        ? effectivePricing(override.pricing as Model['pricing'], generatedAt)
+        : undefined;
+      const expectedInput = expected?.input ?? override?.pricing?.input;
+      const expectedOutput = expected?.output ?? override?.pricing?.output;
+      const inputGap = expectedInput === undefined ? 0 : relativeGap(expectedInput, feed.inputPerMillion);
+      const outputGap = expectedOutput === undefined ? 0 : relativeGap(expectedOutput, feed.outputPerMillion);
       if (inputGap > DISAGREEMENT_THRESHOLD || outputGap > DISAGREEMENT_THRESHOLD) {
         reasons.push({
           code: 'override-drift',
@@ -217,6 +229,16 @@ export function mergeCatalog(input: MergeInput): MergeResult {
         reasons.push({
           code: 'vendor-verification-stale',
           text: `vendor verification is ${ageDays} days old — re-read the first-party pricing page`,
+        });
+      }
+      // The morning's reading of that page. A disagreement never rewrites the
+      // record — the page is evidence, the override is the claim — it puts both
+      // figures in front of a person.
+      const mismatch = vendorMismatchById.get(id);
+      if (mismatch) {
+        reasons.push({
+          code: 'vendor-page-mismatch',
+          text: `the vendor's own page disagrees with the record — ${mismatch.detail}`,
         });
       }
     }
