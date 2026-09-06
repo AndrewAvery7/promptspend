@@ -635,7 +635,9 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
                   </td>
                   <td className="align-left">
                     <span className="model-name">{model.displayName}</span>{' '}
-                    {model.pricing.intro && <span className="badge badge--intro">INTRO</span>}
+                    {rateOn(model, 'input', asOf).promo && (
+                      <span className="badge badge--intro">INTRO PRICE</span>
+                    )}
                     {model.aliasOf && <span className="pill">alias</span>}
                     {model.status !== 'current' && <span className="pill">{model.status}</span>}
                     {model.provenance.stale && <span className="pill">unlisted</span>}
