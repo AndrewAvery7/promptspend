@@ -46,6 +46,17 @@ export interface Checkable {
   override: Override;
   url: string;
   pricing: Model['pricing'];
+  /** The catalog's provider for this row, when known — it is what the id is prefixed with. */
+  providerId?: string;
+}
+
+/** The name the vendor's page is likely to use: the catalog id without its
+ *  provider prefix. `dashscope-qwen3.7-max` is Alibaba's `qwen3.7-max`;
+ *  `claude-opus-5` carries no prefix and is left alone. */
+export function listedAs(row: Checkable): string | undefined {
+  const { id } = row.override;
+  const prefix = row.providerId ? `${row.providerId}-` : undefined;
+  return prefix && id.startsWith(prefix) && id.length > prefix.length ? id.slice(prefix.length) : undefined;
 }
 
 /** What the model reports for one row of one page. Prices are USD per 1M tokens. */
@@ -148,6 +159,8 @@ Rules:
 - If the page shows a promotional, introductory, or limited-time rate for a model, put that rate in promo (with its end date in until when stated) and keep the standard rate in input/output. If the page shows only the promotional rate and no standard rate, put it in promo and omit input/output. Never copy the same figure into both.
 - A price given as "$X through <date>" followed by "$Y starting <later date>" is a promotion: X goes in promo with until = that first date, Y is the standard rate.
 - If the page says a model is retired, deprecated, or redirected and that requests to it are billed at another model's rate, report that rate for it and say so in note.
+- The ids in the list are catalog ids and may carry a provider prefix the page does not use; where a "listed as" name is given, that is the name to look for on the page. Match on the vendor's model name, never on the prefix.
+- A page may price a model only as dated or variant builds of the same name (for example grok-4.20-0309-reasoning and grok-4.20-0309-non-reasoning when asked about grok-4.20, or a model-YYYYMMDD snapshot). When every listed build of that name carries the same standard price, report that price for the model and name the builds in note. When the builds differ in price, report found=false and list them with their prices in note.
 - Match models by name carefully: a model listed only under a different version (for example "Medium 3.1" when asked about "Medium 3") is found=false, with the alternative named in note. Never carry a figure over from a different model, tier, or table: a model whose own row is not in the content is found=false.
 - Return one entry for every id in the list, in the same order.`;
 
@@ -158,13 +171,18 @@ function completePricing(pricing: Override['pricing']): Model['pricing'] | undef
 }
 
 /** Rows the daily check can act on: hand-verified, with a page and a figure to compare. */
-export function checkableRows(overrides: Override[], published: Map<string, Model['pricing']>): Checkable[] {
+export function checkableRows(
+  overrides: Override[],
+  published: Map<string, Model['pricing']>,
+  providers: Map<string, string> = new Map(),
+): Checkable[] {
   const rows: Checkable[] = [];
   for (const override of overrides) {
     if (override.vendorVerified !== true || typeof override.verifiedUrl !== 'string') continue;
     const pricing = completePricing(override.pricing) ?? published.get(override.id);
     if (!pricing) continue;
-    rows.push({ override, url: override.verifiedUrl, pricing });
+    const providerId = override.providerId ?? providers.get(override.id);
+    rows.push({ override, url: override.verifiedUrl, pricing, ...(providerId ? { providerId } : {}) });
   }
   return rows;
 }
@@ -183,12 +201,20 @@ export function groupByPage(rows: Checkable[]): Map<string, Checkable[]> {
 /** The user turn: the page, then the rows to find on it. Deliberately no prices. */
 export function buildExtractionPrompt(url: string, rows: Checkable[], pageText: string): string {
   const list = rows
-    .map(({ override }) => `- ${override.id}${override.displayName ? ` — ${override.displayName}` : ''}`)
+    .map((row) => {
+      const { override } = row;
+      const name = listedAs(row);
+      return (
+        `- ${override.id}` +
+        (override.displayName ? ` — ${override.displayName}` : '') +
+        (name ? ` (listed as "${name}")` : '')
+      );
+    })
     .join('\n');
   return [
     `Pricing page: ${url}`,
     '',
-    'Models to look for, by id (report each id exactly as written):',
+    'Models to look for, by id (report each id exactly as written; look for the "listed as" name where given):',
     list,
     '',
     'Page content:',

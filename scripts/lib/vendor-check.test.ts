@@ -17,6 +17,7 @@ import {
   groupByPage,
   htmlToText,
   isFreshReport,
+  listedAs,
   parsePageExtraction,
   unreadPage,
   VENDOR_CHECK_SCHEMA_VERSION,
@@ -96,10 +97,34 @@ describe('buildExtractionPrompt', () => {
       [row(full), row(provenanceOnly, published.get('claude-opus-4-7'))],
       'BODY',
     );
-    expect(prompt).toContain('- claude-opus-5 — Claude Opus 5');
+    expect(prompt).toContain('- claude-opus-5 — Claude Opus 5\n');
     expect(prompt).toContain('- claude-opus-4-7\n');
     expect(prompt).toContain('<<<PAGE\nBODY\nPAGE>>>');
     expect(prompt).not.toMatch(/\$?\b25\b/);
+  });
+
+  it('tells the reader the vendor’s own name for a prefixed catalog id', () => {
+    const qwen: Override = {
+      id: 'dashscope-qwen3.7-max',
+      displayName: 'Qwen 3.7 Max',
+      vendorVerified: true,
+      lastVerified: '2026-08-26',
+      verifiedUrl: 'https://www.alibabacloud.com/help/en/model-studio/model-pricing',
+    };
+    const rows = checkableRows(
+      [qwen, full],
+      new Map([[qwen.id, { input: 1.2, output: 6 }]]),
+      new Map([
+        [qwen.id, 'dashscope'],
+        [full.id, 'anthropic'],
+      ]),
+    );
+    expect(listedAs(rows[0]!)).toBe('qwen3.7-max');
+    // No prefix to strip: Anthropic ids never carried one.
+    expect(listedAs(rows[1]!)).toBeUndefined();
+    const prompt = buildExtractionPrompt(qwen.verifiedUrl!, rows, 'BODY');
+    expect(prompt).toContain('- dashscope-qwen3.7-max — Qwen 3.7 Max (listed as "qwen3.7-max")');
+    expect(prompt).toContain('- claude-opus-5 — Claude Opus 5\n');
   });
 });
 

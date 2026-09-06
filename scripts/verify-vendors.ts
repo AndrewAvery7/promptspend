@@ -111,11 +111,21 @@ async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: numbe
  *  and the rest of the morning reads the pages the other way. */
 let firecrawlRejected: string | undefined;
 
-/** The page as text: rendered by Firecrawl when a key works, else the page's
- *  markdown variant, else fetched plain. A Firecrawl failure is a reason to
- *  read the page another way, not a reason to leave its rows unread — the
- *  first live run with a stale key turned every page into "unconfirmed". */
+/** The page as text: its markdown twin where the vendor serves one, else
+ *  rendered by Firecrawl when a key works, else fetched plain.
+ *
+ *  Markdown first, not Firecrawl: the rendered OpenAI page shows a flagship
+ *  table and hides the rest behind an expander no renderer opens, so a
+ *  Firecrawl read reported thirteen rows "not listed". `<url>.md` carries
+ *  the whole table, costs nothing, and is the vendor's own text.
+ *
+ *  A Firecrawl failure is a reason to read the page another way, not a
+ *  reason to leave its rows unread — the first live run with a stale key
+ *  turned every page into "unconfirmed". */
 async function readPage(url: string): Promise<{ text: string; via: 'firecrawl' | 'markdown' | 'fetch' }> {
+  const markdownTwin = await fetchMarkdownVariant(url);
+  if (markdownTwin) return { text: markdownTwin, via: 'markdown' };
+
   const firecrawlKey = process.env.FIRECRAWL_API_KEY;
   if (firecrawlKey && !firecrawlRejected) {
     try {
@@ -132,13 +142,6 @@ async function readPage(url: string): Promise<{ text: string; via: 'firecrawl' |
       }
     }
   }
-
-  // Several vendors' docs (OpenAI, Anthropic among them) serve the page as
-  // markdown at `<url>.md` — the whole table, including rows the rendered
-  // page hides behind an expander that a plain fetch never opens. Worth one
-  // extra request before settling for HTML.
-  const markdown = await fetchMarkdownVariant(url);
-  if (markdown) return { text: markdown, via: 'markdown' };
 
   const response = await fetchWithTimeout(
     url,
@@ -333,8 +336,9 @@ async function main(): Promise<void> {
   const overridesFile = (await readJson<{ models: Override[]; [key: string]: unknown }>(OVERRIDES_PATH))!;
   const catalog = await readJson<PricingCatalog>(CATALOG_PATH);
   const published = new Map<string, Model['pricing']>((catalog?.models ?? []).map((m) => [m.id, m.pricing]));
+  const providers = new Map<string, string>((catalog?.models ?? []).map((m) => [m.id, m.providerId]));
 
-  let rows = checkableRows(overridesFile.models, published);
+  let rows = checkableRows(overridesFile.models, published, providers);
   if (args.only) {
     const needle = args.only.toLowerCase();
     rows = rows.filter(
