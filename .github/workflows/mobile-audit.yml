@@ -1,0 +1,59 @@
+name: Mobile dependency triage
+
+# The mobile release check requires apps/mobile/SECURITY.md to have been
+# re-derived within 14 days, and "re-derived" used to mean a person remembered
+# to re-run the audit and edit the date. On 2026-09-05 the August 22 record
+# lapsed and the mobile verify job went red on every pull request until it was
+# redone by hand — a calendar deciding a verdict that the commit should decide,
+# the same shape of noise expo-drift.yml exists to keep out of verify.yml.
+#
+# So the audit runs here, weekly, on its own. scripts/audit-triage.mjs re-runs
+# `npm audit` and compares a fingerprint of the findings with the one
+# SECURITY.md was written against:
+#
+#   same findings   → the prose still describes the dependency state, so the
+#                     review date moves to today and is committed. Green.
+#   new findings    → nothing is touched. Red here means exactly one thing:
+#                     read the findings, rewrite the triage in SECURITY.md,
+#                     then `node scripts/audit-triage.mjs --stamp` and commit.
+#
+# Nothing deploys from this workflow and nothing gates on it; verify.yml only
+# warns about the date on ordinary pushes and enforces it when RELEASE_CHECK=1.
+on:
+  schedule:
+    # Monday 14:30 UTC, half an hour after the Expo drift check.
+    - cron: '30 14 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+
+      # --package-lock-only: the audit reads the lockfile and the registry's
+      # advisory database; nothing is installed, so nothing can run.
+      - name: Re-derive the triage
+        run: node scripts/audit-triage.mjs --refresh
+
+      - name: Commit the review date if it moved
+        run: |
+          git config user.name "promptspend-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add SECURITY.md
+          if git diff --staged --quiet; then
+            echo "Nothing to record."
+          else
+            git commit -m "chore(mobile): dependency triage re-derived, findings unchanged"
+            git push
+          fi

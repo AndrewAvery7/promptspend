@@ -52,7 +52,8 @@ npm.cmd ci
 npm.cmd run test -- --ci
 npm.cmd run typecheck
 npm.cmd run lint
-npm.cmd run check:release
+$env:RELEASE_CHECK = '1'; npm.cmd run check:release
+node scripts/audit-triage.mjs --check
 npx.cmd expo-doctor
 npx.cmd expo export --platform all --output-dir .expo/release-export
 npm.cmd audit
