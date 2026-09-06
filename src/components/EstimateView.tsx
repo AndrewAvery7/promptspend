@@ -13,6 +13,7 @@ import { CountryFilter, emptyReason } from './CountryFilter';
 import { CountryTag } from './Flag';
 import { SyncChip } from './SyncChip';
 import { Rate, useAsOf } from './PromoRate';
+import { rateOn } from '@/lib/pricing/promo';
 
 type Estimator = ReturnType<typeof useEstimator>;
 
@@ -231,7 +232,9 @@ export function EstimateView({
                             <span className="model-row__name">{model.displayName}</span>
                           </label>
                           <span className="model-row__tags">
-                            {model.pricing.intro && <span className="badge badge--intro">INTRO</span>}
+                            {rateOn(model, 'input', asOf).promo && (
+                              <span className="badge badge--intro">INTRO PRICE</span>
+                            )}
                             {/* Status belongs where the choice is made, not only in
                                 the catalog table — picking a retired model by
                                 accident is an expensive mistake to discover later. */}
