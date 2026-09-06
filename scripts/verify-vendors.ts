@@ -106,30 +106,30 @@ async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: numbe
   }
 }
 
-/** The page as text: rendered by Firecrawl when a key is present, else fetched plain. */
+/** Set once Firecrawl has refused the key, so a bad secret is reported once
+ *  and the rest of the morning reads the pages the other way. */
+let firecrawlRejected: string | undefined;
+
+/** The page as text: rendered by Firecrawl when a key works, else the page's
+ *  markdown variant, else fetched plain. A Firecrawl failure is a reason to
+ *  read the page another way, not a reason to leave its rows unread — the
+ *  first live run with a stale key turned every page into "unconfirmed". */
 async function readPage(url: string): Promise<{ text: string; via: 'firecrawl' | 'markdown' | 'fetch' }> {
   const firecrawlKey = process.env.FIRECRAWL_API_KEY;
-  if (firecrawlKey) {
-    const response = await fetchWithTimeout(
-      FIRECRAWL_URL,
-      {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', authorization: `Bearer ${firecrawlKey}` },
-        body: JSON.stringify({ url, formats: ['markdown'], onlyMainContent: true, waitFor: 2000 }),
-      },
-      PAGE_FETCH_TIMEOUT_MS,
-    );
-    if (!response.ok) throw new Error(`Firecrawl responded ${response.status}`);
-    const payload = (await response.json()) as {
-      success?: boolean;
-      data?: { markdown?: string };
-      error?: string;
-    };
-    const markdown = payload.data?.markdown;
-    if (!payload.success || typeof markdown !== 'string' || markdown.trim() === '') {
-      throw new Error(`Firecrawl returned no markdown${payload.error ? ` (${payload.error})` : ''}`);
+  if (firecrawlKey && !firecrawlRejected) {
+    try {
+      return { text: await renderWithFirecrawl(url, firecrawlKey), via: 'firecrawl' };
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      if (/responded (401|403)/.test(reason)) {
+        firecrawlRejected = reason;
+        console.warn(
+          `::warning::Firecrawl rejected the key (${reason}) — check FIRECRAWL_API_KEY. Reading every page without it.`,
+        );
+      } else {
+        console.warn(`  · Firecrawl could not render this page (${reason}) — reading it another way`);
+      }
     }
-    return { text: markdown, via: 'firecrawl' };
   }
 
   // Several vendors' docs (OpenAI, Anthropic among them) serve the page as
@@ -148,6 +148,29 @@ async function readPage(url: string): Promise<{ text: string; via: 'firecrawl' |
   const text = htmlToText(await response.text());
   if (text.length < 200) throw new Error('page returned almost no text — probably rendered by JavaScript');
   return { text, via: 'fetch' };
+}
+
+async function renderWithFirecrawl(url: string, apiKey: string): Promise<string> {
+  const response = await fetchWithTimeout(
+    FIRECRAWL_URL,
+    {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({ url, formats: ['markdown'], onlyMainContent: true, waitFor: 2000 }),
+    },
+    PAGE_FETCH_TIMEOUT_MS,
+  );
+  if (!response.ok) throw new Error(`Firecrawl responded ${response.status}`);
+  const payload = (await response.json()) as {
+    success?: boolean;
+    data?: { markdown?: string };
+    error?: string;
+  };
+  const markdown = payload.data?.markdown;
+  if (!payload.success || typeof markdown !== 'string' || markdown.trim() === '') {
+    throw new Error(`Firecrawl returned no markdown${payload.error ? ` (${payload.error})` : ''}`);
+  }
+  return markdown;
 }
 
 async function fetchMarkdownVariant(url: string): Promise<string | undefined> {
