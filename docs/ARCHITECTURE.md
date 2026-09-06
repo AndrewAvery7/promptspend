@@ -67,6 +67,24 @@ Retiring a model for good means adding its id to `retired` in the allowlist: a d
 shows both because "prices are stable" and "the job stopped running" are indistinguishable from a single
 date, and the second one is the failure worth catching.
 
+**Why the vendors' own pages are re-read every morning.** For a feed-driven row, "every run" above meant
+exactly that. For a hand-verified override it did not: `lastVerified` was pinned to whatever a person had
+typed into `data/pricing-overrides.json`, so the only thing that moved it was another person. Rows
+verified together aged together — twenty-seven read on 2026-08-03 became sixteen flags on 2026-09-05, in
+one morning — while the 30-day rule that raised them was the only automation involved.
+`scripts/verify-vendors.ts` now runs ahead of the sync: it groups every hand-verified row by its
+`verifiedUrl`, reads each page once, has a model transcribe the listed prices into a fixed JSON shape, and
+compares them with the record (`scripts/lib/vendor-check.ts`). Agreement moves the date. Disagreement
+raises `vendor-page-mismatch` carrying both figures. A page that cannot be read changes nothing, and the
+30-day rule remains the backstop for one that stays unreadable. Three things are deliberate:
+
+- **It never writes a price.** The page is evidence; the override is the claim. Only a person resolves a
+  mismatch, the same way only a person resolves an OpenRouter disagreement.
+- **The reading is blind.** The model is told which rows to find and nothing about what the record says,
+  so it cannot confirm a figure by echoing it.
+- **A provenance-only override is checked against the catalog's figure.** Such a row asserts that the
+  feed's number was read off the vendor's page; that number is what the page has to still say.
+
 **`lastChanged` is optional, and absent is a real answer.** It is written only when `pricingChanged`
 — the same comparison the changelog uses, exported from `scripts/lib/diff.ts` so the two cannot form a
 second opinion — says that model's rates moved. A row published without it keeps none: there is

@@ -5,6 +5,7 @@
   "$scope": "These are standard-tier, global-endpoint list prices in USD. Not modelled: regional/data-residency premiums (OpenAI and Anthropic both charge 1.1x), fast/priority tiers, server-side tool call fees, fine-tuning, and negotiated volume discounts. The UI states this boundary rather than implying the figure is a whole invoice.",
   "$timeOfDay": "DeepSeek V4 publishes peak and off-peak rates but the current schema has no time-of-day tier. PromptSpend uses the higher peak rate so an estimate cannot silently understate the bill; off-peak usage can cost 50% less. Revisit this conservative representation when the engine can model a schedule explicitly.",
   "$verificationPass20260812": "First-party rendered pricing tables cleared four standing feed-versus-reseller flags without freezing matching base rates: Qwen 3.7 Max at the International/Singapore rate, Qwen3 Next 80B Instruct, Qwen3 VL 235B Instruct, and MiniMax M2.5. MiniMax also publishes a $0.375/M prompt-cache write rate absent from the feed; that modifier alone is overridden. This evidence was reconciled into the current catalog on 2026-08-16 from the reviewed PR #65 rather than merging its stale generated artifacts.",
+  "$verificationPass20260905": "The last hand pass, and the reason it is the last. Sixteen rows verified together on 2026-08-03 (six Claude, nine OpenAI, Gemini 3.5 Flash — all provenance-only) crossed the 30-day rule together on 2026-09-05 and were re-read against their three pages that morning: every figure the catalog carries for them matched, so only lastVerified moved. Nothing automated had ever re-read a page behind an override before; from this date scripts/verify-vendors.ts does it every morning ahead of the sync (see docs/ARCHITECTURE.md, 'Why the vendors' own pages are re-read every morning'). It moves a date only when the page agrees, raises vendor-page-mismatch when it does not, and never writes a price. The same pass retired Kimi K2.5's provenance and marked it and Mistral Medium 3 legacy — see their notes.",
   "models": [
     {
       "$note": "Confirmed on 2026-09-02 against Anthropic's own pricing page: $10 base input, $50 output, $12.50 for a 5-minute cache write, and a $0.25 cache hit. THE CACHE-HIT RATE IS THE TRAP HERE and is why this row records a price rather than provenance alone: every other Claude model reads a cache hit at 0.1x base input, which would make it $1.00 — the figure its sibling Claude Fable 5 correctly carries. Anthropic's page footnotes an exception: \"Cache hits and refreshes on Claude Fable 5.1 and Claude Mythos 5.1 are priced at 0.025x the base input price.\" Deriving this one from the house multiplier instead of reading the footnote would overstate cached reads fourfold. The batch table reconciles independently at $5/$25, exactly the recorded 50%.",
@@ -118,7 +119,7 @@
       "displayName": "Claude Opus 4.7",
       "capabilityIndex": 92,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -126,7 +127,7 @@
       "displayName": "Claude Opus 4.6",
       "capabilityIndex": 89,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -135,7 +136,7 @@
       "status": "legacy",
       "capabilityIndex": 86,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -144,7 +145,7 @@
       "status": "legacy",
       "capabilityIndex": 80,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -152,7 +153,7 @@
       "displayName": "Claude Sonnet 4.6",
       "capabilityIndex": 85,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -161,7 +162,7 @@
       "status": "legacy",
       "capabilityIndex": 78,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -326,7 +327,7 @@
       "displayName": "GPT-5.2",
       "capabilityIndex": 82,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -334,28 +335,28 @@
       "displayName": "GPT-5.1",
       "capabilityIndex": 80,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "gpt-5",
       "displayName": "GPT-5",
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "gpt-5-mini",
       "displayName": "GPT-5 Mini",
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "gpt-5-nano",
       "displayName": "GPT-5 Nano",
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -363,28 +364,28 @@
       "displayName": "o4-mini",
       "capabilityIndex": 70,
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "o3",
       "displayName": "o3",
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "o3-mini",
       "displayName": "o3-mini",
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "o1",
       "displayName": "o1",
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -546,13 +547,11 @@
       "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k3"
     },
     {
-      "$note": "Read against Moonshot's own per-model page on 2026-08-19. All three published fields match the feed exactly - $0.60 input on a cache miss, $3.00 output, $0.10 on a cache hit - so this row records provenance ONLY and its rate keeps flowing from the feed. Its openrouter-disagreement flag is expected to survive this and is correct: a provenance-only override does not supply a base price, so the cross-check still runs, and OpenRouter's $0.45/$2.25 is a reseller-routed price - the same structural gap already documented on K2.6. This CORRECTS the 2026-08-09 conclusion that K2.5 was unverifiable because the vendor's pricing index no longer lists it. The index is not the whole site: /docs/pricing/chat-k25 still exists and still renders a full price table, it is merely unlinked now that K3, K2.7 Code and K2.6 occupy the index. Worth keeping as a general rule - a model vanishing from a vendor's index is not evidence its pricing page is gone; try the per-model URL pattern directly before recording something as unreadable. Re-read on 2026-08-22 while verifying K3: the table still prints $0.10 / $0.60 / $3.00 over 262,144 tokens, unchanged, so lastVerified moves and nothing else does.",
+      "$note": "Read against Moonshot's own per-model page on 2026-08-19. All three published fields match the feed exactly - $0.60 input on a cache miss, $3.00 output, $0.10 on a cache hit - so this row records provenance ONLY and its rate keeps flowing from the feed. Its openrouter-disagreement flag is expected to survive this and is correct: a provenance-only override does not supply a base price, so the cross-check still runs, and OpenRouter's $0.45/$2.25 is a reseller-routed price - the same structural gap already documented on K2.6. This CORRECTS the 2026-08-09 conclusion that K2.5 was unverifiable because the vendor's pricing index no longer lists it. The index is not the whole site: /docs/pricing/chat-k25 still exists and still renders a full price table, it is merely unlinked now that K3, K2.7 Code and K2.6 occupy the index. Worth keeping as a general rule - a model vanishing from a vendor's index is not evidence its pricing page is gone; try the per-model URL pattern directly before recording something as unreadable. Re-read on 2026-08-22 while verifying K3: the table still prints $0.10 / $0.60 / $3.00 over 262,144 tokens, unchanged, so lastVerified moves and nothing else does. RETIRED BY THE VENDOR on 2026-08-31: Moonshot's model list now states that the kimi-k2.5 series was officially retired on August 31, 2026 and calls return 404, and /docs/pricing/chat-k25 now redirects to that list. The last vendor-published table (archive capture of 2026-08-19) still read $0.10 / $0.60 / $3.00, matching the feed. The vendorVerified provenance was withdrawn on 2026-09-05 because a claim nobody can re-check is not provenance: the page it cites no longer exists, the daily vendor-page check cannot confirm it, and leaving it would have raised a permanent staleness flag on a model that cannot change price again. The rate keeps flowing from the feed; status is legacy; the openrouter-disagreement flag stands for the same reseller reason as before.",
       "id": "moonshot-kimi-k2.5",
       "displayName": "Kimi K2.5",
-      "capabilityIndex": 78,
-      "vendorVerified": true,
-      "lastVerified": "2026-08-22",
-      "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k25"
+      "status": "legacy",
+      "capabilityIndex": 78
     },
     {
       "$note": "Read on 2026-08-26 in the Singapore/International section of the Model Studio pricing page, which prints \"List price $2.5 / Limited-time 50% off\" for input and \"List price $7.5 / Limited-time 50% off\" for output. The list price is what is recorded here. The 50% discount is deliberately NOT written as `intro`: Alibaba states no end date for it anywhere on the page, and `intro` requires `until` — inventing a deadline would be fabricated provenance. Consequence: while the promotion runs, this row overstates the in-force rate by 50%. That is the safe direction to be wrong, but it is wrong; if Alibaba ever publishes an end date, add `intro` at $1.25/$3.75 with that date. Separately, the per-model page /model-studio/qwen3-7-max shows $1.65/$4.951 — that is the China/Global regional rate, NOT the International (Singapore) rate this catalog uses, so it must not be copied here. That page has no International table at all, which is why the earlier verification against it never settled anything.",
@@ -718,7 +717,7 @@
       "displayName": "Grok 4.5",
       "capabilityIndex": 84,
       "vendorVerified": true,
-      "lastVerified": "2026-08-06",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
       "pricing": {
         "input": 2.0,
@@ -737,7 +736,7 @@
       "displayName": "Grok 4.3",
       "capabilityIndex": 80,
       "vendorVerified": true,
-      "lastVerified": "2026-08-06",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
       "pricing": {
         "input": 1.25,
@@ -825,9 +824,10 @@
       "capabilityIndex": 71
     },
     {
-      "$note": "NOT VERIFIABLE, deliberately left feed-driven and flagged. The feed carries $1.5/$7.5, which is exactly Mistral Medium 3.5's rate, while OpenRouter lists $0.4/$2 — a 73% gap, the largest in the catalog. Mistral's own API pricing page was read on 2026-09-02 and lists Mistral Medium 3.5, Mistral Small 4 and Mistral Large 3 but NOT Mistral Medium 3, so there is no first-party number to settle it and neither candidate can be confirmed. Both readings are plausible, which is the point: the feed may be inheriting 3.5's price for a superseded model, or Mistral may genuinely bill the older name at the newer rate as xAI does for retired Grok models. Recording either would be a guess. The row therefore keeps the feed's price — which self-corrects when the feed does — and keeps its flag, so the site marks it disputed rather than asserting it. Do NOT resolve this from OpenRouter: that publishes a reseller's margin as the vendor's rate. Re-read Mistral's page if the model ever appears on it.",
+      "$note": "NOT VERIFIABLE, deliberately left feed-driven and flagged. The feed carries $1.5/$7.5, which is exactly Mistral Medium 3.5's rate, while OpenRouter lists $0.4/$2 — a 73% gap, the largest in the catalog. Mistral's own API pricing page was read on 2026-09-02 and lists Mistral Medium 3.5, Mistral Small 4 and Mistral Large 3 but NOT Mistral Medium 3, so there is no first-party number to settle it and neither candidate can be confirmed. Both readings are plausible, which is the point: the feed may be inheriting 3.5's price for a superseded model, or Mistral may genuinely bill the older name at the newer rate as xAI does for retired Grok models. Recording either would be a guess. The row therefore keeps the feed's price — which self-corrects when the feed does — and keeps its flag, so the site marks it disputed rather than asserting it. Do NOT resolve this from OpenRouter: that publishes a reseller's margin as the vendor's rate. Re-read Mistral's page if the model ever appears on it. Settled on 2026-09-05: Mistral's own model card for mistral-medium-2505 (docs.mistral.ai/models/mistral-medium-3-25-05) marks it Deprecated with a deprecation date of 2026-05-22 and names Mistral Medium 3.5 as its replacement, and the lifecycle page says the mistral-medium-3 alias points at the latest minor of the generation — which is why the feed carries 3.5's $1.5/$7.5. The launch post of 2025-05-07 priced Medium 3 at $0.4/$2, which is OpenRouter's figure. Neither is a live first-party price for this model, so the row stays feed-driven and flagged exactly as before; it is marked legacy so readers know it has been superseded.",
       "id": "mistral-mistral-medium-3",
-      "displayName": "Mistral Medium 3"
+      "displayName": "Mistral Medium 3",
+      "status": "legacy"
     },
     {
       "id": "mistral-mistral-medium-3-5",
@@ -887,7 +887,7 @@
       "providerId": "google",
       "displayName": "Gemini 3.5 Flash",
       "vendorVerified": true,
-      "lastVerified": "2026-08-03",
+      "lastVerified": "2026-09-05",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     }
   ],

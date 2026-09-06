@@ -398,6 +398,93 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(second.review.find((candidate) => candidate.code === 'override-drift')?.isNew).toBe(false);
   });
 
+  it('does not flag drift when the feed reports the currently active intro rate', () => {
+    const overrides = [
+      {
+        id: 'claude-sonnet-5',
+        vendorVerified: true,
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+        pricing: { input: 3, output: 15, intro: { input: 1, output: 5, until: '2026-08-31' } },
+      },
+    ];
+    // The feed (litellm/comparisonKey) reports 3/15 for claude-sonnet-5 per LITELLM fixture above;
+    // point it at the promo rate instead to simulate a feed that bills the live intro price.
+    const promoLitellm = fromLiteLLM(
+      {
+        ...LITELLM,
+        'claude-sonnet-5': { mode: 'chat', input_cost_per_token: 1e-6, output_cost_per_token: 5e-6 },
+      },
+      ALLOWLIST,
+    );
+    const result = mergeCatalog({
+      litellm: promoLitellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides,
+      generatedAt, // 2026-08-01, inside the intro window
+    });
+    expect(result.review.find((candidate) => candidate.code === 'override-drift')).toBeUndefined();
+
+    // Once the promo lapses, the feed reporting the promo rate against a base-priced
+    // override should flag again — the fix must not blind the check permanently.
+    const afterPromo = mergeCatalog({
+      litellm: promoLitellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides,
+      generatedAt: new Date('2026-09-05T06:00:00.000Z'),
+    });
+    expect(afterPromo.review.find((candidate) => candidate.code === 'override-drift')).toBeDefined();
+  });
+
+  it('raises the morning’s vendor-page disagreement without touching the price', () => {
+    const overrides = [
+      {
+        id: 'claude-sonnet-5',
+        vendorVerified: true,
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+        pricing: { input: 3, output: 15 },
+      },
+    ];
+    const vendorCheck = {
+      schemaVersion: 1,
+      checkedAt: generatedAt.toISOString(),
+      extractionModel: 'claude-opus-5',
+      pages: [],
+      items: [
+        {
+          id: 'claude-sonnet-5',
+          url: overrides[0]!.verifiedUrl,
+          status: 'mismatch' as const,
+          detail: 'page lists $4/$20 vs recorded $3/$15',
+        },
+        { id: 'moonshot-kimi-k2.6', url: 'x', status: 'confirmed' as const, detail: '' },
+      ],
+      confirmed: 1,
+      mismatched: 1,
+      unconfirmed: 0,
+    };
+    const { catalog, review } = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides,
+      generatedAt,
+      vendorCheck,
+    });
+    const sonnet = catalog.models.find((model) => model.id === 'claude-sonnet-5')!;
+    expect(sonnet.pricing.input).toBe(3);
+    expect(sonnet.provenance.reviewCodes).toContain('vendor-page-mismatch');
+    expect(review.find((item) => item.code === 'vendor-page-mismatch')?.reason).toContain(
+      '$4/$20 vs recorded $3/$15',
+    );
+    expect(
+      catalog.models.find((model) => model.id === 'moonshot-kimi-k2.6')!.provenance.needsReview,
+    ).toBeUndefined();
+  });
+
   it('flags old vendor verification and rejects invented provenance', () => {
     const stale = mergeCatalog({
       litellm,
