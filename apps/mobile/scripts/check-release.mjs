@@ -221,6 +221,16 @@ if (!securityReviewed) {
 } else if (!/<!-- audit-fingerprint: [0-9a-f]{12} /.test(security)) {
   fail('SECURITY.md carries no audit fingerprint — run scripts/audit-triage.mjs --stamp after triaging');
 } else {
+  const stamped =
+    /<!-- audit-fingerprint: [0-9a-f]{12} \((\d+) findings: (\d+) moderate, (\d+) high, (\d+) critical\)/.exec(
+      security,
+    );
+  const serious = stamped ? Number(stamped[3]) + Number(stamped[4]) : 0;
+  if (serious > 0) {
+    const message = `SECURITY.md records ${serious} high/critical advisories; the standing policy blocks a release until they are assessed and fixed`;
+    if (process.env.RELEASE_CHECK === '1') fail(message);
+    else console.warn(`⚠ ${message}`);
+  }
   const ageDays = Math.floor((Date.now() - new Date(securityReviewed).getTime()) / (24 * 60 * 60 * 1000));
   if (ageDays > 14) {
     const message = `SECURITY.md dependency triage is ${ageDays} days old; a release requires it re-derived within 14 days (scripts/audit-triage.mjs --refresh)`;
