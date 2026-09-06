@@ -60,7 +60,11 @@ export function LearnView({ catalog }: { catalog: Catalog }) {
         <a href="https://promptspend.com/writing/what-llm-cost-calculators-get-wrong/">
           What LLM Cost Calculators Get Wrong
         </a>{' '}
-        — nine ways the number on screen can disagree with the invoice, and how this one tries not to.
+        — nine ways the number on screen can disagree with the invoice, and how this one tries not to.{' '}
+        <a href="https://promptspend.com/writing/2026-08-price-movement-report/">
+          August 2026 Price Movement Report
+        </a>{' '}
+        — every price change our sync recorded last month, led by DeepSeek's overnight repricing of V4.
       </p>
     </section>
   );

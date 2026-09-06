@@ -72,7 +72,7 @@ async function checkGeneratedPage(path: string, problems: string[]): Promise<Pag
   const say = (message: string): void => void problems.push(`${path} ${message}`);
 
   const title = attr(html, /<title>([^<]*)<\/title>/) ?? '';
-  const description = attr(html, /<meta name="description" content="([^"]*)"/) ?? '';
+  const description = attr(html, /<meta\s+name="description"\s+content="([^"]*)"/) ?? '';
   const canonical = attr(html, /<link rel="canonical" href="([^"]*)"/);
 
   if (!title) say('has no <title>');
@@ -176,7 +176,7 @@ async function main(): Promise<void> {
     // It is an index, so it is worth checking it actually indexes something —
     // an empty catalog would still produce a well-formed but useless file.
     if (!llms.startsWith('# PromptSpend')) problems.push('llms.txt does not start with an H1');
-    for (const path of ['/models/', '/compare/', '/data/pricing.json']) {
+    for (const path of ['/models/', '/compare/', '/data/pricing.json', '/receipt/', '/receipt/spec.json']) {
       if (!llms.includes(path)) problems.push(`llms.txt does not link to ${path}`);
     }
     if (canonical && !llms.includes(new URL(canonical).origin)) {

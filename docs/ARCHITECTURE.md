@@ -67,6 +67,32 @@ Retiring a model for good means adding its id to `retired` in the allowlist: a d
 shows both because "prices are stable" and "the job stopped running" are indistinguishable from a single
 date, and the second one is the failure worth catching.
 
+**Why the vendors' own pages are re-read every morning.** For a feed-driven row, "every run" above meant
+exactly that. For a hand-verified override it did not: `lastVerified` was pinned to whatever a person had
+typed into `data/pricing-overrides.json`, so the only thing that moved it was another person. Rows
+verified together aged together — twenty-seven read on 2026-08-03 became sixteen flags on 2026-09-05, in
+one morning — while the 30-day rule that raised them was the only automation involved.
+`scripts/verify-vendors.ts` now runs ahead of the sync: it groups every hand-verified row by its
+`verifiedUrl`, reads each page once, has a model transcribe the listed prices into a fixed JSON shape, and
+compares them with the record (`scripts/lib/vendor-check.ts`). The reader is DeepSeek when its key is
+present — it is a transcription job, and the design tolerates a weaker reader (a mis-read is a flag or a
+skipped date, never a wrong price) — with Anthropic as the fallback, whose structured output enforces the
+shape that DeepSeek's JSON mode is only told about; the report names which one read. Agreement moves the date. Disagreement
+raises `vendor-page-mismatch` carrying both figures. A page that cannot be read changes nothing, and the
+30-day rule remains the backstop for one that stays unreadable. Three things are deliberate:
+
+- **It never writes a price.** The page is evidence; the override is the claim. Only a person resolves a
+  mismatch, the same way only a person resolves an OpenRouter disagreement.
+- **The reading is blind.** The model is told which rows to find and nothing about what the record says,
+  so it cannot confirm a figure by echoing it.
+- **A provenance-only override is checked against the catalog's figure.** Such a row asserts that the
+  feed's number was read off the vendor's page; that number is what the page has to still say.
+- **A page that prints only a promotional rate confirms the rate in force.** OpenAI's page shows GPT-5.6
+  Sol's promotional figures and never reprints the list price behind them. If the promotion agrees with the
+  recorded `intro`, the date moves — that is the figure visitors are billed and the site shows — and the
+  list price stays a claim the page cannot settle until the window closes, when the page prints it and the
+  check catches any error the morning it starts to matter.
+
 **`lastChanged` is optional, and absent is a real answer.** It is written only when `pricingChanged`
 — the same comparison the changelog uses, exported from `scripts/lib/diff.ts` so the two cannot form a
 second opinion — says that model's rates moved. A row published without it keeps none: there is
@@ -142,6 +168,9 @@ would be most expensive, so it gets the deepest investment.
 - **`csv.ts`** — quoting and formula neutralisation for the export. Display names come partly from an
   upstream feed, so a downloaded estimate must not be able to execute anything when it is opened.
 - **`insights.ts`** — turns a comparison into the plain-language diagnosis shown beside the cards.
+- **`observed-session-cost.ts`** — prices request-by-request totals for a conversation that already happened.
+  Cache reads/writes, hidden reasoning when known, promotional windows and long-context tiers remain separate.
+  It must not synthesize history: the observed request totals already contain the history each turn re-sent.
 
 **Why per turn.** A long-context tier is a property of a single request. Pricing the conversation in
 aggregate and applying one rate gets every turn wrong in one direction or the other, and — because the
@@ -186,6 +215,18 @@ Four views behind a single state hook. No router: the app is small enough that v
 and the shareable state lives in the query string. Styling is plain CSS with custom properties on two
 independent axes (`data-theme`, `data-accent`) plus a canvas variant — no utility framework, because the
 design system is token-driven and a translation layer would only add a build step.
+
+The Receipt is the deliberate exception to the single-entry shape. `receipt/index.html` is a second Vite
+input so `/receipt/` is a real deep link on GitHub Pages, not a client-side route that depends on a 404
+fallback Pages does not provide. It imports the same tokens and catalog loader, but has a stricter CSP because
+it uses no inline geometry. `src/receipt/receiptSpec.ts` is the source for all three representations of the
+object: the text shown on the page, the clipboard value, and the generated `instructions.txt`/`spec.json`
+artifacts. `scripts/check-receipt.ts` fails the build if they disagree.
+
+The Receipt never transmits the preceding conversation. The user copies a visible, temporary request into
+their existing assistant, and that assistant reads current facts from the public API. If the assistant cannot
+reach the API or cannot establish an exact model, the contract requires a limitation instead of a remembered
+price. The site itself fetches the same-origin static catalog only to show whether the price source is ready.
 
 ## The other four packages
 
@@ -244,7 +285,7 @@ runners actually report rather than to what anyone remembers.
 
 **What closed, and what did not.** This section used to name three gaps — no browser suite, no automated
 axe pass, no visual-regression snapshots — and call Playwright plus axe the obvious next investment. Both
-landed: 112 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
+landed: 152 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
 two real defects, each a scrollable region no keyboard could reach.
 
 Screenshot diffing is still absent, and now deliberately rather than pending. A visual suite has a real

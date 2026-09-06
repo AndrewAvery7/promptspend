@@ -92,6 +92,17 @@ caption.cap { text-align: left; padding-bottom: 0.5rem; }
   display: inline-block; background: var(--accent-soft); color: var(--accent);
   border-radius: 999px; padding: 0.1rem 0.6rem; font-size: 0.78rem; font-weight: 600;
 }
+/* The marker beside a promotional rate — the same one the app draws, on the
+ * same warn tokens. Its tooltip is a title attribute, which needs no script. */
+.rate-promo {
+  position: relative; display: inline-block; width: 0.8em; height: 0.8em; margin-left: 0.3em; padding: 0.1em;
+  vertical-align: -0.12em; border-radius: 0.2em; background: var(--warn-soft); color: var(--warn);
+  line-height: 0; cursor: help;
+}
+.rate-promo svg { display: block; width: 100%; height: 100%; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
 .note {
   background: var(--warn-soft); border-left: 3px solid var(--warn);
   padding: 0.6rem 0.85rem; border-radius: 0 8px 8px 0; font-size: 0.9rem; margin: 0.75rem 0 0;

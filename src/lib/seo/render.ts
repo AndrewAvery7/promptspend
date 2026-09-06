@@ -25,6 +25,7 @@
 import { DEFAULT_SCENARIO, encodeScenario } from '../url/scenario';
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { Model, Pricing } from '../pricing/types';
+import { promoFor, promoTitle, type RateField } from '../pricing/promo';
 import {
   blendedRate,
   type ComparisonPage,
@@ -104,6 +105,34 @@ function perThousand(dollarsPerMillion: number): string {
 
 function rate(dollarsPerMillion: number): string {
   return `$${Number(dollarsPerMillion.toFixed(4))}`;
+}
+
+/**
+ * The marker beside a promotional figure — the same markup `PromoRate.tsx`
+ * renders in the app, as a string. A native `title` for pointers and the same
+ * sentence as hidden text for screen readers; the glyph is decoration. Empty
+ * when the cell is at the standard rate, which is the usual case.
+ *
+ * `effective` must be what `effectivePricing` returned for `model.pricing` on
+ * the page's `asOf` — every page carries that, so no date is parsed here.
+ */
+function promoIcon(model: Model, effective: Pricing, field: RateField): string {
+  const promo = promoFor(model.pricing, effective, field);
+  if (!promo) return '';
+  const title = escapeHtml(promoTitle(promo));
+  return (
+    `<span class="rate-promo" title="${title}">` +
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">` +
+    `<path d="M3 3h8l10 10-8 8L3 11z"/><circle cx="7.5" cy="7.5" r="1.3" fill="currentColor" stroke="none"/></svg>` +
+    `<span class="visually-hidden"> (${title})</span></span>`
+  );
+}
+
+/** A rate cell's content: the figure in force, marked when promotional. */
+function rateCell(model: Model, effective: Pricing, field: RateField): string {
+  const value = effective[field];
+  if (value === undefined) return '<span class="muted">not published</span>';
+  return `${escapeHtml(rate(value))}${promoIcon(model, effective, field)}`;
 }
 
 interface Crumb {
@@ -214,16 +243,34 @@ function calculatorLink(ctx: RenderContext, modelIds: string[], label: string): 
   return `<p><a class="cta" href="${escapeHtml(`${href(ctx, '/')}?${query}`)}">${escapeHtml(label)}</a></p>`;
 }
 
-function rateRows(pricing: Pricing): string {
+/**
+ * The rate card. `pricing` is the model's rates in force on the page's date;
+ * the four rates a promotion can move are marked when it has moved them.
+ */
+function rateRows(model: Model, pricing: Pricing): string {
   const rows: string[] = [
-    row('Input', pricing.input, 'Every token you send: prompt, history, documents.'),
-    row('Output', pricing.output, 'Every token the model generates, including hidden reasoning tokens.'),
+    row('Input', pricing.input, 'Every token you send: prompt, history, documents.', 'input'),
+    row(
+      'Output',
+      pricing.output,
+      'Every token the model generates, including hidden reasoning tokens.',
+      'output',
+    ),
   ];
   if (pricing.cachedInput !== undefined) {
-    rows.push(row('Cached input', pricing.cachedInput, 'Input served from the provider’s prompt cache.'));
+    rows.push(
+      row(
+        'Cached input',
+        pricing.cachedInput,
+        'Input served from the provider’s prompt cache.',
+        'cachedInput',
+      ),
+    );
   }
   if (pricing.cacheWrite !== undefined) {
-    rows.push(row('Cache write', pricing.cacheWrite, 'Charged once, to put a prefix into the cache.'));
+    rows.push(
+      row('Cache write', pricing.cacheWrite, 'Charged once, to put a prefix into the cache.', 'cacheWrite'),
+    );
   }
   if (pricing.cacheStoragePerMillionTokenHour !== undefined) {
     rows.push(
@@ -247,10 +294,13 @@ function rateRows(pricing: Pricing): string {
   }
   return rows.join('\n');
 
-  function row(label: string, value: number, note: string): string {
+  function row(label: string, value: number, note: string, field?: RateField): string {
+    // One marker per row, on the per-1M figure: the per-1K cell is the same
+    // number in a different unit, and two markers would read as two facts.
+    const marker = field ? promoIcon(model, pricing, field) : '';
     return `            <tr>
               <th scope="row">${escapeHtml(label)}</th>
-              <td class="num">${escapeHtml(rate(value))}</td>
+              <td class="num">${escapeHtml(rate(value))}${marker}</td>
               <td class="num">${escapeHtml(perThousand(value))}</td>
               <td class="muted">${note}</td>
             </tr>`;
@@ -290,8 +340,8 @@ ${page.alternatives
   .map(
     (alt) => `            <tr>
               <td><a href="${escapeHtml(href(ctx, `/models/${alt.slug}/`))}">${escapeHtml(alt.model.displayName)}</a></td>
-              <td class="num">${escapeHtml(rate(alt.model.pricing.input))}</td>
-              <td class="num">${escapeHtml(rate(alt.model.pricing.output))}</td>
+              <td class="num">${rateCell(alt.model, alt.effective, 'input')}</td>
+              <td class="num">${rateCell(alt.model, alt.effective, 'output')}</td>
               <td class="num save">${escapeHtml(formatPercent(alt.saving))}</td>
               <td>${
                 alt.comparisonPath
@@ -366,7 +416,7 @@ ${page.alternatives
             <caption class="unit cap">USD, standard tier, global endpoint</caption>
             <thead><tr><th>Rate</th><th class="num">Per 1M tokens</th><th class="num">Per 1K tokens</th><th>What it covers</th></tr></thead>
             <tbody>
-${rateRows(effective)}
+${rateRows(model, effective)}
             </tbody>
           </table>
         </div>
@@ -518,8 +568,8 @@ export function renderProviderPage(page: ProviderPage, ctx: RenderContext): stri
                   ? ''
                   : ` <span class="pill">${escapeHtml(entry.model.status)}</span>`
               }</td>
-              <td class="num">${escapeHtml(rate(entry.model.pricing.input))}</td>
-              <td class="num">${escapeHtml(rate(entry.model.pricing.output))}</td>
+              <td class="num">${rateCell(entry.model, entry.effective, 'input')}</td>
+              <td class="num">${rateCell(entry.model, entry.effective, 'output')}</td>
               <td class="num">${escapeHtml(formatContext(entry.model.contextWindow))}</td>
               <td>${entry.model.capabilities.reasoning ? '<span class="pill">reasoning</span> ' : ''}${entry.model.capabilities.vision ? '<span class="pill">vision</span>' : ''}</td>
             </tr>`,
@@ -637,9 +687,9 @@ ${workloadRows}
           <table>
             <thead><tr><th></th><th class="num">${escapeHtml(page.left.displayName)}</th><th class="num">${escapeHtml(page.right.displayName)}</th></tr></thead>
             <tbody>
-${spec('Input, per 1M tokens', escapeHtml(rate(page.left.pricing.input)), escapeHtml(rate(page.right.pricing.input)))}
-${spec('Output, per 1M tokens', escapeHtml(rate(page.left.pricing.output)), escapeHtml(rate(page.right.pricing.output)))}
-${spec('Cached input', page.left.pricing.cachedInput === undefined ? '<span class="muted">not published</span>' : escapeHtml(rate(page.left.pricing.cachedInput)), page.right.pricing.cachedInput === undefined ? '<span class="muted">not published</span>' : escapeHtml(rate(page.right.pricing.cachedInput)))}
+${spec('Input, per 1M tokens', rateCell(page.left, page.leftEffective, 'input'), rateCell(page.right, page.rightEffective, 'input'))}
+${spec('Output, per 1M tokens', rateCell(page.left, page.leftEffective, 'output'), rateCell(page.right, page.rightEffective, 'output'))}
+${spec('Cached input', rateCell(page.left, page.leftEffective, 'cachedInput'), rateCell(page.right, page.rightEffective, 'cachedInput'))}
 ${spec('Context window', escapeHtml(formatContext(page.left.contextWindow)), escapeHtml(formatContext(page.right.contextWindow)))}
 ${spec('Maximum output', page.left.maxOutput ? escapeHtml(formatContext(page.left.maxOutput)) : '—', page.right.maxOutput ? escapeHtml(formatContext(page.right.maxOutput)) : '—')}
 ${spec('Reasoning model', page.left.capabilities.reasoning ? 'yes' : 'no', page.right.capabilities.reasoning ? 'yes' : 'no')}
@@ -710,8 +760,8 @@ export function renderModelsIndex(set: PageSet, ctx: RenderContext): string {
                   : ` <span class="pill">${escapeHtml(entry.model.status)}</span>`
               }</td>
               <td><a href="${escapeHtml(href(ctx, entry.providerPath))}">${escapeHtml(entry.providerName)}</a></td>
-              <td class="num">${escapeHtml(rate(entry.effective.input))}</td>
-              <td class="num">${escapeHtml(rate(entry.effective.output))}</td>
+              <td class="num">${rateCell(entry.model, entry.effective, 'input')}</td>
+              <td class="num">${rateCell(entry.model, entry.effective, 'output')}</td>
               <td class="num">${escapeHtml(formatContext(entry.model.contextWindow))}</td>
               <td class="num">${escapeHtml(formatMoney(entry.examples[0]?.perMonth ?? 0))}</td>
             </tr>`,
@@ -779,7 +829,7 @@ export function renderProvidersIndex(set: PageSet, ctx: RenderContext): string {
               <td>${escapeHtml(entry.provider.country)}</td>
               <td class="num">${entry.models.length}</td>
               <td>${entry.cheapest ? escapeHtml(entry.cheapest.displayName) : '—'}</td>
-              <td class="num">${entry.cheapest ? escapeHtml(rate(entry.cheapest.pricing.input)) : '—'}</td>
+              <td class="num">${entry.models[0] ? rateCell(entry.models[0].model, entry.models[0].effective, 'input') : '—'}</td>
             </tr>`,
     )
     .join('\n');

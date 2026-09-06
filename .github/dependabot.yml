@@ -35,8 +35,8 @@ updates:
           - patch
 
   # The Expo client. Its runtime is not the website's, and verify.yml gives it
-  # its own job — install, tests, typecheck, lint, expo-doctor and a full
-  # export for all three platforms — so a bump here is properly exercised.
+  # its own job — install, tests, typecheck, lint and a full export for all
+  # three platforms — so a bump here is properly exercised.
   - package-ecosystem: npm
     directory: /apps/mobile
     schedule:
@@ -63,6 +63,27 @@ updates:
       - dependency-name: 'react-native'
       - dependency-name: 'react-native-*'
       - dependency-name: '@react-native-async-storage/*'
+      # TypeScript majors follow the SDK too, and for the same reason:
+      # jest-expo and the React Native types support the range Expo supports.
+      # The 7.0.2 proposal of 2026-09-01 failed the mobile job with `Cannot
+      # read properties of undefined (reading 'Intrinsic')`. Minors and
+      # patches stay in the weekly batch.
+      - dependency-name: 'typescript'
+        update-types:
+          - 'version-update:semver-major'
+      # jest and eslint majors follow jest-expo and eslint-config-expo, which
+      # cap them: the jest proposal broke every mobile suite outright (#113),
+      # and eslint 10 outran eslint-plugin-import's peer range (#122). Drop
+      # these entries when the SDK's own packages move.
+      - dependency-name: 'jest'
+        update-types:
+          - 'version-update:semver-major'
+      - dependency-name: '@types/jest'
+        update-types:
+          - 'version-update:semver-major'
+      - dependency-name: 'eslint'
+        update-types:
+          - 'version-update:semver-major'
     groups:
       minor-and-patch:
         update-types:

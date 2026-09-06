@@ -28,6 +28,7 @@ import { fromLiteLLM, fromOpenRouter, type Allowlist, type Override } from './li
 import { mergeCatalog } from './lib/merge';
 import { catalogHash, diffCatalogs, renderChangelogEntry, summarizeDiff } from './lib/diff';
 import { updateCatalogBadges } from './lib/readme-badges';
+import { isFreshReport, type VendorCheckReport } from './lib/vendor-check';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG_PATH = resolve(ROOT, 'public/data/pricing.json');
@@ -36,6 +37,7 @@ const CHANGELOG_PATH = resolve(ROOT, 'docs/pricing-changelog.md');
 const README_PATH = resolve(ROOT, 'README.md');
 const ALLOWLIST_PATH = resolve(ROOT, 'data/models-allowlist.json');
 const OVERRIDES_PATH = resolve(ROOT, 'data/pricing-overrides.json');
+const VENDOR_CHECK_PATH = resolve(ROOT, 'public/data/vendor-check.json');
 
 const LITELLM_URL =
   'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
@@ -150,6 +152,20 @@ async function main(): Promise<void> {
   const previous = await readJson<PricingCatalog>(CATALOG_PATH);
   const previousStatus = await readJson<SyncStatus>(STATUS_PATH);
 
+  // Rung 1 upkeep runs just before this (scripts/verify-vendors.ts) and leaves
+  // its reading here. Only this morning's counts: yesterday's disagreement
+  // re-raised today would be a flag about a page nobody re-read.
+  const vendorCheckFile = await readJson<VendorCheckReport>(VENDOR_CHECK_PATH);
+  const vendorCheck = isFreshReport(vendorCheckFile, generatedAt) ? vendorCheckFile : undefined;
+  if (vendorCheck) {
+    console.log(
+      `→ vendor pages read ${vendorCheck.checkedAt}: ${vendorCheck.confirmed} confirmed, ` +
+        `${vendorCheck.mismatched} mismatched, ${vendorCheck.unconfirmed} unconfirmed`,
+    );
+  } else {
+    console.log('→ no vendor-page reading from this morning — hand-verified rows keep their dates');
+  }
+
   console.log('→ fetching sources');
   let litellmRaw: Record<string, unknown> = {};
   if (args.litellmFile) {
@@ -216,6 +232,7 @@ async function main(): Promise<void> {
     overrides,
     previous,
     generatedAt,
+    vendorCheck,
   });
 
   // A model can only leave the catalog through the allowlist's `retired` list,
@@ -295,6 +312,16 @@ async function main(): Promise<void> {
     staleCount: publishedCatalog.models.filter((m) => m.provenance.stale).length,
     catalogHash: catalogHash(publishedCatalog),
     pricesLastChanged: pricesLastChanged ?? null,
+    ...(vendorCheck
+      ? {
+          vendorCheck: {
+            checkedAt: vendorCheck.checkedAt,
+            confirmed: vendorCheck.confirmed,
+            mismatched: vendorCheck.mismatched,
+            unconfirmed: vendorCheck.unconfirmed,
+          },
+        }
+      : {}),
   };
 
   if (args.dryRun) {

@@ -90,7 +90,7 @@ const RAW: PricingCatalog = {
         input: 3,
         output: 15,
         cachedInput: 0.3,
-        intro: { input: 2, output: 10, cachedInput: 0.2, until: '2026-08-31' },
+        intro: { input: 2, output: 10, cachedInput: 0.2, until: '2099-12-31' },
       },
       tokenizer: { kind: 'approx', charsPerToken: 3.6, cjkCharsPerToken: 1.5 },
       capabilities: { reasoning: true, vision: true },
@@ -347,8 +347,13 @@ describe('a promotional rate is the rate', () => {
   // the September rate, while estimate_cost billed a million tokens at $2 —
   // and get_price stamped its answer "confirmed against the provider's own
   // pricing page". Wrong is recoverable; wrong with a confidence claim is not.
+  // The window is far-future on purpose: estimate_cost bills at the real
+  // current date (it takes no `at`), so the agreement test below needs "now"
+  // to sit inside the promotion for as long as the suite runs. The original
+  // fixture rode the real Sonnet 5 window (`until` 2026-08-31) and the suite
+  // turned red the morning after it lapsed, unrelated to any code change.
   const INSIDE = new Date('2026-08-06T00:00:00Z');
-  const AFTER = new Date('2026-09-01T00:00:00Z');
+  const AFTER = new Date('2100-01-01T00:00:00Z');
 
   it('quotes the promoted rate while the promotion is running', () => {
     const r = getPrice(catalog, AT, 'promo-test-one', INSIDE) as Record<string, unknown>;
@@ -361,7 +366,7 @@ describe('a promotional rate is the rate', () => {
     const r = getPrice(catalog, AT, 'promo-test-one', INSIDE) as Record<string, unknown>;
     const promo = r.promotional_pricing as Record<string, unknown>;
     expect(promo).toBeDefined();
-    expect(promo.in_force_until).toBe('2026-08-31');
+    expect(promo.in_force_until).toBe('2099-12-31');
     expect(promo.standard_input_per_million_usd).toBe(3);
     expect(promo.standard_output_per_million_usd).toBe(15);
   });

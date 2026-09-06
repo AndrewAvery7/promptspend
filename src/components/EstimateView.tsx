@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import type { Catalog } from '@/lib/pricing/catalog';
-import { PRICING_SCOPE } from '@/config';
+import { PRICING_SCOPE, RECEIPT_URL } from '@/config';
 import { csvDocument } from '@/lib/engine/csv';
 import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
 import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
 import { MAX_MODELS } from '@/lib/url/scenario';
 import { MAX_PASTE_CHARS, type FieldKey, type useEstimator } from '@/state/useEstimator';
+import { Provenance } from '@/components/Provenance';
 import { AssumptionList, CostCards, InsightList, WarningList } from './CostCards';
 import { HelpTip, ReviewBadge } from './Disclosure';
 import { CountryFilter, emptyReason } from './CountryFilter';
 import { CountryTag } from './Flag';
 import { SyncChip } from './SyncChip';
+import { Rate, useAsOf } from './PromoRate';
+import { rateOn } from '@/lib/pricing/promo';
 
 type Estimator = ReturnType<typeof useEstimator>;
 
@@ -84,6 +87,7 @@ export function EstimateView({
   const primaryTokens = primaryModel ? estimator.tokensForModel(primaryModel) : null;
   const conversationsPerMonth = scenario.conversationsPerDay * 30;
   const cacheOn = scenario.cachedInputShare > 0;
+  const asOf = useAsOf();
 
   return (
     <section aria-labelledby="estimate-heading">
@@ -101,27 +105,7 @@ export function EstimateView({
             Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s
             bill side by side — at your scale, from prices re-checked every morning.
           </p>
-          {/* Every figure here is derived from the catalog being displayed, not
-              written down beside it. A hand-typed count is the thing that goes
-              quietly wrong the morning after a sync adds a row. */}
-          <dl className="hero__stats">
-            <div>
-              <dt>{catalog.primaryModels.length}</dt>
-              <dd>models tracked</dd>
-            </div>
-            <div>
-              <dt>{catalog.providers.length}</dt>
-              <dd>providers</dd>
-            </div>
-            <div>
-              <dt>{catalog.vendorVerifiedCount()}</dt>
-              <dd>read against the vendor&apos;s own page</dd>
-            </div>
-            <div>
-              <dt>0</dt>
-              <dd>accounts, trackers or cookies</dd>
-            </div>
-          </dl>
+          <Provenance catalog={catalog} onOpenData={onOpenData} />
         </div>
         <aside className="hero__aside" aria-labelledby="hero-aside-title">
           <p className="hero__aside-eyebrow">Beyond the browser</p>
@@ -142,6 +126,9 @@ export function EstimateView({
               Safari, and four items are worth announcing as four. */}
           <ul className="hero__aside-list" role="list">
             <li>
+              <b>AI Cost Receipt</b> — bring current PromptSpend pricing into an existing AI conversation
+            </li>
+            <li>
               <b>MCP server</b> — for Claude Code, Cursor and Windsurf
             </li>
             <li>
@@ -154,6 +141,9 @@ export function EstimateView({
               <b>Pricing API</b> — keyless and CORS-open, as JSON or CSV
             </li>
           </ul>
+          <a className="button button--primary hero__receipt-cta" href={RECEIPT_URL}>
+            PromptSpend this conversation
+          </a>
           <p className="hero__aside-note">
             <button type="button" className="linklike" onClick={onOpenData}>
               How to install each &rarr;
@@ -242,7 +232,9 @@ export function EstimateView({
                             <span className="model-row__name">{model.displayName}</span>
                           </label>
                           <span className="model-row__tags">
-                            {model.pricing.intro && <span className="badge badge--intro">INTRO</span>}
+                            {rateOn(model, 'input', asOf).promo && (
+                              <span className="badge badge--intro">INTRO PRICE</span>
+                            )}
                             {/* Status belongs where the choice is made, not only in
                                 the catalog table — picking a retired model by
                                 accident is an expensive mistake to discover later. */}
@@ -259,7 +251,8 @@ export function EstimateView({
                               />
                             )}
                             <span className="model-row__rate mono">
-                              ${model.pricing.input} / ${model.pricing.output}
+                              <Rate model={model} field="input" asOf={asOf} /> /{' '}
+                              <Rate model={model} field="output" asOf={asOf} />
                             </span>
                           </span>
                         </div>
@@ -568,6 +561,7 @@ export function EstimateView({
               catalog={catalog}
               cacheEnabled={cacheOn}
               conversationsPerMonth={conversationsPerMonth}
+              asOf={asOf}
             />
             {rows.length > 1 && <SavingsCallout rows={rows} />}
           </section>

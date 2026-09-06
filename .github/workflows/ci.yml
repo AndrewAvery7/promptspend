@@ -24,6 +24,18 @@ on:
     # 2026-08-19 when PR #77 merged carrying only CodeQL, no `verify`.
     branches: [main, pricing-review]
   pull_request:
+  # A manual handle on the same gate.
+  #
+  # Twice now a pull request has arrived carrying only CodeQL and none of
+  # `verify` — see the note above on GITHUB_TOKEN, and PR #77 on 2026-08-19.
+  # Both times the fix was to make some *other* event fire. That works only once
+  # the cause is known, and the symptom is silent: a green pull request that was
+  # never actually verified looks exactly like one that was.
+  #
+  # `workflow_dispatch` removes the dependency on diagnosing the cause. Whatever
+  # swallowed the event, the gate can still be pointed at the branch by hand from
+  # the Actions tab, and its result read before merging.
+  workflow_dispatch:
 
 # Least privilege for GITHUB_TOKEN. Without this block a job inherits the
 # repository default, which is broader than anything here needs — nothing in the

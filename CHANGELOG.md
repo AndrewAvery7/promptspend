@@ -7,9 +7,39 @@ on their own schedule and are not releases.
 
 ## Unreleased
 
-Work that landed after `v0.6.0` was tagged. The tag points at `fd54a49` and
-these commits came after it, so they are recorded here rather than folded into
-a release that does not contain them.
+### Added
+
+- **PromptSpend Receipt at `/receipt/`.** The new product route gives people one fully visible, temporary
+  instruction object to paste after an AI conversation. It asks for a request-by-request visible-workload
+  estimate, requires current PromptSpend API evidence, preserves unknown model and hidden-usage states, and
+  compares lower-cost candidates without claiming equal quality.
+- **A public Receipt contract.** `/receipt/instructions.txt` and `/receipt/spec.json` are generated from the
+  same source as the visible page and clipboard value. A build check fails if any representation drifts or
+  introduces authority-escalation language.
+- **Observed-session cost arithmetic.** The shared core can now price already-observed request totals without
+  double-counting accumulated history, while keeping cache reads, cache writes, hidden reasoning,
+  promotional windows, and long-context tiers explicit.
+
+## [0.7.0] — 2026-08-30
+
+Everything below landed after `v0.6.0` was tagged at `fd54a49`. A minor rather
+than a patch release: the mobile foundation, country filters, cost receipts,
+scenario intelligence, the launch notify list and private pasted-prompt
+estimation are all new capability, not repairs.
+
+This is also the first release the project can be **cited** by. `CITATION.cff`
+and `.zenodo.json` mean the tag is archived and given a DOI, so a cost estimate
+published elsewhere can point at the exact version of the engine and the price
+catalog it relied on.
+
+### Added
+
+- **`CITATION.cff` and `.zenodo.json`.** The project can now be cited. GitHub
+  renders a "Cite this repository" button from the first; the second tells
+  Zenodo how to describe each release it archives, so releases receive a DOI
+  attributed to an ORCID iD rather than to a bare GitHub username. The pricing
+  catalog is deposited separately as a dated dataset, so that published cost
+  estimates can cite the price basis they actually relied on.
 
 ### Fixed
 

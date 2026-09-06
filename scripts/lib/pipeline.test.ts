@@ -257,6 +257,70 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(warm.review.map((item) => item.id)).toEqual(['moonshot-kimi-k2.6']);
   });
 
+  it('folds a re-keyed upstream duplicate into the existing id instead of colliding on URL slug', () => {
+    // LiteLLM occasionally lists the same model under a differently-punctuated
+    // key (a dot where a dash used to be). Both are valid catalog ids on their
+    // own, but they collapse to the identical URL slug — assertUniqueSlugs in
+    // src/lib/seo/slug.ts is what catches that at build time — so a same-priced
+    // dot-form arriving later must be folded into the id already published,
+    // not minted as a second "new" model.
+    const mistralAllowlist: Allowlist = {
+      ...ALLOWLIST,
+      providers: [...ALLOWLIST.providers, { id: 'mistral', name: 'Mistral AI', country: 'FR' }],
+      families: [
+        ...ALLOWLIST.families,
+        {
+          id: 'mistral',
+          providerId: 'mistral',
+          include: ['^mistral/mistral-medium-\\d(\\.\\d|-\\d)?$'],
+          stripPrefix: 'mistral/',
+          tokenizer: { kind: 'approx', charsPerToken: 3.7, cjkCharsPerToken: 1.8 },
+          capabilities: { reasoning: false, vision: true },
+        },
+      ],
+    };
+    const previous: PricingCatalog = {
+      schemaVersion: SCHEMA_VERSION,
+      generatedAt: '2026-08-01T06:00:00.000Z',
+      providers: mistralAllowlist.providers,
+      models: [
+        {
+          id: 'mistral-mistral-medium-3-5',
+          providerId: 'mistral',
+          displayName: 'Mistral Medium 3.5',
+          status: 'current',
+          contextWindow: 262_144,
+          pricing: { input: 1.5, output: 7.5 },
+          tokenizer: { kind: 'approx', charsPerToken: 3.7, cjkCharsPerToken: 1.8 },
+          capabilities: { reasoning: false, vision: true },
+          provenance: { source: 'litellm', lastVerified: '2026-08-01' },
+        },
+      ],
+    };
+    const feed = fromLiteLLM(
+      {
+        'mistral/mistral-medium-3.5': {
+          mode: 'chat',
+          input_cost_per_token: 1.5e-6,
+          output_cost_per_token: 7.5e-6,
+        },
+      },
+      mistralAllowlist,
+    );
+    const { catalog, review } = mergeCatalog({
+      litellm: feed,
+      openrouter: new Map(),
+      allowlist: mistralAllowlist,
+      overrides: [],
+      previous,
+      generatedAt,
+    });
+    const mistralModels = catalog.models.filter((m) => m.providerId === 'mistral');
+    expect(mistralModels).toHaveLength(1);
+    expect(mistralModels[0]!.id).toBe('mistral-mistral-medium-3-5');
+    expect(review).toEqual([]);
+  });
+
   it('keeps a previously published model when the feed stops listing it', () => {
     // One truncated upstream response used to be enough to delete most of the
     // catalog — and because removals did not trip the review rule, the deletion
@@ -332,6 +396,93 @@ describe('mergeCatalog — the trust ladder', () => {
       generatedAt: new Date('2026-08-02T06:00:00.000Z'),
     });
     expect(second.review.find((candidate) => candidate.code === 'override-drift')?.isNew).toBe(false);
+  });
+
+  it('does not flag drift when the feed reports the currently active intro rate', () => {
+    const overrides = [
+      {
+        id: 'claude-sonnet-5',
+        vendorVerified: true,
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+        pricing: { input: 3, output: 15, intro: { input: 1, output: 5, until: '2026-08-31' } },
+      },
+    ];
+    // The feed (litellm/comparisonKey) reports 3/15 for claude-sonnet-5 per LITELLM fixture above;
+    // point it at the promo rate instead to simulate a feed that bills the live intro price.
+    const promoLitellm = fromLiteLLM(
+      {
+        ...LITELLM,
+        'claude-sonnet-5': { mode: 'chat', input_cost_per_token: 1e-6, output_cost_per_token: 5e-6 },
+      },
+      ALLOWLIST,
+    );
+    const result = mergeCatalog({
+      litellm: promoLitellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides,
+      generatedAt, // 2026-08-01, inside the intro window
+    });
+    expect(result.review.find((candidate) => candidate.code === 'override-drift')).toBeUndefined();
+
+    // Once the promo lapses, the feed reporting the promo rate against a base-priced
+    // override should flag again — the fix must not blind the check permanently.
+    const afterPromo = mergeCatalog({
+      litellm: promoLitellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides,
+      generatedAt: new Date('2026-09-05T06:00:00.000Z'),
+    });
+    expect(afterPromo.review.find((candidate) => candidate.code === 'override-drift')).toBeDefined();
+  });
+
+  it('raises the morning’s vendor-page disagreement without touching the price', () => {
+    const overrides = [
+      {
+        id: 'claude-sonnet-5',
+        vendorVerified: true,
+        lastVerified: '2026-08-01',
+        verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+        pricing: { input: 3, output: 15 },
+      },
+    ];
+    const vendorCheck = {
+      schemaVersion: 1,
+      checkedAt: generatedAt.toISOString(),
+      extractionModel: 'claude-opus-5',
+      pages: [],
+      items: [
+        {
+          id: 'claude-sonnet-5',
+          url: overrides[0]!.verifiedUrl,
+          status: 'mismatch' as const,
+          detail: 'page lists $4/$20 vs recorded $3/$15',
+        },
+        { id: 'moonshot-kimi-k2.6', url: 'x', status: 'confirmed' as const, detail: '' },
+      ],
+      confirmed: 1,
+      mismatched: 1,
+      unconfirmed: 0,
+    };
+    const { catalog, review } = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides,
+      generatedAt,
+      vendorCheck,
+    });
+    const sonnet = catalog.models.find((model) => model.id === 'claude-sonnet-5')!;
+    expect(sonnet.pricing.input).toBe(3);
+    expect(sonnet.provenance.reviewCodes).toContain('vendor-page-mismatch');
+    expect(review.find((item) => item.code === 'vendor-page-mismatch')?.reason).toContain(
+      '$4/$20 vs recorded $3/$15',
+    );
+    expect(
+      catalog.models.find((model) => model.id === 'moonshot-kimi-k2.6')!.provenance.needsReview,
+    ).toBeUndefined();
   });
 
   it('flags old vendor verification and rejects invented provenance', () => {

@@ -27,6 +27,7 @@ import { buildPages } from '@/lib/seo/pages';
 import { PAGE_CSS } from '@/lib/seo/css';
 import { renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
+import { receiptSpec } from '@/receipt/receiptSpec';
 import {
   renderComparisonPage,
   renderComparisonsIndex,
@@ -210,6 +211,7 @@ async function main(): Promise<void> {
     'sitemap.xml',
     sitemap([
       { loc: `${siteUrl}/`, lastmod, priority: '1.0' },
+      { loc: `${siteUrl}/receipt/`, lastmod: receiptSpec.updated, priority: '0.9' },
       ...set.all.map((page) => ({
         loc: `${siteUrl}${page.path}`,
         lastmod: page.lastmod,
@@ -251,7 +253,7 @@ async function main(): Promise<void> {
   );
   console.log(`  stylesheet ${cssName}`);
   console.log(
-    `  sitemap    ${set.all.length + writingPages.length + informationPages.length + 1} URLs at ${siteUrl}/sitemap.xml`,
+    `  sitemap    ${set.all.length + writingPages.length + informationPages.length + 2} URLs at ${siteUrl}/sitemap.xml`,
   );
   console.log(`  llms.txt   ${siteUrl}/llms.txt`);
   if (set.droppedComparisons > 0) {

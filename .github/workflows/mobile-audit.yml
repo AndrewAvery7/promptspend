@@ -1,0 +1,103 @@
+name: Mobile dependency triage
+
+# The mobile release check requires apps/mobile/SECURITY.md to have been
+# re-derived within 14 days, and "re-derived" used to mean a person remembered
+# to re-run the audit and edit the date. On 2026-09-05 the August 22 record
+# lapsed and the mobile verify job went red on every pull request until it was
+# redone by hand — a calendar deciding a verdict that the commit should decide,
+# the same shape of noise expo-drift.yml exists to keep out of verify.yml.
+#
+# So the audit runs here, weekly, on its own, and with nobody watching
+# (Andrew, 2026-09-06: "as hands-off as possible"). scripts/audit-triage.mjs
+# --auto tries the non-forced `npm audit fix` and keeps it only if the mobile
+# tests, typecheck and expo-doctor still pass; re-runs the audit; rewrites the
+# generated section of SECURITY.md; stamps the fingerprint and date; commits.
+#
+#   no high/critical advisory → accepted under the standing policy. Green,
+#                               committed, nobody needed.
+#   any high/critical advisory → the record is still written and committed,
+#                               but the run fails and an issue is opened.
+#                               That is the one case a person is asked to
+#                               read, on purpose: a serious advisory must not
+#                               accept itself.
+#
+# Nothing deploys from this workflow and nothing gates on it; verify.yml only
+# warns on ordinary pushes and enforces the policy when RELEASE_CHECK=1.
+on:
+  schedule:
+    # Monday 14:30 UTC, half an hour after the Expo drift check.
+    - cron: '30 14 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      # Installed because a kept fix is gated on the tests running afterwards.
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild unrs-resolver
+
+      - name: Re-derive the triage, applying any safe fix
+        id: triage
+        continue-on-error: true
+        run: node scripts/audit-triage.mjs --auto
+
+      # The root verify job runs prettier over this file; a record written in
+      # the script's own spacing would fail the next pull request's format
+      # check. Same prettier major as the root package, same root config.
+      - name: Format the record the way the repository does
+        working-directory: .
+        run: npx --yes prettier@3 --write apps/mobile/SECURITY.md
+
+      - name: Commit the record (and a kept fix)
+        run: |
+          git config user.name "promptspend-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add SECURITY.md package.json package-lock.json
+          if git diff --staged --quiet; then
+            echo "Nothing to record."
+          elif git diff --staged --quiet -- package-lock.json; then
+            git commit -m "chore(mobile): dependency triage re-derived (${{ steps.triage.outputs.summary }})"
+            git push
+          else
+            git commit -m "fix(mobile): npm audit fix, kept after tests, typecheck and expo-doctor (${{ steps.triage.outputs.summary }})"
+            git push
+          fi
+
+      # The one case that asks for a person. One open issue at a time: a
+      # repeat run comments on it rather than opening another.
+      - name: Escalate a high or critical advisory
+        if: steps.triage.outputs.verdict == 'escalate'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="Mobile audit: high or critical advisory (${{ steps.triage.outputs.summary }})"
+          BODY="The weekly dependency triage found a high or critical advisory. The generated section of apps/mobile/SECURITY.md has the table. Assess reachability in the exposure notes; check:release blocks a release while it stands. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          EXISTING=$(gh issue list --state open --search "Mobile audit: high or critical advisory in:title" --json number --jq '.[0].number')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY"
+          fi
+          exit 1
+
+      - name: Fail if the triage itself failed for another reason
+        if: steps.triage.outcome == 'failure' && steps.triage.outputs.verdict != 'escalate'
+        run: exit 1

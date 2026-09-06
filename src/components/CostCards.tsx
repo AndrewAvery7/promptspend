@@ -1,17 +1,20 @@
 import type { ComparisonRow } from '@/lib/engine/cost';
 import type { Catalog } from '@/lib/pricing/catalog';
-import { formatMoney, formatPercent, formatRate, renderEmphasis } from '@/lib/engine/format';
+import { formatMoney, formatPercent, renderEmphasis } from '@/lib/engine/format';
 import type { Insight } from '@/lib/engine/insights';
+import { Rate } from './PromoRate';
 
 interface CostCardsProps {
   rows: ComparisonRow[];
   catalog: Catalog;
   cacheEnabled: boolean;
   conversationsPerMonth: number;
+  /** The date the printed rates are in force on — see `useAsOf`. */
+  asOf: Date;
 }
 
 /** Every selected model, side by side, cheapest first. */
-export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth }: CostCardsProps) {
+export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth, asOf }: CostCardsProps) {
   if (rows.length === 0) {
     return (
       <div className="panel__body">
@@ -25,7 +28,6 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth }
       {rows.map((row) => {
         const { breakdown, scaled, model } = row;
         const inputShare = breakdown.total > 0 ? (breakdown.inputCost / breakdown.total) * 100 : 50;
-        const intro = model.pricing.intro;
         return (
           <article
             key={model.id}
@@ -46,10 +48,13 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth }
             <div className="cost-card__head">
               <span className="cost-card__name">{model.displayName}</span>
             </div>
+            {/* The rates the card's total was actually computed at. This line
+                used to print the standard rates and append "intro pricing" —
+                a label that outlived the promotion, beside numbers that never
+                reflected it. */}
             <div className="cost-card__provider">
-              {catalog.providerName(model)} · {formatRate(model.pricing.input)}/M in ·{' '}
-              {formatRate(model.pricing.output)}/M out
-              {intro ? ' · intro pricing' : ''}
+              {catalog.providerName(model)} · <Rate model={model} field="input" asOf={asOf} suffix="/M" /> in
+              · <Rate model={model} field="output" asOf={asOf} suffix="/M" /> out
             </div>
 
             <div className="cost-card__total mono">

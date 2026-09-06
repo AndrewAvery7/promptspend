@@ -1,0 +1,495 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-09-06T19:48:57.461Z",
+  "extractionModel": "deepseek/deepseek-v4-flash",
+  "pages": [
+    {
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "ok": true,
+      "note": "45038 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "claude-fable-5-1",
+        "claude-fable-5",
+        "claude-opus-5",
+        "claude-opus-4-8",
+        "claude-sonnet-5",
+        "claude-haiku-4-5",
+        "claude-opus-4-7",
+        "claude-opus-4-6",
+        "claude-opus-4-5",
+        "claude-opus-4-1",
+        "claude-sonnet-4-6",
+        "claude-sonnet-4-5"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "ok": true,
+      "note": "21422 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "gpt-5.6-sol",
+        "gpt-5.6-terra",
+        "gpt-5.6-luna",
+        "gpt-5.5",
+        "gpt-5.4",
+        "gpt-5.4-mini",
+        "gpt-5.4-nano",
+        "gpt-5.2",
+        "gpt-5.1",
+        "gpt-5",
+        "gpt-5-mini",
+        "gpt-5-nano",
+        "o4-mini",
+        "o3",
+        "o3-mini",
+        "o1"
+      ]
+    },
+    {
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "ok": true,
+      "note": "90379 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "gemini-gemini-3.1-pro-preview",
+        "gemini-gemini-3.6-flash",
+        "gemini-gemini-3.7-flash",
+        "gemini-gemini-3.5-flash-lite",
+        "gemini-gemini-2.5-pro",
+        "gemini-gemini-2.5-flash",
+        "gemini-gemini-3-flash-preview",
+        "gemini-gemini-3.1-flash-lite",
+        "gemini-gemini-3.5-flash"
+      ]
+    },
+    {
+      "url": "https://api-docs.deepseek.com/quick_start/pricing",
+      "ok": true,
+      "note": "3521 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "deepseek-deepseek-v4-pro",
+        "deepseek-deepseek-v4-flash"
+      ]
+    },
+    {
+      "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
+      "ok": true,
+      "note": "2535 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "moonshot-kimi-k2.6"
+      ]
+    },
+    {
+      "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
+      "ok": true,
+      "note": "3086 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "moonshot-kimi-k3"
+      ]
+    },
+    {
+      "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "ok": true,
+      "note": "536866 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "dashscope-qwen3.7-max",
+        "dashscope-qwen3-next-80b-a3b-instruct",
+        "dashscope-qwen3-vl-235b-a22b-instruct"
+      ]
+    },
+    {
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "ok": true,
+      "note": "3702 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "zai-glm-5.1",
+        "zai-glm-5.2",
+        "zai-glm-5.3",
+        "zai-glm-5",
+        "zai-glm-4.7",
+        "zai-glm-4.6"
+      ]
+    },
+    {
+      "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
+      "ok": true,
+      "note": "14014 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "minimax-minimax-m2.5"
+      ]
+    },
+    {
+      "url": "https://docs.x.ai/developers/pricing",
+      "ok": true,
+      "note": "13361 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "xai-grok-4.6",
+        "xai-grok-4.5",
+        "xai-grok-4.3",
+        "xai-grok-4.20"
+      ]
+    },
+    {
+      "url": "https://docs.x.ai/developers/migration/may-15-retirement",
+      "ok": true,
+      "note": "5660 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "xai-grok-4-1-fast",
+        "xai-grok-3",
+        "xai-grok-4"
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "claude-fable-5-1",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $10/$50 (cached $0.25)"
+    },
+    {
+      "id": "claude-fable-5",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $10/$50 (cached $1)"
+    },
+    {
+      "id": "claude-opus-5",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $5/$25 (cached $0.5)"
+    },
+    {
+      "id": "claude-opus-4-8",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $5/$25 (cached $0.5)"
+    },
+    {
+      "id": "claude-sonnet-5",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$10 (cached $0.2)"
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1/$5 (cached $0.1)"
+    },
+    {
+      "id": "claude-opus-4-7",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $5/$25 (cached $0.5)"
+    },
+    {
+      "id": "claude-opus-4-6",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $5/$25 (cached $0.5)"
+    },
+    {
+      "id": "claude-opus-4-5",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $5/$25 (cached $0.5)"
+    },
+    {
+      "id": "claude-opus-4-1",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $15/$75 (cached $1.5)"
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $3/$15 (cached $0.3)"
+    },
+    {
+      "id": "claude-sonnet-4-5",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $3/$15 (cached $0.3)"
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page shows only the promotional rate $4/$20 until 2026-11-21, which agrees; the standard rate $5/$30 is not printed and stays unverified until the window closes"
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$12 (cached $0.2)"
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.2/$1.2 (cached $0.02)"
+    },
+    {
+      "id": "gpt-5.5",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $5/$30 (cached $0.5)"
+    },
+    {
+      "id": "gpt-5.4",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2.5/$15 (cached $0.25)"
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.75/$4.5 (cached $0.075)"
+    },
+    {
+      "id": "gpt-5.4-nano",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.2/$1.25 (cached $0.02)"
+    },
+    {
+      "id": "gpt-5.2",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.75/$14 (cached $0.175)"
+    },
+    {
+      "id": "gpt-5.1",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$10 (cached $0.125)"
+    },
+    {
+      "id": "gpt-5",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$10 (cached $0.125)"
+    },
+    {
+      "id": "gpt-5-mini",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.25/$2 (cached $0.025)"
+    },
+    {
+      "id": "gpt-5-nano",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.05/$0.4 (cached $0.005)"
+    },
+    {
+      "id": "o4-mini",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.1/$4.4 (cached $0.275)"
+    },
+    {
+      "id": "o3",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$8 (cached $0.5)"
+    },
+    {
+      "id": "o3-mini",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.1/$4.4 (cached $0.55)"
+    },
+    {
+      "id": "o1",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $15/$60 (cached $7.5)"
+    },
+    {
+      "id": "gemini-gemini-3.1-pro-preview",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$12 (cached $0.2)"
+    },
+    {
+      "id": "gemini-gemini-3.6-flash",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.5/$7.5 (cached $0.15)"
+    },
+    {
+      "id": "gemini-gemini-3.7-flash",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.5/$7.5 (cached $0.15)"
+    },
+    {
+      "id": "gemini-gemini-3.5-flash-lite",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.3/$2.5 (cached $0.03)"
+    },
+    {
+      "id": "gemini-gemini-2.5-pro",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$10 (cached $0.125)"
+    },
+    {
+      "id": "gemini-gemini-2.5-flash",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.3/$2.5 (cached $0.03)"
+    },
+    {
+      "id": "gemini-gemini-3-flash-preview",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.5/$3 (cached $0.05)"
+    },
+    {
+      "id": "gemini-gemini-3.1-flash-lite",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.25/$1.5 (cached $0.025)"
+    },
+    {
+      "id": "gemini-gemini-3.5-flash",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.5/$9 (cached $0.15)"
+    },
+    {
+      "id": "deepseek-deepseek-v4-pro",
+      "url": "https://api-docs.deepseek.com/quick_start/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.32/$3.96 (cached $0.044)"
+    },
+    {
+      "id": "deepseek-deepseek-v4-flash",
+      "url": "https://api-docs.deepseek.com/quick_start/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.44/$1.32 (cached $0.014)"
+    },
+    {
+      "id": "moonshot-kimi-k2.6",
+      "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
+      "status": "confirmed",
+      "detail": "page lists $0.95/$4 (cached $0.16)"
+    },
+    {
+      "id": "moonshot-kimi-k3",
+      "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
+      "status": "confirmed",
+      "detail": "page lists $3/$15 (cached $0.3)"
+    },
+    {
+      "id": "dashscope-qwen3.7-max",
+      "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "status": "confirmed",
+      "detail": "page lists $2.5/$7.5"
+    },
+    {
+      "id": "dashscope-qwen3-next-80b-a3b-instruct",
+      "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.15/$1.2"
+    },
+    {
+      "id": "dashscope-qwen3-vl-235b-a22b-instruct",
+      "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.4/$1.6"
+    },
+    {
+      "id": "zai-glm-5.1",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.4/$4.4 (cached $0.26)"
+    },
+    {
+      "id": "zai-glm-5.2",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.4/$4.4 (cached $0.26)"
+    },
+    {
+      "id": "zai-glm-5.3",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.4/$4.4 (cached $0.26)"
+    },
+    {
+      "id": "zai-glm-5",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1/$3.2 (cached $0.2)"
+    },
+    {
+      "id": "zai-glm-4.7",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.6/$2.2 (cached $0.11)"
+    },
+    {
+      "id": "zai-glm-4.6",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.6/$2.2 (cached $0.11)"
+    },
+    {
+      "id": "minimax-minimax-m2.5",
+      "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
+      "status": "confirmed",
+      "detail": "page lists $0.3/$1.2 (cached $0.03)"
+    },
+    {
+      "id": "xai-grok-4.6",
+      "url": "https://docs.x.ai/developers/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$6 (cached $0.5)"
+    },
+    {
+      "id": "xai-grok-4.5",
+      "url": "https://docs.x.ai/developers/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$6 (cached $0.3)"
+    },
+    {
+      "id": "xai-grok-4.3",
+      "url": "https://docs.x.ai/developers/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$2.5 (cached $0.2)"
+    },
+    {
+      "id": "xai-grok-4.20",
+      "url": "https://docs.x.ai/developers/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$2.5 (cached $0.2)"
+    },
+    {
+      "id": "xai-grok-4-1-fast",
+      "url": "https://docs.x.ai/developers/migration/may-15-retirement",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$2.5"
+    },
+    {
+      "id": "xai-grok-3",
+      "url": "https://docs.x.ai/developers/migration/may-15-retirement",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$2.5"
+    },
+    {
+      "id": "xai-grok-4",
+      "url": "https://docs.x.ai/developers/migration/may-15-retirement",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$2.5"
+    }
+  ],
+  "confirmed": 58,
+  "mismatched": 0,
+  "unconfirmed": 0
+}

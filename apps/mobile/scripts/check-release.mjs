@@ -231,9 +231,34 @@ if (
 ) {
   fail('Android data-protection plugin must explicitly exclude device transfer');
 }
+// The triage's age is the one verdict here the calendar decides rather than
+// the commit. It gates a release (RELEASE_CHECK=1, set by the runbook), where
+// a stale triage is a real defect. On an ordinary push or pull request it only
+// warns: on 2026-09-05 it turned this job red on every PR for nothing the PR
+// had done. mobile-audit.yml keeps the date current weekly by re-running the
+// audit and moving the date only when the findings are unchanged.
 const securityReviewed = security.match(/Last reviewed:\s+([A-Za-z]+ \d{1,2}, \d{4})/i)?.[1];
-if (!securityReviewed || Date.now() - new Date(securityReviewed).getTime() > 14 * 24 * 60 * 60 * 1000) {
-  fail('SECURITY.md dependency triage must be re-derived within 14 days of a release check');
+if (!securityReviewed) {
+  fail('SECURITY.md has no "Last reviewed" date');
+} else if (!/<!-- audit-fingerprint: [0-9a-f]{12} /.test(security)) {
+  fail('SECURITY.md carries no audit fingerprint — run scripts/audit-triage.mjs --stamp after triaging');
+} else {
+  const stamped =
+    /<!-- audit-fingerprint: [0-9a-f]{12} \((\d+) findings: (\d+) moderate, (\d+) high, (\d+) critical\)/.exec(
+      security,
+    );
+  const serious = stamped ? Number(stamped[3]) + Number(stamped[4]) : 0;
+  if (serious > 0) {
+    const message = `SECURITY.md records ${serious} high/critical advisories; the standing policy blocks a release until they are assessed and fixed`;
+    if (process.env.RELEASE_CHECK === '1') fail(message);
+    else console.warn(`⚠ ${message}`);
+  }
+  const ageDays = Math.floor((Date.now() - new Date(securityReviewed).getTime()) / (24 * 60 * 60 * 1000));
+  if (ageDays > 14) {
+    const message = `SECURITY.md dependency triage is ${ageDays} days old; a release requires it re-derived within 14 days (scripts/audit-triage.mjs --refresh)`;
+    if (process.env.RELEASE_CHECK === '1') fail(message);
+    else console.warn(`⚠ ${message}`);
+  }
 }
 
 if (problems.length) {

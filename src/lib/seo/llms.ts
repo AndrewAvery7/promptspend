@@ -81,6 +81,7 @@ Check the vendor before committing money to a number.
 - [By provider](${siteUrl}/providers/): ${set.providers.length} providers with model counts and their cheapest option
 - [Head-to-head comparisons](${siteUrl}/compare/): ${set.comparisons.length} pairs, each costed on the same three workloads
 - [Cost calculator](${siteUrl}/): price a real workload — conversation length, caching, batch, reasoning overhead
+- [PromptSpend Receipt](${siteUrl}/receipt/): copy a visible, one-response cost-audit object into an existing AI conversation
 
 Each model page carries its full rate card, the monthly bill for three standard
 workloads, its rank in the catalog, cheaper alternatives, and where its number
@@ -92,6 +93,7 @@ came from.
 - [Flat price rows](${apiUrl}/v1/prices): id, provider, input, output, cache rates, context window
 - [As CSV](${apiUrl}/v1/prices.csv)
 - [The raw catalog](${siteUrl}/data/pricing.json): the file everything above is built from
+- [Receipt specification](${siteUrl}/receipt/spec.json): the exact visible instructions, scope and failure behavior used by the copy object
 
 Prefer the API over scraping these pages. It is faster, it is versioned, and it
 will not break when the HTML changes.

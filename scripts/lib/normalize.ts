@@ -186,4 +186,9 @@ export interface Override {
   /** The vendor page that was read. Required in spirit whenever
    *  `vendorVerified` is set — that is what makes the claim checkable. */
   verifiedUrl?: string;
+  /** The name on that page the price was read from, when it is not this
+   *  row's own: a dated build (`grok-4-0709`), a variant
+   *  (`grok-4.20-0309-reasoning`), or a retired name the page says is billed
+   *  at another model's rate. The daily check looks for this name. */
+  verifiedAs?: string;
 }

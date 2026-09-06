@@ -540,3 +540,330 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `dashscope-qwen3.7-max` — provenance.needsReview: true → —
 - **Review** `dashscope-qwen3.7-max` — provenance.reviewNote: OpenRouter disagrees (41%): $1.475/$4.425 vs $2.5/$7.5 → —
 - **Review** `dashscope-qwen3.7-max` — provenance.verifiedUrl: https://www.alibabacloud.com/help/en/model-studio/qwen3-7-max → https://www.alibabacloud.com/help/en/model-studio/model-pricing
+
+## 2026-08-28
+
+- **Added** `mistral-mistral-medium-3` — Mistral Medium 3 ($1.5 in / $7.5 out per 1M)
+- **Added** `zai-glm-5.3` — GLM 5.3 ($1.4 in / $4.4 out per 1M)
+- **Metadata** `xai-grok-2` — status: current → legacy
+- **Review** `xai-grok-2` — provenance.needsReview: — → true
+- **Review** `xai-grok-2` — provenance.reviewNote: — → no longer listed upstream — confirm retirement before removing
+- **Review** `xai-grok-2` — provenance.stale: — → true
+- **Review** `xai-grok-2` — provenance.statusBeforeStale: — → current
+
+## 2026-08-29
+
+- **Review** `mistral-mistral-medium-3` — provenance.reviewNote: OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5; new model discovered by pattern match — confirm name and rates → OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5
+- **Review** `zai-glm-5.3` — provenance.needsReview: true → —
+- **Review** `zai-glm-5.3` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+
+## 2026-08-30
+
+- **Added** `xai-grok-4.20` — Grok 4.20 ($1.25 in / $2.5 out per 1M)
+- **Coverage** `mistral-mistral-large-3` — cachedInput now tracked: — → 0.05
+- **Coverage** `mistral-mistral-medium-3-5` — cachedInput now tracked: — → 0.15
+- **Price** `xai-grok-3` — input down 3 → 1.25
+- **Price** `xai-grok-3` — output down 15 → 2.5
+- **Price** `xai-grok-3` — cachedInput down 0.75 → 0.2
+- **Price** `xai-grok-4` — input down 3 → 1.25
+- **Price** `xai-grok-4` — output down 15 → 2.5
+- **Coverage** `xai-grok-4` — cachedInput now tracked: — → 0.2
+- **Price** `xai-grok-4-1-fast` — input up 0.2 → 1.25
+- **Price** `xai-grok-4-1-fast` — output up 0.5 → 2.5
+- **Price** `xai-grok-4-1-fast` — cachedInput up 0.05 → 0.2
+- **Review** `xai-grok-3` — provenance.needsReview: — → true
+- **Review** `xai-grok-3` — provenance.reviewNote: — → price moved 83% in one day ($3/$15 -> $1.25/$2.5)
+- **Review** `xai-grok-3` — provenance.lastChanged: — → 2026-08-30
+- **Review** `xai-grok-4` — provenance.needsReview: — → true
+- **Review** `xai-grok-4` — provenance.reviewNote: — → price moved 83% in one day ($3/$15 -> $1.25/$2.5)
+- **Review** `xai-grok-4` — provenance.lastChanged: — → 2026-08-30
+- **Review** `xai-grok-4-1-fast` — provenance.needsReview: — → true
+- **Review** `xai-grok-4-1-fast` — provenance.reviewNote: — → price moved 84% in one day ($0.2/$0.5 -> $1.25/$2.5)
+- **Review** `xai-grok-4-1-fast` — provenance.lastChanged: — → 2026-08-30
+
+## 2026-08-31
+
+- **Review** `moonshot-kimi-k2.5` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k2.5` — provenance.reviewNote: — → OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3
+- **Review** `xai-grok-3` — provenance.needsReview: true → —
+- **Review** `xai-grok-3` — provenance.reviewNote: price moved 83% in one day ($3/$15 -> $1.25/$2.5) → —
+- **Review** `xai-grok-4` — provenance.needsReview: true → —
+- **Review** `xai-grok-4` — provenance.reviewNote: price moved 83% in one day ($3/$15 -> $1.25/$2.5) → —
+- **Review** `xai-grok-4-1-fast` — provenance.needsReview: true → —
+- **Review** `xai-grok-4-1-fast` — provenance.reviewNote: price moved 84% in one day ($0.2/$0.5 -> $1.25/$2.5) → —
+- **Review** `xai-grok-4.20` — provenance.needsReview: true → —
+- **Review** `xai-grok-4.20` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+
+## 2026-09-01
+
+> **Not a vendor price cut.** Anthropic did not lower Sonnet 5's price today.
+> The $2/$10 introductory window ran through 2026-08-31 with a step-up to
+> $3/$15 planned for this morning; the vendor cancelled it — the pricing page
+> now states the introductory rate "is now the standard price" and the increase
+> "will not occur". The rows below fold the intro into the base price and drop
+> the expired block (which is also what had failed the morning's catalog
+> validation, holding the whole sync back). What you are charged is unchanged:
+> $2/$10 yesterday, $2/$10 today.
+
+- **Price** `claude-sonnet-5` — input down 3 → 2
+- **Price** `claude-sonnet-5` — output down 15 → 10
+- **Price** `claude-sonnet-5` — cachedInput down 0.3 → 0.2
+- **Price** `claude-sonnet-5` — cacheWrite down 3.75 → 2.5
+- **Coverage** `claude-sonnet-5` — intro.input no longer published: 2 → —
+- **Coverage** `claude-sonnet-5` — intro.output no longer published: 10 → —
+- **Coverage** `claude-sonnet-5` — intro.until no longer published: 2026-08-31 → —
+- **Review** `claude-fable-5` — provenance.needsReview: — → true
+- **Review** `claude-fable-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-haiku-4-5` — provenance.needsReview: — → true
+- **Review** `claude-haiku-4-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-8` — provenance.needsReview: — → true
+- **Review** `claude-opus-4-8` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-opus-5` — provenance.needsReview: — → true
+- **Review** `claude-opus-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-5` — provenance.needsReview: true → —
+- **Review** `claude-sonnet-5` — provenance.reviewNote: vendor override differs from the automated feed (33%): $2/$10 vs $3/$15 → —
+- **Review** `claude-sonnet-5` — provenance.lastChanged: 2026-08-20 → 2026-09-01
+- **Review** `gpt-5.4` — provenance.needsReview: — → true
+- **Review** `gpt-5.4` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4-mini` — provenance.needsReview: — → true
+- **Review** `gpt-5.4-mini` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4-nano` — provenance.needsReview: — → true
+- **Review** `gpt-5.4-nano` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.5` — provenance.needsReview: — → true
+- **Review** `gpt-5.5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.6-luna` — provenance.needsReview: — → true
+- **Review** `gpt-5.6-luna` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.6-terra` — provenance.needsReview: — → true
+- **Review** `gpt-5.6-terra` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-09-02
+
+- **Added** `claude-fable-5-1` — Claude Fable 5 1 ($10 in / $50 out per 1M)
+- **Added** `zai-glm-5.2` — GLM 5.2 ($1.4 in / $4.4 out per 1M)
+- **Review** `claude-fable-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-haiku-4-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-8` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-opus-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4-mini` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.4-nano` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.6-luna` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.6-terra` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `zai-glm-4.6` — provenance.needsReview: — → true
+- **Review** `zai-glm-4.6` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `zai-glm-4.7` — provenance.needsReview: — → true
+- **Review** `zai-glm-4.7` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `zai-glm-5` — provenance.needsReview: — → true
+- **Review** `zai-glm-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `zai-glm-5.1` — provenance.needsReview: — → true
+- **Review** `zai-glm-5.1` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-09-02
+
+- **Coverage** `claude-fable-5-1` — cacheWrite now tracked: — → 12.5
+- **Coverage** `claude-fable-5-1` — batchDiscount now tracked: — → 0.5
+- **Coverage** `xai-grok-4.20` — longContext.thresholdTokens now tracked: — → 200000
+- **Coverage** `xai-grok-4.20` — longContext.input now tracked: — → 2.5
+- **Coverage** `xai-grok-4.20` — longContext.output now tracked: — → 5
+- **Coverage** `xai-grok-4.20` — longContext.cachedInput now tracked: — → 0.4
+- **Metadata** `claude-fable-5-1` — displayName: Claude Fable 5 1 → Claude Fable 5.1
+- **Metadata** `xai-grok-3` — status: current → legacy
+- **Metadata** `xai-grok-4` — status: current → legacy
+- **Metadata** `xai-grok-4-1-fast` — status: current → legacy
+- **Metadata** `zai-glm-5.2` — displayName: GLM 5.2 → GLM-5.2
+- **Metadata** `zai-glm-5.3` — displayName: GLM 5.3 → GLM-5.3
+- **Review** `claude-fable-5` — provenance.needsReview: true → —
+- **Review** `claude-fable-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `claude-fable-5-1` — provenance.source: litellm → vendor
+- **Review** `claude-fable-5-1` — provenance.needsReview: true → —
+- **Review** `claude-fable-5-1` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `claude-fable-5-1` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `claude-haiku-4-5` — provenance.needsReview: true → —
+- **Review** `claude-haiku-4-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `claude-opus-4-8` — provenance.needsReview: true → —
+- **Review** `claude-opus-4-8` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `claude-opus-5` — provenance.needsReview: true → —
+- **Review** `claude-opus-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.4` — provenance.needsReview: true → —
+- **Review** `gpt-5.4` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.4-mini` — provenance.needsReview: true → —
+- **Review** `gpt-5.4-mini` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.4-nano` — provenance.needsReview: true → —
+- **Review** `gpt-5.4-nano` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.5` — provenance.needsReview: true → —
+- **Review** `gpt-5.5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.6-luna` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-luna` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.6-terra` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-terra` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `xai-grok-3` — provenance.source: litellm → vendor
+- **Review** `xai-grok-3` — provenance.verifiedUrl: — → https://docs.x.ai/developers/migration/may-15-retirement
+- **Review** `xai-grok-4` — provenance.source: litellm → vendor
+- **Review** `xai-grok-4` — provenance.verifiedUrl: — → https://docs.x.ai/developers/migration/may-15-retirement
+- **Review** `xai-grok-4-1-fast` — provenance.source: litellm → vendor
+- **Review** `xai-grok-4-1-fast` — provenance.verifiedUrl: — → https://docs.x.ai/developers/migration/may-15-retirement
+- **Review** `xai-grok-4.20` — provenance.source: litellm → vendor
+- **Review** `xai-grok-4.20` — provenance.verifiedUrl: — → https://docs.x.ai/developers/pricing
+- **Review** `zai-glm-4.6` — provenance.needsReview: true → —
+- **Review** `zai-glm-4.6` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `zai-glm-4.7` — provenance.needsReview: true → —
+- **Review** `zai-glm-4.7` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `zai-glm-5` — provenance.needsReview: true → —
+- **Review** `zai-glm-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `zai-glm-5.1` — provenance.needsReview: true → —
+- **Review** `zai-glm-5.1` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `zai-glm-5.2` — provenance.source: litellm → vendor
+- **Review** `zai-glm-5.2` — provenance.needsReview: true → —
+- **Review** `zai-glm-5.2` — provenance.reviewNote: OpenRouter disagrees (31%): $0.966/$3.036 vs $1.4/$4.4; new model discovered by pattern match — confirm name and rates → —
+- **Review** `zai-glm-5.2` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing
+- **Review** `zai-glm-5.3` — provenance.source: litellm → vendor
+- **Review** `zai-glm-5.3` — provenance.verifiedUrl: — → https://docs.z.ai/guides/overview/pricing
+
+## 2026-09-03
+
+- **Review** `claude-opus-4-1` — provenance.needsReview: — → true
+- **Review** `claude-opus-4-1` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-5` — provenance.needsReview: — → true
+- **Review** `claude-opus-4-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-6` — provenance.needsReview: — → true
+- **Review** `claude-opus-4-6` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-7` — provenance.needsReview: — → true
+- **Review** `claude-opus-4-7` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-4-5` — provenance.needsReview: — → true
+- **Review** `claude-sonnet-4-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-4-6` — provenance.needsReview: — → true
+- **Review** `claude-sonnet-4-6` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gemini-gemini-3.5-flash` — provenance.needsReview: — → true
+- **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5` — provenance.needsReview: — → true
+- **Review** `gpt-5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5-mini` — provenance.needsReview: — → true
+- **Review** `gpt-5-mini` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5-nano` — provenance.needsReview: — → true
+- **Review** `gpt-5-nano` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.1` — provenance.needsReview: — → true
+- **Review** `gpt-5.1` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gpt-5.2` — provenance.needsReview: — → true
+- **Review** `gpt-5.2` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `o1` — provenance.needsReview: — → true
+- **Review** `o1` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `o3` — provenance.needsReview: — → true
+- **Review** `o3` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `o3-mini` — provenance.needsReview: — → true
+- **Review** `o3-mini` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `o4-mini` — provenance.needsReview: — → true
+- **Review** `o4-mini` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-09-04
+
+- **Added** `gemini-gemini-3.8-flash` — Gemini 3.8 Flash ($0.75 in / $3.75 out per 1M)
+- **Review** `claude-opus-4-1` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-6` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-7` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-4-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-4-6` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5-mini` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5-nano` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.1` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gpt-5.2` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `o1` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `o3` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `o3-mini` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `o4-mini` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+
+## 2026-09-05
+
+- **Review** `claude-opus-4-1` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-6` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-7` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-4-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-4-6` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `gemini-gemini-3.8-flash` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-3.8-flash` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gpt-5` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `gpt-5-mini` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `gpt-5-nano` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `gpt-5.1` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `gpt-5.2` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `o1` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `o3` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `o3-mini` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `o4-mini` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+
+## 2026-09-06
+
+- **Review** `claude-opus-4-1` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-5` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-6` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `claude-opus-4-7` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-4-5` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `claude-sonnet-4-6` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `gpt-5` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `gpt-5-mini` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `gpt-5-nano` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `gpt-5.1` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `gpt-5.2` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `o1` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `o3` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `o3-mini` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `o4-mini` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `xai-grok-4.3` — provenance.needsReview: — → true
+- **Review** `xai-grok-4.3` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `xai-grok-4.5` — provenance.needsReview: — → true
+- **Review** `xai-grok-4.5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-09-06
+
+- **Metadata** `mistral-mistral-medium-3` — status: current → legacy
+- **Metadata** `moonshot-kimi-k2.5` — status: current → legacy
+- **Review** `claude-opus-4-1` — provenance.needsReview: true → —
+- **Review** `claude-opus-4-1` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `claude-opus-4-5` — provenance.needsReview: true → —
+- **Review** `claude-opus-4-5` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `claude-opus-4-6` — provenance.needsReview: true → —
+- **Review** `claude-opus-4-6` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `claude-opus-4-7` — provenance.needsReview: true → —
+- **Review** `claude-opus-4-7` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `claude-sonnet-4-5` — provenance.needsReview: true → —
+- **Review** `claude-sonnet-4-5` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `claude-sonnet-4-6` — provenance.needsReview: true → —
+- **Review** `claude-sonnet-4-6` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `gemini-gemini-3.5-flash` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `gemini-gemini-3.6-flash` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-3.6-flash` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.75/$3.75 vs $1.5/$7.5 → —
+- **Review** `gemini-gemini-3.7-flash` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-3.7-flash` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.75/$3.75 vs $1.5/$7.5 → —
+- **Review** `gpt-5` — provenance.needsReview: true → —
+- **Review** `gpt-5` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5-mini` — provenance.needsReview: true → —
+- **Review** `gpt-5-mini` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5-nano` — provenance.needsReview: true → —
+- **Review** `gpt-5-nano` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.1` — provenance.needsReview: true → —
+- **Review** `gpt-5.1` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.2` — provenance.needsReview: true → —
+- **Review** `gpt-5.2` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `gpt-5.6-sol` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-sol` — provenance.reviewNote: vendor override differs from the automated feed (33%): $4/$20 vs $5/$30 → —
+- **Review** `moonshot-kimi-k2.5` — provenance.source: vendor → litellm
+- **Review** `moonshot-kimi-k2.5` — provenance.verifiedUrl: https://platform.kimi.ai/docs/pricing/chat-k25 → —
+- **Review** `o1` — provenance.needsReview: true → —
+- **Review** `o1` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `o3` — provenance.needsReview: true → —
+- **Review** `o3` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `o3-mini` — provenance.needsReview: true → —
+- **Review** `o3-mini` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `o4-mini` — provenance.needsReview: true → —
+- **Review** `o4-mini` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+- **Review** `xai-grok-4.3` — provenance.needsReview: true → —
+- **Review** `xai-grok-4.3` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+- **Review** `xai-grok-4.5` — provenance.needsReview: true → —
+- **Review** `xai-grok-4.5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
