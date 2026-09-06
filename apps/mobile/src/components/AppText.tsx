@@ -6,6 +6,13 @@ export const FONT_FAMILIES = {
   numeric: 'JetBrains Mono',
 } as const;
 
+/** Unscaled point sizes; native Dynamic Type scales these and line heights once. */
+export const TYPE_ROLES = {
+  caption: { fontSize: 12, lineHeight: 18 },
+  label: { fontSize: 14, lineHeight: 20 },
+  body: { fontSize: 16, lineHeight: 24 },
+} as const;
+
 /**
  * App-wide native text foundation.
  *

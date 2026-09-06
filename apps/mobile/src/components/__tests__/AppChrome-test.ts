@@ -1,6 +1,12 @@
 import type { Catalog, Model } from '@promptspend/core';
 
-import { buildTickerItems, isCompactAppChrome, matchesCommandSearch } from '@/components/AppChrome';
+import {
+  buildTickerItems,
+  COMPACT_GLOBAL_ACTION_HEIGHT,
+  COMPACT_GLOBAL_ACTION_STYLE,
+  isCompactAppChrome,
+  matchesCommandSearch,
+} from '@/components/AppChrome';
 
 const models = [
   {
@@ -55,6 +61,14 @@ describe('responsive app chrome', () => {
     expect(isCompactAppChrome(360)).toBe(true);
     expect(isCompactAppChrome(430)).toBe(true);
     expect(isCompactAppChrome(768)).toBe(false);
+    expect(COMPACT_GLOBAL_ACTION_HEIGHT).toBeGreaterThanOrEqual(44);
+    expect(COMPACT_GLOBAL_ACTION_HEIGHT).toBeLessThanOrEqual(52);
+    expect(COMPACT_GLOBAL_ACTION_STYLE).toMatchObject({
+      flexGrow: 0,
+      flexShrink: 0,
+      minHeight: COMPACT_GLOBAL_ACTION_HEIGHT,
+      width: '100%',
+    });
   });
 
   test('matches natural Help questions without requiring an exact phrase', () => {

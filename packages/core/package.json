@@ -13,7 +13,8 @@
     "./pricing/catalog": "./src/pricing/catalog.ts",
     "./pricing/health": "./src/pricing/health.ts",
     "./pricing/types": "./src/pricing/types.ts",
-    "./tokenize/estimate": "./src/tokenize/estimate.ts"
+    "./tokenize/estimate": "./src/tokenize/estimate.ts",
+    "./url/scenario": "./src/url/scenario.ts"
   },
   "sideEffects": false,
   "private": true

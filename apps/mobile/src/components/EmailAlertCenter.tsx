@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   Alert,
   findNodeHandle,
+  FlatList,
   Modal,
   Platform,
   Pressable,
@@ -34,15 +35,16 @@ import {
   type EmailAlertPreferences,
 } from '@/lib/emailAlerts';
 import {
+  createVerificationNonce,
   isAllowedVerificationUrl,
   isVerificationDocument,
   parseTurnstileMessage,
+  TURNSTILE_PAGE,
+  VERIFICATION_ORIGIN_WHITELIST,
 } from '@/lib/turnstileVerification';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 import type { Catalog, Model } from '@promptspend/core';
-
-const TURNSTILE_PAGE = 'https://api.promptspend.dev/v1/mobile-turnstile';
 
 type Mode = 'subscribe' | 'manage';
 type VerificationPurpose = 'manage' | 'subscribe';
@@ -77,6 +79,9 @@ export function EmailAlertCenter({
   const [success, setSuccess] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [verification, setVerification] = useState<PendingVerification | null>(null);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const emailInput = useRef<TextInput>(null);
+  const emailError = emailTouched ? emailValidationMessage(draft.email) : null;
   const codeInput = useRef<TextInput>(null);
   const verifiedPanel = useRef<View>(null);
 
@@ -143,6 +148,11 @@ export function EmailAlertCenter({
   const runWithVerification = (purpose: VerificationPurpose) => {
     setError(null);
     setSuccess(null);
+    setEmailTouched(true);
+    if (emailValidationMessage(draft.email)) {
+      emailInput.current?.focus();
+      return;
+    }
     if (purpose === 'subscribe') {
       const validation = alertDraftValidationMessage(draft);
       if (validation) {
@@ -161,7 +171,11 @@ export function EmailAlertCenter({
         setError('Secure verification is temporarily misconfigured. Please try again later.');
         return;
       }
-      setVerification({ nonce: createVerificationNonce(), purpose });
+      try {
+        setVerification({ nonce: createVerificationNonce(), purpose });
+      } catch {
+        setError('Secure verification could not start. Please try again.');
+      }
     } else void completeVerifiedAction(purpose);
   };
 
@@ -354,6 +368,9 @@ export function EmailAlertCenter({
             tracking pixels, and no click tracking.
           </Text>
           <EmailField
+            error={emailError}
+            inputRef={emailInput}
+            onBlur={() => setEmailTouched(true)}
             editable={!busy}
             onChange={(email) => setDraft((current) => ({ ...current, email }))}
             styles={styles}
@@ -384,6 +401,9 @@ export function EmailAlertCenter({
             account is needed.
           </Text>
           <EmailField
+            error={emailError}
+            inputRef={emailInput}
+            onBlur={() => setEmailTouched(true)}
             editable={!busy && !codeSent}
             onChange={(email) => setDraft((current) => ({ ...current, email }))}
             styles={styles}
@@ -624,12 +644,18 @@ function ChoiceCard({
 
 function EmailField({
   editable,
+  error,
+  inputRef,
+  onBlur,
   onChange,
   styles,
   theme,
   value,
 }: {
   editable: boolean;
+  error: string | null;
+  inputRef: RefObject<TextInput | null>;
+  onBlur: () => void;
   onChange: (value: string) => void;
   styles: Styles;
   theme: MobileTheme;
@@ -639,7 +665,9 @@ function EmailField({
     <>
       <Text style={styles.label}>Email address</Text>
       <TextInput
+        ref={inputRef}
         accessibilityLabel="Email address for price alerts"
+        accessibilityHint={error ?? 'Enter the address where you want to receive alerts.'}
         autoCapitalize="none"
         autoComplete="email"
         autoCorrect={false}
@@ -647,6 +675,7 @@ function EmailField({
         inputMode="email"
         keyboardType="email-address"
         maxLength={254}
+        onBlur={onBlur}
         onChangeText={onChange}
         placeholder="you@example.com"
         placeholderTextColor={theme.mutedText}
@@ -654,6 +683,11 @@ function EmailField({
         textContentType="emailAddress"
         value={value}
       />
+      {error && (
+        <Text accessibilityLiveRegion="polite" accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
+      )}
     </>
   );
 }
@@ -742,10 +776,15 @@ function ModelAlertPicker({
   const [query, setQuery] = useState('');
   const [countries, setCountries] = useState<string[]>([]);
   const selected = new Set(selectedIds);
-  const visibleModels = catalog.primaryModels.filter(
-    (model) =>
-      catalog.inCountries(model, countries) &&
-      modelSearchText(catalog, model).includes(query.trim().toLowerCase()),
+  const countryOptions = useMemo(() => catalog.countries(), [catalog]);
+  const visibleModels = useMemo(
+    () =>
+      catalog.primaryModels.filter(
+        (model) =>
+          catalog.inCountries(model, countries) &&
+          modelSearchText(catalog, model).includes(query.trim().toLowerCase()),
+      ),
+    [catalog, countries, query],
   );
   const toggle = (id: string) =>
     onChange(
@@ -778,16 +817,32 @@ function ModelAlertPicker({
           style={styles.searchInput}
           value={query}
         />
+        {query.length > 0 && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Clear alert model search"
+            onPress={() => setQuery('')}
+            style={({ pressed }) => [styles.doneButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.doneText}>Clear search</Text>
+          </Pressable>
+        )}
         <View style={styles.pickerFilter}>
           <CountryFilter
-            countries={catalog.countries()}
+            countries={countryOptions}
             label="Show alert models from these countries"
             onChange={setCountries}
             selected={countries}
           />
         </View>
-        <ScrollView contentContainerStyle={styles.modelList} keyboardShouldPersistTaps="handled">
-          {visibleModels.map((model) => {
+        <FlatList
+          data={visibleModels}
+          extraData={selectedIds}
+          keyExtractor={(model) => model.id}
+          contentContainerStyle={styles.modelList}
+          keyboardShouldPersistTaps="handled"
+          ListEmptyComponent={<Text style={styles.empty}>{emptyReason(query, countries)}</Text>}
+          renderItem={({ item: model }) => {
             const checked = selected.has(model.id);
             return (
               <Pressable
@@ -816,9 +871,8 @@ function ModelAlertPicker({
                 />
               </Pressable>
             );
-          })}
-          {visibleModels.length === 0 && <Text style={styles.empty}>{emptyReason(query, countries)}</Text>}
-        </ScrollView>
+          }}
+        />
       </SafeAreaView>
     </Modal>
   );
@@ -842,6 +896,7 @@ function TurnstileSheet({
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const url = `${TURNSTILE_PAGE}?sitekey=${encodeURIComponent(siteKey)}&theme=${dark ? 'dark' : 'light'}&nonce=${encodeURIComponent(nonce)}`;
+  const [loading, setLoading] = useState(true);
   const handleMessage = (event: WebViewMessageEvent) => {
     if (!isVerificationDocument(event.nativeEvent.url)) {
       onError('The secure verification response came from an unexpected page.');
@@ -875,6 +930,12 @@ function TurnstileSheet({
             prompt text are never loaded into this verification view.
           </Text>
         </View>
+        {loading && (
+          <View accessibilityLiveRegion="polite" style={styles.verificationCopy}>
+            <ActivityIndicator color={theme.accent} />
+            <Text style={styles.body}>Loading secure verification…</Text>
+          </View>
+        )}
         <WebView
           accessibilityLabel="Cloudflare secure anti-abuse verification"
           allowsInlineMediaPlayback
@@ -886,8 +947,10 @@ function TurnstileSheet({
           onError={() => onError('The secure anti-abuse check could not load.')}
           onHttpError={() => onError('The secure anti-abuse check could not load.')}
           onMessage={handleMessage}
+          onLoadStart={() => setLoading(true)}
+          onLoadEnd={() => setLoading(false)}
           onShouldStartLoadWithRequest={(request) => isAllowedVerificationUrl(request.url)}
-          originWhitelist={['https://api.promptspend.dev', 'https://challenges.cloudflare.com', 'about:*']}
+          originWhitelist={VERIFICATION_ORIGIN_WHITELIST}
           setSupportMultipleWindows={false}
           source={{ uri: url }}
           style={styles.webView}
@@ -916,9 +979,6 @@ function uniqueValidModels(ids: readonly string[], catalog: Catalog): string[] {
 }
 function modelSearchText(catalog: Catalog, model: Model): string {
   return `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase();
-}
-function createVerificationNonce(): string {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 }
 function messageFor(cause: unknown): string {
   return cause instanceof Error ? cause.message : 'Something went wrong. Please try again.';
@@ -1083,7 +1143,7 @@ function createStyles(theme: MobileTheme) {
       gap: 12,
       padding: 18,
     },
-    modalEyebrow: { color: theme.accent, fontSize: 10, fontWeight: '900', letterSpacing: 1.1 },
+    modalEyebrow: { color: theme.accent, fontSize: 12, fontWeight: '600', letterSpacing: 1.1 },
     modalTitle: { color: theme.text, fontSize: 24, fontWeight: '800', lineHeight: 30 },
     doneButton: { alignItems: 'center', justifyContent: 'center', minHeight: 44, minWidth: 54 },
     doneText: { color: theme.accent, fontSize: 15, fontWeight: '800' },

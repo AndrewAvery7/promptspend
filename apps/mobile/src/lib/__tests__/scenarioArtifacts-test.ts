@@ -62,6 +62,7 @@ describe('scenario sharing and export privacy', () => {
     const parsed = new URL(url);
 
     expect(parsed.origin).toBe('https://promptspend.com');
+    expect(parsed.pathname).toBe('/estimate/');
     expect(parsed.searchParams.get('m')).toBe('premium,efficient');
     expect(parsed.searchParams.get('px')).toBe('system,user');
     expect(decodeURIComponent(url)).not.toContain(SENTINEL);

@@ -10,6 +10,7 @@
     "userInterfaceStyle": "automatic",
     "githubUrl": "https://github.com/AndrewAvery7/promptspend",
     "ios": {
+      "associatedDomains": ["applinks:promptspend.com"],
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.promptspend.app",
       "supportsTablet": true,
@@ -25,7 +26,21 @@
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "category": ["BROWSABLE", "DEFAULT"],
+          "data": [
+            {
+              "scheme": "https",
+              "host": "promptspend.com",
+              "pathPrefix": "/estimate"
+            }
+          ]
+        }
+      ],
+      "predictiveBackGestureEnabled": true
     },
     "web": {
       "output": "static",

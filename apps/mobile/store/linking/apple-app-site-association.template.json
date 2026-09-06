@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["APPLE_TEAM_ID.com.promptspend.app"],
+        "components": [
+          {
+            "/": "/estimate*",
+            "comment": "Open shared PromptSpend estimates in the installed app."
+          }
+        ]
+      }
+    ]
+  }
+}

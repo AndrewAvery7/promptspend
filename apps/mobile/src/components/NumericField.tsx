@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
+import { useNumericDraftScopeActive } from '@/components/NumericDraftScope';
+import { parseNumericDraft, registerNumericDraft } from '@/lib/numericDrafts';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
@@ -31,36 +33,98 @@ export function NumericField({
   const [draft, setDraft] = useState(String(value));
   const [editing, setEditing] = useState(false);
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
+  const active = useNumericDraftScopeActive();
+  const inputRef = useRef<TextInput>(null);
+  const draftRef = useRef(String(value));
+  const hasDraft = useRef(false);
+  const lastEmittedValue = useRef<number | null>(null);
+  const current = useRef({ label, max, min, step, value, active });
 
-  const commit = (text: string) => {
-    const normalized = text.replace(',', '.').trim();
-    const parsed = normalized.length > 0 && normalized !== '.' ? Number(normalized) : Number.NaN;
-    if (!Number.isFinite(parsed)) {
-      setDraft(String(value));
-      setValidationMessage(`${label} must be a number.`);
-      return;
+  useLayoutEffect(() => {
+    if (value !== current.current.value) {
+      if (value !== lastEmittedValue.current) {
+        // A preset, restore, or savings action changed this field externally.
+        // Do not leave older focused text on top of the new calculated value.
+        draftRef.current = String(value);
+        hasDraft.current = false;
+        setDraft(String(value));
+        setValidationMessage(null);
+      }
+      lastEmittedValue.current = null;
     }
-    const rounded = Math.round(parsed / step) * step;
-    const next = Math.min(max, Math.max(min, Number(rounded.toFixed(step < 1 ? 2 : 0))));
-    setDraft(String(next));
-    setValidationMessage(
-      parsed < min
-        ? `${label} was adjusted to the minimum of ${min}.`
-        : parsed > max
-          ? `${label} was adjusted to the maximum of ${max}.`
-          : null,
-    );
-    onChange(next);
+    current.current = { label, max, min, step, value, active };
+  }, [active, label, max, min, step, value]);
+
+  useEffect(
+    () =>
+      registerNumericDraft({
+        isActive: () => current.current.active,
+        validate: () => {
+          if (!hasDraft.current) return null;
+          const result = parseNumericDraft(draftRef.current, current.current);
+          if (result.kind !== 'valid') return result.message;
+          if (result.value !== current.current.value) return 'Updating estimate; tap again in a moment.';
+          draftRef.current = String(result.value);
+          setDraft(draftRef.current);
+          setValidationMessage(result.message);
+          return null;
+        },
+        reveal: (message) => {
+          setValidationMessage(message);
+          inputRef.current?.focus();
+        },
+        discard: () => {
+          draftRef.current = String(current.current.value);
+          hasDraft.current = false;
+          lastEmittedValue.current = null;
+          setDraft(draftRef.current);
+          setValidationMessage(null);
+        },
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    if (editing) return;
+    const result = parseNumericDraft(draftRef.current, { label, max, min, step });
+    if (hasDraft.current && (result.kind !== 'valid' || result.value !== value)) return;
+    draftRef.current = String(value);
+    hasDraft.current = false;
+    setDraft(String(value));
+  }, [editing, label, max, min, step, value]);
+
+  useEffect(() => {
+    if (active) return;
+    draftRef.current = String(current.current.value);
+    hasDraft.current = false;
+    setDraft(draftRef.current);
+    setEditing(false);
+    setValidationMessage(null);
+  }, [active]);
+
+  const finishEditing = () => {
+    const result = parseNumericDraft(draftRef.current, { label, max, min, step });
+    setValidationMessage(result.message);
+    if (result.kind === 'valid') {
+      draftRef.current = String(result.value);
+      setDraft(draftRef.current);
+      lastEmittedValue.current = result.value;
+      onChange(result.value);
+    }
+    setEditing(false);
   };
 
   const updateDraft = (text: string) => {
-    const normalized = step < 1 ? text.replace(',', '.') : text;
-    const clean =
-      step < 1
-        ? normalized.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')
-        : normalized.replace(/[^0-9]/g, '');
-    setValidationMessage(null);
-    setDraft(clean);
+    draftRef.current = text;
+    hasDraft.current = true;
+    setDraft(text);
+    const result = parseNumericDraft(text, { label, max, min, step });
+    // Incomplete decimal drafts remain editable. Actions still fail closed.
+    setValidationMessage(result.kind === 'invalid' ? result.message : null);
+    if (result.kind === 'valid') {
+      lastEmittedValue.current = result.value;
+      onChange(result.value);
+    }
   };
 
   return (
@@ -70,25 +134,21 @@ export function NumericField({
       </Text>
       <View style={styles.inputRow}>
         <TextInput
+          ref={inputRef}
           accessibilityHint={accessibilityHint}
           accessibilityLabel={label}
           inputMode={step < 1 ? 'decimal' : 'numeric'}
           keyboardType={step < 1 ? 'decimal-pad' : 'number-pad'}
-          maxLength={10}
-          onBlur={() => {
-            commit(draft);
-            setEditing(false);
-          }}
+          onBlur={finishEditing}
           onChangeText={updateDraft}
           onFocus={() => {
-            setDraft(String(value));
             setEditing(true);
           }}
-          onSubmitEditing={() => commit(draft)}
+          onSubmitEditing={finishEditing}
           returnKeyType="done"
           selectTextOnFocus
           style={styles.input}
-          value={editing ? draft : String(value)}
+          value={draft}
         />
         <Text style={styles.suffix}>{suffix}</Text>
       </View>

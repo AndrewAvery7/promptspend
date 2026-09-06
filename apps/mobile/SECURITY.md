@@ -1,36 +1,50 @@
 # Mobile dependency security notes
 
-Last reviewed: August 22, 2026
+Last reviewed: September 1, 2026
 
-## Current scaffold audit
+## Dated mobile dependency audit
 
-The lockfile currently uses Expo 57.0.15 and the exact patch versions selected
-by `npx expo install`. Expo Doctor passes all 21 checks. `npm audit --json`
-reports 16 expanded findings (12 moderate, 4 high, 0 critical); every entry is
-dependency-graph propagation from these two leaf advisories:
+The September 1 read-only audit of the updated mobile lockfile used
+`npm audit --json --package-lock-only --ignore-scripts`. This candidate uses
+Expo 57.0.18, Expo Constants 57.0.16, and Expo Font 57.0.2; the official Expo
+dependency check reports the SDK 57 packages are compatible, and Expo Doctor
+passes all 21 checks. The registry reported **15 moderate, 0 high, and 0
+critical findings**. npm expands two leaf advisories through affected parent
+packages, so the total is package-graph propagation rather than fifteen
+independent flaws:
 
-1. `image-size@1.2.1` can loop indefinitely while parsing specially crafted
-   ICNS, JXL, or HEIF images. It is pulled into Metro's development/build
-   toolchain through React Native's community CLI plugin.
-2. `uuid@7.0.3` can miss a destination-buffer bounds check in specific v3/v5/v6
-   API usage. It is pulled into Expo configuration/build tooling through
-   `expo-sharing > @expo/config-plugins > xcode`.
+- `uuid@7.0.3`: missing destination-buffer bounds checks in specific v3/v5/v6
+  API use ([GHSA-w5hq-g745-h8pq](https://github.com/advisories/GHSA-w5hq-g745-h8pq)).
+  It is pulled into Expo configuration/build tooling through
+  `expo-sharing > @expo/config-plugins > xcode`.
+- `decode-uri-component<=0.4.2`: denial of service from pathologically malformed
+  percent-encoded input ([GHSA-vcc3-ghjq-m6fr](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr)).
+  It is pulled through `expo-router > query-string`.
 
-The current mobile application does not accept user images, parse these image
-formats at runtime, call the affected `uuid` buffer APIs, or ship Metro or the
-Expo configuration toolchain as an end-user feature. That materially limits
-exposure, but it does not make the dependency findings disappear.
+The prior `image-size` finding is no longer present in this audit. Neither the
+older 16-finding note nor the external review's 25-finding total describes this
+candidate. Counts and reachability must be re-derived after dependency changes
+and before the next beta/release build; this is not a permanent waiver.
 
-The new `react-native-webview` 13.16.1 dependency is the Expo SDK 57 supported
-version and does not appear as a vulnerable package in the current audit. The
+The current mobile application does not accept user images or call the affected
+`uuid` buffer APIs, and Metro and the Expo configuration toolchain are not
+end-user features. PromptSpend now declares Universal Links/App Links only for
+the bounded `/estimate` scenario contract. Expo Router still participates in
+navigation, so malformed link/path input, unverified-domain fallback, and
+installed/uninstalled behavior remain in release regression coverage. Shared
+URLs contain derived counts and assumptions, never pasted prompt or response
+text. These facts limit exposure; they do not make the dependency findings
+disappear.
+
+`react-native-webview` 13.16.1 and `expo-crypto` 57.0.2 do not appear as
+vulnerable packages in the current audit. The
 Alert Center WebView is ephemeral, loads one HTTPS origin, blocks mixed content
 and unapproved top-level navigation, and receives no email address, model
 selection, scenario data, or prompt text.
 
 ## Why `npm audit fix --force` is prohibited
 
-npm's non-writing fix preview leaves the `image-size` advisories unresolved and
-the forced path proposes an incompatible Expo SDK 46 downgrade. That version
+npm's audit fix proposal includes an incompatible Expo SDK 46 downgrade. That version
 does not match the SDK 57 project and would replace the verified platform
 foundation with an unsupported dependency combination.
 
@@ -46,6 +60,6 @@ Do not run `npm audit fix --force`.
 - Reassess immediately if the app later adds image import, document upload, or any server-side bundling of user content.
 - Block release for any critical advisory or any advisory shown to be reachable in shipped runtime behavior.
 
-This is a dated triage record derived from the August 16 lockfile, not a
-permanent waiver. The dependency state must be re-derived whenever that
+This is a dated triage record for the September 1 corrective-batch lockfile, not
+a permanent waiver. The dependency state must be re-derived whenever that
 lockfile changes.

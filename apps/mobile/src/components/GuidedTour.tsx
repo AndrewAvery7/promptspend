@@ -181,11 +181,13 @@ export function TourTarget({
   id,
   onReveal,
   scrollRef,
+  style,
 }: PropsWithChildren<{
   id: GuidedTourTargetId;
   enabled?: boolean;
   onReveal?: () => void;
   scrollRef?: RefObject<ScrollView | null>;
+  style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }>) {
   const { reduceMotion, registerTarget } = useGuidedTour();
   const container = useRef<View>(null);
@@ -221,6 +223,7 @@ export function TourTarget({
         contentY.current = event.nativeEvent.layout.y;
       }}
       ref={container}
+      style={style}
     >
       {children}
     </View>

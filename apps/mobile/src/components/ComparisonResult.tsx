@@ -12,13 +12,15 @@ import {
 
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { assertNumericDraftsValid } from '@/lib/numericDrafts';
 
 interface ComparisonResultProps {
   catalog: Catalog;
   rows: readonly ComparisonRow[];
+  validateAction?: () => void;
 }
 
-export function ComparisonResult({ catalog, rows }: ComparisonResultProps) {
+export function ComparisonResult({ catalog, rows, validateAction }: ComparisonResultProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { fontScale, width } = useWindowDimensions();
@@ -35,6 +37,8 @@ export function ComparisonResult({ catalog, rows }: ComparisonResultProps) {
     if (isSharing) return;
     setIsSharing(true);
     try {
+      assertNumericDraftsValid();
+      validateAction?.();
       const anchor = findNodeHandle(shareButtonRef.current);
       await Share.share(
         { message: buildComparisonShareText(rows), title: 'PromptSpend LLM cost comparison' },
@@ -44,10 +48,10 @@ export function ComparisonResult({ catalog, rows }: ComparisonResultProps) {
           ...(anchor === null ? {} : { anchor }),
         },
       );
-    } catch {
+    } catch (error) {
       Alert.alert(
         'Sharing is unavailable',
-        'The share menu could not open. Please try again after checking that sharing is enabled on this device.',
+        error instanceof Error ? error.message : 'The share menu could not open. Please try again.',
       );
     } finally {
       setIsSharing(false);

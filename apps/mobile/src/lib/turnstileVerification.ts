@@ -1,4 +1,20 @@
+import { randomUUID } from 'expo-crypto';
+
 const MAX_VERIFICATION_MESSAGE_LENGTH = 8_192;
+export const VERIFICATION_ORIGIN = 'https://api.promptspend.dev';
+export const VERIFICATION_PATH = '/v1/mobile-turnstile';
+export const TURNSTILE_PAGE = `${VERIFICATION_ORIGIN}${VERIFICATION_PATH}`;
+export const CHALLENGE_ORIGIN = 'https://challenges.cloudflare.com';
+export const VERIFICATION_ORIGIN_WHITELIST = [VERIFICATION_ORIGIN, CHALLENGE_ORIGIN, 'about:*'];
+
+/** No predictable fallback: callers must stop verification if secure randomness fails. */
+export function createVerificationNonce(): string {
+  const nonce = randomUUID();
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(nonce)) {
+    throw new Error('Secure verification could not start. Please try again.');
+  }
+  return nonce;
+}
 
 export type TurnstileMessage =
   | { kind: 'token'; token: string }
@@ -44,8 +60,8 @@ export function isAllowedVerificationUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
     return (
-      (parsed.origin === 'https://api.promptspend.dev' && parsed.pathname === '/v1/mobile-turnstile') ||
-      parsed.origin === 'https://challenges.cloudflare.com'
+      (parsed.origin === VERIFICATION_ORIGIN && parsed.pathname === VERIFICATION_PATH) ||
+      parsed.origin === CHALLENGE_ORIGIN
     );
   } catch {
     return false;
@@ -55,7 +71,7 @@ export function isAllowedVerificationUrl(url: string): boolean {
 export function isVerificationDocument(url: string): boolean {
   try {
     const parsed = new URL(url);
-    return parsed.origin === 'https://api.promptspend.dev' && parsed.pathname === '/v1/mobile-turnstile';
+    return parsed.origin === VERIFICATION_ORIGIN && parsed.pathname === VERIFICATION_PATH;
   } catch {
     return false;
   }

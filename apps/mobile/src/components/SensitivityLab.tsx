@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { formatMoney, formatPercent, type Model, type Scale } from '@promptspend/core';
 
 import { NumericField } from '@/components/NumericField';
+import { assertNumericDraftsValid } from '@/lib/numericDrafts';
 import type { PromptInputState } from '@/lib/promptInput';
 import { workloadForModel } from '@/lib/promptInput';
 import { evaluateSensitivity, type SensitivityDraft } from '@/lib/sensitivity';
@@ -19,6 +20,7 @@ interface SensitivityLabProps {
   model: Model;
   onApply: (draft: SensitivityDraft) => void;
   promptInputs: PromptInputState;
+  pricingDay?: string;
   reasoningMultiplier: number;
   workload: WorkloadState;
 }
@@ -30,6 +32,7 @@ export function SensitivityLab({
   model,
   onApply,
   promptInputs,
+  pricingDay,
   reasoningMultiplier,
   workload,
 }: SensitivityLabProps) {
@@ -48,6 +51,24 @@ export function SensitivityLab({
     [effectiveWorkload.outputTokens, effectiveWorkload.turns, workload.conversationsPerDay],
   );
   const [draft, setDraft] = useState(baselineDraft);
+  const [resetVersion, setResetVersion] = useState(0);
+  const priorBaseline = useRef(baselineDraft);
+  useEffect(() => {
+    const previous = priorBaseline.current;
+    // Follow untouched baseline fields; keep the user's independent what-if edits.
+    setDraft((current) => ({
+      conversationsPerDay:
+        current.conversationsPerDay === previous.conversationsPerDay
+          ? baselineDraft.conversationsPerDay
+          : current.conversationsPerDay,
+      turns: current.turns === previous.turns ? baselineDraft.turns : current.turns,
+      outputTokens:
+        promptInputs.output.mode === 'text' || current.outputTokens === previous.outputTokens
+          ? baselineDraft.outputTokens
+          : current.outputTokens,
+    }));
+    priorBaseline.current = baselineDraft;
+  }, [baselineDraft, promptInputs.output.mode]);
 
   const scale: Scale = useMemo(
     () => ({
@@ -60,6 +81,7 @@ export function SensitivityLab({
   const result = useMemo(
     () =>
       evaluateSensitivity(model, effectiveWorkload, scale, draft, {
+        ...(pricingDay ? { asOf: new Date(`${pricingDay}T12:00:00Z`) } : {}),
         cachedInputShare: cacheEnabled ? cacheSharePercent / 100 : 0,
         reasoningMultiplier,
         useBatchApi: batchEnabled,
@@ -73,6 +95,7 @@ export function SensitivityLab({
       model,
       reasoningMultiplier,
       scale,
+      pricingDay,
     ],
   );
   const changed =
@@ -82,6 +105,9 @@ export function SensitivityLab({
   const outputIsPasted = promptInputs.output.mode === 'text';
 
   const applyPreset = (preset: 'baseline' | 'launch' | 'lean' | 'long') => {
+    // An explicit preview reset also clears incomplete text, even when its last
+    // accepted number already matches the baseline. Do not reset main inputs.
+    setResetVersion((value) => value + 1);
     if (preset === 'baseline') setDraft(baselineDraft);
     if (preset === 'launch') {
       setDraft({ ...baselineDraft, conversationsPerDay: Math.round(baselineDraft.conversationsPerDay * 2) });
@@ -135,6 +161,7 @@ export function SensitivityLab({
       </View>
 
       <NumericField
+        key={`traffic-${resetVersion}`}
         accessibilityHint="Preview a different daily conversation volume without changing the active scenario"
         label="Preview conversations per day"
         max={100000000}
@@ -155,6 +182,7 @@ export function SensitivityLab({
         </View>
       ) : (
         <NumericField
+          key={`output-${resetVersion}`}
           accessibilityHint="Preview a different model response length without changing the active scenario"
           label="Preview response length"
           max={200000}
@@ -164,6 +192,7 @@ export function SensitivityLab({
         />
       )}
       <NumericField
+        key={`turns-${resetVersion}`}
         accessibilityHint="Preview a different number of conversation turns without changing the active scenario"
         label="Preview turns"
         max={200}
@@ -218,14 +247,9 @@ export function SensitivityLab({
       <View style={styles.actionRow}>
         <Pressable
           accessibilityRole="button"
-          accessibilityState={{ disabled: !changed }}
-          disabled={!changed}
-          onPress={() => setDraft(baselineDraft)}
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            pressed && styles.pressed,
-            !changed && styles.disabled,
-          ]}
+          accessibilityHint="Restores only this preview, including any incomplete numeric edits"
+          onPress={() => applyPreset('baseline')}
+          style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
         >
           <Text style={styles.secondaryButtonText}>Restore</Text>
         </Pressable>
@@ -234,7 +258,17 @@ export function SensitivityLab({
           accessibilityRole="button"
           accessibilityState={{ disabled: !changed }}
           disabled={!changed}
-          onPress={() => onApply(draft)}
+          onPress={() => {
+            try {
+              assertNumericDraftsValid();
+              onApply(draft);
+            } catch (error) {
+              Alert.alert(
+                'Check this preview',
+                error instanceof Error ? error.message : 'Review preview inputs before applying.',
+              );
+            }
+          }}
           style={({ pressed }) => [
             styles.primaryButton,
             pressed && styles.pressed,

@@ -1,7 +1,17 @@
 import * as WebBrowser from 'expo-web-browser';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText as Text } from '@/components/AppText';
 import { Catalog, formatContext, formatRate, type Model } from '@promptspend/core';
@@ -11,6 +21,7 @@ import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context';
+const CATALOG_PAGE_SIZE = 20;
 
 interface CatalogExplorerProps {
   catalog: Catalog;
@@ -35,6 +46,11 @@ export function CatalogExplorer({
   const [showInactive, setShowInactive] = useState(false);
   const [detail, setDetail] = useState<Model | null>(null);
   const [chartWidth, setChartWidth] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(CATALOG_PAGE_SIZE);
+  const [sourceError, setSourceError] = useState<string | null>(null);
+  const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const countryOptions = useMemo(() => catalog.countries(), [catalog]);
 
   const models = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -79,9 +95,12 @@ export function CatalogExplorer({
       </View>
 
       <CountryFilter
-        countries={catalog.countries()}
+        countries={countryOptions}
         label="Show catalog models from these countries"
-        onChange={setCountries}
+        onChange={(value) => {
+          setCountries(value);
+          setVisibleCount(CATALOG_PAGE_SIZE);
+        }}
         selected={countries}
       />
 
@@ -139,17 +158,14 @@ export function CatalogExplorer({
       </View>
 
       <View style={styles.card}>
-        <CountryFilter
-          countries={catalog.countries()}
-          label="Show catalog models from these countries, repeated beside the list"
-          onChange={setCountries}
-          selected={countries}
-        />
         <TextInput
           accessibilityLabel="Search the model catalog"
           autoCapitalize="none"
           autoCorrect={false}
-          onChangeText={setQuery}
+          onChangeText={(value) => {
+            setQuery(value);
+            setVisibleCount(CATALOG_PAGE_SIZE);
+          }}
           placeholder="Search models or providers…"
           placeholderTextColor={theme.mutedText}
           style={styles.search}
@@ -162,8 +178,15 @@ export function CatalogExplorer({
               accessibilityRole="radio"
               accessibilityState={{ checked: sort === key }}
               key={key}
-              onPress={() => setSort(key)}
-              style={[styles.sortButton, sort === key && styles.sortButtonActive]}
+              onPress={() => {
+                setSort(key);
+                setVisibleCount(CATALOG_PAGE_SIZE);
+              }}
+              style={({ pressed }) => [
+                styles.sortButton,
+                sort === key && styles.sortButtonActive,
+                pressed && styles.pressed,
+              ]}
             >
               <Text style={[styles.sortText, sort === key && styles.sortTextActive]}>{key}</Text>
             </Pressable>
@@ -179,15 +202,18 @@ export function CatalogExplorer({
           <Switch
             accessibilityLabel="Show legacy, deprecated, and unlisted models"
             ios_backgroundColor={theme.border}
-            onValueChange={setShowInactive}
+            onValueChange={(value) => {
+              setShowInactive(value);
+              setVisibleCount(CATALOG_PAGE_SIZE);
+            }}
             trackColor={{ false: theme.border, true: theme.accent }}
             value={showInactive}
           />
         </View>
         <Text accessibilityLiveRegion="polite" style={styles.note}>
-          {models.length} matching models
+          Showing {Math.min(visibleCount, models.length)} of {models.length} matching models
         </Text>
-        {models.map((model) => {
+        {models.slice(0, visibleCount).map((model) => {
           const selected = selectedIds.includes(model.id);
           const country = catalog.provider(model)?.country;
           return (
@@ -208,10 +234,11 @@ export function CatalogExplorer({
                   accessibilityState={{ checked: selected, disabled: !selected && selectedIds.length >= 4 }}
                   disabled={!selected && selectedIds.length >= 4}
                   onPress={() => onToggle(model.id)}
-                  style={[
+                  style={({ pressed }) => [
                     styles.selectButton,
                     selected && styles.selectButtonActive,
                     !selected && selectedIds.length >= 4 && styles.selectButtonDisabled,
+                    pressed && styles.pressed,
                   ]}
                 >
                   <Text
@@ -237,8 +264,11 @@ export function CatalogExplorer({
               <View style={styles.modelActions}>
                 <Pressable
                   accessibilityRole="button"
-                  onPress={() => setDetail(model)}
-                  style={styles.detailButton}
+                  onPress={() => {
+                    setSourceError(null);
+                    setDetail(model);
+                  }}
+                  style={({ pressed }) => [styles.detailButton, pressed && styles.pressed]}
                 >
                   <Text style={styles.detailText}>Details and source</Text>
                 </Pressable>
@@ -251,7 +281,7 @@ export function CatalogExplorer({
                   accessibilityRole="button"
                   accessibilityState={{ selected: favoriteIds.includes(model.id) }}
                   onPress={() => onToggleFavorite(model.id)}
-                  style={styles.watchButton}
+                  style={({ pressed }) => [styles.watchButton, pressed && styles.pressed]}
                 >
                   <Ionicons
                     color={theme.accent}
@@ -266,6 +296,18 @@ export function CatalogExplorer({
             </View>
           );
         })}
+        {visibleCount < models.length && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Show more catalog models"
+            onPress={() => setVisibleCount((count) => count + CATALOG_PAGE_SIZE)}
+            style={({ pressed }) => [styles.sourceButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.sourceText}>
+              Show next {Math.min(CATALOG_PAGE_SIZE, models.length - visibleCount)} models
+            </Text>
+          </Pressable>
+        )}
         {models.length === 0 && (
           <Text accessibilityLiveRegion="polite" style={styles.empty}>
             {emptyReason(query, countries)}
@@ -282,7 +324,17 @@ export function CatalogExplorer({
         visible={detail !== null}
       >
         <View style={styles.backdrop}>
-          <View style={styles.sheet}>
+          <Pressable
+            accessibilityLabel="Dismiss model details"
+            accessibilityRole="button"
+            onPress={() => setDetail(null)}
+            style={StyleSheet.absoluteFill}
+          />
+          <ScrollView
+            accessibilityViewIsModal
+            style={{ maxHeight: Math.max(100, height - insets.top - 24), backgroundColor: theme.surface }}
+            contentContainerStyle={[styles.sheet, { paddingBottom: Math.max(30, insets.bottom + 16) }]}
+          >
             {detail && (
               <>
                 <View style={styles.sheetHeader}>
@@ -312,7 +364,7 @@ export function CatalogExplorer({
                   accessibilityRole="button"
                   accessibilityState={{ selected: favoriteIds.includes(detail.id) }}
                   onPress={() => onToggleFavorite(detail.id)}
-                  style={styles.watchDetailButton}
+                  style={({ pressed }) => [styles.watchDetailButton, pressed && styles.pressed]}
                 >
                   <Ionicons
                     color={theme.accent}
@@ -326,19 +378,25 @@ export function CatalogExplorer({
                 {(detail.provenance.verifiedUrl ?? catalog.provider(detail)?.pricingUrl) && (
                   <Pressable
                     accessibilityRole="link"
-                    onPress={() =>
+                    onPress={() => {
+                      setSourceError(null);
                       void WebBrowser.openBrowserAsync(
                         (detail.provenance.verifiedUrl ?? catalog.provider(detail)?.pricingUrl)!,
-                      )
-                    }
-                    style={styles.sourceButton}
+                      ).catch(() => setSourceError('The pricing source could not open. Please try again.'));
+                    }}
+                    style={({ pressed }) => [styles.sourceButton, pressed && styles.pressed]}
                   >
                     <Text style={styles.sourceText}>Open published pricing source ↗</Text>
                   </Pressable>
                 )}
+                {sourceError && (
+                  <Text accessibilityRole="alert" style={styles.warning}>
+                    {sourceError}
+                  </Text>
+                )}
               </>
             )}
-          </View>
+          </ScrollView>
         </View>
       </Modal>
     </View>
@@ -370,6 +428,7 @@ function chartPoint(model: Model, models: Model[], width: number): { left: numbe
 
 function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
+    pressed: { opacity: 0.68 },
     section: { gap: 16 },
     heading: { gap: 8 },
     eyebrow: { color: theme.accent, fontSize: 11, fontWeight: '900', letterSpacing: 1.2 },
@@ -394,8 +453,8 @@ function createStyles(theme: MobileTheme) {
       height: 252,
       overflow: 'hidden',
     },
-    chartTop: { color: theme.mutedText, fontSize: 10, left: 10, position: 'absolute', top: 7 },
-    chartBottom: { bottom: 7, color: theme.mutedText, fontSize: 10, left: 10, position: 'absolute' },
+    chartTop: { color: theme.mutedText, fontSize: 12, left: 10, position: 'absolute', top: 7 },
+    chartBottom: { bottom: 7, color: theme.mutedText, fontSize: 12, left: 10, position: 'absolute' },
     pointTarget: {
       alignItems: 'center',
       height: 44,

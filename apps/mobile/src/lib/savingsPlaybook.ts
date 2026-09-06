@@ -2,6 +2,7 @@ import {
   SUGGESTED_CACHE_SHARE,
   conversationCost,
   costAtScale,
+  formatMoney,
   type ComparisonRow,
   type EngineOptions,
   type Model,
@@ -145,9 +146,5 @@ function priceScenario(
 }
 
 function formatCompactMoney(value: number): string {
-  return new Intl.NumberFormat('en-US', {
-    currency: 'USD',
-    maximumFractionDigits: value >= 100 ? 0 : 2,
-    style: 'currency',
-  }).format(value);
+  return formatMoney(value);
 }

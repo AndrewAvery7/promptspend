@@ -1,6 +1,6 @@
 # Galaxy A15 physical QA — Android build 4
 
-Status: ready for private-device installation
+Status: superseded by versionCode 6; physical QA reported defects on August 26.
 
 ## Candidate identity
 
@@ -26,7 +26,10 @@ This APK is for direct installation on the owned Galaxy test device. It has not
 been uploaded to Google Play and this record does not authorize any Google Play
 or Apple public action.
 
-## Installation
+## Historical installation instructions
+
+Use the current baseline in `docs/MOBILE_BETA_QA.md` for new QA. These steps
+describe the original handoff and do not request reinstalling this older build.
 
 1. On the Galaxy, open the private artifact URL supplied through the authorized
    QA handoff in **Chrome**. Direct APK URLs must not be committed to this public
@@ -88,7 +91,12 @@ resilience case in `docs/MOBILE_BETA_QA.md`.
 
 ## Result
 
-- Overall result: Not run
+- Overall result: Failed checks reported; full matrix not completed
 - Open P0 defects: Not assessed
-- Open P1 defects: Not assessed
-- Tester notes:
+- Open P1 defects: Startup, Guide, and global right-edge clipping need retest
+- Tester notes: On August 26, Galaxy A15 QA reported the app opening on Estimate
+  instead of Home, the same Guide outline clipping as iOS, and right-side
+  clipping across all pages. The screenshot also showed the truncated
+  Data & Alerts tab label. Source corrections are included in versionCode 6;
+  source tests and a completed build do not establish a successful physical
+  retest. No other issues were reported, but unchecked rows are not passes.

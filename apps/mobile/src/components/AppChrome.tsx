@@ -1,3 +1,4 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
@@ -9,9 +10,11 @@ import {
   TextInput,
   useWindowDimensions,
   View,
+  type ColorValue,
+  type ViewStyle,
 } from 'react-native';
 
-import { AppText as Text } from '@/components/AppText';
+import { AppText as Text, TYPE_ROLES } from '@/components/AppText';
 import { formatRate, type Catalog } from '@promptspend/core';
 
 import { HELP_ENTRIES, helpSearchText } from '@/lib/helpCenter';
@@ -19,6 +22,16 @@ import type { AccentName, CanvasName, MobileTheme, ThemeMode } from '@/theme/tok
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 export type AppSection = 'estimate' | 'compare' | 'learn' | 'data';
+
+export const COMPACT_GLOBAL_ACTION_HEIGHT = 48;
+export const COMPACT_GLOBAL_ACTION_STYLE = {
+  alignSelf: 'stretch',
+  flexGrow: 0,
+  flexShrink: 0,
+  flexWrap: 'nowrap',
+  minHeight: COMPACT_GLOBAL_ACTION_HEIGHT,
+  width: '100%',
+} satisfies ViewStyle;
 
 const SECTIONS: { id: AppSection; label: string }[] = [
   { id: 'estimate', label: 'Estimate' },
@@ -59,6 +72,7 @@ export function PricingTicker({ catalog, onOpenData }: { catalog: Catalog; onOpe
           activeItem.key === 'flagged' ? 'Opens Data and Alerts' : 'Shows the next highlight'
         }
         accessibilityRole="button"
+        android_ripple={{ color: theme.accentSoft }}
         onPress={() => {
           if (activeItem.key === 'flagged') onOpenData();
           else setActiveIndex((current) => (current + 1) % items.length);
@@ -75,6 +89,7 @@ export function PricingTicker({ catalog, onOpenData }: { catalog: Catalog; onOpe
         }
         accessibilityRole="button"
         accessibilityState={{ disabled: reduceMotion }}
+        android_ripple={{ color: theme.accentSoft }}
         disabled={reduceMotion}
         onPress={() => setPaused((value) => !value)}
         style={[styles.tickerPause, reduceMotion && styles.disabled]}
@@ -102,9 +117,30 @@ export function GlobalActions({
   const compact = isCompactAppChrome(width);
   return (
     <View style={[styles.globalActions, compact && styles.globalActionsCompact]}>
-      <MiniAction compact={compact} label="Search" onPress={onSearch} styles={styles} />
-      <MiniAction compact={compact} label="Guide" onPress={onTour} styles={styles} />
-      <MiniAction compact={compact} label="Color" onPress={onAppearance} styles={styles} />
+      <MiniAction
+        compact={compact}
+        icon="search-outline"
+        label="Search"
+        onPress={onSearch}
+        rippleColor={theme.accentSoft}
+        styles={styles}
+      />
+      <MiniAction
+        compact={compact}
+        icon="map-outline"
+        label="Guide"
+        onPress={onTour}
+        rippleColor={theme.accentSoft}
+        styles={styles}
+      />
+      <MiniAction
+        compact={compact}
+        icon="color-palette-outline"
+        label="Color"
+        onPress={onAppearance}
+        rippleColor={theme.accentSoft}
+        styles={styles}
+      />
     </View>
   );
 }
@@ -195,6 +231,7 @@ export function CommandSheet({
     onClose();
   };
   const commands = useMemo(() => {
+    if (!visible) return [];
     const base: CommandItem[] = [
       { id: 'view-home', kind: 'View', label: 'Go to Home Cost Brief', run: onHome },
       ...SECTIONS.map((item) => ({
@@ -302,6 +339,7 @@ export function CommandSheet({
     onToggleFavorite,
     onTour,
     selectedComparisonIds,
+    visible,
   ]);
   const matches = commands
     .filter((command) =>
@@ -414,18 +452,23 @@ function normalizeSearch(value: string): string {
 
 function MiniAction({
   compact,
+  icon,
   label,
   onPress,
+  rippleColor,
   styles,
 }: {
   compact: boolean;
+  icon: React.ComponentProps<typeof Ionicons>['name'];
   label: string;
   onPress: () => void;
+  rippleColor: ColorValue;
   styles: Styles;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
+      android_ripple={{ color: rippleColor }}
       onPress={onPress}
       style={({ pressed }) => [
         styles.miniAction,
@@ -433,6 +476,7 @@ function MiniAction({
         pressed && styles.pressed,
       ]}
     >
+      <Ionicons color={styles.miniActionText.color as ColorValue} name={icon} size={17} />
       <Text style={styles.miniActionText}>{label}</Text>
     </Pressable>
   );
@@ -557,20 +601,30 @@ function createStyles(theme: MobileTheme) {
       minHeight: 52,
       paddingHorizontal: 10,
     },
-    tickerPauseText: { color: theme.accent, fontSize: 10, fontWeight: '800' },
-    globalActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'flex-end' },
-    globalActionsCompact: { alignSelf: 'stretch', flexGrow: 1, flexWrap: 'nowrap', width: '100%' },
+    tickerPauseText: { color: theme.accent, ...TYPE_ROLES.caption, fontWeight: '600' },
+    globalActions: {
+      alignItems: 'stretch',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      justifyContent: 'flex-end',
+    },
+    globalActionsCompact: COMPACT_GLOBAL_ACTION_STYLE,
     miniAction: {
       alignItems: 'center',
       borderColor: theme.borderStrong,
       borderRadius: 8,
       borderWidth: 1,
+      flexDirection: 'row',
+      gap: 5,
       justifyContent: 'center',
-      minHeight: 44,
+      minHeight: 48,
+      overflow: 'hidden',
+      paddingVertical: 10,
       paddingHorizontal: 10,
     },
     miniActionCompact: { flex: 1, minWidth: 0, paddingHorizontal: 6 },
-    miniActionText: { color: theme.text, fontSize: 11, fontWeight: '800' },
+    miniActionText: { color: theme.text, ...TYPE_ROLES.label, fontWeight: '600' },
     backdrop: { backgroundColor: 'rgba(0,0,0,0.48)', flex: 1, justifyContent: 'flex-end' },
     sheet: {
       backgroundColor: theme.surface,

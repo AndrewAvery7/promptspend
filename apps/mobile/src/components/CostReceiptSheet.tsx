@@ -42,6 +42,7 @@ interface CostReceiptSheetProps {
   turns: number;
   userTokens: number;
   visible: boolean;
+  validateAction?: () => void;
 }
 
 export function CostReceiptSheet(props: CostReceiptSheetProps) {
@@ -56,6 +57,7 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
     if (!receipt || !receiptRef.current || sharingImage) return;
     setSharingImage(true);
     try {
+      props.validateAction?.();
       if (Platform.OS === 'web') {
         Alert.alert(
           'Image sharing is available in the installed app',
@@ -73,6 +75,7 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
         result: 'tmpfile',
         width: 1080 / pixelRatio,
       });
+      props.validateAction?.();
       await Sharing.shareAsync(uri, {
         dialogTitle: 'Share PromptSpend AI Cost Receipt',
         mimeType: 'image/png',
@@ -91,9 +94,13 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
   const shareText = async () => {
     if (!receipt) return;
     try {
+      props.validateAction?.();
       await Share.share({ message: receipt.shareText, title: 'PromptSpend AI Cost Receipt' });
-    } catch {
-      Alert.alert('Text sharing is unavailable', 'The system share menu could not open.');
+    } catch (error) {
+      Alert.alert(
+        'Text sharing is unavailable',
+        error instanceof Error ? error.message : 'The system share menu could not open.',
+      );
     }
   };
 

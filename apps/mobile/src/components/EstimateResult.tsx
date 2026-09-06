@@ -13,14 +13,16 @@ import {
 
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { assertNumericDraftsValid } from '@/lib/numericDrafts';
 
 interface EstimateResultProps {
   breakdown: CostBreakdown;
   model: Model;
   scaled: ScaledCost;
+  validateAction?: () => void;
 }
 
-export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps) {
+export function EstimateResult({ breakdown, model, scaled, validateAction }: EstimateResultProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const shareButtonRef = useRef<View>(null);
@@ -32,6 +34,8 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
 
     setIsSharing(true);
     try {
+      assertNumericDraftsValid();
+      validateAction?.();
       const anchor = findNodeHandle(shareButtonRef.current);
       await Share.share(
         {
@@ -44,10 +48,10 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
           ...(anchor === null ? {} : { anchor }),
         },
       );
-    } catch {
+    } catch (error) {
       Alert.alert(
         'Sharing is unavailable',
-        'The share menu could not open. Please try again after checking that sharing is enabled on this device.',
+        error instanceof Error ? error.message : 'The share menu could not open. Please try again.',
       );
     } finally {
       setIsSharing(false);
@@ -85,6 +89,7 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
         accessibilityLabel="Share this PromptSpend estimate"
         accessibilityRole="button"
         accessibilityState={{ busy: isSharing, disabled: isSharing }}
+        android_ripple={{ color: theme.accentSoft }}
         disabled={isSharing}
         onPress={() => void shareEstimate()}
         ref={shareButtonRef}
@@ -100,6 +105,7 @@ export function EstimateResult({ breakdown, model, scaled }: EstimateResultProps
       <Pressable
         accessibilityRole="button"
         accessibilityState={{ expanded: showDetails }}
+        android_ripple={{ color: theme.accentSoft }}
         onPress={() => setShowDetails((current) => !current)}
         style={({ pressed }) => [styles.detailsButton, pressed && styles.pressed]}
       >

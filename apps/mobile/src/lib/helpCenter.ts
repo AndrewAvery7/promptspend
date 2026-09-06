@@ -631,8 +631,8 @@ export const HELP_ENTRIES: readonly HelpEntry[] = [
     category: 'tools',
     question: 'Which preferences are stored on my device?',
     answer: [
-      'Saved scenarios, model watchlist, the active workload, onboarding status, and appearance choices are stored locally so the app can resume your work.',
-      'Raw pasted prompt text is not persisted. Removing the app or clearing its storage can remove device-local work.',
+      'The active model choices, derived token counts, scale, pricing assumptions, explicitly saved scenarios, model watchlist, onboarding status, and appearance choices are stored locally so the current estimate can resume after reopening the app.',
+      'Raw pasted prompt or response text is never persisted. If pasted text produced a token count, only that derived count and a private-text marker resume; paste the text again to recalculate it. Removing the app or clearing its storage can remove device-local work.',
     ],
     keywords: ['stored', 'device', 'preferences', 'local', 'uninstall', 'clear storage'],
   },

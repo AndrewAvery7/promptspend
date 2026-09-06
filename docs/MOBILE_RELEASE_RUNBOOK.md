@@ -2,7 +2,7 @@
 
 Status: operational draft; production submission requires the go/no-go gate.
 
-Last reviewed: 2026-08-12
+Last reviewed: 2026-09-01
 
 ## Release principle
 
@@ -72,6 +72,40 @@ After the website release containing the policy pages deploys, confirm:
 - `info@promptspend.com` and `security@promptspend.com` receive mail.
 
 Do not enter reserved but non-live URLs into a store submission.
+
+### 3a. Publish association files for shared Estimate links
+
+The native app is limited to verified links under
+`https://promptspend.com/estimate`. The URL contains model IDs, derived token
+counts, scale, and visible pricing assumptions only; it never contains pasted
+prompt or response text.
+
+Obtain the exact Apple Team ID from the Apple Developer membership record and
+the final SHA-256 certificate fingerprint from **Play App Signing** in Play
+Console. Do not substitute a local debug, EAS preview, upload, or internal APK
+certificate for the Play App Signing fingerprint.
+
+Generate the two website files locally from the mobile workspace:
+
+```powershell
+Set-Location apps/mobile
+$env:PROMPTSPEND_APPLE_TEAM_ID = "<APPLE_TEAM_ID>"
+$env:PROMPTSPEND_ANDROID_SHA256 = "<PLAY_APP_SIGNING_SHA256_FINGERPRINT>"
+npm.cmd run prepare:links
+Remove-Item Env:PROMPTSPEND_APPLE_TEAM_ID
+Remove-Item Env:PROMPTSPEND_ANDROID_SHA256
+```
+
+Review `public/.well-known/apple-app-site-association` and
+`public/.well-known/assetlinks.json` before staging. Generation does not deploy
+them. Deployment remains a separate owner-approved action.
+
+After an approved website deployment, verify both files return HTTP 200 over
+HTTPS, without redirects, with JSON content types, and with the exact production
+app identifiers. Then test the shared link on installed and uninstalled iPhone,
+iPad, and Galaxy devices; test cold and warm app states, Cancel and Open estimate,
+malformed values, unrelated query parameters, and browser fallback. Do not claim
+Universal Link or App Link support from configuration alone.
 
 ## 4. Build candidates
 

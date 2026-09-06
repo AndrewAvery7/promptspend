@@ -1,4 +1,4 @@
-import { useMemo, useState, type RefObject } from 'react';
+import { useEffect, useMemo, useState, type RefObject } from 'react';
 import { Pressable, type ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
@@ -17,11 +17,13 @@ const SAMPLE =
 export function LearnSection({
   catalog,
   initialHelpEntryId,
+  onHelpEntryConsumed,
   onNavigate,
   tourScrollRef,
 }: {
   catalog?: Catalog;
   initialHelpEntryId?: string;
+  onHelpEntryConsumed?: () => void;
   onNavigate: (destination: HelpDestination) => void;
   tourScrollRef?: RefObject<ScrollView | null>;
 }) {
@@ -30,6 +32,9 @@ export function LearnSection({
   const [openId, setOpenId] = useState<string | null>('tokens-101');
   const [text, setText] = useState(SAMPLE);
   const samples = useMemo(() => (catalog ? pickSampleModels(catalog) : []), [catalog]);
+  useEffect(() => {
+    if (initialHelpEntryId) onHelpEntryConsumed?.();
+  }, [initialHelpEntryId, onHelpEntryConsumed]);
 
   return (
     <View style={styles.section}>
@@ -73,6 +78,13 @@ export function LearnSection({
               textAlignVertical="top"
               value={text}
             />
+            <Text
+              accessibilityLiveRegion={text.length >= MAX_PASTE_CHARS ? 'polite' : 'none'}
+              style={styles.privateText}
+            >
+              {text.length.toLocaleString()} / {MAX_PASTE_CHARS.toLocaleString()} characters
+              {text.length >= MAX_PASTE_CHARS ? ' · Limit reached. Shorten the sample to add more text.' : ''}
+            </Text>
             <Text style={styles.privateText}>
               Private: this text is not saved, logged, shared, or uploaded.
             </Text>
