@@ -25,7 +25,8 @@
  *                       The default: this is a transcription job, and DeepSeek
  *                       does it for a fraction of the cost.
  *   ANTHROPIC_API_KEY   Anthropic, structured output (schema-enforced JSON).
- *                       The fallback when no DeepSeek key is set.
+ *                       The fallback: used when no DeepSeek key is set, or
+ *                       for the rest of the morning once DeepSeek refuses its.
  *   Neither             the check is skipped, not failed.
  *   VENDOR_CHECK_MODEL  overrides the reader's model id (deepseek-v4-flash /
  *                       claude-opus-5 by default).
@@ -263,13 +264,51 @@ function anthropicReader(model: string): Reader {
   };
 }
 
-function chooseReader(): Reader | undefined {
+/** Every reader with a key, in order of preference. `VENDOR_CHECK_MODEL`
+ *  names a model for the first of them only — a model id is provider-specific. */
+function chooseReaders(): Reader[] {
   const override = process.env.VENDOR_CHECK_MODEL;
+  const readers: Reader[] = [];
   if (process.env.DEEPSEEK_API_KEY) {
-    return deepseekReader(process.env.DEEPSEEK_API_KEY, override || DEFAULT_DEEPSEEK_MODEL);
+    readers.push(deepseekReader(process.env.DEEPSEEK_API_KEY, override || DEFAULT_DEEPSEEK_MODEL));
   }
-  if (process.env.ANTHROPIC_API_KEY) return anthropicReader(override || DEFAULT_ANTHROPIC_MODEL);
-  return undefined;
+  if (process.env.ANTHROPIC_API_KEY) {
+    readers.push(anthropicReader(readers.length === 0 && override ? override : DEFAULT_ANTHROPIC_MODEL));
+  }
+  return readers;
+}
+
+/** A reader whose key is refused is refused for the whole morning. */
+function isKeyRejected(error: unknown): boolean {
+  if (error instanceof Anthropic.AuthenticationError || error instanceof Anthropic.PermissionDeniedError)
+    return true;
+  return error instanceof Error && /responded (401|403)\b/.test(error.message);
+}
+
+/** Read with the preferred reader; when it refuses the key, hand the rest of
+ *  the morning to the next one rather than leave the pages unread. On the
+ *  first live run a mistyped DeepSeek key produced 58 unconfirmed rows with a
+ *  working Anthropic key sitting unused beside it. */
+function readerChain(readers: Reader[]): { read: Reader['read']; active(): Reader } {
+  let index = 0;
+  return {
+    active: () => readers[index]!,
+    async read(url, rows, pageText) {
+      for (;;) {
+        const reader = readers[index]!;
+        try {
+          return await reader.read(url, rows, pageText);
+        } catch (error) {
+          if (!isKeyRejected(error) || index + 1 >= readers.length) throw error;
+          const reason = error instanceof Error ? error.message : String(error);
+          index += 1;
+          console.warn(
+            `::warning::${reader.label} rejected its key (${reason.slice(0, 160)}) — check the secret. Continuing with ${readers[index]!.label}.`,
+          );
+        }
+      }
+    },
+  };
 }
 
 async function writeOutputs(lines: string[]): Promise<void> {
@@ -282,8 +321,8 @@ async function main(): Promise<void> {
   const checkedAt = new Date();
   const isoDate = checkedAt.toISOString().slice(0, 10);
 
-  const reader = chooseReader();
-  if (!reader) {
+  const readers = chooseReaders();
+  if (readers.length === 0) {
     console.log(
       'Neither DEEPSEEK_API_KEY nor ANTHROPIC_API_KEY is set — skipping the vendor-page check. Nothing changes.',
     );
@@ -303,8 +342,11 @@ async function main(): Promise<void> {
     );
   }
   const pages = groupByPage(rows);
+  const chain = readerChain(readers);
   console.log(
-    `→ ${rows.length} hand-verified row(s) across ${pages.size} vendor page(s), read by ${reader.label}`,
+    `→ ${rows.length} hand-verified row(s) across ${pages.size} vendor page(s), read by ${readers
+      .map((reader) => reader.label)
+      .join(', then ')}`,
   );
   console.log(
     `  pages via ${process.env.FIRECRAWL_API_KEY ? 'Firecrawl' : 'plain fetch (set FIRECRAWL_API_KEY for rendered pages)'}`,
@@ -321,10 +363,15 @@ async function main(): Promise<void> {
       if (page.text.length > MAX_PAGE_CHARS) {
         throw new Error(`page is ${page.text.length} characters — too large to be a pricing page`);
       }
-      const extraction = await reader.read(url, group, page.text);
+      const extraction = await chain.read(url, group, page.text);
       const compared = compareGroup(group, extraction, checkedAt);
       items.push(...compared);
-      pageReports.push({ url, ok: true, note: `${page.text.length} chars via ${page.via}`, modelIds });
+      pageReports.push({
+        url,
+        ok: true,
+        note: `${page.text.length} chars via ${page.via}, read by ${chain.active().label}`,
+        modelIds,
+      });
       for (const item of compared) console.log(`  ${label(item.status)} ${item.id}: ${item.detail}`);
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
@@ -334,7 +381,7 @@ async function main(): Promise<void> {
     }
   }
 
-  const report = buildReport(checkedAt, reader.label, pageReports, items);
+  const report = buildReport(checkedAt, chain.active().label, pageReports, items);
   const { overrides, bumped } = applyConfirmations(overridesFile.models, items, isoDate);
 
   console.log(
