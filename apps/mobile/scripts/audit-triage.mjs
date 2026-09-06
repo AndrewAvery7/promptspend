@@ -129,11 +129,14 @@ function lockVersion(pkg) {
   return lock.packages?.[`node_modules/${pkg}`]?.version ?? '?';
 }
 
-function lockCommit() {
-  // No spaces inside one argument: with a shell on Windows they would split it.
-  const r = run('git', ['log', '-1', '--format=%h,%ad', '--date=short', '--', 'package-lock.json']);
-  const [sha, date] = (r.stdout ?? '').trim().split(',');
-  return sha ? `${sha} (${date})` : 'unknown';
+function lockId() {
+  // The lockfile's own content hash. A commit id looked better but the weekly
+  // runner checks out one commit deep, so `git log -- package-lock.json` named
+  // whatever HEAD was rather than the change that last touched the file.
+  return createHash('sha256')
+    .update(readFileSync(resolve(ROOT, 'package-lock.json')))
+    .digest('hex')
+    .slice(0, 8);
 }
 
 /** The safe fix path: non-forced `npm audit fix`, kept only if the app still checks out. */
@@ -175,7 +178,10 @@ function section(a, fixNote, verdict) {
     ? a.findings
         .map((f) => {
           const adv = f.advisories.map((x) => `[${x.url.split('/').pop()}](${x.url})`).join(', ') || '—';
-          return `| \`${f.name}\` | ${f.severity} | \`${f.range}\` | ${adv} | \`${f.chain.join(' > ')}\` | ${f.fix} |`;
+          // A vulnerable range can contain `||`, which a markdown table reads as
+          // two cell boundaries; every cell is escaped, not just the one seen.
+          const cell = (s) => String(s).replaceAll('|', '\\|');
+          return `| \`${cell(f.name)}\` | ${f.severity} | \`${cell(f.range)}\` | ${adv} | \`${cell(f.chain.join(' > '))}\` | ${cell(f.fix)} |`;
         })
         .join('\n')
     : '| _none_ | | | | | |';
@@ -183,7 +189,7 @@ function section(a, fixNote, verdict) {
 
 ## Current audit (generated)
 
-Re-derived ${today()} from \`npm audit --package-lock-only\` against the lockfile last changed at ${lockCommit()}: **${a.summary}**. Expo ${lockVersion('expo')}, expo-router ${lockVersion('expo-router')}, react-native-webview ${lockVersion('react-native-webview')}.
+Re-derived ${today()} from \`npm audit --package-lock-only\` against lockfile \`${lockId()}\`: **${a.summary}**. Expo ${lockVersion('expo')}, expo-router ${lockVersion('expo-router')}, react-native-webview ${lockVersion('react-native-webview')}.
 
 | Package | Severity | Vulnerable range | Advisory | Reached through | Fix |
 | --- | --- | --- | --- | --- | --- |

@@ -59,6 +59,13 @@ jobs:
         continue-on-error: true
         run: node scripts/audit-triage.mjs --auto
 
+      # The root verify job runs prettier over this file; a record written in
+      # the script's own spacing would fail the next pull request's format
+      # check. Same prettier major as the root package, same root config.
+      - name: Format the record the way the repository does
+        working-directory: .
+        run: npx --yes prettier@3 --write apps/mobile/SECURITY.md
+
       - name: Commit the record (and a kept fix)
         run: |
           git config user.name "promptspend-bot"
