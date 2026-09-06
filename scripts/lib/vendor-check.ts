@@ -27,7 +27,10 @@ import type { Model } from '../../src/lib/pricing/types';
 import type { Override } from './normalize';
 
 export const VENDOR_CHECK_SCHEMA_VERSION = 1;
-export const DEFAULT_EXTRACTION_MODEL = 'claude-opus-5';
+/** The reader. DeepSeek when its key is present (an order of magnitude cheaper
+ *  for what is a transcription job), Anthropic as the fallback. */
+export const DEFAULT_DEEPSEEK_MODEL = 'deepseek-v4-flash';
+export const DEFAULT_ANTHROPIC_MODEL = 'claude-opus-5';
 /** Vendor pages round; the record does not. Within this fraction is the same number. */
 export const CONFIRM_TOLERANCE = 0.01;
 /** A report older than this describes a different morning and must not raise flags. */
@@ -446,4 +449,105 @@ export function htmlToText(html: string): string {
     .replace(/ *\n */g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+}
+
+/* ------------------------------------------------------------------------ *
+ * The OpenAI-style reader (DeepSeek).
+ *
+ * DeepSeek's JSON mode guarantees a JSON object, not a JSON object of a given
+ * shape — the schema above is a contract Anthropic enforces and DeepSeek is
+ * only told about. So the prompt carries an example, the reply is validated
+ * by `parsePageExtraction`, and a reply that fails validation earns exactly
+ * one retry that quotes the problem back. The page itself is public, so
+ * nothing in the request is sensitive.
+ * ------------------------------------------------------------------------ */
+
+/** The example DeepSeek's JSON mode asks for; the shape is EXTRACTION_SCHEMA. */
+export const EXTRACTION_JSON_EXAMPLE = JSON.stringify(
+  {
+    models: [
+      { id: 'vendor-model-a', found: true, input: 1.25, output: 10, cachedInput: 0.125 },
+      {
+        id: 'vendor-model-b',
+        found: true,
+        input: 1.5,
+        output: 7.5,
+        promo: { input: 0.75, output: 3.75, until: '2026-12-31' },
+        note: 'promotional rate shown beside the standard rate',
+      },
+      { id: 'vendor-model-c', found: false, note: 'only version 3.5 is listed' },
+    ],
+  },
+  null,
+  2,
+);
+
+/** The system prompt with the JSON-mode requirements DeepSeek documents:
+ *  the word "json" and an example of the shape. */
+export function jsonModeSystemPrompt(): string {
+  return (
+    `${EXTRACTION_SYSTEM_PROMPT}\n\n` +
+    `Reply with a single JSON object and nothing else — no prose, no code fence. ` +
+    `Use exactly these keys and no others. Omit a key rather than writing null. Example of the shape:\n` +
+    EXTRACTION_JSON_EXAMPLE
+  );
+}
+
+export interface ChatCompletionRequest {
+  model: string;
+  messages: { role: 'system' | 'user'; content: string }[];
+  response_format: { type: 'json_object' };
+  max_tokens: number;
+  temperature: number;
+  thinking: { type: 'disabled' };
+}
+
+/** Enough for sixteen rows with notes, several times over; DeepSeek warns that
+ *  a low ceiling truncates the JSON mid-string. */
+export const CHAT_COMPLETION_MAX_TOKENS = 8192;
+
+/** The request body for an OpenAI-style chat completion in JSON mode. A
+ *  `previousError` turns it into the one retry, telling the model what was
+ *  wrong with its last reply. */
+export function buildChatCompletionRequest(
+  model: string,
+  userPrompt: string,
+  previousError?: string,
+): ChatCompletionRequest {
+  const system = previousError
+    ? `${jsonModeSystemPrompt()}\n\nYour previous reply could not be used: ${previousError}. Reply again with only the JSON object.`
+    : jsonModeSystemPrompt();
+  return {
+    model,
+    messages: [
+      { role: 'system', content: system },
+      { role: 'user', content: userPrompt },
+    ],
+    response_format: { type: 'json_object' },
+    max_tokens: CHAT_COMPLETION_MAX_TOKENS,
+    temperature: 0,
+    thinking: { type: 'disabled' },
+  };
+}
+
+/** The assistant text out of an OpenAI-style completion, or why there is none. */
+export function chatCompletionText(payload: unknown): string {
+  const choice = (payload as { choices?: unknown[] } | null)?.choices?.[0] as
+    { message?: { content?: unknown }; finish_reason?: unknown } | undefined;
+  if (!choice) throw new Error('the completion carried no choices');
+  if (choice.finish_reason === 'length') throw new Error('the reply was cut off at max_tokens');
+  if (choice.finish_reason === 'content_filter')
+    throw new Error('the reply was withheld by a content filter');
+  const content = choice.message?.content;
+  if (typeof content !== 'string' || content.trim() === '') {
+    throw new Error(`the reply was empty (finish_reason ${String(choice.finish_reason ?? 'unknown')})`);
+  }
+  return content;
+}
+
+/** JSON mode promises an object; a stray code fence still costs nothing to strip. */
+export function parseJsonReply(text: string): unknown {
+  const trimmed = text.trim();
+  const unfenced = trimmed.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+  return JSON.parse(unfenced);
 }

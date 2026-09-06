@@ -64,12 +64,17 @@ jobs:
       # disagrees the sync raises `vendor-page-mismatch` with both figures.
       # It never writes a price, and it never fails the morning — a page that
       # cannot be read leaves its rows as they were, and the 30-day rule in
-      # merge.ts is still the backstop. Skipped, not failed, when the key is
-      # absent, so a missing secret degrades to the old behaviour rather than
-      # stopping the catalog.
+      # merge.ts is still the backstop. Skipped, not failed, when no reader key
+      # is present, so a missing secret degrades to the old behaviour rather
+      # than stopping the catalog.
+      #
+      # The reader is DeepSeek when its key is set (a transcription job, done
+      # for a fraction of the cost) and Anthropic otherwise. The report records
+      # which one read the pages.
       - name: Re-read the vendors' own pricing pages
         id: vendors
         env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: npm run verify:vendors

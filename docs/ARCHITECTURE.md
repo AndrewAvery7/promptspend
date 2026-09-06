@@ -74,7 +74,10 @@ verified together aged together — twenty-seven read on 2026-08-03 became sixte
 one morning — while the 30-day rule that raised them was the only automation involved.
 `scripts/verify-vendors.ts` now runs ahead of the sync: it groups every hand-verified row by its
 `verifiedUrl`, reads each page once, has a model transcribe the listed prices into a fixed JSON shape, and
-compares them with the record (`scripts/lib/vendor-check.ts`). Agreement moves the date. Disagreement
+compares them with the record (`scripts/lib/vendor-check.ts`). The reader is DeepSeek when its key is
+present — it is a transcription job, and the design tolerates a weaker reader (a mis-read is a flag or a
+skipped date, never a wrong price) — with Anthropic as the fallback, whose structured output enforces the
+shape that DeepSeek's JSON mode is only told about; the report names which one read. Agreement moves the date. Disagreement
 raises `vendor-page-mismatch` carrying both figures. A page that cannot be read changes nothing, and the
 30-day rule remains the backstop for one that stays unreadable. Three things are deliberate:
 

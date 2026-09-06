@@ -3,9 +3,15 @@ import type { Model } from '../../src/lib/pricing/types';
 import type { Override } from './normalize';
 import {
   applyConfirmations,
+  buildChatCompletionRequest,
   buildExtractionPrompt,
   buildReport,
+  CHAT_COMPLETION_MAX_TOKENS,
+  chatCompletionText,
   checkableRows,
+  EXTRACTION_JSON_EXAMPLE,
+  EXTRACTION_SYSTEM_PROMPT,
+  parseJsonReply,
   compareGroup,
   compareRate,
   groupByPage,
@@ -392,5 +398,59 @@ describe('htmlToText', () => {
 
   it('leaves an unknown entity alone rather than guessing', () => {
     expect(htmlToText('a &zzz; b')).toBe('a &zzz; b');
+  });
+});
+
+describe('the DeepSeek reader’s request and reply', () => {
+  it('meets JSON mode’s two requirements: the word json and an example of the shape', () => {
+    const request = buildChatCompletionRequest('deepseek-v4-flash', 'USER');
+    const system = request.messages[0]!.content;
+    expect(system).toMatch(/json/i);
+    expect(system).toContain(EXTRACTION_JSON_EXAMPLE);
+    expect(system).toContain(EXTRACTION_SYSTEM_PROMPT);
+    expect(request).toMatchObject({
+      model: 'deepseek-v4-flash',
+      response_format: { type: 'json_object' },
+      max_tokens: CHAT_COMPLETION_MAX_TOKENS,
+      temperature: 0,
+      thinking: { type: 'disabled' },
+    });
+    expect(request.messages[1]).toEqual({ role: 'user', content: 'USER' });
+    expect(JSON.parse(EXTRACTION_JSON_EXAMPLE)).toMatchObject({ models: expect.any(Array) });
+  });
+
+  it('quotes the problem back on the one retry', () => {
+    const retry = buildChatCompletionRequest(
+      'deepseek-v4-flash',
+      'USER',
+      'extraction did not contain a models array',
+    );
+    expect(retry.messages[0]!.content).toContain(
+      'Your previous reply could not be used: extraction did not contain a models array',
+    );
+    expect(buildChatCompletionRequest('m', 'USER').messages[0]!.content).not.toContain('previous reply');
+  });
+
+  it('takes the text of the first choice and names every way there is none', () => {
+    expect(
+      chatCompletionText({ choices: [{ message: { content: '{"models":[]}' }, finish_reason: 'stop' }] }),
+    ).toBe('{"models":[]}');
+    expect(() => chatCompletionText({})).toThrow(/no choices/);
+    expect(() =>
+      chatCompletionText({ choices: [{ message: { content: '{' }, finish_reason: 'length' }] }),
+    ).toThrow(/cut off/);
+    expect(() =>
+      chatCompletionText({ choices: [{ message: { content: 'x' }, finish_reason: 'content_filter' }] }),
+    ).toThrow(/content filter/);
+    expect(() =>
+      chatCompletionText({ choices: [{ message: { content: '' }, finish_reason: 'stop' }] }),
+    ).toThrow(/empty \(finish_reason stop\)/);
+    expect(() => chatCompletionText({ choices: [{ message: {} }] })).toThrow(/finish_reason unknown/);
+  });
+
+  it('parses a bare object and forgives a code fence', () => {
+    expect(parseJsonReply(' {"models": []} ')).toEqual({ models: [] });
+    expect(parseJsonReply('```json\n{"models": []}\n```')).toEqual({ models: [] });
+    expect(() => parseJsonReply('not json')).toThrow();
   });
 });
