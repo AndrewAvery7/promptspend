@@ -87,6 +87,11 @@ raises `vendor-page-mismatch` carrying both figures. A page that cannot be read 
   so it cannot confirm a figure by echoing it.
 - **A provenance-only override is checked against the catalog's figure.** Such a row asserts that the
   feed's number was read off the vendor's page; that number is what the page has to still say.
+- **A page that prints only a promotional rate confirms the rate in force.** OpenAI's page shows GPT-5.6
+  Sol's promotional figures and never reprints the list price behind them. If the promotion agrees with the
+  recorded `intro`, the date moves — that is the figure visitors are billed and the site shows — and the
+  list price stays a claim the page cannot settle until the window closes, when the page prints it and the
+  check catches any error the morning it starts to matter.
 
 **`lastChanged` is optional, and absent is a real answer.** It is written only when `pricingChanged`
 — the same comparison the changelog uses, exported from `scripts/lib/diff.ts` so the two cannot form a

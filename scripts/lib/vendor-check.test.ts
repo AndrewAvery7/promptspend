@@ -222,18 +222,41 @@ describe('compareRate', () => {
       expect(item.status).toBe('confirmed');
     });
 
-    it('cannot confirm the standard rate from a page that shows only the promotion', () => {
+    it('confirms the rate in force from a page that prints only the promotion, and says what it could not see', () => {
       const viaPromo = compareRate(
         flash,
         { id: promo.id, found: true, promo: { input: 0.75, output: 3.75 } },
         ASOF,
       );
-      expect(viaPromo.status).toBe('unconfirmed');
-      expect(viaPromo.detail).toContain('standard rate $1.5/$7.5 is not shown');
+      expect(viaPromo.status).toBe('confirmed');
+      expect(viaPromo.detail).toBe(
+        'page shows only the promotional rate $0.75/$3.75 until 2026-12-31, which agrees; the standard rate $1.5/$7.5 is not printed and stays unverified until the window closes',
+      );
 
       const viaStandard = compareRate(flash, { id: promo.id, found: true, input: 0.75, output: 3.75 }, ASOF);
-      expect(viaStandard.status).toBe('unconfirmed');
-      expect(viaStandard.detail).toContain('only the promotional figure');
+      expect(viaStandard.status).toBe('confirmed');
+      expect(viaStandard.detail).toContain('page shows only the promotional rate');
+
+      // A reader that copies the one printed figure into both slots has still
+      // seen one figure — this is what GPT-5.6 Sol's page produced on the
+      // first live run, and it was reported as a disagreement.
+      const doubled = compareRate(
+        flash,
+        { id: promo.id, found: true, input: 0.75, output: 3.75, promo: { input: 0.75, output: 3.75 } },
+        ASOF,
+      );
+      expect(doubled.status).toBe('confirmed');
+      expect(doubled.detail).toContain('only the promotional rate');
+    });
+
+    it('still flags a promotion-only page whose figure does not match the intro', () => {
+      const item = compareRate(
+        flash,
+        { id: promo.id, found: true, promo: { input: 0.5, output: 3.75 } },
+        ASOF,
+      );
+      expect(item.status).toBe('mismatch');
+      expect(item.detail).toBe('promotional rate $0.5/$3.75 vs recorded intro $0.75/$3.75 until 2026-12-31');
     });
 
     it('flags a promotion the page has withdrawn early', () => {

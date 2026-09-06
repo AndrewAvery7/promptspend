@@ -107,7 +107,7 @@ async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: numbe
 }
 
 /** The page as text: rendered by Firecrawl when a key is present, else fetched plain. */
-async function readPage(url: string): Promise<{ text: string; via: 'firecrawl' | 'fetch' }> {
+async function readPage(url: string): Promise<{ text: string; via: 'firecrawl' | 'markdown' | 'fetch' }> {
   const firecrawlKey = process.env.FIRECRAWL_API_KEY;
   if (firecrawlKey) {
     const response = await fetchWithTimeout(
@@ -132,6 +132,13 @@ async function readPage(url: string): Promise<{ text: string; via: 'firecrawl' |
     return { text: markdown, via: 'firecrawl' };
   }
 
+  // Several vendors' docs (OpenAI, Anthropic among them) serve the page as
+  // markdown at `<url>.md` — the whole table, including rows the rendered
+  // page hides behind an expander that a plain fetch never opens. Worth one
+  // extra request before settling for HTML.
+  const markdown = await fetchMarkdownVariant(url);
+  if (markdown) return { text: markdown, via: 'markdown' };
+
   const response = await fetchWithTimeout(
     url,
     { headers: { 'user-agent': 'promptspend-vendor-check', accept: 'text/html,application/xhtml+xml' } },
@@ -141,6 +148,24 @@ async function readPage(url: string): Promise<{ text: string; via: 'firecrawl' |
   const text = htmlToText(await response.text());
   if (text.length < 200) throw new Error('page returned almost no text — probably rendered by JavaScript');
   return { text, via: 'fetch' };
+}
+
+async function fetchMarkdownVariant(url: string): Promise<string | undefined> {
+  try {
+    const response = await fetchWithTimeout(
+      `${url}.md`,
+      { headers: { 'user-agent': 'promptspend-vendor-check', accept: 'text/markdown, text/plain' } },
+      PAGE_FETCH_TIMEOUT_MS,
+    );
+    if (!response.ok) return undefined;
+    const body = await response.text();
+    const type = response.headers.get('content-type') ?? '';
+    // Some hosts answer the `.md` path with the ordinary HTML page.
+    if (!type.includes('markdown') || /^\s*<(!doctype|html)/i.test(body)) return undefined;
+    return body.trim().length >= 200 ? body : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** One reading of one page. Nothing about the record goes in. */

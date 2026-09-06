@@ -145,8 +145,10 @@ Rules:
 - Prices are USD per 1 million tokens. If the page prices per 1,000 tokens or per token, convert and say so in note.
 - Use the standard pay-as-you-go tier at the global endpoint. Ignore batch, priority/fast, regional or data-residency, fine-tuning, and long-context surcharge tiers.
 - input and output are the standard list prices. cachedInput is the cache-hit (cached input read) price when listed.
-- If the page shows a promotional, introductory, or limited-time rate for a model, put that rate in promo (with its end date in until when stated) and keep the standard rate in input/output. If the page shows only the promotional rate and no standard rate, put it in promo and omit input/output.
-- Match models by name carefully: a model listed only under a different version (for example "Medium 3.1" when asked about "Medium 3") is found=false, with the alternative named in note.
+- If the page shows a promotional, introductory, or limited-time rate for a model, put that rate in promo (with its end date in until when stated) and keep the standard rate in input/output. If the page shows only the promotional rate and no standard rate, put it in promo and omit input/output. Never copy the same figure into both.
+- A price given as "$X through <date>" followed by "$Y starting <later date>" is a promotion: X goes in promo with until = that first date, Y is the standard rate.
+- If the page says a model is retired, deprecated, or redirected and that requests to it are billed at another model's rate, report that rate for it and say so in note.
+- Match models by name carefully: a model listed only under a different version (for example "Medium 3.1" when asked about "Medium 3") is found=false, with the alternative named in note. Never carry a figure over from a different model, tier, or table: a model whose own row is not in the content is found=false.
 - Return one entry for every id in the list, in the same order.`;
 
 function completePricing(pricing: Override['pricing']): Model['pricing'] | undefined {
@@ -282,7 +284,7 @@ export function compareRate(row: Checkable, rate: PageRate | undefined, asOf: Da
     };
   }
 
-  const pageStandard: Figure | undefined =
+  let pageStandard: Figure | undefined =
     rate.input !== undefined && rate.output !== undefined
       ? {
           input: rate.input,
@@ -294,9 +296,26 @@ export function compareRate(row: Checkable, rate: PageRate | undefined, asOf: Da
   if (!pageStandard && !pagePromo) {
     return { id, url, status: 'unconfirmed', detail: 'listed, but no price could be read' };
   }
+  // A reader handed a page that prints one figure with "promotional" beside it
+  // tends to report that figure twice, as both the promotion and the standard
+  // rate. Two identical figures are one figure: the page shows only the
+  // promotion.
+  if (pageStandard && pagePromo && sameFigure(pageStandard, pagePromo)) pageStandard = undefined;
 
   const problems: string[] = [];
   const untilNote = intro?.until ? ` until ${intro.until}` : '';
+
+  // The page prints only the rate in force and it agrees with the recorded
+  // intro. That confirms what visitors are billed today — the figure the site
+  // shows — so the date moves. The standard rate behind it stays a claim the
+  // page cannot settle until the window closes, at which point the page prints
+  // it and this check catches any error the morning it starts to matter.
+  const promoOnlyAgrees = (shown: Figure): VendorCheckItem => ({
+    id,
+    url,
+    status: 'confirmed',
+    detail: `page shows only the promotional rate ${fmt(shown)}${untilNote}, which agrees; the standard rate ${fmt(base)} is not printed and stays unverified until the window closes`,
+  });
 
   if (intro) {
     const introFigure: Figure = { input: intro.input, output: intro.output };
@@ -314,21 +333,9 @@ export function compareRate(row: Checkable, rate: PageRate | undefined, asOf: Da
       ) {
         problems.push(`promotional cached input $${pagePromo.cachedInput} vs recorded $${intro.cachedInput}`);
       }
-      if (!pageStandard && problems.length === 0) {
-        return {
-          id,
-          url,
-          status: 'unconfirmed',
-          detail: `promotional rate ${fmt(pagePromo)} agrees; the standard rate ${fmt(base)} is not shown`,
-        };
-      }
+      if (!pageStandard && problems.length === 0) return promoOnlyAgrees(pagePromo);
     } else if (sameFigure(pageStandard!, introFigure)) {
-      return {
-        id,
-        url,
-        status: 'unconfirmed',
-        detail: `page shows only the promotional figure ${fmt(introFigure)}; the standard rate ${fmt(base)} is not shown`,
-      };
+      return promoOnlyAgrees(pageStandard!);
     } else if (sameFigure(pageStandard!, base)) {
       problems.push(`page no longer shows the promotional rate ${fmt(introFigure)} recorded${untilNote}`);
     } else {
@@ -476,6 +483,13 @@ export const EXTRACTION_JSON_EXAMPLE = JSON.stringify(
         note: 'promotional rate shown beside the standard rate',
       },
       { id: 'vendor-model-c', found: false, note: 'only version 3.5 is listed' },
+      {
+        id: 'vendor-model-d',
+        found: true,
+        input: 1.25,
+        output: 2.5,
+        note: 'retired; the page says requests to it are billed at vendor-model-e rates',
+      },
     ],
   },
   null,
