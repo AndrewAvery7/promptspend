@@ -118,8 +118,18 @@
       "easBuildId": "16721c06-a51b-4831-b6e4-0475121a1ae1",
       "gitCommit": "a4a26e07b6368055a46dd2b36da8be1aee900447",
       "channel": "private-apk",
-      "status": "private-qa-current",
+      "status": "superseded-private-qa",
       "evidence": "docs/qa/ANDROID_GALAXY_A15_BUILD_7.md"
+    },
+    {
+      "platform": "android",
+      "marketingVersion": "0.1.0",
+      "versionCode": 9,
+      "easBuildId": "f43fe4ee-3909-40fd-937d-0f83d5a3b966",
+      "gitCommit": "5b4dddc05c8a4fc5b7dd4e45aa4a7ab29115b29f",
+      "channel": "private-apk",
+      "status": "private-qa-current",
+      "evidence": "docs/qa/ANDROID_GALAXY_A15_BUILD_9.md"
     }
   ],
   "note": "EAS remote versioning remains authoritative. Record every new private or store binary here after its build identifier is verified."

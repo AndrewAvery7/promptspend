@@ -8,7 +8,7 @@ Status: active test protocol
 
 Last reviewed: 2026-09-08
 
-> **Current private-QA binaries.** Android versionCode 7 is the current
+> **Current private-QA binaries.** Android versionCode 9 is the current
 > installable private-QA artifact from merged `main`. iOS build 22 was attempted
 > from the same source but failed before producing an IPA because the existing
 > Apple provisioning profile lacks the intentionally configured Associated
@@ -20,18 +20,17 @@ Last reviewed: 2026-09-08
 - iOS: no current replacement IPA. The failed build-22 record is in
   `docs/qa/IOS_TESTFLIGHT_BUILD_22.md`; the last installable baseline is build
   17, EAS build `2ce3cb87-aa5f-4fde-b58b-ed47348cefbe`, from superseded source.
-- Android internal APK: version 0.1.0, versionCode 7, EAS build
-  `16721c06-a51b-4831-b6e4-0475121a1ae1`; the verified artifact and checksum are
-  recorded in `docs/qa/ANDROID_GALAXY_A15_BUILD_7.md`.
-- Android 7 and the attempted iOS 22 use merged commit
-  `a4a26e07b6368055a46dd2b36da8be1aee900447`.
+- Android internal APK: version 0.1.0, versionCode 9, EAS build
+  `f43fe4ee-3909-40fd-937d-0f83d5a3b966`; the verified artifact and checksum are
+  recorded in `docs/qa/ANDROID_GALAXY_A15_BUILD_9.md`.
+- Android 9 uses commit `5b4dddc05c8a4fc5b7dd4e45aa4a7ab29115b29f`; the attempted
+  iOS 22 uses merged commit `a4a26e07b6368055a46dd2b36da8be1aee900447`.
 - iOS TestFlight VALID / IN_BETA_TESTING was recorded August 26. Apple-side
   processing was not rechecked August 31. EAS completion does not prove a
   successful installation or device sign-off.
-- Android 7's EAS artifact is the installable private-QA handoff. EAS may expire
+- Android 9's EAS artifact is the installable private-QA handoff. EAS may expire
   the download URL; use the authenticated build record to retrieve a fresh link
-  if needed. VersionCode 8 is queued from the same commit but is not yet an
-  installable candidate.
+  if needed. Android 7 is superseded and must not be used to sign off this fix.
 
 These identify the last known baseline, not the eventual release candidate.
 Every test record must name the exact installed build.
@@ -40,7 +39,8 @@ Per-build execution records:
 
 - `docs/qa/IOS_TESTFLIGHT_BUILD_17.md` (stale baseline)
 - `docs/qa/IOS_TESTFLIGHT_BUILD_22.md` (failed replacement attempt)
-- `docs/qa/ANDROID_GALAXY_A15_BUILD_7.md`
+- `docs/qa/ANDROID_GALAXY_A15_BUILD_7.md` (superseded)
+- `docs/qa/ANDROID_GALAXY_A15_BUILD_9.md`
 - `docs/MOBILE_NATIVE_QA_SCOPE.md` defines the bounded next-candidate smoke test.
 
 Apple public-release and Google developer-platform work remain gated by the
