@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-07T11:06:02.073Z",
+  "checkedAt": "2026-09-08T11:06:15.218Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -64,7 +64,7 @@
     {
       "url": "https://api-docs.deepseek.com/quick_start/pricing",
       "ok": true,
-      "note": "3526 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "3521 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "deepseek-deepseek-v4-pro",
         "deepseek-deepseek-v4-flash"
@@ -89,7 +89,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "536866 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "535642 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
