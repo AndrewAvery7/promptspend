@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
-import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
+import { CountryFilter, countryFlag, countryName, emptyReason } from '@/components/CountryFilter';
 import { lightTheme as mockLightTheme } from '@/theme/tokens';
 
 jest.mock('@/theme/useMobileTheme', () => ({
@@ -68,6 +68,8 @@ describe('country-filter copy', () => {
   test('uses understandable country names and falls back safely for new ISO codes', () => {
     expect(countryName('cn')).toBe('China');
     expect(countryName('DE')).toBe('DE');
+    expect(countryFlag('us')).toBe('🇺🇸');
+    expect(countryFlag('unknown')).toBe('🌐');
   });
 
   test.each([

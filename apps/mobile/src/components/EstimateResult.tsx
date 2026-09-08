@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Alert, findNodeHandle, Pressable, Share, StyleSheet, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
+import { CountryBadge } from '@/components/CountryBadge';
 import {
   buildEstimateShareText,
   formatMoney,
@@ -19,10 +20,11 @@ interface EstimateResultProps {
   breakdown: CostBreakdown;
   model: Model;
   scaled: ScaledCost;
+  country?: string | null;
   validateAction?: () => void;
 }
 
-export function EstimateResult({ breakdown, model, scaled, validateAction }: EstimateResultProps) {
+export function EstimateResult({ breakdown, country, model, scaled, validateAction }: EstimateResultProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const shareButtonRef = useRef<View>(null);
@@ -164,6 +166,8 @@ export function EstimateResult({ breakdown, model, scaled, validateAction }: Est
           )}
         </View>
       )}
+
+      <CountryBadge country={country} />
     </View>
   );
 }
