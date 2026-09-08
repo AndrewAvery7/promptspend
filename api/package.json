@@ -14,9 +14,9 @@
     "verify": "npm run typecheck && npm run test"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.20.1",
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
     "typescript": "^5.7.2",
-    "vitest": "^4.1.10",
+    "vitest": "^4.1.11",
     "wrangler": "^4.118.0"
   },
   "allowScripts": {
