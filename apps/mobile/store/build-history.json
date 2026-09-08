@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedOn": "2026-08-31",
+  "updatedOn": "2026-09-08",
   "versionSource": "remote",
   "records": [
     {
@@ -100,6 +100,26 @@
       "channel": "private-apk",
       "status": "private-qa",
       "evidence": "docs/qa/ANDROID_GALAXY_A15_BUILD_6.md"
+    },
+    {
+      "platform": "ios",
+      "marketingVersion": "0.1.0",
+      "buildNumber": 22,
+      "easBuildId": "ec50765a-6cdd-4f0d-b9e2-3f5f4879d043",
+      "gitCommit": "a4a26e07b6368055a46dd2b36da8be1aee900447",
+      "channel": "internal-testflight",
+      "status": "build-failed-signing-capability",
+      "evidence": "docs/qa/IOS_TESTFLIGHT_BUILD_22.md"
+    },
+    {
+      "platform": "android",
+      "marketingVersion": "0.1.0",
+      "versionCode": 7,
+      "easBuildId": "16721c06-a51b-4831-b6e4-0475121a1ae1",
+      "gitCommit": "a4a26e07b6368055a46dd2b36da8be1aee900447",
+      "channel": "private-apk",
+      "status": "private-qa-current",
+      "evidence": "docs/qa/ANDROID_GALAXY_A15_BUILD_7.md"
     }
   ],
   "note": "EAS remote versioning remains authoritative. Record every new private or store binary here after its build identifier is verified."

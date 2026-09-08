@@ -6,34 +6,41 @@ replacement binary. Earlier device results do not certify these additions.
 
 Status: active test protocol
 
-Last reviewed: 2026-08-31
+Last reviewed: 2026-09-08
 
-> **Current private-QA binaries.** iOS build 17 and Android versionCode 6 contain
-> the August 26 QA fixes and Help Center. They do not contain the later header
-> correction or August 31 review fixes. They are not approved public-release
-> candidates; source validation cannot substitute for testing replacement binaries.
+> **Current private-QA binaries.** Android versionCode 7 is the current
+> installable private-QA artifact from merged `main`. iOS build 22 was attempted
+> from the same source but failed before producing an IPA because the existing
+> Apple provisioning profile lacks the intentionally configured Associated
+> Domains capability. iOS build 17 remains installable in TestFlight but is
+> stale and must not be used to sign off the current source.
 
 ## Current installable baseline
 
-- iOS: version 0.1.0, build 17, EAS build
-  `2ce3cb87-aa5f-4fde-b58b-ed47348cefbe`.
-- Android internal APK: version 0.1.0, versionCode 6, EAS build
-  `d48de221-6a86-4f4c-9315-43cb6b803284`.
-- Both use commit `5a935049e4843b9907eaba9ff4a721fe4398107a` and were built
-  August 26. A read-only EAS query on August 31 confirmed both as FINISHED.
+- iOS: no current replacement IPA. The failed build-22 record is in
+  `docs/qa/IOS_TESTFLIGHT_BUILD_22.md`; the last installable baseline is build
+  17, EAS build `2ce3cb87-aa5f-4fde-b58b-ed47348cefbe`, from superseded source.
+- Android internal APK: version 0.1.0, versionCode 7, EAS build
+  `16721c06-a51b-4831-b6e4-0475121a1ae1`; the verified artifact and checksum are
+  recorded in `docs/qa/ANDROID_GALAXY_A15_BUILD_7.md`.
+- Android 7 and the attempted iOS 22 use merged commit
+  `a4a26e07b6368055a46dd2b36da8be1aee900447`.
 - iOS TestFlight VALID / IN_BETA_TESTING was recorded August 26. Apple-side
   processing was not rechecked August 31. EAS completion does not prove a
   successful installation or device sign-off.
-- Android 6's EAS artifact expires September 9 at 21:16 UTC. September 5 belongs
-  to superseded Android 4. No replacement artifact is created by this record.
+- Android 7's EAS artifact is the installable private-QA handoff. EAS may expire
+  the download URL; use the authenticated build record to retrieve a fresh link
+  if needed. VersionCode 8 is queued from the same commit but is not yet an
+  installable candidate.
 
 These identify the last known baseline, not the eventual release candidate.
 Every test record must name the exact installed build.
 
 Per-build execution records:
 
-- `docs/qa/IOS_TESTFLIGHT_BUILD_17.md`
-- `docs/qa/ANDROID_GALAXY_A15_BUILD_6.md`
+- `docs/qa/IOS_TESTFLIGHT_BUILD_17.md` (stale baseline)
+- `docs/qa/IOS_TESTFLIGHT_BUILD_22.md` (failed replacement attempt)
+- `docs/qa/ANDROID_GALAXY_A15_BUILD_7.md`
 - `docs/MOBILE_NATIVE_QA_SCOPE.md` defines the bounded next-candidate smoke test.
 
 Apple public-release and Google developer-platform work remain gated by the
