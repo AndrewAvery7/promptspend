@@ -7,7 +7,7 @@ Last reviewed: September 8, 2026
 
 ## Current audit (generated)
 
-Re-derived September 8, 2026 from `npm audit --package-lock-only` against lockfile `a9047cb4`: **3 findings: 3 moderate, 0 high, 0 critical**. Expo 57.0.20, expo-router 57.0.19, react-native-webview 13.16.1.
+Re-derived September 8, 2026 from `npm audit --package-lock-only` against lockfile `7fd445f7`: **3 findings: 3 moderate, 0 high, 0 critical**. Expo 57.0.21, expo-router 57.0.20, react-native-webview 13.16.1.
 
 | Package                | Severity | Vulnerable range                                     | Advisory                                                                 | Reached through                                     | Fix                                          |
 | ---------------------- | -------- | ---------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------- | -------------------------------------------- |
@@ -17,7 +17,7 @@ Re-derived September 8, 2026 from `npm audit --package-lock-only` against lockfi
 
 "Reached through" is the dependency chain from the package this project declares down to the vulnerable one; it says where a finding lives, not whether shipped code exercises it. Reachability is assessed in the exposure notes below only when a finding is escalated.
 
-**Automatic handling this run.** Fix attempts disabled for this run (--no-fix).
+**Automatic handling this run.** Fix attempts disabled for this run (--refresh).
 
 **Verdict.** Accepted under the standing policy below: no high or critical advisory. Moderate and low findings with no compatible fix are recorded here, not waived — the policy names the conditions that reopen them.
 

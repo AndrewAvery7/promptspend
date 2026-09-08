@@ -26,8 +26,9 @@
  *                    record is still written, the exit code is 3, and the
  *                    workflow opens an issue. That one case is the only one a
  *                    person is asked to look at.
- *   --refresh   re-run the audit; move the date only if the findings match
- *               the recorded fingerprint (exit 2 otherwise). No fixes.
+ *   --refresh   re-run the audit and regenerate its factual section when the
+ *               findings match the recorded fingerprint (exit 2 otherwise).
+ *               No fixes.
  *   --check     compare only; exit 2 on drift. For local use before a release.
  *   --stamp     record the current fingerprint and date after a person has
  *               edited the notes by hand.
@@ -47,7 +48,7 @@ const MARKER = /<!-- audit-fingerprint: ([0-9a-f]{12}) \(([^)]*)\) -->/;
 const REVIEWED = /^Last reviewed: ([A-Za-z]+ \d{1,2}, \d{4})$/m;
 const BEGIN = '<!-- audit:begin';
 const END = '<!-- audit:end -->';
-const SHELL = process.platform === 'win32';
+const WINDOWS = process.platform === 'win32';
 
 const mode = process.argv[2];
 const noFix = process.argv.includes('--no-fix');
@@ -57,7 +58,19 @@ if (!['--auto', '--refresh', '--stamp', '--check'].includes(mode ?? '')) {
 }
 
 function run(cmd, args, opts = {}) {
-  return spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', shell: SHELL, ...opts });
+  if (WINDOWS && (cmd === 'npm' || cmd === 'npx')) {
+    const tokens = [cmd, ...args];
+    if (tokens.some((token) => !/^[a-zA-Z0-9@./:_-]+$/.test(token))) {
+      throw new Error(`Refusing to pass an unsafe token to cmd.exe: ${tokens.join(' ')}`);
+    }
+    return spawnSync(process.env.ComSpec ?? 'cmd.exe', ['/d', '/s', '/c', tokens.join(' ')], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      shell: false,
+      ...opts,
+    });
+  }
+  return spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', shell: false, ...opts });
 }
 
 /** Every finding npm reports, in a form that changes only when the finding does. */
@@ -288,9 +301,24 @@ if (mode === '--check') {
   console.log('✓ the record still describes the dependency state');
   process.exit(0);
 }
-if (reviewed === today()) {
-  console.log('✓ already reviewed today — nothing to change');
-  process.exit(0);
-}
-writeFileSync(SECURITY, text.replace(REVIEWED, `Last reviewed: ${today()}`));
-console.log(`✓ re-derived, no change in findings — reviewed date moved from ${reviewed} to ${today()}`);
+
+// A patch-only dependency update may leave the advisory fingerprint unchanged
+// while changing the lock hash and the installed Expo versions printed in the
+// generated section. Refresh that entire factual section instead of moving
+// only the date and leaving the evidence stale.
+const begin = text.indexOf(BEGIN);
+const end = text.indexOf(END);
+const verdict =
+  'Accepted under the standing policy below: no high or critical advisory. Moderate and low findings with no compatible fix are recorded here, not waived — the policy names the conditions that reopen them.';
+const refreshedSection = section(a, 'Fix attempts disabled for this run (--refresh).', verdict);
+let next =
+  begin >= 0 && end > begin
+    ? text.slice(0, begin) + refreshedSection + text.slice(end + END.length)
+    : text.replace(/^(Last reviewed: .*\n(?:<!-- audit-fingerprint:.*-->\n)?)/m, `$1\n${refreshedSection}\n`);
+next = stamp(next, a);
+writeFileSync(SECURITY, next);
+console.log(
+  reviewed === today()
+    ? '✓ re-derived and refreshed the dependency evidence'
+    : `✓ re-derived, no change in findings — reviewed date moved from ${reviewed} to ${today()}`,
+);

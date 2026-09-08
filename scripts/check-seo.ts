@@ -47,6 +47,19 @@ async function findPages(dir = DIST, prefix = '/'): Promise<string[]> {
 }
 
 /**
+ * Utility routes such as the shared-estimate handoff deliberately opt out of
+ * search indexing. They are part of the built artifact, but they are not SEO
+ * landing pages and therefore must not be required to carry unique search
+ * metadata or appear in the sitemap.
+ */
+async function isNoIndexPage(path: string): Promise<boolean> {
+  const html = await readFile(resolve(DIST, `${path.slice(1)}index.html`), 'utf8');
+  const match = /<meta\s+(?:name="robots"\s+content="([^"]*)"|content="([^"]*)"\s+name="robots")/.exec(html);
+  const robots = match?.[1] ?? match?.[2] ?? '';
+  return (robots ?? '').split(',').some((directive) => directive.trim().toLowerCase() === 'noindex');
+}
+
+/**
  * Does this href point at something that exists in the artifact?
  *
  * The generated pages link to each other by path, and a directory that was
@@ -186,7 +199,11 @@ async function main(): Promise<void> {
 
   // ------------------------------------------------------- generated pages
 
-  const pages = await findPages();
+  const discoveredPages = await findPages();
+  const pages: string[] = [];
+  for (const path of discoveredPages) {
+    if (!(await isNoIndexPage(path))) pages.push(path);
+  }
   if (pages.length === 0) {
     problems.push('no generated pages found — did `npm run build:pages` run?');
   }

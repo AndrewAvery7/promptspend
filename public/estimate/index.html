@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="noindex" name="robots" />
+    <meta
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"
+      http-equiv="Content-Security-Policy"
+    />
     <link href="https://promptspend.com/" rel="canonical" />
     <title>Opening shared estimate — PromptSpend</title>
-    <script>
-      window.location.replace('/' + window.location.search + window.location.hash);
-    </script>
+    <script defer src="./redirect.js"></script>
   </head>
   <body>
     <p>
