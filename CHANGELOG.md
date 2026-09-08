@@ -9,6 +9,13 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Native conversation Receipt.** iOS and Android share the website's versioned audit instructions and
+  JSON parser, with local import, editable review, image/text sharing, Search, Guide, and FAQ entry points.
+  The existing hypothetical scenario artifact is now named Estimate Receipt.
+- **Mobile pricing evidence parity.** Introductory rates and expiration context appear in selectors,
+  catalog exploration, watchlists, the ticker, CSV, and Estimate Receipts. Home and Data expose catalog
+  provenance counts; Learn links to the August price movement report.
+
 - **PromptSpend Receipt at `/receipt/`.** The new product route gives people one fully visible, temporary
   instruction object to paste after an AI conversation. It asks for a request-by-request visible-workload
   estimate, requires current PromptSpend API evidence, preserves unknown model and hidden-usage states, and

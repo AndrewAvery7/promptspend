@@ -48,6 +48,7 @@ const safeProps = {
   modelIds: ['premium', 'efficient'],
   outputTokens: 900,
   pastedFields: ['system', 'user'] as const,
+  pricingAsOf: new Date('2026-08-13T12:00:00Z'),
   reasoningMultiplier: 1,
   revenuePerUserPerMonth: 0,
   rows,
@@ -62,6 +63,7 @@ describe('scenario sharing and export privacy', () => {
     const parsed = new URL(url);
 
     expect(parsed.origin).toBe('https://promptspend.com');
+    expect(parsed.pathname).toBe('/estimate/');
     expect(parsed.searchParams.get('m')).toBe('premium,efficient');
     expect(parsed.searchParams.get('px')).toBe('system,user');
     expect(decodeURIComponent(url)).not.toContain(SENTINEL);

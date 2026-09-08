@@ -1,37 +1,43 @@
 # PromptSpend Mobile Beta and QA
 
+Also complete the September Receipt, promotional-rate, provenance, and report-link
+checks in [`MOBILE_PARITY_2026_09.md`](MOBILE_PARITY_2026_09.md) against the exact
+replacement binary. Earlier device results do not certify these additions.
+
 Status: active test protocol
 
-Last reviewed: 2026-08-22
+Last reviewed: 2026-08-31
 
-> **Current private-QA binaries.** iOS build 15 and Android versionCode 4 contain
-> the complete August 22 country-filter release from the same merged source
-> revision. All earlier binaries are historical and must not be recorded as
-> current QA evidence.
+> **Current private-QA binaries.** iOS build 17 and Android versionCode 6 contain
+> the August 26 QA fixes and Help Center. They do not contain the later header
+> correction or August 31 review fixes. They are not approved public-release
+> candidates; source validation cannot substitute for testing replacement binaries.
 
 ## Current installable baseline
 
-- iOS TestFlight candidate: version 0.1.0, build 15, EAS build
-  `7416e483-86aa-49fd-a343-5eaed1e2d25e`, built from commit
-  `f944544f34ba14ff97f934cccc5afcd86a8fcf8e`. Verified IPA SHA-256:
-  `A4363B711FDB4C89CAD3BD6DD6843BDDCA6EE9EA80C43918ED5E627E980752AE`.
-  EAS submission `b2a12bc1-c792-4931-85a0-237992505a04` successfully uploaded
-  the binary to App Store Connect; install only after TestFlight displays build 15.
-- Android internal APK baseline: version 0.1.0, versionCode 4, EAS build
-  `c21e5975-fb91-4dac-b064-0b56f90a8a98`, built from commit
-  `f944544f34ba14ff97f934cccc5afcd86a8fcf8e`. Verified APK SHA-256:
-  `9D893EB7FE7C45741423698F781957BF7EC9F6332D7638A61A35201B3A22CCFC`.
+- iOS: version 0.1.0, build 17, EAS build
+  `2ce3cb87-aa5f-4fde-b58b-ed47348cefbe`.
+- Android internal APK: version 0.1.0, versionCode 6, EAS build
+  `d48de221-6a86-4f4c-9315-43cb6b803284`.
+- Both use commit `5a935049e4843b9907eaba9ff4a721fe4398107a` and were built
+  August 26. A read-only EAS query on August 31 confirmed both as FINISHED.
+- iOS TestFlight VALID / IN_BETA_TESTING was recorded August 26. Apple-side
+  processing was not rechecked August 31. EAS completion does not prove a
+  successful installation or device sign-off.
+- Android 6's EAS artifact expires September 9 at 21:16 UTC. September 5 belongs
+  to superseded Android 4. No replacement artifact is created by this record.
 
 These identify the last known baseline, not the eventual release candidate.
 Every test record must name the exact installed build.
 
 Per-build execution records:
 
-- `docs/qa/IOS_TESTFLIGHT_BUILD_15.md`
-- `docs/qa/ANDROID_GALAXY_A15_BUILD_4.md`
+- `docs/qa/IOS_TESTFLIGHT_BUILD_17.md`
+- `docs/qa/ANDROID_GALAXY_A15_BUILD_6.md`
+- `docs/MOBILE_NATIVE_QA_SCOPE.md` defines the bounded next-candidate smoke test.
 
 Apple public-release and Google developer-platform work remain gated by the
-account/D-U-N-S process and separate explicit approvals. Build 15 was uploaded
+account-verification process and separate explicit approvals. Build 17 was uploaded
 to App Store Connect for private internal TestFlight QA only. The Android
 baseline may be installed directly for private physical-device QA. Neither
 action authorizes a Play Console upload, store review, or public distribution.
@@ -82,6 +88,13 @@ size, light/dark setting, and assistive technology.
 - First launch with working network.
 - Network lost after a successful refresh with cache age under 24 hours.
 - Cache exactly 24 hours old and older than 24 hours.
+- Leave the app foregrounded across expiry; calculations and price sharing
+  must stop at the deadline without requiring navigation or a manual refresh.
+- Type a numeric change and tap Apply, Save, Share, CSV, or Receipt without
+  first dismissing the keyboard; the action must use the visible accepted input
+  or explain why the draft cannot be used.
+- Simulate full/read-only storage and corrupt saved state; no action may report
+  a durable save, rename, or deletion that the device did not acknowledge.
 - Device clock behind the cache timestamp.
 - Corrupt or partially written cache file.
 - Pricing returns HTTP error, timeout, malformed JSON, invalid schema, and a

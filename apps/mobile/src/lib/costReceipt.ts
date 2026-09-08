@@ -1,6 +1,7 @@
 import {
   buildComparisonShareText,
   buildEstimateShareText,
+  effectivePricing,
   formatMoney,
   type Catalog,
   type ComparisonRow,
@@ -15,6 +16,7 @@ export interface CostReceiptInput {
   conversationsPerDay: number;
   outputTokens: number;
   pastedFields: readonly PromptFieldKey[];
+  pricingAsOf: Date;
   reasoningMultiplier: number;
   rows: readonly ComparisonRow[];
   systemTokens: number;
@@ -29,6 +31,7 @@ export interface CostReceiptRow {
   monthly: string;
   perConversation: string;
   providerName: string;
+  promotional: boolean;
   yearly: string;
 }
 
@@ -69,6 +72,7 @@ export function buildCostReceiptData(input: CostReceiptInput): CostReceiptData |
     monthly: `${formatMoney(row.scaled.perMonth)}/mo`,
     perConversation: `${formatMoney(row.breakdown.total)}/conversation`,
     providerName: input.catalog.providerName(row.model),
+    promotional: effectivePricing(row.model.pricing, input.pricingAsOf) !== row.model.pricing,
     yearly: `${formatMoney(row.scaled.perYear)}/year`,
   }));
 
@@ -83,6 +87,14 @@ export function buildCostReceiptData(input: CostReceiptInput): CostReceiptData |
   if (input.batchEnabled) assumptionLines.push('Published batch pricing applied where available');
   if (input.reasoningMultiplier !== 1)
     assumptionLines.push(`${input.reasoningMultiplier.toFixed(1)}× reasoning-token multiplier`);
+  const promotionalAssumptions = [
+    ...new Set(
+      rows.flatMap((row) =>
+        row.breakdown.assumptions.filter((line) => line.includes('Promotional pricing applied')),
+      ),
+    ),
+  ];
+  assumptionLines.push(...promotionalAssumptions);
 
   return {
     assumptionLines,

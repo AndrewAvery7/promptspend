@@ -9,6 +9,7 @@ describe('mobile routes', () => {
   test('keeps Estimate separate from the startup route', () => {
     expect(APP_ROUTES.home).toBe('/home');
     expect(APP_ROUTES.estimate).toBe('/estimate');
+    expect(APP_ROUTES.receipt).toBe('/receipt');
   });
 
   test('builds an encoded deep link to a Help answer', () => {

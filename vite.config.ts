@@ -270,7 +270,12 @@ export default defineConfig(({ mode }) => {
       globals: true,
       environment: 'jsdom',
       setupFiles: ['./tests/setup.ts'],
-      include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'scripts/**/*.test.ts'],
+      include: [
+        'src/**/*.test.ts',
+        'src/**/*.test.tsx',
+        'scripts/**/*.test.ts',
+        'packages/core/src/**/*.test.ts',
+      ],
       coverage: {
         provider: 'v8',
         // Components and state orchestration were excluded, which meant the

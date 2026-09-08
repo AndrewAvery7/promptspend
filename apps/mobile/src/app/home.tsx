@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 
-import { AppText as Text } from '@/components/AppText';
+import { AppText as Text, TYPE_ROLES } from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { conversationCost, costAtScale, formatMoney, type Model } from '@promptspend/core';
@@ -28,9 +28,11 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { ContextualHelpLink } from '@/components/HelpCenter';
 import { TourTarget, useGuidedTour } from '@/components/GuidedTour';
 import { SavedScenarioSheet } from '@/components/SavedScenarioSheet';
+import { PersistenceStatus } from '@/components/PersistenceStatus';
 import { WebDocumentHead } from '@/components/WebDocumentHead';
 import { toggleComparisonSelection } from '@/lib/comparison';
 import { compareModelsForInputs, workloadForModel } from '@/lib/promptInput';
+import { modelRateDisplay } from '@/lib/pricingDisplay';
 import { APP_ROUTES, helpHref } from '@/lib/routes';
 import {
   SCENARIO_PRESETS,
@@ -51,11 +53,14 @@ export default function HomeScreen() {
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
-  const [deletedScenario, setDeletedScenario] = useState<SavedScenario | null>(null);
+  const [deletedScenarios, setDeletedScenarios] = useState<SavedScenario[]>([]);
+  const deletedScenario = deletedScenarios[0];
   const [managedScenario, setManagedScenario] = useState<SavedScenario | null>(null);
   const [showAllScenarios, setShowAllScenarios] = useState(false);
+  const [showAllWatched, setShowAllWatched] = useState(false);
 
   const catalog = launch.catalogResult?.catalog ?? null;
+  const pricingAsOf = useMemo(() => new Date(`${launch.pricingDay}T12:00:00Z`), [launch.pricingDay]);
   const selectedModel = useMemo(
     () => chooseModel(catalog?.primaryModels ?? [], launch.selectedId),
     [catalog, launch.selectedId],
@@ -64,6 +69,7 @@ export default function HomeScreen() {
     if (!selectedModel) return null;
     const modelWorkload = workloadForModel(selectedModel, launch.promptInputs, launch.workload);
     const breakdown = conversationCost(selectedModel, modelWorkload, {
+      asOf: pricingAsOf,
       cachedInputShare: launch.cacheEnabled ? launch.cacheSharePercent / 100 : 0,
       reasoningMultiplier: launch.reasoningMultiplier,
       useBatchApi: launch.batchEnabled,
@@ -82,6 +88,7 @@ export default function HomeScreen() {
     launch.reasoningMultiplier,
     launch.workload,
     selectedModel,
+    pricingAsOf,
   ]);
   const comparisonModels = useMemo(
     () =>
@@ -106,6 +113,7 @@ export default function HomeScreen() {
         },
         {
           cachedInputShare: launch.cacheEnabled ? launch.cacheSharePercent / 100 : 0,
+          asOf: pricingAsOf,
           reasoningMultiplier: launch.reasoningMultiplier,
           useBatchApi: launch.batchEnabled,
         },
@@ -118,6 +126,7 @@ export default function HomeScreen() {
       launch.promptInputs,
       launch.reasoningMultiplier,
       launch.workload,
+      pricingAsOf,
     ],
   );
   const selectedRow = comparisonRows.find((row) => row.model.id === launch.selectedId);
@@ -125,12 +134,16 @@ export default function HomeScreen() {
   const potentialSavings =
     selectedRow && cheapestRow ? selectedRow.scaled.perMonth - cheapestRow.scaled.perMonth : 0;
 
-  const navigateToSection = (section: AppSection) => {
-    if (section === 'estimate') router.navigate(APP_ROUTES.estimate);
-    if (section === 'compare') router.navigate(APP_ROUTES.compare);
-    if (section === 'learn') router.navigate(APP_ROUTES.learn);
-    if (section === 'data') router.navigate(APP_ROUTES.data);
-  };
+  const navigateToSection = useCallback(
+    (section: AppSection) => {
+      if (section === 'estimate') router.navigate(APP_ROUTES.estimate);
+      if (section === 'compare') router.navigate(APP_ROUTES.compare);
+      if (section === 'receipt') router.navigate(APP_ROUTES.receipt);
+      if (section === 'learn') router.navigate(APP_ROUTES.learn);
+      if (section === 'data') router.navigate(APP_ROUTES.data);
+    },
+    [router],
+  );
 
   const applyPreset = (preset: ScenarioPreset) => {
     launch.applyPreset(preset);
@@ -139,12 +152,14 @@ export default function HomeScreen() {
     router.navigate(APP_ROUTES.estimate);
   };
 
-  const saveCurrentScenario = () => {
+  const saveCurrentScenario = async () => {
     if (!current) return;
-    launch.saveScenario(`Estimate · ${shortDate(new Date())}`, {
+    const saved = await launch.saveScenario(`Estimate · ${shortDate(new Date())}`, {
       ...launch.workload,
       ...current.modelWorkload,
     });
+    if (saved)
+      Alert.alert('Scenario saved', 'Stored on this device with derived counts and assumptions only.');
   };
 
   return (
@@ -185,7 +200,13 @@ export default function HomeScreen() {
             />
           </View>
 
-          {catalog && <PricingTicker catalog={catalog} onOpenData={() => router.navigate(APP_ROUTES.data)} />}
+          {catalog && (
+            <PricingTicker
+              asOf={pricingAsOf}
+              catalog={catalog}
+              onOpenData={() => router.navigate(APP_ROUTES.data)}
+            />
+          )}
 
           <TourTarget id="home-cost-brief" scrollRef={scrollRef}>
             <View style={styles.hero}>
@@ -209,6 +230,30 @@ export default function HomeScreen() {
               )}
             </View>
           </TourTarget>
+
+          {catalog && (
+            <Pressable
+              accessibilityHint="Opens complete pricing provenance and verification details"
+              accessibilityRole="button"
+              onPress={() => router.navigate(APP_ROUTES.data)}
+              style={({ pressed }) => [styles.provenanceCard, pressed && styles.pressed]}
+            >
+              <View style={styles.provenanceHeader}>
+                <Text style={styles.cardEyebrow}>THE RECEIPTS BEHIND THE RATES</Text>
+                <Ionicons color={theme.accent} name="shield-checkmark-outline" size={22} />
+              </View>
+              <Text style={styles.provenanceStatement}>
+                {catalog.primaryModels.length} models · {catalog.providers.length} providers ·{' '}
+                {catalog.vendorVerifiedCount()} vendor-page verified · {catalog.feedSourcedCount()}{' '}
+                public-feed sourced
+              </Text>
+              <Text style={[styles.body, catalog.flaggedForReviewCount() > 0 && styles.provenanceWarning]}>
+                {catalog.flaggedForReviewCount() === 0
+                  ? 'No pricing rows are currently flagged for review.'
+                  : `${catalog.flaggedForReviewCount()} pricing rows are visibly flagged for review.`}
+              </Text>
+            </Pressable>
+          )}
 
           {!launch.catalogResult && (
             <View accessibilityLiveRegion="polite" style={styles.statusCard}>
@@ -242,12 +287,7 @@ export default function HomeScreen() {
             </View>
           )}
 
-          {launch.persistenceNotice && (
-            <View accessibilityRole="alert" style={styles.warningCard}>
-              <Ionicons color={theme.warning} name="file-tray-outline" size={22} />
-              <Text style={styles.warningText}>{launch.persistenceNotice}</Text>
-            </View>
-          )}
+          <PersistenceStatus />
 
           {selectedModel && current && (
             <View
@@ -320,6 +360,26 @@ export default function HomeScreen() {
             </Pressable>
           )}
 
+          <Pressable
+            accessibilityHint="Opens the private conversation audit workflow"
+            accessibilityRole="button"
+            onPress={() => router.navigate(APP_ROUTES.receipt)}
+            style={({ pressed }) => [styles.receiptCta, pressed && styles.pressed]}
+          >
+            <View style={styles.receiptCtaIcon}>
+              <Ionicons color={theme.accent} name="receipt-outline" size={24} />
+            </View>
+            <View style={styles.flex}>
+              <Text style={styles.cardEyebrow}>NEW · PROMPTSPEND RECEIPT</Text>
+              <Text style={styles.cardTitle}>Audit a conversation that already happened.</Text>
+              <Text style={styles.body}>
+                Generate a transparent cost receipt without connecting an AI account or uploading the
+                conversation.
+              </Text>
+            </View>
+            <Ionicons color={theme.accent} name="chevron-forward" size={20} />
+          </Pressable>
+
           <SectionHeading
             eyebrow="START FAST"
             summary="Use a transparent starting point, then change every assumption."
@@ -353,7 +413,15 @@ export default function HomeScreen() {
             title="Saved scenarios"
             styles={styles}
           />
-          {launch.savedScenarios.length === 0 ? (
+          {!launch.hydrated || launch.persistenceBlocked ? (
+            <View accessibilityLiveRegion="polite" style={styles.emptyCard}>
+              <Text style={styles.body}>
+                {!launch.hydrated
+                  ? 'Loading saved scenarios…'
+                  : 'Saved scenarios are protected while storage recovery is pending. Use the recovery options above.'}
+              </Text>
+            </View>
+          ) : launch.savedScenarios.length === 0 ? (
             <View style={styles.emptyCard}>
               <Ionicons color={theme.mutedText} name="albums-outline" size={28} />
               <Text style={styles.cardTitle}>No saved scenarios yet</Text>
@@ -412,7 +480,22 @@ export default function HomeScreen() {
             title="Models you follow"
             styles={styles}
           />
-          {launch.favorites.length === 0 || !catalog ? (
+          {!launch.hydrated || launch.persistenceBlocked ? (
+            <View accessibilityLiveRegion="polite" style={styles.emptyCard}>
+              <Text style={styles.body}>
+                {!launch.hydrated
+                  ? 'Loading watched models…'
+                  : 'Your watchlist is protected while storage recovery is pending.'}
+              </Text>
+            </View>
+          ) : launch.favorites.length > 0 && !catalog ? (
+            <View style={styles.emptyCard}>
+              <Text style={styles.cardTitle}>{launch.favorites.length} watched models saved</Text>
+              <Text style={styles.body}>
+                Your choices are kept. Current pricing must be available before their price cards can appear.
+              </Text>
+            </View>
+          ) : launch.favorites.length === 0 ? (
             <View style={styles.emptyCard}>
               <Ionicons color={theme.mutedText} name="bookmark-outline" size={28} />
               <Text style={styles.cardTitle}>Your watchlist is ready</Text>
@@ -427,8 +510,8 @@ export default function HomeScreen() {
             </View>
           ) : (
             <View style={styles.watchGrid}>
-              {launch.favorites.slice(0, 6).map((id) => {
-                const model = catalog.get(id);
+              {launch.favorites.slice(0, showAllWatched ? 100 : 6).map((id) => {
+                const model = catalog?.get(id);
                 if (!model) {
                   return (
                     <View key={id} style={styles.watchCard}>
@@ -443,7 +526,7 @@ export default function HomeScreen() {
                         accessibilityLabel={`Remove ${id} from watchlist`}
                         accessibilityRole="button"
                         onPress={() => launch.toggleFavorite(id)}
-                        style={styles.watchRemove}
+                        style={({ pressed }) => [styles.watchRemove, pressed && styles.pressed]}
                       >
                         <Text style={styles.watchRemoveText}>Remove from watchlist</Text>
                       </Pressable>
@@ -459,9 +542,10 @@ export default function HomeScreen() {
                     : model.status === 'current'
                       ? 'CURRENT'
                       : model.status.toUpperCase();
+                const rates = modelRateDisplay(model, pricingAsOf);
                 return (
                   <Pressable
-                    accessibilityLabel={`${model.displayName}. ${status}. Input ${formatMoney(model.pricing.input)} and output ${formatMoney(model.pricing.output)} per million tokens. Verified ${model.provenance.lastVerified}.`}
+                    accessibilityLabel={`${model.displayName}. ${status}. ${rates.accessibility}. Verified ${model.provenance.lastVerified}.`}
                     accessibilityRole="button"
                     key={id}
                     onPress={() => {
@@ -475,11 +559,12 @@ export default function HomeScreen() {
                       <Text style={[styles.watchBadge, attention && styles.watchBadgeWarning]}>{status}</Text>
                     </View>
                     <Text style={styles.watchMeta}>
-                      {catalog.providerName(model)} · verified {model.provenance.lastVerified}
+                      {catalog?.providerName(model)} · verified {model.provenance.lastVerified}
                     </Text>
                     <Text style={styles.watchPrice}>
-                      {formatMoney(model.pricing.input)}/{formatMoney(model.pricing.output)} per 1M
+                      {rates.input}/{rates.output} per 1M
                     </Text>
+                    {rates.promoLabel && <Text style={styles.watchPromo}>{rates.promoLabel}</Text>}
                     {model.provenance.reviewNote && (
                       <Text numberOfLines={2} style={styles.watchReview}>
                         {model.provenance.reviewNote}
@@ -488,6 +573,18 @@ export default function HomeScreen() {
                   </Pressable>
                 );
               })}
+              {launch.favorites.length > 6 && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: showAllWatched }}
+                  onPress={() => setShowAllWatched((value) => !value)}
+                  style={({ pressed }) => [styles.showAllButton, pressed && styles.pressed]}
+                >
+                  <Text style={styles.showAllText}>
+                    {showAllWatched ? 'Show first six' : `View all ${launch.favorites.length} watched models`}
+                  </Text>
+                </Pressable>
+              )}
             </View>
           )}
 
@@ -496,12 +593,14 @@ export default function HomeScreen() {
 
         {deletedScenario && (
           <View accessibilityLiveRegion="polite" style={styles.undoBar}>
-            <Text style={styles.undoText}>Scenario deleted</Text>
+            <Text style={styles.undoText}>
+              {deletedScenarios.length} deleted · {deletedScenario.name}
+            </Text>
             <Pressable
               accessibilityRole="button"
-              onPress={() => {
-                launch.recoverScenario(deletedScenario);
-                setDeletedScenario(null);
+              onPress={async () => {
+                if (await launch.recoverScenario(deletedScenario))
+                  setDeletedScenarios((items) => items.filter((item) => item.id !== deletedScenario.id));
               }}
               style={styles.undoButton}
             >
@@ -510,7 +609,9 @@ export default function HomeScreen() {
             <Pressable
               accessibilityLabel="Dismiss delete message"
               accessibilityRole="button"
-              onPress={() => setDeletedScenario(null)}
+              onPress={() =>
+                setDeletedScenarios((items) => items.filter((item) => item.id !== deletedScenario.id))
+              }
               style={styles.undoClose}
             >
               <Ionicons color={theme.onAccent} name="close" size={20} />
@@ -521,23 +622,27 @@ export default function HomeScreen() {
         <SavedScenarioSheet
           key={managedScenario?.id ?? 'no-managed-scenario'}
           onClose={() => setManagedScenario(null)}
-          onDelete={(scenario) => {
-            launch.deleteScenario(scenario.id);
-            setDeletedScenario(scenario);
+          onDelete={async (scenario) => {
+            const saved = await launch.deleteScenario(scenario.id);
+            if (saved) setDeletedScenarios((items) => [...items, scenario]);
+            return saved;
           }}
-          onDuplicate={(scenario) => {
-            const duplicate = launch.duplicateScenario(scenario);
+          onDuplicate={async (scenario) => {
+            const duplicate = await launch.duplicateScenario(scenario);
+            if (!duplicate) return false;
             setManagedScenario(null);
             Alert.alert('Scenario duplicated', `“${duplicate.name}” is ready in Saved scenarios.`);
+            return true;
           }}
           onOpen={(scenario) => {
             launch.restoreScenario(scenario);
             setManagedScenario(null);
             router.navigate(APP_ROUTES.estimate);
           }}
-          onRename={(scenario, name) => {
-            launch.renameScenario(scenario.id, name);
-            setManagedScenario({ ...scenario, name });
+          onRename={async (scenario, name) => {
+            const saved = await launch.renameScenario(scenario.id, name);
+            if (saved) setManagedScenario({ ...scenario, name });
+            return saved;
           }}
           scenario={managedScenario}
         />
@@ -766,6 +871,7 @@ function presetIcon(id: string): keyof typeof Ionicons.glyphMap {
 }
 
 function shortDate(date: Date): string {
+  if (!Number.isFinite(date.getTime())) return 'Date unavailable';
   return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 }
 
@@ -802,7 +908,7 @@ function createStyles(theme: MobileTheme) {
     },
     brandMarkInner: { borderColor: theme.onAccent, borderRadius: 3, borderWidth: 2, height: 17, width: 14 },
     brandName: { color: theme.text, fontSize: 20, fontWeight: '900' },
-    brandSubhead: { color: theme.mutedText, fontSize: 8, fontWeight: '800', letterSpacing: 1.25 },
+    brandSubhead: { color: theme.mutedText, ...TYPE_ROLES.caption, fontWeight: '600', letterSpacing: 1.0 },
     hero: { gap: 10, paddingBottom: 4, paddingTop: 8 },
     eyebrow: { color: theme.accent, fontSize: 11, fontWeight: '900', letterSpacing: 1.5 },
     title: {
@@ -834,6 +940,17 @@ function createStyles(theme: MobileTheme) {
       padding: 14,
     },
     warningText: { color: theme.text, flex: 1, fontSize: 13, lineHeight: 19 },
+    provenanceCard: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 14,
+      borderWidth: 1,
+      gap: 8,
+      padding: 16,
+    },
+    provenanceHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+    provenanceStatement: { color: theme.text, fontSize: 15, fontWeight: '800', lineHeight: 22 },
+    provenanceWarning: { color: theme.warning, fontWeight: '800' },
     costCard: {
       backgroundColor: theme.surface,
       borderColor: theme.border,
@@ -844,7 +961,7 @@ function createStyles(theme: MobileTheme) {
     },
     costHeader: { alignItems: 'flex-start', flexDirection: 'row', gap: 12 },
     costHeaderCopy: { flex: 1, gap: 4 },
-    cardEyebrow: { color: theme.accent, fontSize: 10, fontWeight: '900', letterSpacing: 1.15 },
+    cardEyebrow: { color: theme.accent, ...TYPE_ROLES.caption, fontWeight: '600', letterSpacing: 1.15 },
     cardTitle: { color: theme.text, fontSize: 19, fontWeight: '800', lineHeight: 25 },
     body: { color: theme.mutedText, fontSize: 14, lineHeight: 21 },
     iconButton: {
@@ -885,6 +1002,24 @@ function createStyles(theme: MobileTheme) {
     actionButtonText: { color: theme.text, fontSize: 14, fontWeight: '800' },
     actionButtonTextPrimary: { color: theme.onAccent },
     pressed: { opacity: 0.68 },
+    receiptCta: {
+      alignItems: 'center',
+      backgroundColor: theme.accentSoft,
+      borderColor: theme.accent,
+      borderRadius: 16,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 14,
+      padding: 18,
+    },
+    receiptCtaIcon: {
+      alignItems: 'center',
+      backgroundColor: theme.surface,
+      borderRadius: 12,
+      height: 46,
+      justifyContent: 'center',
+      width: 46,
+    },
     savingsCard: {
       alignItems: 'center',
       backgroundColor: theme.surface,
@@ -903,10 +1038,10 @@ function createStyles(theme: MobileTheme) {
       justifyContent: 'center',
       width: 46,
     },
-    savingsLabel: { color: theme.savings, fontSize: 10, fontWeight: '900', letterSpacing: 1.1 },
+    savingsLabel: { color: theme.savings, ...TYPE_ROLES.caption, fontWeight: '600', letterSpacing: 1.1 },
     savingsValue: { color: theme.text, fontSize: 20, fontWeight: '900', marginBottom: 2, marginTop: 3 },
     sectionHeading: { gap: 4, paddingTop: 8 },
-    sectionEyebrow: { color: theme.accent, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
+    sectionEyebrow: { color: theme.accent, ...TYPE_ROLES.caption, fontWeight: '600', letterSpacing: 1.2 },
     sectionTitle: { color: theme.text, fontSize: 25, fontWeight: '900', lineHeight: 31 },
     sectionSummary: { color: theme.mutedText, fontSize: 13, lineHeight: 20 },
     presetGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
@@ -986,7 +1121,7 @@ function createStyles(theme: MobileTheme) {
       backgroundColor: theme.accentSoft,
       borderRadius: 6,
       color: theme.accent,
-      fontSize: 8,
+      ...TYPE_ROLES.caption,
       fontWeight: '900',
       letterSpacing: 0.6,
       overflow: 'hidden',
@@ -996,7 +1131,8 @@ function createStyles(theme: MobileTheme) {
     watchBadgeWarning: { backgroundColor: theme.surfaceRaised, color: theme.warning },
     watchMeta: { color: theme.mutedText, fontSize: 11 },
     watchPrice: { color: theme.accent, fontSize: 11, fontWeight: '800', marginTop: 6 },
-    watchReview: { color: theme.warning, fontSize: 10, lineHeight: 15 },
+    watchPromo: { color: theme.accent, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
+    watchReview: { color: theme.warning, ...TYPE_ROLES.caption },
     watchRemove: { alignItems: 'center', alignSelf: 'flex-start', justifyContent: 'center', minHeight: 48 },
     watchRemoveText: { color: theme.danger, fontSize: 11, fontWeight: '800' },
     footer: {
@@ -1052,7 +1188,7 @@ function createStyles(theme: MobileTheme) {
     },
     skipButton: { alignItems: 'center', justifyContent: 'center', minHeight: 44, paddingHorizontal: 10 },
     skipText: { color: theme.accent, fontSize: 14, fontWeight: '800' },
-    onboardingStep: { color: theme.accent, fontSize: 10, fontWeight: '900', letterSpacing: 1.2 },
+    onboardingStep: { color: theme.accent, ...TYPE_ROLES.caption, fontWeight: '600', letterSpacing: 1.2 },
     onboardingTitle: {
       color: theme.text,
       fontSize: 30,

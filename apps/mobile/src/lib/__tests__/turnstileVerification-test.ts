@@ -1,11 +1,27 @@
 import {
+  createVerificationNonce,
   isAllowedVerificationUrl,
   isVerificationDocument,
   parseTurnstileMessage,
 } from '@/lib/turnstileVerification';
+import { randomUUID } from 'expo-crypto';
+
+jest.mock('expo-crypto', () => ({ randomUUID: jest.fn() }));
 
 describe('native Turnstile verification boundary', () => {
   const nonce = 'request-nonce';
+
+  test('uses a CSPRNG UUID and never falls back to predictable randomness', () => {
+    const uuid = '40332171-f9ae-4902-ab8a-e6e0d9371234';
+    jest.mocked(randomUUID).mockReturnValueOnce(uuid);
+    expect(createVerificationNonce()).toBe(uuid);
+    jest.mocked(randomUUID).mockReturnValueOnce('predictable');
+    expect(createVerificationNonce).toThrow('Secure verification could not start');
+    jest.mocked(randomUUID).mockImplementationOnce(() => {
+      throw new Error('Native unavailable');
+    });
+    expect(createVerificationNonce).toThrow('Native unavailable');
+  });
 
   test('accepts only a well-formed token for the current request', () => {
     const token = 'verified-token-with-enough-entropy';

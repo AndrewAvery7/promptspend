@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter, useIsFocused, useLocalSearchParams } from 'expo-router';
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -10,12 +11,19 @@ import {
   StyleSheet,
   Switch,
   View,
+  useWindowDimensions,
 } from 'react-native';
 
-import { AppText as Text } from '@/components/AppText';
+import { AppText as Text, FONT_FAMILIES } from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { conversationCost, costAtScale, SUGGESTED_CACHE_SHARE, type Model } from '@promptspend/core';
+import {
+  conversationCost,
+  costAtScale,
+  formatMoney,
+  SUGGESTED_CACHE_SHARE,
+  type Model,
+} from '@promptspend/core';
 
 import { ComparisonModelPicker } from '@/components/ComparisonModelPicker';
 import { ComparisonResult } from '@/components/ComparisonResult';
@@ -25,6 +33,7 @@ import {
   GlobalActions,
   PricingTicker,
   type AppSection,
+  isCompactAppChrome,
 } from '@/components/AppChrome';
 import { DataSection } from '@/components/DataSection';
 import { CatalogExplorer } from '@/components/CatalogExplorer';
@@ -36,6 +45,9 @@ import { LearnSection } from '@/components/LearnSection';
 import { WebDocumentHead } from '@/components/WebDocumentHead';
 import { ModelPicker } from '@/components/ModelPicker';
 import { NumericField } from '@/components/NumericField';
+import { NumericDraftScopeProvider } from '@/components/NumericDraftScope';
+import { PersistenceStatus } from '@/components/PersistenceStatus';
+import { assertNumericDraftsValid } from '@/lib/numericDrafts';
 import { PromptInputField } from '@/components/PromptInputField';
 import { ScenarioActions } from '@/components/ScenarioActions';
 import { ScenarioInsights } from '@/components/ScenarioInsights';
@@ -52,6 +64,7 @@ import {
   type PromptInputMode,
 } from '@/lib/promptInput';
 import { APP_ROUTES, helpHref } from '@/lib/routes';
+import { readSharedScenario, type SharedScenarioParams } from '@/lib/sharedScenarioLink';
 import type { SavingsLever } from '@/lib/savingsPlaybook';
 import type { SensitivityDraft } from '@/lib/sensitivity';
 import type { MobileTheme } from '@/theme/tokens';
@@ -59,25 +72,49 @@ import { useMobileTheme } from '@/theme/useMobileTheme';
 import { DEFAULT_MODEL_ID, type WorkloadState, useLaunchState } from '@/state/useLaunchState';
 
 export default function EstimateScreen() {
+  const params = useLocalSearchParams() as SharedScenarioParams;
+  const launch = useLaunchState();
+  const handledLink = useRef<string | null>(null);
+  const shared = useMemo(() => readSharedScenario(params), [params]);
+
+  useEffect(() => {
+    if (!launch.hydrated || !shared || handledLink.current === shared.signature) return;
+    handledLink.current = shared.signature;
+    Alert.alert(
+      'Open shared estimate?',
+      'This link contains model choices, derived token counts, and pricing assumptions. It never contains pasted prompt or response text.',
+      [
+        { text: 'Not now', style: 'cancel' },
+        { text: 'Open estimate', onPress: () => launch.applySharedScenario(shared.scenario) },
+      ],
+    );
+  }, [launch, shared]);
+
   return <EstimatorWorkspace section="estimate" />;
 }
 
 export function EstimatorWorkspace({
   alertToken,
   helpEntryId,
+  onHelpEntryConsumed,
   section,
 }: {
   alertToken?: string;
   helpEntryId?: string;
+  onHelpEntryConsumed?: () => void;
   section: AppSection;
 }) {
   const router = useRouter();
+  const isFocused = useIsFocused();
+  const { width } = useWindowDimensions();
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { startTour } = useGuidedTour();
   const scrollRef = useRef<ScrollView>(null);
   const {
     batchEnabled,
+    assertCurrentPricing,
+    pricingDay,
     cacheEnabled,
     cacheSharePercent,
     catalogError,
@@ -105,13 +142,16 @@ export function EstimatorWorkspace({
     workload,
   } = useLaunchState();
   const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const mode = section === 'compare' ? 'compare' : 'estimate';
+  const documentMeta = DOCUMENT_META[section];
 
   const navigateToSection = useCallback(
     (next: AppSection) => {
       if (next === 'estimate') router.navigate(APP_ROUTES.estimate);
       if (next === 'compare') router.navigate(APP_ROUTES.compare);
+      if (next === 'receipt') router.navigate(APP_ROUTES.receipt);
       if (next === 'learn') router.navigate(APP_ROUTES.learn);
       if (next === 'data') router.navigate(APP_ROUTES.data);
     },
@@ -126,6 +166,7 @@ export function EstimatorWorkspace({
   );
 
   const catalog = catalogResult?.catalog ?? null;
+  const pricingAsOf = useMemo(() => new Date(`${pricingDay}T12:00:00Z`), [pricingDay]);
   const selectedModel = useMemo(
     () => (catalog ? chooseModel(catalog.primaryModels, selectedId) : null),
     [catalog, selectedId],
@@ -135,6 +176,7 @@ export function EstimatorWorkspace({
     () =>
       selectedModel
         ? conversationCost(selectedModel, workloadForModel(selectedModel, promptInputs, workload), {
+            asOf: pricingAsOf,
             cachedInputShare: cacheEnabled ? cacheSharePercent / 100 : 0,
             reasoningMultiplier,
             useBatchApi: batchEnabled,
@@ -148,6 +190,7 @@ export function EstimatorWorkspace({
       reasoningMultiplier,
       selectedModel,
       workload,
+      pricingAsOf,
     ],
   );
   const scaled = useMemo(
@@ -181,6 +224,7 @@ export function EstimatorWorkspace({
         },
         {
           cachedInputShare: cacheEnabled ? cacheSharePercent / 100 : 0,
+          asOf: pricingAsOf,
           reasoningMultiplier,
           useBatchApi: batchEnabled,
         },
@@ -193,6 +237,7 @@ export function EstimatorWorkspace({
       promptInputs,
       reasoningMultiplier,
       workload,
+      pricingAsOf,
     ],
   );
   const tokenReferenceModel = mode === 'compare' ? (comparisonModels[0] ?? selectedModel) : selectedModel;
@@ -242,9 +287,29 @@ export function EstimatorWorkspace({
       ...current,
       [field]: { ...current[field], text },
     }));
+    if (tokenReferenceModel) {
+      const workloadKey = {
+        system: 'systemTokens',
+        user: 'userTokens',
+        output: 'outputTokens',
+      }[field] as 'systemTokens' | 'userTokens' | 'outputTokens';
+      const derivedTokens = promptFieldTokens(
+        { mode: 'text', text },
+        workload[workloadKey],
+        tokenReferenceModel,
+      );
+      setWorkload((current) => ({ ...current, [workloadKey]: derivedTokens }));
+    }
   };
 
   const applySavingsLever = (lever: SavingsLever) => {
+    try {
+      assertNumericDraftsValid();
+      assertCurrentPricing();
+    } catch (error) {
+      Alert.alert('Check this estimate', error instanceof Error ? error.message : 'Review the inputs first.');
+      return;
+    }
     if (lever.kind === 'model' && lever.proposedModelId) setSelectedId(lever.proposedModelId);
     if (lever.kind === 'output' && lever.proposedValue !== undefined) {
       updateWorkload('outputTokens', lever.proposedValue);
@@ -260,6 +325,13 @@ export function EstimatorWorkspace({
   };
 
   const applySensitivityPreview = (draft: SensitivityDraft) => {
+    try {
+      assertNumericDraftsValid();
+      assertCurrentPricing();
+    } catch (error) {
+      Alert.alert('Check this preview', error instanceof Error ? error.message : 'Review the inputs first.');
+      return;
+    }
     setWorkload((current) => ({
       ...current,
       conversationsPerDay: draft.conversationsPerDay,
@@ -269,11 +341,8 @@ export function EstimatorWorkspace({
   };
 
   return (
-    <>
-      <WebDocumentHead
-        description="Estimate, compare, and understand LLM API costs with validated pricing evidence."
-        title="PromptSpend — LLM cost estimator"
-      />
+    <NumericDraftScopeProvider active={isFocused}>
+      <WebDocumentHead description={documentMeta.description} title={documentMeta.title} />
       <SafeAreaView role="main" style={styles.safeArea} edges={['top', 'right', 'left']}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -286,6 +355,9 @@ export function EstimatorWorkspace({
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="handled"
             ref={scrollRef}
+            stickyHeaderIndices={
+              section === 'estimate' && breakdown && scaled ? [catalog ? 2 : 1] : undefined
+            }
             refreshControl={
               <RefreshControl
                 accessibilityLabel="Refresh pricing catalog"
@@ -304,7 +376,12 @@ export function EstimatorWorkspace({
                 </View>
                 <Text style={styles.brandName}>PromptSpend</Text>
               </View>
-              <TourTarget enabled={section === 'learn'} id="global-tools" scrollRef={scrollRef}>
+              <TourTarget
+                enabled={section === 'learn'}
+                id="global-tools"
+                scrollRef={scrollRef}
+                style={isCompactAppChrome(width) ? { width: '100%' } : undefined}
+              >
                 <GlobalActions
                   onAppearance={() => setAppearanceOpen(true)}
                   onSearch={() => setCommandOpen(true)}
@@ -313,7 +390,36 @@ export function EstimatorWorkspace({
               </TourTarget>
             </View>
 
-            {catalog && <PricingTicker catalog={catalog} onOpenData={() => navigateToSection('data')} />}
+            {catalog && (
+              <PricingTicker
+                asOf={pricingAsOf}
+                catalog={catalog}
+                onOpenData={() => navigateToSection('data')}
+              />
+            )}
+
+            {section === 'estimate' && breakdown && selectedModel && scaled && (
+              <View style={styles.stickySummaryShell}>
+                <View
+                  accessibilityLabel={`${selectedModel.displayName}. ${formatMoney(scaled.perMonth)} per month and ${formatMoney(breakdown.total)} per conversation.`}
+                  accessibilityRole="summary"
+                  style={styles.stickySummary}
+                >
+                  <View style={styles.stickySummaryCopy}>
+                    <Text style={styles.stickySummaryEyebrow}>LIVE ESTIMATE</Text>
+                    <Text numberOfLines={1} style={styles.stickySummaryModel}>
+                      {selectedModel.displayName}
+                    </Text>
+                  </View>
+                  <View style={styles.stickySummaryCost}>
+                    <Text style={styles.stickySummaryAmount}>{formatMoney(scaled.perMonth)}</Text>
+                    <Text style={styles.stickySummaryUnit}>
+                      per month · {formatMoney(breakdown.total)}/conversation
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
 
             {(section === 'estimate' || section === 'compare') && (
               <View style={styles.hero}>
@@ -341,12 +447,13 @@ export function EstimatorWorkspace({
               </View>
             )}
 
-            {!catalogResult && (
+            <PersistenceStatus />
+            {!catalogResult && section !== 'learn' && (
               <View accessibilityLiveRegion="polite" style={styles.gateCard}>
                 {catalogError ? (
                   <>
                     <Text accessibilityRole="header" style={styles.gateTitle}>
-                      Price calculations paused
+                      {section === 'data' ? 'Live price data paused' : 'Price calculations paused'}
                     </Text>
                     <Text style={styles.gateText}>{catalogError}</Text>
                     <Text style={styles.gateText}>
@@ -401,12 +508,21 @@ export function EstimatorWorkspace({
             )}
 
             {section === 'estimate' && breakdown && selectedModel && scaled && (
-              <EstimateResult breakdown={breakdown} model={selectedModel} scaled={scaled} />
+              <EstimateResult
+                breakdown={breakdown}
+                model={selectedModel}
+                scaled={scaled}
+                validateAction={assertCurrentPricing}
+              />
             )}
 
             {section === 'compare' && catalog && (
               <TourTarget id="compare-results" scrollRef={scrollRef}>
-                <ComparisonResult catalog={catalog} rows={comparisonRows} />
+                <ComparisonResult
+                  catalog={catalog}
+                  rows={comparisonRows}
+                  validateAction={assertCurrentPricing}
+                />
               </TourTarget>
             )}
 
@@ -414,13 +530,15 @@ export function EstimatorWorkspace({
               <LearnSection
                 catalog={catalog ?? undefined}
                 initialHelpEntryId={helpEntryId}
+                onHelpEntryConsumed={onHelpEntryConsumed}
                 onNavigate={navigateToHelpDestination}
                 tourScrollRef={scrollRef}
               />
             )}
 
-            {section === 'data' && catalog && (
+            {section === 'data' && (
               <DataSection
+                asOf={pricingAsOf}
                 catalog={catalog}
                 onOpenHelp={() => router.navigate(helpHref('data-overview'))}
                 preferencesToken={alertToken}
@@ -450,6 +568,7 @@ export function EstimatorWorkspace({
 
                     {mode === 'estimate' ? (
                       <ModelPicker
+                        asOf={pricingAsOf}
                         catalog={catalog}
                         isFavorite={favorites.includes(selectedModel.id)}
                         onChange={(model) => setSelectedId(model.id)}
@@ -458,6 +577,7 @@ export function EstimatorWorkspace({
                       />
                     ) : (
                       <ComparisonModelPicker
+                        asOf={pricingAsOf}
                         catalog={catalog}
                         favoriteIds={favorites}
                         onClear={() => setComparisonIds([])}
@@ -555,67 +675,90 @@ export function EstimatorWorkspace({
                       Conversation history is re-sent each turn, so cost compounds.
                     </Text>
 
-                    <View style={styles.switchRow}>
-                      <View style={styles.switchCopy}>
-                        <Text style={styles.switchLabel}>Assume prompt caching</Text>
-                        <Text style={styles.helper}>
-                          Off by default. When enabled, applies a {Math.round(SUGGESTED_CACHE_SHARE * 100)}%
-                          starting hit-rate assumption and published cache-write rates.
+                    <Pressable
+                      accessibilityHint="Shows or hides optional caching, batch, and reasoning assumptions"
+                      accessibilityRole="button"
+                      accessibilityState={{ expanded: advancedOpen }}
+                      android_ripple={{ color: theme.accentSoft }}
+                      onPress={() => setAdvancedOpen((current) => !current)}
+                      style={({ pressed }) => [styles.advancedToggle, pressed && styles.pressed]}
+                    >
+                      <View style={styles.advancedToggleCopy}>
+                        <Text style={styles.advancedToggleTitle}>Advanced assumptions</Text>
+                        <Text style={styles.advancedToggleSummary}>
+                          Cache {cacheEnabled ? `${Math.round(cacheSharePercent)}%` : 'off'} · Batch{' '}
+                          {batchEnabled ? 'on' : 'off'} · Reasoning {reasoningMultiplier.toFixed(1)}×
                         </Text>
                       </View>
-                      <Switch
-                        accessibilityHint="Applies a sixty percent cached-input assumption"
-                        accessibilityLabel="Assume prompt caching"
-                        ios_backgroundColor={theme.border}
-                        onValueChange={setCacheEnabled}
-                        thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
-                        trackColor={{ false: theme.border, true: theme.accent }}
-                        value={cacheEnabled}
-                      />
-                    </View>
+                      <Text style={styles.advancedToggleAction}>{advancedOpen ? 'Hide' : 'Edit'}</Text>
+                    </Pressable>
 
-                    {cacheEnabled && (
-                      <NumericField
-                        accessibilityHint="Estimated percentage of repeated input served from the provider prompt cache"
-                        label="Cache hit share"
-                        max={100}
-                        onChange={setCacheSharePercent}
-                        suffix="percent"
-                        value={cacheSharePercent}
-                      />
+                    {advancedOpen && (
+                      <View style={styles.advancedContent}>
+                        <View style={styles.switchRow}>
+                          <View style={styles.switchCopy}>
+                            <Text style={styles.switchLabel}>Assume prompt caching</Text>
+                            <Text style={styles.helper}>
+                              Off by default. When enabled, applies a{' '}
+                              {Math.round(SUGGESTED_CACHE_SHARE * 100)}% starting hit-rate assumption and
+                              published cache-write rates.
+                            </Text>
+                          </View>
+                          <Switch
+                            accessibilityHint="Applies a sixty percent cached-input assumption"
+                            accessibilityLabel="Assume prompt caching"
+                            ios_backgroundColor={theme.border}
+                            onValueChange={setCacheEnabled}
+                            thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
+                            trackColor={{ false: theme.border, true: theme.accent }}
+                            value={cacheEnabled}
+                          />
+                        </View>
+
+                        {cacheEnabled && (
+                          <NumericField
+                            accessibilityHint="Estimated percentage of repeated input served from the provider prompt cache"
+                            label="Cache hit share"
+                            max={100}
+                            onChange={setCacheSharePercent}
+                            suffix="percent"
+                            value={cacheSharePercent}
+                          />
+                        )}
+
+                        <View style={styles.switchRow}>
+                          <View style={styles.switchCopy}>
+                            <Text style={styles.switchLabel}>Use batch API where available</Text>
+                            <Text style={styles.helper}>
+                              Applies only each provider’s published batch multiplier. Models without one stay
+                              at full rates.
+                            </Text>
+                          </View>
+                          <Switch
+                            accessibilityLabel="Use batch API where available"
+                            ios_backgroundColor={theme.border}
+                            onValueChange={setBatchEnabled}
+                            thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
+                            trackColor={{ false: theme.border, true: theme.accent }}
+                            value={batchEnabled}
+                          />
+                        </View>
+
+                        <NumericField
+                          accessibilityHint="Multiplier for hidden reasoning tokens billed at the output rate"
+                          label="Reasoning token multiplier"
+                          max={5}
+                          min={1}
+                          onChange={setReasoningMultiplier}
+                          step={0.1}
+                          suffix="times"
+                          value={reasoningMultiplier}
+                        />
+                        <Text style={styles.helper}>
+                          Leave at 1× unless provider usage reports hidden reasoning tokens.
+                        </Text>
+                      </View>
                     )}
-
-                    <View style={styles.switchRow}>
-                      <View style={styles.switchCopy}>
-                        <Text style={styles.switchLabel}>Use batch API where available</Text>
-                        <Text style={styles.helper}>
-                          Applies only each provider’s published batch multiplier. Models without one stay at
-                          full rates.
-                        </Text>
-                      </View>
-                      <Switch
-                        accessibilityLabel="Use batch API where available"
-                        ios_backgroundColor={theme.border}
-                        onValueChange={setBatchEnabled}
-                        thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
-                        trackColor={{ false: theme.border, true: theme.accent }}
-                        value={batchEnabled}
-                      />
-                    </View>
-
-                    <NumericField
-                      accessibilityHint="Multiplier for hidden reasoning tokens billed at the output rate"
-                      label="Reasoning token multiplier"
-                      max={5}
-                      min={1}
-                      onChange={setReasoningMultiplier}
-                      step={0.1}
-                      suffix="times"
-                      value={reasoningMultiplier}
-                    />
-                    <Text style={styles.helper}>
-                      Leave at 1× unless provider usage reports hidden reasoning tokens.
-                    </Text>
                   </View>
                 </TourTarget>
 
@@ -678,7 +821,8 @@ export function EstimatorWorkspace({
                       workload={workload}
                     />
                     <SensitivityLab
-                      key={`sensitivity-${selectedModel.id}-${workload.conversationsPerDay}-${workload.turns}-${displayedPromptTokens.output}`}
+                      key={`sensitivity-${selectedModel.id}`}
+                      pricingDay={pricingDay}
                       batchEnabled={batchEnabled}
                       cacheEnabled={cacheEnabled}
                       cacheSharePercent={cacheSharePercent}
@@ -702,6 +846,7 @@ export function EstimatorWorkspace({
                   pastedFields={(Object.keys(promptInputs) as PromptFieldKey[]).filter(
                     (field) => promptInputs[field].mode === 'text',
                   )}
+                  pricingAsOf={pricingAsOf}
                   reasoningMultiplier={reasoningMultiplier}
                   revenuePerUserPerMonth={workload.revenuePerUserPerMonth}
                   rows={exportRows}
@@ -712,7 +857,11 @@ export function EstimatorWorkspace({
 
                 <View style={styles.dataCard}>
                   <Text style={styles.dataEyebrow}>PRICE EVIDENCE</Text>
-                  <Text style={styles.dataTitle}>{sourceLabel(catalogResult?.source ?? 'network')}</Text>
+                  <Text style={styles.dataTitle}>
+                    {catalogResult?.warning
+                      ? 'Last successful price validation'
+                      : sourceLabel(catalogResult?.source ?? 'network')}
+                  </Text>
                   <Text style={styles.dataText}>
                     {catalog.primaryModels.length} models across {catalog.providers.length} providers. Every
                     download is schema-validated before it can replace the bundled catalog.
@@ -724,6 +873,7 @@ export function EstimatorWorkspace({
 
                 {section === 'compare' && (
                   <CatalogExplorer
+                    asOf={pricingAsOf}
                     catalog={catalog}
                     favoriteIds={favorites}
                     onToggleFavorite={toggleFavorite}
@@ -764,18 +914,17 @@ export function EstimatorWorkspace({
           )}
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </>
+    </NumericDraftScopeProvider>
   );
 }
 
-function chooseModel(models: Model[], selectedId: string): Model {
+function chooseModel(models: Model[], selectedId: string): Model | null {
   const selected = models.find((model) => model.id === selectedId);
   if (selected) return selected;
   const preferred = models.find((model) => model.id === DEFAULT_MODEL_ID);
   if (preferred) return preferred;
   const first = models[0];
-  if (!first) throw new Error('The validated pricing catalog contains no primary models.');
-  return first;
+  return first ?? null;
 }
 
 function sourceLabel(source: MobileCatalogResult['source']): string {
@@ -789,6 +938,29 @@ function formatTimestamp(date: Date): string {
     timeStyle: 'short',
   }).format(date);
 }
+
+const DOCUMENT_META: Record<AppSection, { description: string; title: string }> = {
+  estimate: {
+    description: 'Estimate one LLM API workload with current pricing evidence and transparent assumptions.',
+    title: 'Estimate LLM API cost — PromptSpend',
+  },
+  compare: {
+    description: 'Compare up to four LLMs against the same workload, pricing date, and assumptions.',
+    title: 'Compare LLM API prices — PromptSpend',
+  },
+  data: {
+    description: 'Inspect PromptSpend pricing provenance, freshness, changes, and private alert controls.',
+    title: 'Pricing data and alerts — PromptSpend',
+  },
+  learn: {
+    description: 'Learn how LLM tokens, caching, workload scale, and provider pricing affect AI cost.',
+    title: 'Learn LLM cost fundamentals — PromptSpend',
+  },
+  receipt: {
+    description: 'Audit an AI conversation using a portable, privacy-safe PromptSpend Receipt.',
+    title: 'PromptSpend Receipt — audit AI cost',
+  },
+};
 
 function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
@@ -808,6 +980,48 @@ function createStyles(theme: MobileTheme) {
       paddingTop: 12,
       width: '100%',
     },
+    stickySummaryShell: {
+      backgroundColor: theme.background,
+      paddingBottom: 4,
+      paddingTop: 4,
+      zIndex: 20,
+    },
+    stickySummary: {
+      alignItems: 'center',
+      backgroundColor: theme.surface,
+      borderColor: theme.borderStrong,
+      borderRadius: 14,
+      borderWidth: 1,
+      elevation: 5,
+      flexDirection: 'row',
+      gap: 12,
+      justifyContent: 'space-between',
+      minHeight: 68,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      shadowColor: '#000000',
+      shadowOffset: { height: 3, width: 0 },
+      shadowOpacity: 0.12,
+      shadowRadius: 7,
+    },
+    stickySummaryCopy: { flex: 1, gap: 2, minWidth: 0 },
+    stickySummaryEyebrow: {
+      color: theme.accent,
+      fontSize: 10,
+      fontWeight: '800',
+      letterSpacing: 1,
+      lineHeight: 14,
+    },
+    stickySummaryModel: { color: theme.text, fontSize: 14, fontWeight: '700', lineHeight: 19 },
+    stickySummaryCost: { alignItems: 'flex-end', flexShrink: 0, gap: 1 },
+    stickySummaryAmount: {
+      color: theme.text,
+      fontFamily: FONT_FAMILIES.numeric,
+      fontSize: 21,
+      fontWeight: '700',
+      lineHeight: 25,
+    },
+    stickySummaryUnit: { color: theme.mutedText, fontSize: 10, lineHeight: 14 },
     brandRow: {
       alignItems: 'center',
       flexDirection: 'row',
@@ -935,6 +1149,25 @@ function createStyles(theme: MobileTheme) {
       gap: 16,
       padding: 18,
     },
+    advancedToggle: {
+      alignItems: 'center',
+      backgroundColor: theme.accentSoft,
+      borderColor: theme.border,
+      borderRadius: 12,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 12,
+      justifyContent: 'space-between',
+      minHeight: 58,
+      overflow: 'hidden',
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+    },
+    advancedToggleCopy: { flex: 1, gap: 2 },
+    advancedToggleTitle: { color: theme.text, fontSize: 14, fontWeight: '800', lineHeight: 19 },
+    advancedToggleSummary: { color: theme.mutedText, fontSize: 11, lineHeight: 16 },
+    advancedToggleAction: { color: theme.accent, fontSize: 13, fontWeight: '800', lineHeight: 18 },
+    advancedContent: { gap: 16 },
     panelHeader: {
       alignItems: 'flex-start',
       flexDirection: 'row',
@@ -1059,7 +1292,7 @@ function createStyles(theme: MobileTheme) {
       lineHeight: 20,
     },
     privacyText: {
-      color: theme.savings,
+      color: theme.mutedText,
       fontSize: 12,
       fontWeight: '700',
       lineHeight: 18,

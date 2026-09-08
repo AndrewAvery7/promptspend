@@ -7,9 +7,10 @@ import { Pressable, type ScrollView, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { EmailAlertCenter } from '@/components/EmailAlertCenter';
 import { ContextualHelpLink } from '@/components/HelpCenter';
-import { type Catalog, formatRate } from '@promptspend/core';
+import { type Catalog } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';
+import { modelRateDisplay } from '@/lib/pricingDisplay';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 const REPO_URL = 'https://github.com/AndrewAvery7/promptspend';
@@ -24,12 +25,14 @@ const PRIVACY_URL = `${SITE_URL}privacy/`;
 const SUPPORT_URL = `${SITE_URL}support/`;
 
 export function DataSection({
+  asOf,
   catalog,
   onOpenHelp,
   preferencesToken,
   tourScrollRef,
 }: {
-  catalog: Catalog;
+  asOf: Date;
+  catalog?: Catalog | null;
   onOpenHelp: () => void;
   preferencesToken?: string;
   tourScrollRef?: RefObject<ScrollView | null>;
@@ -37,16 +40,22 @@ export function DataSection({
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [notice, setNotice] = useState<string | null>(null);
-  const health = catalog.health;
-  const flagged = catalog.models.filter((model) => model.provenance.needsReview);
-  const vendorVerified = catalog.primaryModels.filter((model) => model.provenance.source === 'vendor');
+  const health = catalog?.health;
+  const flagged = catalog?.models.filter((model) => model.provenance.needsReview) ?? [];
+  const vendorVerified = catalog?.primaryModels.filter((model) => model.provenance.source === 'vendor') ?? [];
+  const feedSourced = catalog?.feedSourcedCount() ?? 0;
 
   const open = async (url: string) => {
-    await WebBrowser.openBrowserAsync(url, {
-      controlsColor: theme.accent,
-      dismissButtonStyle: 'close',
-      toolbarColor: theme.surface,
-    });
+    setNotice(null);
+    try {
+      await WebBrowser.openBrowserAsync(url, {
+        controlsColor: theme.accent,
+        dismissButtonStyle: 'close',
+        toolbarColor: theme.surface,
+      });
+    } catch {
+      setNotice('This link could not open. Check your connection and try again.');
+    }
   };
 
   return (
@@ -62,7 +71,20 @@ export function DataSection({
         <ContextualHelpLink label="How to use Data & Alerts" onPress={onOpenHelp} />
       </View>
 
-      <EmailAlertCenter catalog={catalog} preferencesToken={preferencesToken} tourScrollRef={tourScrollRef} />
+      {catalog ? (
+        <EmailAlertCenter
+          catalog={catalog}
+          preferencesToken={preferencesToken}
+          tourScrollRef={tourScrollRef}
+        />
+      ) : (
+        <Card styles={styles} title="Pricing data and alert setup are temporarily unavailable">
+          <Text style={styles.body}>
+            Reconnect and refresh to validate the catalog before changing model alerts. Privacy information,
+            support, and the resources below remain available; external links need a connection.
+          </Text>
+        </Card>
+      )}
 
       {notice && (
         <View accessibilityLiveRegion="polite" style={styles.notice}>
@@ -70,48 +92,79 @@ export function DataSection({
         </View>
       )}
 
-      <Card styles={styles} title="Pipeline health">
-        <Metric
-          styles={styles}
-          label="Prices last changed"
-          value={catalog.pricesLastChanged() ?? 'No price change recorded since tracking began'}
-        />
-        <Metric
-          styles={styles}
-          label="Sources last checked cleanly"
-          value={catalog.sourcesLastChecked() ?? 'Evidence unavailable'}
-        />
-        <Metric
-          styles={styles}
-          label="Last run"
-          value={health ? `${health.attemptedAt.slice(0, 10)} · ${health.outcome}` : 'Unknown'}
-        />
-        <Metric
-          styles={styles}
-          label="Models tracked"
-          value={`${catalog.primaryModels.length}${catalog.models.length !== catalog.primaryModels.length ? ` (+${catalog.models.length - catalog.primaryModels.length} aliases)` : ''}`}
-        />
-        {health?.outcome === 'degraded' && (
-          <View accessibilityRole="alert" style={styles.warning}>
-            <Text style={styles.warningText}>
-              The last run was degraded and published nothing.{' '}
-              {health.problems.join('; ') || 'A source was unavailable.'}
-            </Text>
-          </View>
-        )}
-        <Action label="Open the public sync manifest" onPress={() => void open(HEALTH_URL)} styles={styles} />
-      </Card>
+      {catalog && (
+        <Card styles={styles} title="Pipeline health">
+          <Metric
+            styles={styles}
+            label="Prices last changed"
+            value={catalog.pricesLastChanged() ?? 'No price change recorded since tracking began'}
+          />
+          <Metric
+            styles={styles}
+            label="Sources last checked cleanly"
+            value={catalog.sourcesLastChecked() ?? 'Evidence unavailable'}
+          />
+          <Metric
+            styles={styles}
+            label="Last run"
+            value={health ? `${health.attemptedAt.slice(0, 10)} · ${health.outcome}` : 'Unknown'}
+          />
+          <Metric
+            styles={styles}
+            label="Models tracked"
+            value={`${catalog.primaryModels.length}${catalog.models.length !== catalog.primaryModels.length ? ` (+${catalog.models.length - catalog.primaryModels.length} aliases)` : ''}`}
+          />
+          <Metric
+            styles={styles}
+            label="Vendor-page verified"
+            value={`${catalog.vendorVerifiedCount()} models`}
+          />
+          <Metric styles={styles} label="Public-feed sourced" value={`${feedSourced} models`} />
+          <Metric
+            styles={styles}
+            label="Flagged for review"
+            value={`${catalog.flaggedForReviewCount()} models`}
+          />
+          {health?.vendorCheck && (
+            <View style={styles.vendorCheck}>
+              <Text style={styles.metricLabel}>
+                Latest vendor-page check · {health.vendorCheck.checkedAt.slice(0, 10)}
+              </Text>
+              <Text style={styles.vendorCheckValue}>
+                {health.vendorCheck.confirmed} confirmed · {health.vendorCheck.mismatched} mismatched ·{' '}
+                {health.vendorCheck.unconfirmed} unconfirmed
+              </Text>
+            </View>
+          )}
+          {health?.outcome === 'degraded' && (
+            <View accessibilityRole="alert" style={styles.warning}>
+              <Text style={styles.warningText}>
+                The last run was degraded and published nothing.{' '}
+                {health.problems.join('; ') || 'A source was unavailable.'}
+              </Text>
+            </View>
+          )}
+          <Action
+            label="Open the public sync manifest"
+            onPress={() => void open(HEALTH_URL)}
+            styles={styles}
+          />
+        </Card>
+      )}
 
       <Card styles={styles} title="Native notifications">
         <Text style={styles.body}>
-          Email alerts are managed directly above. Native push is not yet enabled because browser VAPID
-          subscriptions cannot be reused by iOS or Android; the alert service must add APNs/FCM tokens before
-          the app asks for notification permission.
+          Email alerts can be managed above when the pricing catalog is available. Native push is not yet
+          enabled because browser VAPID subscriptions cannot be reused by iOS or Android; the alert service
+          must add APNs/FCM tokens before the app asks for notification permission.
         </Text>
         <Action
           label="Copy catalog commit feed"
           onPress={() => {
-            void Clipboard.setStringAsync(FEED_URL).then(() => setNotice('Feed address copied.'));
+            setNotice(null);
+            void Clipboard.setStringAsync(FEED_URL)
+              .then(() => setNotice('Feed address copied.'))
+              .catch(() => setNotice('The feed address could not be copied. Please try again.'));
           }}
           styles={styles}
         />
@@ -159,68 +212,81 @@ export function DataSection({
         <Action
           label="Email PromptSpend support"
           onPress={() =>
-            void Linking.openURL('mailto:info@promptspend.com?subject=PromptSpend%20app%20support')
+            void Linking.openURL('mailto:info@promptspend.com?subject=PromptSpend%20app%20support').catch(
+              () =>
+                setNotice(
+                  'An email app could not open. You can email info@promptspend.com from your preferred mail app.',
+                ),
+            )
           }
           styles={styles}
         />
       </Card>
 
-      <Card styles={styles} title="Trust ladder">
-        <TrustRow
-          detail={`Hand-verified vendor list prices win every conflict. ${vendorVerified.length} current models carry this mark.`}
-          number="1"
-          styles={styles}
-          title="Vendor overrides"
-        />
-        <TrustRow
-          detail="The LiteLLM community catalog is the automated daily feed."
-          number="2"
-          styles={styles}
-          title="LiteLLM"
-        />
-        <TrustRow
-          detail="OpenRouter is an independent cross-check. A disagreement flags a model but never silently overwrites it."
-          number="3"
-          styles={styles}
-          title="OpenRouter"
-        />
-        <TrustRow
-          detail="Schema, rate, source-size, daily-move, and catalog-shrink checks stop suspicious runs from publishing."
-          number="4"
-          styles={styles}
-          title="Sanity gates"
-        />
-        <Text style={styles.scope}>
-          Standard-tier global list prices in USD. Regional premiums, priority tiers, server-side tool fees,
-          and negotiated discounts are outside the estimate.
-        </Text>
-      </Card>
+      {catalog && (
+        <>
+          <Card styles={styles} title="Trust ladder">
+            <TrustRow
+              detail={`Hand-verified vendor list prices win every conflict. ${vendorVerified.length} current models carry this mark.`}
+              number="1"
+              styles={styles}
+              title="Vendor overrides"
+            />
+            <TrustRow
+              detail="The LiteLLM community catalog is the automated daily feed."
+              number="2"
+              styles={styles}
+              title="LiteLLM"
+            />
+            <TrustRow
+              detail="OpenRouter is an independent cross-check. A disagreement flags a model but never silently overwrites it."
+              number="3"
+              styles={styles}
+              title="OpenRouter"
+            />
+            <TrustRow
+              detail="Schema, rate, source-size, daily-move, and catalog-shrink checks stop suspicious runs from publishing."
+              number="4"
+              styles={styles}
+              title="Sanity gates"
+            />
+            <Text style={styles.scope}>
+              Standard-tier global list prices in USD. Regional premiums, priority tiers, server-side tool
+              fees, and negotiated discounts are outside the estimate.
+            </Text>
+          </Card>
 
-      <Card styles={styles} title={`Flagged for review (${flagged.length})`}>
-        {flagged.length === 0 ? (
-          <Text style={styles.body}>Nothing is flagged; all independent sources agree today.</Text>
-        ) : (
-          flagged.slice(0, 12).map((model) => (
-            <View key={model.id} style={styles.flaggedRow}>
-              <Text style={styles.flaggedTitle}>Δ {model.displayName}</Text>
-              <Text style={styles.body}>
-                {model.provenance.reviewNote ?? 'Independent sources disagree.'}
-              </Text>
-              <Text style={styles.rateText}>
-                {formatRate(model.pricing.input)} input · {formatRate(model.pricing.output)} output / 1M
-              </Text>
-            </View>
-          ))
-        )}
-        <Text style={styles.body}>
-          A flagged row keeps the primary feed’s price while the cross-check raises a visible warning.
-        </Text>
-        <Action
-          label="Request a missing model"
-          onPress={() => void open(`${REPO_URL}/issues/new?template=model-request.yml`)}
-          styles={styles}
-        />
-      </Card>
+          <Card styles={styles} title={`Flagged for review (${flagged.length})`}>
+            {flagged.length === 0 ? (
+              <Text style={styles.body}>Nothing is flagged; all independent sources agree today.</Text>
+            ) : (
+              flagged.slice(0, 12).map((model) => (
+                <View key={model.id} style={styles.flaggedRow}>
+                  <Text style={styles.flaggedTitle}>Δ {model.displayName}</Text>
+                  <Text style={styles.body}>
+                    {model.provenance.reviewNote ?? 'Independent sources disagree.'}
+                  </Text>
+                  <Text style={styles.rateText}>
+                    {modelRateDisplay(model, asOf).input} input · {modelRateDisplay(model, asOf).output}{' '}
+                    output / 1M
+                  </Text>
+                  {modelRateDisplay(model, asOf).promoLabel && (
+                    <Text style={styles.promoText}>{modelRateDisplay(model, asOf).promoLabel}</Text>
+                  )}
+                </View>
+              ))
+            )}
+            <Text style={styles.body}>
+              A flagged row keeps the primary feed’s price while the cross-check raises a visible warning.
+            </Text>
+            <Action
+              label="Request a missing model"
+              onPress={() => void open(`${REPO_URL}/issues/new?template=model-request.yml`)}
+              styles={styles}
+            />
+          </Card>
+        </>
+      )}
     </View>
   );
 }
@@ -323,6 +389,8 @@ function createStyles(theme: MobileTheme) {
     metric: { backgroundColor: theme.surfaceRaised, borderRadius: 10, gap: 3, padding: 12 },
     metricLabel: { color: theme.mutedText, fontSize: 11, fontWeight: '700' },
     metricValue: { color: theme.text, fontSize: 15, fontVariant: ['tabular-nums'], fontWeight: '800' },
+    vendorCheck: { backgroundColor: theme.accentSoft, borderRadius: 10, gap: 4, padding: 12 },
+    vendorCheckValue: { color: theme.text, fontSize: 13, fontWeight: '800', lineHeight: 19 },
     warning: {
       backgroundColor: theme.surfaceRaised,
       borderColor: theme.warning,
@@ -368,6 +436,7 @@ function createStyles(theme: MobileTheme) {
     },
     flaggedTitle: { color: theme.warning, fontSize: 14, fontWeight: '800' },
     rateText: { color: theme.text, fontSize: 12, fontVariant: ['tabular-nums'], fontWeight: '700' },
+    promoText: { color: theme.accent, fontSize: 11, fontWeight: '900' },
     notice: { backgroundColor: theme.accentSoft, borderRadius: 10, padding: 12 },
     noticeText: { color: theme.accent, fontSize: 13, fontWeight: '800' },
     pressed: { opacity: 0.68 },

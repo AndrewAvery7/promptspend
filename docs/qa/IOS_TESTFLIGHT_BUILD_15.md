@@ -1,7 +1,6 @@
 # iPhone and iPad physical QA — iOS build 15
 
-Status: uploaded successfully; awaiting confirmation that Apple has exposed the
-build in TestFlight
+Status: superseded by build 17; physical QA reported defects on August 26.
 
 ## Candidate identity
 
@@ -26,7 +25,10 @@ finish its own TestFlight processing before installation. This record authorizes
 private internal TestFlight QA only. It does not authorize external testing,
 App Review, public release, pricing changes, or customer distribution.
 
-## Installation
+## Historical installation instructions
+
+Use the current baseline in `docs/MOBILE_BETA_QA.md` for new QA. These steps
+describe the original handoff and do not request reinstalling this older build.
 
 1. On the iPhone or iPad, open Apple's **TestFlight** app.
 2. Pull down to refresh the app list if PromptSpend still shows build 14.
@@ -81,7 +83,12 @@ resilience case in `docs/MOBILE_BETA_QA.md`.
 
 ## Result
 
-- Overall result: Not run
+- Overall result: Failed checks reported; full matrix not completed
 - Open P0 defects: Not assessed
-- Open P1 defects: Not assessed
-- Tester notes:
+- Open P1 defects: Startup and Guide presentation findings require retest
+- Tester notes: On August 26, iPhone QA reported that cold launch always opened
+  Estimate rather than Home and that the Guide outline clipped information on
+  multiple steps. iPad review reported the same issues and no additional ones.
+  The owner also requested swapping Learn and Data & Alerts in the tab order.
+  These source changes are included in build 17; a successful complete device
+  retest is not implied. Existing unchecked rows remain unverified.

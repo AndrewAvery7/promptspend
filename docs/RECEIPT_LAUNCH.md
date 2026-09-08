@@ -4,8 +4,9 @@
 
 PromptSpend Receipt is a visible, user-initiated request that asks the assistant already holding a conversation to estimate the visible workload, use current PromptSpend pricing, and state what it cannot know. It is temporary, inspectable, and performs one narrow task.
 
-Primary CTA: **PromptSpend this conversation**  
-Campaign line: **Your prompt has a price tag.**  
+Primary CTA: **PromptSpend this conversation**
+
+Campaign line: **Your prompt has a price tag.**
 Supporting line: **Most AI won't tell you what it is. PromptSpend will.**
 
 ## Demo sequence

@@ -1,18 +1,31 @@
 import * as WebBrowser from 'expo-web-browser';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText as Text } from '@/components/AppText';
-import { Catalog, formatContext, formatRate, type Model } from '@promptspend/core';
+import { Catalog, effectivePricing, formatContext, type Model } from '@promptspend/core';
 
 import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
+import { modelRateDisplay } from '@/lib/pricingDisplay';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context';
+const CATALOG_PAGE_SIZE = 20;
 
 interface CatalogExplorerProps {
+  asOf: Date;
   catalog: Catalog;
   favoriteIds: readonly string[];
   onToggleFavorite: (id: string) => void;
@@ -21,6 +34,7 @@ interface CatalogExplorerProps {
 }
 
 export function CatalogExplorer({
+  asOf,
   catalog,
   favoriteIds,
   onToggle,
@@ -35,6 +49,11 @@ export function CatalogExplorer({
   const [showInactive, setShowInactive] = useState(false);
   const [detail, setDetail] = useState<Model | null>(null);
   const [chartWidth, setChartWidth] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(CATALOG_PAGE_SIZE);
+  const [sourceError, setSourceError] = useState<string | null>(null);
+  const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const countryOptions = useMemo(() => catalog.countries(), [catalog]);
 
   const models = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -47,8 +66,8 @@ export function CatalogExplorer({
           !needle ||
           `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase().includes(needle),
       )
-      .sort((a, b) => compareModel(a, b, sort, catalog));
-  }, [catalog, countries, query, showInactive, sort]);
+      .sort((a, b) => compareModel(a, b, sort, catalog, asOf));
+  }, [asOf, catalog, countries, query, showInactive, sort]);
   const inScopePrimary = useMemo(
     () => catalog.primaryModels.filter((model) => catalog.inCountries(model, countries)),
     [catalog, countries],
@@ -58,10 +77,10 @@ export function CatalogExplorer({
       inScopePrimary.filter(
         (model) =>
           model.capabilityIndex !== undefined &&
-          Catalog.blendedRate(model) > 0 &&
+          effectiveBlendedRate(model, asOf) > 0 &&
           model.provenance.stale !== true,
       ),
-    [inScopePrimary],
+    [asOf, inScopePrimary],
   );
   const unscored = inScopePrimary.length - scored.length;
 
@@ -79,9 +98,12 @@ export function CatalogExplorer({
       </View>
 
       <CountryFilter
-        countries={catalog.countries()}
+        countries={countryOptions}
         label="Show catalog models from these countries"
-        onChange={setCountries}
+        onChange={(value) => {
+          setCountries(value);
+          setVisibleCount(CATALOG_PAGE_SIZE);
+        }}
         selected={countries}
       />
 
@@ -103,13 +125,13 @@ export function CatalogExplorer({
               <Text style={styles.chartTop}>Higher illustrative capability</Text>
               {chartWidth > 0 &&
                 scored.map((model) => {
-                  const point = chartPoint(model, scored, chartWidth);
+                  const point = chartPoint(model, scored, chartWidth, asOf);
                   const selected = selectedIds.includes(model.id);
                   const disabled = !selected && selectedIds.length >= 4;
                   return (
                     <Pressable
                       accessibilityHint="Adds or removes this model from the four-model shortlist"
-                      accessibilityLabel={`${model.displayName}, capability ${model.capabilityIndex}, blended rate ${formatRate(Catalog.blendedRate(model))} per million tokens${selected ? ', selected' : ''}`}
+                      accessibilityLabel={`${model.displayName}, capability ${model.capabilityIndex}, ${modelRateDisplay(model, asOf).accessibility}${selected ? ', selected' : ''}`}
                       accessibilityRole="button"
                       accessibilityState={{ disabled, selected }}
                       disabled={disabled}
@@ -139,17 +161,14 @@ export function CatalogExplorer({
       </View>
 
       <View style={styles.card}>
-        <CountryFilter
-          countries={catalog.countries()}
-          label="Show catalog models from these countries, repeated beside the list"
-          onChange={setCountries}
-          selected={countries}
-        />
         <TextInput
           accessibilityLabel="Search the model catalog"
           autoCapitalize="none"
           autoCorrect={false}
-          onChangeText={setQuery}
+          onChangeText={(value) => {
+            setQuery(value);
+            setVisibleCount(CATALOG_PAGE_SIZE);
+          }}
           placeholder="Search models or providers…"
           placeholderTextColor={theme.mutedText}
           style={styles.search}
@@ -162,8 +181,15 @@ export function CatalogExplorer({
               accessibilityRole="radio"
               accessibilityState={{ checked: sort === key }}
               key={key}
-              onPress={() => setSort(key)}
-              style={[styles.sortButton, sort === key && styles.sortButtonActive]}
+              onPress={() => {
+                setSort(key);
+                setVisibleCount(CATALOG_PAGE_SIZE);
+              }}
+              style={({ pressed }) => [
+                styles.sortButton,
+                sort === key && styles.sortButtonActive,
+                pressed && styles.pressed,
+              ]}
             >
               <Text style={[styles.sortText, sort === key && styles.sortTextActive]}>{key}</Text>
             </Pressable>
@@ -179,17 +205,21 @@ export function CatalogExplorer({
           <Switch
             accessibilityLabel="Show legacy, deprecated, and unlisted models"
             ios_backgroundColor={theme.border}
-            onValueChange={setShowInactive}
+            onValueChange={(value) => {
+              setShowInactive(value);
+              setVisibleCount(CATALOG_PAGE_SIZE);
+            }}
             trackColor={{ false: theme.border, true: theme.accent }}
             value={showInactive}
           />
         </View>
         <Text accessibilityLiveRegion="polite" style={styles.note}>
-          {models.length} matching models
+          Showing {Math.min(visibleCount, models.length)} of {models.length} matching models
         </Text>
-        {models.map((model) => {
+        {models.slice(0, visibleCount).map((model) => {
           const selected = selectedIds.includes(model.id);
           const country = catalog.provider(model)?.country;
+          const rates = modelRateDisplay(model, asOf);
           return (
             <View key={model.id} style={styles.modelRow}>
               <View style={styles.modelHeader}>
@@ -208,10 +238,11 @@ export function CatalogExplorer({
                   accessibilityState={{ checked: selected, disabled: !selected && selectedIds.length >= 4 }}
                   disabled={!selected && selectedIds.length >= 4}
                   onPress={() => onToggle(model.id)}
-                  style={[
+                  style={({ pressed }) => [
                     styles.selectButton,
                     selected && styles.selectButtonActive,
                     !selected && selectedIds.length >= 4 && styles.selectButtonDisabled,
+                    pressed && styles.pressed,
                   ]}
                 >
                   <Text
@@ -226,10 +257,15 @@ export function CatalogExplorer({
                 </Pressable>
               </View>
               <View style={styles.rates}>
-                <Text style={styles.rate}>{formatRate(model.pricing.input)} input</Text>
-                <Text style={styles.rate}>{formatRate(model.pricing.output)} output</Text>
+                <Text style={styles.rate}>{rates.input} input</Text>
+                <Text style={styles.rate}>{rates.output} output</Text>
                 <Text style={styles.rate}>{formatContext(model.contextWindow)} context</Text>
               </View>
+              {rates.promoLabel && (
+                <Text style={styles.promo}>
+                  {rates.promoLabel} · {rates.standardLabel}
+                </Text>
+              )}
               <Text style={styles.note}>
                 {model.provenance.source}
                 {model.provenance.needsReview ? ' · CHECK' : ''} · verified {model.provenance.lastVerified}
@@ -237,8 +273,11 @@ export function CatalogExplorer({
               <View style={styles.modelActions}>
                 <Pressable
                   accessibilityRole="button"
-                  onPress={() => setDetail(model)}
-                  style={styles.detailButton}
+                  onPress={() => {
+                    setSourceError(null);
+                    setDetail(model);
+                  }}
+                  style={({ pressed }) => [styles.detailButton, pressed && styles.pressed]}
                 >
                   <Text style={styles.detailText}>Details and source</Text>
                 </Pressable>
@@ -251,7 +290,7 @@ export function CatalogExplorer({
                   accessibilityRole="button"
                   accessibilityState={{ selected: favoriteIds.includes(model.id) }}
                   onPress={() => onToggleFavorite(model.id)}
-                  style={styles.watchButton}
+                  style={({ pressed }) => [styles.watchButton, pressed && styles.pressed]}
                 >
                   <Ionicons
                     color={theme.accent}
@@ -266,6 +305,18 @@ export function CatalogExplorer({
             </View>
           );
         })}
+        {visibleCount < models.length && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Show more catalog models"
+            onPress={() => setVisibleCount((count) => count + CATALOG_PAGE_SIZE)}
+            style={({ pressed }) => [styles.sourceButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.sourceText}>
+              Show next {Math.min(CATALOG_PAGE_SIZE, models.length - visibleCount)} models
+            </Text>
+          </Pressable>
+        )}
         {models.length === 0 && (
           <Text accessibilityLiveRegion="polite" style={styles.empty}>
             {emptyReason(query, countries)}
@@ -282,7 +333,17 @@ export function CatalogExplorer({
         visible={detail !== null}
       >
         <View style={styles.backdrop}>
-          <View style={styles.sheet}>
+          <Pressable
+            accessibilityLabel="Dismiss model details"
+            accessibilityRole="button"
+            onPress={() => setDetail(null)}
+            style={StyleSheet.absoluteFill}
+          />
+          <ScrollView
+            accessibilityViewIsModal
+            style={{ maxHeight: Math.max(100, height - insets.top - 24), backgroundColor: theme.surface }}
+            contentContainerStyle={[styles.sheet, { paddingBottom: Math.max(30, insets.bottom + 16) }]}
+          >
             {detail && (
               <>
                 <View style={styles.sheetHeader}>
@@ -299,9 +360,15 @@ export function CatalogExplorer({
                   {detail.capabilities.vision ? 'vision' : 'text'}
                 </Text>
                 <Text style={styles.body}>
-                  Input {formatRate(detail.pricing.input)}/M · Output {formatRate(detail.pricing.output)}/M ·
-                  Context {formatContext(detail.contextWindow)}
+                  Input {modelRateDisplay(detail, asOf).input}/M · Output{' '}
+                  {modelRateDisplay(detail, asOf).output}/M · Context {formatContext(detail.contextWindow)}
                 </Text>
+                {modelRateDisplay(detail, asOf).promoLabel && (
+                  <Text style={styles.promo}>
+                    {modelRateDisplay(detail, asOf).promoLabel} ·{' '}
+                    {modelRateDisplay(detail, asOf).standardLabel}
+                  </Text>
+                )}
                 <Text style={styles.body}>
                   Source: {detail.provenance.source}. Last verified {detail.provenance.lastVerified}.
                 </Text>
@@ -312,7 +379,7 @@ export function CatalogExplorer({
                   accessibilityRole="button"
                   accessibilityState={{ selected: favoriteIds.includes(detail.id) }}
                   onPress={() => onToggleFavorite(detail.id)}
-                  style={styles.watchDetailButton}
+                  style={({ pressed }) => [styles.watchDetailButton, pressed && styles.pressed]}
                 >
                   <Ionicons
                     color={theme.accent}
@@ -326,50 +393,69 @@ export function CatalogExplorer({
                 {(detail.provenance.verifiedUrl ?? catalog.provider(detail)?.pricingUrl) && (
                   <Pressable
                     accessibilityRole="link"
-                    onPress={() =>
+                    onPress={() => {
+                      setSourceError(null);
                       void WebBrowser.openBrowserAsync(
                         (detail.provenance.verifiedUrl ?? catalog.provider(detail)?.pricingUrl)!,
-                      )
-                    }
-                    style={styles.sourceButton}
+                      ).catch(() => setSourceError('The pricing source could not open. Please try again.'));
+                    }}
+                    style={({ pressed }) => [styles.sourceButton, pressed && styles.pressed]}
                   >
                     <Text style={styles.sourceText}>Open published pricing source ↗</Text>
                   </Pressable>
                 )}
+                {sourceError && (
+                  <Text accessibilityRole="alert" style={styles.warning}>
+                    {sourceError}
+                  </Text>
+                )}
               </>
             )}
-          </View>
+          </ScrollView>
         </View>
       </Modal>
     </View>
   );
 }
 
-function compareModel(a: Model, b: Model, key: SortKey, catalog: Catalog): number {
+function compareModel(a: Model, b: Model, key: SortKey, catalog: Catalog, asOf: Date): number {
   if (key === 'provider')
     return (
       catalog.providerName(a).localeCompare(catalog.providerName(b)) ||
       a.displayName.localeCompare(b.displayName)
     );
-  if (key === 'input') return a.pricing.input - b.pricing.input || a.displayName.localeCompare(b.displayName);
+  if (key === 'input')
+    return (
+      effectivePricing(a.pricing, asOf).input - effectivePricing(b.pricing, asOf).input ||
+      a.displayName.localeCompare(b.displayName)
+    );
   if (key === 'output')
-    return a.pricing.output - b.pricing.output || a.displayName.localeCompare(b.displayName);
+    return (
+      effectivePricing(a.pricing, asOf).output - effectivePricing(b.pricing, asOf).output ||
+      a.displayName.localeCompare(b.displayName)
+    );
   if (key === 'context')
     return b.contextWindow - a.contextWindow || a.displayName.localeCompare(b.displayName);
   return a.displayName.localeCompare(b.displayName);
 }
 
-function chartPoint(model: Model, models: Model[], width: number): { left: number; top: number } {
-  const rates = models.map(Catalog.blendedRate).filter((rate) => rate > 0);
+function effectiveBlendedRate(model: Model, asOf: Date): number {
+  const pricing = effectivePricing(model.pricing, asOf);
+  return 0.75 * pricing.input + 0.25 * pricing.output;
+}
+
+function chartPoint(model: Model, models: Model[], width: number, asOf: Date): { left: number; top: number } {
+  const rates = models.map((item) => effectiveBlendedRate(item, asOf)).filter((rate) => rate > 0);
   const min = Math.log10(Math.min(...rates));
   const max = Math.log10(Math.max(...rates));
-  const x = max === min ? 0.5 : (Math.log10(Catalog.blendedRate(model)) - min) / (max - min);
+  const x = max === min ? 0.5 : (Math.log10(effectiveBlendedRate(model, asOf)) - min) / (max - min);
   const y = (model.capabilityIndex ?? 0) / 100;
   return { left: 10 + x * Math.max(0, width - 34), top: 26 + (1 - y) * 184 };
 }
 
 function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
+    pressed: { opacity: 0.68 },
     section: { gap: 16 },
     heading: { gap: 8 },
     eyebrow: { color: theme.accent, fontSize: 11, fontWeight: '900', letterSpacing: 1.2 },
@@ -394,8 +480,8 @@ function createStyles(theme: MobileTheme) {
       height: 252,
       overflow: 'hidden',
     },
-    chartTop: { color: theme.mutedText, fontSize: 10, left: 10, position: 'absolute', top: 7 },
-    chartBottom: { bottom: 7, color: theme.mutedText, fontSize: 10, left: 10, position: 'absolute' },
+    chartTop: { color: theme.mutedText, fontSize: 12, left: 10, position: 'absolute', top: 7 },
+    chartBottom: { bottom: 7, color: theme.mutedText, fontSize: 12, left: 10, position: 'absolute' },
     pointTarget: {
       alignItems: 'center',
       height: 44,
@@ -490,6 +576,7 @@ function createStyles(theme: MobileTheme) {
     selectTextDisabled: { color: theme.mutedText },
     rates: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
     rate: { color: theme.text, fontSize: 12, fontVariant: ['tabular-nums'], fontWeight: '700' },
+    promo: { color: theme.accent, fontSize: 11, fontWeight: '900', lineHeight: 16 },
     detailButton: { alignItems: 'flex-start', justifyContent: 'center', minHeight: 44 },
     detailText: { color: theme.accent, fontSize: 12, fontWeight: '800' },
     backdrop: { backgroundColor: 'rgba(0,0,0,0.48)', flex: 1, justifyContent: 'flex-end' },

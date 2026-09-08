@@ -35,13 +35,35 @@ export interface MobileCatalogResult {
 interface LoadCatalogOptions {
   cache?: MobileCatalogCache;
   fetcher?: typeof fetch;
-  now?: Date;
+  /** A clock, rather than a request-start snapshot, lets fallback recheck age. */
+  now?: Date | (() => Date);
   timeoutMs?: number;
+}
+
+export function isMobileCatalogFresh(refreshedAt: Date | null | undefined, now = new Date()): boolean {
+  if (!refreshedAt) return false;
+  const age = now.getTime() - refreshedAt.getTime();
+  return Number.isFinite(age) && age >= 0 && age < MOBILE_CATALOG_MAX_AGE_MS;
 }
 
 function validatedCatalog(pricing: unknown, health: unknown): Catalog {
   assertCatalog(pricing);
-  return new Catalog(pricing, isSyncStatus(health) ? health : null);
+  const catalog = new Catalog(pricing, isSyncStatus(health) ? health : null);
+  if (catalog.primaryModels.length === 0) throw new Error('Catalog has no primary models');
+  // Schema validation checks that targets exist, but cannot by itself ensure
+  // aliases ultimately lead to a primary model rather than form a cycle.
+  for (const model of catalog.models) {
+    const visited = new Set<string>();
+    let current = model;
+    while (current.aliasOf !== undefined) {
+      if (visited.has(current.id)) throw new Error('Catalog contains cyclic model aliases');
+      visited.add(current.id);
+      const target = catalog.get(current.aliasOf);
+      if (!target) throw new Error('Catalog contains an unresolved model alias');
+      current = target;
+    }
+  }
+  return catalog;
 }
 
 export function parseCacheRecord(value: unknown): { envelope: CacheEnvelope; catalog: Catalog } | null {
@@ -104,12 +126,16 @@ async function fetchJson(url: string, fetcher: typeof fetch, timeoutMs: number):
   });
 
   try {
-    const response = await Promise.race([
-      fetcher(url, { cache: 'no-cache', signal: controller.signal }),
+    // Keep the deadline alive until the body has also been downloaded and
+    // decoded. Receiving headers does not mean a response has finished.
+    return await Promise.race([
+      (async () => {
+        const response = await fetcher(url, { cache: 'no-cache', signal: controller.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return (await response.json()) as unknown;
+      })(),
       timeoutPromise,
     ]);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json() as Promise<unknown>;
   } finally {
     if (timeout !== undefined) clearTimeout(timeout);
   }
@@ -122,12 +148,11 @@ async function fetchJson(url: string, fetcher: typeof fetch, timeoutMs: number):
  * still-current validated cache remains usable. Older prices fail closed.
  */
 export async function loadMobileCatalog(options: LoadCatalogOptions = {}): Promise<MobileCatalogResult> {
-  const now = options.now ?? new Date();
+  const configuredNow = options.now;
+  const clock = typeof configuredNow === 'function' ? configuredNow : () => configuredNow ?? new Date();
   const cache = options.cache ?? DEVICE_CACHE;
-  const cached = await cache.read();
-  const cachedAt = cached ? Date.parse(cached.envelope.cachedAt) : Number.NaN;
-  const cacheAge = now.getTime() - cachedAt;
-  const cacheIsFresh = cached !== null && cacheAge >= 0 && cacheAge < MOBILE_CATALOG_MAX_AGE_MS;
+  // An inaccessible cache must not prevent a successful live download.
+  const cached = await cache.read().catch(() => null);
 
   try {
     const fetcher = options.fetcher ?? fetch;
@@ -137,8 +162,13 @@ export async function loadMobileCatalog(options: LoadCatalogOptions = {}): Promi
       fetchJson(HEALTH_URL, fetcher, timeoutMs).catch(() => null),
     ]);
     const catalog = validatedCatalog(pricing, health);
+    const now = clock();
     const cachedAtIso = now.toISOString();
-    await cache.write({ cachedAt: cachedAtIso, health, pricing: pricing as PricingCatalog });
+    // Cache writes are best effort: usable, freshly validated network data
+    // must not be replaced with old data just because the disk is full.
+    await cache
+      .write({ cachedAt: cachedAtIso, health, pricing: pricing as PricingCatalog })
+      .catch(() => undefined);
     const freshness = catalog.freshness(now);
     const warning =
       freshness.level === 'unknown'
@@ -148,7 +178,7 @@ export async function loadMobileCatalog(options: LoadCatalogOptions = {}): Promi
           : null;
     return { catalog, source: 'network', refreshedAt: now, warning };
   } catch {
-    if (cached && cacheIsFresh) {
+    if (cached && isMobileCatalogFresh(new Date(cached.envelope.cachedAt), clock())) {
       return {
         catalog: cached.catalog,
         source: 'cache',

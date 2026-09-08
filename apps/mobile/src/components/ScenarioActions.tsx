@@ -1,16 +1,18 @@
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Alert, Platform, Pressable, Share, StyleSheet, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
-import { type Catalog, type ComparisonRow } from '@promptspend/core';
+import { effectivePricing, encodeScenario, type Catalog, type ComparisonRow } from '@promptspend/core';
 
 import type { PromptFieldKey } from '@/lib/promptInput';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 import { CostReceiptSheet } from '@/components/CostReceiptSheet';
 import { useLaunchState } from '@/state/useLaunchState';
+import { assertNumericDraftsValid } from '@/lib/numericDrafts';
+import { cleanOldCsvExports } from '@/lib/csvExports';
 
 interface ScenarioActionsProps {
   batchEnabled: boolean;
@@ -21,6 +23,7 @@ interface ScenarioActionsProps {
   modelIds: readonly string[];
   outputTokens: number;
   pastedFields: readonly PromptFieldKey[];
+  pricingAsOf: Date;
   reasoningMultiplier: number;
   revenuePerUserPerMonth: number;
   rows: readonly ComparisonRow[];
@@ -34,18 +37,28 @@ export function ScenarioActions(props: ScenarioActionsProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [working, setWorking] = useState(false);
+  const saving = useRef(false);
+  const [saveBusy, setSaveBusy] = useState(false);
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [savedName, setSavedName] = useState<string | null>(null);
   const scenarioUrl = useMemo(() => buildScenarioUrl(props), [props]);
+  const validateAction = () => {
+    assertNumericDraftsValid();
+    launch.assertCurrentPricing();
+  };
 
   const shareScenario = async () => {
     try {
+      validateAction();
       await Share.share({
         message: `Open this PromptSpend scenario:\r\n${scenarioUrl}\r\n\r\nOnly model choices, derived token counts, and assumptions are included. Pasted prompt text is never placed in the link.`,
         title: 'PromptSpend scenario',
       });
-    } catch {
-      Alert.alert('Sharing is unavailable', 'The system share menu could not open.');
+    } catch (error) {
+      Alert.alert(
+        'Sharing is unavailable',
+        error instanceof Error ? error.message : 'The system share menu could not open.',
+      );
     }
   };
 
@@ -53,6 +66,7 @@ export function ScenarioActions(props: ScenarioActionsProps) {
     if (working || props.rows.length === 0) return;
     setWorking(true);
     try {
+      validateAction();
       if (Platform.OS === 'web') {
         Alert.alert(
           'Use the website to download CSV',
@@ -61,6 +75,8 @@ export function ScenarioActions(props: ScenarioActionsProps) {
         return;
       }
       if (!(await Sharing.isAvailableAsync())) throw new Error('The system file share menu is unavailable.');
+      validateAction();
+      cleanOldCsvExports();
       const file = new File(Paths.cache, `promptspend-estimate-${Date.now()}.csv`);
       file.write(csvForRows(props));
       await Sharing.shareAsync(file.uri, {
@@ -90,24 +106,39 @@ export function ScenarioActions(props: ScenarioActionsProps) {
         <Pressable
           accessibilityHint="Stores derived counts, model choices, scale, and assumptions on this device"
           accessibilityRole="button"
-          onPress={() => {
-            const scenario = launch.saveScenario(
-              `AI cost scenario · ${new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(new Date())}`,
-              {
-                conversationsPerDay: props.conversationsPerDay,
-                monthlyActiveUsers: props.monthlyActiveUsers,
-                outputTokens: props.outputTokens,
-                revenuePerUserPerMonth: props.revenuePerUserPerMonth,
-                systemTokens: props.systemTokens,
-                turns: props.turns,
-                userTokens: props.userTokens,
-              },
-            );
-            setSavedName(scenario.name);
+          android_ripple={{ color: theme.accentSoft }}
+          disabled={saveBusy || !launch.hydrated || launch.persistenceBlocked}
+          accessibilityState={{
+            busy: saveBusy,
+            disabled: saveBusy || !launch.hydrated || launch.persistenceBlocked,
+          }}
+          onPress={async () => {
+            if (saving.current) return;
+            saving.current = true;
+            setSaveBusy(true);
+            setSavedName(null);
+            try {
+              const scenario = await launch.saveScenario(
+                `AI cost scenario · ${new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(new Date())}`,
+                {
+                  conversationsPerDay: props.conversationsPerDay,
+                  monthlyActiveUsers: props.monthlyActiveUsers,
+                  outputTokens: props.outputTokens,
+                  revenuePerUserPerMonth: props.revenuePerUserPerMonth,
+                  systemTokens: props.systemTokens,
+                  turns: props.turns,
+                  userTokens: props.userTokens,
+                },
+              );
+              if (scenario) setSavedName(scenario.name);
+            } finally {
+              saving.current = false;
+              setSaveBusy(false);
+            }
           }}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
-          <Text style={styles.buttonText}>Save on this device</Text>
+          <Text style={styles.buttonText}>{saveBusy ? 'Saving…' : 'Save on this device'}</Text>
         </Pressable>
         {savedName && (
           <Text accessibilityLiveRegion="polite" style={styles.savedNotice}>
@@ -117,20 +148,32 @@ export function ScenarioActions(props: ScenarioActionsProps) {
         <Pressable
           accessibilityHint="Previews a polished private image or readable text receipt"
           accessibilityRole="button"
+          android_ripple={{ color: theme.accentSoft }}
           accessibilityState={{ disabled: props.rows.length === 0 }}
           disabled={props.rows.length === 0}
-          onPress={() => setReceiptOpen(true)}
+          onPress={() => {
+            try {
+              validateAction();
+              setReceiptOpen(true);
+            } catch (error) {
+              Alert.alert(
+                'Check this estimate',
+                error instanceof Error ? error.message : 'Review the inputs first.',
+              );
+            }
+          }}
           style={({ pressed }) => [
             styles.receiptButton,
             pressed && styles.pressed,
             props.rows.length === 0 && styles.disabled,
           ]}
         >
-          <Text style={styles.receiptButtonText}>Create AI Cost Receipt</Text>
+          <Text style={styles.receiptButtonText}>Create Estimate Receipt</Text>
         </Pressable>
         <Pressable
           accessibilityHint="Shares a restorable website link without pasted prompt text"
           accessibilityRole="button"
+          android_ripple={{ color: theme.accentSoft }}
           onPress={() => void shareScenario()}
           style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         >
@@ -139,6 +182,7 @@ export function ScenarioActions(props: ScenarioActionsProps) {
         <Pressable
           accessibilityHint="Creates a CSV containing costs, assumptions, source dates, and warnings"
           accessibilityRole="button"
+          android_ripple={{ color: theme.accentSoft }}
           accessibilityState={{ busy: working, disabled: working || props.rows.length === 0 }}
           disabled={working || props.rows.length === 0}
           onPress={() => void exportCsv()}
@@ -151,26 +195,32 @@ export function ScenarioActions(props: ScenarioActionsProps) {
           <Text style={styles.buttonText}>{working ? 'Preparing CSV…' : 'Export CSV'}</Text>
         </Pressable>
       </View>
-      <CostReceiptSheet {...props} onClose={() => setReceiptOpen(false)} visible={receiptOpen} />
+      <CostReceiptSheet
+        {...props}
+        validateAction={validateAction}
+        onClose={() => setReceiptOpen(false)}
+        visible={receiptOpen}
+      />
     </View>
   );
 }
 
 export function buildScenarioUrl(props: ScenarioActionsProps): string {
-  const params = new URLSearchParams();
-  params.set('m', props.modelIds.slice(0, 4).join(','));
-  params.set('sys', String(Math.round(props.systemTokens)));
-  params.set('usr', String(Math.round(props.userTokens)));
-  params.set('out', String(Math.round(props.outputTokens)));
-  params.set('t', String(Math.round(props.turns)));
-  params.set('cpd', String(Math.round(props.conversationsPerDay)));
-  params.set('mau', String(Math.round(props.monthlyActiveUsers)));
-  params.set('rev', String(props.revenuePerUserPerMonth));
-  params.set('cache', props.cacheShare.toFixed(2));
-  if (props.reasoningMultiplier !== 1) params.set('rsn', String(props.reasoningMultiplier));
-  if (props.batchEnabled) params.set('batch', '1');
-  if (props.pastedFields.length > 0) params.set('px', props.pastedFields.join(','));
-  return `https://promptspend.com/?${params.toString()}`;
+  const query = encodeScenario({
+    cachedInputShare: props.cacheShare,
+    conversationsPerDay: props.conversationsPerDay,
+    modelIds: [...props.modelIds].slice(0, 4),
+    monthlyActiveUsers: props.monthlyActiveUsers,
+    outputTokens: props.outputTokens,
+    pastedFields: [...props.pastedFields],
+    reasoningMultiplier: props.reasoningMultiplier,
+    revenuePerUserPerMonth: props.revenuePerUserPerMonth,
+    systemTokens: props.systemTokens,
+    turns: props.turns,
+    useBatchApi: props.batchEnabled,
+    userTokens: props.userTokens,
+  });
+  return `https://promptspend.com/estimate/?${query}`;
 }
 
 export function csvForRows(props: ScenarioActionsProps): string {
@@ -214,31 +264,34 @@ export function csvForRows(props: ScenarioActionsProps): string {
       'cost_per_user',
       'margin',
     ],
-    ...props.rows.map(({ breakdown, model, scaled }) => [
-      model.displayName,
-      model.id,
-      props.catalog.providerName(model),
-      model.status,
-      model.provenance.source,
-      model.provenance.lastVerified,
-      model.provenance.verifiedUrl ?? props.catalog.provider(model)?.pricingUrl ?? '',
-      model.provenance.needsReview ? 'yes' : 'no',
-      model.tokenizer.kind === 'tiktoken' ? `estimated:${model.tokenizer.encoding}` : 'estimated:ratio',
-      model.pricing.input,
-      model.pricing.output,
-      model.pricing.cachedInput ?? '',
-      model.pricing.cacheWrite ?? '',
-      model.pricing.cacheStoragePerMillionTokenHour ?? '',
-      Math.round(breakdown.inputTokens),
-      Math.round(breakdown.outputTokens),
-      Math.round(breakdown.peakRequestTokens),
-      breakdown.longContextTurns,
-      scaled.perConversation.toFixed(6),
-      scaled.perMonth.toFixed(2),
-      scaled.perYear.toFixed(2),
-      scaled.costPerUser.toFixed(4),
-      scaled.margin === null ? '' : scaled.margin.toFixed(4),
-    ]),
+    ...props.rows.map(({ breakdown, model, scaled }) => {
+      const pricing = effectivePricing(model.pricing, props.pricingAsOf);
+      return [
+        model.displayName,
+        model.id,
+        props.catalog.providerName(model),
+        model.status,
+        model.provenance.source,
+        model.provenance.lastVerified,
+        model.provenance.verifiedUrl ?? props.catalog.provider(model)?.pricingUrl ?? '',
+        model.provenance.needsReview ? 'yes' : 'no',
+        model.tokenizer.kind === 'tiktoken' ? `estimated:${model.tokenizer.encoding}` : 'estimated:ratio',
+        pricing.input,
+        pricing.output,
+        pricing.cachedInput ?? '',
+        pricing.cacheWrite ?? '',
+        pricing.cacheStoragePerMillionTokenHour ?? '',
+        Math.round(breakdown.inputTokens),
+        Math.round(breakdown.outputTokens),
+        Math.round(breakdown.peakRequestTokens),
+        breakdown.longContextTurns,
+        scaled.perConversation.toFixed(6),
+        scaled.perMonth.toFixed(2),
+        scaled.perYear.toFixed(2),
+        scaled.costPerUser.toFixed(4),
+        scaled.margin === null ? '' : scaled.margin.toFixed(4),
+      ];
+    }),
   ];
   return `${rows.map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }

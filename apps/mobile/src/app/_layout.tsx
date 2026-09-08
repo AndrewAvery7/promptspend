@@ -56,6 +56,7 @@ function ThemedTabs() {
         }}
       >
         <Tabs.Screen name="index" options={{ href: null }} />
+        <Tabs.Screen name="receipt" options={{ href: null, title: 'PromptSpend Receipt' }} />
         <Tabs.Screen
           name="home"
           options={{

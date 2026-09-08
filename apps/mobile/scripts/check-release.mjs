@@ -80,6 +80,24 @@ if (APP.ios?.infoPlist?.ITSAppUsesNonExemptEncryption !== false) {
   fail('export-compliance declaration is missing or changed');
 }
 if (APP.android?.allowBackup !== false) fail('Android backup must remain disabled for local scenario data');
+if (APP.android?.predictiveBackGestureEnabled !== true) {
+  fail('Android predictive back must remain enabled for the public candidate');
+}
+if (!APP.ios?.associatedDomains?.includes('applinks:promptspend.com')) {
+  fail('iOS Associated Domains must include applinks:promptspend.com');
+}
+const estimateAppLink = APP.android?.intentFilters?.find(
+  (filter) =>
+    filter?.action === 'VIEW' &&
+    filter?.autoVerify === true &&
+    filter?.category?.includes('BROWSABLE') &&
+    filter?.category?.includes('DEFAULT') &&
+    filter?.data?.some(
+      (entry) =>
+        entry?.scheme === 'https' && entry?.host === 'promptspend.com' && entry?.pathPrefix === '/estimate',
+    ),
+);
+if (!estimateAppLink) fail('Android verified App Link configuration for /estimate is missing');
 if (!APP.plugins?.includes('./plugins/with-android-data-protection')) {
   fail('Android cloud-backup and device-transfer protection plugin is missing');
 }
@@ -179,6 +197,10 @@ for (const path of [
   'assets/images/favicon.png',
   'plugins/with-android-data-protection.js',
   'store/build-history.json',
+  'store/linking/apple-app-site-association.template.json',
+  'store/linking/assetlinks.template.json',
+  'scripts/prepare-associated-domain-files.mjs',
+  '../../public/estimate/index.html',
 ]) {
   requireFile(path);
 }
