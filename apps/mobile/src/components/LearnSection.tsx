@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type RefObject } from 'react';
 import { Pressable, type ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 
 import { AppText as Text } from '@/components/AppText';
 import { estimateTokens, formatCount, LEARN_MODULES, type Catalog, type Model } from '@promptspend/core';
@@ -13,6 +14,7 @@ import { useMobileTheme } from '@/theme/useMobileTheme';
 
 const SAMPLE =
   'Compare the cost of running this prompt on several AI models at one million requests per month.';
+const LATEST_REPORT_URL = 'https://promptspend.com/writing/2026-08-price-movement-report/';
 
 export function LearnSection({
   catalog,
@@ -50,6 +52,26 @@ export function LearnSection({
       </View>
 
       <HelpCenter initialEntryId={initialHelpEntryId} onNavigate={onNavigate} />
+
+      <Pressable
+        accessibilityHint="Opens the current PromptSpend market report on the website"
+        accessibilityRole="link"
+        onPress={() => void WebBrowser.openBrowserAsync(LATEST_REPORT_URL)}
+        style={({ pressed }) => [styles.reportCard, pressed && styles.pressed]}
+      >
+        <View style={styles.reportHeading}>
+          <Text style={styles.number}>MARKET REPORT</Text>
+          <Text style={styles.reportDate}>August 2026</Text>
+        </View>
+        <Text accessibilityRole="header" style={styles.cardTitle}>
+          What changed in model pricing—and what it means
+        </Text>
+        <Text style={styles.body}>
+          Read the latest evidence-led movement report on the live website, where it can stay current without
+          waiting for another app binary.
+        </Text>
+        <Text style={styles.reportLink}>Read the latest report ↗</Text>
+      </Pressable>
 
       {catalog ? (
         <TourTarget id="learn-token-lab" scrollRef={tourScrollRef}>
@@ -187,6 +209,17 @@ function createStyles(theme: MobileTheme) {
       gap: 12,
       padding: 18,
     },
+    reportCard: {
+      backgroundColor: theme.surface,
+      borderColor: theme.accent,
+      borderRadius: 16,
+      borderWidth: 1,
+      gap: 10,
+      padding: 18,
+    },
+    reportHeading: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+    reportDate: { color: theme.mutedText, fontSize: 12, fontWeight: '700' },
+    reportLink: { color: theme.accent, fontSize: 14, fontWeight: '900' },
     lessonHeader: { alignItems: 'flex-start', flexDirection: 'row', gap: 12 },
     lessonHeading: { flex: 1, gap: 3 },
     number: { color: theme.accent, fontSize: 13, fontWeight: '900', letterSpacing: 1 },

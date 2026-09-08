@@ -1,5 +1,9 @@
 # PromptSpend Mobile Beta and QA
 
+Also complete the September Receipt, promotional-rate, provenance, and report-link
+checks in [`MOBILE_PARITY_2026_09.md`](MOBILE_PARITY_2026_09.md) against the exact
+replacement binary. Earlier device results do not certify these additions.
+
 Status: active test protocol
 
 Last reviewed: 2026-08-31

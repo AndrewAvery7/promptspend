@@ -2,6 +2,12 @@
 
 Status: active release gate
 
+September 2026 parity implementation and its additional device checks are in
+[`MOBILE_PARITY_2026_09.md`](MOBILE_PARITY_2026_09.md). This adds native PromptSpend
+Receipt, renames the scenario artifact to Estimate Receipt, extends the tour to
+seven steps, exposes provenance counts, and uses effective promotional rates.
+Earlier device gates below remain required for the replacement binary.
+
 The iOS and Android applications must represent every user-facing capability of
 `promptspend.com`. A native interaction may differ from the browser when the
 platform calls for it, but the underlying user outcome must remain available.

@@ -26,7 +26,14 @@ describe('mobile Help and FAQ catalog', () => {
   });
 
   test('keeps in-app actions inside known destinations', () => {
-    const destinations = new Set<HelpDestination>(['home', 'estimate', 'compare', 'data', 'learn']);
+    const destinations = new Set<HelpDestination>([
+      'home',
+      'estimate',
+      'compare',
+      'receipt',
+      'data',
+      'learn',
+    ]);
     for (const entry of HELP_ENTRIES) {
       if (entry.action) expect(destinations.has(entry.action.destination)).toBe(true);
     }

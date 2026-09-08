@@ -151,6 +151,7 @@ export function EstimatorWorkspace({
     (next: AppSection) => {
       if (next === 'estimate') router.navigate(APP_ROUTES.estimate);
       if (next === 'compare') router.navigate(APP_ROUTES.compare);
+      if (next === 'receipt') router.navigate(APP_ROUTES.receipt);
       if (next === 'learn') router.navigate(APP_ROUTES.learn);
       if (next === 'data') router.navigate(APP_ROUTES.data);
     },
@@ -165,6 +166,7 @@ export function EstimatorWorkspace({
   );
 
   const catalog = catalogResult?.catalog ?? null;
+  const pricingAsOf = useMemo(() => new Date(`${pricingDay}T12:00:00Z`), [pricingDay]);
   const selectedModel = useMemo(
     () => (catalog ? chooseModel(catalog.primaryModels, selectedId) : null),
     [catalog, selectedId],
@@ -174,7 +176,7 @@ export function EstimatorWorkspace({
     () =>
       selectedModel
         ? conversationCost(selectedModel, workloadForModel(selectedModel, promptInputs, workload), {
-            asOf: new Date(`${pricingDay}T12:00:00Z`),
+            asOf: pricingAsOf,
             cachedInputShare: cacheEnabled ? cacheSharePercent / 100 : 0,
             reasoningMultiplier,
             useBatchApi: batchEnabled,
@@ -188,7 +190,7 @@ export function EstimatorWorkspace({
       reasoningMultiplier,
       selectedModel,
       workload,
-      pricingDay,
+      pricingAsOf,
     ],
   );
   const scaled = useMemo(
@@ -222,7 +224,7 @@ export function EstimatorWorkspace({
         },
         {
           cachedInputShare: cacheEnabled ? cacheSharePercent / 100 : 0,
-          asOf: new Date(`${pricingDay}T12:00:00Z`),
+          asOf: pricingAsOf,
           reasoningMultiplier,
           useBatchApi: batchEnabled,
         },
@@ -235,7 +237,7 @@ export function EstimatorWorkspace({
       promptInputs,
       reasoningMultiplier,
       workload,
-      pricingDay,
+      pricingAsOf,
     ],
   );
   const tokenReferenceModel = mode === 'compare' ? (comparisonModels[0] ?? selectedModel) : selectedModel;
@@ -388,7 +390,13 @@ export function EstimatorWorkspace({
               </TourTarget>
             </View>
 
-            {catalog && <PricingTicker catalog={catalog} onOpenData={() => navigateToSection('data')} />}
+            {catalog && (
+              <PricingTicker
+                asOf={pricingAsOf}
+                catalog={catalog}
+                onOpenData={() => navigateToSection('data')}
+              />
+            )}
 
             {section === 'estimate' && breakdown && selectedModel && scaled && (
               <View style={styles.stickySummaryShell}>
@@ -530,6 +538,7 @@ export function EstimatorWorkspace({
 
             {section === 'data' && (
               <DataSection
+                asOf={pricingAsOf}
                 catalog={catalog}
                 onOpenHelp={() => router.navigate(helpHref('data-overview'))}
                 preferencesToken={alertToken}
@@ -559,6 +568,7 @@ export function EstimatorWorkspace({
 
                     {mode === 'estimate' ? (
                       <ModelPicker
+                        asOf={pricingAsOf}
                         catalog={catalog}
                         isFavorite={favorites.includes(selectedModel.id)}
                         onChange={(model) => setSelectedId(model.id)}
@@ -567,6 +577,7 @@ export function EstimatorWorkspace({
                       />
                     ) : (
                       <ComparisonModelPicker
+                        asOf={pricingAsOf}
                         catalog={catalog}
                         favoriteIds={favorites}
                         onClear={() => setComparisonIds([])}
@@ -835,6 +846,7 @@ export function EstimatorWorkspace({
                   pastedFields={(Object.keys(promptInputs) as PromptFieldKey[]).filter(
                     (field) => promptInputs[field].mode === 'text',
                   )}
+                  pricingAsOf={pricingAsOf}
                   reasoningMultiplier={reasoningMultiplier}
                   revenuePerUserPerMonth={workload.revenuePerUserPerMonth}
                   rows={exportRows}
@@ -861,6 +873,7 @@ export function EstimatorWorkspace({
 
                 {section === 'compare' && (
                   <CatalogExplorer
+                    asOf={pricingAsOf}
                     catalog={catalog}
                     favoriteIds={favorites}
                     onToggleFavorite={toggleFavorite}
@@ -942,6 +955,10 @@ const DOCUMENT_META: Record<AppSection, { description: string; title: string }> 
   learn: {
     description: 'Learn how LLM tokens, caching, workload scale, and provider pricing affect AI cost.',
     title: 'Learn LLM cost fundamentals — PromptSpend',
+  },
+  receipt: {
+    description: 'Audit an AI conversation using a portable, privacy-safe PromptSpend Receipt.',
+    title: 'PromptSpend Receipt — audit AI cost',
   },
 };
 

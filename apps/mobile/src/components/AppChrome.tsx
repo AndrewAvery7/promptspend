@@ -15,13 +15,13 @@ import {
 } from 'react-native';
 
 import { AppText as Text, TYPE_ROLES } from '@/components/AppText';
-import { formatRate, type Catalog } from '@promptspend/core';
+import { effectivePricing, formatRate, type Catalog, type Model } from '@promptspend/core';
 
 import { HELP_ENTRIES, helpSearchText } from '@/lib/helpCenter';
 import type { AccentName, CanvasName, MobileTheme, ThemeMode } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
-export type AppSection = 'estimate' | 'compare' | 'learn' | 'data';
+export type AppSection = 'estimate' | 'compare' | 'receipt' | 'learn' | 'data';
 
 export const COMPACT_GLOBAL_ACTION_HEIGHT = 48;
 export const COMPACT_GLOBAL_ACTION_STYLE = {
@@ -36,17 +36,26 @@ export const COMPACT_GLOBAL_ACTION_STYLE = {
 const SECTIONS: { id: AppSection; label: string }[] = [
   { id: 'estimate', label: 'Estimate' },
   { id: 'compare', label: 'Compare' },
+  { id: 'receipt', label: 'PromptSpend Receipt' },
   { id: 'data', label: 'Data & Alerts' },
   { id: 'learn', label: 'Learn' },
 ];
 
-export function PricingTicker({ catalog, onOpenData }: { catalog: Catalog; onOpenData: () => void }) {
+export function PricingTicker({
+  asOf = new Date(),
+  catalog,
+  onOpenData,
+}: {
+  asOf?: Date;
+  catalog: Catalog;
+  onOpenData: () => void;
+}) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
-  const items = useMemo(() => buildTickerItems(catalog), [catalog]);
+  const items = useMemo(() => buildTickerItems(catalog, asOf), [asOf, catalog]);
 
   useEffect(() => {
     void AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
@@ -387,17 +396,17 @@ export function CommandSheet({
   );
 }
 
-export function buildTickerItems(catalog: Catalog): { key: string; text: string }[] {
+export function buildTickerItems(catalog: Catalog, asOf: Date = new Date()): { key: string; text: string }[] {
   const items: { key: string; text: string }[] = [];
   const cheapest = [...catalog.primaryModels]
-    .filter((model) => model.pricing.input > 0)
-    .sort((a, b) => a.pricing.input - b.pricing.input)[0];
+    .filter((model) => effectivePricing(model.pricing, asOf).input > 0)
+    .sort((a, b) => effectivePricing(a.pricing, asOf).input - effectivePricing(b.pricing, asOf).input)[0];
   if (cheapest)
     items.push({
       key: 'cheapest',
-      text: `CHEAPEST INPUT TODAY · ${cheapest.displayName} ${formatRate(cheapest.pricing.input)}/M`,
+      text: `CHEAPEST INPUT TODAY · ${cheapest.displayName} ${formatRate(effectivePricing(cheapest.pricing, asOf).input)}/M`,
     });
-  const spread = catalog.rateSpread();
+  const spread = effectiveSpread(catalog.primaryModels, asOf);
   if (spread)
     items.push({
       key: 'spread',
@@ -410,7 +419,7 @@ export function buildTickerItems(catalog: Catalog): { key: string; text: string 
     .forEach((model) => {
       items.push({
         key: `new-${model.id}`,
-        text: `▲ TRACKED · ${model.displayName} · ${formatRate(model.pricing.input)}/${formatRate(model.pricing.output)} per 1M`,
+        text: `▲ TRACKED · ${model.displayName} · ${formatRate(effectivePricing(model.pricing, asOf).input)}/${formatRate(effectivePricing(model.pricing, asOf).output)} per 1M${effectivePricing(model.pricing, asOf) !== model.pricing ? ' · INTRO PRICE' : ''}`,
       });
     });
   const flagged = catalog.models.filter((model) => model.provenance.needsReview).length;
@@ -422,6 +431,21 @@ export function buildTickerItems(catalog: Catalog): { key: string; text: string 
   });
   items.push({ key: 'alerts', text: 'FOLLOW PRICE CHANGES · feed and email options in Data & Alerts' });
   return items;
+}
+
+function effectiveSpread(models: readonly Model[], asOf: Date) {
+  const priced = models
+    .filter((model) => model.provenance.stale !== true)
+    .map((model) => {
+      const pricing = effectivePricing(model.pricing, asOf);
+      return { model, rate: 0.75 * pricing.input + 0.25 * pricing.output };
+    })
+    .filter((item) => item.rate > 0)
+    .sort((a, b) => a.rate - b.rate);
+  const cheapest = priced[0];
+  const priciest = priced.at(-1);
+  if (!cheapest || !priciest || cheapest === priciest) return null;
+  return { cheapest: cheapest.model, multiple: priciest.rate / cheapest.rate, priciest: priciest.model };
 }
 
 interface CommandItem {

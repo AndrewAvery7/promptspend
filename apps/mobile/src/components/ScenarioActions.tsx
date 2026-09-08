@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Alert, Platform, Pressable, Share, StyleSheet, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
-import { encodeScenario, type Catalog, type ComparisonRow } from '@promptspend/core';
+import { effectivePricing, encodeScenario, type Catalog, type ComparisonRow } from '@promptspend/core';
 
 import type { PromptFieldKey } from '@/lib/promptInput';
 import type { MobileTheme } from '@/theme/tokens';
@@ -23,6 +23,7 @@ interface ScenarioActionsProps {
   modelIds: readonly string[];
   outputTokens: number;
   pastedFields: readonly PromptFieldKey[];
+  pricingAsOf: Date;
   reasoningMultiplier: number;
   revenuePerUserPerMonth: number;
   rows: readonly ComparisonRow[];
@@ -167,7 +168,7 @@ export function ScenarioActions(props: ScenarioActionsProps) {
             props.rows.length === 0 && styles.disabled,
           ]}
         >
-          <Text style={styles.receiptButtonText}>Create AI Cost Receipt</Text>
+          <Text style={styles.receiptButtonText}>Create Estimate Receipt</Text>
         </Pressable>
         <Pressable
           accessibilityHint="Shares a restorable website link without pasted prompt text"
@@ -263,31 +264,34 @@ export function csvForRows(props: ScenarioActionsProps): string {
       'cost_per_user',
       'margin',
     ],
-    ...props.rows.map(({ breakdown, model, scaled }) => [
-      model.displayName,
-      model.id,
-      props.catalog.providerName(model),
-      model.status,
-      model.provenance.source,
-      model.provenance.lastVerified,
-      model.provenance.verifiedUrl ?? props.catalog.provider(model)?.pricingUrl ?? '',
-      model.provenance.needsReview ? 'yes' : 'no',
-      model.tokenizer.kind === 'tiktoken' ? `estimated:${model.tokenizer.encoding}` : 'estimated:ratio',
-      model.pricing.input,
-      model.pricing.output,
-      model.pricing.cachedInput ?? '',
-      model.pricing.cacheWrite ?? '',
-      model.pricing.cacheStoragePerMillionTokenHour ?? '',
-      Math.round(breakdown.inputTokens),
-      Math.round(breakdown.outputTokens),
-      Math.round(breakdown.peakRequestTokens),
-      breakdown.longContextTurns,
-      scaled.perConversation.toFixed(6),
-      scaled.perMonth.toFixed(2),
-      scaled.perYear.toFixed(2),
-      scaled.costPerUser.toFixed(4),
-      scaled.margin === null ? '' : scaled.margin.toFixed(4),
-    ]),
+    ...props.rows.map(({ breakdown, model, scaled }) => {
+      const pricing = effectivePricing(model.pricing, props.pricingAsOf);
+      return [
+        model.displayName,
+        model.id,
+        props.catalog.providerName(model),
+        model.status,
+        model.provenance.source,
+        model.provenance.lastVerified,
+        model.provenance.verifiedUrl ?? props.catalog.provider(model)?.pricingUrl ?? '',
+        model.provenance.needsReview ? 'yes' : 'no',
+        model.tokenizer.kind === 'tiktoken' ? `estimated:${model.tokenizer.encoding}` : 'estimated:ratio',
+        pricing.input,
+        pricing.output,
+        pricing.cachedInput ?? '',
+        pricing.cacheWrite ?? '',
+        pricing.cacheStoragePerMillionTokenHour ?? '',
+        Math.round(breakdown.inputTokens),
+        Math.round(breakdown.outputTokens),
+        Math.round(breakdown.peakRequestTokens),
+        breakdown.longContextTurns,
+        scaled.perConversation.toFixed(6),
+        scaled.perMonth.toFixed(2),
+        scaled.perYear.toFixed(2),
+        scaled.costPerUser.toFixed(4),
+        scaled.margin === null ? '' : scaled.margin.toFixed(4),
+      ];
+    }),
   ];
   return `${rows.map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }

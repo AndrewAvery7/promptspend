@@ -36,9 +36,13 @@ the layout checks in portrait and landscape.
 4. Enable the largest practical text setting. Complete one Estimate using
    pasted text, then compare four models and expand every calculation section.
 5. Save, rename, duplicate, reopen, delete, and undo a scenario.
-6. Create and share a readable result and an AI Cost Receipt through Messages,
+6. Create and share a readable result and an Estimate Receipt through Messages,
    Mail/Gmail, Notes/Files, and one third-party share target. Confirm no pasted
    prompt text appears.
+   Also open PromptSpend Receipt from Home, import a sample structured result,
+   review/edit each labeled field, and share both formats. Confirm its preview
+   is announced completely, long fields remain visible, and all seven Guide
+   steps work. Spoken introductory prices must include expiration context.
 7. Navigate every Learn lesson and use the private token lab.
 8. Open every Data & Alerts resource and confirm browser, clipboard, and hosted
    alert handoffs are understandable and reversible.

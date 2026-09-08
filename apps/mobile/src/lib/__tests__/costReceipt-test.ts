@@ -31,7 +31,7 @@ const rows = compareModels(
   { conversationsPerDay: 2500, monthlyActiveUsers: 1000, revenuePerUserPerMonth: 0 },
 );
 
-describe('AI Cost Receipt', () => {
+describe('Estimate Receipt', () => {
   test('sorts a comparison, labels the lowest model, and exposes annual spread', () => {
     const receipt = buildCostReceiptData({
       batchEnabled: false,
@@ -40,6 +40,7 @@ describe('AI Cost Receipt', () => {
       conversationsPerDay: 2500,
       outputTokens: 900,
       pastedFields: [],
+      pricingAsOf: new Date('2026-08-12T12:00:00Z'),
       reasoningMultiplier: 1,
       rows,
       systemTokens: 800,
@@ -63,6 +64,7 @@ describe('AI Cost Receipt', () => {
       conversationsPerDay: 2500,
       outputTokens: privatePrompt.length,
       pastedFields: ['system'],
+      pricingAsOf: new Date('2026-08-12T12:00:00Z'),
       reasoningMultiplier: 1.2,
       rows: [rows[0]!],
       systemTokens: privatePrompt.length,
@@ -91,6 +93,7 @@ describe('AI Cost Receipt', () => {
         conversationsPerDay: 0,
         outputTokens: 0,
         pastedFields: [],
+        pricingAsOf: new Date('2026-08-12T12:00:00Z'),
         reasoningMultiplier: 1,
         rows: [],
         systemTokens: 0,

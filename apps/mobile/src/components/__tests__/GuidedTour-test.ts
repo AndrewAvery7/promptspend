@@ -6,6 +6,7 @@ describe('guided tour flow', () => {
       '/home',
       '/estimate',
       '/compare',
+      '/receipt',
       '/data',
       '/learn',
       '/learn',

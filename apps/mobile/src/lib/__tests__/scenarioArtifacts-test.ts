@@ -48,6 +48,7 @@ const safeProps = {
   modelIds: ['premium', 'efficient'],
   outputTokens: 900,
   pastedFields: ['system', 'user'] as const,
+  pricingAsOf: new Date('2026-08-13T12:00:00Z'),
   reasoningMultiplier: 1,
   revenuePerUserPerMonth: 0,
   rows,

@@ -98,6 +98,7 @@ function Workspace() {
         catalog={mockCatalog}
         modelIds={rows.map((row) => row.model.id)}
         pastedFields={[]}
+        pricingAsOf={new Date('2026-08-13T12:00:00Z')}
         reasoningMultiplier={1}
         rows={rows}
       />
@@ -204,11 +205,11 @@ describe('numeric edits through real pricing and action components', () => {
   test('Receipt opens only after valid input and readable text reflects the latest workload', async () => {
     const { screen, input } = await openWorkspace();
     await fireEvent.changeText(input, '');
-    await fireEvent.press(screen.getByText('Create AI Cost Receipt'));
-    expect(screen.queryByLabelText('Close Cost Receipt')).toBeNull();
+    await fireEvent.press(screen.getByText('Create Estimate Receipt'));
+    expect(screen.queryByLabelText('Close Estimate Receipt')).toBeNull();
     await fireEvent.changeText(input, '777');
-    await fireEvent.press(screen.getByText('Create AI Cost Receipt'));
-    expect(screen.getByLabelText('Close Cost Receipt')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Create Estimate Receipt'));
+    expect(screen.getByLabelText('Close Estimate Receipt')).toBeTruthy();
     await fireEvent.press(screen.getByText('Share readable text'));
     await waitFor(() => expect(Share.share).toHaveBeenCalled());
     const workload = { ...DEFAULT_WORKLOAD, userTokens: 777 };

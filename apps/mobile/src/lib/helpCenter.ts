@@ -3,6 +3,11 @@ export const HELP_CATEGORIES = [
   { id: 'home', label: 'Home', summary: 'Use the Cost Brief, presets, saved scenarios, and watchlist.' },
   { id: 'estimate', label: 'Estimate', summary: 'Describe one workload and understand every assumption.' },
   { id: 'compare', label: 'Compare', summary: 'Apply one workload to as many as four models.' },
+  {
+    id: 'receipt',
+    label: 'Receipt',
+    summary: 'Audit an existing conversation and create a private receipt.',
+  },
   { id: 'data', label: 'Data & Alerts', summary: 'Inspect evidence and manage private pricing alerts.' },
   { id: 'learn', label: 'Learn', summary: 'Use the Token Lab and the seven cost lessons.' },
   {
@@ -23,7 +28,7 @@ export const HELP_CATEGORIES = [
 ] as const;
 
 export type HelpCategoryId = (typeof HELP_CATEGORIES)[number]['id'];
-export type HelpDestination = 'home' | 'estimate' | 'compare' | 'data' | 'learn';
+export type HelpDestination = 'home' | 'estimate' | 'compare' | 'receipt' | 'data' | 'learn';
 
 export interface HelpAction {
   destination: HelpDestination;
@@ -57,7 +62,7 @@ export const HELP_ENTRIES: readonly HelpEntry[] = [
     question: 'What is the difference between Home, Estimate, and Compare?',
     answer: [
       'Home is your private Cost Brief: it summarizes the active scenario, saved work, followed models, and the strongest current savings opportunity.',
-      'Estimate calculates one model in detail. Compare applies the same workload and assumptions to as many as four models so the price differences are fair.',
+      'Estimate calculates one model in detail. Compare applies the same workload and assumptions to as many as four models so the price differences are fair. PromptSpend Receipt audits a conversation that already happened.',
     ],
     keywords: ['home versus estimate', 'home vs estimate', 'compare', 'difference', 'pages', 'tabs'],
     action: { destination: 'home', label: 'Open Home' },
@@ -342,7 +347,7 @@ export const HELP_ENTRIES: readonly HelpEntry[] = [
     category: 'estimate',
     question: 'How do I save, share, or export an estimate?',
     answer: [
-      'Save keeps the scenario on this device. Share estimate opens the system share sheet with a privacy-safe summary. Cost Receipt creates a more detailed artifact that can be previewed and shared through installed apps.',
+      'Save keeps the scenario on this device. Share estimate opens the system share sheet with a privacy-safe summary. Estimate Receipt creates a more detailed artifact from the hypothetical scenario and can be previewed and shared through installed apps.',
       'Raw pasted prompt text is excluded from shares and saved artifacts. Always review the preview before sending it.',
     ],
     keywords: ['save', 'share', 'email', 'messenger', 'export', 'receipt', 'pdf', 'csv'],
@@ -431,6 +436,61 @@ export const HELP_ENTRIES: readonly HelpEntry[] = [
     ],
     keywords: ['share comparison', 'email', 'message', 'messenger', 'privacy'],
     action: { destination: 'compare', label: 'Open comparison results' },
+  },
+  {
+    id: 'receipt-overview',
+    category: 'receipt',
+    question: 'What is PromptSpend Receipt?',
+    answer: [
+      'PromptSpend Receipt audits an AI conversation that already happened. It is separate from Estimate Receipt, which packages a hypothetical Estimate or Compare scenario.',
+      'You send the versioned audit instructions as the next message in the existing conversation, then import the structured promptspend-receipt block returned by the assistant.',
+    ],
+    keywords: ['receipt', 'conversation audit', 'actual conversation', 'estimate receipt', 'difference'],
+    action: { destination: 'receipt', label: 'Open PromptSpend Receipt' },
+  },
+  {
+    id: 'receipt-steps',
+    category: 'receipt',
+    question: 'How do I audit a conversation?',
+    answer: [
+      'Open PromptSpend Receipt and copy its audit instructions. Return to the conversation you want to measure and send those instructions as the next message.',
+      'Copy only the fenced promptspend-receipt JSON block from the answer. Return to PromptSpend, import the clipboard, review every field, and then share the image or readable text.',
+    ],
+    keywords: ['receipt instructions', 'copy', 'paste', 'json', 'audit conversation', 'steps'],
+    action: { destination: 'receipt', label: 'Start a conversation audit' },
+  },
+  {
+    id: 'receipt-privacy',
+    category: 'receipt',
+    question: 'Does PromptSpend upload or save my conversation?',
+    answer: [
+      'No. The mobile app does not connect to your AI account, receive the full conversation, or upload the imported receipt result. Clipboard content and editable receipt fields remain in volatile screen memory and disappear when the screen is closed.',
+      'The instructions tell the assistant to inspect only earlier visible user and assistant messages. Hidden prompts, internal tools, retrieved payloads, secrets, and the receipt request itself are excluded.',
+    ],
+    keywords: ['receipt privacy', 'upload', 'save', 'clipboard', 'chat history', 'account'],
+    action: { destination: 'receipt', label: 'Review the private workflow' },
+  },
+  {
+    id: 'receipt-unknowns',
+    category: 'receipt',
+    question: 'Why might a receipt say unknown or pricing unavailable?',
+    answer: [
+      'A conversation interface does not always reveal the exact billable model. PromptSpend preserves UNKNOWN or AMBIGUOUS instead of guessing.',
+      'If the assistant cannot retrieve current PromptSpend pricing, it must report Current pricing unavailable rather than substitute a remembered rate. Ranges and caveats are preserved during import.',
+    ],
+    keywords: ['unknown model', 'ambiguous', 'pricing unavailable', 'range', 'receipt limitation'],
+    action: { destination: 'receipt', label: 'Open PromptSpend Receipt' },
+  },
+  {
+    id: 'receipt-share',
+    category: 'receipt',
+    question: 'What can I share from a PromptSpend Receipt?',
+    answer: [
+      'After importing and reviewing a valid result, you can create a local PNG or share accessible plain text through the apps installed on your device.',
+      'The receipt contains the summarized audit fields, not the original conversation. Review the preview before sending it because the information may still be commercially sensitive.',
+    ],
+    keywords: ['receipt share', 'png', 'image', 'text', 'email', 'messenger'],
+    action: { destination: 'receipt', label: 'Create a shareable receipt' },
   },
   {
     id: 'data-overview',
@@ -600,7 +660,7 @@ export const HELP_ENTRIES: readonly HelpEntry[] = [
     category: 'tools',
     question: 'What is the Guided Tour for?',
     answer: [
-      'The Guided Tour is a six-step orientation that moves through Home, Estimate, Compare, Learn, Data & Alerts, and the global tools while highlighting the relevant content.',
+      'The Guided Tour is a seven-step orientation that moves through Home, Estimate, Compare, PromptSpend Receipt, Data & Alerts, Learn, and the global tools while highlighting the relevant content.',
       'It is always replayable. Use this Help Center for detailed reference after the overview.',
     ],
     keywords: ['guide', 'guided tour', 'six steps', 'replay', 'highlight'],

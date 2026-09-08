@@ -14,9 +14,10 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText as Text } from '@/components/AppText';
-import { Catalog, formatContext, formatRate, type Model } from '@promptspend/core';
+import { Catalog, effectivePricing, formatContext, type Model } from '@promptspend/core';
 
 import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
+import { modelRateDisplay } from '@/lib/pricingDisplay';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
@@ -24,6 +25,7 @@ type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context';
 const CATALOG_PAGE_SIZE = 20;
 
 interface CatalogExplorerProps {
+  asOf: Date;
   catalog: Catalog;
   favoriteIds: readonly string[];
   onToggleFavorite: (id: string) => void;
@@ -32,6 +34,7 @@ interface CatalogExplorerProps {
 }
 
 export function CatalogExplorer({
+  asOf,
   catalog,
   favoriteIds,
   onToggle,
@@ -63,8 +66,8 @@ export function CatalogExplorer({
           !needle ||
           `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase().includes(needle),
       )
-      .sort((a, b) => compareModel(a, b, sort, catalog));
-  }, [catalog, countries, query, showInactive, sort]);
+      .sort((a, b) => compareModel(a, b, sort, catalog, asOf));
+  }, [asOf, catalog, countries, query, showInactive, sort]);
   const inScopePrimary = useMemo(
     () => catalog.primaryModels.filter((model) => catalog.inCountries(model, countries)),
     [catalog, countries],
@@ -74,10 +77,10 @@ export function CatalogExplorer({
       inScopePrimary.filter(
         (model) =>
           model.capabilityIndex !== undefined &&
-          Catalog.blendedRate(model) > 0 &&
+          effectiveBlendedRate(model, asOf) > 0 &&
           model.provenance.stale !== true,
       ),
-    [inScopePrimary],
+    [asOf, inScopePrimary],
   );
   const unscored = inScopePrimary.length - scored.length;
 
@@ -122,13 +125,13 @@ export function CatalogExplorer({
               <Text style={styles.chartTop}>Higher illustrative capability</Text>
               {chartWidth > 0 &&
                 scored.map((model) => {
-                  const point = chartPoint(model, scored, chartWidth);
+                  const point = chartPoint(model, scored, chartWidth, asOf);
                   const selected = selectedIds.includes(model.id);
                   const disabled = !selected && selectedIds.length >= 4;
                   return (
                     <Pressable
                       accessibilityHint="Adds or removes this model from the four-model shortlist"
-                      accessibilityLabel={`${model.displayName}, capability ${model.capabilityIndex}, blended rate ${formatRate(Catalog.blendedRate(model))} per million tokens${selected ? ', selected' : ''}`}
+                      accessibilityLabel={`${model.displayName}, capability ${model.capabilityIndex}, ${modelRateDisplay(model, asOf).accessibility}${selected ? ', selected' : ''}`}
                       accessibilityRole="button"
                       accessibilityState={{ disabled, selected }}
                       disabled={disabled}
@@ -216,6 +219,7 @@ export function CatalogExplorer({
         {models.slice(0, visibleCount).map((model) => {
           const selected = selectedIds.includes(model.id);
           const country = catalog.provider(model)?.country;
+          const rates = modelRateDisplay(model, asOf);
           return (
             <View key={model.id} style={styles.modelRow}>
               <View style={styles.modelHeader}>
@@ -253,10 +257,15 @@ export function CatalogExplorer({
                 </Pressable>
               </View>
               <View style={styles.rates}>
-                <Text style={styles.rate}>{formatRate(model.pricing.input)} input</Text>
-                <Text style={styles.rate}>{formatRate(model.pricing.output)} output</Text>
+                <Text style={styles.rate}>{rates.input} input</Text>
+                <Text style={styles.rate}>{rates.output} output</Text>
                 <Text style={styles.rate}>{formatContext(model.contextWindow)} context</Text>
               </View>
+              {rates.promoLabel && (
+                <Text style={styles.promo}>
+                  {rates.promoLabel} · {rates.standardLabel}
+                </Text>
+              )}
               <Text style={styles.note}>
                 {model.provenance.source}
                 {model.provenance.needsReview ? ' · CHECK' : ''} · verified {model.provenance.lastVerified}
@@ -351,9 +360,15 @@ export function CatalogExplorer({
                   {detail.capabilities.vision ? 'vision' : 'text'}
                 </Text>
                 <Text style={styles.body}>
-                  Input {formatRate(detail.pricing.input)}/M · Output {formatRate(detail.pricing.output)}/M ·
-                  Context {formatContext(detail.contextWindow)}
+                  Input {modelRateDisplay(detail, asOf).input}/M · Output{' '}
+                  {modelRateDisplay(detail, asOf).output}/M · Context {formatContext(detail.contextWindow)}
                 </Text>
+                {modelRateDisplay(detail, asOf).promoLabel && (
+                  <Text style={styles.promo}>
+                    {modelRateDisplay(detail, asOf).promoLabel} ·{' '}
+                    {modelRateDisplay(detail, asOf).standardLabel}
+                  </Text>
+                )}
                 <Text style={styles.body}>
                   Source: {detail.provenance.source}. Last verified {detail.provenance.lastVerified}.
                 </Text>
@@ -403,25 +418,37 @@ export function CatalogExplorer({
   );
 }
 
-function compareModel(a: Model, b: Model, key: SortKey, catalog: Catalog): number {
+function compareModel(a: Model, b: Model, key: SortKey, catalog: Catalog, asOf: Date): number {
   if (key === 'provider')
     return (
       catalog.providerName(a).localeCompare(catalog.providerName(b)) ||
       a.displayName.localeCompare(b.displayName)
     );
-  if (key === 'input') return a.pricing.input - b.pricing.input || a.displayName.localeCompare(b.displayName);
+  if (key === 'input')
+    return (
+      effectivePricing(a.pricing, asOf).input - effectivePricing(b.pricing, asOf).input ||
+      a.displayName.localeCompare(b.displayName)
+    );
   if (key === 'output')
-    return a.pricing.output - b.pricing.output || a.displayName.localeCompare(b.displayName);
+    return (
+      effectivePricing(a.pricing, asOf).output - effectivePricing(b.pricing, asOf).output ||
+      a.displayName.localeCompare(b.displayName)
+    );
   if (key === 'context')
     return b.contextWindow - a.contextWindow || a.displayName.localeCompare(b.displayName);
   return a.displayName.localeCompare(b.displayName);
 }
 
-function chartPoint(model: Model, models: Model[], width: number): { left: number; top: number } {
-  const rates = models.map(Catalog.blendedRate).filter((rate) => rate > 0);
+function effectiveBlendedRate(model: Model, asOf: Date): number {
+  const pricing = effectivePricing(model.pricing, asOf);
+  return 0.75 * pricing.input + 0.25 * pricing.output;
+}
+
+function chartPoint(model: Model, models: Model[], width: number, asOf: Date): { left: number; top: number } {
+  const rates = models.map((item) => effectiveBlendedRate(item, asOf)).filter((rate) => rate > 0);
   const min = Math.log10(Math.min(...rates));
   const max = Math.log10(Math.max(...rates));
-  const x = max === min ? 0.5 : (Math.log10(Catalog.blendedRate(model)) - min) / (max - min);
+  const x = max === min ? 0.5 : (Math.log10(effectiveBlendedRate(model, asOf)) - min) / (max - min);
   const y = (model.capabilityIndex ?? 0) / 100;
   return { left: 10 + x * Math.max(0, width - 34), top: 26 + (1 - y) * 184 };
 }
@@ -549,6 +576,7 @@ function createStyles(theme: MobileTheme) {
     selectTextDisabled: { color: theme.mutedText },
     rates: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
     rate: { color: theme.text, fontSize: 12, fontVariant: ['tabular-nums'], fontWeight: '700' },
+    promo: { color: theme.accent, fontSize: 11, fontWeight: '900', lineHeight: 16 },
     detailButton: { alignItems: 'flex-start', justifyContent: 'center', minHeight: 44 },
     detailText: { color: theme.accent, fontSize: 12, fontWeight: '800' },
     backdrop: { backgroundColor: 'rgba(0,0,0,0.48)', flex: 1, justifyContent: 'flex-end' },

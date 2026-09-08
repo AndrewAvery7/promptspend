@@ -7,10 +7,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Catalog, Model } from '@promptspend/core';
 
 import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
+import { modelRateDisplay } from '@/lib/pricingDisplay';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 interface ModelPickerProps {
+  asOf: Date;
   catalog: Catalog;
   isFavorite: boolean;
   onChange: (model: Model) => void;
@@ -18,12 +20,20 @@ interface ModelPickerProps {
   selected: Model;
 }
 
-export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, selected }: ModelPickerProps) {
+export function ModelPicker({
+  asOf,
+  catalog,
+  isFavorite,
+  onChange,
+  onToggleFavorite,
+  selected,
+}: ModelPickerProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [countries, setCountries] = useState<string[]>([]);
+  const selectedRates = modelRateDisplay(selected, asOf);
   const models = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return catalog.primaryModels.filter((model) => {
@@ -48,9 +58,10 @@ export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, s
             <Text style={styles.modelName}>{selected.displayName}</Text>
             <Text style={styles.providerName}>
               {catalog.providerName(selected)}
-              {catalog.provider(selected)?.country ? ` · ${catalog.provider(selected)?.country}` : ''} · $
-              {selected.pricing.input}/M input · ${selected.pricing.output}/M output
+              {catalog.provider(selected)?.country ? ` · ${catalog.provider(selected)?.country}` : ''} ·
+              {selectedRates.input}/M input · {selectedRates.output}/M output
             </Text>
+            {selectedRates.promoLabel && <Text style={styles.promo}>{selectedRates.promoLabel}</Text>}
           </View>
           <Text accessibilityElementsHidden style={styles.changeLabel}>
             Change
@@ -130,9 +141,10 @@ export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, s
             renderItem={({ item }) => {
               const isSelected = item.id === selected.id;
               const country = catalog.provider(item)?.country;
+              const rates = modelRateDisplay(item, asOf);
               return (
                 <Pressable
-                  accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}${country ? `, ${countryName(country)}` : ''}, ${item.pricing.input} dollars per million input tokens and ${item.pricing.output} dollars per million output tokens${isSelected ? ', selected' : ''}`}
+                  accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}${country ? `, ${countryName(country)}` : ''}, ${rates.accessibility}${isSelected ? ', selected' : ''}`}
                   accessibilityRole="button"
                   onPress={() => {
                     onChange(item);
@@ -154,9 +166,11 @@ export function ModelPicker({ catalog, isFavorite, onChange, onToggleFavorite, s
                   </View>
                   <View style={styles.rateBlock}>
                     <Text style={styles.rate}>
-                      ${item.pricing.input} / ${item.pricing.output}
+                      {rates.input} / {rates.output}
                     </Text>
-                    <Text style={styles.rateLabel}>{isSelected ? 'Selected' : 'input / output'}</Text>
+                    <Text style={[styles.rateLabel, rates.promoLabel && styles.promo]}>
+                      {rates.promoLabel ?? (isSelected ? 'Selected' : 'input / output')}
+                    </Text>
                   </View>
                 </Pressable>
               );
@@ -206,6 +220,7 @@ function createStyles(theme: MobileTheme) {
       fontSize: 12,
       lineHeight: 17,
     },
+    promo: { color: theme.accent, fontSize: 10, fontWeight: '900', letterSpacing: 0.4 },
     changeLabel: {
       color: theme.accent,
       fontSize: 14,

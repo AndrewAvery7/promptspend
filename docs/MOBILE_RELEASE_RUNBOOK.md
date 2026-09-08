@@ -2,7 +2,7 @@
 
 Status: operational draft; production submission requires the go/no-go gate.
 
-Last reviewed: 2026-09-01
+Last reviewed: 2026-09-07
 
 ## Release principle
 
@@ -133,6 +133,10 @@ credentials used, start/finish time, and checksum where available. A successful
 cloud build is not QA approval.
 
 ## 5. Beta distribution
+
+This section requires separate explicit owner approval for the exact Apple or
+Google action. Creating an EAS binary does not authorize uploading it to
+TestFlight, changing store records, distributing through Play, or starting review.
 
 iOS:
 

@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render } from '@testing-library/react-native';
-import { Catalog, type PricingCatalog } from '@promptspend/core';
+import { Catalog, DEFAULT_SHARE_RECEIPT, type PricingCatalog } from '@promptspend/core';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import CompareScreen from '../compare';
@@ -7,13 +7,15 @@ import DataAndAlertsScreen from '../data';
 import EstimateScreen from '../estimate';
 import HomeScreen from '../home';
 import LearnScreen from '../learn';
+import ReceiptScreen from '../receipt';
 
 const mockNavigate = jest.fn();
 const mockSetParams = jest.fn();
 const mockLaunchState = jest.fn();
+let mockFocused = true;
 
 jest.mock('expo-router', () => ({
-  useIsFocused: () => true,
+  useIsFocused: () => mockFocused,
   useLocalSearchParams: () => ({}),
   useRouter: () => ({ navigate: mockNavigate, setParams: mockSetParams }),
 }));
@@ -150,6 +152,7 @@ function launchState() {
 
 describe('top-level route screens', () => {
   beforeEach(() => {
+    mockFocused = true;
     mockLaunchState.mockReturnValue(launchState());
     mockNavigate.mockClear();
     mockSetParams.mockClear();
@@ -157,12 +160,47 @@ describe('top-level route screens', () => {
 
   afterEach(cleanup);
 
+  test('Receipt validates input, clears the raw paste, and clears the artifact when leaving', async () => {
+    const wrapper = () => (
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { x: 0, y: 0, width: 390, height: 844 },
+          insets: { top: 44, bottom: 34, left: 0, right: 0 },
+        }}
+      >
+        <ReceiptScreen />
+      </SafeAreaProvider>
+    );
+    const view = await render(wrapper());
+    expect(view.getByRole('button', { name: /Share readable text/ })).toBeDisabled();
+    await fireEvent.changeText(view.getByLabelText('Assistant receipt JSON'), '{"conversation":"one"}');
+    await fireEvent.press(view.getByText('Import pasted JSON'));
+    expect(view.getByText(/JSON is missing receipt fields/)).toBeTruthy();
+    expect(view.getByRole('button', { name: /Share readable text/ })).toBeDisabled();
+    await fireEvent.changeText(
+      view.getByLabelText('Assistant receipt JSON'),
+      JSON.stringify({ ...DEFAULT_SHARE_RECEIPT, currentModel: 'Audited model' }),
+    );
+    await fireEvent.press(view.getByText('Import pasted JSON'));
+    expect(view.getByLabelText('Assistant receipt JSON').props.value).toBe('');
+    expect(view.getByRole('button', { name: /Share readable text/ })).toBeEnabled();
+    expect(view.getByRole('image').props.accessibilityLabel).toContain('Audited model');
+    mockFocused = false;
+    await view.rerender(wrapper());
+    expect(view.queryByRole('image')).toBeNull();
+    mockFocused = true;
+    await view.rerender(wrapper());
+    expect(view.getByRole('button', { name: /Share readable text/ })).toBeDisabled();
+    expect(view.getByRole('image').props.accessibilityLabel).not.toContain('Audited model');
+  });
+
   test.each([
     ['Home', HomeScreen, /Know what your AI decision costs/],
     ['Estimate', EstimateScreen, /Know the tab before you build/],
     ['Compare', CompareScreen, /See the price difference/],
     ['Learn', LearnScreen, /Understand the cost. Master the app/],
     ['Data & Alerts', DataAndAlertsScreen, /Every number shows its work/],
+    ['Receipt', ReceiptScreen, /Your prompt has a price tag/],
   ])('%s renders its defining product outcome', async (_name, Screen, heading) => {
     const view = await render(
       <SafeAreaProvider

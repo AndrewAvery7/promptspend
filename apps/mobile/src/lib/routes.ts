@@ -8,6 +8,7 @@ export const APP_ROUTES = {
   estimate: '/estimate' as Href,
   home: '/home' as Href,
   learn: '/learn' as Href,
+  receipt: '/receipt' as Href,
 } as const;
 
 export function helpHref(entryId: string): Href {

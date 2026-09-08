@@ -32,6 +32,7 @@ import { PersistenceStatus } from '@/components/PersistenceStatus';
 import { WebDocumentHead } from '@/components/WebDocumentHead';
 import { toggleComparisonSelection } from '@/lib/comparison';
 import { compareModelsForInputs, workloadForModel } from '@/lib/promptInput';
+import { modelRateDisplay } from '@/lib/pricingDisplay';
 import { APP_ROUTES, helpHref } from '@/lib/routes';
 import {
   SCENARIO_PRESETS,
@@ -59,6 +60,7 @@ export default function HomeScreen() {
   const [showAllWatched, setShowAllWatched] = useState(false);
 
   const catalog = launch.catalogResult?.catalog ?? null;
+  const pricingAsOf = useMemo(() => new Date(`${launch.pricingDay}T12:00:00Z`), [launch.pricingDay]);
   const selectedModel = useMemo(
     () => chooseModel(catalog?.primaryModels ?? [], launch.selectedId),
     [catalog, launch.selectedId],
@@ -67,7 +69,7 @@ export default function HomeScreen() {
     if (!selectedModel) return null;
     const modelWorkload = workloadForModel(selectedModel, launch.promptInputs, launch.workload);
     const breakdown = conversationCost(selectedModel, modelWorkload, {
-      asOf: new Date(`${launch.pricingDay}T12:00:00Z`),
+      asOf: pricingAsOf,
       cachedInputShare: launch.cacheEnabled ? launch.cacheSharePercent / 100 : 0,
       reasoningMultiplier: launch.reasoningMultiplier,
       useBatchApi: launch.batchEnabled,
@@ -86,7 +88,7 @@ export default function HomeScreen() {
     launch.reasoningMultiplier,
     launch.workload,
     selectedModel,
-    launch.pricingDay,
+    pricingAsOf,
   ]);
   const comparisonModels = useMemo(
     () =>
@@ -111,7 +113,7 @@ export default function HomeScreen() {
         },
         {
           cachedInputShare: launch.cacheEnabled ? launch.cacheSharePercent / 100 : 0,
-          asOf: new Date(`${launch.pricingDay}T12:00:00Z`),
+          asOf: pricingAsOf,
           reasoningMultiplier: launch.reasoningMultiplier,
           useBatchApi: launch.batchEnabled,
         },
@@ -124,7 +126,7 @@ export default function HomeScreen() {
       launch.promptInputs,
       launch.reasoningMultiplier,
       launch.workload,
-      launch.pricingDay,
+      pricingAsOf,
     ],
   );
   const selectedRow = comparisonRows.find((row) => row.model.id === launch.selectedId);
@@ -136,6 +138,7 @@ export default function HomeScreen() {
     (section: AppSection) => {
       if (section === 'estimate') router.navigate(APP_ROUTES.estimate);
       if (section === 'compare') router.navigate(APP_ROUTES.compare);
+      if (section === 'receipt') router.navigate(APP_ROUTES.receipt);
       if (section === 'learn') router.navigate(APP_ROUTES.learn);
       if (section === 'data') router.navigate(APP_ROUTES.data);
     },
@@ -197,7 +200,13 @@ export default function HomeScreen() {
             />
           </View>
 
-          {catalog && <PricingTicker catalog={catalog} onOpenData={() => router.navigate(APP_ROUTES.data)} />}
+          {catalog && (
+            <PricingTicker
+              asOf={pricingAsOf}
+              catalog={catalog}
+              onOpenData={() => router.navigate(APP_ROUTES.data)}
+            />
+          )}
 
           <TourTarget id="home-cost-brief" scrollRef={scrollRef}>
             <View style={styles.hero}>
@@ -221,6 +230,30 @@ export default function HomeScreen() {
               )}
             </View>
           </TourTarget>
+
+          {catalog && (
+            <Pressable
+              accessibilityHint="Opens complete pricing provenance and verification details"
+              accessibilityRole="button"
+              onPress={() => router.navigate(APP_ROUTES.data)}
+              style={({ pressed }) => [styles.provenanceCard, pressed && styles.pressed]}
+            >
+              <View style={styles.provenanceHeader}>
+                <Text style={styles.cardEyebrow}>THE RECEIPTS BEHIND THE RATES</Text>
+                <Ionicons color={theme.accent} name="shield-checkmark-outline" size={22} />
+              </View>
+              <Text style={styles.provenanceStatement}>
+                {catalog.primaryModels.length} models · {catalog.providers.length} providers ·{' '}
+                {catalog.vendorVerifiedCount()} vendor-page verified · {catalog.feedSourcedCount()}{' '}
+                public-feed sourced
+              </Text>
+              <Text style={[styles.body, catalog.flaggedForReviewCount() > 0 && styles.provenanceWarning]}>
+                {catalog.flaggedForReviewCount() === 0
+                  ? 'No pricing rows are currently flagged for review.'
+                  : `${catalog.flaggedForReviewCount()} pricing rows are visibly flagged for review.`}
+              </Text>
+            </Pressable>
+          )}
 
           {!launch.catalogResult && (
             <View accessibilityLiveRegion="polite" style={styles.statusCard}>
@@ -326,6 +359,26 @@ export default function HomeScreen() {
               <Ionicons color={theme.accent} name="chevron-forward" size={20} />
             </Pressable>
           )}
+
+          <Pressable
+            accessibilityHint="Opens the private conversation audit workflow"
+            accessibilityRole="button"
+            onPress={() => router.navigate(APP_ROUTES.receipt)}
+            style={({ pressed }) => [styles.receiptCta, pressed && styles.pressed]}
+          >
+            <View style={styles.receiptCtaIcon}>
+              <Ionicons color={theme.accent} name="receipt-outline" size={24} />
+            </View>
+            <View style={styles.flex}>
+              <Text style={styles.cardEyebrow}>NEW · PROMPTSPEND RECEIPT</Text>
+              <Text style={styles.cardTitle}>Audit a conversation that already happened.</Text>
+              <Text style={styles.body}>
+                Generate a transparent cost receipt without connecting an AI account or uploading the
+                conversation.
+              </Text>
+            </View>
+            <Ionicons color={theme.accent} name="chevron-forward" size={20} />
+          </Pressable>
 
           <SectionHeading
             eyebrow="START FAST"
@@ -489,9 +542,10 @@ export default function HomeScreen() {
                     : model.status === 'current'
                       ? 'CURRENT'
                       : model.status.toUpperCase();
+                const rates = modelRateDisplay(model, pricingAsOf);
                 return (
                   <Pressable
-                    accessibilityLabel={`${model.displayName}. ${status}. Input ${formatMoney(model.pricing.input)} and output ${formatMoney(model.pricing.output)} per million tokens. Verified ${model.provenance.lastVerified}.`}
+                    accessibilityLabel={`${model.displayName}. ${status}. ${rates.accessibility}. Verified ${model.provenance.lastVerified}.`}
                     accessibilityRole="button"
                     key={id}
                     onPress={() => {
@@ -508,8 +562,9 @@ export default function HomeScreen() {
                       {catalog?.providerName(model)} · verified {model.provenance.lastVerified}
                     </Text>
                     <Text style={styles.watchPrice}>
-                      {formatMoney(model.pricing.input)}/{formatMoney(model.pricing.output)} per 1M
+                      {rates.input}/{rates.output} per 1M
                     </Text>
+                    {rates.promoLabel && <Text style={styles.watchPromo}>{rates.promoLabel}</Text>}
                     {model.provenance.reviewNote && (
                       <Text numberOfLines={2} style={styles.watchReview}>
                         {model.provenance.reviewNote}
@@ -885,6 +940,17 @@ function createStyles(theme: MobileTheme) {
       padding: 14,
     },
     warningText: { color: theme.text, flex: 1, fontSize: 13, lineHeight: 19 },
+    provenanceCard: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+      borderRadius: 14,
+      borderWidth: 1,
+      gap: 8,
+      padding: 16,
+    },
+    provenanceHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+    provenanceStatement: { color: theme.text, fontSize: 15, fontWeight: '800', lineHeight: 22 },
+    provenanceWarning: { color: theme.warning, fontWeight: '800' },
     costCard: {
       backgroundColor: theme.surface,
       borderColor: theme.border,
@@ -936,6 +1002,24 @@ function createStyles(theme: MobileTheme) {
     actionButtonText: { color: theme.text, fontSize: 14, fontWeight: '800' },
     actionButtonTextPrimary: { color: theme.onAccent },
     pressed: { opacity: 0.68 },
+    receiptCta: {
+      alignItems: 'center',
+      backgroundColor: theme.accentSoft,
+      borderColor: theme.accent,
+      borderRadius: 16,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 14,
+      padding: 18,
+    },
+    receiptCtaIcon: {
+      alignItems: 'center',
+      backgroundColor: theme.surface,
+      borderRadius: 12,
+      height: 46,
+      justifyContent: 'center',
+      width: 46,
+    },
     savingsCard: {
       alignItems: 'center',
       backgroundColor: theme.surface,
@@ -1047,6 +1131,7 @@ function createStyles(theme: MobileTheme) {
     watchBadgeWarning: { backgroundColor: theme.surfaceRaised, color: theme.warning },
     watchMeta: { color: theme.mutedText, fontSize: 11 },
     watchPrice: { color: theme.accent, fontSize: 11, fontWeight: '800', marginTop: 6 },
+    watchPromo: { color: theme.accent, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
     watchReview: { color: theme.warning, ...TYPE_ROLES.caption },
     watchRemove: { alignItems: 'center', alignSelf: 'flex-start', justifyContent: 'center', minHeight: 48 },
     watchRemoveText: { color: theme.danger, fontSize: 11, fontWeight: '800' },

@@ -126,6 +126,7 @@ test('alert model search can be cleared on either platform', async () => {
 test('catalog starts bounded, offers remaining rows, and resets after search', async () => {
   const view = await render(
     <CatalogExplorer
+      asOf={new Date('2026-08-13T12:00:00Z')}
       catalog={catalog}
       favoriteIds={[]}
       selectedIds={[]}
@@ -143,7 +144,7 @@ test('catalog starts bounded, offers remaining rows, and resets after search', a
 
 test('Data resources stay available without a catalog and clipboard failures are truthful', async () => {
   jest.mocked(Clipboard.setStringAsync).mockRejectedValueOnce(new Error('Unavailable'));
-  const view = await render(<DataSection onOpenHelp={jest.fn()} />);
+  const view = await render(<DataSection asOf={new Date('2026-08-13T12:00:00Z')} onOpenHelp={jest.fn()} />);
   expect(view.getByText('Privacy & support')).toBeTruthy();
   expect(view.getByText('Pricing data and alert setup are temporarily unavailable')).toBeTruthy();
   expect(view.queryByText('Pipeline health')).toBeNull();
@@ -156,7 +157,7 @@ test('Data resources stay available without a catalog and clipboard failures are
 
 test('Data link failures offer a retry message', async () => {
   jest.mocked(WebBrowser.openBrowserAsync).mockRejectedValueOnce(new Error('Unavailable'));
-  const view = await render(<DataSection onOpenHelp={jest.fn()} />);
+  const view = await render(<DataSection asOf={new Date('2026-08-13T12:00:00Z')} onOpenHelp={jest.fn()} />);
   await fireEvent.press(view.getByText('Read the privacy policy ↗'));
   await waitFor(() =>
     expect(view.getByText('This link could not open. Check your connection and try again.')).toBeTruthy(),

@@ -8,10 +8,12 @@ import type { Catalog, Model } from '@promptspend/core';
 
 import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
 import { MAX_COMPARISON_MODELS } from '@/lib/comparison';
+import { modelRateDisplay } from '@/lib/pricingDisplay';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 interface ComparisonModelPickerProps {
+  asOf: Date;
   catalog: Catalog;
   favoriteIds: readonly string[];
   onClear: () => void;
@@ -21,6 +23,7 @@ interface ComparisonModelPickerProps {
 }
 
 export function ComparisonModelPicker({
+  asOf,
   catalog,
   favoriteIds,
   onClear,
@@ -199,6 +202,7 @@ export function ComparisonModelPicker({
               const isSelected = selectedIds.includes(item.id);
               const isAtLimit = selectedIds.length >= MAX_COMPARISON_MODELS && !isSelected;
               const country = catalog.provider(item)?.country;
+              const rates = modelRateDisplay(item, asOf);
               return (
                 <Pressable
                   aria-checked={isSelected}
@@ -209,7 +213,7 @@ export function ComparisonModelPicker({
                         ? 'Removes this model from the comparison'
                         : 'Adds this model to the comparison'
                   }
-                  accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}${country ? `, ${countryName(country)}` : ''}, ${item.pricing.input} dollars per million input tokens and ${item.pricing.output} dollars per million output tokens${isSelected ? ', selected for comparison' : ''}`}
+                  accessibilityLabel={`${item.displayName}, ${catalog.providerName(item)}${country ? `, ${countryName(country)}` : ''}, ${rates.accessibility}${isSelected ? ', selected for comparison' : ''}`}
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: isSelected, disabled: isAtLimit }}
                   disabled={isAtLimit}
@@ -233,9 +237,11 @@ export function ComparisonModelPicker({
                   </View>
                   <View style={styles.rateBlock}>
                     <Text style={styles.rate}>
-                      ${item.pricing.input} / ${item.pricing.output}
+                      {rates.input} / {rates.output}
                     </Text>
-                    <Text style={styles.rateLabel}>{isAtLimit ? 'Limit reached' : 'input / output'}</Text>
+                    <Text style={[styles.rateLabel, rates.promoLabel && styles.promo]}>
+                      {isAtLimit ? 'Limit reached' : (rates.promoLabel ?? 'input / output')}
+                    </Text>
                   </View>
                 </Pressable>
               );
@@ -379,6 +385,7 @@ function createStyles(theme: MobileTheme) {
     rateBlock: { alignItems: 'flex-end', gap: 3 },
     rate: { color: theme.text, fontSize: 13, fontVariant: ['tabular-nums'], fontWeight: '700' },
     rateLabel: { color: theme.mutedText, fontSize: 10, textTransform: 'uppercase' },
+    promo: { color: theme.accent, fontWeight: '900' },
     empty: { color: theme.mutedText, fontSize: 15, lineHeight: 22, paddingVertical: 40, textAlign: 'center' },
   });
 }

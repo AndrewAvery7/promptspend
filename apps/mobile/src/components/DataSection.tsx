@@ -7,9 +7,10 @@ import { Pressable, type ScrollView, StyleSheet, View } from 'react-native';
 import { AppText as Text } from '@/components/AppText';
 import { EmailAlertCenter } from '@/components/EmailAlertCenter';
 import { ContextualHelpLink } from '@/components/HelpCenter';
-import { type Catalog, formatRate } from '@promptspend/core';
+import { type Catalog } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';
+import { modelRateDisplay } from '@/lib/pricingDisplay';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 const REPO_URL = 'https://github.com/AndrewAvery7/promptspend';
@@ -24,11 +25,13 @@ const PRIVACY_URL = `${SITE_URL}privacy/`;
 const SUPPORT_URL = `${SITE_URL}support/`;
 
 export function DataSection({
+  asOf,
   catalog,
   onOpenHelp,
   preferencesToken,
   tourScrollRef,
 }: {
+  asOf: Date;
   catalog?: Catalog | null;
   onOpenHelp: () => void;
   preferencesToken?: string;
@@ -40,6 +43,7 @@ export function DataSection({
   const health = catalog?.health;
   const flagged = catalog?.models.filter((model) => model.provenance.needsReview) ?? [];
   const vendorVerified = catalog?.primaryModels.filter((model) => model.provenance.source === 'vendor') ?? [];
+  const feedSourced = catalog?.feedSourcedCount() ?? 0;
 
   const open = async (url: string) => {
     setNotice(null);
@@ -110,6 +114,28 @@ export function DataSection({
             label="Models tracked"
             value={`${catalog.primaryModels.length}${catalog.models.length !== catalog.primaryModels.length ? ` (+${catalog.models.length - catalog.primaryModels.length} aliases)` : ''}`}
           />
+          <Metric
+            styles={styles}
+            label="Vendor-page verified"
+            value={`${catalog.vendorVerifiedCount()} models`}
+          />
+          <Metric styles={styles} label="Public-feed sourced" value={`${feedSourced} models`} />
+          <Metric
+            styles={styles}
+            label="Flagged for review"
+            value={`${catalog.flaggedForReviewCount()} models`}
+          />
+          {health?.vendorCheck && (
+            <View style={styles.vendorCheck}>
+              <Text style={styles.metricLabel}>
+                Latest vendor-page check · {health.vendorCheck.checkedAt.slice(0, 10)}
+              </Text>
+              <Text style={styles.vendorCheckValue}>
+                {health.vendorCheck.confirmed} confirmed · {health.vendorCheck.mismatched} mismatched ·{' '}
+                {health.vendorCheck.unconfirmed} unconfirmed
+              </Text>
+            </View>
+          )}
           {health?.outcome === 'degraded' && (
             <View accessibilityRole="alert" style={styles.warning}>
               <Text style={styles.warningText}>
@@ -241,8 +267,12 @@ export function DataSection({
                     {model.provenance.reviewNote ?? 'Independent sources disagree.'}
                   </Text>
                   <Text style={styles.rateText}>
-                    {formatRate(model.pricing.input)} input · {formatRate(model.pricing.output)} output / 1M
+                    {modelRateDisplay(model, asOf).input} input · {modelRateDisplay(model, asOf).output}{' '}
+                    output / 1M
                   </Text>
+                  {modelRateDisplay(model, asOf).promoLabel && (
+                    <Text style={styles.promoText}>{modelRateDisplay(model, asOf).promoLabel}</Text>
+                  )}
                 </View>
               ))
             )}
@@ -359,6 +389,8 @@ function createStyles(theme: MobileTheme) {
     metric: { backgroundColor: theme.surfaceRaised, borderRadius: 10, gap: 3, padding: 12 },
     metricLabel: { color: theme.mutedText, fontSize: 11, fontWeight: '700' },
     metricValue: { color: theme.text, fontSize: 15, fontVariant: ['tabular-nums'], fontWeight: '800' },
+    vendorCheck: { backgroundColor: theme.accentSoft, borderRadius: 10, gap: 4, padding: 12 },
+    vendorCheckValue: { color: theme.text, fontSize: 13, fontWeight: '800', lineHeight: 19 },
     warning: {
       backgroundColor: theme.surfaceRaised,
       borderColor: theme.warning,
@@ -404,6 +436,7 @@ function createStyles(theme: MobileTheme) {
     },
     flaggedTitle: { color: theme.warning, fontSize: 14, fontWeight: '800' },
     rateText: { color: theme.text, fontSize: 12, fontVariant: ['tabular-nums'], fontWeight: '700' },
+    promoText: { color: theme.accent, fontSize: 11, fontWeight: '900' },
     notice: { backgroundColor: theme.accentSoft, borderRadius: 10, padding: 12 },
     noticeText: { color: theme.accent, fontSize: 13, fontWeight: '800' },
     pressed: { opacity: 0.68 },

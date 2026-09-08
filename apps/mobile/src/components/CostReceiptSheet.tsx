@@ -36,6 +36,7 @@ interface CostReceiptSheetProps {
   onClose: () => void;
   outputTokens: number;
   pastedFields: readonly PromptFieldKey[];
+  pricingAsOf: Date;
   reasoningMultiplier: number;
   rows: readonly ComparisonRow[];
   systemTokens: number;
@@ -77,13 +78,13 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
       });
       props.validateAction?.();
       await Sharing.shareAsync(uri, {
-        dialogTitle: 'Share PromptSpend AI Cost Receipt',
+        dialogTitle: 'Share PromptSpend Estimate Receipt',
         mimeType: 'image/png',
         UTI: 'public.png',
       });
     } catch (error) {
       Alert.alert(
-        'Cost Receipt sharing is unavailable',
+        'Estimate Receipt sharing is unavailable',
         error instanceof Error ? error.message : 'The receipt image could not be created.',
       );
     } finally {
@@ -95,7 +96,7 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
     if (!receipt) return;
     try {
       props.validateAction?.();
-      await Share.share({ message: receipt.shareText, title: 'PromptSpend AI Cost Receipt' });
+      await Share.share({ message: receipt.shareText, title: 'PromptSpend Estimate Receipt' });
     } catch (error) {
       Alert.alert(
         'Text sharing is unavailable',
@@ -106,7 +107,7 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
 
   return (
     <Modal
-      accessibilityLabel="AI Cost Receipt preview"
+      accessibilityLabel="Estimate Receipt preview"
       animationType="slide"
       onRequestClose={props.onClose}
       presentationStyle="pageSheet"
@@ -117,11 +118,11 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
           <View style={styles.headerCopy}>
             <Text style={styles.eyebrow}>SHAREABLE ARTIFACT</Text>
             <Text accessibilityRole="header" style={styles.title}>
-              AI Cost Receipt
+              Estimate Receipt
             </Text>
           </View>
           <Pressable
-            accessibilityLabel="Close Cost Receipt"
+            accessibilityLabel="Close Estimate Receipt"
             accessibilityRole="button"
             onPress={props.onClose}
             style={styles.close}
@@ -132,8 +133,9 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
 
         <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.intro}>
-            Preview exactly what will be shared. Raw prompt text, names, device identifiers, and tracking
-            metadata are excluded.
+            This receipt packages a hypothetical Estimate or Compare scenario. To audit a conversation that
+            already happened, open PromptSpend Receipt from Home. Raw prompt text, names, device identifiers,
+            and tracking metadata are excluded.
           </Text>
 
           {receipt ? (
@@ -193,6 +195,11 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
                           {row.isLowest && receipt.isComparison && (
                             <Text allowFontScaling={false} style={styles.lowest}>
                               LOWEST
+                            </Text>
+                          )}
+                          {row.promotional && (
+                            <Text allowFontScaling={false} style={styles.promo}>
+                              INTRO PRICE
                             </Text>
                           )}
                         </View>
@@ -409,6 +416,17 @@ function createStyles(theme: MobileTheme) {
       fontWeight: '900',
       letterSpacing: 0.5,
       paddingHorizontal: 4,
+      paddingVertical: 2,
+    },
+    promo: {
+      backgroundColor: '#FFF4CC',
+      borderRadius: 999,
+      color: '#714C00',
+      fontSize: 7,
+      fontWeight: '900',
+      letterSpacing: 0.5,
+      overflow: 'hidden',
+      paddingHorizontal: 5,
       paddingVertical: 2,
     },
     receiptProvider: { color: '#667085', fontSize: 6.5, lineHeight: 9 },

@@ -4,6 +4,7 @@ export type GuidedTourTargetId =
   | 'home-cost-brief'
   | 'estimate-workload'
   | 'compare-results'
+  | 'receipt-audit'
   | 'learn-token-lab'
   | 'data-alerts'
   | 'global-tools';
@@ -48,6 +49,14 @@ export const GUIDED_TOUR_STEPS: readonly GuidedTourStep[] = [
     targetId: 'compare-results',
     title: 'Put the same workload side by side',
     body: 'Compare ranks as many as four models from lowest to highest cost, while keeping every workload assumption identical and every pricing source inspectable.',
+  },
+  {
+    id: 'receipt',
+    route: APP_ROUTES.receipt,
+    section: 'Receipt',
+    targetId: 'receipt-audit',
+    title: 'Audit a conversation that already happened',
+    body: 'Copy the versioned instructions into an existing AI conversation, import only its structured receipt block, review the result, and create a private PNG or readable text share. The original conversation is never uploaded or saved.',
   },
   {
     id: 'alerts',

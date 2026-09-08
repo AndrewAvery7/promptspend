@@ -38,7 +38,7 @@ describe('mobile pricing ticker', () => {
 
     expect(items[0]).toMatchObject({ key: 'cheapest' });
     expect(items.map((item) => item.text).join(' ')).toContain('Low Cost');
-    expect(items.map((item) => item.text).join(' ')).toContain('100×');
+    expect(items.map((item) => item.text).join(' ')).toContain('86×');
     expect(items).toContainEqual(expect.objectContaining({ key: 'flagged' }));
     expect(items).toContainEqual(expect.objectContaining({ key: 'coverage' }));
   });
