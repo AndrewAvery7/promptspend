@@ -12,13 +12,16 @@ name: Expo drift check
 # merged. A red X that appears for that reason is noise, and noise is how the
 # real ones get missed — so it runs here, weekly, on its own.
 #
-# Red here means exactly one thing: take the patch releases. In apps/mobile,
-#
-#   npx expo install --fix
-#
-# then commit package.json and package-lock.json together (a54782b, 3231809
-# and ca8d2e4 are the shape). Nothing deploys from this workflow and nothing
-# gates on it — the site's daily update path does not know it exists.
+# Since 2026-09-07 it also takes the patches itself (Andrew: "as hands-off as
+# possible"). When expo-doctor reports drift, `npx expo install --fix` moves
+# the pins to the versions Expo names for SDK 57 — the same command a54782b,
+# 3231809 and ca8d2e4 were made with by hand — and the result is kept only if
+# a clean install, the tests, typecheck, lint and expo-doctor all pass on it.
+# Otherwise package.json and the lockfile go back and the run fails, which
+# now means exactly one thing: the patches Expo shipped broke something, and
+# a person has to look. Nothing deploys from this workflow and nothing gates
+# on it. mobile-audit.yml runs half an hour later and re-derives the
+# dependency triage against whatever this committed.
 on:
   schedule:
     # Monday 14:00 UTC — 09:00 America/Chicago, give or take daylight saving.
@@ -26,7 +29,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   doctor:
@@ -49,4 +52,53 @@ jobs:
           npm rebuild unrs-resolver
 
       - name: expo-doctor
+        id: doctor
+        continue-on-error: true
         run: npx expo-doctor
+
+      # Only reached when the doctor found drift. `expo install --fix` writes
+      # package.json and the lockfile; the gates below run on a fresh install
+      # from that lockfile, not on whatever `expo install` left in node_modules.
+      - name: Take the patch releases Expo names
+        if: steps.doctor.outcome == 'failure'
+        run: |
+          npx expo install --fix
+          if git diff --quiet -- package.json package-lock.json; then
+            echo "expo-doctor failed but expo install --fix changed nothing — not a drift problem." >&2
+            exit 1
+          fi
+          git diff --stat -- package.json package-lock.json
+
+      - name: Prove the patched app still checks out
+        if: steps.doctor.outcome == 'failure'
+        id: gates
+        continue-on-error: true
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild unrs-resolver
+          # One retry: rehearsing this on 2026-09-07 the suite failed a single
+          # test once in five runs on the same tree. A flicker must not turn
+          # a good patch away; a real regression fails twice.
+          npm test -- --ci || npm test -- --ci
+          npm run typecheck
+          npm run lint
+          npx expo-doctor
+
+      - name: Keep the patches
+        if: steps.doctor.outcome == 'failure' && steps.gates.outcome == 'success'
+        run: |
+          git config user.name "promptspend-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore(mobile): clear expo-doctor patch drift"
+          git push
+
+      # The one case that asks for a person: Expo's own patch releases broke
+      # the tests, the types, the lint or the doctor. The tree is put back so
+      # the failure is visible without leaving a broken lockfile behind.
+      - name: Put the tree back and fail
+        if: steps.doctor.outcome == 'failure' && steps.gates.outcome != 'success'
+        run: |
+          git checkout -- package.json package-lock.json
+          echo "The patch releases did not pass the gates; see the step above. Nothing was committed." >&2
+          exit 1

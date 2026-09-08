@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-06T19:48:57.461Z",
+  "checkedAt": "2026-09-08T11:06:15.218Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -89,7 +89,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "536866 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "535642 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -112,7 +112,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "14014 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "16614 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
