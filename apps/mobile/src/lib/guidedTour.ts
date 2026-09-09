@@ -18,13 +18,6 @@ export interface GuidedTourStep {
   title: string;
 }
 
-export interface GuidedTourTargetRect {
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-}
-
 export const GUIDED_TOUR_STEPS: readonly GuidedTourStep[] = [
   {
     id: 'cost-brief',
@@ -84,20 +77,11 @@ export const GUIDED_TOUR_STEPS: readonly GuidedTourStep[] = [
   },
 ] as const;
 
-export function padAndClamp(
-  rect: GuidedTourTargetRect,
-  width: number,
-  height: number,
-  padding: number,
-): GuidedTourTargetRect {
-  const x = Math.min(width, Math.max(0, rect.x - padding));
-  const y = Math.min(height, Math.max(0, rect.y - padding));
-  return {
-    x,
-    y,
-    width: Math.max(0, Math.min(width - x, rect.width + padding * 2)),
-    height: Math.max(0, Math.min(height - y, rect.height + padding * 2)),
-  };
+export function isActiveTourTarget(
+  targetId: GuidedTourTargetId,
+  currentTargetId: GuidedTourTargetId | null,
+): boolean {
+  return targetId === currentTargetId;
 }
 
 /**

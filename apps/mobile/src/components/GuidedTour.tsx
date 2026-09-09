@@ -6,7 +6,6 @@ import {
   Pressable,
   type ScrollView,
   StyleSheet,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import {
@@ -25,17 +24,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText as Text } from '@/components/AppText';
 import {
   GUIDED_TOUR_STEPS,
-  padAndClamp,
+  isActiveTourTarget,
   tourScrollOffset,
   type GuidedTourStep,
   type GuidedTourTargetId,
-  type GuidedTourTargetRect,
 } from '@/lib/guidedTour';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 
 interface RegisteredTarget {
-  measure: (callback: (rect: GuidedTourTargetRect | null) => void) => void;
   reveal?: () => void;
 }
 
@@ -53,7 +50,6 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
   const router = useRouter();
   const [active, setActive] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
-  const [targetRect, setTargetRect] = useState<GuidedTourTargetRect | null>(null);
   const [targetUnavailable, setTargetUnavailable] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const targets = useRef(new Map<GuidedTourTargetId, RegisteredTarget>());
@@ -68,14 +64,12 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
 
   const startTour = useCallback(() => {
     setStepIndex(0);
-    setTargetRect(null);
     setTargetUnavailable(false);
     setActive(true);
   }, []);
 
   const close = useCallback(() => {
     setActive(false);
-    setTargetRect(null);
     setTargetUnavailable(false);
   }, []);
 
@@ -93,7 +87,6 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
         return;
       }
       setStepIndex(nextIndex);
-      setTargetRect(null);
       setTargetUnavailable(false);
     },
     [close],
@@ -108,7 +101,6 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
 
     let cancelled = false;
     let attempts = 0;
-    let measurements = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const locate = () => {
       if (cancelled) return;
@@ -120,27 +112,7 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
         return;
       }
       target.reveal?.();
-      const measureUntilReady = () => {
-        target.measure((rect) => {
-          if (cancelled) return;
-          if (rect) {
-            setTargetRect(rect);
-            setTargetUnavailable(false);
-            // Android reports intermediate coordinates while a ScrollView is
-            // settling. Keep the latest measurement through the scroll
-            // animation so the modal highlight follows the final target.
-            measurements += 1;
-            if (!reduceMotion && measurements < 5) {
-              timer = setTimeout(measureUntilReady, 120);
-            }
-            return;
-          }
-          attempts += 1;
-          if (attempts < 12) timer = setTimeout(measureUntilReady, reduceMotion ? 40 : 120);
-          else setTargetUnavailable(true);
-        });
-      };
-      timer = setTimeout(measureUntilReady, reduceMotion ? 40 : 220);
+      setTargetUnavailable(false);
     };
     timer = setTimeout(locate, reduceMotion ? 80 : 220);
     return () => {
@@ -171,7 +143,6 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
         reduceMotion={reduceMotion}
         step={step}
         stepIndex={stepIndex}
-        targetRect={targetRect}
         targetUnavailable={targetUnavailable}
       />
     </GuidedTourContext.Provider>
@@ -198,21 +169,16 @@ export function TourTarget({
   scrollRef?: RefObject<ScrollView | null>;
   style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }>) {
-  const { reduceMotion, registerTarget } = useGuidedTour();
+  const { currentTargetId, reduceMotion, registerTarget } = useGuidedTour();
+  const { theme } = useMobileTheme();
+  const targetStyles = useMemo(() => createTargetStyles(theme), [theme]);
   const container = useRef<View>(null);
   const contentY = useRef(0);
+  const isCurrentTarget = isActiveTourTarget(id, currentTargetId);
 
   useEffect(() => {
     if (!enabled) return;
     return registerTarget(id, {
-      measure: (callback) => {
-        // The guide is rendered in a transparent Modal, so the cut-out must
-        // use window coordinates. `measure` is parent-relative on Android and
-        // made the frame begin at the top-left of the screen.
-        container.current?.measureInWindow((x, y, width, height) => {
-          callback(width > 0 && height > 0 ? { height, width, x, y } : null);
-        });
-      },
       reveal: () => {
         onReveal?.();
         const scrollView = scrollRef?.current;
@@ -243,9 +209,18 @@ export function TourTarget({
         contentY.current = event.nativeEvent.layout.y;
       }}
       ref={container}
-      style={style}
+      style={[style, targetStyles.container]}
     >
       {children}
+      {isCurrentTarget && (
+        <View
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          pointerEvents="none"
+          style={targetStyles.outline}
+          testID="guided-tour-highlight"
+        />
+      )}
     </View>
   );
 }
@@ -258,7 +233,6 @@ function GuidedTourOverlay({
   reduceMotion,
   step,
   stepIndex,
-  targetRect,
   targetUnavailable,
 }: {
   active: boolean;
@@ -268,12 +242,10 @@ function GuidedTourOverlay({
   reduceMotion: boolean;
   step: GuidedTourStep;
   stepIndex: number;
-  targetRect: GuidedTourTargetRect | null;
   targetUnavailable: boolean;
 }) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const card = useRef<View>(null);
   useEffect(() => {
@@ -288,8 +260,6 @@ function GuidedTourOverlay({
     return () => clearTimeout(timer);
   }, [active, reduceMotion, stepIndex]);
 
-  const padded = targetRect ? padAndClamp(targetRect, width, height, 8) : null;
-  const placeAtTop = Boolean(padded && padded.y + padded.height > height * 0.6);
   const last = stepIndex === GUIDED_TOUR_STEPS.length - 1;
 
   return (
@@ -302,56 +272,16 @@ function GuidedTourOverlay({
       visible={active}
     >
       <View style={StyleSheet.absoluteFill}>
-        {padded ? (
-          <>
-            <View
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-              style={[styles.scrim, { height: padded.y, left: 0, right: 0, top: 0 }]}
-            />
-            <View
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-              style={[styles.scrim, { bottom: 0, left: 0, right: 0, top: padded.y + padded.height }]}
-            />
-            <View
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-              style={[styles.scrim, { height: padded.height, left: 0, top: padded.y, width: padded.x }]}
-            />
-            <View
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-              style={[
-                styles.scrim,
-                { height: padded.height, left: padded.x + padded.width, right: 0, top: padded.y },
-              ]}
-            />
-            <View pointerEvents="auto" style={[styles.targetBlocker, padded]} />
-            <View
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-              pointerEvents="none"
-              style={[styles.targetOutline, padded]}
-              testID="guided-tour-highlight"
-            />
-          </>
-        ) : (
-          <View
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-            style={[StyleSheet.absoluteFill, targetUnavailable ? styles.scrimUnavailable : styles.scrim]}
-          />
-        )}
+        <View
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          style={[StyleSheet.absoluteFill, styles.backdrop]}
+        />
 
         <View
           accessibilityViewIsModal
           ref={card}
-          style={[
-            styles.tourCard,
-            { left: 16, maxWidth: 620, right: 16 },
-            placeAtTop ? { top: insets.top + 16 } : { bottom: insets.bottom + 16 },
-          ]}
+          style={[styles.tourCard, { left: 16, maxWidth: 620, right: 16 }, { bottom: insets.bottom + 16 }]}
         >
           <View style={styles.tourHeader}>
             <View style={styles.tourHeaderCopy}>
@@ -416,18 +346,29 @@ function GuidedTourOverlay({
   );
 }
 
-function createStyles(theme: MobileTheme) {
+function createTargetStyles(theme: MobileTheme) {
   return StyleSheet.create({
-    scrim: { backgroundColor: 'rgba(5, 8, 14, 0.62)', position: 'absolute' },
-    scrimUnavailable: { backgroundColor: 'rgba(5, 8, 14, 0.30)', position: 'absolute' },
-    targetBlocker: { position: 'absolute' },
-    targetOutline: {
+    container: { overflow: 'visible', position: 'relative' },
+    // This outline is rendered by the target itself, not a separately
+    // positioned Modal. That keeps it coupled to the actual component on
+    // Android release builds, where cross-window measurement was unreliable.
+    outline: {
       borderColor: theme.accent,
       borderRadius: 18,
       borderWidth: 3,
+      bottom: -8,
+      left: -8,
       position: 'absolute',
-      zIndex: 20,
+      right: -8,
+      top: -8,
+      zIndex: 2,
     },
+  });
+}
+
+function createStyles(theme: MobileTheme) {
+  return StyleSheet.create({
+    backdrop: { backgroundColor: 'rgba(5, 8, 14, 0.14)', position: 'absolute' },
     tourCard: {
       alignSelf: 'center',
       backgroundColor: theme.surface,
