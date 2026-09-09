@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { type ReactNode, useMemo, useRef, useState } from 'react';
 import { Alert, findNodeHandle, Pressable, Share, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
@@ -18,10 +18,11 @@ import { assertNumericDraftsValid } from '@/lib/numericDrafts';
 interface ComparisonResultProps {
   catalog: Catalog;
   rows: readonly ComparisonRow[];
+  wrapTourTarget?: (content: ReactNode) => ReactNode;
   validateAction?: () => void;
 }
 
-export function ComparisonResult({ catalog, rows, validateAction }: ComparisonResultProps) {
+export function ComparisonResult({ catalog, rows, validateAction, wrapTourTarget }: ComparisonResultProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { fontScale, width } = useWindowDimensions();
@@ -60,7 +61,7 @@ export function ComparisonResult({ catalog, rows, validateAction }: ComparisonRe
   };
 
   if (!cheapest) {
-    return (
+    const emptyCard = (
       <View style={styles.emptyCard}>
         <Text style={styles.eyebrow}>COST COMPARISON</Text>
         <Text accessibilityRole="header" style={styles.emptyTitle}>
@@ -71,13 +72,11 @@ export function ComparisonResult({ catalog, rows, validateAction }: ComparisonRe
         </Text>
       </View>
     );
+    return <>{wrapTourTarget ? wrapTourTarget(emptyCard) : emptyCard}</>;
   }
 
-  return (
-    <View
-      accessibilityLabel={`${rows.length} model cost comparison. ${cheapest.model.displayName} has the lowest estimated monthly cost at ${formatMoney(cheapest.scaled.perMonth)}.`}
-      style={styles.resultCard}
-    >
+  const summary = (
+    <View>
       <Text style={styles.eyebrow}>LOWEST ESTIMATED COST</Text>
       <Text style={styles.monthlyCost}>{formatMoney(cheapest.scaled.perMonth)}</Text>
       <Text style={styles.monthlyLabel}>per month · {cheapest.model.displayName}</Text>
@@ -91,6 +90,15 @@ export function ComparisonResult({ catalog, rows, validateAction }: ComparisonRe
           </Text>
         </View>
       )}
+    </View>
+  );
+
+  return (
+    <View
+      accessibilityLabel={`${rows.length} model cost comparison. ${cheapest.model.displayName} has the lowest estimated monthly cost at ${formatMoney(cheapest.scaled.perMonth)}.`}
+      style={styles.resultCard}
+    >
+      {wrapTourTarget ? wrapTourTarget(summary) : summary}
 
       <View style={[styles.rows, useGrid && styles.rowsGrid]}>
         {rows.map((row, index) => (

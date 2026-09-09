@@ -26,6 +26,7 @@ import { AppText as Text } from '@/components/AppText';
 import {
   GUIDED_TOUR_STEPS,
   padAndClamp,
+  tourScrollOffset,
   type GuidedTourStep,
   type GuidedTourTargetId,
   type GuidedTourTargetRect,
@@ -205,11 +206,11 @@ export function TourTarget({
     if (!enabled) return;
     return registerTarget(id, {
       measure: (callback) => {
-        // `measure` gives pageX/pageY in screen coordinates. On Android this
-        // is more reliable than measureInWindow for children of a ScrollView
-        // when a transparent, edge-to-edge Modal is open.
-        container.current?.measure((_x, _y, width, height, pageX, pageY) => {
-          callback(width > 0 && height > 0 ? { height, width, x: pageX, y: pageY } : null);
+        // The guide is rendered in a transparent Modal, so the cut-out must
+        // use window coordinates. `measure` is parent-relative on Android and
+        // made the frame begin at the top-left of the screen.
+        container.current?.measureInWindow((x, y, width, height) => {
+          callback(width > 0 && height > 0 ? { height, width, x, y } : null);
         });
       },
       reveal: () => {
@@ -219,8 +220,16 @@ export function TourTarget({
         if (scrollView && target) {
           target.measureLayout(
             scrollView.getInnerViewNode(),
-            (_x, y) => scrollView.scrollTo({ animated: !reduceMotion, y: Math.max(0, y - 88) }),
-            () => scrollView.scrollTo({ animated: !reduceMotion, y: Math.max(0, contentY.current - 88) }),
+            (_x, y) =>
+              scrollView.scrollTo({
+                animated: !reduceMotion,
+                y: tourScrollOffset(y, contentY.current),
+              }),
+            () =>
+              scrollView.scrollTo({
+                animated: !reduceMotion,
+                y: tourScrollOffset(0, contentY.current),
+              }),
           );
         }
       },

@@ -74,8 +74,8 @@ export function LearnSection({
       </Pressable>
 
       {catalog ? (
-        <TourTarget id="learn-token-lab" scrollRef={tourScrollRef}>
-          <View style={styles.lab}>
+        <View style={styles.lab}>
+          <TourTarget id="learn-token-lab" scrollRef={tourScrollRef} style={styles.labIntro}>
             <Text accessibilityRole="header" style={styles.cardTitle}>
               Try it: the same text is a different token count on every model
             </Text>
@@ -83,6 +83,8 @@ export function LearnSection({
               Paste any sample below. Counts are private, calculated on this device, and deliberately labelled
               as estimates until exact tokenizers pass physical-device parity tests.
             </Text>
+          </TourTarget>
+          <View style={styles.labControls}>
             <TextInput
               accessibilityHint="Counts update while you type and the text never leaves this device"
               accessibilityLabel="Sample text to tokenize"
@@ -122,7 +124,7 @@ export function LearnSection({
               ))}
             </View>
           </View>
-        </TourTarget>
+        </View>
       ) : (
         <View accessibilityLiveRegion="polite" style={styles.lab}>
           <Text accessibilityRole="header" style={styles.cardTitle}>
@@ -201,6 +203,8 @@ function createStyles(theme: MobileTheme) {
       gap: 12,
       padding: 18,
     },
+    labIntro: { gap: 12 },
+    labControls: { gap: 12 },
     lesson: {
       backgroundColor: theme.surface,
       borderColor: theme.border,
