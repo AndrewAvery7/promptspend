@@ -30,6 +30,11 @@ export function FreshnessChip({ freshness, pricesChangedOn = null }: FreshnessCh
         ? 'Refresh needed'
         : 'Status unknown';
   const statusIcon = freshness.level === 'fresh' ? '✓' : freshness.level === 'stale' ? '!' : '?';
+  const visibleLabel = [
+    statusLabel,
+    freshness.checkedOn ? `checked ${formatDate(freshness.checkedOn)}` : 'check unavailable',
+    pricesChangedOn ? `changed ${formatDate(pricesChangedOn)}` : 'no price change recorded',
+  ].join(' · ');
 
   return (
     <View
@@ -41,8 +46,8 @@ export function FreshnessChip({ freshness, pricesChangedOn = null }: FreshnessCh
       <View style={[styles.status, { borderColor: tone }]}>
         <Text style={[styles.statusText, { color: tone }]}>{statusIcon}</Text>
       </View>
-      <Text style={styles.label}>
-        {statusLabel} · {label} · {changeLabel}
+      <Text ellipsizeMode="tail" numberOfLines={1} style={styles.label}>
+        {visibleLabel}
       </Text>
     </View>
   );
@@ -60,16 +65,16 @@ function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
     chip: {
       alignItems: 'center',
-      alignSelf: 'stretch',
-      backgroundColor: theme.surfaceRaised,
-      borderColor: theme.border,
+      alignSelf: 'center',
+      backgroundColor: theme.background,
+      borderColor: theme.borderStrong,
       borderRadius: 999,
       borderWidth: 1,
       flexDirection: 'row',
       gap: 8,
-      justifyContent: 'center',
+      maxWidth: '100%',
       minHeight: 32,
-      paddingHorizontal: 14,
+      paddingHorizontal: 12,
     },
     status: {
       alignItems: 'center',
@@ -84,12 +89,10 @@ function createStyles(theme: MobileTheme) {
     label: {
       color: theme.mutedText,
       flexShrink: 1,
-      flex: 1,
       fontSize: 12,
       fontWeight: '600',
       lineHeight: 16,
       minWidth: 0,
-      textAlign: 'center',
     },
   });
 }
