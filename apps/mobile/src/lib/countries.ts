@@ -14,7 +14,5 @@ export function countryName(code: string): string {
 export function countryFlag(code: string): string {
   const upper = code.trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(upper)) return '🌐';
-  return String.fromCodePoint(
-    ...[...upper].map((letter) => 0x1f1e6 + letter.charCodeAt(0) - 65),
-  );
+  return String.fromCodePoint(...[...upper].map((letter) => 0x1f1e6 + letter.charCodeAt(0) - 65));
 }

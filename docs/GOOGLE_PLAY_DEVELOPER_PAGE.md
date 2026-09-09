@@ -54,7 +54,7 @@ Recommended draft concept:
 - Background: cool paper with a subtle cobalt-to-slate field, no transparent
   areas.
 - Center-safe message: `Crestwood Holdings` and `Clearer decisions for AI
-  costs.`
+costs.`
 - Supporting visual: a simplified cost-brief surface and provenance/freshness
   cue derived from the real PromptSpend UI.
 - Do not show exact prices, rankings, awards, download counts, Google Play
