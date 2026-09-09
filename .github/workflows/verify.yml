@@ -168,11 +168,11 @@ jobs:
       # the same CSS.
       - name: Install the browser
         run: |
-          # Playwright supplies Chromium itself. The runner's unrelated Google
-          # Chrome apt feed has intermittently returned invalid package hashes,
-          # blocking apt before the test browser can install.
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
-          npx playwright install --with-deps chromium
+          # GitHub's Ubuntu image already includes Chromium's shared-library
+          # dependencies. Playwright supplies the version-pinned test browser;
+          # avoiding --with-deps prevents an unrelated Chrome apt feed from
+          # blocking this job with a package-index hash mismatch.
+          npx playwright install chromium
 
       # The config builds the site itself, so this needs no separate build step
       # and cannot run against a stale dist/.
