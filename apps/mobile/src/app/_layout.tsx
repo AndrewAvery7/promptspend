@@ -2,13 +2,13 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import type { ColorValue } from 'react-native';
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LaunchStateProvider } from '@/state/useLaunchState';
 import { GuidedTourProvider } from '@/components/GuidedTour';
 import { AppText, FONT_FAMILIES } from '@/components/AppText';
+import { getTabBarNavigatorStyle } from '@/app/tabBarLayout';
 import { MobileThemeProvider, useMobileTheme } from '@/theme/useMobileTheme';
-import { getTabBarSafeAreaStyle } from '@/app/tabBarLayout';
 
 // Expo Router reads this before the tab navigator mounts. Keeping Home as the
 // anchor here makes cold starts and deep-link back navigation deterministic.
@@ -30,7 +30,6 @@ export default function RootLayout() {
 
 function ThemedTabs() {
   const { isDark, theme } = useMobileTheme();
-  const insets = useSafeAreaInsets();
   return (
     <>
       <StatusBar style={isDark ? 'light' : 'dark'} />
@@ -53,7 +52,7 @@ function ThemedTabs() {
           tabBarStyle: {
             backgroundColor: theme.surface,
             borderTopColor: theme.border,
-            ...getTabBarSafeAreaStyle(insets.bottom),
+            ...getTabBarNavigatorStyle(),
           },
         }}
       >
@@ -119,10 +118,11 @@ function DataAlertsTabLabel({ color }: { color: ColorValue }) {
   return (
     <AppText
       maxFontSizeMultiplier={1.35}
-      numberOfLines={2}
-      style={{ color, fontSize: 10, fontWeight: '600', lineHeight: 11, textAlign: 'center' }}
+      ellipsizeMode="tail"
+      numberOfLines={1}
+      style={{ color, fontSize: 9, fontWeight: '600', lineHeight: 12, textAlign: 'center' }}
     >
-      Data &amp;{`\n`}Alerts
+      Data &amp; Alerts
     </AppText>
   );
 }

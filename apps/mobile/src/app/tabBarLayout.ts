@@ -1,16 +1,10 @@
-export const BASE_TAB_BAR_HEIGHT = 72;
-export const ANDROID_TAB_BAR_FALLBACK_INSET = 16;
+export const TAB_BAR_MIN_HEIGHT = 72;
 
 /**
- * The tab navigator is edge-to-edge on recent Android releases. Reserve the
- * system navigation area so wrapped labels (notably Data & Alerts) remain
- * fully visible above gesture/three-button navigation controls.
+ * BottomTabBar calculates its height and bottom padding from the Android
+ * system-navigation inset. Supplying a custom height replaces that internal
+ * calculation, which can put the tab contents beneath the system controls.
  */
-export function getTabBarSafeAreaStyle(bottomInset: number, platform: 'android' | 'ios' | 'web' = 'web') {
-  const safeBottomInset = platform === 'android' ? Math.max(bottomInset, ANDROID_TAB_BAR_FALLBACK_INSET) : 0;
-  return {
-    height: BASE_TAB_BAR_HEIGHT + safeBottomInset,
-    minHeight: BASE_TAB_BAR_HEIGHT + safeBottomInset,
-    paddingBottom: safeBottomInset,
-  };
+export function getTabBarNavigatorStyle() {
+  return { minHeight: TAB_BAR_MIN_HEIGHT };
 }
