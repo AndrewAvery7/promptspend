@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-08T11:06:15.218Z",
+  "checkedAt": "2026-09-09T11:05:48.344Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -25,7 +25,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "21422 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "21644 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -48,7 +48,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "90379 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "91180 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -120,7 +120,7 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "13361 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "13830 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",
