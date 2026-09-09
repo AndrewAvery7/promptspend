@@ -1,4 +1,4 @@
-import { GUIDED_TOUR_STEPS, padAndClamp, tourScrollOffset } from '@/lib/guidedTour';
+import { GUIDED_TOUR_STEPS, isActiveTourTarget, tourScrollOffset } from '@/lib/guidedTour';
 
 describe('guided tour flow', () => {
   test('visits every top-level product destination before global tools', () => {
@@ -21,19 +21,10 @@ describe('guided tour flow', () => {
     }
   });
 
-  test('draws the highlight outside the measured content without exceeding the viewport', () => {
-    expect(padAndClamp({ height: 100, width: 200, x: 20, y: 40 }, 390, 844, 8)).toEqual({
-      height: 116,
-      width: 216,
-      x: 12,
-      y: 32,
-    });
-    expect(padAndClamp({ height: 100, width: 200, x: 185, y: 750 }, 390, 844, 8)).toEqual({
-      height: 102,
-      width: 213,
-      x: 177,
-      y: 742,
-    });
+  test('activates only the step target that the guide is currently describing', () => {
+    expect(isActiveTourTarget('home-cost-brief', 'home-cost-brief')).toBe(true);
+    expect(isActiveTourTarget('home-cost-brief', 'global-tools')).toBe(false);
+    expect(isActiveTourTarget('home-cost-brief', null)).toBe(false);
   });
 
   test('keeps the target below app chrome when Android reports a transient zero layout position', () => {
