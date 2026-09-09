@@ -5,11 +5,6 @@ describe('tab bar safe-area layout', () => {
     const style = getTabBarNavigatorStyle();
 
     expect(style).toEqual({ minHeight: TAB_BAR_MIN_HEIGHT });
-  });
-
-  test('does not replace the navigator-calculated height', () => {
-    const style = getTabBarNavigatorStyle();
-
     expect(style).not.toHaveProperty('height');
   });
 
