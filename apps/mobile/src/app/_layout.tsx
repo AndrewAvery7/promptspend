@@ -7,7 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LaunchStateProvider } from '@/state/useLaunchState';
 import { GuidedTourProvider } from '@/components/GuidedTour';
 import { AppText, FONT_FAMILIES } from '@/components/AppText';
-import { getTabBarNavigatorStyle } from '@/app/tabBarLayout';
+import { getTabBarNavigatorStyle } from '@/lib/tabBarLayout';
 import { MobileThemeProvider, useMobileTheme } from '@/theme/useMobileTheme';
 
 // Expo Router reads this before the tab navigator mounts. Keeping Home as the

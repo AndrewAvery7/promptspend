@@ -167,7 +167,12 @@ jobs:
       # emulation, so WebKit and Firefox would triple the download to re-check
       # the same CSS.
       - name: Install the browser
-        run: npx playwright install --with-deps chromium
+        run: |
+          # GitHub's Ubuntu image already includes Chromium's shared-library
+          # dependencies. Playwright supplies the version-pinned test browser;
+          # avoiding --with-deps prevents an unrelated Chrome apt feed from
+          # blocking this job with a package-index hash mismatch.
+          npx playwright install chromium
 
       # The config builds the site itself, so this needs no separate build step
       # and cannot run against a stale dist/.

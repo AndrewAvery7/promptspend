@@ -32,6 +32,16 @@ function sourceFiles(directory) {
   });
 }
 
+// Every module in src/app is interpreted by Expo Router as a screen. A layout
+// helper there created a sixth, malformed bottom-tab entry on Android.
+if (sourceFiles('src/app').includes('src/app/tabBarLayout.ts')) {
+  fail('tab-bar layout helper must stay outside the Expo Router route directory');
+}
+const tabLayout = requireFile('src/app/_layout.tsx')?.toString('utf8') ?? '';
+if (!tabLayout.includes("from '@/lib/tabBarLayout'")) {
+  fail('tab navigator must import its layout helper from src/lib, not src/app');
+}
+
 function png(path, width, height, alpha) {
   const bytes = requireFile(path);
   if (!bytes) return;

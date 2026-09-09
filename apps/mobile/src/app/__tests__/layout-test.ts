@@ -1,4 +1,4 @@
-import { getTabBarNavigatorStyle, TAB_BAR_MIN_HEIGHT } from '@/app/tabBarLayout';
+import { getTabBarNavigatorStyle, TAB_BAR_MIN_HEIGHT } from '@/lib/tabBarLayout';
 
 describe('tab bar safe-area layout', () => {
   test('keeps the navigator responsible for Android navigation-bar insets', () => {
@@ -6,11 +6,10 @@ describe('tab bar safe-area layout', () => {
 
     expect(style).toEqual({ minHeight: TAB_BAR_MIN_HEIGHT });
     expect(style).not.toHaveProperty('height');
+    expect(style).not.toHaveProperty('paddingBottom');
   });
 
-  test('does not replace the navigator-calculated bottom padding', () => {
-    const style = getTabBarNavigatorStyle();
-
-    expect(style).not.toHaveProperty('paddingBottom');
+  test('uses the intended minimum tab-bar height', () => {
+    expect(TAB_BAR_MIN_HEIGHT).toBe(72);
   });
 });
