@@ -99,3 +99,14 @@ export function padAndClamp(
     height: Math.max(0, Math.min(height - y, rect.height + padding * 2)),
   };
 }
+
+/**
+ * Keep the highlighted content clear of the tour card by placing it just
+ * beneath the application chrome. Android can return zero from
+ * `measureLayout` while a ScrollView is settling; an on-layout coordinate is
+ * the safe fallback for that case.
+ */
+export function tourScrollOffset(measuredY: number, fallbackY: number, topClearance = 88): number {
+  const targetY = Number.isFinite(measuredY) && measuredY > 0 ? measuredY : fallbackY;
+  return Math.max(0, targetY - topClearance);
+}

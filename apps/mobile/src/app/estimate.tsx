@@ -518,13 +518,16 @@ export function EstimatorWorkspace({
             )}
 
             {section === 'compare' && catalog && (
-              <TourTarget id="compare-results" scrollRef={scrollRef}>
-                <ComparisonResult
-                  catalog={catalog}
-                  rows={comparisonRows}
-                  validateAction={assertCurrentPricing}
-                />
-              </TourTarget>
+              <ComparisonResult
+                catalog={catalog}
+                rows={comparisonRows}
+                validateAction={assertCurrentPricing}
+                wrapTourTarget={(content) => (
+                  <TourTarget id="compare-results" scrollRef={scrollRef}>
+                    {content}
+                  </TourTarget>
+                )}
+              />
             )}
 
             {section === 'learn' && (
@@ -549,8 +552,8 @@ export function EstimatorWorkspace({
 
             {(section === 'estimate' || section === 'compare') && catalog && selectedModel && (
               <>
-                <TourTarget enabled={section === 'estimate'} id="estimate-workload" scrollRef={scrollRef}>
-                  <View style={styles.panel}>
+                <View style={styles.panel}>
+                  <TourTarget enabled={section === 'estimate'} id="estimate-workload" scrollRef={scrollRef}>
                     <View style={styles.panelHeader}>
                       <View style={styles.stepBadge}>
                         <Text style={styles.stepBadgeText}>1</Text>
@@ -566,202 +569,201 @@ export function EstimatorWorkspace({
                         </Text>
                       </View>
                     </View>
+                  </TourTarget>
 
-                    {mode === 'estimate' ? (
-                      <ModelPicker
-                        asOf={pricingAsOf}
-                        catalog={catalog}
-                        isFavorite={favorites.includes(selectedModel.id)}
-                        onChange={(model) => setSelectedId(model.id)}
-                        onToggleFavorite={() => toggleFavorite(selectedModel.id)}
-                        selected={selectedModel}
-                      />
-                    ) : (
-                      <ComparisonModelPicker
-                        asOf={pricingAsOf}
-                        catalog={catalog}
-                        favoriteIds={favorites}
-                        onClear={() => setComparisonIds([])}
-                        onSetModelsWatched={setModelsWatched}
-                        onToggle={toggleComparisonModel}
-                        selectedIds={comparisonIds}
-                      />
-                    )}
+                  {mode === 'estimate' ? (
+                    <ModelPicker
+                      asOf={pricingAsOf}
+                      catalog={catalog}
+                      isFavorite={favorites.includes(selectedModel.id)}
+                      onChange={(model) => setSelectedId(model.id)}
+                      onToggleFavorite={() => toggleFavorite(selectedModel.id)}
+                      selected={selectedModel}
+                    />
+                  ) : (
+                    <ComparisonModelPicker
+                      asOf={pricingAsOf}
+                      catalog={catalog}
+                      favoriteIds={favorites}
+                      onClear={() => setComparisonIds([])}
+                      onSetModelsWatched={setModelsWatched}
+                      onToggle={toggleComparisonModel}
+                      selectedIds={comparisonIds}
+                    />
+                  )}
 
-                    <View style={styles.divider} />
+                  <View style={styles.divider} />
 
-                    <View style={styles.inputGuide}>
-                      <Text style={styles.inputGuideTitle}>Use counts or paste the real text</Text>
-                      <Text style={styles.inputGuideText}>
-                        If you do not know the token count, choose Paste text. The estimate updates on this
-                        device while you type.
+                  <View style={styles.inputGuide}>
+                    <Text style={styles.inputGuideTitle}>Use counts or paste the real text</Text>
+                    <Text style={styles.inputGuideText}>
+                      If you do not know the token count, choose Paste text. The estimate updates on this
+                      device while you type.
+                    </Text>
+                  </View>
+
+                  {restoredPasteFields.length > 0 && (
+                    <View accessibilityRole="alert" style={styles.restoreNotice}>
+                      <View style={styles.restoreNoticeCopy}>
+                        <Text style={styles.restoreNoticeTitle}>Private text was not restored</Text>
+                        <Text style={styles.restoreNoticeText}>
+                          This saved scenario used pasted text for {restoredPasteFields.join(', ')}.
+                          PromptSpend restored only the derived token counts. Paste again if you want to
+                          recalculate from the original text.
+                        </Text>
+                      </View>
+                      <Pressable
+                        accessibilityLabel="Dismiss restored text notice"
+                        accessibilityRole="button"
+                        onPress={clearRestoredPasteNotice}
+                        style={styles.restoreDismiss}
+                      >
+                        <Text style={styles.restoreDismissText}>Dismiss</Text>
+                      </Pressable>
+                    </View>
+                  )}
+
+                  <PromptInputField
+                    accessibilityHint="Typical number of tokens in the system instructions sent with each request"
+                    helper="Sent with every request. Stable prefixes may be eligible for caching."
+                    input={promptInputs.system}
+                    label="System prompt"
+                    max={200000}
+                    modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                    numericValue={workload.systemTokens}
+                    onModeChange={(inputMode) => updatePromptMode('system', inputMode)}
+                    onNumericChange={(value) => updateWorkload('systemTokens', value)}
+                    onTextChange={(text) => updatePromptText('system', text)}
+                    placeholder="Paste your actual system prompt — the token estimate updates live…"
+                    tokenEstimate={displayedPromptTokens.system}
+                  />
+
+                  <PromptInputField
+                    accessibilityHint="Typical number of tokens in each new user message"
+                    input={promptInputs.user}
+                    label="User message"
+                    max={200000}
+                    modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                    numericValue={workload.userTokens}
+                    onModeChange={(inputMode) => updatePromptMode('user', inputMode)}
+                    onNumericChange={(value) => updateWorkload('userTokens', value)}
+                    onTextChange={(text) => updatePromptText('user', text)}
+                    placeholder="Paste a typical user message…"
+                    tokenEstimate={displayedPromptTokens.user}
+                  />
+
+                  <PromptInputField
+                    accessibilityHint="Typical number of tokens generated in each model response"
+                    helper="Paste a representative earlier response if you have one; otherwise enter an expected token count."
+                    input={promptInputs.output}
+                    label="Model response"
+                    max={200000}
+                    modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
+                    numericValue={workload.outputTokens}
+                    onModeChange={(inputMode) => updatePromptMode('output', inputMode)}
+                    onNumericChange={(value) => updateWorkload('outputTokens', value)}
+                    onTextChange={(text) => updatePromptText('output', text)}
+                    placeholder="Paste a sample response, if you have one…"
+                    tokenEstimate={displayedPromptTokens.output}
+                  />
+
+                  <NumericField
+                    accessibilityHint="Number of back-and-forth turns in one conversation"
+                    label="Turns per conversation"
+                    max={200}
+                    min={1}
+                    onChange={(value) => updateWorkload('turns', value)}
+                    suffix="turns"
+                    value={workload.turns}
+                  />
+                  <Text style={styles.helper}>
+                    Conversation history is re-sent each turn, so cost compounds.
+                  </Text>
+
+                  <Pressable
+                    accessibilityHint="Shows or hides optional caching, batch, and reasoning assumptions"
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: advancedOpen }}
+                    android_ripple={{ color: theme.accentSoft }}
+                    onPress={() => setAdvancedOpen((current) => !current)}
+                    style={({ pressed }) => [styles.advancedToggle, pressed && styles.pressed]}
+                  >
+                    <View style={styles.advancedToggleCopy}>
+                      <Text style={styles.advancedToggleTitle}>Advanced assumptions</Text>
+                      <Text style={styles.advancedToggleSummary}>
+                        Cache {cacheEnabled ? `${Math.round(cacheSharePercent)}%` : 'off'} · Batch{' '}
+                        {batchEnabled ? 'on' : 'off'} · Reasoning {reasoningMultiplier.toFixed(1)}×
                       </Text>
                     </View>
+                    <Text style={styles.advancedToggleAction}>{advancedOpen ? 'Hide' : 'Edit'}</Text>
+                  </Pressable>
 
-                    {restoredPasteFields.length > 0 && (
-                      <View accessibilityRole="alert" style={styles.restoreNotice}>
-                        <View style={styles.restoreNoticeCopy}>
-                          <Text style={styles.restoreNoticeTitle}>Private text was not restored</Text>
-                          <Text style={styles.restoreNoticeText}>
-                            This saved scenario used pasted text for {restoredPasteFields.join(', ')}.
-                            PromptSpend restored only the derived token counts. Paste again if you want to
-                            recalculate from the original text.
+                  {advancedOpen && (
+                    <View style={styles.advancedContent}>
+                      <View style={styles.switchRow}>
+                        <View style={styles.switchCopy}>
+                          <Text style={styles.switchLabel}>Assume prompt caching</Text>
+                          <Text style={styles.helper}>
+                            Off by default. When enabled, applies a {Math.round(SUGGESTED_CACHE_SHARE * 100)}%
+                            starting hit-rate assumption and published cache-write rates.
                           </Text>
                         </View>
-                        <Pressable
-                          accessibilityLabel="Dismiss restored text notice"
-                          accessibilityRole="button"
-                          onPress={clearRestoredPasteNotice}
-                          style={styles.restoreDismiss}
-                        >
-                          <Text style={styles.restoreDismissText}>Dismiss</Text>
-                        </Pressable>
-                      </View>
-                    )}
-
-                    <PromptInputField
-                      accessibilityHint="Typical number of tokens in the system instructions sent with each request"
-                      helper="Sent with every request. Stable prefixes may be eligible for caching."
-                      input={promptInputs.system}
-                      label="System prompt"
-                      max={200000}
-                      modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
-                      numericValue={workload.systemTokens}
-                      onModeChange={(inputMode) => updatePromptMode('system', inputMode)}
-                      onNumericChange={(value) => updateWorkload('systemTokens', value)}
-                      onTextChange={(text) => updatePromptText('system', text)}
-                      placeholder="Paste your actual system prompt — the token estimate updates live…"
-                      tokenEstimate={displayedPromptTokens.system}
-                    />
-
-                    <PromptInputField
-                      accessibilityHint="Typical number of tokens in each new user message"
-                      input={promptInputs.user}
-                      label="User message"
-                      max={200000}
-                      modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
-                      numericValue={workload.userTokens}
-                      onModeChange={(inputMode) => updatePromptMode('user', inputMode)}
-                      onNumericChange={(value) => updateWorkload('userTokens', value)}
-                      onTextChange={(text) => updatePromptText('user', text)}
-                      placeholder="Paste a typical user message…"
-                      tokenEstimate={displayedPromptTokens.user}
-                    />
-
-                    <PromptInputField
-                      accessibilityHint="Typical number of tokens generated in each model response"
-                      helper="Paste a representative earlier response if you have one; otherwise enter an expected token count."
-                      input={promptInputs.output}
-                      label="Model response"
-                      max={200000}
-                      modelName={tokenReferenceModel?.displayName ?? 'the selected model'}
-                      numericValue={workload.outputTokens}
-                      onModeChange={(inputMode) => updatePromptMode('output', inputMode)}
-                      onNumericChange={(value) => updateWorkload('outputTokens', value)}
-                      onTextChange={(text) => updatePromptText('output', text)}
-                      placeholder="Paste a sample response, if you have one…"
-                      tokenEstimate={displayedPromptTokens.output}
-                    />
-
-                    <NumericField
-                      accessibilityHint="Number of back-and-forth turns in one conversation"
-                      label="Turns per conversation"
-                      max={200}
-                      min={1}
-                      onChange={(value) => updateWorkload('turns', value)}
-                      suffix="turns"
-                      value={workload.turns}
-                    />
-                    <Text style={styles.helper}>
-                      Conversation history is re-sent each turn, so cost compounds.
-                    </Text>
-
-                    <Pressable
-                      accessibilityHint="Shows or hides optional caching, batch, and reasoning assumptions"
-                      accessibilityRole="button"
-                      accessibilityState={{ expanded: advancedOpen }}
-                      android_ripple={{ color: theme.accentSoft }}
-                      onPress={() => setAdvancedOpen((current) => !current)}
-                      style={({ pressed }) => [styles.advancedToggle, pressed && styles.pressed]}
-                    >
-                      <View style={styles.advancedToggleCopy}>
-                        <Text style={styles.advancedToggleTitle}>Advanced assumptions</Text>
-                        <Text style={styles.advancedToggleSummary}>
-                          Cache {cacheEnabled ? `${Math.round(cacheSharePercent)}%` : 'off'} · Batch{' '}
-                          {batchEnabled ? 'on' : 'off'} · Reasoning {reasoningMultiplier.toFixed(1)}×
-                        </Text>
-                      </View>
-                      <Text style={styles.advancedToggleAction}>{advancedOpen ? 'Hide' : 'Edit'}</Text>
-                    </Pressable>
-
-                    {advancedOpen && (
-                      <View style={styles.advancedContent}>
-                        <View style={styles.switchRow}>
-                          <View style={styles.switchCopy}>
-                            <Text style={styles.switchLabel}>Assume prompt caching</Text>
-                            <Text style={styles.helper}>
-                              Off by default. When enabled, applies a{' '}
-                              {Math.round(SUGGESTED_CACHE_SHARE * 100)}% starting hit-rate assumption and
-                              published cache-write rates.
-                            </Text>
-                          </View>
-                          <Switch
-                            accessibilityHint="Applies a sixty percent cached-input assumption"
-                            accessibilityLabel="Assume prompt caching"
-                            ios_backgroundColor={theme.border}
-                            onValueChange={setCacheEnabled}
-                            thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
-                            trackColor={{ false: theme.border, true: theme.accent }}
-                            value={cacheEnabled}
-                          />
-                        </View>
-
-                        {cacheEnabled && (
-                          <NumericField
-                            accessibilityHint="Estimated percentage of repeated input served from the provider prompt cache"
-                            label="Cache hit share"
-                            max={100}
-                            onChange={setCacheSharePercent}
-                            suffix="percent"
-                            value={cacheSharePercent}
-                          />
-                        )}
-
-                        <View style={styles.switchRow}>
-                          <View style={styles.switchCopy}>
-                            <Text style={styles.switchLabel}>Use batch API where available</Text>
-                            <Text style={styles.helper}>
-                              Applies only each provider’s published batch multiplier. Models without one stay
-                              at full rates.
-                            </Text>
-                          </View>
-                          <Switch
-                            accessibilityLabel="Use batch API where available"
-                            ios_backgroundColor={theme.border}
-                            onValueChange={setBatchEnabled}
-                            thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
-                            trackColor={{ false: theme.border, true: theme.accent }}
-                            value={batchEnabled}
-                          />
-                        </View>
-
-                        <NumericField
-                          accessibilityHint="Multiplier for hidden reasoning tokens billed at the output rate"
-                          label="Reasoning token multiplier"
-                          max={5}
-                          min={1}
-                          onChange={setReasoningMultiplier}
-                          step={0.1}
-                          suffix="times"
-                          value={reasoningMultiplier}
+                        <Switch
+                          accessibilityHint="Applies a sixty percent cached-input assumption"
+                          accessibilityLabel="Assume prompt caching"
+                          ios_backgroundColor={theme.border}
+                          onValueChange={setCacheEnabled}
+                          thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
+                          trackColor={{ false: theme.border, true: theme.accent }}
+                          value={cacheEnabled}
                         />
-                        <Text style={styles.helper}>
-                          Leave at 1× unless provider usage reports hidden reasoning tokens.
-                        </Text>
                       </View>
-                    )}
-                  </View>
-                </TourTarget>
+
+                      {cacheEnabled && (
+                        <NumericField
+                          accessibilityHint="Estimated percentage of repeated input served from the provider prompt cache"
+                          label="Cache hit share"
+                          max={100}
+                          onChange={setCacheSharePercent}
+                          suffix="percent"
+                          value={cacheSharePercent}
+                        />
+                      )}
+
+                      <View style={styles.switchRow}>
+                        <View style={styles.switchCopy}>
+                          <Text style={styles.switchLabel}>Use batch API where available</Text>
+                          <Text style={styles.helper}>
+                            Applies only each provider’s published batch multiplier. Models without one stay
+                            at full rates.
+                          </Text>
+                        </View>
+                        <Switch
+                          accessibilityLabel="Use batch API where available"
+                          ios_backgroundColor={theme.border}
+                          onValueChange={setBatchEnabled}
+                          thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
+                          trackColor={{ false: theme.border, true: theme.accent }}
+                          value={batchEnabled}
+                        />
+                      </View>
+
+                      <NumericField
+                        accessibilityHint="Multiplier for hidden reasoning tokens billed at the output rate"
+                        label="Reasoning token multiplier"
+                        max={5}
+                        min={1}
+                        onChange={setReasoningMultiplier}
+                        step={0.1}
+                        suffix="times"
+                        value={reasoningMultiplier}
+                      />
+                      <Text style={styles.helper}>
+                        Leave at 1× unless provider usage reports hidden reasoning tokens.
+                      </Text>
+                    </View>
+                  )}
+                </View>
 
                 <View style={styles.panel}>
                   <View style={styles.panelHeader}>

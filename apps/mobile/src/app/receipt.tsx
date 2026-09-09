@@ -174,8 +174,8 @@ function ReceiptContent() {
             />
           </View>
 
-          <TourTarget id="receipt-audit" scrollRef={scrollRef}>
-            <View style={styles.hero}>
+          <View style={styles.hero}>
+            <TourTarget id="receipt-audit" scrollRef={scrollRef} style={styles.heroIntro}>
               <Text style={styles.eyebrow}>PROMPTSPEND RECEIPT · v{RECEIPT_SPEC_VERSION}</Text>
               <Text accessibilityRole="header" style={styles.title}>
                 Your prompt has a price tag.
@@ -184,16 +184,16 @@ function ReceiptContent() {
                 Audit a conversation that already happened, then turn the assistant’s structured answer into a
                 private receipt generated on this device.
               </Text>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => router.navigate(helpHref('receipt-overview'))}
-                style={({ pressed }) => [styles.helpButton, pressed && styles.pressed]}
-              >
-                <Ionicons color={theme.accent} name="help-circle-outline" size={19} />
-                <Text style={styles.helpText}>How PromptSpend Receipt works</Text>
-              </Pressable>
-            </View>
-          </TourTarget>
+            </TourTarget>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.navigate(helpHref('receipt-overview'))}
+              style={({ pressed }) => [styles.helpButton, pressed && styles.pressed]}
+            >
+              <Ionicons color={theme.accent} name="help-circle-outline" size={19} />
+              <Text style={styles.helpText}>How PromptSpend Receipt works</Text>
+            </Pressable>
+          </View>
 
           <Step number="1" styles={styles} title="Send the audit instructions">
             <Text style={styles.body}>
@@ -497,6 +497,7 @@ function createStyles(theme: MobileTheme) {
     brandMarkInner: { borderColor: theme.onAccent, borderRadius: 3, borderWidth: 2, height: 19, width: 19 },
     brandName: { color: theme.text, flexShrink: 1, fontSize: 21, fontWeight: '900' },
     hero: { gap: 12, paddingVertical: 14 },
+    heroIntro: { gap: 12 },
     eyebrow: { color: theme.accent, fontSize: 11, fontWeight: '900', letterSpacing: 1.3 },
     title: { color: theme.text, fontSize: 38, fontWeight: '900', letterSpacing: -1.2, lineHeight: 44 },
     summary: { color: theme.mutedText, fontSize: 17, lineHeight: 25 },

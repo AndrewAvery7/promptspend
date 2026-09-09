@@ -1,4 +1,4 @@
-import { GUIDED_TOUR_STEPS, padAndClamp } from '@/lib/guidedTour';
+import { GUIDED_TOUR_STEPS, padAndClamp, tourScrollOffset } from '@/lib/guidedTour';
 
 describe('guided tour flow', () => {
   test('visits every top-level product destination before global tools', () => {
@@ -34,5 +34,10 @@ describe('guided tour flow', () => {
       x: 177,
       y: 742,
     });
+  });
+
+  test('keeps the target below app chrome when Android reports a transient zero layout position', () => {
+    expect(tourScrollOffset(312, 246)).toBe(224);
+    expect(tourScrollOffset(0, 246)).toBe(158);
   });
 });

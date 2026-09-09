@@ -208,8 +208,8 @@ export default function HomeScreen() {
             />
           )}
 
-          <TourTarget id="home-cost-brief" scrollRef={scrollRef}>
-            <View style={styles.hero}>
+          <View style={styles.hero}>
+            <TourTarget id="home-cost-brief" scrollRef={scrollRef} style={styles.heroIntro}>
               <Text style={styles.eyebrow}>YOUR COST BRIEF</Text>
               <Text accessibilityRole="header" style={styles.title}>
                 Know what your AI decision costs.
@@ -218,6 +218,8 @@ export default function HomeScreen() {
                 One private view of the estimate you are shaping, the models you watch, and the next place to
                 save.
               </Text>
+            </TourTarget>
+            <View style={styles.heroActions}>
               <ContextualHelpLink
                 label="How to use Home"
                 onPress={() => router.navigate(helpHref('home-overview'))}
@@ -229,7 +231,7 @@ export default function HomeScreen() {
                 />
               )}
             </View>
-          </TourTarget>
+          </View>
 
           {catalog && (
             <Pressable
@@ -910,6 +912,8 @@ function createStyles(theme: MobileTheme) {
     brandName: { color: theme.text, fontSize: 20, fontWeight: '900' },
     brandSubhead: { color: theme.mutedText, ...TYPE_ROLES.caption, fontWeight: '600', letterSpacing: 1.0 },
     hero: { gap: 10, paddingBottom: 4, paddingTop: 8 },
+    heroIntro: { gap: 10 },
+    heroActions: { gap: 10 },
     eyebrow: { color: theme.accent, fontSize: 11, fontWeight: '900', letterSpacing: 1.5 },
     title: {
       color: theme.text,
