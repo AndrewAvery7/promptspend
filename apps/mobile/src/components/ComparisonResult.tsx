@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Alert, findNodeHandle, Pressable, Share, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
+import { CountryBadge } from '@/components/CountryBadge';
 import {
   buildComparisonShareText,
   formatMoney,
@@ -130,7 +131,6 @@ export function ComparisonResult({ catalog, rows, validateAction }: ComparisonRe
                 <SmallMetric label="AI margin" value={formatPercent(row.scaled.margin, 1)} styles={styles} />
               )}
             </View>
-
             {row.breakdown.warnings.map((warning, warningIndex) => (
               <View
                 accessibilityRole="alert"
@@ -177,6 +177,7 @@ export function ComparisonResult({ catalog, rows, validateAction }: ComparisonRe
                 ))}
               </View>
             )}
+            <CountryBadge country={catalog.provider(row.model)?.country} />
           </View>
         ))}
       </View>

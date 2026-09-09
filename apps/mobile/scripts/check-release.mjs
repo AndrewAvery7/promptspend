@@ -55,6 +55,8 @@ png('assets/images/android-icon-foreground.png', 1024, 1024, true);
 png('assets/images/android-icon-monochrome.png', 1024, 1024, true);
 png('assets/images/splash-icon.png', 512, 512, true);
 png('assets/images/splash-icon-dark.png', 512, 512, true);
+png('store/assets/google-play/feature-graphic.png', 1024, 500, false);
+png('store/assets/google-play/play-icon.png', 512, 512, false);
 
 for (const file of [
   'assets/fonts/ibm-plex-sans-400.ttf',

@@ -326,19 +326,12 @@ The public target remains the week of October 26-November 2, 2026. Store review,
 account verification, or a release-blocking defect may move public availability;
 quality or privacy gates will not be waived to preserve a date.
 
-## Google Play organization transition
+## Google Play organization account
 
-The current Play developer account began as a personal account. The owner is
-working with Google to transition it to an organization account for Crestwood
-Holdings.
-
-Until Play Console shows the account type as organization and confirms the
-available production path, the personal-account 12-tester/14-continuous-day
-rule remains a contingency. It is not considered removed based only on a
-support request.
-
-If the transition completes, the mandatory personal-account test is replaced
-in the release plan by:
+Play Console confirmed the converted publisher as an Organization account on
+September 9, 2026. The prior contingency for a newly created personal account's
+mandatory 12-tester/14-continuous-day test no longer governs this release. The
+Android release plan still requires:
 
 - organization identity and payments-profile verification;
 - legal organization name/address and D-U-N-S matching;
@@ -349,7 +342,7 @@ in the release plan by:
 - Play pre-launch report, policy declarations, content rating, data safety,
   store listing, and production review.
 
-The Google account transition does not remove PromptSpend's own Android beta,
+The Google organization status does not remove PromptSpend's own Android beta,
 accessibility, privacy, performance, or device-quality gates.
 
 ## Non-blocking decisions to close during implementation
@@ -357,8 +350,8 @@ accessibility, privacy, performance, or device-quality gates.
 - Select final app icon and splash direction at the visual checkpoint.
 - Decide whether exact native tokenization meets physical-device performance
   requirements; retain honest approximate labels if it does not.
-- Confirm the final Google account type and production eligibility in Play
-  Console before planning the production submission date.
+- Confirm the production track is available after the app record and first
+  internal release are created in Play Console.
 - Confirm final store support email, website, privacy URL, and public developer
   display information before metadata submission.
 

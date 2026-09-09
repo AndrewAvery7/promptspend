@@ -60,15 +60,16 @@ function createStyles(theme: MobileTheme) {
   return StyleSheet.create({
     chip: {
       alignItems: 'center',
-      alignSelf: 'flex-start',
+      alignSelf: 'stretch',
       backgroundColor: theme.surfaceRaised,
       borderColor: theme.border,
       borderRadius: 999,
       borderWidth: 1,
       flexDirection: 'row',
       gap: 8,
+      justifyContent: 'center',
       minHeight: 32,
-      paddingHorizontal: 12,
+      paddingHorizontal: 14,
     },
     status: {
       alignItems: 'center',
@@ -76,14 +77,19 @@ function createStyles(theme: MobileTheme) {
       borderWidth: 1.5,
       height: 16,
       justifyContent: 'center',
+      flexShrink: 0,
       width: 16,
     },
     statusText: { fontSize: 10, fontWeight: '900', lineHeight: 12 },
     label: {
       color: theme.mutedText,
+      flexShrink: 1,
+      flex: 1,
       fontSize: 12,
       fontWeight: '600',
       lineHeight: 16,
+      minWidth: 0,
+      textAlign: 'center',
     },
   });
 }

@@ -510,6 +510,7 @@ export function EstimatorWorkspace({
             {section === 'estimate' && breakdown && selectedModel && scaled && (
               <EstimateResult
                 breakdown={breakdown}
+                country={catalog?.provider(selectedModel)?.country}
                 model={selectedModel}
                 scaled={scaled}
                 validateAction={assertCurrentPricing}

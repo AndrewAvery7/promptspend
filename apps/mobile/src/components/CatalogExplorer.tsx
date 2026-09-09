@@ -14,6 +14,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText as Text } from '@/components/AppText';
+import { CountryBadge } from '@/components/CountryBadge';
 import { Catalog, effectivePricing, formatContext, type Model } from '@promptspend/core';
 
 import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
@@ -261,6 +262,7 @@ export function CatalogExplorer({
                 <Text style={styles.rate}>{rates.output} output</Text>
                 <Text style={styles.rate}>{formatContext(model.contextWindow)} context</Text>
               </View>
+              <CountryBadge country={country} />
               {rates.promoLabel && (
                 <Text style={styles.promo}>
                   {rates.promoLabel} · {rates.standardLabel}

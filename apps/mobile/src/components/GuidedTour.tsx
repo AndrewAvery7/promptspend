@@ -107,6 +107,7 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
 
     let cancelled = false;
     let attempts = 0;
+    let measurements = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const locate = () => {
       if (cancelled) return;
@@ -124,6 +125,13 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
           if (rect) {
             setTargetRect(rect);
             setTargetUnavailable(false);
+            // Android reports intermediate coordinates while a ScrollView is
+            // settling. Keep the latest measurement through the scroll
+            // animation so the modal highlight follows the final target.
+            measurements += 1;
+            if (!reduceMotion && measurements < 5) {
+              timer = setTimeout(measureUntilReady, 120);
+            }
             return;
           }
           attempts += 1;
@@ -131,7 +139,7 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
           else setTargetUnavailable(true);
         });
       };
-      timer = setTimeout(measureUntilReady, reduceMotion ? 40 : 180);
+      timer = setTimeout(measureUntilReady, reduceMotion ? 40 : 220);
     };
     timer = setTimeout(locate, reduceMotion ? 80 : 220);
     return () => {
@@ -197,8 +205,11 @@ export function TourTarget({
     if (!enabled) return;
     return registerTarget(id, {
       measure: (callback) => {
-        container.current?.measureInWindow((x, y, width, height) => {
-          callback(width > 0 && height > 0 ? { height, width, x, y } : null);
+        // `measure` gives pageX/pageY in screen coordinates. On Android this
+        // is more reliable than measureInWindow for children of a ScrollView
+        // when a transparent, edge-to-edge Modal is open.
+        container.current?.measure((_x, _y, width, height, pageX, pageY) => {
+          callback(width > 0 && height > 0 ? { height, width, x: pageX, y: pageY } : null);
         });
       },
       reveal: () => {

@@ -6,24 +6,15 @@ import type { CountryCount } from '@promptspend/core';
 
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { countryFlag, countryName } from '@/lib/countries';
+
+export { countryFlag, countryName } from '@/lib/countries';
 
 interface CountryFilterProps {
   countries: readonly CountryCount[];
   label: string;
   onChange: (next: string[]) => void;
   selected: readonly string[];
-}
-
-const COUNTRY_NAMES: Record<string, string> = {
-  CA: 'Canada',
-  CN: 'China',
-  FR: 'France',
-  US: 'United States',
-};
-
-export function countryName(code: string): string {
-  const upper = code.toUpperCase();
-  return COUNTRY_NAMES[upper] ?? upper;
 }
 
 export function emptyReason(search: string, countries: readonly string[]): string {
@@ -79,6 +70,7 @@ export function CountryFilter({ countries, label, onChange, selected }: CountryF
           const name = countryName(code);
           return (
             <Pressable
+              accessibilityHint="Toggles this country filter"
               accessibilityLabel={`${code}, ${name}, ${count} ${count === 1 ? 'model' : 'models'}`}
               accessibilityRole="checkbox"
               accessibilityState={{ checked }}
@@ -90,6 +82,9 @@ export function CountryFilter({ countries, label, onChange, selected }: CountryF
                 pressed && styles.pressed,
               ]}
             >
+              <Text accessibilityElementsHidden style={styles.flag}>
+                {countryFlag(code)}
+              </Text>
               <Text style={[styles.chipText, checked && styles.chipTextSelected]}>{code}</Text>
               <View style={[styles.countBadge, checked && styles.countBadgeSelected]}>
                 <Text style={[styles.countText, checked && styles.countTextSelected]}>{count}</Text>
@@ -125,6 +120,7 @@ function createStyles(theme: MobileTheme) {
     chipSelected: { backgroundColor: theme.accentSoft, borderColor: theme.accent },
     chipText: { color: theme.text, fontSize: 13, fontWeight: '800' },
     chipTextSelected: { color: theme.accent },
+    flag: { fontSize: 17, lineHeight: 20 },
     countBadge: {
       alignItems: 'center',
       backgroundColor: theme.background,
