@@ -9,11 +9,11 @@ Last reviewed: September 9, 2026
 
 Re-derived September 9, 2026 from `npm audit --package-lock-only` against lockfile `8269ec38`: **3 findings: 3 moderate, 0 high, 0 critical**. Expo 57.0.21, expo-router 57.0.20, react-native-webview 13.16.1.
 
-| Package | Severity | Vulnerable range | Advisory | Reached through | Fix |
-| --- | --- | --- | --- | --- | --- |
-| `decode-uri-component` | moderate | `<=0.4.2` | [GHSA-vcc3-ghjq-m6fr](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr) | `expo-router > query-string > decode-uri-component` | only by a major change to expo-router@5.1.11 |
-| `expo-router` | moderate | `1.2.2 - 3.1.2 \|\| >=5.2.0-canary-20250611-f0afe80` | — | `expo-router` | only by a major change to expo-router@5.1.11 |
-| `query-string` | moderate | `5.0.0 - 9.4.1` | — | `expo-router > query-string` | only by a major change to expo-router@5.1.11 |
+| Package                | Severity | Vulnerable range                                     | Advisory                                                                 | Reached through                                     | Fix                                          |
+| ---------------------- | -------- | ---------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------- | -------------------------------------------- |
+| `decode-uri-component` | moderate | `<=0.4.2`                                            | [GHSA-vcc3-ghjq-m6fr](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr) | `expo-router > query-string > decode-uri-component` | only by a major change to expo-router@5.1.11 |
+| `expo-router`          | moderate | `1.2.2 - 3.1.2 \|\| >=5.2.0-canary-20250611-f0afe80` | —                                                                        | `expo-router`                                       | only by a major change to expo-router@5.1.11 |
+| `query-string`         | moderate | `5.0.0 - 9.4.1`                                      | —                                                                        | `expo-router > query-string`                        | only by a major change to expo-router@5.1.11 |
 
 "Reached through" is the dependency chain from the package this project declares down to the vulnerable one; it says where a finding lives, not whether shipped code exercises it. Reachability is assessed in the exposure notes below only when a finding is escalated.
 
