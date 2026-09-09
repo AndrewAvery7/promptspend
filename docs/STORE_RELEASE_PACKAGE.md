@@ -1,10 +1,10 @@
 # PromptSpend Store Release Package
 
-Status: pre-device-QA draft; copy and evidence are implementation-ready, but
-store declarations remain unsubmitted until the release-candidate binary and
-physical-device evidence are final.
+Status: Android release-candidate preparation; copy and evidence are
+implementation-ready, but production declarations remain unsubmitted until
+the exact Play candidate and physical-device evidence are final.
 
-Last reviewed: 2026-08-16
+Last reviewed: 2026-09-09
 
 ## Sources of truth
 
@@ -22,25 +22,26 @@ presence of every release document.
 
 ## Product identity
 
-| Field                 | Value                                       | Status                                                  |
-| --------------------- | ------------------------------------------- | ------------------------------------------------------- |
-| Name                  | PromptSpend                                 | Ready                                                   |
-| Version               | 0.1.0                                       | Ready; build numbers remain remotely auto-incremented   |
-| iOS bundle ID         | `com.promptspend.app`                       | Locked by uploaded builds                               |
-| Android package       | `com.promptspend.app`                       | Locked before first Play release                        |
-| App Store Connect app | `6800386428`                                | Active                                                  |
-| Expo project          | `9671ef3e-be90-49ba-aebe-56b6982af806`      | Active                                                  |
-| Apple account type    | Individual                                  | Confirmed by owner                                      |
-| Google account type   | Personal, organization transition requested | Pending Play Console confirmation                       |
-| Default language      | English (U.S.)                              | Proposed                                                |
-| Price                 | Free, no in-app purchases                   | Proposed; confirm immediately before submission         |
-| Apple categories      | Developer Tools; Business                   | Proposed                                                |
-| Google category       | Tools                                       | Proposed                                                |
-| Copyright owner       | Not yet entered here                        | **Owner decision required** before App Store submission |
+| Field                 | Value                                  | Status                                                |
+| --------------------- | -------------------------------------- | ----------------------------------------------------- |
+| Name                  | PromptSpend                            | Ready                                                 |
+| Version               | 0.1.0                                  | Ready; build numbers remain remotely auto-incremented |
+| iOS bundle ID         | `com.promptspend.app`                  | Locked by uploaded builds                             |
+| Android package       | `com.promptspend.app`                  | Locked before first Play release                      |
+| App Store Connect app | `6800386428`                           | Active                                                |
+| Expo project          | `9671ef3e-be90-49ba-aebe-56b6982af806` | Active                                                |
+| Apple account type    | Organization migration processing      | Pending Apple completion                              |
+| Google account type   | Organization                           | Verified live in Play Console on 2026-09-09           |
+| Default language      | English (U.S.)                         | Proposed                                              |
+| Price                 | Free, no in-app purchases              | Owner-approved release default                        |
+| Apple categories      | Developer Tools; Business              | Proposed                                              |
+| Google category       | Tools                                  | Proposed                                              |
+| Copyright owner       | Crestwood Holdings Management LLC      | Owner-approved release default                        |
 
-The Google account is treated as personal until Play Console itself confirms
-the organization conversion and displays the resulting production path. No
-testing exemption is assumed from a support request or payment alone.
+Play Console now identifies publisher `4914249645624372750` as an Organization
+account. PromptSpend still uses an internal-track install and physical QA before
+production; organization status removes only the contingency that treated the
+account as a newly created personal publisher.
 
 ## Store copy
 

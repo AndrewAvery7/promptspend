@@ -148,12 +148,10 @@ Wait for the single submission to finish, then confirm the same build appears
 in App Store Connect and TestFlight. Install from TestFlight, not the `.ipa`
 URL, and execute `MOBILE_BETA_QA.md`.
 
-Android: upload the candidate AAB to Play Console's internal track first. The
-Google account remains subject to the production requirements shown in Play
-Console until the requested organization transition is confirmed. An
-organization conversion may change the personal-account closed-test path; it
-does not waive PromptSpend's own physical-device, policy, accessibility,
-pre-launch-report, or release-quality gates.
+Android: upload the candidate AAB to Play Console's internal track first. Play
+Console confirmed the publisher as an Organization account on September 9, 2026. The account follows the production path Play Console exposes for that
+organization; this does not waive PromptSpend's own physical-device, policy,
+accessibility, pre-launch-report, or release-quality gates.
 
 ## 6. Store configuration
 
@@ -190,7 +188,8 @@ automatic release until the owner has reviewed the final product pages.
 
 ## 8. Submission and monitoring
 
-Submit one platform at a time, iOS first unless the owner changes the order.
+Submit one platform at a time. For this release, the owner selected Android
+first while Apple's organization migration completes.
 Capture the submission ID and store status. Respond to reviewer questions with
 facts from the release package; do not add a capability claim merely to answer
 a reviewer.
