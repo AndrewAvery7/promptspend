@@ -1,9 +1,10 @@
 # PromptSpend Store Screenshot Storyboard
 
-Status: creative direction approved by the launch specification; final captures
-remain blocked on release-candidate physical-device QA.
+Status: creative direction approved by the launch specification; Play icon and
+feature graphic are ready, while final screenshots remain blocked on
+release-candidate physical-device QA.
 
-Last reviewed: 2026-08-12
+Last reviewed: 2026-09-09
 
 ## Visual direction
 
@@ -64,6 +65,13 @@ Google Play:
   landscape between 1080 and 7680 pixels.
 - Feature graphic: `1024 x 500`, JPEG or 24-bit PNG with no alpha.
 - Play icon: `512 x 512`, 32-bit PNG, no badges or ranking/price claims.
+
+Prepared Google assets:
+
+- `apps/mobile/store/assets/google-play/feature-graphic.png` — 1024 x 500,
+  opaque sRGB PNG.
+- `apps/mobile/store/assets/google-play/play-icon.png` — 512 x 512, opaque sRGB
+  PNG derived from the shipping app icon.
 
 ## Google alt text
 
