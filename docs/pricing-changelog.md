@@ -867,3 +867,10 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `xai-grok-4.3` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
 - **Review** `xai-grok-4.5` — provenance.needsReview: true → —
 - **Review** `xai-grok-4.5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → —
+
+## 2026-09-10
+
+- **Review** `dashscope-qwen3.7-max` — provenance.needsReview: — → true
+- **Review** `dashscope-qwen3.7-max` — provenance.reviewNote: — → the vendor's own page disagrees with the record — page lists $1.65/$4.951 vs recorded $2.5/$7.5
+- **Review** `deepseek-deepseek-v4-flash` — provenance.needsReview: — → true
+- **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: — → the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014
