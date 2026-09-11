@@ -170,6 +170,12 @@ main {
 }
 
 .receipt-hero {
+  /* The status line under the receipt is space reserved for a message that is
+   * empty until you copy: 44px plus its 8px gap. It made the object column
+   * taller than the visible card, so centring the two columns left the wording
+   * 26px below the card's middle. The copy column carries the same reserve, so
+   * both now centre on the card itself. */
+  --receipt-status-reserve: 52px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(340px, 0.78fr);
   align-items: center;
@@ -270,6 +276,10 @@ main {
   background: var(--warn-soft);
   color: var(--warn);
   border-color: color-mix(in srgb, var(--warn) 34%, transparent);
+}
+
+.receipt-hero__copy {
+  margin-bottom: var(--receipt-status-reserve);
 }
 
 .receipt-hero__object {
@@ -474,9 +484,14 @@ main {
 
 /* Section headings sit a clear step below the page title, the way they do on
  * the other tabs — there, the title is the only large type on the page. Same
- * display face, weight and tracking as .headline; only the size steps down. */
+ * display face, weight and tracking as .headline; only the size steps down.
+ *
+ * The margins above and below match so the heading sits midway between its
+ * eyebrow and its body copy. The eyebrow needs saying explicitly because it is
+ * a <p>, so `.receipt-section p` below zeroed the margin it carries in the
+ * hero and left the heading jammed against it. */
 .receipt-section h2 {
-  margin: 0 0 16px;
+  margin: 14px 0;
   font-family: var(--font-display);
   font-size: clamp(1.35rem, 2.6vw, 2rem);
   font-weight: 700;
@@ -534,12 +549,16 @@ main {
   font-weight: 700;
 }
 
+.receipt-section .receipt-eyebrow {
+  margin-bottom: 0;
+}
+
 .receipt-section__heading {
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 .receipt-secondary-copy {
@@ -838,6 +857,10 @@ main {
 
   .receipt-hero h1 {
     font-size: clamp(1.75rem, 7vw, 2.4rem);
+  }
+
+  .receipt-hero__copy {
+    margin-bottom: 0;
   }
 
   .receipt-hero__object {
