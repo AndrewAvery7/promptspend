@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { HEALTH_URL, PRICING_SCOPE, PRICING_URL, RECEIPT_URL } from '@/config';
 import { loadCatalog, type Catalog } from '@/lib/pricing/catalog';
+import { Ticker } from '@/components/Ticker';
 import { useAppearance } from '@/state/useAppearance';
 import { ReceiptObject } from './ReceiptObject';
 import { ShareReceiptBuilder, dispatchReceiptEvent } from './ShareReceiptBuilder';
@@ -87,6 +88,20 @@ export function ReceiptPage() {
       <a className="receipt-skip-link" href="#receipt-main">
         Skip to main content
       </a>
+      {/* The same freshness strip the calculator runs above its header. The
+          calculator waits for the catalog before it renders anything, so it can
+          mount the tape directly; this page renders straight away, so an empty
+          lane holds the strip's height until the figures arrive rather than
+          letting the whole page jump down when they do. */}
+      {catalogState.status === 'ready' ? (
+        <Ticker catalog={catalogState.catalog} />
+      ) : (
+        <div className="ticker" aria-hidden="true">
+          <div className="ticker__lane ticker__lane--idle">
+            <span className="ticker__item">&nbsp;</span>
+          </div>
+        </div>
+      )}
       {/* The same navigation as the calculator's header, so the Receipt reads as a
           page of the site rather than a separate product (Andrew, 2026-09-05).
           The view links go through the hash, which App.tsx honours. */}
