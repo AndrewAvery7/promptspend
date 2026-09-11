@@ -170,12 +170,11 @@ main {
 }
 
 .receipt-hero {
-  min-height: calc(100vh - 76px);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.82fr);
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.78fr);
   align-items: center;
-  gap: clamp(44px, 8vw, 112px);
-  padding: 70px 0 84px;
+  gap: clamp(40px, 7vw, 96px);
+  padding: 52px 0 60px;
 }
 
 /* Matches .eyebrow on the other tabs, including its 12px floor — app.css puts
@@ -279,9 +278,9 @@ main {
 
 .receipt-object {
   position: relative;
-  width: min(100%, 480px);
+  width: min(100%, 460px);
   margin: 0 auto;
-  padding: 38px 34px 30px;
+  padding: 28px 28px 24px;
   overflow: hidden;
   background: var(--surface);
   color: var(--ink);
@@ -315,7 +314,7 @@ main {
 }
 
 .receipt-object__kicker {
-  margin: 28px 0 3px;
+  margin: 18px 0 3px;
   text-align: center;
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -327,12 +326,12 @@ main {
   margin: 0;
   text-align: center;
   font-family: var(--font-mono);
-  font-size: clamp(1.65rem, 5vw, 2.25rem);
+  font-size: clamp(1.35rem, 3.6vw, 1.8rem);
   line-height: 1.1;
 }
 
 .receipt-object__scope {
-  margin: 10px auto 26px;
+  margin: 8px auto 16px;
   max-width: 330px;
   color: var(--muted);
   text-align: center;
@@ -341,7 +340,7 @@ main {
 
 .receipt-object__rows {
   margin: 0;
-  padding: 22px 0;
+  padding: 15px 0;
   border-top: 1px dashed var(--muted);
   border-bottom: 1px dashed var(--muted);
 }
@@ -350,7 +349,7 @@ main {
   display: flex;
   justify-content: space-between;
   gap: 18px;
-  padding: 5px 0;
+  padding: 3px 0;
   font-family: var(--font-mono);
   font-size: 0.82rem;
 }
@@ -370,7 +369,7 @@ main {
   justify-content: space-between;
   align-items: baseline;
   gap: 20px;
-  padding: 22px 0 20px;
+  padding: 15px 0 14px;
   font-family: var(--font-mono);
 }
 
@@ -388,7 +387,7 @@ main {
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
 .receipt-object__trust span {
@@ -433,7 +432,7 @@ main {
 }
 
 .receipt-object__url {
-  margin: 14px 0 0;
+  margin: 10px 0 0;
   color: var(--muted);
   text-align: center;
   font-family: var(--font-mono);
@@ -462,10 +461,14 @@ main {
   box-shadow: var(--shadow);
 }
 
+/* The heading column stretches to the height of the column beside it, so
+ * without this its text pinned to the top and left up to 228px empty
+ * underneath. Centred, the heading sits against the middle of its content. */
 .receipt-section--split,
 .receipt-limitations {
   display: grid;
   grid-template-columns: minmax(0, 0.78fr) minmax(0, 1fr);
+  align-items: center;
   gap: clamp(32px, 7vw, 96px);
 }
 
