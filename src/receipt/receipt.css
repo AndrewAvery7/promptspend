@@ -69,6 +69,62 @@ a {
  * 1280px inner measure, pill links, the current page in the accent. Kept in
  * this stylesheet rather than imported from app.css so the Receipt page still
  * ships only its own CSS. */
+/* The freshness strip — the same tape the calculator runs above its header,
+ * and duplicated here for the same reason the header below it is: this page
+ * ships only its own CSS. */
+.ticker {
+  background: var(--ink);
+  color: var(--bg);
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  /* app.css sets 0.7rem and then floors every small label at
+   * max(0.75rem, 12px). This stylesheet carries no such floor, and the browser
+   * suite fails on any text under 12px, so the floor is stated here. */
+  font-size: max(0.75rem, 12px);
+}
+
+.ticker__lane {
+  display: inline-block;
+  padding: 12px 0;
+  animation: ticker-scroll 60s linear infinite;
+}
+
+/* Holds the strip's height while the catalog loads. */
+.ticker__lane--idle {
+  animation: none;
+}
+
+.ticker:hover .ticker__lane,
+.ticker:focus-within .ticker__lane {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker__item {
+  margin: 0 26px;
+}
+
+.ticker__up {
+  color: #3ccb7f;
+}
+
+.ticker__chg {
+  color: #f5b849;
+}
+
+.ticker__dim {
+  opacity: 0.55;
+}
+
 .receipt-header {
   position: sticky;
   top: 0;
@@ -966,5 +1022,11 @@ main {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* The ticker is the only animation on this page, and a tape that scrolls
+   * itself is exactly what this preference is asking us not to do. */
+  .ticker__lane {
+    animation: none;
   }
 }
