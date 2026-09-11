@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-10T11:05:53.497Z",
+  "checkedAt": "2026-09-11T11:05:53.389Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -25,7 +25,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "21695 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22015 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -73,7 +73,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "ok": true,
-      "note": "2535 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3243 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k2.6"
       ]
@@ -81,7 +81,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
       "ok": true,
-      "note": "3086 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3243 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k3"
       ]
@@ -89,7 +89,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "535948 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "535923 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",

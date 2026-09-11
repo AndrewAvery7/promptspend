@@ -874,3 +874,8 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `dashscope-qwen3.7-max` — provenance.reviewNote: — → the vendor's own page disagrees with the record — page lists $1.65/$4.951 vs recorded $2.5/$7.5
 - **Review** `deepseek-deepseek-v4-flash` — provenance.needsReview: — → true
 - **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: — → the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014
+
+## 2026-09-11
+
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: — → OpenRouter disagrees (22%): $2.34/$11.7 vs $3/$15
