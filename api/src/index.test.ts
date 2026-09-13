@@ -332,6 +332,68 @@ describe('catalog endpoints', () => {
   });
 });
 
+describe('price badges', () => {
+  beforeEach(() => serveCatalog());
+
+  it('serves an SVG badge with the price and confirmation date visible in the text', async () => {
+    const response = await get('/badge/gpt-5.svg');
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toBe('image/svg+xml; charset=utf-8');
+    expect(response.headers.get('Cache-Control')).toBe('no-cache');
+    const svg = await response.text();
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('gpt-5');
+    expect(svg).toContain('$1.25/$10 per 1M');
+    expect(svg).toContain('2026-08-01');
+  });
+
+  it('serves a shields.io endpoint JSON with the same content', async () => {
+    const response = await get('/badge/gpt-5.json');
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toBe('application/json; charset=utf-8');
+    expect(response.headers.get('Cache-Control')).toBe('no-cache');
+    const body = (await response.json()) as {
+      schemaVersion: number;
+      label: string;
+      message: string;
+      color: string;
+    };
+    expect(body).toEqual({
+      schemaVersion: 1,
+      label: 'gpt-5',
+      message: '$1.25/$10 per 1M · 2026-08-01',
+      color: 'brightgreen',
+    });
+  });
+
+  it('renders a legible fallback badge for an unknown model instead of a 404', async () => {
+    const response = await get('/badge/not-a-real-model.svg');
+    expect(response.status).toBe(200);
+    const svg = await response.text();
+    expect(svg).toContain('model not found');
+
+    const json = (await (await get('/badge/not-a-real-model.json')).json()) as { message: string };
+    expect(json.message).toBe('model not found');
+  });
+
+  it('is callable from any origin, like the rest of the API', async () => {
+    expect((await get('/badge/gpt-5.svg')).headers.get('Access-Control-Allow-Origin')).toBe('*');
+  });
+
+  it('still answers with a badge, not a JSON error body, when the origin is down', async () => {
+    // A prior test in this file may have left a cached catalog whose write was
+    // still in flight when the top-level `beforeEach` cleared it — clearing it
+    // again here, synchronously before the request, is what actually forces
+    // the no-cache-entry path this test means to exercise.
+    await caches.default.delete(new Request(CACHE_KEY));
+    originUnreachable();
+    const response = await get('/badge/gpt-5.svg');
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toBe('image/svg+xml; charset=utf-8');
+    expect(await response.text()).toContain('catalog unavailable');
+  });
+});
+
 describe('when the catalog cannot be trusted', () => {
   it('returns 503 rather than an empty answer when the origin is down', async () => {
     serveCatalog('nope', 500);

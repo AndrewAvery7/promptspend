@@ -13,6 +13,7 @@
  * router dependency would be larger than the thing it routes.
  */
 
+import { badgeContent, renderBadgeSvg, shieldsEndpoint, type BadgeContent } from './badge';
 import { filterModels, priceCsv, priceRows, readCatalog, readSyncStatus, type ModelFilter } from './catalog';
 import { DOCS_CSS, docsPage, llmsTxt } from './docs';
 import type { Env } from './env';
@@ -141,8 +142,11 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
   // the origin happened to be down — that is a confusing way to be told about a
   // typo in a URL.
   const single = /^\/v1\/models\/(.+)$/.exec(path);
+  const badge = /^\/badge\/(.+)\.(svg|json)$/.exec(path);
   const known = ['/v1/models', '/v1/prices', '/v1/prices.csv', '/v1/providers', '/v1/health'];
-  if (!single && !known.includes(path)) throw notFound('That endpoint');
+  if (!single && !badge && !known.includes(path)) throw notFound('That endpoint');
+
+  if (badge) return badgeResponse(badge[1]!, badge[2] as 'svg' | 'json', env, ctx);
 
   const [read, sync] = await Promise.all([
     readCatalog(env, ctx).catch((cause: unknown) => {
@@ -240,6 +244,52 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
     throw notFound(`Model "${shown}"`);
   }
   return json(model, { freshness, etag });
+}
+
+/**
+ * `/badge/<model>.svg` and `/badge/<model>.json` (a shields.io "endpoint").
+ *
+ * Handled ahead of the freshness/ETag machinery below: a badge embedded in a
+ * README is fetched by GitHub's Camo proxy, which does not send conditional
+ * request headers back to the origin, so there is no caller here to serve a
+ * 304 to. `Cache-Control: no-cache` instead — Camo must revalidate on every
+ * fetch rather than trust a cached image showing yesterday's date, which is
+ * the one failure this product cannot afford.
+ *
+ * A catalog read failure still answers with a badge, not a 503 with a JSON
+ * body: whatever is consuming this URL is an `<img>` tag, and an error body
+ * only leaves it showing a broken-image icon regardless of status code.
+ */
+async function badgeResponse(
+  rawId: string,
+  ext: 'svg' | 'json',
+  env: Env,
+  ctx: ExecutionContext,
+): Promise<Response> {
+  let id: string;
+  try {
+    id = decodeURIComponent(rawId);
+  } catch {
+    id = rawId;
+  }
+
+  let content: BadgeContent;
+  try {
+    const { catalog } = await readCatalog(env, ctx);
+    content = badgeContent(priceRows(catalog).find((row) => row.id === id));
+  } catch {
+    content = { label: 'promptspend', message: 'catalog unavailable', color: 'lightgrey' };
+  }
+
+  const headers: Record<string, string> = { 'Cache-Control': 'no-cache', ...corsHeaders() };
+  if (ext === 'svg') {
+    return new Response(renderBadgeSvg(content), {
+      headers: { ...headers, 'Content-Type': 'image/svg+xml; charset=utf-8' },
+    });
+  }
+  return new Response(JSON.stringify(shieldsEndpoint(content)), {
+    headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
+  });
 }
 
 function parseFilter(url: URL): ModelFilter {
