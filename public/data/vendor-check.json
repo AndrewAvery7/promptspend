@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-12T11:04:53.230Z",
+  "checkedAt": "2026-09-13T11:04:43.764Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -389,8 +389,8 @@
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "mismatch",
-      "detail": "page lists $1.65/$4.951 vs recorded $2.5/$7.5"
+      "status": "confirmed",
+      "detail": "page lists $2.5/$7.5"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
@@ -489,7 +489,7 @@
       "detail": "page lists $1.25/$2.5"
     }
   ],
-  "confirmed": 56,
-  "mismatched": 2,
+  "confirmed": 57,
+  "mismatched": 1,
   "unconfirmed": 0
 }
