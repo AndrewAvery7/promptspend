@@ -47,6 +47,8 @@ const ENDPOINTS: [string, string][] = [
   ],
   ['GET /v1/prices.csv', 'The same rows as CSV, for a spreadsheet.'],
   ['GET /v1/health', 'Whether this API can currently read and validate the catalog.'],
+  ['GET /badge/{id}.svg', 'An embeddable price badge for one model — current price and confirmation date.'],
+  ['GET /badge/{id}.json', 'The same badge as a shields.io endpoint, for img.shields.io/endpoint?url=.'],
   ['GET /openapi.json', 'OpenAPI 3.1 description of everything above.'],
   ['GET /llms.txt', 'The same, in the form an agent reads first.'],
   ['GET /sitemap.xml', 'The single indexable developer-hub URL.'],
@@ -173,6 +175,27 @@ ${rows}
   }
 }</code></pre>
 
+        <h2>Embed a price badge</h2>
+        <p>
+          <img src="/badge/claude-opus-5.svg" alt="claude-opus-5 price" />
+        </p>
+        <p>
+          One image, no build step. The date shown is the day that price was last confirmed against its
+          source, not the day the badge happened to render — this Worker sends
+          <code>Cache-Control: no-cache</code>, so GitHub's Camo proxy revalidates on every fetch instead of
+          serving a cached image with yesterday's date on it.
+        </p>
+        <pre><code>[![claude-opus-5 price](${origin}/badge/claude-opus-5.svg)](${origin}/)</code></pre>
+        <p class="muted">
+          Swap <code>claude-opus-5</code> for any id from <a href="/v1/models">/v1/models</a>. An id this
+          catalog does not track still renders — a plain gray "model not found" badge, never a broken image.
+        </p>
+        <p>
+          Prefer shields.io's own badge styles (flat-square, for-the-badge, plastic)? Point its
+          <a href="https://shields.io/badges/endpoint-badge">endpoint badge</a> at the JSON instead of the SVG:
+        </p>
+        <pre><code>![price](https://img.shields.io/endpoint?url=${encodeURIComponent(`${origin}/badge/claude-opus-5.json`)})</code></pre>
+
         <h2>Inside a coding agent</h2>
         <p>
           The same data, as an MCP server. Every price it returns carries the source and the date it
@@ -244,6 +267,8 @@ export function llmsTxt(origin: string, siteOrigin: string): string {
 - [Flat prices](${origin}/v1/prices): id, provider, input, output, cache rates, context window
 - [Prices as CSV](${origin}/v1/prices.csv): the same rows, RFC 4180
 - [Health](${origin}/v1/health): whether the catalog is readable and valid
+- [Price badge](${origin}/badge/claude-opus-5.svg): embeddable SVG, price and confirmation date, per model id
+- [Price badge as shields.io endpoint](${origin}/badge/claude-opus-5.json): same data, for img.shields.io/endpoint
 - [OpenAPI 3.1](${origin}/openapi.json): machine-readable description of all of the above
 
 ## Filters

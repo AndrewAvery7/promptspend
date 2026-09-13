@@ -31,20 +31,22 @@ themselves, cross-links between them.
 
 ## Endpoints
 
-| Endpoint             | Returns                                                            |
-| -------------------- | ------------------------------------------------------------------ |
-| `GET /`              | The developer hub (HTML)                                           |
-| `GET /v1/models`     | Every model in full                                                |
-| `GET /v1/models/:id` | One model; 404 if unknown                                          |
-| `GET /v1/providers`  | Every provider, with a model count                                 |
-| `GET /v1/prices`     | Flat rows — the numbers only                                       |
-| `GET /v1/prices.csv` | The same rows as CSV, RFC 4180                                     |
-| `GET /v1/health`     | Whether a valid catalog is readable, and how many rows are flagged |
-| `GET /openapi.json`  | OpenAPI 3.1, with the server URL taken from the request            |
-| `GET /llms.txt`      | The same index in the form an agent reads first                    |
-| `GET /robots.txt`    | Allow fetching; `/v1/` stays out of search via `X-Robots-Tag`      |
-| `GET /sitemap.xml`   | The single indexable developer-hub URL                             |
-| `GET /style.css`     | The developer-hub stylesheet                                       |
+| Endpoint              | Returns                                                                  |
+| --------------------- | ------------------------------------------------------------------------ |
+| `GET /`               | The developer hub (HTML)                                                 |
+| `GET /v1/models`      | Every model in full                                                      |
+| `GET /v1/models/:id`  | One model; 404 if unknown                                                |
+| `GET /v1/providers`   | Every provider, with a model count                                       |
+| `GET /v1/prices`      | Flat rows — the numbers only                                             |
+| `GET /v1/prices.csv`  | The same rows as CSV, RFC 4180                                           |
+| `GET /v1/health`      | Whether a valid catalog is readable, and how many rows are flagged       |
+| `GET /badge/:id.svg`  | An embeddable price badge for one model — price and confirmation date    |
+| `GET /badge/:id.json` | The same badge as a shields.io endpoint (`img.shields.io/endpoint?url=`) |
+| `GET /openapi.json`   | OpenAPI 3.1, with the server URL taken from the request                  |
+| `GET /llms.txt`       | The same index in the form an agent reads first                          |
+| `GET /robots.txt`     | Allow fetching; `/v1/` stays out of search via `X-Robots-Tag`            |
+| `GET /sitemap.xml`    | The single indexable developer-hub URL                                   |
+| `GET /style.css`      | The developer-hub stylesheet                                             |
 
 `/v1/models`, `/v1/prices` and `/v1/prices.csv` accept `?provider=`, `?status=`
 and `?aliases=include`. Routing aliases are excluded by default so one
@@ -70,6 +72,13 @@ prior status.
   should not be able to report 503 because the origin happened to be down.
 - **The OpenAPI `servers` URL comes from the request**, so a `workers.dev`
   preview or `wrangler dev` never hands a generated client a production URL.
+- **`/badge/` sends `Cache-Control: no-cache`, not the five-minute policy every
+  other endpoint gets.** A badge is fetched by GitHub's Camo proxy on someone
+  else's README, and Camo does not send conditional-request headers back here
+  to revalidate against — `no-cache` forces it to check on every fetch instead
+  of serving a cached image with a stale confirmation date on it. An unknown
+  model id still renders a plain gray badge rather than 404ing: a broken image
+  in somebody else's README is how a badge gets removed, not fixed.
 
 ---
 
