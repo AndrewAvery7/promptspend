@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-13T11:04:43.764Z",
+  "checkedAt": "2026-09-14T11:06:12.191Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -89,7 +89,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "535923 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "542617 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -120,7 +120,7 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "13830 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "13658 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",
@@ -389,8 +389,8 @@
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "confirmed",
-      "detail": "page lists $2.5/$7.5"
+      "status": "mismatch",
+      "detail": "page lists $1.65/$4.951 vs recorded $2.5/$7.5"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
@@ -489,7 +489,7 @@
       "detail": "page lists $1.25/$2.5"
     }
   ],
-  "confirmed": 57,
-  "mismatched": 1,
+  "confirmed": 56,
+  "mismatched": 2,
   "unconfirmed": 0
 }
