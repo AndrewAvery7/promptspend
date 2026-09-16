@@ -874,3 +874,14 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `dashscope-qwen3.7-max` — provenance.reviewNote: — → the vendor's own page disagrees with the record — page lists $1.65/$4.951 vs recorded $2.5/$7.5
 - **Review** `deepseek-deepseek-v4-flash` — provenance.needsReview: — → true
 - **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: — → the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014
+
+## 2026-09-16
+
+- **Price** `deepseek-deepseek-v4-flash` — input down 0.44 → 0.3
+- **Price** `deepseek-deepseek-v4-flash` — output down 1.32 → 1.2
+- **Price** `deepseek-deepseek-v4-flash` — cachedInput down 0.014 → 0.006
+- **Review** `dashscope-qwen3.7-max` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3.7-max` — provenance.reviewNote: the vendor's own page disagrees with the record — page lists $1.65/$4.951 vs recorded $2.5/$7.5 → —
+- **Review** `deepseek-deepseek-v4-flash` — provenance.needsReview: true → —
+- **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014 → —
+- **Review** `deepseek-deepseek-v4-flash` — provenance.lastChanged: 2026-08-16 → 2026-09-16

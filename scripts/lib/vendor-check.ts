@@ -209,14 +209,15 @@ export function buildExtractionPrompt(url: string, rows: Checkable[], pageText: 
       return (
         `- ${override.id}` +
         (override.displayName ? ` — ${override.displayName}` : '') +
-        (name ? ` (listed as "${name}")` : '')
+        (name ? ` (listed as "${name}")` : '') +
+        (override.verifyHint ? ` — where to look: ${override.verifyHint}` : '')
       );
     })
     .join('\n');
   return [
     `Pricing page: ${url}`,
     '',
-    'Models to look for, by id (report each id exactly as written; look for the "listed as" name where given):',
+    'Models to look for, by id (report each id exactly as written; look for the "listed as" name where given; where a "where to look" note is given, read that part of the page and no other):',
     list,
     '',
     'Page content:',

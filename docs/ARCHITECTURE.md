@@ -84,7 +84,12 @@ raises `vendor-page-mismatch` carrying both figures. A page that cannot be read 
 - **It never writes a price.** The page is evidence; the override is the claim. Only a person resolves a
   mismatch, the same way only a person resolves an OpenRouter disagreement.
 - **The reading is blind.** The model is told which rows to find and nothing about what the record says,
-  so it cannot confirm a figure by echoing it.
+  so it cannot confirm a figure by echoing it. A row may carry a `verifyHint` — one sentence naming where
+  on the page to read, handed to the reader verbatim — and that is the one thing a person may say to it.
+  It narrows _where_ to look and never says _what_ to find, so the reading stays blind. Alibaba's Model
+  Studio page is why it exists: it renders a separate pricing table per region, each listing `qwen3.7-max`
+  at a different rate, and a reader with no steer reported the China (Beijing) figure as a mismatch against
+  a correct Singapore one, every morning, forever.
 - **A provenance-only override is checked against the catalog's figure.** Such a row asserts that the
   feed's number was read off the vendor's page; that number is what the page has to still say.
 - **A page that prints only a promotional rate confirms the rate in force.** OpenAI's page shows GPT-5.6
