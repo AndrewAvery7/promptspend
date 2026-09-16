@@ -130,6 +130,28 @@ describe('buildExtractionPrompt', () => {
     expect(prompt).toContain('- dashscope-qwen3.7-max — Qwen 3.7 Max (listed as "qwen3.7-max")');
     expect(prompt).toContain('- claude-opus-5 — Claude Opus 5\n');
   });
+
+  it('passes on where to read when one page prices the same model more than once', () => {
+    const qwen: Override = {
+      id: 'dashscope-qwen3.7-max',
+      displayName: 'Qwen 3.7 Max',
+      vendorVerified: true,
+      lastVerified: '2026-09-16',
+      verifiedUrl: 'https://www.alibabacloud.com/help/en/model-studio/model-pricing',
+      verifyHint: 'Read the Singapore (International) table only.',
+    };
+    const rows = checkableRows(
+      [qwen],
+      new Map([[qwen.id, { input: 2.5, output: 7.5 }]]),
+      new Map([[qwen.id, 'dashscope']]),
+    );
+    const prompt = buildExtractionPrompt(qwen.verifiedUrl!, rows, 'BODY');
+    expect(prompt).toContain(
+      '- dashscope-qwen3.7-max — Qwen 3.7 Max (listed as "qwen3.7-max") — where to look: Read the Singapore (International) table only.',
+    );
+    // A hint says where, never what: the figure on record still must not leak.
+    expect(prompt).not.toMatch(/2\.5|7\.5/);
+  });
 });
 
 describe('parsePageExtraction', () => {

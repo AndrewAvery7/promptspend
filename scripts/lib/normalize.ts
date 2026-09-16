@@ -191,4 +191,11 @@ export interface Override {
    *  (`grok-4.20-0309-reasoning`), or a retired name the page says is billed
    *  at another model's rate. The daily check looks for this name. */
   verifiedAs?: string;
+  /** Where on that page to read, when the page prints the same model more than
+   *  once and only one of those figures is this catalog's. Alibaba's Model
+   *  Studio page is the case that forced this: it renders a separate table per
+   *  region, every one of them listing `qwen3.7-max`, and a reader with no
+   *  steer picks whichever it meets first. One sentence, handed to the reader
+   *  verbatim. It narrows where to look; it never says what to find. */
+  verifyHint?: string;
 }

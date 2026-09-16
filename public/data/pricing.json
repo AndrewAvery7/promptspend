@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-16T11:06:20.624Z",
+  "generatedAt": "2026-09-16T14:34:23.795Z",
   "providers": [
     {
       "id": "anthropic",
@@ -623,7 +623,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-09-13",
+        "lastVerified": "2026-09-16",
         "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
         "needsReview": true,
         "reviewNote": "the vendor's own page disagrees with the record — page lists $1.65/$4.951 vs recorded $2.5/$7.5",
@@ -727,9 +727,9 @@
       "status": "current",
       "contextWindow": 1000000,
       "pricing": {
-        "input": 0.44,
-        "output": 1.32,
-        "cachedInput": 0.014
+        "input": 0.3,
+        "output": 1.2,
+        "cachedInput": 0.006
       },
       "tokenizer": {
         "kind": "approx",
@@ -743,13 +743,12 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-09-09",
-        "lastChanged": "2026-08-16",
+        "lastVerified": "2026-09-16",
+        "lastChanged": "2026-09-16",
         "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing",
         "needsReview": true,
-        "reviewNote": "vendor override differs from the automated feed (32%): $0.3/$1.2 vs $0.44/$1.32; the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014",
+        "reviewNote": "the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014",
         "reviewCodes": [
-          "override-drift",
           "vendor-page-mismatch"
         ]
       },
