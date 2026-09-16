@@ -129,4 +129,8 @@ footer {
   color: var(--muted); font-size: 0.85rem;
 }
 footer a { color: var(--muted); }
+footer .listing { margin: 1.1rem 0 0; }
+/* The link carries the 44px a thumb needs; the artwork stays 40px. */
+footer .listing a { display: inline-flex; align-items: center; min-height: 44px; }
+footer .listing img { display: block; height: 40px; width: auto; }
 `;

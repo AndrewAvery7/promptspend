@@ -2527,6 +2527,28 @@ table.catalog tbody tr:hover {
   color: var(--accent);
 }
 
+/* The Sell With boost listing badge. Its own artwork carries the frame and the
+   background, so it needs no border here - only a fixed height, so a swap
+   between the light and dark file cannot reflow the footer. */
+.footer__badge {
+  display: flex;
+  align-items: center;
+}
+/* The artwork is 40px tall, which is four short of the 44px a thumb needs and
+   which `tests/e2e/mobile.spec.ts` enforces. The link, not the picture, is the
+   target, so it carries the height and the picture stays the size it was
+   drawn. */
+.footer__badge a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.footer__badge img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
 .state-message {
   padding: 60px 24px;
   text-align: center;
