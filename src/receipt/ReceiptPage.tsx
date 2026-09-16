@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { HEALTH_URL, PRICING_SCOPE, PRICING_URL, RECEIPT_URL } from '@/config';
 import { loadCatalog, type Catalog } from '@/lib/pricing/catalog';
+import { SiteFooter } from '@/components/SiteFooter';
 import { Ticker } from '@/components/Ticker';
 import { useAppearance } from '@/state/useAppearance';
 import { ReceiptObject } from './ReceiptObject';
@@ -127,7 +128,7 @@ export function ReceiptPage() {
             <a href={`${import.meta.env.BASE_URL}#learn`}>Learn</a>
             <a href={`${import.meta.env.BASE_URL}#data`}>Data &amp; Alerts</a>
             <a href={RECEIPT_URL} aria-current="page">
-              PromptSpend it
+              PromptSpend It
             </a>
           </nav>
           <div className="receipt-header__spacer" />
@@ -275,7 +276,7 @@ export function ReceiptPage() {
             <p className="receipt-eyebrow">PROMPTSPEND IT</p>
             <h2 id="examples-title">A cost check, wherever the work already is.</h2>
             <p>
-              “PromptSpend it” means bringing a visible, temporary cost-audit request into the
+              “PromptSpend It” means bringing a visible, temporary cost-audit request into the
               conversation—not handing control to a hidden agent.
             </p>
           </div>
@@ -316,13 +317,10 @@ export function ReceiptPage() {
         </section>
       </main>
 
-      <footer className="receipt-footer">
-        <span>PromptSpend · open source · no accounts · no tracking</span>
-        <span className="receipt-footer__links">
-          <a href="https://averyresume.com/">Creator profile</a>
-          <a href="https://github.com/AndrewAvery7/promptspend">Source on GitHub</a>
-        </span>
-      </footer>
+      <SiteFooter
+        catalog={catalogState.status === 'ready' ? catalogState.catalog : null}
+        theme={appearance.theme}
+      />
     </>
   );
 }

@@ -1,0 +1,58 @@
+/**
+ * The site footer, shared by the calculator and the Receipt page.
+ *
+ * It lives in a file of its own because those two entry points load different
+ * stylesheets - `app.css` and `receipt/receipt.css` - and a footer that drifts
+ * apart between them is precisely what this extraction exists to stop. Both
+ * import this; neither owns it.
+ */
+
+.footer {
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
+}
+
+.footer__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 22px 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  /* The site-wide floor: nothing readable renders under 12px, which
+     `tests/e2e/mobile.spec.ts` enforces on every viewport. */
+  font-size: max(0.75rem, 12px);
+  color: var(--muted);
+}
+
+.footer a {
+  color: var(--accent);
+}
+
+.footer__stats {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The Sell With boost listing badge. Its artwork carries whatever frame it
+   needs, so nothing is added here but a height. */
+.footer__badge {
+  display: flex;
+  align-items: center;
+}
+
+/* The artwork is 40px tall, four short of the 44px a thumb needs and that the
+   mobile e2e run enforces. The link, not the picture, is the target, so the
+   link carries the height and the artwork stays the size it was drawn. */
+.footer__badge a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.footer__badge img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
