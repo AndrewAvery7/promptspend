@@ -1,22 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Catalog, loadCatalog } from '@/lib/pricing/catalog';
-import {
-  COMPARE_INDEX_URL,
-  CONTACT_EMAIL,
-  DEVELOPER_HUB_URL,
-  HEALTH_URL,
-  MCP_PACKAGE_URL,
-  MODELS_INDEX_URL,
-  OPEN_VSX_URL,
-  PRICING_URL,
-  PROVIDERS_INDEX_URL,
-  REPO_URL,
-  SWB_BADGE_DARK,
-  SWB_BADGE_LIGHT,
-  SWB_URL,
-  VSCODE_MARKETPLACE_URL,
-} from '@/config';
+import { HEALTH_URL, PRICING_URL, REPO_URL } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { SiteFooter } from '@/components/SiteFooter';
 import { useAppearance, ACCENTS } from '@/state/useAppearance';
 import { useEstimator } from '@/state/useEstimator';
 import { Header, VIEWS, type ViewId } from '@/components/Header';
@@ -316,55 +302,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
         {view === 'data' && <DataView catalog={catalog} theme={appearance.theme} onToast={showToast} />}
       </main>
 
-      <footer className="footer">
-        <div className="footer__inner">
-          <div>
-            <b>PromptSpend</b> · open source, MIT · no accounts, no tracking ·{' '}
-            <a href={REPO_URL}>star it on GitHub</a> · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-          </div>
-          {/* The generated pages. Every model has a permanent URL of its own —
-              useful to link to, and the route by which anything that does not
-              run JavaScript can read this catalog at all. */}
-          <div>
-            <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
-            <a href={COMPARE_INDEX_URL}>Comparisons</a> · <a href={DEVELOPER_HUB_URL}>Pricing API</a>
-          </div>
-          {/* The three places this catalog answers that are not a web page. The
-              footer is the only row present on every view, so it is where
-              somebody who never opens Data & Alerts finds out they exist. */}
-          <div>
-            <a href={MCP_PACKAGE_URL} target="_blank" rel="noreferrer noopener">
-              MCP server
-            </a>{' '}
-            ·{' '}
-            <a href={VSCODE_MARKETPLACE_URL} target="_blank" rel="noreferrer noopener">
-              VS Code extension
-            </a>{' '}
-            ·{' '}
-            <a href={OPEN_VSX_URL} target="_blank" rel="noreferrer noopener">
-              Open VSX
-            </a>
-          </div>
-          <div className="mono">
-            {catalog.primaryModels.length} models · prices last changed{' '}
-            {catalog.pricesLastChanged() ?? 'no change recorded since tracking began'}
-            {catalog.sourcesLastChecked() ? ` · sources checked ${catalog.sourcesLastChecked()}` : ''}
-          </div>
-          {/* The directory listing's price: a link back, on a page they can
-              fetch. The artwork is served from here, not from theirs - see
-              `SWB_BADGE_LIGHT` in `@/config` for why. */}
-          <div className="footer__badge">
-            <a href={SWB_URL} target="_blank" rel="noopener noreferrer">
-              <img
-                src={appearance.theme === 'dark' ? SWB_BADGE_DARK : SWB_BADGE_LIGHT}
-                alt="Listed on Sell With boost"
-                width={160}
-                height={40}
-              />
-            </a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter catalog={catalog} theme={appearance.theme} />
 
       {tourStep !== null && (
         <GuidedTour

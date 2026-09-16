@@ -1,5 +1,6 @@
 @import '../styles/fonts.css';
 @import '../styles/tokens.css';
+@import '../styles/footer.css';
 
 *,
 *::before,
@@ -745,18 +746,18 @@ main {
   position: absolute;
   inset: 0 0 auto;
   height: 9px;
-  background: #6d4aff;
+  background: #2456e6;
 }
 
 .share-card__brand {
-  color: #6d4aff !important;
+  color: #2456e6 !important;
   font-family: var(--font-display);
   font-weight: 700;
 }
 
 .share-card__eyebrow {
   margin-top: 24px !important;
-  color: #6d4aff !important;
+  color: #2456e6 !important;
   font-family: var(--font-mono);
   font-size: 0.76rem;
   font-weight: 700;
@@ -805,7 +806,7 @@ main {
 .share-card__difference {
   margin: 18px 0 0 !important;
   display: grid;
-  color: #6d4aff !important;
+  color: #2456e6 !important;
 }
 
 .share-card__difference span {
@@ -877,26 +878,6 @@ main {
   border-radius: var(--radius-sm);
 }
 
-.receipt-footer__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 20px;
-}
-
-.receipt-footer {
-  width: min(1180px, calc(100% - 40px));
-  min-height: 92px;
-  margin: 34px auto 0;
-  padding: 24px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  color: var(--muted);
-  border-top: 1px solid var(--border);
-  font-size: 0.86rem;
-}
-
 .receipt-copy-fallback {
   position: fixed;
   left: -9999px;
@@ -932,8 +913,7 @@ main {
 }
 
 @media (max-width: 640px) {
-  main,
-  .receipt-footer {
+  main {
     width: min(100% - 28px, 1180px);
   }
 
@@ -984,11 +964,6 @@ main {
     margin-inline: -8px;
     padding: 18px;
   }
-
-  .receipt-footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
 }
 
 @media (pointer: coarse) {
@@ -998,15 +973,13 @@ main {
   .receipt-secondary-copy,
   .receipt-object__copy,
   .receipt-machine-links a,
-  .receipt-footer a,
   .share-builder__edit summary,
   .share-builder__fields input {
     min-width: 44px;
     min-height: 44px;
   }
 
-  .receipt-machine-links a,
-  .receipt-footer a {
+  .receipt-machine-links a {
     display: inline-flex;
     align-items: center;
   }
