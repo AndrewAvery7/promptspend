@@ -2534,6 +2534,15 @@ table.catalog tbody tr:hover {
   display: flex;
   align-items: center;
 }
+/* The artwork is 40px tall, which is four short of the 44px a thumb needs and
+   which `tests/e2e/mobile.spec.ts` enforces. The link, not the picture, is the
+   target, so it carries the height and the picture stays the size it was
+   drawn. */
+.footer__badge a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
 .footer__badge img {
   display: block;
   height: 40px;
