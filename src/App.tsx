@@ -11,6 +11,9 @@ import {
   PRICING_URL,
   PROVIDERS_INDEX_URL,
   REPO_URL,
+  SWB_BADGE_DARK,
+  SWB_BADGE_LIGHT,
+  SWB_URL,
   VSCODE_MARKETPLACE_URL,
 } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -346,6 +349,19 @@ function Workspace({ catalog }: { catalog: Catalog }) {
             {catalog.primaryModels.length} models · prices last changed{' '}
             {catalog.pricesLastChanged() ?? 'no change recorded since tracking began'}
             {catalog.sourcesLastChecked() ? ` · sources checked ${catalog.sourcesLastChecked()}` : ''}
+          </div>
+          {/* The directory listing's price: a link back, on a page they can
+              fetch. The artwork is served from here, not from theirs - see
+              `SWB_BADGE_LIGHT` in `@/config` for why. */}
+          <div className="footer__badge">
+            <a href={SWB_URL} target="_blank" rel="noopener noreferrer">
+              <img
+                src={appearance.theme === 'dark' ? SWB_BADGE_DARK : SWB_BADGE_LIGHT}
+                alt="Listed on Sell With boost"
+                width={160}
+                height={40}
+              />
+            </a>
           </div>
         </div>
       </footer>

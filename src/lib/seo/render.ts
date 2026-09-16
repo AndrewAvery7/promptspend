@@ -13,8 +13,11 @@
  *    `'unsafe-inline'`. The hash is computed over the string that is actually
  *    emitted (see `hashInline`), so the two cannot drift apart.
  * 3. **Therefore no external anything**: no fonts, no analytics, no images
- *    beyond an inline SVG favicon. Which is also the honest position for a site
- *    whose footer says "no accounts, no tracking".
+ *    beyond an inline SVG favicon and the two same-origin listing badges in the
+ *    footer. Which is also the honest position for a site whose footer says
+ *    "no accounts, no tracking" - the directory that asked for that badge hosts
+ *    its own copy, and linking to it would have put their server in the request
+ *    path of every page here.
  *
  * Every string that reaches the output goes through `escapeHtml`. Catalog data
  * is not user input, but it is *upstream* input — it arrives from LiteLLM and
@@ -228,6 +231,14 @@ ${input.body}
           <a href="${escapeHtml(href(ctx, '/privacy/'))}">Privacy</a> &middot;
           <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a> &middot;
           <a href="https://github.com/AndrewAvery7/promptspend">Source</a>
+        </p>
+        <p class="listing">
+          <a href="https://sellwithboost.com" target="_blank" rel="noopener noreferrer">
+            <picture>
+              <source srcset="${escapeHtml(href(ctx, '/sellwithboost-dark.svg'))}" media="(prefers-color-scheme: dark)" />
+              <img src="${escapeHtml(href(ctx, '/sellwithboost-light.svg'))}" alt="Listed on Sell With boost" width="160" height="40" />
+            </picture>
+          </a>
         </p>
       </footer>
     </div>

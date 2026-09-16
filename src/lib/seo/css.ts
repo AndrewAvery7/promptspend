@@ -129,4 +129,6 @@ footer {
   color: var(--muted); font-size: 0.85rem;
 }
 footer a { color: var(--muted); }
+footer .listing { margin: 1.1rem 0 0; }
+footer .listing img { display: block; height: 40px; width: auto; }
 `;

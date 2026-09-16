@@ -2527,6 +2527,19 @@ table.catalog tbody tr:hover {
   color: var(--accent);
 }
 
+/* The Sell With boost listing badge. Its own artwork carries the frame and the
+   background, so it needs no border here - only a fixed height, so a swap
+   between the light and dark file cannot reflow the footer. */
+.footer__badge {
+  display: flex;
+  align-items: center;
+}
+.footer__badge img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
 .state-message {
   padding: 60px 24px;
   text-align: center;
