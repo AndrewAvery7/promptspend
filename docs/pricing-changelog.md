@@ -904,3 +904,15 @@ value that moves in the same run as its source URL is a correction.
 - **Price** `deepseek-deepseek-v4-flash` — cachedInput down 0.014 → 0.006
 - **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: vendor override differs from the automated feed (32%): $0.3/$1.2 vs $0.44/$1.32; the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014 → the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014
 - **Review** `deepseek-deepseek-v4-flash` — provenance.lastChanged: 2026-08-16 → 2026-09-16
+
+## 2026-09-17
+
+- **Metadata** `claude-sonnet-4-5` — contextWindow: 200000 → 1000000
+- **Metadata** `gemini-gemini-2.5-flash` — maxOutput: 65535 → 65536
+- **Metadata** `gemini-gemini-2.5-pro` — maxOutput: 65535 → 65536
+- **Metadata** `gemini-gemini-3-flash-preview` — maxOutput: 65535 → 65536
+- **Metadata** `gemini-gemini-3.5-flash` — maxOutput: 65535 → 65536
+- **Review** `dashscope-qwen3.7-max` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3.7-max` — provenance.reviewNote: the vendor's own page disagrees with the record — page lists $1.65/$4.951 vs recorded $2.5/$7.5 → —
+- **Review** `deepseek-deepseek-v4-flash` — provenance.needsReview: true → —
+- **Review** `deepseek-deepseek-v4-flash` — provenance.reviewNote: the vendor's own page disagrees with the record — page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014 → —

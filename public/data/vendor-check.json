@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-16T11:05:51.256Z",
+  "checkedAt": "2026-09-17T11:05:56.362Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "45038 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "45049 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -48,7 +48,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "87880 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "87742 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -89,7 +89,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "544879 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "544822 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -112,7 +112,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "16614 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "17056 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -371,8 +371,8 @@
     {
       "id": "deepseek-deepseek-v4-flash",
       "url": "https://api-docs.deepseek.com/quick_start/pricing",
-      "status": "mismatch",
-      "detail": "page lists $0.3/$1.2 vs recorded $0.44/$1.32; cached input $0.006 vs recorded $0.014"
+      "status": "confirmed",
+      "detail": "page lists $0.3/$1.2 (cached $0.006)"
     },
     {
       "id": "moonshot-kimi-k2.6",
@@ -389,8 +389,8 @@
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "mismatch",
-      "detail": "page lists $1.65/$4.951 vs recorded $2.5/$7.5"
+      "status": "confirmed",
+      "detail": "page lists $2.5/$7.5"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
@@ -489,7 +489,7 @@
       "detail": "page lists $1.25/$2.5"
     }
   ],
-  "confirmed": 56,
-  "mismatched": 2,
+  "confirmed": 58,
+  "mismatched": 0,
   "unconfirmed": 0
 }
