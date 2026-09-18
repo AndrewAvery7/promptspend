@@ -231,7 +231,8 @@ const androidAssociation = JSON.parse(
   requireFile('../../public/.well-known/assetlinks.json')?.toString('utf8') ?? '[]',
 );
 const androidTarget = androidAssociation.find(
-  (statement) => statement?.target?.namespace === 'android_app' && statement.target.package_name === APP.android.package,
+  (statement) =>
+    statement?.target?.namespace === 'android_app' && statement.target.package_name === APP.android.package,
 );
 if (
   !androidTarget?.target?.sha256_cert_fingerprints?.some((fingerprint) =>
