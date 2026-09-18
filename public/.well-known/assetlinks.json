@@ -4,7 +4,9 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.promptspend.app",
-      "sha256_cert_fingerprints": ["72:10:39:7B:50:64:A5:D3:C0:D3:CB:65:65:07:87:AB:95:62:A6:44:EF:FC:4D:97:FA:ED:7B:FB:63:C9:C5:70"]
+      "sha256_cert_fingerprints": [
+        "72:10:39:7B:50:64:A5:D3:C0:D3:CB:65:65:07:87:AB:95:62:A6:44:EF:FC:4D:97:FA:ED:7B:FB:63:C9:C5:70"
+      ]
     }
   }
 ]
