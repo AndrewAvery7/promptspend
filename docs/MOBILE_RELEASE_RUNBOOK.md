@@ -90,11 +90,11 @@ Generate the two website files locally from the mobile workspace:
 
 ```powershell
 Set-Location apps/mobile
-$env:PROMPTSPEND_APPLE_TEAM_ID = "<APPLE_TEAM_ID>"
-$env:PROMPTSPEND_ANDROID_SHA256 = "<PLAY_APP_SIGNING_SHA256_FINGERPRINT>"
+$env:APPLE_TEAM_ID = "<APPLE_TEAM_ID>"
+$env:ANDROID_SHA256_CERT_FINGERPRINT = "<PLAY_APP_SIGNING_SHA256_FINGERPRINT>"
 npm.cmd run prepare:links
-Remove-Item Env:PROMPTSPEND_APPLE_TEAM_ID
-Remove-Item Env:PROMPTSPEND_ANDROID_SHA256
+Remove-Item Env:APPLE_TEAM_ID
+Remove-Item Env:ANDROID_SHA256_CERT_FINGERPRINT
 ```
 
 Review `public/.well-known/apple-app-site-association` and
