@@ -212,9 +212,33 @@ for (const path of [
   'store/linking/apple-app-site-association.template.json',
   'store/linking/assetlinks.template.json',
   'scripts/prepare-associated-domain-files.mjs',
+  '../../public/.well-known/apple-app-site-association',
+  '../../public/.well-known/assetlinks.json',
   '../../public/estimate/index.html',
 ]) {
   requireFile(path);
+}
+
+const appleAssociation = JSON.parse(
+  requireFile('../../public/.well-known/apple-app-site-association')?.toString('utf8') ?? '{}',
+);
+const appleAppIds = appleAssociation?.applinks?.details?.flatMap((detail) => detail.appIDs ?? []) ?? [];
+if (!appleAppIds.some((appId) => /^[A-Z0-9]{10}\.com\.promptspend\.app$/.test(appId))) {
+  fail('Apple association file must contain the organization Team ID and iOS bundle identifier');
+}
+
+const androidAssociation = JSON.parse(
+  requireFile('../../public/.well-known/assetlinks.json')?.toString('utf8') ?? '[]',
+);
+const androidTarget = androidAssociation.find(
+  (statement) => statement?.target?.namespace === 'android_app' && statement.target.package_name === APP.android.package,
+);
+if (
+  !androidTarget?.target?.sha256_cert_fingerprints?.some((fingerprint) =>
+    /^(?:[0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(fingerprint),
+  )
+) {
+  fail('Android association file must contain the final Play App Signing SHA-256 fingerprint');
 }
 
 const privacy = requireFile('../../src/content/information/privacy.md')?.toString('utf8') ?? '';

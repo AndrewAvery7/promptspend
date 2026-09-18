@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["DYAFJY2VLF.com.promptspend.app"],
+        "components": [
+          {
+            "/": "/estimate*",
+            "comment": "Open shared PromptSpend estimates in the installed app."
+          }
+        ]
+      }
+    ]
+  }
+}
