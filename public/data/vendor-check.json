@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-17T11:05:56.362Z",
+  "checkedAt": "2026-09-18T11:05:40.689Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -48,7 +48,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "87742 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "87868 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -88,8 +88,8 @@
     },
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "ok": true,
-      "note": "544822 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "ok": false,
+      "note": "page is 804324 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -99,7 +99,7 @@
     {
       "url": "https://docs.z.ai/guides/overview/pricing",
       "ok": true,
-      "note": "3382 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3462 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "zai-glm-5.1",
         "zai-glm-5.2",
@@ -389,20 +389,20 @@
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "confirmed",
-      "detail": "page lists $2.5/$7.5"
+      "status": "unconfirmed",
+      "detail": "page could not be read: page is 804324 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "confirmed",
-      "detail": "page lists $0.15/$1.2"
+      "status": "unconfirmed",
+      "detail": "page could not be read: page is 804324 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "confirmed",
-      "detail": "page lists $0.4/$1.6"
+      "status": "unconfirmed",
+      "detail": "page could not be read: page is 804324 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
@@ -489,7 +489,7 @@
       "detail": "page lists $1.25/$2.5"
     }
   ],
-  "confirmed": 58,
+  "confirmed": 55,
   "mismatched": 0,
-  "unconfirmed": 0
+  "unconfirmed": 3
 }
