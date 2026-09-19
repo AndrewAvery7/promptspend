@@ -116,6 +116,11 @@ jobs:
           name: site
           path: dist
           retention-days: 1
+          # Universal Links and Android App Links are served from
+          # `/.well-known/`. upload-artifact excludes dot-directories unless
+          # this is explicit, which otherwise produces a green build whose
+          # association endpoints are both 404s.
+          include-hidden-files: true
 
   # The alerts worker is a separate package with its own runtime, so it gets its
   # own job rather than being bolted onto `npm run verify`. Its tests run inside
