@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-18T11:05:40.689Z",
+  "checkedAt": "2026-09-19T11:04:50.385Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -64,7 +64,7 @@
     {
       "url": "https://api-docs.deepseek.com/quick_start/pricing",
       "ok": true,
-      "note": "3721 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "3527 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "deepseek-deepseek-v4-pro",
         "deepseek-deepseek-v4-flash"
@@ -120,7 +120,7 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "14954 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "15038 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",

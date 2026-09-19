@@ -922,3 +922,7 @@ value that moves in the same run as its source URL is a correction.
 - **Coverage** `mistral-mistral-medium-3` — cachedInput now tracked: — → 0.15
 - **Review** `moonshot-kimi-k3` — provenance.needsReview: — → true
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: — → OpenRouter disagrees (30%): $2.1/$10.95 vs $3/$15
+
+## 2026-09-19
+
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (30%): $2.1/$10.95 vs $3/$15 → OpenRouter disagrees (43%): $1.7/$8.5 vs $3/$15
