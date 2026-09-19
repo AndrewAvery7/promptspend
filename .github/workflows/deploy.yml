@@ -60,6 +60,10 @@ jobs:
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: dist
+          # Keep `/.well-known/` in the Pages archive. The action excludes all
+          # dot-directories by default, including the association files used by
+          # Universal Links and Android App Links.
+          include-hidden-files: true
 
   deploy:
     needs: package
@@ -111,6 +115,8 @@ jobs:
           set -uo pipefail
           expected=$(jq -r '.generatedAt' public/data/pricing.json)
           expected_revision="${GITHUB_SHA}"
+          expected_aasa_app_id="DYAFJY2VLF.com.promptspend.app"
+          expected_android_package="com.promptspend.app"
           echo "expecting revision=$expected_revision and generatedAt=$expected"
 
           for attempt in $(seq 1 40); do
@@ -118,11 +124,24 @@ jobs:
               | jq -r '.revision' 2>/dev/null || echo '')
             live=$(curl -sS --max-time 20 "https://promptspend.com/data/pricing.json" \
               | jq -r '.generatedAt' 2>/dev/null || echo '')
-            if [ "$live_revision" = "$expected_revision" ] && [ "$live" = "$expected" ]; then
+            live_aasa_app_id=$(curl -fsS --max-time 20 \
+              "https://promptspend.com/.well-known/apple-app-site-association" \
+              | jq -r --arg expected "$expected_aasa_app_id" \
+                '.applinks.details[].appIDs[]? | select(. == $expected)' \
+                2>/dev/null || echo '')
+            live_android_package=$(curl -fsS --max-time 20 \
+              "https://promptspend.com/.well-known/assetlinks.json" \
+              | jq -r --arg expected "$expected_android_package" \
+                '.[].target.package_name | select(. == $expected)' \
+                2>/dev/null || echo '')
+            if [ "$live_revision" = "$expected_revision" ] \
+              && [ "$live" = "$expected" ] \
+              && [ "$live_aasa_app_id" = "$expected_aasa_app_id" ] \
+              && [ "$live_android_package" = "$expected_android_package" ]; then
               echo "✓ the site is serving this build (after ${attempt} check(s))"
               exit 0
             fi
-            echo "  serving revision=$live_revision generatedAt=$live — waiting"
+            echo "  serving revision=$live_revision generatedAt=$live aasa=$live_aasa_app_id android=$live_android_package — waiting"
             sleep 30
           done
 
