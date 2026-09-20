@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-19T11:04:50.385Z",
+  "checkedAt": "2026-09-20T11:05:01.953Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -73,7 +73,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "ok": true,
-      "note": "3242 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "4356 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k2.6"
       ]
@@ -81,7 +81,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
       "ok": true,
-      "note": "3242 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "4356 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k3"
       ]
@@ -89,7 +89,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": false,
-      "note": "page is 804324 characters — too large to be a pricing page",
+      "note": "page is 808920 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -390,19 +390,19 @@
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 804324 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 808920 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 804324 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 808920 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 804324 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 808920 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
