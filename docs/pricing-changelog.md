@@ -926,3 +926,11 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-09-19
 
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (30%): $2.1/$10.95 vs $3/$15 → OpenRouter disagrees (43%): $1.7/$8.5 vs $3/$15
+
+## 2026-09-22
+
+- **Added** `xai-grok-4.7` — Grok 4.7 ($2 in / $6 out per 1M)
+- **Coverage** `deepseek-deepseek-r1` — cachedInput now tracked: — → 0.14
+- **Coverage** `deepseek-deepseek-v3.2` — cachedInput now tracked: — → 0.028
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (43%): $1.7/$8.5 vs $3/$15 → —
