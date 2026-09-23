@@ -15,9 +15,9 @@ to publish past it.
 
 ## What the suite covers
 
-**1220 tests in all**: 505 unit and integration tests in this package, 228 in
+**1232 tests in all**: 505 unit and integration tests in this package, 228 in
 `apps/mobile/`, 102 in `worker/`, 49 in `api/`, 47 in `mcp/`, 137 in `vscode/`,
-and 152 browser tests across four viewports. Those seven figures are the whole suite and they sum to the
+and 164 browser tests across four viewports. Those seven figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
 of its own list nor inclusive of `mcp/` at all; the next claimed 580, which was
 correct when written and went stale the moment the VS Code extension landed with
@@ -95,7 +95,7 @@ browser run:
 | `api/`         | 49    | The public pricing API: filters, ETags, CORS, CSV quoting, that a catalog failing validation is refused rather than passed through, and that an origin answering with HTML is reported as such rather than as a JSON syntax error.                                                                                                                                                                              |
 | `mcp/`         | 47    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, that `get_price` quotes the rate actually in force and cannot drift from what `estimate_cost` bills, that the server reports the version it was published as, and that the real fetch path names what arrived when the catalog is not JSON.                                                         |
 | `vscode/`      | 137   | The editor extension: which lines in which languages name a model, hover, status-bar and inline rendering, that every surface quotes the rate in force rather than the standard one during a promotional window, the catalog fetch when the server is unreachable or answers malformed, selection estimates that name an impossible request rather than pricing it, and diagnostics that stay quiet by default. |
-| Browser        | 152   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA, plus the Receipt copy, outage, machine-contract, share-import, and local PNG-export flows. See below.                                                                                                                                                                |
+| Browser        | 164   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA, plus the Receipt copy, outage, machine-contract, share-import, and local PNG-export flows. See below.                                                                                                                                                                |
 
 ## Layout is checked in a real browser
 
@@ -121,8 +121,8 @@ scroll" is not a bug report, "table.catalog is 512px wide in a 320px viewport"
 is.
 
 It runs against the built site rather than the dev server because the 159
-generated pages only exist after `build:pages`, and one test loads a model page
-with JavaScript disabled — those pages ship none, and that is the point.
+generated pages only exist after `build:pages`, and two tests load a model page and
+the apps page with JavaScript disabled — those pages ship none, and that is the point.
 
 On its first honest run it found four touch targets under 44px, three of them
 caused by the same trap: a more specific selector elsewhere in the stylesheet

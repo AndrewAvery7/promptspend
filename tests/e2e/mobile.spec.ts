@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { APP_STORE_URL, GOOGLE_PLAY_URL } from '../../src/lib/links';
 import { horizontalOverflow, report, smallTouchTargets, tinyText } from './lib/audit';
 
 /**
@@ -23,6 +24,7 @@ const GENERATED = [
   { path: '/models/claude-opus-5/', name: 'a model page' },
   { path: '/providers/anthropic/', name: 'a provider page' },
   { path: '/compare/', name: 'the comparison index' },
+  { path: '/app/', name: 'the apps page' },
 ] as const;
 
 test.describe('the app', () => {
@@ -100,6 +102,35 @@ test.describe('the generated pages', () => {
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText('pricing');
     await expect(page.getByText('$5', { exact: false }).first()).toBeVisible();
+    const offenders = await horizontalOverflow(page);
+    expect(offenders, report('elements push the page sideways', offenders)).toEqual([]);
+
+    await context.close();
+  });
+
+  test('the apps page is readable with no JavaScript at all', async ({ browser, isMobile }) => {
+    // Most people reach it from a store listing, a QR code or a shared link on
+    // a phone, so the store links have to work before anything else loads.
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('/app/');
+
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('iPhone and Android');
+    const appStore = page.getByRole('link', { name: 'Download on the App Store' });
+    const googlePlay = page.getByRole('link', { name: 'Get it on Google Play' });
+    await expect(appStore).toBeVisible();
+    await expect(appStore).toHaveAttribute('href', APP_STORE_URL);
+    await expect(googlePlay).toBeVisible();
+    await expect(googlePlay).toHaveAttribute('href', GOOGLE_PLAY_URL);
+
+    // A phone cannot scan its own screen, so the QR codes are for a computer
+    // only. By class, not role: a role query skips hidden elements, so it would
+    // find nothing on a phone and pass whether the rule worked or not.
+    const qr = page.locator('.store-qr__code');
+    await expect(qr).toHaveCount(2);
+    if (isMobile) await expect(qr.first()).toBeHidden();
+    else await expect(qr.first()).toBeVisible();
+
     const offenders = await horizontalOverflow(page);
     expect(offenders, report('elements push the page sideways', offenders)).toEqual([]);
 
