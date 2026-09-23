@@ -27,6 +27,24 @@ export const VSCODE_MARKETPLACE_URL =
   'https://marketplace.visualstudio.com/items?itemName=promptspend.promptspend';
 export const OPEN_VSX_URL = 'https://open-vsx.org/extension/promptspend/promptspend';
 
+/**
+ * The native apps, on both stores.
+ *
+ * The App Store URL carries no country segment, so Apple sends each visitor to
+ * their own storefront rather than the US one. These are also what the printed
+ * QR codes under `public/store/` encode, so changing either means regenerating
+ * those too.
+ */
+export const APP_STORE_URL = 'https://apps.apple.com/app/id6800386428';
+export const APP_STORE_ID = '6800386428';
+export const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=com.promptspend.app';
+
+/**
+ * The permanent page for both apps, relative to the site root. The launch
+ * banner can be dismissed; this page, and every link to it, cannot.
+ */
+export const APP_PAGE_PATH = '/app/';
+
 /** What to type in a terminal, for people who would rather not click. */
 export const VSCODE_INSTALL_COMMAND = 'code --install-extension promptspend.promptspend';
 

@@ -133,4 +133,20 @@ footer .listing { margin: 1.1rem 0 0; }
 /* The link carries the 44px a thumb needs; the artwork stays 40px. */
 footer .listing a { display: inline-flex; align-items: center; min-height: 44px; }
 footer .listing img { display: block; height: 40px; width: auto; }
+/* The app page. Badge links carry the 44px a thumb needs; the artwork is the
+   stores' standard 40px. The QR codes show only on a wide screen with a
+   hovering pointer, because the phone in your hand cannot scan itself. */
+.store-badges { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0 0 1.25rem; }
+.store-badges a { display: inline-flex; align-items: center; min-height: 44px; }
+.store-badges img { display: block; height: 40px; width: auto; }
+.store-qr { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1rem 1.5rem; margin: 0 0 1.5rem; }
+.store-qr__hint { margin: 0 0 0.75rem; color: var(--muted); font-size: 0.9rem; }
+.store-qr__code {
+  display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+  color: var(--muted); font-size: 0.85rem; font-weight: 600; text-decoration: none;
+}
+/* White in both themes: a QR code needs its light quiet zone to scan. */
+.store-qr__code img { display: block; width: 132px; height: 132px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
+@media (max-width: 860px), (hover: none) { .store-qr { display: none; } }
+.credit { color: var(--muted); font-size: 0.78rem; margin-top: 2rem; }
 `;

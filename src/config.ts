@@ -75,12 +75,27 @@ export const SWB_BADGE_DARK = `${import.meta.env.BASE_URL}sellwithboost-dark.svg
  * reads above would throw.
  */
 export {
+  APP_STORE_URL,
+  GOOGLE_PLAY_URL,
   MCP_INSTALL_COMMAND,
   MCP_PACKAGE_URL,
   OPEN_VSX_URL,
   VSCODE_INSTALL_COMMAND,
   VSCODE_MARKETPLACE_URL,
 } from '@/lib/links';
+
+/** The permanent page for both apps, under whatever base path this build uses. */
+export const APP_PAGE_URL = `${import.meta.env.BASE_URL}app/`;
+
+/** Store artwork and QR codes, served from `public/store/`. */
+export const APP_STORE_BADGE = `${import.meta.env.BASE_URL}store/app-store-badge.svg`;
+export const GOOGLE_PLAY_BADGE = `${import.meta.env.BASE_URL}store/google-play-badge.png`;
+export const QR_IOS = `${import.meta.env.BASE_URL}store/qr-ios.svg`;
+export const QR_ANDROID = `${import.meta.env.BASE_URL}store/qr-android.svg`;
+
+/** Required wherever the Android robot is shown (Google's CC BY 3.0 terms). */
+export const ANDROID_ROBOT_CREDIT =
+  'The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.';
 
 /**
  * What these numbers cover, stated once and reused wherever the boundary

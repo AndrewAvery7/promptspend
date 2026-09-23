@@ -231,6 +231,22 @@ textarea {
   color: var(--accent);
   background: var(--accent-soft);
 }
+/* The "Get the app" link wears the same pill as the tour button. */
+a.tour-toggle {
+  text-decoration: none;
+}
+a.tour-toggle:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+/* The header is capped at 1280px, so at every screen width it has room for
+   one more pill only if something gives: the search button reads "Search"
+   (was "Search & commands") and this link reads "Apps". Both keep their full
+   names for screen readers via `.visually-hidden`. Under 1020px this pill hides
+   with the tour button and the footer carries the link. */
+.get-app {
+  padding-right: 12px;
+}
 .tour-toggle--pulse::after {
   content: '';
   position: absolute;
@@ -2160,9 +2176,10 @@ table.catalog tbody tr:hover {
 .launch {
   position: relative;
   display: grid;
-  /* Four columns: glyphs, copy, form, dismiss. The dismiss is a column rather
-     than an absolutely-positioned corner button so it sits inline at the end of
-     the row, matching `.welcome__dismiss` on the guided-tour strip. */
+  /* Four columns: glyphs, copy (with the store badges under it), QR codes,
+     dismiss. The dismiss is a column rather than an absolutely-positioned
+     corner button so it sits inline at the end of the row, matching
+     `.welcome__dismiss` on the guided-tour strip. */
   grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 8px 18px;
@@ -2172,28 +2189,10 @@ table.catalog tbody tr:hover {
   padding: 14px 18px;
   box-shadow: var(--shadow);
 }
-/* Row two, spanning every column. The anti-abuse check and the fine print sit
-   side by side here rather than stacking under the input, which is what made
-   the first version three times taller than its own sentence. The Turnstile
-   widget is mounted `interaction-only`, so in the ordinary case it occupies no
-   height at all and this row is a single line of grey text. */
-.launch__foot {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  min-height: 0;
-}
-/* See the comment beside `launch__check` in LaunchBanner.tsx: the widget's own
-   container holds ~65px even when `interaction-only` draws nothing, so it is
-   collapsed once the token is in hand rather than left holding the row open. */
-.launch__check--passed {
-  display: none;
-}
 .launch__glyphs {
   display: flex;
   gap: 8px;
+  align-self: start;
 }
 /* Neutral tiles, not accent-tinted: the Play mark carries Google's own four
    colours and an accent wash behind it muddies them. The Apple mark takes
@@ -2226,68 +2225,21 @@ table.catalog tbody tr:hover {
   line-height: 1.5;
   color: var(--muted);
 }
-.launch__form {
-  min-width: 0;
-}
-/* The label is for screen readers and autofill; the placeholder carries the
-   visible hint. A visible label here would push the row to two lines on the
-   widths where this banner is already tightest. */
-.launch__label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.launch__row {
-  display: flex;
-  gap: 8px;
-}
-.launch__input {
-  width: 210px;
-  padding: 9px 12px;
-  font-size: 0.86rem;
-  color: var(--ink);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-.launch__submit {
-  background: var(--accent);
-  color: var(--accent-ink);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 9px 18px;
+.launch__sub a {
+  color: var(--accent);
   font-weight: 600;
-  font-size: 0.86rem;
-  white-space: nowrap;
 }
-.launch__submit:disabled {
-  opacity: 0.55;
+.launch .store-badges {
+  margin-top: 10px;
 }
-/* No `max-width` and no top margin: this now lives in the full-width foot row
-   beside the check, not stacked in the narrow form column. */
+/* The robot's credit, spanning the row under everything. It exists only where
+   the Android QR code does, so it is hidden by the same rule that hides them. */
 .launch__fine {
+  grid-column: 1 / -1;
   margin: 0;
   font-size: 0.72rem;
   line-height: 1.5;
   color: var(--muted);
-}
-.launch__error {
-  margin: 0;
-  font-size: 0.76rem;
-  color: var(--cost);
-}
-.launch__done {
-  margin: 0;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: var(--ink);
-  max-width: 300px;
-}
-.launch__done b {
-  color: var(--accent);
 }
 /* Deliberately identical to `.welcome__dismiss`. Two dismissible strips that
    close differently is the kind of small inconsistency that reads as two
@@ -2302,8 +2254,7 @@ table.catalog tbody tr:hover {
   padding: 4px;
 }
 /* Below this the multi-column grid stops fitting: the glyph pair moves above
-   the copy and the form takes the full width rather than being squeezed into a
-   column too narrow for an email address. */
+   the copy and the badges wrap under it. */
 @media (max-width: 860px) {
   .launch {
     grid-template-columns: 1fr;
@@ -2321,15 +2272,67 @@ table.catalog tbody tr:hover {
   .launch__copy {
     padding-right: 24px;
   }
-  .launch__input {
-    width: 100%;
-  }
-  .launch__row {
-    max-width: 420px;
-  }
-  .launch__fine,
-  .launch__done {
-    max-width: none;
+}
+
+/* ---- store badges and QR codes (StoreBadges.tsx) ----
+   Shared by the launch banner and Data & Alerts. Each link is at least 44px
+   tall, the minimum tap target the mobile e2e suite enforces; the artwork
+   itself is the stores' standard 40px. */
+.store-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.store-badges a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.store-badges img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+.store-qr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+.store-qr__code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+}
+/* White whatever the theme: a QR code needs its light quiet zone to scan. */
+.store-qr__code img {
+  display: block;
+  width: 92px;
+  height: 92px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.store-qr__credit {
+  flex-basis: 100%;
+  margin: 0;
+  max-width: 60ch;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+/* A code on the screen you are holding cannot be scanned, so the codes (and the
+   credit that belongs to them) appear only on a wide screen with a hovering
+   pointer — a computer with a phone in reach. */
+@media (max-width: 860px), (hover: none) {
+  .store-qr,
+  .launch__credit {
+    display: none;
   }
 }
 

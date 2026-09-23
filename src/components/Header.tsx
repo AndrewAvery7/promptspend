@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ACCENTS, type Accent, type Canvas, type Theme } from '@/state/useAppearance';
-import { RECEIPT_URL } from '@/config';
+import { APP_PAGE_URL, RECEIPT_URL } from '@/config';
 
 export type ViewId = 'estimate' | 'compare' | 'learn' | 'data';
 
@@ -96,9 +96,34 @@ export function Header(props: HeaderProps) {
         <div className="header__spacer" />
 
         <button type="button" className="kbd-button" onClick={props.onCommandPalette}>
-          <span>Search &amp; commands</span>
+          <span>
+            Search <span className="visually-hidden">&amp; commands</span>
+          </span>
           <kbd>Ctrl K</kbd>
         </button>
+
+        {/* The permanent way back to the apps once the launch banner has been
+            dismissed. Styled as the tour pill and hidden with it on phones,
+            where the header is already full and the footer carries the link. */}
+        <a className="tour-toggle get-app" href={APP_PAGE_URL} title="Get the iPhone and Android apps">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="6" y="2.5" width="12" height="19" rx="2.5" />
+            <path d="M10.5 18h3" />
+          </svg>
+          <span>
+            <span className="visually-hidden">Get the</span> Apps
+          </span>
+        </a>
 
         <button
           type="button"

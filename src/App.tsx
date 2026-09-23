@@ -266,7 +266,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
       {/* Above the view rather than inside one: the apps are not a feature of
           the estimator, and a visitor who lands on Compare or Data should see
           the announcement too. Dismissing it is remembered. */}
-      <LaunchBanner theme={appearance.theme} />
+      <LaunchBanner />
 
       <main className="main">
         {view === 'estimate' && (

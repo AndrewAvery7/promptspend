@@ -1,31 +1,25 @@
-import { useEffect, useState } from 'react';
-import {
-  alertsConfigured,
-  fetchAlertsConfig,
-  subscribeLaunchNotify,
-  type AlertsConfig,
-} from '@/lib/alerts/api';
-import { Turnstile } from '@/components/Turnstile';
+import { useState } from 'react';
+import { ANDROID_ROBOT_CREDIT, APP_PAGE_URL } from '@/config';
+import { StoreBadges, StoreQrCodes } from '@/components/StoreBadges';
 
 /**
- * The mobile-app announcement, with a one-message signup.
+ * The mobile-app announcement, now that both apps are live.
  *
- * Three deliberate absences:
+ * Until September 2026 this banner said the apps were coming and offered a
+ * one-message email list. That list is closed (see docs/ALERTS.md): the form is
+ * gone, and what replaces it is the thing the list was waiting for — the two
+ * store badges, plus a QR code per store for a visitor on a computer.
  *
- *   1. **No date.** App review timing is not ours to promise, and a front page
- *      that says "next week" for two months is exactly the stale-but-confident
- *      claim this catalog exists to argue against.
- *   2. **No store badges.** Apple's and Google's badge guidelines both require
- *      their artwork to link to a live listing. Until those exist, these are
- *      plain platform glyphs that say which platforms, not fake download
- *      buttons.
- *   3. **No form when it cannot submit.** If the alerts API is unconfigured for
- *      this deployment, the banner still announces the apps but drops the
- *      input rather than rendering a field that silently fails — the same rule
- *      the alerts panel already follows.
+ * It is dismissible, and a dismissal is remembered, because an announcement
+ * that cannot be put away turns into furniture. That is also why it is not the
+ * only way to the apps: the header, the footer, the hero aside and Data & Alerts
+ * all link to the permanent page at /app/, which cannot be dismissed.
+ *
+ * The storage key is new rather than reused. Someone who closed the "coming
+ * soon" version has not seen this news, and should, once.
  */
 
-const DISMISSED_KEY = 'ps.launchBannerDismissed';
+const DISMISSED_KEY = 'ps.appsLiveBannerDismissed';
 
 function AppleGlyph() {
   return (
@@ -45,9 +39,6 @@ function AppleGlyph() {
  * ours to re-theme — and unlike the rest of the palette they do not flip with
  * the theme. They read correctly on both canvases, which is why the tile behind
  * them is neutral rather than accent-tinted.
- *
- * Note this is the Play *mark*, not the "Get it on Google Play" badge. The
- * badge may only be used to link to a live listing, which does not exist yet.
  */
 function PlayGlyph() {
   return (
@@ -60,7 +51,7 @@ function PlayGlyph() {
   );
 }
 
-export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
+export function LaunchBanner() {
   const [dismissed, setDismissed] = useState(() => {
     try {
       return localStorage.getItem(DISMISSED_KEY) === '1';
@@ -68,72 +59,17 @@ export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
       return false;
     }
   });
-  const [config, setConfig] = useState<AlertsConfig | null>(null);
-  const [email, setEmail] = useState('');
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!alertsConfigured || dismissed) return;
-    let cancelled = false;
-    fetchAlertsConfig()
-      .then((loaded) => {
-        if (!cancelled) setConfig(loaded);
-      })
-      .catch(() => {
-        // A failed config fetch is not worth an error message here. The banner
-        // is an announcement first; losing the form leaves the announcement.
-        if (!cancelled) setConfig(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [dismissed]);
+  if (dismissed) return null;
 
-  /** Record that this banner has been answered, by either route. */
-  const remember = () => {
+  const dismiss = () => {
+    setDismissed(true);
     try {
       localStorage.setItem(DISMISSED_KEY, '1');
     } catch {
       /* ignore */
     }
   };
-
-  const dismiss = () => {
-    setDismissed(true);
-    remember();
-  };
-
-  if (dismissed) return null;
-
-  const canSubmit = alertsConfigured && config?.emailEnabled === true;
-
-  const submit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!email.trim()) {
-      setError('Enter an email address first.');
-      return;
-    }
-    setError(null);
-    setBusy(true);
-    try {
-      await subscribeLaunchNotify({ email, ...(turnstileToken ? { turnstileToken } : {}) });
-      setSent(true);
-      // Remembered the same way a dismissal is. Someone who has handed over an
-      // address has answered this banner; asking again on their next visit
-      // reads as not having listened. The confirmation stays visible for the
-      // rest of this visit — that is the instruction to go and click the link.
-      remember();
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not sign you up.');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const turnstileNeeded = Boolean(canSubmit && config?.turnstileRequired && config?.turnstileSiteKey);
 
   return (
     <div className="launch-wrap">
@@ -149,49 +85,18 @@ export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
 
         <div className="launch__copy">
           <p className="launch__title" id="launch-title">
-            PromptSpend is coming to iPhone and Android
+            PromptSpend is now on iPhone and Android
           </p>
           <p className="launch__sub">
-            The same catalog, the same sources and dates, built for a phone. We&apos;ll email you once when
-            both apps are live — and only once.
+            The same catalog, the same sources and dates, built for a phone. Free — no account, no ads, and
+            what you paste stays on your device. <a href={APP_PAGE_URL}>About the app</a>
           </p>
+          <StoreBadges />
         </div>
 
-        {sent ? (
-          <p className="launch__done" role="status">
-            <b>Check your inbox.</b> Confirm the link and that is the last you hear from us until launch day.
-          </p>
-        ) : canSubmit ? (
-          <form className="launch__form" onSubmit={submit}>
-            <label className="launch__label" htmlFor="launch-email">
-              Email address
-            </label>
-            <div className="launch__row">
-              <input
-                id="launch-email"
-                type="email"
-                className="launch__input"
-                placeholder="you@company.com"
-                value={email}
-                autoComplete="email"
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  if (error) setError(null);
-                }}
-              />
-              <button
-                type="submit"
-                className="launch__submit"
-                disabled={busy || (turnstileNeeded && !turnstileToken)}
-              >
-                {busy ? 'Sending…' : 'Notify me'}
-              </button>
-            </div>
-          </form>
-        ) : null}
+        <StoreQrCodes credit={false} />
 
-        {/* The dismiss sits inline at the end of the row, matching the guided
-            tour's strip, rather than floating in the corner. */}
+        {/* Inline at the end of the row, matching the guided tour's strip. */}
         <button
           type="button"
           className="launch__dismiss"
@@ -201,49 +106,9 @@ export function LaunchBanner({ theme }: { theme: 'light' | 'dark' }) {
           ✕
         </button>
 
-        {/* Second row, spanning the grid. The anti-abuse check and the fine
-            print used to stack under the input, which made the card three
-            times taller than the sentence it exists to carry. */}
-        {!sent && canSubmit && (
-          <div className="launch__foot">
-            {turnstileNeeded && config?.turnstileSiteKey && (
-              /* Collapsed once a token exists, and that is what actually keeps
-                 this row one line tall. `interaction-only` stops Cloudflare
-                 *drawing* a checkbox, but the container it renders into still
-                 reserves its height, so the row stayed ~65px with nothing
-                 visible in it. Hiding it is safe only after the token is in
-                 hand: before that a challenge may genuinely need to be shown,
-                 and a hidden challenge is an unsubmittable form. If the token
-                 later expires, `onToken(null)` brings it straight back. */
-              <div className={`launch__check${turnstileToken ? ' launch__check--passed' : ''}`}>
-                <Turnstile
-                  siteKey={config.turnstileSiteKey}
-                  theme={theme}
-                  action="web_launch_notify"
-                  appearance="interaction-only"
-                  onToken={setTurnstileToken}
-                />
-              </div>
-            )}
-            {error ? (
-              <p className="launch__error" role="alert">
-                {error}
-              </p>
-            ) : turnstileNeeded && !turnstileToken ? (
-              /* The widget is invisible while it passes, so without this the
-                 submit button would sit greyed out with nothing on screen
-                 saying why. */
-              <p className="launch__fine" role="status">
-                Checking you&apos;re human — the button enables in a moment.
-              </p>
-            ) : (
-              <p className="launch__fine">
-                One email, then your address is deleted, and it is separate from price alerts.{' '}
-                <a href="/privacy/">How we handle it</a>.
-              </p>
-            )}
-          </div>
-        )}
+        {/* Only where the QR codes are shown: the credit belongs to the robot
+            in the Android code, so it goes wherever that code goes. */}
+        <p className="launch__fine launch__credit">{ANDROID_ROBOT_CREDIT}</p>
       </section>
     </div>
   );

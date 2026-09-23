@@ -75,7 +75,7 @@ interface TurnstileProps {
    * replayed against another — which means this has to match the action the
    * endpoint expects, not merely be unique.
    */
-  action?: 'web_email_alerts' | 'web_launch_notify';
+  action?: 'web_email_alerts';
   /**
    * `interaction-only` keeps the widget at zero height unless Cloudflare
    * actually wants the visitor to do something; most visitors are cleared

@@ -73,7 +73,7 @@ describe('meta endpoints', () => {
   });
 });
 
-describe('mobile launch notify', () => {
+describe('mobile launch notify (closed)', () => {
   async function launchId(email: string): Promise<string> {
     const row = await env.DB.prepare('SELECT id FROM launch_subscribers WHERE email = ?')
       .bind(email)
@@ -85,23 +85,35 @@ describe('mobile launch notify', () => {
   async function launchRow(email: string) {
     return env.DB.prepare('SELECT * FROM launch_subscribers WHERE email = ?')
       .bind(email)
-      .first<{ status: string; confirmed_at: string | null; consent_ip_hash: string | null }>();
+      .first<{ status: string }>();
   }
 
-  it('runs subscribe → confirm → unsubscribe', async () => {
-    const subscribed = await post('/v1/launch/subscribe', { email: 'reader@example.com' });
-    expect(subscribed.status).toBe(200);
-    expect(await subscribed.json()).toEqual({ ok: true, pending: true });
+  /** A signup made before the list closed, written the way the old endpoint wrote it. */
+  async function seed(email: string): Promise<void> {
+    const { upsertPendingLaunch } = await import('./db/queries');
+    await upsertPendingLaunch(env.DB, { email, consentIpHash: null });
+  }
 
-    const pending = await launchRow('reader@example.com');
-    expect(pending?.status).toBe('pending');
-    // Consent evidence is recorded at signup, not at confirmation.
-    expect(pending?.consent_ip_hash).toBeTruthy();
+  /**
+   * The apps shipped, so the list is closed. Anything still posting here learns
+   * that the thing it was waiting for has happened — and where to get it —
+   * rather than getting a 404 that reads like a typo.
+   */
+  it('refuses new signups with 410 and the store links, and stores nothing', async () => {
+    const response = await post('/v1/launch/subscribe', { email: 'late@example.com' });
+    expect(response.status).toBe(410);
+    const body = JSON.stringify(await response.json());
+    expect(body).toContain('apps.apple.com/app/id6800386428');
+    expect(body).toContain('play.google.com/store/apps/details?id=com.promptspend.app');
+    expect(await launchRow('late@example.com')).toBeNull();
+  });
+
+  it('still confirms a signup made before the close, and still lets it leave', async () => {
+    await seed('reader@example.com');
 
     const token = await tokenFor('launch-confirm', await launchId('reader@example.com'));
     const confirmed = await SELF.fetch(`${API}/v1/launch/confirm?t=${encodeURIComponent(token)}`);
     expect(confirmed.status).toBe(200);
-    expect(await confirmed.text()).toContain("You're on the launch list");
     expect((await launchRow('reader@example.com'))?.status).toBe('active');
 
     const unsubToken = await tokenFor('launch-unsubscribe', await launchId('reader@example.com'));
@@ -113,28 +125,8 @@ describe('mobile launch notify', () => {
     expect(await launchRow('reader@example.com')).toBeNull();
   });
 
-  /**
-   * Months can pass between confirming and the apps shipping. If the only
-   * unsubscribe link lived in the launch email, the single message would also
-   * be the first chance to leave — consent that cannot be withdrawn until it
-   * has already been acted on.
-   */
-  it('offers a working unsubscribe on the confirmation page itself', async () => {
-    await post('/v1/launch/subscribe', { email: 'leaver@example.com' });
-    const token = await tokenFor('launch-confirm', await launchId('leaver@example.com'));
-    const confirmed = await SELF.fetch(`${API}/v1/launch/confirm?t=${encodeURIComponent(token)}`);
-
-    const html = await confirmed.text();
-    const href = /href="([^"]*\/v1\/launch\/unsubscribe\?t=[^"]+)"/.exec(html)?.[1];
-    expect(href).toBeTruthy();
-
-    const gone = await SELF.fetch(href!.replace(/&amp;/g, '&'), { method: 'POST' });
-    expect(gone.status).toBe(200);
-    expect(await launchRow('leaver@example.com')).toBeNull();
-  });
-
   it('asks before unsubscribing on GET, so a link scanner cannot remove someone', async () => {
-    await post('/v1/launch/subscribe', { email: 'scanner@example.com' });
+    await seed('scanner@example.com');
     const token = await tokenFor('launch-unsubscribe', await launchId('scanner@example.com'));
 
     const asked = await SELF.fetch(`${API}/v1/launch/unsubscribe?t=${encodeURIComponent(token)}`);
@@ -144,81 +136,16 @@ describe('mobile launch notify', () => {
   });
 
   /**
-   * The whole reason this list has its own table and its own token purposes.
-   * A token minted for one list must be inert against the other.
+   * The reason this list had its own token purposes. A token minted for one
+   * list must stay inert against the other, closed or not.
    */
   it('will not confirm a launch signup with a price-alert token', async () => {
-    await post('/v1/launch/subscribe', { email: 'crossed@example.com' });
+    await seed('crossed@example.com');
     const wrongPurpose = await tokenFor('confirm', await launchId('crossed@example.com'));
 
     const response = await SELF.fetch(`${API}/v1/launch/confirm?t=${encodeURIComponent(wrongPurpose)}`);
     expect(response.status).toBe(410);
     expect((await launchRow('crossed@example.com'))?.status).toBe('pending');
-  });
-
-  it('does not put a launch signup on the price-alert list', async () => {
-    await post('/v1/launch/subscribe', { email: 'separate@example.com' });
-    const priceAlert = await env.DB.prepare('SELECT id FROM email_subscribers WHERE email = ?')
-      .bind('separate@example.com')
-      .first();
-    expect(priceAlert).toBeNull();
-  });
-
-  /**
-   * An address that already receives price alerts must still be able to join
-   * this list. The price-alert endpoint deliberately treats a repeat signup as
-   * a management request; if that behaviour leaked into this path, the people
-   * most likely to want the app would be the ones silently dropped.
-   */
-  it('accepts an address that already receives price alerts', async () => {
-    await post('/v1/email/subscribe', {
-      email: 'both@example.com',
-      cadence: 'weekly',
-      scope: 'all',
-      models: [],
-    });
-    const confirmToken = await tokenFor('confirm', await subscriberId('both@example.com'));
-    await SELF.fetch(`${API}/v1/email/confirm?t=${encodeURIComponent(confirmToken)}`);
-
-    const response = await post('/v1/launch/subscribe', { email: 'both@example.com' });
-    expect(response.status).toBe(200);
-    expect((await launchRow('both@example.com'))?.status).toBe('pending');
-  });
-
-  it('does not create a second row when the form is submitted twice', async () => {
-    await post('/v1/launch/subscribe', { email: 'twice@example.com' });
-    await post('/v1/launch/subscribe', { email: 'twice@example.com' });
-
-    const { results } = await env.DB.prepare('SELECT id FROM launch_subscribers WHERE email = ?')
-      .bind('twice@example.com')
-      .all();
-    expect(results).toHaveLength(1);
-  });
-
-  it('treats addresses case-insensitively', async () => {
-    await post('/v1/launch/subscribe', { email: 'Reader@Example.com' });
-    await post('/v1/launch/subscribe', { email: 'reader@example.com' });
-
-    const { results } = await env.DB.prepare('SELECT id FROM launch_subscribers').all();
-    expect(results).toHaveLength(1);
-  });
-
-  /** A row whose one message has been sent is never reset to pending. */
-  it('leaves an already-notified address alone', async () => {
-    await post('/v1/launch/subscribe', { email: 'done@example.com' });
-    await env.DB.prepare(`UPDATE launch_subscribers SET status = 'notified' WHERE email = ?`)
-      .bind('done@example.com')
-      .run();
-
-    const response = await post('/v1/launch/subscribe', { email: 'done@example.com' });
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ ok: true, pending: true });
-    expect((await launchRow('done@example.com'))?.status).toBe('notified');
-  });
-
-  it('rejects a malformed address', async () => {
-    const response = await post('/v1/launch/subscribe', { email: 'not-an-address' });
-    expect(response.status).toBe(400);
   });
 });
 
