@@ -934,3 +934,27 @@ value that moves in the same run as its source URL is a correction.
 - **Coverage** `deepseek-deepseek-v3.2` — cachedInput now tracked: — → 0.028
 - **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (43%): $1.7/$8.5 vs $3/$15 → —
+
+## 2026-09-23
+
+- **Added** `claude-opus-5-5` — Claude Opus 5 5 ($4 in / $20 out per 1M)
+- **Metadata** `gemini-gemini-3-pro-preview` — status: current → legacy
+- **Metadata** `gemini-gemini-3.1-flash-lite-preview` — status: current → legacy
+- **Metadata** `moonshot-kimi-k2-thinking` — status: current → legacy
+- **Review** `claude-opus-4-1` — provenance.needsReview: — → true
+- **Review** `claude-opus-4-1` — provenance.reviewNote: — → no longer listed upstream — confirm retirement before removing
+- **Review** `claude-opus-4-1` — provenance.stale: — → true
+- **Review** `claude-opus-4-1` — provenance.statusBeforeStale: — → legacy
+- **Review** `gemini-gemini-3-pro-preview` — provenance.needsReview: — → true
+- **Review** `gemini-gemini-3-pro-preview` — provenance.reviewNote: — → no longer listed upstream — confirm retirement before removing
+- **Review** `gemini-gemini-3-pro-preview` — provenance.stale: — → true
+- **Review** `gemini-gemini-3-pro-preview` — provenance.statusBeforeStale: — → current
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.needsReview: — → true
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.reviewNote: — → no longer listed upstream — confirm retirement before removing
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.stale: — → true
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.statusBeforeStale: — → current
+- **Review** `moonshot-kimi-k2-thinking` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k2-thinking` — provenance.reviewNote: — → no longer listed upstream — confirm retirement before removing
+- **Review** `moonshot-kimi-k2-thinking` — provenance.stale: — → true
+- **Review** `moonshot-kimi-k2-thinking` — provenance.statusBeforeStale: — → current
+- **Review** `xai-grok-4.7` — provenance.reviewNote: OpenRouter disagrees (20%): $1.6/$4.8 vs $2/$6; new model discovered by pattern match — confirm name and rates → OpenRouter disagrees (20%): $1.6/$4.8 vs $2/$6
