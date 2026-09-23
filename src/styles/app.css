@@ -2237,7 +2237,7 @@ table.catalog tbody tr:hover {
 .launch__fine {
   grid-column: 1 / -1;
   margin: 0;
-  font-size: 0.72rem;
+  font-size: max(0.72rem, 12px);
   line-height: 1.5;
   color: var(--muted);
 }
@@ -2304,7 +2304,7 @@ table.catalog tbody tr:hover {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  font-size: 0.72rem;
+  font-size: max(0.72rem, 12px);
   font-weight: 600;
   color: var(--muted);
   text-decoration: none;
@@ -2322,7 +2322,7 @@ table.catalog tbody tr:hover {
   flex-basis: 100%;
   margin: 0;
   max-width: 60ch;
-  font-size: 0.72rem;
+  font-size: max(0.72rem, 12px);
   line-height: 1.5;
   color: var(--muted);
 }
