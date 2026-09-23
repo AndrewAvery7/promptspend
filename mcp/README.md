@@ -141,6 +141,10 @@ and negotiated or committed-use discounts.
 
 ---
 
+The same catalog is also in free native apps for
+[iPhone and iPad](https://apps.apple.com/app/id6800386428) and
+[Android](https://play.google.com/store/apps/details?id=com.promptspend.app).
+
 Part of [PromptSpend](https://github.com/AndrewAvery7/promptspend) — MIT.
 Found a wrong price? That is the most serious class of bug this project can have.
 [Open an issue.](https://github.com/AndrewAvery7/promptspend/issues)

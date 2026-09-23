@@ -236,10 +236,17 @@ ${rows}
           catalog, and publishes a page per model at
           <a href="${siteOrigin}/models/">${siteOrigin.replace(/^https:\/\//, '')}/models/</a>.
         </p>
+        <p>
+          On a phone? The same catalog runs in free native apps for
+          <a href="https://apps.apple.com/app/id6800386428">iPhone and iPad</a> and
+          <a href="https://play.google.com/store/apps/details?id=com.promptspend.app">Android</a>.
+          <a href="${siteOrigin}/app/">About the apps.</a>
+        </p>
       </main>
       <footer>
         <p>
           <a href="${siteOrigin}/">Calculator</a> &middot;
+          <a href="${siteOrigin}/app/">iPhone &amp; Android apps</a> &middot;
           <a href="/openapi.json">OpenAPI</a> &middot;
           <a href="https://github.com/AndrewAvery7/promptspend">Source</a> &middot;
           <a href="mailto:info@promptspend.com">info@promptspend.com</a>

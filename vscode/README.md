@@ -145,6 +145,7 @@ model ids; they are never transmitted, logged, or stored. VS Code's
 - [promptspend.com](https://promptspend.com) — the estimator, the value map and the pipeline's provenance
 - [`@promptspend/mcp`](https://www.npmjs.com/package/@promptspend/mcp) — the same catalog for coding agents
 - [promptspend.dev](https://promptspend.dev) — a keyless JSON API over the catalog
+- PromptSpend for [iPhone and iPad](https://apps.apple.com/app/id6800386428) and [Android](https://play.google.com/store/apps/details?id=com.promptspend.app) — the same catalog in free native apps
 
 ## Licence
 
