@@ -4,6 +4,7 @@ import { SCHEMA_VERSION } from '@/lib/pricing/types';
 import { buildPages } from './pages';
 import {
   escapeHtml,
+  renderAppPage,
   renderComparisonPage,
   renderComparisonsIndex,
   renderModelPage,
@@ -333,6 +334,31 @@ describe('rendered pages', () => {
       expect(csp).toContain('default-src &#39;none&#39;');
       expect(csp).not.toContain('unsafe-inline');
       expect(csp).not.toContain('http');
+    }
+  });
+});
+
+describe('the app page', () => {
+  it('links both official badges and both QR codes to the live listings', () => {
+    const html = renderAppPage(recordingContext());
+    expect(html.match(/href="https:\/\/apps\.apple\.com\/app\/id6800386428"/g)).toHaveLength(2);
+    expect(
+      html.match(/href="https:\/\/play\.google\.com\/store\/apps\/details\?id=com\.promptspend\.app"/g),
+    ).toHaveLength(2);
+    expect(html).toContain('alt="Download on the App Store"');
+    expect(html).toContain('alt="Get it on Google Play"');
+  });
+
+  it('asks Safari for its App Store banner, credits the Android robot, and is canonical at /app/', () => {
+    const html = renderAppPage(recordingContext());
+    expect(html).toContain('<meta name="apple-itunes-app" content="app-id=6800386428" />');
+    expect(html).toMatch(/Android robot is reproduced or modified/);
+    expect(html).toContain('<link rel="canonical" href="https://promptspend.com/app/" />');
+  });
+
+  it('is reachable from the footer of every generated page', () => {
+    for (const { html } of everyPage(SAMPLE)) {
+      expect(html).toContain('<a href="/app/">iPhone &amp; Android apps</a>');
     }
   });
 });

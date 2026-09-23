@@ -1,4 +1,5 @@
 import {
+  APP_PAGE_URL,
   COMPARE_INDEX_URL,
   CONTACT_EMAIL,
   DEVELOPER_HUB_URL,
@@ -42,10 +43,12 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
           <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
           <a href={COMPARE_INDEX_URL}>Comparisons</a> · <a href={DEVELOPER_HUB_URL}>Pricing API</a>
         </div>
-        {/* The three places this catalog answers that are not a web page. The
-            footer is the only row present on every view, so it is where
-            somebody who never opens Data & Alerts finds out they exist. */}
+        {/* The places this catalog answers that are not a web page. The footer
+            is the only row present on every view, so it is where somebody who
+            never opens Data & Alerts finds out they exist — and where anyone
+            who dismissed the launch banner finds the apps again. */}
         <div>
+          <a href={APP_PAGE_URL}>iPhone &amp; Android apps</a> ·{' '}
           <a href={MCP_PACKAGE_URL} target="_blank" rel="noreferrer noopener">
             MCP server
           </a>{' '}

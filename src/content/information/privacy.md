@@ -3,7 +3,7 @@ slug: privacy
 title: Privacy Policy | PromptSpend
 description: How PromptSpend handles pasted text, local app data, public pricing requests, sharing, alerts, and support communications.
 heading: Privacy Policy
-updated: 2026-08-16
+updated: 2026-09-23
 ---
 
 PromptSpend is designed to estimate AI costs without turning your prompts into our data. This policy covers the PromptSpend native apps, website, pricing API, and optional alert and support services.
@@ -36,9 +36,9 @@ New subscriptions require email confirmation. Unconfirmed subscriptions are dele
 
 ## Mobile app launch notification
 
-The website offers a separate, optional list for one announcement: an email when the iPhone and Android apps become available to download. It is not a price-alert subscription. Joining it does not subscribe you to price alerts, does not change any alert preferences you already have, and asking for price alerts does not add you here.
+Before the iPhone and Android apps were released, the website offered a separate, optional list for one announcement: an email when the apps became available to download. It was never a price-alert subscription, and joining one did not affect the other.
 
-This list stores only the email address, confirmation status, consent time, and the same keyed hash of the connection address used for abuse prevention. It stores no model choices, no cadence, and no delivery history. Confirmation is required before the address is on the list at all, and unconfirmed signups are deleted after seven days. The address is deleted when you unsubscribe, and the entire list is deleted once the launch announcement has been sent. Every message carries a one-click unsubscribe that removes the address from this list only.
+That list closed when the apps launched in September 2026. The website no longer accepts signups, and every address on the list has been deleted, as this policy promised. The list held no addresses from outside PromptSpend, so no announcement email was sent.
 
 ## Support and security reports
 

@@ -53,13 +53,12 @@ import {
   unsubscribeLaunch,
   updateEmailPreferences,
   upsertPendingEmail,
-  upsertPendingLaunch,
   upsertPushSubscription,
   withinRateLimit,
 } from './db/queries';
 import { changedModelIds, validateChangeSet, type ChangeSet } from './changes';
 import { createTransport } from './email/transport';
-import { renderConfirmation, renderLaunchConfirmation, renderManageCode } from './email/render';
+import { renderConfirmation, renderManageCode } from './email/render';
 import { buildNotificationPayload, sendPush } from './push/send';
 import { assertKeyPairMatches } from './push/vapid';
 import { fanoutDigest, fanoutInstantEmail, fanoutPush } from './fanout';
@@ -145,7 +144,7 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
     case 'POST /v1/email/unsubscribe':
       return handleUnsubscribePost(request, env);
     case 'POST /v1/launch/subscribe':
-      return handleLaunchSubscribe(request, env);
+      return handleLaunchSubscribe();
     case 'GET /v1/launch/confirm':
       return handleLaunchConfirm(request, env);
     case 'GET /v1/launch/unsubscribe':
@@ -520,60 +519,25 @@ async function handleUnsubscribePost(request: Request, env: Env): Promise<Respon
 // --------------------------------------------------- mobile launch notify
 
 /**
- * "Tell me when the apps are out" — a single-message list, kept apart from
- * price alerts at every layer: its own table, its own token purposes, its own
- * Turnstile action, its own confirmation copy.
+ * "Tell me when the apps are out" — closed.
  *
- * The one behavioural difference from `handleEmailSubscribe` worth calling out:
- * there is no "already active, send a management code instead" branch. There
- * are no preferences to manage — the only states are on the list and not on it
- * — so re-submitting simply re-sends the confirmation for a pending row and is
- * a no-op for a confirmed one. The HTTP response is identical either way, so
- * the endpoint still cannot be used to test whether an address is on the list.
+ * This was a single-message list, kept apart from price alerts at every layer:
+ * its own table, its own token purposes, its own Turnstile action. The apps
+ * shipped in September 2026, the website's form was replaced by the store
+ * links, and the list was emptied, as the privacy policy promised. No
+ * announcement was sent: the only confirmed address was the developer's own.
+ *
+ * The route answers 410 Gone, with the store links, rather than 404: anything
+ * still posting here — an old tab, a cached page — should learn that the
+ * thing it was waiting for has happened, not that it made a typo. Confirm and
+ * unsubscribe stay: a confirmation link mailed before the close still resolves
+ * to a page that makes sense, and leaving is always possible.
  */
-async function handleLaunchSubscribe(request: Request, env: Env): Promise<Response> {
-  if (!emailEnabled(env)) throw new HttpError(503, 'Email is not configured yet.');
-  const ipHash = await guard(request, env, 'launch-subscribe', 10);
-
-  const body = await readJson<Record<string, unknown>>(request);
-  const turnstile = await verifyTurnstile(
-    env,
-    typeof body.turnstileToken === 'string' ? body.turnstileToken : undefined,
-    request.headers.get('CF-Connecting-IP'),
-    'web_launch_notify',
+async function handleLaunchSubscribe(): Promise<Response> {
+  throw new HttpError(
+    410,
+    'The PromptSpend apps are out, so this list is closed. iPhone: https://apps.apple.com/app/id6800386428 · Android: https://play.google.com/store/apps/details?id=com.promptspend.app',
   );
-  if (!turnstile.ok) {
-    throw badRequest(
-      'We could not verify that you are human. Refresh the page and try again.',
-      (turnstile.errorCodes ?? []).join(','),
-    );
-  }
-
-  const email = requireEmail(body.email);
-  const subscriber = await upsertPendingLaunch(env.DB, { email, consentIpHash: ipHash });
-
-  // A row that has already had its one message stays untouched, and no second
-  // confirmation goes out. Returning the same shape keeps that indistinguishable
-  // from a fresh signup.
-  if (subscriber.status === 'notified') return json({ ok: true, pending: true }, request, env);
-
-  if (subscriber.status === 'pending') {
-    const token = await issueToken(requireSecret(env, 'TOKEN_SECRET'), 'launch-confirm', subscriber.id);
-    const confirmUrl = `${new URL(request.url).origin}/v1/launch/confirm?t=${encodeURIComponent(token)}`;
-    const message = renderLaunchConfirmation(confirmUrl, siteUrl(env));
-
-    const result = await createTransport(env).send({
-      to: subscriber.email,
-      subject: message.subject,
-      html: message.html,
-      text: message.text,
-    });
-    if (!result.ok) {
-      throw new HttpError(502, 'We could not send the confirmation email. Please try again.', result.detail);
-    }
-  }
-
-  return json({ ok: true, pending: true }, request, env);
 }
 
 async function handleLaunchConfirm(request: Request, env: Env): Promise<Response> {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Catalog } from '@/lib/pricing/catalog';
-import { PRICING_SCOPE, RECEIPT_URL } from '@/config';
+import { APP_PAGE_URL, PRICING_SCOPE, RECEIPT_URL } from '@/config';
 import { csvDocument } from '@/lib/engine/csv';
 import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
 import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
@@ -120,11 +120,18 @@ export function EstimateView({
               for none of the others. Every install route now lives together on
               Data & Alerts, where there is room to give each a command, a link
               and the reason to pick it. The job here is to tell somebody who
-              never leaves this page that the other three exist at all.
+              never leaves this page that the others exist at all.
 
               `role="list"` because `list-style: none` strips list semantics in
-              Safari, and four items are worth announcing as four. */}
+              Safari, and a list is worth announcing as one. */}
           <ul className="hero__aside-list" role="list">
+            {/* First because it is the one route here that needs no editor,
+                terminal or AI assistant — and it is the permanent way back to
+                the apps once the launch banner has been dismissed. */}
+            <li>
+              <b>iPhone &amp; Android apps</b> — the estimator in your pocket,{' '}
+              <a href={APP_PAGE_URL}>free on both stores</a>
+            </li>
             <li>
               <b>AI Cost Receipt</b> — bring current PromptSpend pricing into an existing AI conversation
             </li>

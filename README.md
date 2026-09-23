@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-80-2456E6.svg" alt="80 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-1224-blue.svg" alt="1224 tests">
+  <img src="https://img.shields.io/badge/tests-1220-blue.svg" alt="1220 tests">
   <img src="https://img.shields.io/badge/initial%20payload-98%20KB%20gzip-blue.svg" alt="98 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -278,6 +278,15 @@ Same rule as everywhere else — no bundled prices. If the catalog cannot be rea
 shows nothing, and the status bar carries the generation date at all times. See
 [vscode/README.md](vscode/README.md).
 
+### Or on your phone
+
+Native apps for iPhone and Android, free on the
+[App Store](https://apps.apple.com/app/id6800386428) and
+[Google Play](https://play.google.com/store/apps/details?id=com.promptspend.app): paste a sample
+conversation, compare up to four models, and see the cost per conversation, day, month and year from the
+same catalog. Pasted text is processed on the device and never uploaded. Both are described at
+[promptspend.com/app](https://promptspend.com/app/); the source is in [apps/mobile/](apps/mobile/).
+
 Or read the file the API reads. The catalog is plain, versioned JSON with a stable shape:
 
 ```
@@ -394,7 +403,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                             |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1224 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1220 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                 |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 161 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline      |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live   |

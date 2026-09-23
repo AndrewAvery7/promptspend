@@ -1,5 +1,6 @@
 import type { Catalog } from '@/lib/pricing/catalog';
 import {
+  APP_PAGE_URL,
   DEVELOPER_HUB_URL,
   MCP_INSTALL_COMMAND,
   MCP_PACKAGE_URL,
@@ -11,6 +12,7 @@ import {
 } from '@/config';
 import { AlertsPanel } from '@/components/AlertsPanel';
 import { CopyButton } from './CopyButton';
+import { StoreBadges } from './StoreBadges';
 
 /** GitHub's Atom feed of commits touching the published catalog. */
 const FEED_URL = `${REPO_URL}/commits/main/public/data/pricing.json.atom`;
@@ -186,8 +188,8 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
           <div className="panel__body">
             <p>
               Every price here carries its source and the date it was last confirmed. That does not stop at
-              this page — the same record travels into your coding agent, through the API, and onto the line
-              of code that names the model.
+              this page — the same record travels into your coding agent, through the API, onto the line of
+              code that names the model, and into the apps on your phone.
             </p>
             <div className="build-grid">
               <article>
@@ -279,6 +281,20 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                     Open VSX
                   </a>{' '}
                   for Cursor, Windsurf and VSCodium.
+                </p>
+              </article>
+              {/* The fourth card. No install command to copy — a store badge is
+                  the phone's equivalent — and the link goes to the permanent
+                  page rather than a store, for anyone deciding between the two. */}
+              <article>
+                <h3>On your phone</h3>
+                <p>
+                  Native apps for iPhone and Android: paste a sample conversation, compare up to four models,
+                  and see the cost per conversation, day, month and year. What you paste stays on the device.
+                </p>
+                <StoreBadges />
+                <p className="privacy-note">
+                  <a href={APP_PAGE_URL}>More about the app →</a>
                 </p>
               </article>
             </div>

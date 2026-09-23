@@ -79,6 +79,13 @@ describe('renderLlmsTxt', () => {
     expect(text).toMatch(/source and confirmation date/i);
   });
 
+  it('names both native apps and their permanent page', () => {
+    const text = renderLlmsTxt(SET, INPUT);
+    expect(text).toContain('https://apps.apple.com/app/id6800386428');
+    expect(text).toContain('https://play.google.com/store/apps/details?id=com.promptspend.app');
+    expect(text).toContain('https://promptspend.com/app/');
+  });
+
   it('uses absolute URLs throughout, since it is read away from the site', () => {
     const text = renderLlmsTxt(SET, INPUT);
     const links = [...text.matchAll(/\]\(([^)]+)\)/g)].map((match) => match[1]!);

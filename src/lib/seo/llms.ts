@@ -17,6 +17,9 @@
 
 import type { PageSet } from './pages';
 import {
+  APP_PAGE_PATH,
+  APP_STORE_URL,
+  GOOGLE_PLAY_URL,
   MCP_INSTALL_COMMAND,
   MCP_PACKAGE_URL,
   OPEN_VSX_URL,
@@ -108,6 +111,10 @@ You may not need HTTP at all.
 Neither bundles a price list. Both fetch the same catalog linked above, and both
 carry the source and confirmation date on every price — so a model quoting one
 of them can say where the number came from and when it was last checked.
+
+## On a phone
+
+- [PromptSpend for iPhone and iPad](${APP_STORE_URL}) and [for Android](${GOOGLE_PLAY_URL}): free native apps that forecast a pasted sample conversation's cost per conversation, day, month and year across up to four models, from the same catalog. Pasted text is processed on the device and not uploaded. Both are described at ${siteUrl}${APP_PAGE_PATH}.
 
 ## Most-asked models
 

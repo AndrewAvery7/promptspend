@@ -28,7 +28,10 @@ import { PAGE_CSS } from '@/lib/seo/css';
 import { renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import { receiptSpec } from '@/receipt/receiptSpec';
+import { APP_PAGE_PATH } from '@/lib/links';
 import {
+  APP_PAGE_UPDATED,
+  renderAppPage,
   renderComparisonPage,
   renderComparisonsIndex,
   renderInformationPage,
@@ -203,6 +206,9 @@ async function main(): Promise<void> {
   for (const page of informationPages) {
     await writeFileAt(fileFor(page.path), renderInformationPage(page, ctx));
   }
+  // The permanent page for the two native apps. One page, hand-written copy,
+  // so it sits beside the prose pages rather than in the catalog's page set.
+  await writeFileAt(fileFor(APP_PAGE_PATH), renderAppPage(ctx));
 
   // The sitemap lives here rather than in `vite.config.ts` because it has to
   // list these pages, and the config has no idea they exist.
@@ -212,6 +218,7 @@ async function main(): Promise<void> {
     sitemap([
       { loc: `${siteUrl}/`, lastmod, priority: '1.0' },
       { loc: `${siteUrl}/receipt/`, lastmod: receiptSpec.updated, priority: '0.9' },
+      { loc: `${siteUrl}${APP_PAGE_PATH}`, lastmod: APP_PAGE_UPDATED, priority: '0.8' },
       ...set.all.map((page) => ({
         loc: `${siteUrl}${page.path}`,
         lastmod: page.lastmod,
@@ -246,14 +253,14 @@ async function main(): Promise<void> {
   await writeFileAt(INDEXNOW_KEY_FILE, `${INDEXNOW_KEY}\n`);
 
   console.log(
-    `✓ ${set.all.length + writingPages.length + informationPages.length} pages written under ${DIST}`,
+    `✓ ${set.all.length + writingPages.length + informationPages.length + 1} pages written under ${DIST}`,
   );
   console.log(
-    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing, ${informationPages.length} information`,
+    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing, ${informationPages.length} information, 1 app`,
   );
   console.log(`  stylesheet ${cssName}`);
   console.log(
-    `  sitemap    ${set.all.length + writingPages.length + informationPages.length + 2} URLs at ${siteUrl}/sitemap.xml`,
+    `  sitemap    ${set.all.length + writingPages.length + informationPages.length + 3} URLs at ${siteUrl}/sitemap.xml`,
   );
   console.log(`  llms.txt   ${siteUrl}/llms.txt`);
   if (set.droppedComparisons > 0) {

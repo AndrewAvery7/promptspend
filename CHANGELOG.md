@@ -9,6 +9,15 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **The iPhone and Android apps are live, and the site says so.** The "coming to iPhone and Android"
+  banner now announces both apps with the official App Store and Google Play badges and, on a computer, a QR
+  code per store. A permanent page at `/app/` holds both, and is linked from the header, the footer of every
+  page, the home page's "Beyond the browser" list and a new "On your phone" card on Data & Alerts, so a
+  dismissed banner never hides the apps. Safari on iPhone shows its App Store banner; `llms.txt` lists both.
+- **The one-message launch list is closed.** Its form is gone, `/v1/launch/subscribe` answers 410 with the
+  store links, and the list was emptied as the privacy policy promised. It held only a test signup, so no
+  announcement was sent.
+
 - **Native conversation Receipt.** iOS and Android share the website's versioned audit instructions and
   JSON parser, with local import, editable review, image/text sharing, Search, Guide, and FAQ entry points.
   The existing hypothetical scenario artifact is now named Estimate Receipt.

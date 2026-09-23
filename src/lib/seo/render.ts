@@ -29,6 +29,7 @@ import { DEFAULT_SCENARIO, encodeScenario } from '../url/scenario';
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { Model, Pricing } from '../pricing/types';
 import { promoFor, promoTitle, type RateField } from '../pricing/promo';
+import { APP_PAGE_PATH, APP_STORE_ID, APP_STORE_URL, GOOGLE_PLAY_URL } from '../links';
 import {
   blendedRate,
   type ComparisonPage,
@@ -168,6 +169,8 @@ interface LayoutInput {
   path: string;
   title: string;
   description: string;
+  /** Extra `<head>` markup for one page, e.g. the app page's Smart App Banner tag. */
+  extraHead?: string;
   /** Nodes for the JSON-LD `@graph`. */
   graph: unknown[];
   body: string;
@@ -200,7 +203,7 @@ function layout(ctx: RenderContext, input: LayoutInput): string {
     <link rel="canonical" href="${escapeHtml(canonical)}" />
     <meta http-equiv="Content-Security-Policy" content="${escapeHtml(csp)}" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta property="og:type" content="article" />
+${input.extraHead ?? ''}    <meta property="og:type" content="article" />
     <meta property="og:site_name" content="PromptSpend" />
     <meta property="og:url" content="${escapeHtml(canonical)}" />
     <meta property="og:title" content="${escapeHtml(input.title)}" />
@@ -224,6 +227,7 @@ ${input.body}
         </p>
         <p>
           <a href="${escapeHtml(href(ctx, '/'))}">PromptSpend calculator</a> &middot;
+          <a href="${escapeHtml(href(ctx, APP_PAGE_PATH))}">iPhone &amp; Android apps</a> &middot;
           <a href="${escapeHtml(href(ctx, '/models/'))}">All models</a> &middot;
           <a href="${escapeHtml(href(ctx, '/providers/'))}">Providers</a> &middot;
           <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
@@ -1014,6 +1018,100 @@ ${page.bodyHtml}
         url: absolute(ctx, page.path),
         dateModified: page.updatedDate,
       },
+    ],
+    body,
+  });
+}
+
+// ------------------------------------------------------------------ app page
+
+/** When the app page's copy was last reviewed against the two store listings. */
+export const APP_PAGE_UPDATED = '2026-09-23';
+
+const ANDROID_ROBOT_CREDIT =
+  'The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.';
+
+/**
+ * The permanent home of the two native apps.
+ *
+ * The calculator's launch banner can be dismissed, and a dismissal is
+ * remembered; this page cannot, and every surface that mentions the apps links
+ * here. It is generated rather than drawn by the calculator so it renders
+ * without JavaScript — which is also what a store reviewer, a crawler, or
+ * anyone following a printed link gets.
+ *
+ * The feature list is taken from the store listings, not written fresh, so the
+ * page cannot promise something the app does not do.
+ */
+export function renderAppPage(ctx: RenderContext): string {
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: 'iPhone & Android apps', path: null },
+  ];
+  const store = (url: string) => `href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"`;
+  const asset = (path: string) => escapeHtml(href(ctx, path));
+
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <article>
+          <h1>PromptSpend for iPhone and Android</h1>
+          <p class="lede">The same catalog, the same sources and dates, built for a phone. Free, with no account, no ads and no tracking.</p>
+          <div class="store-badges">
+            <a ${store(APP_STORE_URL)}><img src="${asset('/store/app-store-badge.svg')}" alt="Download on the App Store" width="120" height="40" /></a>
+            <a ${store(GOOGLE_PLAY_URL)}><img src="${asset('/store/google-play-badge.png')}" alt="Get it on Google Play" width="134" height="40" /></a>
+          </div>
+          <p class="store-qr store-qr__hint">On a computer? Point your phone&rsquo;s camera at the code for your phone.</p>
+          <div class="store-qr">
+            <a class="store-qr__code" ${store(APP_STORE_URL)}><img src="${asset('/store/qr-ios.svg')}" alt="QR code: PromptSpend on the App Store" width="132" height="132" /><span>iPhone &amp; iPad</span></a>
+            <a class="store-qr__code" ${store(GOOGLE_PLAY_URL)}><img src="${asset('/store/qr-android.svg')}" alt="QR code: PromptSpend on Google Play" width="132" height="132" /><span>Android</span></a>
+          </div>
+
+          <h2>What it does</h2>
+          <ul class="plain">
+            <li><b>Forecast a conversation.</b> Paste sample text or enter known token counts, choose your traffic, and see the cost per conversation, day, month and year.</li>
+            <li><b>Compare up to four models</b> side by side, ranked, with the monthly difference from the lowest-cost option.</li>
+            <li><b>See what moves the number</b>: input, output, prompt-cache writes, long-context tiers, reasoning assumptions, batch discounts and conversation growth.</li>
+            <li><b>Prices with evidence.</b> The same public catalog as this site, showing when each source was checked and flagging disagreements for review.</li>
+            <li><b>Optional price alerts</b> by email, without creating an account.</li>
+            <li><b>Share the result</b> as a readable estimate, a four-model comparison, a CSV or an Estimate Receipt &mdash; built from counts and costs, never your pasted text.</li>
+          </ul>
+
+          <h2>Private by design</h2>
+          <p>Text you paste is processed on your phone and is not uploaded or saved by PromptSpend. There is no account, advertising SDK, behavioural analytics or tracking identifier. The details are in the <a href="${escapeHtml(href(ctx, '/privacy/'))}">privacy policy</a>.</p>
+
+          <h2>Rather use the browser?</h2>
+          <p>Nothing to install: <a href="${escapeHtml(href(ctx, '/'))}">the PromptSpend calculator</a> runs the same estimates in any browser.</p>
+
+          <p class="credit">${escapeHtml(ANDROID_ROBOT_CREDIT)}</p>
+        </article>
+      </main>`;
+
+  const app = (name: string, os: string, url: string) => ({
+    '@type': 'MobileApplication',
+    name,
+    operatingSystem: os,
+    applicationCategory: 'DeveloperApplication',
+    url,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  });
+
+  return layout(ctx, {
+    path: APP_PAGE_PATH,
+    title: 'PromptSpend for iPhone and Android — free AI cost estimates',
+    description:
+      "Forecast what an AI conversation will cost and compare up to four models, with every price's source. Free on the App Store and Google Play, no account, no ads.",
+    // Safari on iPhone turns this into its own "Open in the App Store" strip.
+    extraHead: `    <meta name="apple-itunes-app" content="app-id=${APP_STORE_ID}" />\n`,
+    graph: [
+      breadcrumbLd(ctx, crumbs, APP_PAGE_PATH),
+      {
+        '@type': 'WebPage',
+        name: 'PromptSpend for iPhone and Android',
+        url: absolute(ctx, APP_PAGE_PATH),
+        dateModified: APP_PAGE_UPDATED,
+      },
+      app('PromptSpend for iPhone and iPad', 'iOS', APP_STORE_URL),
+      app('PromptSpend for Android', 'Android', GOOGLE_PLAY_URL),
     ],
     body,
   });
