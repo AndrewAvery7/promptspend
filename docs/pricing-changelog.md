@@ -958,3 +958,13 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `moonshot-kimi-k2-thinking` — provenance.stale: — → true
 - **Review** `moonshot-kimi-k2-thinking` — provenance.statusBeforeStale: — → current
 - **Review** `xai-grok-4.7` — provenance.reviewNote: OpenRouter disagrees (20%): $1.6/$4.8 vs $2/$6; new model discovered by pattern match — confirm name and rates → OpenRouter disagrees (20%): $1.6/$4.8 vs $2/$6
+
+## 2026-09-24
+
+- **Metadata** `gemini-gemini-3.1-flash-lite-preview` — status: legacy → current
+- **Review** `claude-opus-5-5` — provenance.needsReview: true → —
+- **Review** `claude-opus-5-5` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.reviewNote: no longer listed upstream — confirm retirement before removing → —
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.stale: true → —
+- **Review** `gemini-gemini-3.1-flash-lite-preview` — provenance.statusBeforeStale: current → —
