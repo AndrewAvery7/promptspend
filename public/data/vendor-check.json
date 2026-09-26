@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-25T11:05:54.593Z",
+  "checkedAt": "2026-09-26T11:05:53.887Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -25,7 +25,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "23239 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "23471 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -215,8 +215,8 @@
     {
       "id": "gpt-5.6-sol",
       "url": "https://developers.openai.com/api/docs/pricing",
-      "status": "mismatch",
-      "detail": "promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5"
+      "status": "confirmed",
+      "detail": "page shows only the promotional rate $4/$20 until 2026-11-21, which agrees; the standard rate $5/$30 is not printed and stays unverified until the window closes"
     },
     {
       "id": "gpt-5.6-terra",
@@ -489,7 +489,7 @@
       "detail": "page lists $1.25/$2.5"
     }
   ],
-  "confirmed": 54,
-  "mismatched": 1,
+  "confirmed": 55,
+  "mismatched": 0,
   "unconfirmed": 3
 }

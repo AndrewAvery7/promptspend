@@ -973,3 +973,8 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `gpt-5.6-sol` — provenance.needsReview: — → true
 - **Review** `gpt-5.6-sol` — provenance.reviewNote: — → the vendor's own page disagrees with the record — promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5
+
+## 2026-09-26
+
+- **Review** `gpt-5.6-sol` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-sol` — provenance.reviewNote: the vendor's own page disagrees with the record — promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5 → —
