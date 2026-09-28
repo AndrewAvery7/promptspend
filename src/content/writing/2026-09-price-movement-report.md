@@ -1,7 +1,7 @@
 ---
 slug: 2026-09-price-movement-report
 title: September 2026 Price Movement Report
-description: Every LLM price change our sync recorded in September 2026 — one genuine cut, to DeepSeek V4 Flash, a Sonnet 5 "cut" that changed nobody's bill, and a correction to our August report.
+description: Every LLM price change our sync recorded in September 2026: one real cut, to DeepSeek V4 Flash, a Sonnet 5 drop nobody paid less for, and a fix to our August report.
 published: 2026-10-01
 ---
 
