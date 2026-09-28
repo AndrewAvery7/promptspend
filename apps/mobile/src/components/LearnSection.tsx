@@ -14,7 +14,7 @@ import { useMobileTheme } from '@/theme/useMobileTheme';
 
 const SAMPLE =
   'Compare the cost of running this prompt on several AI models at one million requests per month.';
-const LATEST_REPORT_URL = 'https://promptspend.com/writing/2026-08-price-movement-report/';
+const LATEST_REPORT_URL = 'https://promptspend.com/writing/2026-09-price-movement-report/';
 
 export function LearnSection({
   catalog,
@@ -61,7 +61,7 @@ export function LearnSection({
       >
         <View style={styles.reportHeading}>
           <Text style={styles.number}>MARKET REPORT</Text>
-          <Text style={styles.reportDate}>August 2026</Text>
+          <Text style={styles.reportDate}>September 2026</Text>
         </View>
         <Text accessibilityRole="header" style={styles.cardTitle}>
           What changed in model pricing—and what it means

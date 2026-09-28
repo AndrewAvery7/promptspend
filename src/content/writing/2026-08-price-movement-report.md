@@ -5,6 +5,13 @@ description: Every LLM price change our sync recorded in August 2026, led by Dee
 published: 2026-09-01
 ---
 
+**Correction, 1 October 2026:** this report's tally stopped at 27 August and
+missed the month's last four days, including price changes to three retired
+xAI models on 2026-08-30 that overturn two of the "largest move" claims below.
+The corrected figures are in the
+[September 2026 Price Movement Report](https://promptspend.com/writing/2026-09-price-movement-report/);
+the text below is left as published.
+
 This is the first entry in a series we'll publish on the first of every
 month: what actually moved in LLM pricing over the previous month, sourced
 entirely from [`docs/pricing-changelog.md`](https://github.com/AndrewAvery7/promptspend/blob/main/docs/pricing-changelog.md)
