@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-27T11:05:16.424Z",
+  "checkedAt": "2026-09-28T11:06:08.518Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -73,7 +73,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "ok": true,
-      "note": "4356 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "4381 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k2.6"
       ]
@@ -81,7 +81,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
       "ok": true,
-      "note": "4356 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "4381 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k3"
       ]
