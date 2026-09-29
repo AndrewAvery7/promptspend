@@ -116,6 +116,19 @@ iOS production:
 npx.cmd eas-cli@latest build --platform ios --profile production
 ```
 
+Android Play candidate AAB without Expo build credits: run the **Android
+store build** workflow (GitHub → Actions → Android store build → Run
+workflow, with the commit to build and a reason), or from PowerShell:
+
+```powershell
+gh workflow run android-build.yml --repo AndrewAvery7/promptspend -f ref=main -f reason="0.1.2 store release"
+```
+
+It runs `eas build --local` on a free GitHub runner, signed with the same
+EAS-managed upload key, and leaves the AAB as the artifact
+`promptspend-android-aab` (`gh run download <run-id> -n promptspend-android-aab`).
+It needs the repository secret `EXPO_TOKEN`.
+
 Android internal QA APK:
 
 ```powershell
