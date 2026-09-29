@@ -176,7 +176,7 @@ export function LearnSection({
 }
 
 function pickSampleModels(catalog: Catalog): Model[] {
-  const preferred = ['gpt-5.4', 'claude-sonnet-5', 'deepseek-deepseek-v3.2'];
+  const preferred = ['gpt-5.4', 'claude-sonnet-5', 'deepseek-deepseek-v4-flash'];
   const chosen = catalog.getAll(preferred);
   if (chosen.length === 3) return chosen;
   const seen = new Set<string>();

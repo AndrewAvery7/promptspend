@@ -13,7 +13,7 @@ describe('mobile comparison selection', () => {
     const available = [
       { id: 'other', pricing: { output: 3 } },
       { id: 'moonshot-kimi-k2.6', pricing: { output: 2 } },
-      { id: 'deepseek-deepseek-v3.2', pricing: { output: 1 } },
+      { id: 'deepseek-deepseek-v4-flash', pricing: { output: 1 } },
       { id: 'gpt-5.4', pricing: { output: 5 } },
       { id: 'claude-sonnet-5', pricing: { output: 4 } },
     ];
@@ -21,7 +21,7 @@ describe('mobile comparison selection', () => {
     expect(defaultComparisonSelection(available)).toEqual([
       'claude-sonnet-5',
       'gpt-5.4',
-      'deepseek-deepseek-v3.2',
+      'deepseek-deepseek-v4-flash',
       'moonshot-kimi-k2.6',
     ]);
   });

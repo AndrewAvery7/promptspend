@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-29T11:33:36.530Z",
+  "generatedAt": "2026-09-29T11:56:06.647Z",
   "providers": [
     {
       "id": "anthropic",
@@ -405,13 +405,15 @@
     {
       "id": "claude-opus-5-5",
       "providerId": "anthropic",
-      "displayName": "Claude Opus 5 5",
+      "displayName": "Claude Opus 5.5",
       "status": "current",
       "contextWindow": 1000000,
       "pricing": {
         "input": 4,
         "output": 20,
-        "cachedInput": 0.2
+        "cachedInput": 0.2,
+        "cacheWrite": 5,
+        "batchDiscount": 0.5
       },
       "tokenizer": {
         "kind": "approx",
@@ -424,10 +426,12 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-09-29"
+        "source": "vendor",
+        "lastVerified": "2026-09-29",
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 97
     },
     {
       "id": "claude-sonnet-4-5",
@@ -719,7 +723,7 @@
       "id": "deepseek-deepseek-v3",
       "providerId": "deepseek",
       "displayName": "DeepSeek V3",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 65536,
       "pricing": {
         "input": 0.27,
@@ -746,7 +750,7 @@
       "id": "deepseek-deepseek-v3.2",
       "providerId": "deepseek",
       "displayName": "DeepSeek V3.2",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 163840,
       "pricing": {
         "input": 0.28,

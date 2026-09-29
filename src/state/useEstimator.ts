@@ -87,7 +87,7 @@ export function defaultSelection(catalog: Catalog): string[] {
   // Filtered by `isSelectableId`, not mere presence: a preferred model the
   // vendor has since retired stays in the catalog as a record, and must not
   // become the first thing a new visitor is shown pricing.
-  const preferred = ['claude-sonnet-5', 'gpt-5.4', 'deepseek-deepseek-v3.2', 'moonshot-kimi-k2.6'];
+  const preferred = ['claude-sonnet-5', 'gpt-5.4', 'deepseek-deepseek-v4-flash', 'moonshot-kimi-k2.6'];
   const found = preferred.filter((id) => isSelectableId(catalog, id));
   if (found.length >= 2) return found.slice(0, MAX_MODELS);
 

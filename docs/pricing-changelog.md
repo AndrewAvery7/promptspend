@@ -1024,3 +1024,11 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `xai-grok-2` — provenance.reviewNote: no longer listed upstream — confirm retirement before removing → —
 - **Review** `xai-grok-2` — provenance.stale: true → —
 - **Review** `xai-grok-2` — provenance.statusBeforeStale: current → —
+- **Coverage** `claude-opus-5-5` — cacheWrite now tracked: — → 5
+- **Coverage** `claude-opus-5-5` — batchDiscount now tracked: — → 0.5
+- **Metadata** `claude-opus-5-5` — displayName: Claude Opus 5 5 → Claude Opus 5.5
+- **Metadata** `claude-opus-5-5` — capabilityIndex: — → 97
+- **Metadata** `deepseek-deepseek-v3` — status: current → deprecated
+- **Metadata** `deepseek-deepseek-v3.2` — status: current → deprecated
+- **Review** `claude-opus-5-5` — provenance.source: litellm → vendor
+- **Review** `claude-opus-5-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing

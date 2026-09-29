@@ -3,7 +3,7 @@ export const MAX_COMPARISON_MODELS = 4;
 const PREFERRED_COMPARISON_MODELS = [
   'claude-sonnet-5',
   'gpt-5.4',
-  'deepseek-deepseek-v3.2',
+  'deepseek-deepseek-v4-flash',
   'moonshot-kimi-k2.6',
 ] as const;
 
