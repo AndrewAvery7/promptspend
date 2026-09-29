@@ -1,0 +1,108 @@
+name: Android store build
+
+# A signed Google Play bundle (AAB), built on this GitHub runner with
+# `eas build --local` rather than on Expo's servers. It is signed with the same
+# EAS-managed upload key (eas-cli downloads it for the build), so Play accepts
+# it exactly like a cloud build, but it spends no Expo build credits: the
+# Free plan's 15 Android builds a month ran out on 2026-09-29. The repository
+# is public, so the runner time is free too.
+#
+# Started by hand only (Actions → Android store build → Run workflow), never
+# by a push or pull request, because the job holds EXPO_TOKEN and a fork's
+# pull request must never be able to reach it.
+#
+# The result is the workflow artifact `promptspend-android-aab`. Uploading it
+# to Play Console stays a separate, deliberate step; see
+# docs/MOBILE_RELEASE_RUNBOOK.md.
+#
+# Needs the repository secret EXPO_TOKEN (an Expo robot token for the
+# crestwood-holdings account).
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Commit, tag or branch to build (e.g. main, or a release commit SHA)
+        required: true
+        default: main
+      reason:
+        description: Why this build (kept in the run summary)
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-store-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install
+        run: npm ci
+
+      - name: Release contract
+        run: node scripts/check-release.mjs
+
+      - uses: expo/expo-github-action@eab7a230208c952974db8c3245cfd78402c7b385 # 9.0.0
+        with:
+          eas-version: latest
+          packager: npm
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # The React Native template's Gradle heap runs out of metaspace on a
+      # release build this size; the user-level file overrides it.
+      - name: Give Gradle room
+        run: |
+          mkdir -p ~/.gradle
+          printf '%s\n' \
+            'org.gradle.jvmargs=-Xmx8g -XX:MaxMetaspaceSize=2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8' \
+            'org.gradle.workers.max=4' 'org.gradle.parallel=true' > ~/.gradle/gradle.properties
+
+      - name: Build the AAB on this runner
+        env:
+          EAS_BUILD_NO_EXPO_GO_WARNING: 'true'
+        run: eas build --platform android --profile production --local --non-interactive --output "$RUNNER_TEMP/promptspend.aab"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: promptspend-android-aab
+          path: ${{ runner.temp }}/promptspend.aab
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Summary
+        env:
+          REASON: ${{ inputs.reason }}
+        run: |
+          version=$(node -p "require('./app.json').expo.version")
+          code=$(eas build:version:get --platform android --profile production --non-interactive 2>/dev/null | grep -o '[0-9]\+' | tail -1 || true)
+          {
+            echo "### Android store build"
+            echo "- version: $version, versionCode: ${code:-see Expo}"
+            echo "- commit: $(git rev-parse HEAD)"
+            echo "- size: $(du -h "$RUNNER_TEMP/promptspend.aab" | cut -f1), sha256: $(sha256sum "$RUNNER_TEMP/promptspend.aab" | cut -c1-16)"
+            echo "- reason: $REASON"
+            echo "- artifact: promptspend-android-aab (upload it in Play Console → Production)"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
