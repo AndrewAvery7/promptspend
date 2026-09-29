@@ -3,7 +3,7 @@
     "name": "PromptSpend",
     "slug": "promptspend-app",
     "description": "Estimate, compare, and understand LLM API costs with pricing provenance and freshness evidence.",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "promptspend",
