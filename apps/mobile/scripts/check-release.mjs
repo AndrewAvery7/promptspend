@@ -83,7 +83,7 @@ for (const file of [
 }
 
 if (APP.name !== 'PromptSpend') fail('app name must remain PromptSpend');
-if (APP.version !== '0.1.0') fail(`unexpected release version ${APP.version}`);
+if (APP.version !== '0.1.1') fail(`unexpected release version ${APP.version}`);
 if (APP.ios?.bundleIdentifier !== 'com.promptspend.app') fail('iOS bundle identifier drifted');
 if (APP.android?.package !== 'com.promptspend.app') fail('Android package name drifted');
 if (APP.ios?.supportsTablet !== true) fail('iPad support must remain enabled');

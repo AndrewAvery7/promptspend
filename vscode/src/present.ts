@@ -213,7 +213,7 @@ export function warningsFor(match: ModelMatch): string[] {
     );
   }
   if (model.status === 'deprecated') {
-    warnings.push('This model is deprecated. Check the provider for a migration path before relying on it.');
+    warnings.push('This model has been retired by its vendor. Check the provider for its replacement.');
   }
   return warnings;
 }

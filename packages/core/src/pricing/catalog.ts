@@ -52,8 +52,14 @@ export class Catalog {
   readonly generatedAt: Date;
   /** Every row, aliases and stale entries included — the table shows them all. */
   readonly models: Model[];
-  /** The distinct things you can actually buy: no routing aliases. */
+  /** The distinct things in the catalog: no routing aliases. Retired
+   *  (`deprecated`) rows are included — they are records, and counts, pages
+   *  and the full table still show them. */
   readonly primaryModels: Model[];
+  /** What a person can choose: primary rows the vendor still serves. Every
+   *  picker, default and suggestion draws from this list, never from
+   *  `primaryModels`, so a retired model cannot be added to an estimate. */
+  readonly selectableModels: Model[];
   readonly providers: Provider[];
   /** Health of the last sync run, when the manifest is available. */
   readonly health: SyncStatus | null;
@@ -70,7 +76,17 @@ export class Catalog {
         this.providerName(a).localeCompare(this.providerName(b)) || a.pricing.output - b.pricing.output,
     );
     this.primaryModels = this.models.filter((m) => m.aliasOf === undefined);
+    this.selectableModels = this.primaryModels.filter((m) => Catalog.isSelectable(m));
     this.byId = new Map(raw.models.map((m) => [m.id, m]));
+  }
+
+  /**
+   * Whether a model may be offered for selection: a primary row whose vendor
+   * still serves it. A `deprecated` row has been shut down by its vendor and is
+   * kept only as a record, so it can be looked at but never picked.
+   */
+  static isSelectable(model: Model): boolean {
+    return model.aliasOf === undefined && model.status !== 'deprecated';
   }
 
   get(id: string): Model | undefined {
@@ -210,13 +226,14 @@ export class Catalog {
     return code !== undefined && countries.includes(code);
   }
 
-  /** Models grouped by provider, in display order. Aliases are left out: one
-   *  purchasable model should appear in the picker once. */
+  /** Models grouped by provider, in display order, for the picker. Aliases are
+   *  left out (one purchasable model should appear once) and so are retired
+   *  models, which cannot be bought at all. */
   byProvider(filter = '', countries: readonly string[] = []): { provider: Provider; models: Model[] }[] {
     const needle = filter.trim().toLowerCase();
     const groups = new Map<string, Model[]>();
 
-    for (const model of this.primaryModels) {
+    for (const model of this.selectableModels) {
       if (!this.inCountries(model, countries)) continue;
       if (needle) {
         const haystack = `${model.displayName} ${this.providerName(model)} ${model.id}`.toLowerCase();
@@ -262,7 +279,7 @@ export class Catalog {
     cheapestRate: number;
     priciestRate: number;
   } | null {
-    const priced = this.primaryModels.filter(
+    const priced = this.selectableModels.filter(
       (m) => Catalog.blendedRate(m) > 0 && m.provenance.stale !== true,
     );
     if (priced.length < 2) return null;

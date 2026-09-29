@@ -168,7 +168,7 @@ export function EstimatorWorkspace({
   const catalog = catalogResult?.catalog ?? null;
   const pricingAsOf = useMemo(() => new Date(`${pricingDay}T12:00:00Z`), [pricingDay]);
   const selectedModel = useMemo(
-    () => (catalog ? chooseModel(catalog.primaryModels, selectedId) : null),
+    () => (catalog ? chooseModel(catalog.selectableModels, selectedId) : null),
     [catalog, selectedId],
   );
 

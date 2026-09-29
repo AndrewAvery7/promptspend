@@ -172,7 +172,10 @@ function completePricing(pricing: Override['pricing']): Model['pricing'] | undef
     : undefined;
 }
 
-/** Rows the daily check can act on: hand-verified, with a page and a figure to compare. */
+/** Rows the daily check can act on: hand-verified, with a page and a figure to
+ *  compare, and still sold. A retired (`deprecated`) row cannot change price
+ *  again, and its vendor has usually dropped it from the page, so reading for
+ *  it would only ever report it missing. */
 export function checkableRows(
   overrides: Override[],
   published: Map<string, Model['pricing']>,
@@ -181,6 +184,7 @@ export function checkableRows(
   const rows: Checkable[] = [];
   for (const override of overrides) {
     if (override.vendorVerified !== true || typeof override.verifiedUrl !== 'string') continue;
+    if (override.status === 'deprecated') continue;
     const pricing = completePricing(override.pricing) ?? published.get(override.id);
     if (!pricing) continue;
     const providerId = override.providerId ?? providers.get(override.id);

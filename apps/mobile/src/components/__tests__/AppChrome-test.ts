@@ -28,6 +28,7 @@ const models = [
 const catalog = {
   models,
   primaryModels: models,
+  selectableModels: models,
   providers: [{ id: 'test', name: 'Test Provider' }],
   rateSpread: () => ({ cheapest: models[0], multiple: 100, priciest: models[1] }),
 } as unknown as Catalog;
@@ -48,6 +49,7 @@ describe('mobile pricing ticker', () => {
     const freeCatalog = {
       models: [freeModel],
       primaryModels: [freeModel],
+      selectableModels: [freeModel],
       providers: [{ id: 'test', name: 'Test Provider' }],
       rateSpread: () => null,
     } as unknown as Catalog;

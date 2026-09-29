@@ -1,7 +1,7 @@
 {
   "name": "@promptspend/mobile",
   "main": "expo-router/entry",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Native iOS and Android applications for PromptSpend.",
   "license": "MIT",
   "dependencies": {

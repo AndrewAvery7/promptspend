@@ -151,6 +151,31 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       );
     }
 
+    // Retired by its vendor. The row is a record now, not a price anyone can
+    // pay, so it is carried forward exactly as last published: no feed value,
+    // no cross-check, no review flag. Every one of those checks asks a question
+    // that can never be answered for a model that is no longer sold, which is
+    // why they used to re-raise the same flags every morning. Retirement is
+    // written down in the override (`status: "deprecated"` plus a `$note`
+    // quoting the vendor), so it is a deliberate, reviewable edit, and the row
+    // keeps its page and its history instead of being deleted.
+    if (override?.status === 'deprecated') {
+      if (!before) continue;
+      const provenance = { ...before.provenance };
+      delete provenance.needsReview;
+      delete provenance.reviewNote;
+      delete provenance.reviewCodes;
+      delete provenance.stale;
+      delete provenance.statusBeforeStale;
+      models.push({
+        ...before,
+        ...(override.displayName ? { displayName: override.displayName } : {}),
+        status: 'deprecated',
+        provenance,
+      });
+      continue;
+    }
+
     // Missing upstream and not hand-curated: keep yesterday's row, mark it.
     if (!feed && !override?.pricing) {
       if (!before) continue;

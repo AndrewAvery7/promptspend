@@ -242,6 +242,51 @@ describe('Catalog', () => {
     expect(filtered[0]!.models[0]!.id).toBe('deepseek-v3.2');
   });
 
+  describe('retired models', () => {
+    // A retired row is a record: it is kept, counted and shown in the full
+    // table, but no picker, default or headline may offer it.
+    const retired = new Catalog({
+      ...CATALOG,
+      models: [
+        ...CATALOG.models,
+        { ...CATALOG.models[1]!, id: 'deepseek-r1', displayName: 'DeepSeek R1', status: 'deprecated' },
+        { ...CATALOG.models[1]!, id: 'deepseek-v3', displayName: 'DeepSeek V3', status: 'legacy' },
+        {
+          ...CATALOG.models[1]!,
+          id: 'deepseek-chat',
+          displayName: 'deepseek-chat',
+          aliasOf: 'deepseek-v3.2',
+        },
+      ],
+    });
+
+    it('keeps retired rows as records but leaves them out of the selectable list', () => {
+      expect(retired.get('deepseek-r1')?.status).toBe('deprecated');
+      expect(retired.primaryModels.map((m) => m.id)).toContain('deepseek-r1');
+      expect(retired.selectableModels.map((m) => m.id)).not.toContain('deepseek-r1');
+      // Legacy is still sold, so it stays selectable; an alias never is.
+      expect(retired.selectableModels.map((m) => m.id)).toContain('deepseek-v3');
+      expect(Catalog.isSelectable(retired.get('deepseek-chat')!)).toBe(false);
+    });
+
+    it('never offers a retired model in the picker, even when searched for by name', () => {
+      const ids = retired.byProvider().flatMap((group) => group.models.map((m) => m.id));
+      expect(ids).not.toContain('deepseek-r1');
+      expect(retired.byProvider('r1')).toEqual([]);
+    });
+
+    it('does not name a retired model as either end of the price spread', () => {
+      const cheapest = new Catalog({
+        ...CATALOG,
+        models: [
+          ...CATALOG.models,
+          { ...CATALOG.models[1]!, id: 'old', status: 'deprecated', pricing: { input: 0.01, output: 0.01 } },
+        ],
+      });
+      expect(cheapest.rateSpread()?.cheapest.id).toBe('deepseek-v3.2');
+    });
+  });
+
   it('matches on provider name as well as model name', () => {
     expect(catalog.byProvider('anthropic')[0]!.models[0]!.id).toBe('claude-sonnet-5');
   });

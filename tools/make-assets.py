@@ -226,8 +226,8 @@ def make_social_card(path):
     mono = find_font("mono", 27 * SCALE)
     label = find_font("medium", 15 * SCALE)
     chips = [
-        ("BUDGET", "$723/mo", theme["save"]),
-        ("MID", "$2,417/mo", theme["muted"]),
+        ("BUDGET", "$1,087/mo", theme["save"]),
+        ("MID", "$3,522/mo", theme["muted"]),
         ("FRONTIER", "$11,081/mo", theme["cost"]),
     ]
     chip_w, chip_h = 196 * SCALE, 96 * SCALE

@@ -273,7 +273,7 @@ function formatCompactMoney(dollars: number): string {
 /**
  * Which models are worth a side-by-side page.
  *
- * The combinatorial answer is 77 × 76 ÷ 2 = 2,926 pages, nearly all of which
+ * The combinatorial answer is 81 × 80 ÷ 2 = 3,240 pages, nearly all of which
  * compare things nobody would choose between — a $0.14 flash model against a
  * $75 frontier model is not a decision, it is a category difference. Mass pages
  * like that are the textbook definition of thin content and they cost more
@@ -513,8 +513,11 @@ export function buildPages(raw: PricingCatalog, options: BuildOptions): PageSet 
           blended: blendedRate(model),
         }));
 
-      const cheapest = owned[0]?.model;
-      const cheapestRate = owned[0]?.effective.input;
+      // Retired rows stay in the provider's table as records, but "from X at
+      // $Y" is an offer to the reader, so it names only a model still sold.
+      const cheapestEntry = owned.find((entry) => Catalog.isSelectable(entry.model));
+      const cheapest = cheapestEntry?.model;
+      const cheapestRate = cheapestEntry?.effective.input;
       return {
         kind: 'provider' as const,
         id: provider.id,
