@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "promptspend-updates",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+
+  // Off on purpose, and part of the privacy promise rather than a cost choice.
+  // Every update check from a phone carries a random per-install identifier
+  // that the expo-updates library adds on its own. Nothing here reads it, and
+  // with logs and traces off Cloudflare does not keep a request log that would
+  // hold it either. Turning this on would make the privacy policy untrue.
+  "observability": { "enabled": false, "logs": { "enabled": false } },
+  "logpush": false,
+
+  "routes": [{ "pattern": "updates.promptspend.dev", "custom_domain": true }],
+
+  "r2_buckets": [{ "binding": "UPDATES", "bucket_name": "promptspend-updates" }],
+}

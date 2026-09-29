@@ -15,9 +15,9 @@ to publish past it.
 
 ## What the suite covers
 
-**1240 tests in all**: 512 unit and integration tests in this package, 228 in
-`apps/mobile/`, 102 in `worker/`, 49 in `api/`, 48 in `mcp/`, 137 in `vscode/`,
-and 164 browser tests across four viewports. Those seven figures are the whole suite and they sum to the
+**1249 tests in all**: 512 unit and integration tests in this package, 228 in
+`apps/mobile/`, 102 in `worker/`, 49 in `api/`, 48 in `mcp/`, 9 in `updates/`, 137 in `vscode/`,
+and 164 browser tests across four viewports. Those eight figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
 of its own list nor inclusive of `mcp/` at all; the next claimed 580, which was
 correct when written and went stale the moment the VS Code extension landed with
@@ -85,7 +85,7 @@ anyone adding them up.
 
 | `src/lib/seo/css.test.ts` | 3 | That the generated-page stylesheet defines every class the renderers emit, styles both colour schemes, and lets wide tables scroll inside their own container. |
 
-Five more packages, each with its own runtime, lockfile and CI job, plus the
+Six more packages, each with its own runtime, lockfile and CI job, plus the
 browser run:
 
 | Package        | Tests | Guards                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -94,6 +94,7 @@ browser run:
 | `apps/mobile/` | 228   | The native launch product: all five tab outcomes plus PromptSpend Receipt, private prompt conversion, pricing-cache resilience, state recovery, sharing privacy, accessible country filtering, promotional-rate display, alert requests, source-anchored guided-tour focus, searchable Help & FAQs, startup routing, and the Turnstile message boundary.                                                        |
 | `api/`         | 49    | The public pricing API: filters, ETags, CORS, CSV quoting, that a catalog failing validation is refused rather than passed through, and that an origin answering with HTML is reported as such rather than as a JSON syntax error.                                                                                                                                                                              |
 | `mcp/`         | 48    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, that `get_price` quotes the rate actually in force and cannot drift from what `estimate_cost` bills, that the server reports the version it was published as, and that the real fetch path names what arrived when the catalog is not JSON.                                                         |
+| `updates/`     | 9     | The self-hosted over-the-air update server inside workerd against a local R2: protocol headers, multipart framing, a manifest served byte-for-byte with a signature that verifies, rollback directives, per-platform and per-version isolation, and immutable content-addressed assets.                                                                                                                         |
 | `vscode/`      | 137   | The editor extension: which lines in which languages name a model, hover, status-bar and inline rendering, that every surface quotes the rate in force rather than the standard one during a promotional window, the catalog fetch when the server is unreachable or answers malformed, selection estimates that name an impossible request rather than pricing it, and diagnostics that stay quiet by default. |
 | Browser        | 164   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA, plus the Receipt copy, outage, machine-contract, share-import, and local PNG-export flows. See below.                                                                                                                                                                |
 

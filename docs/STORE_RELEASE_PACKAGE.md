@@ -118,6 +118,18 @@ shipped third-party library's behavior, and repeat the privacy sentinel tests
 against the exact release candidate. Apple requires one app-level answer that
 includes third-party partner behavior across supported platforms.
 
+**Over-the-air update check (from the first release built with expo-updates).**
+Each launch sends a request to `https://updates.promptspend.dev/manifest`,
+PromptSpend's own Cloudflare Worker. It carries the platform, app/runtime
+version and, added by expo-updates itself, a random per-install ID
+(`EAS-Client-ID`) plus the message of any failed update launch. The Worker
+never reads those headers and has logging and Logpush disabled, so nothing is
+retained beyond serving the request. Apple defines "collect" as transmitting
+data in a way that allows access _for longer than necessary to service the
+request in real time_, so this draft adds **no** Apple data type for it. If the
+Worker is ever changed to log requests, that stops being true: declare
+Identifiers → Device ID (App Functionality, not linked, not tracking) first.
+
 Privacy Policy URL: `https://promptspend.com/privacy/`
 
 User Privacy Choices URL: `https://promptspend.com/support/`. The support and
@@ -139,6 +151,13 @@ Provisional answers:
   unsubscribe action deletes the optional alert address and preferences, and
   the privacy/support URL documents that deletion path.
 - Privacy policy: `https://promptspend.com/privacy/`.
+- Over-the-air update check (from the first release built with expo-updates):
+  **declare Device or other IDs → collected, processed ephemerally, not
+  shared, required (not optional), purpose App functionality.** Google counts
+  any transmission off the device as collection, and expo-updates sends a
+  random per-install ID with every update check even though PromptSpend's
+  server does not keep it. "Processed ephemerally" is the accurate
+  qualifier. See `docs/MOBILE_OTA_UPDATES.md`.
 
 Google defines collection broadly as transmitting user data off-device,
 including third-party SDK behavior. On-device prompt processing remains outside

@@ -85,7 +85,7 @@ jobs:
             workspace=$(dirname "$config")
             (cd "$workspace" && npm ci --ignore-scripts)
             case "$workspace" in
-              api|worker) (cd "$workspace" && npm rebuild esbuild workerd) ;;
+              api|updates|worker) (cd "$workspace" && npm rebuild esbuild workerd) ;;
               mcp|vscode) (cd "$workspace" && npm rebuild esbuild) ;;
             esac
           done
@@ -254,6 +254,30 @@ jobs:
           npm rebuild esbuild workerd
 
       - name: Verify the pricing API
+        run: npm run verify
+
+  # The app's self-hosted over-the-air update server. Its own job for the
+  # same reasons as the API: its own runtime and lockfile, tests inside workerd.
+  updates:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: updates
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: updates/package-lock.json
+
+      - name: Install reviewed dependencies only
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild workerd
+
+      - name: Verify the update server
         run: npm run verify
 
   # The MCP server. Its own job for the same reasons as the API, plus one of

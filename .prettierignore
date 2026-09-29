@@ -13,7 +13,10 @@ worker/dist
 worker/worker-configuration.d.ts
 api/node_modules
 api/dist
+updates/node_modules
+updates/dist
 api/worker-configuration.d.ts
+updates/worker-configuration.d.ts
 mcp/node_modules
 mcp/dist
 vscode/node_modules
