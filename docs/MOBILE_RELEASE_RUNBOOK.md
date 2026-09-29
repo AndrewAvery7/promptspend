@@ -132,6 +132,15 @@ Record EAS build ID, version, build number/versionCode, commit SHA, artifact URL
 credentials used, start/finish time, and checksum where available. A successful
 cloud build is not QA approval.
 
+### Over-the-air updates
+
+From the first release built with expo-updates, JavaScript-only fixes ship
+without a store release; see `MOBILE_OTA_UPDATES.md`. A store release is still
+required for native changes, and every store release must bump `version`,
+because the app's runtime version is its version. The first OTA-capable
+release must also carry the Google Play Data Safety addition in
+`STORE_RELEASE_PACKAGE.md`.
+
 ## 5. Beta distribution
 
 This section requires separate explicit owner approval for the exact Apple or

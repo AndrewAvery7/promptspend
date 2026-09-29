@@ -17,6 +17,10 @@ expo-env.d.ts
 *.p8
 *.p12
 *.key
+# Over-the-air update signing: only certs/certificate.pem belongs in the repo.
+# The private key lives outside it (see docs/MOBILE_OTA_UPDATES.md).
+private-key.pem
+public-key.pem
 *.mobileprovision
 
 # Metro
@@ -30,6 +34,9 @@ yarn-error.*
 # macOS
 .DS_Store
 *.pem
+# The one PEM that must ship: the public certificate the app checks update
+# signatures against. It holds no secret.
+!certs/certificate.pem
 
 # local env files
 .env*.local

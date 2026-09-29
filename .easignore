@@ -42,6 +42,9 @@ apps/mobile/expo-env.d.ts
 *.p8
 *.p12
 *.pem
+# ...except the public certificate the app verifies over-the-air updates
+# with. The build must embed it; it holds no secret.
+!apps/mobile/certs/certificate.pem
 *.key
 *.mobileprovision
 credentials.json

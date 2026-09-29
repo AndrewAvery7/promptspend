@@ -1,16 +1,16 @@
 ---
 slug: privacy
 title: Privacy Policy | PromptSpend
-description: How PromptSpend handles pasted text, local app data, public pricing requests, sharing, alerts, and support communications.
+description: How PromptSpend handles pasted text, local app data, public pricing requests, app updates, sharing, alerts, and support communications.
 heading: Privacy Policy
-updated: 2026-09-23
+updated: 2026-09-29
 ---
 
 PromptSpend is designed to estimate AI costs without turning your prompts into our data. This policy covers the PromptSpend native apps, website, pricing API, and optional alert and support services.
 
 ## The short version
 
-The native app has no account system, advertising SDK, behavioral analytics, cross-app tracking, or tracking identifier. Text pasted into the estimator is processed on your device. PromptSpend does not transmit or save that pasted text. You choose whether to share a result, and shared results contain derived counts and costs rather than the pasted text. If you opt into email alerts, the app sends the email address and alert choices you enter to the PromptSpend alert service solely to provide and secure that feature.
+The native app has no account system, advertising SDK, behavioral analytics, cross-app tracking, or tracking identifier. The random installation code its update check carries, described under App updates, is never stored or used to identify you. Text pasted into the estimator is processed on your device. PromptSpend does not transmit or save that pasted text. You choose whether to share a result, and shared results contain derived counts and costs rather than the pasted text. If you opt into email alerts, the app sends the email address and alert choices you enter to the PromptSpend alert service solely to provide and secure that feature.
 
 ## Information that stays on your device
 
@@ -21,6 +21,10 @@ On the website, prompt text is processed in the browser. PromptSpend does not pl
 ## Network requests
 
 The native app uses encrypted HTTPS requests to download PromptSpend's public pricing catalog and source-check status. These requests do not include your pasted text, saved scenarios, contacts, advertising identifier, or precise location. Like other internet services, hosting and network providers may process ordinary connection information, such as an IP address, request time, and user agent, to deliver and secure the service. PromptSpend does not use that information to build advertising profiles or track activity across apps or websites.
+
+## App updates
+
+App versions that support it check PromptSpend's own update server, updates.promptspend.dev, each time they open, so a fix to the app's own code can arrive without waiting for a new store release. The request says which platform (iPhone or Android) and which app version you have. The update software the app is built with, Expo's open-source expo-updates library, also adds a random installation code it generates on your device and, if an earlier update failed to start, that error message. The update server does not read, log, or store the installation code or error messages; its request logging is switched off, and no third party receives these requests. Cloudflare hosts the server in the same way it hosts the rest of PromptSpend. Every update is digitally signed, and the app refuses to run an update that PromptSpend did not sign.
 
 ## Sharing and external links
 
