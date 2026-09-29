@@ -44,7 +44,7 @@ import {
 } from '@/lib/turnstileVerification';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
-import type { Catalog, Model } from '@promptspend/core';
+import { Catalog, type Model } from '@promptspend/core';
 
 type Mode = 'subscribe' | 'manage';
 type VerificationPurpose = 'manage' | 'subscribe';
@@ -781,10 +781,13 @@ function ModelAlertPicker({
     () =>
       catalog.primaryModels.filter(
         (model) =>
+          // Retired models cannot be followed; one already followed stays
+          // listed so it can be unfollowed.
+          (Catalog.isSelectable(model) || selectedIds.includes(model.id)) &&
           catalog.inCountries(model, countries) &&
           modelSearchText(catalog, model).includes(query.trim().toLowerCase()),
       ),
-    [catalog, countries, query],
+    [catalog, countries, query, selectedIds],
   );
   const toggle = (id: string) =>
     onChange(

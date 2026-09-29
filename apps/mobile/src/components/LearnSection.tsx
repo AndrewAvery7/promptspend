@@ -180,7 +180,7 @@ function pickSampleModels(catalog: Catalog): Model[] {
   const chosen = catalog.getAll(preferred);
   if (chosen.length === 3) return chosen;
   const seen = new Set<string>();
-  return catalog.primaryModels.filter((model) => {
+  return catalog.selectableModels.filter((model) => {
     const family = model.tokenizer.kind === 'tiktoken' ? model.tokenizer.encoding : model.providerId;
     if (seen.has(family) || seen.size >= 3) return false;
     seen.add(family);

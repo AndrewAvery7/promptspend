@@ -25,7 +25,7 @@
  * exactly the things this project documents everyone getting wrong.
  */
 import { compareModels, effectivePricing, type Workload, type Scale } from '@/lib/engine/cost';
-import type { Catalog } from '@/lib/pricing/catalog';
+import { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { provenanceOf } from './provenance';
 
@@ -120,8 +120,7 @@ export function resolveModel(catalog: Catalog, query: string): Model | undefined
 }
 
 function notFound(catalog: Catalog, query: string) {
-  const suggestions = catalog.models
-    .filter((m) => !m.aliasOf)
+  const suggestions = catalog.selectableModels
     .map((m) => m.id)
     .filter((id) => id.split('-')[0] === query.trim().toLowerCase().split(/[-\s]/)[0])
     .slice(0, 8);
@@ -165,13 +164,25 @@ export function estimateCost(catalog: Catalog, generatedAt: string, input: Estim
   if (invalid) return { error: invalid };
   const resolved: Model[] = [];
   const unknown: string[] = [];
+  // A model its vendor has retired is still in the catalog as a record, and
+  // `get_price` will say what it cost. It is not costed here: an estimate is a
+  // plan to spend money, and nobody can spend it on a model that is gone.
+  const retired: string[] = [];
   for (const name of input.models) {
     const m = resolveModel(catalog, name);
-    if (m) resolved.push(m);
-    else unknown.push(name);
+    if (!m) unknown.push(name);
+    else if (m.aliasOf === undefined && !Catalog.isSelectable(m)) retired.push(m.id);
+    else resolved.push(m);
   }
   if (resolved.length === 0) {
-    return { error: 'None of the requested models are in the catalog.', unknown_models: unknown };
+    return {
+      error:
+        retired.length > 0 && unknown.length === 0
+          ? 'Every requested model has been retired by its vendor and can no longer be used.'
+          : 'None of the requested models are in the catalog.',
+      unknown_models: unknown.length > 0 ? unknown : undefined,
+      retired_models: retired.length > 0 ? retired : undefined,
+    };
   }
 
   const workload: Workload = {
@@ -217,6 +228,7 @@ export function estimateCost(catalog: Catalog, generatedAt: string, input: Estim
       provenance: provenanceOf(r.model),
     })),
     unknown_models: unknown.length > 0 ? unknown : undefined,
+    retired_models: retired.length > 0 ? retired : undefined,
     catalog_generated_at: generatedAt,
     assumptions:
       'Standard-tier list prices. Cache writes are billed where the provider publishes a rate. ' +

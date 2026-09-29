@@ -27,7 +27,7 @@ function buildItems(catalog: Catalog, asOf: Date): { key: string; node: React.Re
   const items: { key: string; node: React.ReactNode }[] = [];
   const spread = catalog.rateSpread();
 
-  const cheapestInput = [...catalog.primaryModels]
+  const cheapestInput = [...catalog.selectableModels]
     .filter((m) => m.pricing.input > 0)
     .sort((a, b) => a.pricing.input - b.pricing.input)[0];
 
@@ -59,7 +59,7 @@ function buildItems(catalog: Catalog, asOf: Date): { key: string; node: React.Re
     });
   }
 
-  const newest = [...catalog.primaryModels]
+  const newest = [...catalog.selectableModels]
     .filter((m) => m.releaseDate)
     .sort((a, b) => (b.releaseDate ?? '').localeCompare(a.releaseDate ?? ''))
     .slice(0, 2);

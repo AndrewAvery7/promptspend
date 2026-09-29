@@ -4,7 +4,7 @@ const PREFERRED_COMPARISON_MODELS = [
   'claude-sonnet-5',
   'gpt-5.4',
   'deepseek-deepseek-v3.2',
-  'moonshot-kimi-k2.5',
+  'moonshot-kimi-k2.6',
 ] as const;
 
 export interface ComparisonSelectionResult {

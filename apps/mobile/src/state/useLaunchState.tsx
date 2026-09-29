@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { AppState } from 'react-native';
 
-import { SUGGESTED_CACHE_SHARE, type Catalog, type Scenario as SharedScenario } from '@promptspend/core';
+import { Catalog, SUGGESTED_CACHE_SHARE, type Scenario as SharedScenario } from '@promptspend/core';
 
 import {
   loadMobileCatalog,
@@ -510,7 +510,7 @@ export function LaunchStateProvider({ children }: PropsWithChildren) {
     setSelectedId(DEFAULT_MODEL_ID);
     setComparisonIds((current) => {
       const catalog = catalogResult?.catalog;
-      return catalog ? defaultComparisonSelection(catalog.primaryModels) : current;
+      return catalog ? defaultComparisonSelection(catalog.selectableModels) : current;
     });
     setWorkload(DEFAULT_WORKLOAD);
     setPromptInputs(createDefaultPromptInputs());
@@ -740,16 +740,25 @@ export function useLaunchState(): LaunchStateValue {
   return value;
 }
 
+/** Whether `id` names a model a person may pick: in the catalog and still sold. */
+function isSelectableId(catalog: Catalog, id: string): boolean {
+  const model = catalog.get(id);
+  return model !== undefined && Catalog.isSelectable(model);
+}
+
+// A saved selection can name a model its vendor has retired since it was
+// saved. It is dropped like an unknown id: the row is still in the catalog as a
+// record, but it is not something anyone can buy.
 export function reconcileComparisonSelection(catalog: Catalog, selectedIds: readonly string[]): string[] {
-  const valid = [...new Set(selectedIds)].filter((id) => catalog.get(id) !== undefined).slice(0, 4);
+  const valid = [...new Set(selectedIds)].filter((id) => isSelectableId(catalog, id)).slice(0, 4);
   if (valid.length > 0) return valid;
-  return defaultComparisonSelection(catalog.primaryModels);
+  return defaultComparisonSelection(catalog.selectableModels);
 }
 
 export function resolveSelectedModelId(catalog: Catalog, selectedId: string): string {
-  if (catalog.get(selectedId)) return selectedId;
-  if (catalog.get(DEFAULT_MODEL_ID)) return DEFAULT_MODEL_ID;
-  return catalog.primaryModels[0]?.id ?? '';
+  if (isSelectableId(catalog, selectedId)) return selectedId;
+  if (isSelectableId(catalog, DEFAULT_MODEL_ID)) return DEFAULT_MODEL_ID;
+  return catalog.selectableModels[0]?.id ?? '';
 }
 
 export function isCatalogResultUsable(result: MobileCatalogResult, now = new Date()): boolean {

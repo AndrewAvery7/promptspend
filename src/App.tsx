@@ -225,7 +225,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
       });
     }
 
-    for (const model of catalog.primaryModels) {
+    for (const model of catalog.selectableModels) {
       const selected = estimator.scenario.modelIds.includes(model.id);
       list.push({
         id: `model-${model.id}`,

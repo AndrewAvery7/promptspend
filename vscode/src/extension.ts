@@ -366,7 +366,7 @@ async function estimateSelectionCommand(service: PricingService): Promise<void> 
 
   const models = await chooseModels(
     matches.map((m) => m.model),
-    state.catalog.primaryModels,
+    state.catalog.selectableModels,
   );
   if (models.length === 0) return;
 

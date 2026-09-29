@@ -36,7 +36,7 @@ export function ModelPicker({
   const selectedRates = modelRateDisplay(selected, asOf);
   const models = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return catalog.primaryModels.filter((model) => {
+    return catalog.selectableModels.filter((model) => {
       if (!catalog.inCountries(model, countries)) return false;
       if (!needle) return true;
       return `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase().includes(needle);

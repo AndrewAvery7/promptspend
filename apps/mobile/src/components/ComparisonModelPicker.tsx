@@ -4,7 +4,7 @@ import { Alert, FlatList, Modal, Pressable, StyleSheet, TextInput, View } from '
 import { AppText as Text } from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import type { Catalog, Model } from '@promptspend/core';
+import { Catalog, type Model } from '@promptspend/core';
 
 import { CountryFilter, countryName, emptyReason } from '@/components/CountryFilter';
 import { MAX_COMPARISON_MODELS } from '@/lib/comparison';
@@ -42,12 +42,15 @@ export function ComparisonModelPicker({
   );
   const models = useMemo(() => {
     const needle = query.trim().toLowerCase();
+    // Retired models cannot be added; one already selected stays listed so it
+    // can be removed.
     return catalog.primaryModels.filter((model) => {
+      if (!Catalog.isSelectable(model) && !selectedIds.includes(model.id)) return false;
       if (!catalog.inCountries(model, countries)) return false;
       if (!needle) return true;
       return `${model.displayName} ${catalog.providerName(model)} ${model.id}`.toLowerCase().includes(needle);
     });
-  }, [catalog, countries, query]);
+  }, [catalog, countries, query, selectedIds]);
   const allSelectedWatched = selectedIds.length > 0 && selectedIds.every((id) => favoriteIds.includes(id));
 
   const toggle = (id: string) => {

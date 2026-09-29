@@ -92,6 +92,12 @@ function jsonForScript(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }
 
+/** The pill beside a non-current row. `deprecated` is the catalog's word for a
+ *  model its vendor has shut down; "retired" is what a reader needs to hear. */
+function statusPill(model: Model): string {
+  return model.status === 'deprecated' ? 'retired' : model.status;
+}
+
 function href(ctx: RenderContext, path: string): string {
   return `${ctx.basePath}${path.replace(/^\//, '')}`;
 }
@@ -384,7 +390,10 @@ ${page.alternatives
       'Provider',
       `<a href="${escapeHtml(href(ctx, page.providerPath))}">${escapeHtml(page.providerName)}</a>`,
     ],
-    ['Status', model.status === 'current' ? 'Current' : model.status === 'legacy' ? 'Legacy' : 'Deprecated'],
+    [
+      'Status',
+      model.status === 'current' ? 'Current' : model.status === 'legacy' ? 'Legacy' : 'Retired by its vendor',
+    ],
     ...(model.releaseDate ? ([['Released', escapeHtml(model.releaseDate)]] as [string, string][]) : []),
     ['Reasoning model', model.capabilities.reasoning ? 'Yes' : 'No'],
     ['Vision', model.capabilities.vision ? 'Yes' : 'No'],
@@ -581,7 +590,7 @@ export function renderProviderPage(page: ProviderPage, ctx: RenderContext): stri
               <td><a href="${escapeHtml(href(ctx, entry.path))}">${escapeHtml(entry.model.displayName)}</a>${
                 entry.model.status === 'current'
                   ? ''
-                  : ` <span class="pill">${escapeHtml(entry.model.status)}</span>`
+                  : ` <span class="pill">${escapeHtml(statusPill(entry.model))}</span>`
               }</td>
               <td class="num">${rateCell(entry.model, entry.effective, 'input')}</td>
               <td class="num">${rateCell(entry.model, entry.effective, 'output')}</td>
@@ -772,7 +781,7 @@ export function renderModelsIndex(set: PageSet, ctx: RenderContext): string {
               <td><a href="${escapeHtml(href(ctx, entry.path))}">${escapeHtml(entry.model.displayName)}</a>${
                 entry.model.status === 'current'
                   ? ''
-                  : ` <span class="pill">${escapeHtml(entry.model.status)}</span>`
+                  : ` <span class="pill">${escapeHtml(statusPill(entry.model))}</span>`
               }</td>
               <td><a href="${escapeHtml(href(ctx, entry.providerPath))}">${escapeHtml(entry.providerName)}</a></td>
               <td class="num">${rateCell(entry.model, entry.effective, 'input')}</td>

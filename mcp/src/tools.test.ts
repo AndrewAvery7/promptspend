@@ -219,6 +219,22 @@ describe('estimate_cost — the thing a price lookup cannot answer', () => {
     expect(r.unknown_models).toEqual(['not-a-real-model-xyz']);
   });
 
+  it('names a retired model rather than costing it', () => {
+    const withRetired = new Catalog({
+      ...RAW,
+      models: [...RAW.models, { ...RAW.models[2]!, id: 'deepseek-test-old', status: 'deprecated' }],
+    });
+    const r = estimateCost(withRetired, AT, { models: ['gpt-test-pro', 'deepseek-test-old'] }) as {
+      results: { model: string }[];
+      retired_models?: string[];
+    };
+    expect(r.results.map((row) => row.model)).toEqual(['gpt-test-pro']);
+    expect(r.retired_models).toEqual(['deepseek-test-old']);
+
+    const only = estimateCost(withRetired, AT, { models: ['deepseek-test-old'] }) as { error?: string };
+    expect(only.error).toMatch(/retired/);
+  });
+
   it('errors rather than guessing when nothing resolves', () => {
     const r = estimateCost(catalog, AT, { models: ['nonsense'] }) as { error?: string };
     expect(r.error).toBeDefined();

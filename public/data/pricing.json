@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-29T11:06:17.935Z",
+  "generatedAt": "2026-09-29T11:33:36.530Z",
   "providers": [
     {
       "id": "anthropic",
@@ -228,7 +228,7 @@
       "id": "claude-opus-4-1",
       "providerId": "anthropic",
       "displayName": "Claude Opus 4.1",
-      "status": "legacy",
+      "status": "deprecated",
       "contextWindow": 200000,
       "pricing": {
         "input": 15,
@@ -248,14 +248,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-09-22",
-        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
-        "statusBeforeStale": "legacy",
-        "stale": true,
-        "needsReview": true,
-        "reviewNote": "no longer listed upstream — confirm retirement before removing",
-        "reviewCodes": [
-          "upstream-missing"
-        ]
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 32000,
       "capabilityIndex": 80
@@ -529,13 +522,15 @@
     {
       "id": "claude-sonnet-5-5",
       "providerId": "anthropic",
-      "displayName": "Claude Sonnet 5 5",
+      "displayName": "Claude Sonnet 5.5",
       "status": "current",
       "contextWindow": 1000000,
       "pricing": {
         "input": 2,
         "output": 10,
-        "cachedInput": 0.2
+        "cachedInput": 0.2,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5
       },
       "tokenizer": {
         "kind": "approx",
@@ -548,15 +543,12 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-09-29",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 91
     },
     {
       "id": "command-a-03-2025",
@@ -699,7 +691,7 @@
       "id": "deepseek-deepseek-r1",
       "providerId": "deepseek",
       "displayName": "DeepSeek R1",
-      "status": "legacy",
+      "status": "deprecated",
       "contextWindow": 65536,
       "pricing": {
         "input": 0.55,
@@ -718,12 +710,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-29",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "lastVerified": "2026-09-29"
       },
       "maxOutput": 8192,
       "capabilityIndex": 70
@@ -941,7 +928,7 @@
       "id": "gemini-gemini-3-pro-preview",
       "providerId": "google",
       "displayName": "Gemini 3 Pro Preview",
-      "status": "legacy",
+      "status": "deprecated",
       "contextWindow": 1048576,
       "pricing": {
         "input": 2,
@@ -960,14 +947,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-22",
-        "statusBeforeStale": "current",
-        "stale": true,
-        "needsReview": true,
-        "reviewNote": "no longer listed upstream — confirm retirement before removing",
-        "reviewCodes": [
-          "upstream-missing"
-        ]
+        "lastVerified": "2026-09-22"
       },
       "maxOutput": 65535
     },
@@ -1761,7 +1741,7 @@
       "id": "mistral-mistral-medium-3",
       "providerId": "mistral",
       "displayName": "Mistral Medium 3",
-      "status": "legacy",
+      "status": "deprecated",
       "contextWindow": 262144,
       "pricing": {
         "input": 1.5,
@@ -1780,12 +1760,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-29",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "lastVerified": "2026-09-29"
       },
       "maxOutput": 262144
     },
@@ -1821,7 +1796,7 @@
       "id": "moonshot-kimi-k2-thinking",
       "providerId": "moonshot",
       "displayName": "Kimi K2 Thinking",
-      "status": "legacy",
+      "status": "deprecated",
       "contextWindow": 262144,
       "pricing": {
         "input": 0.6,
@@ -1840,14 +1815,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-22",
-        "statusBeforeStale": "current",
-        "stale": true,
-        "needsReview": true,
-        "reviewNote": "no longer listed upstream — confirm retirement before removing",
-        "reviewCodes": [
-          "upstream-missing"
-        ]
+        "lastVerified": "2026-09-22"
       },
       "maxOutput": 262144
     },
@@ -1855,7 +1823,7 @@
       "id": "moonshot-kimi-k2.5",
       "providerId": "moonshot",
       "displayName": "Kimi K2.5",
-      "status": "legacy",
+      "status": "deprecated",
       "contextWindow": 262144,
       "pricing": {
         "input": 0.6,
@@ -1874,12 +1842,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-09-29",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "lastVerified": "2026-09-29"
       },
       "maxOutput": 262144,
       "capabilityIndex": 78
@@ -2050,7 +2013,7 @@
       "id": "xai-grok-2",
       "providerId": "xai",
       "displayName": "Grok 2",
-      "status": "legacy",
+      "status": "deprecated",
       "contextWindow": 131072,
       "pricing": {
         "input": 2,
@@ -2068,14 +2031,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-08-27",
-        "statusBeforeStale": "current",
-        "stale": true,
-        "needsReview": true,
-        "reviewNote": "no longer listed upstream — confirm retirement before removing",
-        "reviewCodes": [
-          "upstream-missing"
-        ]
+        "lastVerified": "2026-08-27"
       },
       "maxOutput": 131072
     },

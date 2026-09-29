@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { Catalog } from '@/lib/pricing/catalog';
+import { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { compareModels, type ComparisonRow, type Workload } from '@/lib/engine/cost';
 import { buildInsights } from '@/lib/engine/insights';
@@ -77,12 +77,21 @@ function remember(cache: ReadonlyMap<string, number>, key: string, value: number
 }
 
 /** Pick sensible starting models: a frontier one, a mid-tier one, two budget ones. */
+/** Whether `id` names a model a person may add: in the catalog and still sold. */
+function isSelectableId(catalog: Catalog, id: string): boolean {
+  const model = catalog.get(id);
+  return model !== undefined && Catalog.isSelectable(model);
+}
+
 export function defaultSelection(catalog: Catalog): string[] {
-  const preferred = ['claude-sonnet-5', 'gpt-5.4', 'deepseek-deepseek-v3.2', 'moonshot-kimi-k2.5'];
-  const found = preferred.filter((id) => catalog.get(id) !== undefined);
+  // Filtered by `isSelectableId`, not mere presence: a preferred model the
+  // vendor has since retired stays in the catalog as a record, and must not
+  // become the first thing a new visitor is shown pricing.
+  const preferred = ['claude-sonnet-5', 'gpt-5.4', 'deepseek-deepseek-v3.2', 'moonshot-kimi-k2.6'];
+  const found = preferred.filter((id) => isSelectableId(catalog, id));
   if (found.length >= 2) return found.slice(0, MAX_MODELS);
 
-  const sorted = [...catalog.primaryModels].sort((a, b) => a.pricing.output - b.pricing.output);
+  const sorted = [...catalog.selectableModels].sort((a, b) => a.pricing.output - b.pricing.output);
   const cheap = sorted.slice(0, 2).map((m) => m.id);
   const dear = sorted.slice(-2).map((m) => m.id);
   return [...new Set([...dear, ...cheap])].slice(0, MAX_MODELS);
@@ -91,7 +100,9 @@ export function defaultSelection(catalog: Catalog): string[] {
 export function useEstimator(catalog: Catalog) {
   const [scenario, setScenario] = useState<Scenario>(() => {
     const fromUrl = decodeScenario(window.location.search);
-    const modelIds = fromUrl.modelIds.filter((id) => catalog.get(id) !== undefined);
+    // A shared link can name a model that has been retired since it was made;
+    // it is dropped like an unknown id rather than priced as if still sold.
+    const modelIds = fromUrl.modelIds.filter((id) => isSelectableId(catalog, id));
     return { ...fromUrl, modelIds: modelIds.length > 0 ? modelIds : defaultSelection(catalog) };
   });
 
@@ -299,20 +310,33 @@ export function useEstimator(catalog: Catalog) {
     [],
   );
 
-  const toggleModel = useCallback((id: string): { ok: boolean; reason?: string } => {
-    let result: { ok: boolean; reason?: string } = { ok: true };
-    setScenario((prev) => {
-      if (prev.modelIds.includes(id)) {
-        return { ...prev, modelIds: prev.modelIds.filter((existing) => existing !== id) };
-      }
-      if (prev.modelIds.length >= MAX_MODELS) {
-        result = { ok: false, reason: `Compare up to ${MAX_MODELS} models at once` };
-        return prev;
-      }
-      return { ...prev, modelIds: [...prev.modelIds, id] };
-    });
-    return result;
-  }, []);
+  const toggleModel = useCallback(
+    (id: string): { ok: boolean; reason?: string } => {
+      let result: { ok: boolean; reason?: string } = { ok: true };
+      setScenario((prev) => {
+        if (prev.modelIds.includes(id)) {
+          return { ...prev, modelIds: prev.modelIds.filter((existing) => existing !== id) };
+        }
+        // Removing is always allowed; adding only what is still sold. The pickers
+        // already hide retired models — this is the backstop for any path that
+        // does not (a stale command-palette entry, a future control).
+        if (!isSelectableId(catalog, id)) {
+          result = {
+            ok: false,
+            reason: 'That model has been retired by its vendor and can no longer be added',
+          };
+          return prev;
+        }
+        if (prev.modelIds.length >= MAX_MODELS) {
+          result = { ok: false, reason: `Compare up to ${MAX_MODELS} models at once` };
+          return prev;
+        }
+        return { ...prev, modelIds: [...prev.modelIds, id] };
+      });
+      return result;
+    },
+    [catalog],
+  );
 
   /**
    * Empty the selection without touching anything else.
