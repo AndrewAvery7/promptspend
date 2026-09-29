@@ -90,10 +90,11 @@ updates:
           - minor
           - patch
 
-  # The three Workers below share a toolchain — wrangler, vitest and its
-  # workerd pool, typescript — and wrangler in particular moves fast enough
-  # that an unwatched pin goes stale in weeks. Each has its own lockfile and
-  # its own verify.yml job running its tests inside workerd.
+  # The Workers below (the alerts API, the pricing API and the app's update
+  # server) share a toolchain — wrangler, vitest and its workerd pool,
+  # typescript — and wrangler in particular moves fast enough that an
+  # unwatched pin goes stale in weeks. Each has its own lockfile and its own
+  # verify.yml job running its tests inside workerd.
   - package-ecosystem: npm
     directory: /worker
     schedule:
@@ -108,6 +109,21 @@ updates:
 
   - package-ecosystem: npm
     directory: /api
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'deps'
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # The self-hosted over-the-air update server for the app. Nothing here
+  # changes what a phone runs (only a signed publish does), so a routine bump
+  # is safe to take once its workerd tests pass.
+  - package-ecosystem: npm
+    directory: /updates
     schedule:
       interval: weekly
     commit-message:
