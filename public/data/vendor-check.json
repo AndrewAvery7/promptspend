@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-28T11:06:08.518Z",
+  "checkedAt": "2026-09-29T11:05:49.609Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "47297 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "47941 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -99,7 +99,7 @@
     {
       "url": "https://docs.z.ai/guides/overview/pricing",
       "ok": true,
-      "note": "3462 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "2505 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "zai-glm-5.1",
         "zai-glm-5.2",
@@ -112,7 +112,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "17056 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "11673 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -120,7 +120,7 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "15948 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "16011 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",

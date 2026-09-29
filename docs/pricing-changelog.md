@@ -978,3 +978,9 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `gpt-5.6-sol` — provenance.needsReview: true → —
 - **Review** `gpt-5.6-sol` — provenance.reviewNote: the vendor's own page disagrees with the record — promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5 → —
+
+## 2026-09-29
+
+- **Added** `claude-sonnet-5-5` — Claude Sonnet 5 5 ($2 in / $10 out per 1M)
+- **Review** `xai-grok-4.7` — provenance.needsReview: true → —
+- **Review** `xai-grok-4.7` — provenance.reviewNote: OpenRouter disagrees (20%): $1.6/$4.8 vs $2/$6 → —
