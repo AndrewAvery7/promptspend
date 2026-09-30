@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-09-29T11:05:49.609Z",
+  "checkedAt": "2026-09-30T11:06:01.710Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -11,13 +11,14 @@
         "claude-fable-5-1",
         "claude-fable-5",
         "claude-opus-5",
+        "claude-opus-5-5",
         "claude-opus-4-8",
         "claude-sonnet-5",
+        "claude-sonnet-5-5",
         "claude-haiku-4-5",
         "claude-opus-4-7",
         "claude-opus-4-6",
         "claude-opus-4-5",
-        "claude-opus-4-1",
         "claude-sonnet-4-6",
         "claude-sonnet-4-5"
       ]
@@ -25,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "23471 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22401 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -112,7 +113,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "11673 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "11661 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -159,6 +160,12 @@
       "detail": "page lists $5/$25 (cached $0.5)"
     },
     {
+      "id": "claude-opus-5-5",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $4/$20 (cached $0.2)"
+    },
+    {
       "id": "claude-opus-4-8",
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "status": "confirmed",
@@ -166,6 +173,12 @@
     },
     {
       "id": "claude-sonnet-5",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$10 (cached $0.2)"
+    },
+    {
+      "id": "claude-sonnet-5-5",
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "status": "confirmed",
       "detail": "page lists $2/$10 (cached $0.2)"
@@ -193,12 +206,6 @@
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "status": "confirmed",
       "detail": "page lists $5/$25 (cached $0.5)"
-    },
-    {
-      "id": "claude-opus-4-1",
-      "url": "https://platform.claude.com/docs/en/about-claude/pricing",
-      "status": "confirmed",
-      "detail": "page lists $15/$75 (cached $1.5)"
     },
     {
       "id": "claude-sonnet-4-6",
@@ -489,7 +496,7 @@
       "detail": "page lists $1.25/$2.5"
     }
   ],
-  "confirmed": 55,
+  "confirmed": 56,
   "mismatched": 0,
   "unconfirmed": 3
 }
