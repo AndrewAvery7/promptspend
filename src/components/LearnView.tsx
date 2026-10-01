@@ -61,10 +61,10 @@ export function LearnView({ catalog }: { catalog: Catalog }) {
           What LLM Cost Calculators Get Wrong
         </a>{' '}
         — nine ways the number on screen can disagree with the invoice, and how this one tries not to.{' '}
-        <a href="https://promptspend.com/writing/2026-08-price-movement-report/">
-          August 2026 Price Movement Report
+        <a href="https://promptspend.com/writing/2026-09-price-movement-report/">
+          September 2026 Price Movement Report
         </a>{' '}
-        — every price change our sync recorded last month, led by DeepSeek's overnight repricing of V4.
+        — every price change our sync recorded last month, led by DeepSeek's cut to V4 Flash.
       </p>
     </section>
   );
