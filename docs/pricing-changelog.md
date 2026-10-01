@@ -1032,3 +1032,8 @@ value that moves in the same run as its source URL is a correction.
 - **Metadata** `deepseek-deepseek-v3.2` — status: current → deprecated
 - **Review** `claude-opus-5-5` — provenance.source: litellm → vendor
 - **Review** `claude-opus-5-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+
+## 2026-10-01
+
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: — → OpenRouter disagrees (76%): $0.723/$10 vs $3/$15
