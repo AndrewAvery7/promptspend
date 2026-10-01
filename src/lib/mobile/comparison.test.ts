@@ -12,8 +12,8 @@ describe('mobile comparison selection', () => {
   it('uses the same preferred four-model shortlist as the website when available', () => {
     const available = [
       { id: 'other', pricing: { output: 3 } },
-      { id: 'moonshot-kimi-k2.5', pricing: { output: 2 } },
-      { id: 'deepseek-deepseek-v3.2', pricing: { output: 1 } },
+      { id: 'moonshot-kimi-k2.6', pricing: { output: 2 } },
+      { id: 'deepseek-deepseek-v4-flash', pricing: { output: 1 } },
       { id: 'gpt-5.4', pricing: { output: 5 } },
       { id: 'claude-sonnet-5', pricing: { output: 4 } },
     ];
@@ -21,8 +21,8 @@ describe('mobile comparison selection', () => {
     expect(defaultComparisonSelection(available)).toEqual([
       'claude-sonnet-5',
       'gpt-5.4',
-      'deepseek-deepseek-v3.2',
-      'moonshot-kimi-k2.5',
+      'deepseek-deepseek-v4-flash',
+      'moonshot-kimi-k2.6',
     ]);
   });
 

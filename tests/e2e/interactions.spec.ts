@@ -289,9 +289,17 @@ test('the shortlist stays on screen, and updates, while the chart is in use', as
   });
   await expect(side, 'the shortlist must stay visible while the chart is').toBeInViewport();
 
-  // Toggling a dot from down here must change the list, in view.
+  // Toggling a dot from down here must change the list, in view. The lowest
+  // selected dot, not the first in document order: which models the default
+  // estimate holds changes as vendors retire them, and the first one can sit at
+  // the top of the plot, under the sticky header, where it cannot be clicked
+  // from this scroll position at all.
   const before = await page.locator('.shortlist li').count();
-  await page.locator('.value-map svg g[aria-label*="In your estimate"]').first().click();
+  const selectedDots = page.locator('.value-map svg g[aria-label*="In your estimate"]');
+  const heights = await selectedDots.evaluateAll((dots) =>
+    dots.map((dot) => dot.getBoundingClientRect().top),
+  );
+  await selectedDots.nth(heights.indexOf(Math.max(...heights))).click();
   await expect(page.locator('.shortlist li')).toHaveCount(before - 1);
   await expect(side).toBeInViewport();
 });

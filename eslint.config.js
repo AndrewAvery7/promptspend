@@ -13,6 +13,8 @@ export default tseslint.config(
       'worker/dist',
       'api/node_modules',
       'api/dist',
+      'updates/node_modules',
+      'updates/dist',
       'mcp/node_modules',
       'mcp/dist',
       'vscode/node_modules',
@@ -30,6 +32,7 @@ export default tseslint.config(
       // ours to lint or to fix.
       'worker/worker-configuration.d.ts',
       'api/worker-configuration.d.ts',
+      'updates/worker-configuration.d.ts',
       // Playwright's own output: traces, screenshots and a static HTML report.
       'test-results',
       'playwright-report',
@@ -78,7 +81,7 @@ export default tseslint.config(
     // The alerts worker runs on workerd. Its console output is not debug
     // clutter — logs are the only observability a Worker has, and the fan-out
     // counts printed after a notify run are how a delivery problem gets found.
-    files: ['worker/**/*.ts', 'api/**/*.ts', 'mcp/**/*.ts', 'vscode/**/*.ts'],
+    files: ['worker/**/*.ts', 'api/**/*.ts', 'updates/**/*.ts', 'mcp/**/*.ts', 'vscode/**/*.ts'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: { ...globals.worker, ...globals.node },

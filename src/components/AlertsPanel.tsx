@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import type { Catalog } from '@/lib/pricing/catalog';
+import { Catalog } from '@/lib/pricing/catalog';
 import {
   AlertsError,
   alertsConfigured,
@@ -773,7 +773,10 @@ function ModelPicker({
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
+    // Retired models cannot be followed, but one already followed stays listed
+    // so it can be unfollowed.
     return catalog.primaryModels.filter((model) => {
+      if (!Catalog.isSelectable(model) && !selected.includes(model.id)) return false;
       if (!catalog.inCountries(model, countries)) return false;
       if (!needle) return true;
       return (
@@ -781,7 +784,7 @@ function ModelPicker({
         catalog.providerName(model).toLowerCase().includes(needle)
       );
     });
-  }, [catalog, query, countries]);
+  }, [catalog, query, countries, selected]);
 
   const toggle = (id: string) => {
     if (selected.includes(id)) onChange(selected.filter((entry) => entry !== id));

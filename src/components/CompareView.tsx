@@ -175,7 +175,9 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
     // is the point of filtering a chart at all: with only the Chinese models
     // left, the price axis spans their range rather than leaving them bunched
     // against one edge of a scale drawn for models that are no longer shown.
-    const inScope = catalog.primaryModels.filter((m) => catalog.inCountries(m, countries));
+    // Every point on the map is a click that adds a model to the estimate, so
+    // only models that are still sold are plotted.
+    const inScope = catalog.selectableModels.filter((m) => catalog.inCountries(m, countries));
     const models = inScope.filter((m) => Catalog.blendedRate(m) > 0 && m.capabilityIndex !== undefined);
     if (models.length === 0) return null;
 
@@ -620,15 +622,19 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
                   <td className="align-left col-use">
                     {/* Selection from the table, not only from the chart: a plot
                         point is a poor control on a phone and unusable with a
-                        screen reader alone. */}
+                        screen reader alone. A retired row is shown as a record
+                        but cannot be ticked; one already ticked can still be
+                        unticked, so the control never traps a selection. */}
                     <input
                       type="checkbox"
                       checked={selectedIds.includes(model.id)}
-                      disabled={model.aliasOf !== undefined}
+                      disabled={!Catalog.isSelectable(model) && !selectedIds.includes(model.id)}
                       aria-label={
                         model.aliasOf
                           ? `${model.displayName} is an alias for ${model.aliasOf} — select that instead`
-                          : `Add ${model.displayName} to your estimate`
+                          : !Catalog.isSelectable(model)
+                            ? `${model.displayName} has been retired by its vendor and cannot be added`
+                            : `Add ${model.displayName} to your estimate`
                       }
                       onChange={() => onToggle(model.id)}
                     />
@@ -639,7 +645,9 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
                       <span className="badge badge--intro">INTRO PRICE</span>
                     )}
                     {model.aliasOf && <span className="pill">alias</span>}
-                    {model.status !== 'current' && <span className="pill">{model.status}</span>}
+                    {model.status !== 'current' && (
+                      <span className="pill">{model.status === 'deprecated' ? 'retired' : model.status}</span>
+                    )}
                     {model.provenance.stale && <span className="pill">unlisted</span>}
                   </td>
                   <td className="align-left">

@@ -310,7 +310,7 @@ export function CommandSheet({
       terms: helpSearchText(entry),
       run: () => onHelp(entry.id),
     }));
-    const models: CommandItem[] = catalog.primaryModels.flatMap((model) => {
+    const models: CommandItem[] = catalog.selectableModels.flatMap((model) => {
       const selected = selectedComparisonIds.includes(model.id);
       const watched = favoriteIds.includes(model.id);
       return [
@@ -398,7 +398,7 @@ export function CommandSheet({
 
 export function buildTickerItems(catalog: Catalog, asOf: Date = new Date()): { key: string; text: string }[] {
   const items: { key: string; text: string }[] = [];
-  const cheapest = [...catalog.primaryModels]
+  const cheapest = [...catalog.selectableModels]
     .filter((model) => effectivePricing(model.pricing, asOf).input > 0)
     .sort((a, b) => effectivePricing(a.pricing, asOf).input - effectivePricing(b.pricing, asOf).input)[0];
   if (cheapest)
@@ -406,13 +406,13 @@ export function buildTickerItems(catalog: Catalog, asOf: Date = new Date()): { k
       key: 'cheapest',
       text: `CHEAPEST INPUT TODAY · ${cheapest.displayName} ${formatRate(effectivePricing(cheapest.pricing, asOf).input)}/M`,
     });
-  const spread = effectiveSpread(catalog.primaryModels, asOf);
+  const spread = effectiveSpread(catalog.selectableModels, asOf);
   if (spread)
     items.push({
       key: 'spread',
       text: `BLENDED PRICE SPREAD · ${Math.round(spread.multiple)}× · ${spread.cheapest.displayName} → ${spread.priciest.displayName}`,
     });
-  [...catalog.primaryModels]
+  [...catalog.selectableModels]
     .filter((model) => model.releaseDate)
     .sort((a, b) => (b.releaseDate ?? '').localeCompare(a.releaseDate ?? ''))
     .slice(0, 2)

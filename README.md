@@ -12,9 +12,9 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
-  <img src="https://img.shields.io/badge/models-80-2456E6.svg" alt="80 models tracked">
+  <img src="https://img.shields.io/badge/models-81-2456E6.svg" alt="81 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-1232-blue.svg" alt="1232 tests">
+  <img src="https://img.shields.io/badge/tests-1249-blue.svg" alt="1249 tests">
   <img src="https://img.shields.io/badge/initial%20payload-98%20KB%20gzip-blue.svg" alt="98 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -353,8 +353,8 @@ published test counts, the published page counts, a production build, catalog sc
 bundle budget, the Content Security Policy and the SEO checks. The deploy workflow calls the same reusable workflow CI does and
 publishes the artifact it produced, so a commit that fails any of them cannot reach the live site.
 
-It does **not** run the other four packages' suites — CI has a job each for `api/`, `mcp/`, `vscode/` and
-`worker/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
+It does **not** run the other packages' suites — CI has a job each for `api/`, `mcp/`, `updates/`, `vscode/`
+and `worker/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Project layout
 
@@ -373,6 +373,7 @@ public/data/        the published catalog the app reads
 public/sw.js        service worker — push display only, no offline cache
 worker/             the alerts API (Cloudflare Worker, own package and tests)
 api/                the public pricing API on promptspend.dev (own package and tests)
+updates/            the app's self-hosted over-the-air update server (own package and tests)
 src/state/          the scenario hook, and the URL it mirrors itself into
 tests/              the browser suite: Playwright at four viewports, plus axe
 tools/              the promo pipeline — capture, render, stitch
@@ -380,7 +381,7 @@ mcp/                the MCP server — imports the engine above, so it cannot di
 vscode/             the VS Code extension — imports it too, for the same reason
 ```
 
-Beyond the calculator and Receipt, the build writes 162 crawlable pages — one per model, one per provider, and a
+Beyond the calculator and Receipt, the build writes 171 crawlable pages — one per model, one per provider, and a
 curated set of head-to-heads — from the same catalog and the same cost engine. See
 [docs/PAGES.md](docs/PAGES.md).
 
@@ -403,9 +404,9 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                             |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1232 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1249 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                 |
-| [docs/PAGES.md](docs/PAGES.md)                         | The 162 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline      |
+| [docs/PAGES.md](docs/PAGES.md)                         | The 171 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline      |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live   |
 | [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                  |
 | [docs/ALERTS.md](docs/ALERTS.md)                       | The price-alerts Worker — push and email architecture, the cost model, the domain cutover                 |

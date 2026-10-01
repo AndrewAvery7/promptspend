@@ -83,7 +83,7 @@ for (const file of [
 }
 
 if (APP.name !== 'PromptSpend') fail('app name must remain PromptSpend');
-if (APP.version !== '0.1.0') fail(`unexpected release version ${APP.version}`);
+if (APP.version !== '0.1.2') fail(`unexpected release version ${APP.version}`);
 if (APP.ios?.bundleIdentifier !== 'com.promptspend.app') fail('iOS bundle identifier drifted');
 if (APP.android?.package !== 'com.promptspend.app') fail('Android package name drifted');
 if (APP.ios?.supportsTablet !== true) fail('iPad support must remain enabled');
@@ -125,6 +125,53 @@ const iosUsageDescriptions = Object.keys(APP.ios?.infoPlist ?? {}).filter((key) 
 );
 if (iosUsageDescriptions.length > 0) {
   fail(`launch build contains unexpected iOS permission descriptions: ${iosUsageDescriptions.join(', ')}`);
+}
+// Over-the-air updates come only from PromptSpend's own server and only when
+// signed. Expo's hosted service (u.expo.dev) would add a third party that sees
+// every launch, which the privacy policy does not allow; an unsigned setup
+// would let whoever controlled the server run code on every phone.
+if (APP.updates?.url !== 'https://updates.promptspend.dev/manifest') {
+  fail('updates.url must be the self-hosted server https://updates.promptspend.dev/manifest');
+}
+if (APP.updates?.enabled === false) fail('updates must stay enabled once the release carries expo-updates');
+if (APP.runtimeVersion?.policy !== 'appVersion') {
+  fail('runtimeVersion must use the appVersion policy the publish script and runbook assume');
+}
+if (
+  APP.updates?.codeSigningCertificate !== './certs/certificate.pem' ||
+  APP.updates?.codeSigningMetadata?.keyid !== 'main' ||
+  APP.updates?.codeSigningMetadata?.alg !== 'rsa-v1_5-sha256'
+) {
+  fail('update code signing must be configured with certs/certificate.pem, keyid main, rsa-v1_5-sha256');
+}
+const updatesCertificate = requireFile('certs/certificate.pem')?.toString('utf8') ?? '';
+if (updatesCertificate && !updatesCertificate.includes('BEGIN CERTIFICATE')) {
+  fail('certs/certificate.pem is not a PEM certificate');
+}
+if (/PRIVATE KEY/.test(updatesCertificate)) fail('certs/certificate.pem contains a private key');
+// The repo ignores *.pem, and EAS builds read .easignore rather than
+// .gitignore. Both need an exception for this one file, or the build ships no
+// certificate and every signed update is refused.
+if (!/^!certs\/certificate\.pem$/m.test(requireFile('.gitignore')?.toString('utf8') ?? '')) {
+  fail('apps/mobile/.gitignore must un-ignore certs/certificate.pem');
+}
+if (
+  !/^!apps\/mobile\/certs\/certificate\.pem$/m.test(requireFile('../../.easignore')?.toString('utf8') ?? '')
+) {
+  fail('.easignore must un-ignore apps/mobile/certs/certificate.pem so EAS builds embed it');
+}
+for (const file of sourceFiles('certs')) {
+  if (file !== 'certs/certificate.pem') fail(`${file} must not be committed next to the update certificate`);
+}
+if (EAS.build?.production?.channel || EAS.build?.preview?.channel) {
+  fail('EAS build channels belong to EAS Update; this app is served by its own update server');
+}
+if (
+  !/updates\.promptspend\.dev/.test(
+    requireFile('../../src/content/information/privacy.md')?.toString('utf8') ?? '',
+  )
+) {
+  fail('privacy policy must disclose the app-update check to updates.promptspend.dev');
 }
 if (EAS.submit?.production?.ios?.ascAppId !== '6800386428') fail('App Store Connect app id drifted');
 if (EAS.cli?.appVersionSource !== 'remote') fail('EAS appVersionSource must remain remote');

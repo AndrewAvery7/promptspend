@@ -79,6 +79,10 @@ describe('checkableRows and groupByPage', () => {
     expect(rows[1]!.pricing).toEqual({ input: 5, output: 25, cachedInput: 0.5 });
   });
 
+  it('skips a row its vendor has retired', () => {
+    expect(checkableRows([{ ...full, status: 'deprecated' }], published)).toEqual([]);
+  });
+
   it('skips a provenance-only row the catalog has not published yet', () => {
     expect(checkableRows([provenanceOnly], new Map())).toEqual([]);
   });

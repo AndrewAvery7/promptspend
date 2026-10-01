@@ -62,7 +62,7 @@ export default function HomeScreen() {
   const catalog = launch.catalogResult?.catalog ?? null;
   const pricingAsOf = useMemo(() => new Date(`${launch.pricingDay}T12:00:00Z`), [launch.pricingDay]);
   const selectedModel = useMemo(
-    () => chooseModel(catalog?.primaryModels ?? [], launch.selectedId),
+    () => chooseModel(catalog?.selectableModels ?? [], launch.selectedId),
     [catalog, launch.selectedId],
   );
   const current = useMemo(() => {

@@ -82,7 +82,7 @@ export function diagnose(matches: readonly ModelMatch[], catalog: Catalog): Find
         kind: 'deprecated',
         match,
         url: provenance.verifiedUrl,
-        message: `${model.displayName} is deprecated. Check the provider for a migration path.`,
+        message: `${model.displayName} has been retired by its vendor. Check the provider for its replacement.`,
       });
     } else if (model.status === 'legacy') {
       findings.push({

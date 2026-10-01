@@ -160,13 +160,13 @@ function TokenLab({ catalog }: { catalog: Catalog }) {
 
 /** One model from three different tokenizer families, for contrast. */
 function pickSampleModels(catalog: Catalog): Model[] {
-  const preferred = ['gpt-5.4', 'claude-sonnet-5', 'deepseek-deepseek-v3.2'];
+  const preferred = ['gpt-5.4', 'claude-sonnet-5', 'deepseek-deepseek-v4-flash'];
   const chosen = preferred.map((id) => catalog.get(id)).filter((m): m is Model => m !== undefined);
   if (chosen.length === 3) return chosen;
 
   const seen = new Set<string>();
   const fallback: Model[] = [];
-  for (const model of catalog.models) {
+  for (const model of catalog.selectableModels) {
     const key = model.tokenizer.kind === 'tiktoken' ? 'tiktoken' : model.providerId;
     if (seen.has(key)) continue;
     seen.add(key);

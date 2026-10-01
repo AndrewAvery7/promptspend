@@ -116,6 +116,19 @@ iOS production:
 npx.cmd eas-cli@latest build --platform ios --profile production
 ```
 
+Android Play candidate AAB without Expo build credits: run the **Android
+store build** workflow (GitHub → Actions → Android store build → Run
+workflow, with the commit to build and a reason), or from PowerShell:
+
+```powershell
+gh workflow run android-build.yml --repo AndrewAvery7/promptspend -f ref=main -f reason="0.1.2 store release"
+```
+
+It runs `eas build --local` on a free GitHub runner, signed with the same
+EAS-managed upload key, and leaves the AAB as the artifact
+`promptspend-android-aab` (`gh run download <run-id> -n promptspend-android-aab`).
+It needs the repository secret `EXPO_TOKEN`.
+
 Android internal QA APK:
 
 ```powershell
@@ -131,6 +144,15 @@ npx.cmd eas-cli@latest build --platform android --profile production
 Record EAS build ID, version, build number/versionCode, commit SHA, artifact URL,
 credentials used, start/finish time, and checksum where available. A successful
 cloud build is not QA approval.
+
+### Over-the-air updates
+
+From the first release built with expo-updates, JavaScript-only fixes ship
+without a store release; see `MOBILE_OTA_UPDATES.md`. A store release is still
+required for native changes, and every store release must bump `version`,
+because the app's runtime version is its version. The first OTA-capable
+release must also carry the Google Play Data Safety addition in
+`STORE_RELEASE_PACKAGE.md`.
 
 ## 5. Beta distribution
 

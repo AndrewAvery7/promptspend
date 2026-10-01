@@ -8,6 +8,15 @@
  */
 export const SCHEMA_VERSION = 2;
 
+/**
+ * `current` and `legacy` are both still sold — legacy is an older generation the
+ * vendor keeps serving. `deprecated` means the vendor has shut the model down:
+ * the row stays in the catalog as a record of what it cost, but nothing offers
+ * it for selection (see `Catalog.isSelectable`). It is the existing value rather
+ * than a new `retired` one on purpose — installed app and extension builds
+ * validate this enum, and a value they have never seen would fail the whole
+ * catalog on their devices.
+ */
 export type ModelStatus = 'current' | 'legacy' | 'deprecated';
 
 /** How a token count for this family is arrived at. */

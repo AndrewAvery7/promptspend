@@ -366,6 +366,88 @@ describe('mergeCatalog — the trust ladder', () => {
     }
   });
 
+  it('carries a retired model forward as a record, with no flags, once the feed drops it', () => {
+    // A vendor-retired model can never answer "confirm retirement before
+    // removing" — that question re-raised itself every morning. Marking the
+    // override deprecated is the answer: the row keeps its page and its last
+    // published price, and stops asking.
+    const cold = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt,
+    });
+    const missing = mergeCatalog({
+      litellm: litellm.filter((rate) => rate.id !== 'moonshot-kimi-k2.6'),
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      previous: cold.catalog,
+      generatedAt,
+    });
+    expect(missing.review.map((item) => item.code)).toEqual(['upstream-missing']);
+
+    const retired = mergeCatalog({
+      litellm: litellm.filter((rate) => rate.id !== 'moonshot-kimi-k2.6'),
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [{ id: 'moonshot-kimi-k2.6', status: 'deprecated' }],
+      previous: missing.catalog,
+      generatedAt: new Date('2026-08-02T06:00:00.000Z'),
+    });
+    const kimi = retired.catalog.models.find((m) => m.id === 'moonshot-kimi-k2.6')!;
+    expect(kimi.status).toBe('deprecated');
+    expect(kimi.pricing).toEqual(cold.catalog.models.find((m) => m.id === 'moonshot-kimi-k2.6')!.pricing);
+    expect(kimi.provenance.needsReview).toBeUndefined();
+    expect(kimi.provenance.reviewCodes).toBeUndefined();
+    expect(kimi.provenance.stale).toBeUndefined();
+    expect(kimi.provenance.statusBeforeStale).toBeUndefined();
+    expect(retired.review).toEqual([]);
+    expect(retired.stale).toEqual([]);
+    expect(validateCatalog(retired.catalog)).toEqual([]);
+  });
+
+  it('freezes a retired model the feed still lists, ignoring its price and the cross-check', () => {
+    const cold = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt,
+    });
+    const repriced = litellm.map((rate) =>
+      rate.id === 'claude-sonnet-5' ? { ...rate, inputPerMillion: 30, outputPerMillion: 150 } : rate,
+    );
+    const openrouter = fromOpenRouter({
+      data: [{ id: 'anthropic/claude-sonnet-5', pricing: { prompt: '0.000006', completion: '0.00003' } }],
+    });
+    const { catalog, review } = mergeCatalog({
+      litellm: repriced,
+      openrouter,
+      allowlist: ALLOWLIST,
+      overrides: [{ id: 'claude-sonnet-5', status: 'deprecated' }],
+      previous: cold.catalog,
+      generatedAt: new Date('2026-08-02T06:00:00.000Z'),
+    });
+    const sonnet = catalog.models.find((m) => m.id === 'claude-sonnet-5')!;
+    expect(sonnet.status).toBe('deprecated');
+    expect(sonnet.pricing.input).toBe(3);
+    expect(sonnet.provenance.needsReview).toBeUndefined();
+    expect(review).toEqual([]);
+  });
+
+  it('does not invent a retired row that was never published', () => {
+    const { catalog } = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [{ id: 'claude-sonnet-5', status: 'deprecated' }],
+      generatedAt,
+    });
+    expect(catalog.models.some((m) => m.id === 'claude-sonnet-5')).toBe(false);
+  });
+
   it('keeps a vendor override but flags feed drift and does not re-raise it', () => {
     const overrides = [
       {

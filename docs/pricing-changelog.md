@@ -978,3 +978,62 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `gpt-5.6-sol` — provenance.needsReview: true → —
 - **Review** `gpt-5.6-sol` — provenance.reviewNote: the vendor's own page disagrees with the record — promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5 → —
+
+## 2026-09-29
+
+- **Added** `claude-sonnet-5-5` — Claude Sonnet 5 5 ($2 in / $10 out per 1M)
+- **Review** `xai-grok-4.7` — provenance.needsReview: true → —
+- **Review** `xai-grok-4.7` — provenance.reviewNote: OpenRouter disagrees (20%): $1.6/$4.8 vs $2/$6 → —
+
+## 2026-09-29
+
+- **Coverage** `claude-sonnet-5-5` — cacheWrite now tracked: — → 2.5
+- **Coverage** `claude-sonnet-5-5` — batchDiscount now tracked: — → 0.5
+- **Metadata** `claude-opus-4-1` — status: legacy → deprecated
+- **Metadata** `claude-sonnet-5-5` — displayName: Claude Sonnet 5 5 → Claude Sonnet 5.5
+- **Metadata** `claude-sonnet-5-5` — capabilityIndex: — → 91
+- **Metadata** `deepseek-deepseek-r1` — status: legacy → deprecated
+- **Metadata** `gemini-gemini-3-pro-preview` — status: legacy → deprecated
+- **Metadata** `mistral-mistral-medium-3` — status: legacy → deprecated
+- **Metadata** `moonshot-kimi-k2-thinking` — status: legacy → deprecated
+- **Metadata** `moonshot-kimi-k2.5` — status: legacy → deprecated
+- **Metadata** `xai-grok-2` — status: legacy → deprecated
+- **Review** `claude-opus-4-1` — provenance.needsReview: true → —
+- **Review** `claude-opus-4-1` — provenance.reviewNote: no longer listed upstream — confirm retirement before removing → —
+- **Review** `claude-opus-4-1` — provenance.stale: true → —
+- **Review** `claude-opus-4-1` — provenance.statusBeforeStale: legacy → —
+- **Review** `claude-sonnet-5-5` — provenance.source: litellm → vendor
+- **Review** `claude-sonnet-5-5` — provenance.needsReview: true → —
+- **Review** `claude-sonnet-5-5` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `claude-sonnet-5-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+- **Review** `deepseek-deepseek-r1` — provenance.needsReview: true → —
+- **Review** `deepseek-deepseek-r1` — provenance.reviewNote: OpenRouter disagrees (21%): $0.7/$2.5 vs $0.55/$2.19 → —
+- **Review** `gemini-gemini-3-pro-preview` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-3-pro-preview` — provenance.reviewNote: no longer listed upstream — confirm retirement before removing → —
+- **Review** `gemini-gemini-3-pro-preview` — provenance.stale: true → —
+- **Review** `gemini-gemini-3-pro-preview` — provenance.statusBeforeStale: current → —
+- **Review** `mistral-mistral-medium-3` — provenance.needsReview: true → —
+- **Review** `mistral-mistral-medium-3` — provenance.reviewNote: OpenRouter disagrees (73%): $0.4/$2 vs $1.5/$7.5 → —
+- **Review** `moonshot-kimi-k2-thinking` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k2-thinking` — provenance.reviewNote: no longer listed upstream — confirm retirement before removing → —
+- **Review** `moonshot-kimi-k2-thinking` — provenance.stale: true → —
+- **Review** `moonshot-kimi-k2-thinking` — provenance.statusBeforeStale: current → —
+- **Review** `moonshot-kimi-k2.5` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k2.5` — provenance.reviewNote: OpenRouter disagrees (25%): $0.45/$2.25 vs $0.6/$3 → —
+- **Review** `xai-grok-2` — provenance.needsReview: true → —
+- **Review** `xai-grok-2` — provenance.reviewNote: no longer listed upstream — confirm retirement before removing → —
+- **Review** `xai-grok-2` — provenance.stale: true → —
+- **Review** `xai-grok-2` — provenance.statusBeforeStale: current → —
+- **Coverage** `claude-opus-5-5` — cacheWrite now tracked: — → 5
+- **Coverage** `claude-opus-5-5` — batchDiscount now tracked: — → 0.5
+- **Metadata** `claude-opus-5-5` — displayName: Claude Opus 5 5 → Claude Opus 5.5
+- **Metadata** `claude-opus-5-5` — capabilityIndex: — → 97
+- **Metadata** `deepseek-deepseek-v3` — status: current → deprecated
+- **Metadata** `deepseek-deepseek-v3.2` — status: current → deprecated
+- **Review** `claude-opus-5-5` — provenance.source: litellm → vendor
+- **Review** `claude-opus-5-5` — provenance.verifiedUrl: — → https://platform.claude.com/docs/en/about-claude/pricing
+
+## 2026-10-01
+
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: — → OpenRouter disagrees (76%): $0.723/$10 vs $3/$15
