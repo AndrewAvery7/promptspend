@@ -89,11 +89,11 @@ DeepSeek.
 
 Every changelog entry in September, tallied by the label the sync gave it:
 
-- Review: 269 — a disagreement between sources noted, updated, or cleared; no price changed
-- Metadata: 17 — nine status changes, five context or output limits (Claude Sonnet 4.5's context window went from 200K to 1M tokens), three display names
-- Coverage: 12 — a field the catalog wasn't tracking before now is, or one a vendor stopped publishing
+- Review: 299 — a disagreement between sources noted, updated, or cleared; no price changed
+- Metadata: 30 — eighteen status changes (nine of them the archiving described below), five context or output limits (Claude Sonnet 4.5's context window went from 200K to 1M tokens), five display names, two capability scores
+- Coverage: 16 — a field the catalog wasn't tracking before now is, or one a vendor stopped publishing
 - Price: 7 — across 2 models, described above
-- Added: 5 — Claude Fable 5.1, GLM-5.2, Gemini 3.8 Flash, Grok 4.7, Claude Opus 5.5
+- Added: 6 — Claude Fable 5.1, GLM-5.2, Gemini 3.8 Flash, Grok 4.7, Claude Opus 5.5, Claude Sonnet 5.5
 
 No Provider or Corrected entries this month.
 
@@ -101,16 +101,24 @@ No Provider or Corrected entries this month.
 
 The comparison the series exists for, August (corrected) against September:
 
-- Models added: 6 after launch, plus 70 at launch → **5**
+- Models added: 6 after launch, plus 70 at launch → **6**
 - Models moved to legacy: 1 → **7**
+- Models archived as retired: 0 → **9**
 - Models re-priced: 20 → **2**, only 1 of them by the vendor
-- Changelog entries: 471 → **310**
+- Changelog entries: 471 → **358**
 
 "Legacy" means a model is no longer offered as current upstream; the catalog
 keeps its page rather than deleting it. September's seven were Grok 3, Grok 4
 and Grok 4.1 Fast (the retired models above), Mistral Medium 3, Kimi K2.5,
 Gemini 3 Pro Preview and Kimi K2 Thinking. An eighth, Gemini 3.1 Flash-Lite
 Preview, was marked legacy on 2026-09-23 and restored the next day.
+
+"Archived" is new this month. On 2026-09-29 we began marking models that a
+vendor has shut down entirely as `deprecated`: the page and its price history
+stay, but the row is frozen and no longer offered in any model picker. Nine
+were archived that day: Claude Opus 4.1, DeepSeek R1, DeepSeek V3, DeepSeek
+V3.2, Gemini 3 Pro Preview, Mistral Medium 3, Kimi K2 Thinking, Kimi K2.5 and
+Grok 2.
 
 August's re-pricing number is inflated by the pipeline's first days: 43 of
 its 77 Price rows landed on 2026-08-02. September is the first month that
@@ -119,19 +127,24 @@ reads as the market rather than the machinery, and the market was calm.
 ## What's still disputed
 
 When the August report went out, **17 models** carried an open `needsReview`
-flag. As of this report it's **8**, from our own health endpoint:
+flag. As of this report it's **1**, from our own health endpoint:
 
 ```bash
 curl -s https://promptspend.dev/v1/health
 ```
 
-The count rose before it fell: it had reached 23 by 2 September, when 16 flags
-were cleared in one pass by reading each vendor's own pricing page. Of the 8
-still open, four are price disagreements between sources (DeepSeek R1, Mistral
-Medium 3, Kimi K2.5, Grok 4.7) and four are models that dropped out of the
-upstream feed and are waiting for someone to confirm the retirement (Claude
-Opus 4.1, Gemini 3 Pro Preview, Kimi K2 Thinking, Grok 2). A flag means two
-sources disagree right now, not that either is necessarily wrong.
+That drop needs reading carefully, because most of it isn't disputes being
+settled. The count had reached 23 by 2 September, when 16 flags were cleared
+in one pass by reading each vendor's own pricing page. Eight were still open
+on 28 September. On the 29th, the Grok 4.7 flag cleared, and the other seven
+all belonged to models that were then archived as retired (Claude Opus 4.1,
+DeepSeek R1, Gemini 3 Pro Preview, Mistral Medium 3, Kimi K2 Thinking, Kimi
+K2.5 and Grok 2). A model its vendor no longer sells can't be re-checked
+against anything, so archiving closes its flag rather than resolving it.
+
+The one flag open today is new: on 1 October, Kimi K3's recorded price of
+$3 / $15 per million tokens disagreed with OpenRouter's $0.723 / $10. A flag
+means two sources disagree right now, not that either is necessarily wrong.
 
 ## Reading this report
 
