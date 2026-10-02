@@ -37,6 +37,7 @@ import {
   type ModelPage,
   type PageSet,
   type ProviderPage,
+  type RetiredComparisonPage,
 } from './pages';
 
 export interface RenderContext {
@@ -173,6 +174,12 @@ function breadcrumbLd(ctx: RenderContext, crumbs: Crumb[], selfPath: string): un
 
 interface LayoutInput {
   path: string;
+  /** Where the canonical link points, when it is not `path` itself. Only a
+   *  `noindex` signpost should ever set this; see `renderRetiredComparisonPage`. */
+  canonicalPath?: string;
+  /** A `<meta name="robots">` value, e.g. `noindex, follow`. Omitted means
+   *  indexable, which is every page except the signposts. */
+  robots?: string;
   title: string;
   description: string;
   /** Extra `<head>` markup for one page, e.g. the app page's Smart App Banner tag. */
@@ -183,7 +190,7 @@ interface LayoutInput {
 }
 
 function layout(ctx: RenderContext, input: LayoutInput): string {
-  const canonical = absolute(ctx, input.path);
+  const canonical = absolute(ctx, input.canonicalPath ?? input.path);
   const ld = jsonForScript({ '@context': 'https://schema.org', '@graph': input.graph });
   // The policy names the data block by its own hash. `'unsafe-inline'` would be
   // one word shorter and would also permit every future inline script, on pages
@@ -207,7 +214,7 @@ function layout(ctx: RenderContext, input: LayoutInput): string {
     <meta name="description" content="${escapeHtml(input.description)}" />
     <meta name="color-scheme" content="light dark" />
     <link rel="canonical" href="${escapeHtml(canonical)}" />
-    <meta http-equiv="Content-Security-Policy" content="${escapeHtml(csp)}" />
+${input.robots ? `    <meta name="robots" content="${escapeHtml(input.robots)}" />\n` : ''}    <meta http-equiv="Content-Security-Policy" content="${escapeHtml(csp)}" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 ${input.extraHead ?? ''}    <meta property="og:type" content="article" />
     <meta property="og:site_name" content="PromptSpend" />
@@ -687,6 +694,24 @@ export function renderComparisonPage(page: ComparisonPage, ctx: RenderContext): 
     )
     .join('\n');
 
+  // A pair is kept once published, so one side can be a model its vendor has
+  // since shut down. The numbers are still its last published rates; the
+  // reader needs to know they can no longer be bought.
+  const retiredNotes = [page.left, page.right]
+    .filter((model) => model.status === 'deprecated')
+    .map(
+      (model) =>
+        `<p class="note">${escapeHtml(model.displayName)} has been retired by its vendor. Its column shows the last rates it was sold at, kept for reference.</p>`,
+    )
+    .join('\n        ');
+
+  const differences =
+    page.differences.length > 0
+      ? `<ul>
+${page.differences.map((line) => `          <li>${escapeHtml(line)}</li>`).join('\n')}
+        </ul>`
+      : `<p>Beyond price there is little to choose: the two match on context window, output ceiling, reasoning, vision, caching and batch pricing.</p>`;
+
   const body = `      ${breadcrumbHtml(ctx, crumbs)}
       <main id="main">
         <h1>${escapeHtml(page.heading)}</h1>
@@ -694,6 +719,7 @@ export function renderComparisonPage(page: ComparisonPage, ctx: RenderContext): 
           ${escapeHtml(page.leftProvider)} against ${escapeHtml(page.rightProvider)}, costed on the same three workloads.
           <strong>${escapeHtml(page.verdict)}</strong>
         </p>
+        ${retiredNotes}
 
         <h2>Monthly bill, side by side</h2>
         <div class="card tablewrap" tabindex="0">
@@ -721,6 +747,9 @@ ${spec('Vision', page.left.capabilities.vision ? 'yes' : 'no', page.right.capabi
             </tbody>
           </table>
         </div>
+
+        <h2>Beyond the price</h2>
+        ${differences}
 
         ${calculatorLink(ctx, [page.left.id, page.right.id], 'Run this comparison on your own numbers')}
 
@@ -755,6 +784,50 @@ ${spec('Vision', page.left.capabilities.vision ? 'yes' : 'no', page.right.capabi
         ],
       },
     ],
+    body,
+  });
+}
+
+/**
+ * The page left at a comparison URL whose pair can no longer be built.
+ *
+ * `noindex`, kept out of the sitemap, and canonical to the best surviving page,
+ * so it neither competes in search nor 404s for the people and links that still
+ * arrive. A static host cannot send a real 301, and a meta refresh would strand
+ * anyone who wanted to know why the comparison went.
+ */
+export function renderRetiredComparisonPage(page: RetiredComparisonPage, ctx: RenderContext): string {
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: 'Comparisons', path: '/compare/' },
+    { label: page.heading, path: null },
+  ];
+
+  const links = [
+    ...page.survivors,
+    { path: '/compare/', label: 'Every current comparison' },
+    { path: '/models/', label: 'Every model, by price' },
+  ];
+
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <h1>${escapeHtml(page.heading)}</h1>
+        <p class="lede">
+          This comparison has been retired: ${escapeHtml(page.leftName)} or ${escapeHtml(page.rightName)} is no
+          longer in the catalog, so there are no current prices to set side by side.
+        </p>
+        <ul class="links">
+${links.map((link) => `          <li><a href="${escapeHtml(href(ctx, link.path))}">${escapeHtml(link.label)}</a></li>`).join('\n')}
+        </ul>
+      </main>`;
+
+  return layout(ctx, {
+    path: page.path,
+    canonicalPath: page.canonicalPath,
+    robots: 'noindex, follow',
+    title: page.title,
+    description: page.description,
+    graph: [breadcrumbLd(ctx, crumbs, page.path)],
     body,
   });
 }
@@ -907,9 +980,9 @@ export function renderComparisonsIndex(set: PageSet, ctx: RenderContext): string
       <main id="main">
         <h1>${escapeHtml(page.heading)}</h1>
         <p class="lede">
-          ${set.comparisons.length} comparisons. Only models from <em>different</em> providers appear here, and
-          only where the two are within 3&times; of each other on price — a $0.14 model against a $75 one is
-          not a decision anybody is weighing.
+          ${set.comparisons.length} comparisons. A pair is added only for models from <em>different</em> providers
+          within 3&times; of each other on price — a $0.14 model against a $75 one is not a decision anybody is
+          weighing. Once published, a comparison stays, so a few pairs may since have drifted further apart.
         </p>
         <ul class="links">
 ${items}

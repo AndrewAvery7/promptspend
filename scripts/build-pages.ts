@@ -39,12 +39,14 @@ import {
   renderModelsIndex,
   renderProviderPage,
   renderProvidersIndex,
+  renderRetiredComparisonPage,
   renderWritingPage,
   type InformationPage,
   type RenderContext,
   type WritingPage,
 } from '@/lib/seo/render';
 import { INDEXNOW_KEY, INDEXNOW_KEY_FILE } from './lib/indexnow';
+import { readLedger } from './lib/page-ledger';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
@@ -165,7 +167,11 @@ async function main(): Promise<void> {
   // commit then produce byte-identical pages, which is what makes "did this
   // deploy change anything?" answerable.
   const asOf = new Date(catalog.generatedAt);
-  const set = buildPages(catalog, { asOf });
+  // The ledger is what keeps a published comparison published and gives every
+  // page the date its content last changed rather than today's. See
+  // src/lib/seo/ledger.ts.
+  const ledger = await readLedger();
+  const set = buildPages(catalog, { asOf, ledger });
 
   // Content-hashed, because these pages are served with whatever cache headers
   // GitHub Pages chooses and a fixed filename would leave visitors on the old
@@ -196,6 +202,11 @@ async function main(): Promise<void> {
   for (const page of set.models) await writeFileAt(fileFor(page.path), renderModelPage(page, ctx));
   for (const page of set.providers) await writeFileAt(fileFor(page.path), renderProviderPage(page, ctx));
   for (const page of set.comparisons) await writeFileAt(fileFor(page.path), renderComparisonPage(page, ctx));
+  // Published pairs that can no longer be built: a noindex signpost rather than
+  // a 404. Deliberately absent from the sitemap below.
+  for (const page of set.retiredComparisons) {
+    await writeFileAt(fileFor(page.path), renderRetiredComparisonPage(page, ctx));
+  }
 
   // Prose pages, not part of the catalog-driven `PageSet`: `check-pages.ts`'s
   // page-count arithmetic is deliberately about the catalog alone, so these
@@ -212,7 +223,13 @@ async function main(): Promise<void> {
 
   // The sitemap lives here rather than in `vite.config.ts` because it has to
   // list these pages, and the config has no idea they exist.
-  const lastmod = catalog.generatedAt.slice(0, 10);
+  //
+  // Every `lastmod` is the date that page's content last changed, never the
+  // build date. The calculator shows the same prices as the model table, so it
+  // carries that table's date. Stamping every URL with today, as this used to,
+  // told Google 170 pages changed every morning — and a crawler that is always
+  // told everything changed stops believing `lastmod` at all.
+  const lastmod = set.modelsIndex.lastmod;
   await writeFileAt(
     'sitemap.xml',
     sitemap([
@@ -258,6 +275,13 @@ async function main(): Promise<void> {
   console.log(
     `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing, ${informationPages.length} information, 1 app`,
   );
+  const kept = set.comparisons.filter((page) => page.kept).length;
+  if (kept > 0) console.log(`  ${kept} comparison(s) kept because they were published before`);
+  if (set.retiredComparisons.length > 0) {
+    console.log(
+      `  ${set.retiredComparisons.length} retired comparison signpost(s), noindex and not in the sitemap`,
+    );
+  }
   console.log(`  stylesheet ${cssName}`);
   console.log(
     `  sitemap    ${set.all.length + writingPages.length + informationPages.length + 3} URLs at ${siteUrl}/sitemap.xml`,

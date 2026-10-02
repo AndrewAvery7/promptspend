@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
-import { buildPages, fitTitle } from './pages';
+import { buildPages, fitTitle, ledgerPages, pairDifferences } from './pages';
+import { updateLedger, type PageLedger } from './ledger';
 
 const ASOF = new Date('2026-08-02T00:00:00Z');
 
@@ -238,5 +239,219 @@ describe('fitTitle', () => {
 
   it('truncates the last candidate rather than returning something too long', () => {
     expect(fitTitle(['x'.repeat(80)], 10)).toHaveLength(10);
+  });
+});
+
+/** The same catalog, as the sync would publish it on a later morning. */
+function catalogOn(models: Model[], day: string): PricingCatalog {
+  return { ...catalog(models), generatedAt: `${day}T11:00:00.000Z` };
+}
+
+/** What `check-pages.ts --fix` does: build, then record what was built. */
+function record(raw: PricingCatalog, ledger: PageLedger = {}): PageLedger {
+  const asOf = new Date(raw.generatedAt);
+  return updateLedger(ledger, ledgerPages(buildPages(raw, { asOf, ledger })), raw.generatedAt.slice(0, 10));
+}
+
+function lastmods(raw: PricingCatalog, ledger: PageLedger): Record<string, string> {
+  const set = buildPages(raw, { asOf: new Date(raw.generatedAt), ledger });
+  return Object.fromEntries(set.all.map((page) => [page.path, page.lastmod]));
+}
+
+const TRIO = [
+  model('gpt-5', { providerId: 'openai' }),
+  model('claude-opus-5', { providerId: 'anthropic' }),
+  model('gemini-3-pro', { providerId: 'google' }),
+];
+
+describe('sitemap lastmod', () => {
+  it('is the build date for every page when nothing has been recorded', () => {
+    const set = buildPages(catalog(TRIO), { asOf: ASOF });
+    expect(new Set(set.all.map((page) => page.lastmod))).toEqual(new Set(['2026-08-02']));
+  });
+
+  it('does not move when a later morning re-verifies the same prices', () => {
+    // The sync moves `generatedAt` and every `lastVerified` daily. Neither is a
+    // change to any page, and neither may reach the sitemap.
+    const ledger = record(catalogOn(TRIO, '2026-08-02'));
+    const reverified = TRIO.map((m) => ({
+      ...m,
+      provenance: { ...m.provenance, lastVerified: '2026-09-30' },
+    }));
+
+    const later = lastmods(catalogOn(reverified, '2026-09-30'), ledger);
+    expect(new Set(Object.values(later))).toEqual(new Set(['2026-08-02']));
+    expect(later).toEqual(lastmods(catalogOn(TRIO, '2026-08-02'), ledger));
+  });
+
+  it('moves for the page whose rates changed and the pages that show them, and no others', () => {
+    const ledger = record(catalogOn(TRIO, '2026-08-02'));
+    const repriced = TRIO.map((m) => (m.id === 'gpt-5' ? { ...m, pricing: { input: 1.25, output: 5 } } : m));
+    const after = lastmods(catalogOn(repriced, '2026-08-20'), ledger);
+
+    expect(after['/models/gpt-5/']).toBe('2026-08-20');
+    expect(after['/providers/openai/']).toBe('2026-08-20');
+    expect(after['/models/']).toBe('2026-08-20');
+    expect(after['/compare/claude-opus-5-vs-gpt-5/']).toBe('2026-08-20');
+    expect(after['/models/claude-opus-5/']).toBe('2026-08-02');
+    expect(after['/providers/anthropic/']).toBe('2026-08-02');
+    expect(after['/compare/claude-opus-5-vs-gemini-3-pro/']).toBe('2026-08-02');
+  });
+
+  it('moves on the day a promotional rate lapses, because the price a reader sees changed', () => {
+    const promo = [
+      model('gpt-5', {
+        pricing: { input: 1, output: 4, intro: { input: 0.5, output: 2, until: '2026-08-31' } },
+      }),
+    ];
+    const ledger = record(catalogOn(promo, '2026-08-02'));
+    expect(lastmods(catalogOn(promo, '2026-08-30'), ledger)['/models/gpt-5/']).toBe('2026-08-02');
+    expect(lastmods(catalogOn(promo, '2026-09-01'), ledger)['/models/gpt-5/']).toBe('2026-09-01');
+  });
+
+  it('gives the same answer before and after the ledger records the change', () => {
+    const ledger = record(catalogOn(TRIO, '2026-08-02'));
+    const repriced = catalogOn(
+      TRIO.map((m) => (m.id === 'gpt-5' ? { ...m, pricing: { input: 2, output: 8 } } : m)),
+      '2026-08-20',
+    );
+    expect(lastmods(repriced, record(repriced, ledger))).toEqual(lastmods(repriced, ledger));
+  });
+});
+
+describe('published comparisons', () => {
+  /** gpt-5 and claude qualify as a pair until gpt-5's price moves more than
+   *  3x away, at which point the curation alone would drop the page. */
+  const before = [
+    model('gpt-5', { providerId: 'openai' }),
+    model('claude-opus-5', { providerId: 'anthropic' }),
+  ];
+  const after = [
+    model('gpt-5', { providerId: 'openai', pricing: { input: 10, output: 40 } }),
+    model('claude-opus-5', { providerId: 'anthropic' }),
+  ];
+
+  it('drops a pair the curation no longer picks when nothing remembers it', () => {
+    expect(buildPages(catalogOn(after, '2026-09-01'), { asOf: ASOF }).comparisons).toEqual([]);
+  });
+
+  it('keeps building a pair once published, even when the curation would no longer pick it', () => {
+    const ledger = record(catalogOn(before, '2026-08-02'));
+    const set = buildPages(catalogOn(after, '2026-09-01'), { asOf: new Date('2026-09-01'), ledger });
+
+    expect(set.comparisons.map((page) => page.slug)).toEqual(['claude-opus-5-vs-gpt-5']);
+    expect(set.comparisons[0]!.kept).toBe(true);
+    expect(set.retiredComparisons).toEqual([]);
+    // Still linked from the model pages, so it is not an orphan.
+    expect(set.models.find((page) => page.id === 'gpt-5')!.comparisons.map((link) => link.path)).toEqual([
+      '/compare/claude-opus-5-vs-gpt-5/',
+    ]);
+  });
+
+  it('applies the ceiling to new pairs only', () => {
+    const ledger = record(catalogOn(TRIO, '2026-08-02'));
+    const raw = catalogOn([...TRIO, model('grok-5', { providerId: 'xai' })], '2026-08-20');
+    raw.providers = [...raw.providers, { id: 'xai', name: 'xAI', country: 'US' }];
+
+    const set = buildPages(raw, { asOf: new Date('2026-08-20'), ledger, maxComparisons: 0 });
+    expect(set.comparisons).toHaveLength(3);
+    expect(set.comparisons.every((page) => !page.slug.includes('grok'))).toBe(true);
+    expect(set.droppedComparisons).toBe(3);
+  });
+
+  it('retires a pair whose model has lost its page, pointing at the side that survives', () => {
+    const ledger = record(catalogOn(before, '2026-08-02'));
+    const gone = [
+      model('gpt-5', { providerId: 'openai' }),
+      model('claude-opus-5', {
+        providerId: 'anthropic',
+        displayName: 'Claude Opus 5',
+        provenance: { source: 'vendor', lastVerified: '2026-08-01', stale: true },
+      }),
+    ];
+    const set = buildPages(catalogOn(gone, '2026-09-01'), { asOf: new Date('2026-09-01'), ledger });
+
+    expect(set.comparisons).toEqual([]);
+    expect(set.retiredComparisons).toHaveLength(1);
+    const retired = set.retiredComparisons[0]!;
+    expect(retired.path).toBe('/compare/claude-opus-5-vs-gpt-5/');
+    expect(retired.leftName).toBe('Claude Opus 5');
+    expect(retired.survivors.map((link) => link.path)).toEqual(['/models/gpt-5/']);
+    expect(retired.canonicalPath).toBe('/models/gpt-5/');
+    // A signpost, not a page: not in the sitemap set and not counted.
+    expect(set.all.some((page) => page.path === retired.path)).toBe(false);
+  });
+
+  it('follows a model that became an alias to the model it now routes to', () => {
+    const ledger = record(catalogOn(before, '2026-08-02'));
+    const renamed = [
+      model('gpt-5', { providerId: 'openai' }),
+      model('claude-opus-5', { providerId: 'anthropic', aliasOf: 'claude-opus-5-0' }),
+      model('claude-opus-5-0', { providerId: 'anthropic', displayName: 'Claude Opus 5.0' }),
+    ];
+    const set = buildPages(catalogOn(renamed, '2026-09-01'), { asOf: new Date('2026-09-01'), ledger });
+    const retired = set.retiredComparisons.find((page) => page.slug === 'claude-opus-5-vs-gpt-5')!;
+
+    expect(retired.survivors.map((link) => link.path)).toEqual([
+      '/models/claude-opus-5-0/',
+      '/models/gpt-5/',
+    ]);
+  });
+
+  it('falls back to the comparisons index when neither side survives', () => {
+    const ledger = record(catalogOn(before, '2026-08-02'));
+    const stale = { source: 'vendor' as const, lastVerified: '2026-08-01', stale: true };
+    const set = buildPages(
+      catalogOn(
+        [
+          model('gpt-5', { providerId: 'openai', provenance: stale }),
+          model('claude-opus-5', { providerId: 'anthropic', provenance: stale }),
+          model('o9', { providerId: 'openai' }),
+        ],
+        '2026-09-01',
+      ),
+      { asOf: new Date('2026-09-01'), ledger },
+    );
+
+    expect(set.retiredComparisons[0]!.survivors).toEqual([]);
+    expect(set.retiredComparisons[0]!.canonicalPath).toBe('/compare/');
+  });
+});
+
+describe('pairDifferences', () => {
+  it('states each real difference once, naming the model it favours', () => {
+    const left = model('a', {
+      displayName: 'Alpha',
+      contextWindow: 1_000_000,
+      capabilities: { reasoning: true, vision: false },
+      pricing: { input: 1, output: 4, cachedInput: 0.1, batchDiscount: 0.5 },
+    });
+    const right = model('b', {
+      displayName: 'Beta',
+      contextWindow: 200_000,
+      capabilities: { reasoning: false, vision: true },
+    });
+
+    expect(pairDifferences(left, right, left.pricing, right.pricing)).toEqual([
+      'Alpha reads up to 1M tokens of context in one request; Beta stops at 200K.',
+      'Only Alpha is a reasoning model, so its output bill also pays for the thinking it does before it answers.',
+      'Only Beta accepts images as input.',
+      'Only Alpha publishes a cached-input rate, which cuts the cost of resending a long, unchanging prompt.',
+      'Only Alpha offers a batch discount — 50% off both rates for work that can wait.',
+    ]);
+  });
+
+  it('says nothing when the two match, and ignores gaps too small to print', () => {
+    const left = model('a', { contextWindow: 128_000 });
+    const right = model('b', { contextWindow: 128_100 });
+    expect(pairDifferences(left, right, left.pricing, right.pricing)).toEqual([]);
+  });
+
+  it('compares cache discounts when both publish one', () => {
+    const left = model('a', { displayName: 'Alpha', pricing: { input: 1, output: 4, cachedInput: 0.1 } });
+    const right = model('b', { displayName: 'Beta', pricing: { input: 1, output: 4, cachedInput: 0.5 } });
+    expect(pairDifferences(left, right, left.pricing, right.pricing)).toEqual([
+      'Cached input costs 90% less than fresh input on Alpha and 50% less on Beta, which matters most for workloads that resend the same prompt.',
+    ]);
   });
 });

@@ -91,7 +91,13 @@ jobs:
       #
       # Before validation, so a run that cannot publish does not leave the
       # documentation rewritten for a catalogue nobody will see.
-      - name: Bring the generated-page counts with it
+      #
+      # The same step records the day's pages in data/published-pages.json: a
+      # new page or a page whose rates moved gets today's date as its sitemap
+      # lastmod, everything else keeps the date it last really changed, and a
+      # comparison once published stays published. Both commit steps below add
+      # that file; without it the deploy's `check:pages` fails.
+      - name: Bring the generated-page counts and the page ledger with it
         if: steps.sync.outputs.degraded != 'true'
         run: npx tsx scripts/check-pages.ts --fix
 
@@ -120,7 +126,7 @@ jobs:
           echo "Sources stable — recording the verification."
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json README.md docs/PAGES.md src/lib/seo/pages.ts
+          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json data/published-pages.json README.md docs/PAGES.md src/lib/seo/pages.ts
           if git diff --staged --quiet; then
             echo "Nothing staged — nothing to record."
           else
@@ -161,7 +167,7 @@ jobs:
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
+          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json data/published-pages.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
           note=""
           if [ "$NEEDS_REVIEW" = "true" ]; then note=" (flagged)"; fi
           git commit -m "data: $SYNC_SUMMARY$note"
