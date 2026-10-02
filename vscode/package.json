@@ -1,6 +1,6 @@
 {
   "name": "promptspend",
-  "displayName": "PromptSpend \u2014 LLM prices in your editor",
+  "displayName": "PromptSpend — LLM prices in your editor",
   "description": "What the model on this line costs, and when that price was last confirmed.",
   "version": "0.1.8",
   "license": "MIT",
@@ -144,7 +144,7 @@
             "off"
           ],
           "enumDescriptions": [
-            "Rates only \u2014 $3 / $15 per M",
+            "Rates only — $3 / $15 per M",
             "Rates and the date the price was last confirmed",
             "No end-of-line annotation; hovers still work"
           ],
@@ -198,7 +198,7 @@
             "No entries in the Problems panel"
           ],
           "default": "facts",
-          "markdownDescription": "Which findings reach the Problems panel. The cheaper-model suggestion is opt-in because it rests on a capability estimate this project calls illustrative rather than a benchmark. All entries are Information severity \u2014 none of them are mistakes."
+          "markdownDescription": "Which findings reach the Problems panel. The cheaper-model suggestion is opt-in because it rests on a capability estimate this project calls illustrative rather than a benchmark. All entries are Information severity — none of them are mistakes."
         },
         "promptspend.annotateComments": {
           "type": "boolean",
@@ -224,15 +224,15 @@
     "check:package": "tsx tools/check-package.ts"
   },
   "devDependencies": {
-    "@types/node": "^22.20.1",
-    "@types/vscode": "^1.85.0",
-    "esbuild": "^0.28.1",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "vitest": "^4.1.10"
+    "@types/node": "^22.20.5",
+    "@types/vscode": "~1.85.0",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
   },
   "allowScripts": {
-    "esbuild@0.28.1": true
+    "esbuild@0.28.2": true
   },
   "dependencies": {
     "js-tiktoken": "^1.0.21"
