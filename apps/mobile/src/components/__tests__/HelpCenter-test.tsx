@@ -12,6 +12,14 @@ jest.mock('@/theme/useMobileTheme', () => {
 });
 
 describe('HelpCenter', () => {
+  test('starts with every question collapsed and opens a selected answer', async () => {
+    const view = await render(<HelpCenter onNavigate={jest.fn()} />);
+
+    expect(view.queryByText(/Open Estimate and choose a model\./)).toBeNull();
+    fireEvent.press(view.getAllByText('How do I create my first estimate?')[0]);
+    await waitFor(() => expect(view.getByText(/Open Estimate and choose a model\./)).toBeTruthy());
+  });
+
   test('opens a deep-linked answer and runs its in-app action', async () => {
     const onNavigate = jest.fn();
     const view = await render(<HelpCenter initialEntryId="compare-select" onNavigate={onNavigate} />);

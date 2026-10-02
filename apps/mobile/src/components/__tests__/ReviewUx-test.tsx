@@ -179,3 +179,11 @@ test('Learn displays sample limit feedback and acknowledges help intent', async 
   expect(view.getByText(/200,000 \/ 200,000 characters/)).toBeTruthy();
   expect(view.getByText(/Limit reached/)).toBeTruthy();
 });
+
+test('Learn lessons start collapsed and open when selected', async () => {
+  const view = await render(<LearnSection catalog={catalog} onNavigate={jest.fn()} />);
+
+  expect(view.queryByText(/Models do not read characters or words\./)).toBeNull();
+  await fireEvent.press(view.getByText('Tokens 101'));
+  expect(view.getByText(/Models do not read characters or words\./)).toBeTruthy();
+});

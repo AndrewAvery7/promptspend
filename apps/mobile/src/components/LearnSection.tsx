@@ -31,7 +31,7 @@ export function LearnSection({
 }) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const [openId, setOpenId] = useState<string | null>('tokens-101');
+  const [openId, setOpenId] = useState<string | null>(null);
   const [text, setText] = useState(SAMPLE);
   const samples = useMemo(() => (catalog ? pickSampleModels(catalog) : []), [catalog]);
   useEffect(() => {

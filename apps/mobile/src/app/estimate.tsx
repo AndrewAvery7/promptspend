@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 
 import { AppText as Text, FONT_FAMILIES } from '@/components/AppText';
+import { AppFooter } from '@/components/AppFooter';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
@@ -887,9 +888,7 @@ export function EstimatorWorkspace({
               </>
             )}
 
-            <Text style={styles.footer}>
-              PromptSpend mobile · Home · Estimate · Compare · Data &amp; Alerts · Learn
-            </Text>
+            <AppFooter />
           </ScrollView>
 
           <AppearanceSheet onClose={() => setAppearanceOpen(false)} visible={appearanceOpen} />
@@ -1300,13 +1299,6 @@ function createStyles(theme: MobileTheme) {
       fontWeight: '700',
       lineHeight: 18,
       marginTop: 2,
-    },
-    footer: {
-      color: theme.mutedText,
-      fontSize: 12,
-      lineHeight: 18,
-      paddingTop: 4,
-      textAlign: 'center',
     },
   });
 }
