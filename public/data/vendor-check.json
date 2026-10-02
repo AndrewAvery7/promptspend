@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-01T11:05:53.612Z",
+  "checkedAt": "2026-10-02T11:05:46.762Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -100,7 +100,7 @@
     {
       "url": "https://docs.z.ai/guides/overview/pricing",
       "ok": true,
-      "note": "2505 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "2618 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "zai-glm-5.1",
         "zai-glm-5.2",
