@@ -1,0 +1,1129 @@
+{
+  "$comment": "Every generated page the site has published: when it first appeared, a fingerprint of its material content, and the date that content last changed (what sitemap.xml reports as lastmod). Comparison entries also name their two model slugs, so a published pair keeps being built and never 404s. Written by `npx tsx scripts/check-pages.ts --fix` (the daily sync runs it); never edit by hand, never delete an entry. See src/lib/seo/ledger.ts.",
+  "pages": {
+    "/compare/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "14c99d456299e8"
+    },
+    "/compare/amazon-nova-2-lite-v1-0-vs-dashscope-qwen3-next-80b-a3b-instruct/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "06970400e3cbe7",
+      "left": "amazon-nova-2-lite-v1-0",
+      "right": "dashscope-qwen3-next-80b-a3b-instruct"
+    },
+    "/compare/amazon-nova-2-lite-v1-0-vs-deepseek-v4-flash/": {
+      "published": "2026-08-16",
+      "lastmod": "2026-09-16",
+      "fingerprint": "0dc6ce86847550",
+      "left": "amazon-nova-2-lite-v1-0",
+      "right": "deepseek-v4-flash"
+    },
+    "/compare/amazon-nova-2-lite-v1-0-vs-gemini-3-5-flash-lite/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1e00e71d3f75ba",
+      "left": "amazon-nova-2-lite-v1-0",
+      "right": "gemini-3-5-flash-lite"
+    },
+    "/compare/amazon-nova-2-lite-v1-0-vs-gpt-5-4-nano/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "0649097fa53d39",
+      "left": "amazon-nova-2-lite-v1-0",
+      "right": "gpt-5-4-nano"
+    },
+    "/compare/amazon-nova-2-lite-v1-0-vs-xai-grok-4-1-fast/": {
+      "published": "2026-08-30",
+      "lastmod": "2026-10-02",
+      "fingerprint": "0cc8d94c283090",
+      "left": "amazon-nova-2-lite-v1-0",
+      "right": "xai-grok-4-1-fast"
+    },
+    "/compare/amazon-nova-2-pro-preview-20251202-v1-0-vs-gpt-5-1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "1077bb5855edde",
+      "left": "amazon-nova-2-pro-preview-20251202-v1-0",
+      "right": "gpt-5-1"
+    },
+    "/compare/amazon-nova-2-pro-preview-20251202-v1-0-vs-zai-glm-5-1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "12b6b430ed44e5",
+      "left": "amazon-nova-2-pro-preview-20251202-v1-0",
+      "right": "zai-glm-5-1"
+    },
+    "/compare/amazon-nova-2-pro-preview-20251202-v1-0-vs-zai-glm-5-code/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "186235c6ff76ac",
+      "left": "amazon-nova-2-pro-preview-20251202-v1-0",
+      "right": "zai-glm-5-code"
+    },
+    "/compare/claude-fable-5-vs-gpt-5-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1ffd751235bdf3",
+      "left": "claude-fable-5",
+      "right": "gpt-5-5"
+    },
+    "/compare/claude-fable-5-vs-gpt-5-6-sol/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-26",
+      "fingerprint": "17dc8923b4ce87",
+      "left": "claude-fable-5",
+      "right": "gpt-5-6-sol"
+    },
+    "/compare/claude-haiku-4-5-vs-command-a-03-2025/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "126d5ed3b52dbb",
+      "left": "claude-haiku-4-5",
+      "right": "command-a-03-2025"
+    },
+    "/compare/claude-haiku-4-5-vs-gpt-5-4-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1b90ef5c5f3f08",
+      "left": "claude-haiku-4-5",
+      "right": "gpt-5-4-mini"
+    },
+    "/compare/claude-haiku-4-5-vs-mistral-medium-3-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "0ac13029b190cc",
+      "left": "claude-haiku-4-5",
+      "right": "mistral-medium-3-5"
+    },
+    "/compare/claude-haiku-4-5-vs-zai-glm-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "15a875f9f802ab",
+      "left": "claude-haiku-4-5",
+      "right": "zai-glm-5"
+    },
+    "/compare/claude-opus-4-6-vs-gemini-3-1-pro-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1c08e43cb0a8a4",
+      "left": "claude-opus-4-6",
+      "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-opus-4-6-vs-gpt-5-4/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "0a5031d8ec51d3",
+      "left": "claude-opus-4-6",
+      "right": "gpt-5-4"
+    },
+    "/compare/claude-opus-4-6-vs-gpt-5-6-terra/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "066e6f06bec4f5",
+      "left": "claude-opus-4-6",
+      "right": "gpt-5-6-terra"
+    },
+    "/compare/claude-opus-4-7-vs-gemini-3-1-pro-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "17c372c8b60442",
+      "left": "claude-opus-4-7",
+      "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-opus-4-7-vs-gpt-5-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "0b3814858db75e",
+      "left": "claude-opus-4-7",
+      "right": "gpt-5-5"
+    },
+    "/compare/claude-opus-4-7-vs-gpt-5-6-sol/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-26",
+      "fingerprint": "10d4f4b501baf3",
+      "left": "claude-opus-4-7",
+      "right": "gpt-5-6-sol"
+    },
+    "/compare/claude-opus-4-8-vs-gemini-3-1-pro-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "0c8eec44e6b671",
+      "left": "claude-opus-4-8",
+      "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-opus-4-8-vs-gpt-5-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "0f2ffcfdcdfc92",
+      "left": "claude-opus-4-8",
+      "right": "gpt-5-5"
+    },
+    "/compare/claude-opus-4-8-vs-gpt-5-6-sol/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-26",
+      "fingerprint": "18bfb431fbc63b",
+      "left": "claude-opus-4-8",
+      "right": "gpt-5-6-sol"
+    },
+    "/compare/claude-opus-5-5-vs-gemini-3-1-pro-preview/": {
+      "published": "2026-09-29",
+      "lastmod": "2026-09-29",
+      "fingerprint": "17250aa827e9af",
+      "left": "claude-opus-5-5",
+      "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-opus-5-5-vs-gpt-5-5/": {
+      "published": "2026-09-29",
+      "lastmod": "2026-09-29",
+      "fingerprint": "0f14de02c2344e",
+      "left": "claude-opus-5-5",
+      "right": "gpt-5-5"
+    },
+    "/compare/claude-opus-5-5-vs-gpt-5-6-sol/": {
+      "published": "2026-09-29",
+      "lastmod": "2026-09-29",
+      "fingerprint": "012e54e989a905",
+      "left": "claude-opus-5-5",
+      "right": "gpt-5-6-sol"
+    },
+    "/compare/claude-opus-5-vs-gemini-3-1-pro-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "110a1039da7b9d",
+      "left": "claude-opus-5",
+      "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-opus-5-vs-gpt-5-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1f40674c07e592",
+      "left": "claude-opus-5",
+      "right": "gpt-5-5"
+    },
+    "/compare/claude-opus-5-vs-gpt-5-6-sol/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-26",
+      "fingerprint": "121753ac33abe4",
+      "left": "claude-opus-5",
+      "right": "gpt-5-6-sol"
+    },
+    "/compare/claude-sonnet-4-6-vs-dashscope-qwen3-7-max/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "18572a0e33bc77",
+      "left": "claude-sonnet-4-6",
+      "right": "dashscope-qwen3-7-max"
+    },
+    "/compare/claude-sonnet-4-6-vs-gpt-5-4/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "1b4b01131eb12e",
+      "left": "claude-sonnet-4-6",
+      "right": "gpt-5-4"
+    },
+    "/compare/claude-sonnet-4-6-vs-gpt-5-6-terra/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "01327122d6ace3",
+      "left": "claude-sonnet-4-6",
+      "right": "gpt-5-6-terra"
+    },
+    "/compare/claude-sonnet-4-6-vs-xai-grok-4-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "16e5d2f14503ad",
+      "left": "claude-sonnet-4-6",
+      "right": "xai-grok-4-5"
+    },
+    "/compare/claude-sonnet-5-5-vs-gemini-3-1-pro-preview/": {
+      "published": "2026-09-29",
+      "lastmod": "2026-09-29",
+      "fingerprint": "0fec0f132eddb2",
+      "left": "claude-sonnet-5-5",
+      "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-sonnet-5-5-vs-gpt-5-4/": {
+      "published": "2026-09-29",
+      "lastmod": "2026-09-29",
+      "fingerprint": "1fcb4b3246fae8",
+      "left": "claude-sonnet-5-5",
+      "right": "gpt-5-4"
+    },
+    "/compare/claude-sonnet-5-5-vs-gpt-5-5/": {
+      "published": "2026-09-29",
+      "lastmod": "2026-09-29",
+      "fingerprint": "0ac2516e2a57c8",
+      "left": "claude-sonnet-5-5",
+      "right": "gpt-5-5"
+    },
+    "/compare/claude-sonnet-5-vs-gemini-3-1-pro-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-01",
+      "fingerprint": "0234e7d202f668",
+      "left": "claude-sonnet-5",
+      "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-sonnet-5-vs-gpt-5-4/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-01",
+      "fingerprint": "0505f574856a74",
+      "left": "claude-sonnet-5",
+      "right": "gpt-5-4"
+    },
+    "/compare/claude-sonnet-5-vs-gpt-5-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-01",
+      "fingerprint": "1021115e135190",
+      "left": "claude-sonnet-5",
+      "right": "gpt-5-5"
+    },
+    "/compare/command-a-03-2025-vs-gpt-5-4-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "04fd82b49f5723",
+      "left": "command-a-03-2025",
+      "right": "gpt-5-4-mini"
+    },
+    "/compare/command-a-03-2025-vs-mistral-medium-3-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "02fcbe0ba3fe90",
+      "left": "command-a-03-2025",
+      "right": "mistral-medium-3-5"
+    },
+    "/compare/command-a-03-2025-vs-zai-glm-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "12b683c5ca05a5",
+      "left": "command-a-03-2025",
+      "right": "zai-glm-5"
+    },
+    "/compare/dashscope-qwen3-7-max-vs-gemini-3-6-flash/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "0ed4a4b7f9e62a",
+      "left": "dashscope-qwen3-7-max",
+      "right": "gemini-3-6-flash"
+    },
+    "/compare/dashscope-qwen3-7-max-vs-gpt-5-2/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1e24a22014a5fa",
+      "left": "dashscope-qwen3-7-max",
+      "right": "gpt-5-2"
+    },
+    "/compare/dashscope-qwen3-7-max-vs-moonshot-kimi-k2-6/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "026c8786dc363d",
+      "left": "dashscope-qwen3-7-max",
+      "right": "moonshot-kimi-k2-6"
+    },
+    "/compare/dashscope-qwen3-7-max-vs-xai-grok-4-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "17b1de7e99db7a",
+      "left": "dashscope-qwen3-7-max",
+      "right": "xai-grok-4-5"
+    },
+    "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-deepseek-v4-flash/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-16",
+      "fingerprint": "0146cac8786a4f",
+      "left": "dashscope-qwen3-next-80b-a3b-instruct",
+      "right": "deepseek-v4-flash"
+    },
+    "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-gemini-3-5-flash-lite/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "0efe9ec5b2bc13",
+      "left": "dashscope-qwen3-next-80b-a3b-instruct",
+      "right": "gemini-3-5-flash-lite"
+    },
+    "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-gpt-5-6-luna/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "189bd9d8249b66",
+      "left": "dashscope-qwen3-next-80b-a3b-instruct",
+      "right": "gpt-5-6-luna"
+    },
+    "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-minimax-m3/": {
+      "published": "2026-08-16",
+      "lastmod": "2026-08-16",
+      "fingerprint": "17c604cef09b49",
+      "left": "dashscope-qwen3-next-80b-a3b-instruct",
+      "right": "minimax-m3"
+    },
+    "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-mistral-large-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "12b393035349d1",
+      "left": "dashscope-qwen3-next-80b-a3b-instruct",
+      "right": "mistral-large-3"
+    },
+    "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-xai-grok-4-1-fast/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "028642cbf7e77f",
+      "left": "dashscope-qwen3-next-80b-a3b-instruct",
+      "right": "xai-grok-4-1-fast"
+    },
+    "/compare/deepseek-v3-2-vs-gpt-5-6-luna/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "12d5add37d205e",
+      "left": "deepseek-v3-2",
+      "right": "gpt-5-6-luna"
+    },
+    "/compare/deepseek-v3-2-vs-minimax-m3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "190645cd045ebd",
+      "left": "deepseek-v3-2",
+      "right": "minimax-m3"
+    },
+    "/compare/deepseek-v3-2-vs-mistral-large-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "19f57c346f4717",
+      "left": "deepseek-v3-2",
+      "right": "mistral-large-3"
+    },
+    "/compare/deepseek-v4-flash-vs-gemini-3-5-flash-lite/": {
+      "published": "2026-08-16",
+      "lastmod": "2026-09-16",
+      "fingerprint": "1cc5fd4ec68a66",
+      "left": "deepseek-v4-flash",
+      "right": "gemini-3-5-flash-lite"
+    },
+    "/compare/deepseek-v4-flash-vs-gpt-5-4-nano/": {
+      "published": "2026-08-30",
+      "lastmod": "2026-09-16",
+      "fingerprint": "1194fee02445c4",
+      "left": "deepseek-v4-flash",
+      "right": "gpt-5-4-nano"
+    },
+    "/compare/deepseek-v4-flash-vs-gpt-5-6-luna/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "126644305b39a1",
+      "left": "deepseek-v4-flash",
+      "right": "gpt-5-6-luna"
+    },
+    "/compare/deepseek-v4-flash-vs-mistral-large-3/": {
+      "published": "2026-09-16",
+      "lastmod": "2026-09-16",
+      "fingerprint": "1aef9cc7a57f57",
+      "left": "deepseek-v4-flash",
+      "right": "mistral-large-3"
+    },
+    "/compare/deepseek-v4-flash-vs-o4-mini/": {
+      "published": "2026-08-16",
+      "lastmod": "2026-10-02",
+      "fingerprint": "1dd1d7b55f2fbc",
+      "left": "deepseek-v4-flash",
+      "right": "o4-mini"
+    },
+    "/compare/deepseek-v4-flash-vs-xai-grok-4-1-fast/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "1575e89c61f12f",
+      "left": "deepseek-v4-flash",
+      "right": "xai-grok-4-1-fast"
+    },
+    "/compare/deepseek-v4-pro-vs-moonshot-kimi-k2-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "0ad4b73be25e70",
+      "left": "deepseek-v4-pro",
+      "right": "moonshot-kimi-k2-5"
+    },
+    "/compare/deepseek-v4-pro-vs-xai-grok-4-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1b5cf76510bf81",
+      "left": "deepseek-v4-pro",
+      "right": "xai-grok-4-3"
+    },
+    "/compare/deepseek-v4-pro-vs-zai-glm-5-1/": {
+      "published": "2026-09-06",
+      "lastmod": "2026-09-06",
+      "fingerprint": "1c01e424a76ae1",
+      "left": "deepseek-v4-pro",
+      "right": "zai-glm-5-1"
+    },
+    "/compare/deepseek-v4-pro-vs-zai-glm-5-code/": {
+      "published": "2026-08-16",
+      "lastmod": "2026-08-16",
+      "fingerprint": "11d6f0238b94be",
+      "left": "deepseek-v4-pro",
+      "right": "zai-glm-5-code"
+    },
+    "/compare/deepseek-v4-pro-vs-zai-glm-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "0a563e30eedb2a",
+      "left": "deepseek-v4-pro",
+      "right": "zai-glm-5"
+    },
+    "/compare/gemini-3-1-pro-preview-vs-gpt-5-4/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "12e651f8a1383b",
+      "left": "gemini-3-1-pro-preview",
+      "right": "gpt-5-4"
+    },
+    "/compare/gemini-3-1-pro-preview-vs-gpt-5-6-terra/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "1e24a4d93727fd",
+      "left": "gemini-3-1-pro-preview",
+      "right": "gpt-5-6-terra"
+    },
+    "/compare/gemini-3-5-flash-lite-vs-gpt-5-4-nano/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1763c4fcdb09e2",
+      "left": "gemini-3-5-flash-lite",
+      "right": "gpt-5-4-nano"
+    },
+    "/compare/gemini-3-5-flash-lite-vs-o4-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "00fd786946cc79",
+      "left": "gemini-3-5-flash-lite",
+      "right": "o4-mini"
+    },
+    "/compare/gemini-3-5-flash-lite-vs-xai-grok-4-1-fast/": {
+      "published": "2026-08-30",
+      "lastmod": "2026-10-02",
+      "fingerprint": "00d9899ad1aa6e",
+      "left": "gemini-3-5-flash-lite",
+      "right": "xai-grok-4-1-fast"
+    },
+    "/compare/gemini-3-6-flash-vs-gpt-5-2/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1d22f4e0fd2ae2",
+      "left": "gemini-3-6-flash",
+      "right": "gpt-5-2"
+    },
+    "/compare/gemini-3-6-flash-vs-moonshot-kimi-k2-6/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "0f6a8b20c1737b",
+      "left": "gemini-3-6-flash",
+      "right": "moonshot-kimi-k2-6"
+    },
+    "/compare/gpt-5-1-vs-xai-grok-4-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-06",
+      "fingerprint": "1b5535a1fc46e5",
+      "left": "gpt-5-1",
+      "right": "xai-grok-4-3"
+    },
+    "/compare/gpt-5-1-vs-zai-glm-5-1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "164e05a3946826",
+      "left": "gpt-5-1",
+      "right": "zai-glm-5-1"
+    },
+    "/compare/gpt-5-2-vs-moonshot-kimi-k2-6/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-09",
+      "fingerprint": "08dbc96d714b7e",
+      "left": "gpt-5-2",
+      "right": "moonshot-kimi-k2-6"
+    },
+    "/compare/gpt-5-4-mini-vs-moonshot-kimi-k2-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "0be8f4770f07d7",
+      "left": "gpt-5-4-mini",
+      "right": "moonshot-kimi-k2-5"
+    },
+    "/compare/gpt-5-4-mini-vs-zai-glm-5-code/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "0f36ea03be0aed",
+      "left": "gpt-5-4-mini",
+      "right": "zai-glm-5-code"
+    },
+    "/compare/gpt-5-4-mini-vs-zai-glm-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "158100affe6512",
+      "left": "gpt-5-4-mini",
+      "right": "zai-glm-5"
+    },
+    "/compare/gpt-5-4-nano-vs-xai-grok-4-1-fast/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "15d49e8cb67a76",
+      "left": "gpt-5-4-nano",
+      "right": "xai-grok-4-1-fast"
+    },
+    "/compare/gpt-5-6-luna-vs-minimax-m3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "14ead02fedfdc6",
+      "left": "gpt-5-6-luna",
+      "right": "minimax-m3"
+    },
+    "/compare/gpt-5-6-luna-vs-mistral-large-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "00ce12fa2754aa",
+      "left": "gpt-5-6-luna",
+      "right": "mistral-large-3"
+    },
+    "/compare/gpt-5-6-terra-vs-xai-grok-4-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "088efe0baa3335",
+      "left": "gpt-5-6-terra",
+      "right": "xai-grok-4-5"
+    },
+    "/compare/minimax-m3-vs-mistral-large-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "1ac4ab573434f7",
+      "left": "minimax-m3",
+      "right": "mistral-large-3"
+    },
+    "/compare/mistral-large-3-vs-o4-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "0615331ba686f5",
+      "left": "mistral-large-3",
+      "right": "o4-mini"
+    },
+    "/compare/mistral-medium-3-5-vs-o4-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "04c7dd329e6227",
+      "left": "mistral-medium-3-5",
+      "right": "o4-mini"
+    },
+    "/compare/mistral-medium-3-5-vs-xai-grok-4-1-fast/": {
+      "published": "2026-08-30",
+      "lastmod": "2026-10-02",
+      "fingerprint": "073d3f4fd0719a",
+      "left": "mistral-medium-3-5",
+      "right": "xai-grok-4-1-fast"
+    },
+    "/compare/moonshot-kimi-k2-5-vs-zai-glm-5-code/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "069dda72aff381",
+      "left": "moonshot-kimi-k2-5",
+      "right": "zai-glm-5-code"
+    },
+    "/compare/moonshot-kimi-k2-5-vs-zai-glm-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-10-02",
+      "fingerprint": "0365bab7092ece",
+      "left": "moonshot-kimi-k2-5",
+      "right": "zai-glm-5"
+    },
+    "/compare/moonshot-kimi-k2-6-vs-xai-grok-4-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-09",
+      "fingerprint": "19907f198663b1",
+      "left": "moonshot-kimi-k2-6",
+      "right": "xai-grok-4-5"
+    },
+    "/compare/xai-grok-4-3-vs-zai-glm-5-1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-06",
+      "fingerprint": "12ba1a625f22bb",
+      "left": "xai-grok-4-3",
+      "right": "zai-glm-5-1"
+    },
+    "/compare/xai-grok-4-3-vs-zai-glm-5-code/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-06",
+      "fingerprint": "01c44326aaff6f",
+      "left": "xai-grok-4-3",
+      "right": "zai-glm-5-code"
+    },
+    "/models/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "187bb259a3bbe6"
+    },
+    "/models/amazon-nova-2-lite-v1-0/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "07567e3a11be9b"
+    },
+    "/models/amazon-nova-2-pro-preview-20251202-v1-0/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "133f435f7d9e3a"
+    },
+    "/models/claude-fable-5-1/": {
+      "published": "2026-09-02",
+      "lastmod": "2026-09-02",
+      "fingerprint": "1dcc006ca2fd5a"
+    },
+    "/models/claude-fable-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "13aef0994cb3b7"
+    },
+    "/models/claude-haiku-4-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "163b52ebf37285"
+    },
+    "/models/claude-opus-4-1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "1743653c52984e"
+    },
+    "/models/claude-opus-4-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "18bf12ea47e9ff"
+    },
+    "/models/claude-opus-4-6/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "12cbdf4e22c6b8"
+    },
+    "/models/claude-opus-4-7/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "1a1e8f75226c10"
+    },
+    "/models/claude-opus-4-8/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "18d30309e4671c"
+    },
+    "/models/claude-opus-5-5/": {
+      "published": "2026-09-23",
+      "lastmod": "2026-09-29",
+      "fingerprint": "173f5da8b39776"
+    },
+    "/models/claude-opus-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "0fe20702d30ee2"
+    },
+    "/models/claude-sonnet-4-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-17",
+      "fingerprint": "08d9fcaecbbd12"
+    },
+    "/models/claude-sonnet-4-6/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "19b53349b9e4d2"
+    },
+    "/models/claude-sonnet-5-5/": {
+      "published": "2026-09-29",
+      "lastmod": "2026-09-29",
+      "fingerprint": "09a2fc79d44b13"
+    },
+    "/models/claude-sonnet-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-01",
+      "fingerprint": "175ca3817cdd40"
+    },
+    "/models/command-a-03-2025/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "12640b947c44a6"
+    },
+    "/models/dashscope-qwen3-7-max/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "0da62f20dd6e3d"
+    },
+    "/models/dashscope-qwen3-next-80b-a3b-instruct/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "173fca2cb6c22d"
+    },
+    "/models/dashscope-qwen3-next-80b-a3b-thinking/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "0ec0390ff1156b"
+    },
+    "/models/dashscope-qwen3-vl-235b-a22b-instruct/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "18a0a69b9add00"
+    },
+    "/models/deepseek-r1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "1e29c60114c3d5"
+    },
+    "/models/deepseek-v3-2/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "0560269d9a7828"
+    },
+    "/models/deepseek-v3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "1016e37d0cac83"
+    },
+    "/models/deepseek-v4-flash/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-16",
+      "fingerprint": "05c840c1cbadcd"
+    },
+    "/models/deepseek-v4-pro/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1ff93d6d68a79f"
+    },
+    "/models/gemini-2-5-flash/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-17",
+      "fingerprint": "10236ee927456e"
+    },
+    "/models/gemini-2-5-pro/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-17",
+      "fingerprint": "03dc4494aaf02d"
+    },
+    "/models/gemini-3-1-flash-lite-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1c7a7d3ea87fe0"
+    },
+    "/models/gemini-3-1-flash-lite/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "034df6072c178b"
+    },
+    "/models/gemini-3-1-pro-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1c8cd9821ab4a0"
+    },
+    "/models/gemini-3-5-flash-lite/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "030a0ce9a2edb2"
+    },
+    "/models/gemini-3-5-flash/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-17",
+      "fingerprint": "15a8cf58b70332"
+    },
+    "/models/gemini-3-6-flash/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1aadcaa7decc30"
+    },
+    "/models/gemini-3-7-flash/": {
+      "published": "2026-08-16",
+      "lastmod": "2026-08-16",
+      "fingerprint": "14ab6ef6aca01b"
+    },
+    "/models/gemini-3-8-flash/": {
+      "published": "2026-09-04",
+      "lastmod": "2026-09-04",
+      "fingerprint": "101f0631e76982"
+    },
+    "/models/gemini-3-flash-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-17",
+      "fingerprint": "0a226a3a5faad1"
+    },
+    "/models/gemini-3-pro-preview/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "119e4bd71b20d1"
+    },
+    "/models/gpt-5-1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "096dfbb4092802"
+    },
+    "/models/gpt-5-2/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "1ad3b97a5ec559"
+    },
+    "/models/gpt-5-4-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "12ea2889429e97"
+    },
+    "/models/gpt-5-4-nano/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1d4ec3d75b1090"
+    },
+    "/models/gpt-5-4/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "16aa3ce19b7d3a"
+    },
+    "/models/gpt-5-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "07473dd9694805"
+    },
+    "/models/gpt-5-6-luna/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "0697ed0ff256a4"
+    },
+    "/models/gpt-5-6-sol/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-26",
+      "fingerprint": "08b28b8d8e1385"
+    },
+    "/models/gpt-5-6-terra/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-22",
+      "fingerprint": "1d2553eec806d4"
+    },
+    "/models/gpt-5-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "0d5d500e506e19"
+    },
+    "/models/gpt-5-nano/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "0a398986a19d60"
+    },
+    "/models/gpt-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "07ebee7ea40b02"
+    },
+    "/models/minimax-m2-1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "03c356f62adc93"
+    },
+    "/models/minimax-m2-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "0bf847e3842a0d"
+    },
+    "/models/minimax-m2/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1e875fdfa24961"
+    },
+    "/models/minimax-m3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1b7a77fcca1c72"
+    },
+    "/models/mistral-large-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "011a8198e8829b"
+    },
+    "/models/mistral-medium-3-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-30",
+      "fingerprint": "1f948a757adf24"
+    },
+    "/models/mistral-medium-3/": {
+      "published": "2026-08-28",
+      "lastmod": "2026-09-29",
+      "fingerprint": "13db390be6dcf7"
+    },
+    "/models/moonshot-kimi-k2-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "06a7edae941d3b"
+    },
+    "/models/moonshot-kimi-k2-6/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-09",
+      "fingerprint": "112d4756525e73"
+    },
+    "/models/moonshot-kimi-k2-thinking/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "04f3bfb8e58a73"
+    },
+    "/models/moonshot-kimi-k3/": {
+      "published": "2026-08-22",
+      "lastmod": "2026-08-22",
+      "fingerprint": "1bb61fd21253dd"
+    },
+    "/models/o1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "1eab263f2c92bf"
+    },
+    "/models/o3-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "1553b07a14ed38"
+    },
+    "/models/o3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "1e00fed0968d28"
+    },
+    "/models/o4-mini/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-03",
+      "fingerprint": "00aa49bfb5bde2"
+    },
+    "/models/xai-grok-2/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "1cd7d5042a9a43"
+    },
+    "/models/xai-grok-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-02",
+      "fingerprint": "0dd8b05e3a7f8f"
+    },
+    "/models/xai-grok-4-1-fast/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-02",
+      "fingerprint": "1a8a757c939f6e"
+    },
+    "/models/xai-grok-4-20/": {
+      "published": "2026-08-30",
+      "lastmod": "2026-09-02",
+      "fingerprint": "11841d4bb40aa1"
+    },
+    "/models/xai-grok-4-3/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-06",
+      "fingerprint": "0e9f83ed392e58"
+    },
+    "/models/xai-grok-4-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-06",
+      "fingerprint": "0a032b6e6ec9d9"
+    },
+    "/models/xai-grok-4-6/": {
+      "published": "2026-08-16",
+      "lastmod": "2026-08-16",
+      "fingerprint": "10cbd35bf89c55"
+    },
+    "/models/xai-grok-4-7/": {
+      "published": "2026-09-22",
+      "lastmod": "2026-09-22",
+      "fingerprint": "1b32c3343f0394"
+    },
+    "/models/xai-grok-4/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-02",
+      "fingerprint": "0245dd75f99c15"
+    },
+    "/models/zai-glm-4-6/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "01db9536dc0a2b"
+    },
+    "/models/zai-glm-4-7/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "09bc2d57b93b04"
+    },
+    "/models/zai-glm-5-1/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "0078418a0de3e2"
+    },
+    "/models/zai-glm-5-2/": {
+      "published": "2026-09-02",
+      "lastmod": "2026-09-02",
+      "fingerprint": "1d8f64f7e272d9"
+    },
+    "/models/zai-glm-5-3/": {
+      "published": "2026-08-28",
+      "lastmod": "2026-09-02",
+      "fingerprint": "1286b8ebe91c32"
+    },
+    "/models/zai-glm-5-code/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "08c49e8e9c72c6"
+    },
+    "/models/zai-glm-5/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1edecbcf120fba"
+    },
+    "/providers/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "077459492a8ce9"
+    },
+    "/providers/alibaba/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-16",
+      "fingerprint": "1257838eba5d21"
+    },
+    "/providers/amazon/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "1209457545d8ee"
+    },
+    "/providers/anthropic/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "16ccf1ce0706d5"
+    },
+    "/providers/cohere/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-02",
+      "fingerprint": "058edec6ba2af6"
+    },
+    "/providers/deepseek/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "129631c98e28e1"
+    },
+    "/providers/google/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "10beeb431c41d8"
+    },
+    "/providers/minimax/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-20",
+      "fingerprint": "119a59c9f4796b"
+    },
+    "/providers/mistral/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "0caad857ce2fa1"
+    },
+    "/providers/moonshot/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "1c741847f42cb9"
+    },
+    "/providers/openai/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-08-26",
+      "fingerprint": "06044ab9348555"
+    },
+    "/providers/xai/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-29",
+      "fingerprint": "04445c5ae56bd9"
+    },
+    "/providers/zai/": {
+      "published": "2026-08-02",
+      "lastmod": "2026-09-02",
+      "fingerprint": "0a5e19148598ea"
+    }
+  }
+}

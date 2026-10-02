@@ -11,6 +11,7 @@ import {
   renderModelsIndex,
   renderProviderPage,
   renderProvidersIndex,
+  renderRetiredComparisonPage,
   type RenderContext,
 } from './render';
 
@@ -335,6 +336,79 @@ describe('rendered pages', () => {
       expect(csp).not.toContain('unsafe-inline');
       expect(csp).not.toContain('http');
     }
+  });
+
+  it('never marks an ordinary page noindex', () => {
+    for (const { html } of everyPage(SAMPLE)) expect(html).not.toContain('name="robots"');
+  });
+
+  it('says what separates a pair besides price, and that a side has been retired', () => {
+    const set = buildPages(
+      catalog([
+        model('a', { providerId: 'openai', capabilities: { reasoning: false, vision: true } }),
+        model('b', { providerId: 'anthropic', status: 'deprecated', displayName: 'Old B' }),
+      ]),
+      {
+        asOf: ASOF,
+        // A retired model is never newly paired; this pair survives from the ledger.
+        ledger: {
+          '/compare/a-vs-b/': {
+            published: '2026-08-01',
+            lastmod: '2026-08-01',
+            fingerprint: 'x',
+            left: 'a',
+            right: 'b',
+          },
+        },
+      },
+    );
+    const html = renderComparisonPage(set.comparisons[0]!, recordingContext());
+
+    expect(html).toContain('<h2>Beyond the price</h2>');
+    expect(html).toContain('<li>Only a accepts images as input.</li>');
+    expect(html).toContain('Old B has been retired by its vendor.');
+  });
+});
+
+describe('a retired comparison', () => {
+  function retired(): string {
+    const set = buildPages(
+      catalog([
+        model('gpt-5'),
+        model('gone', {
+          providerId: 'anthropic',
+          displayName: 'Gone Model',
+          provenance: { source: 'vendor', lastVerified: '2026-08-01', stale: true },
+        }),
+      ]),
+      {
+        asOf: ASOF,
+        ledger: {
+          '/compare/gone-vs-gpt-5/': {
+            published: '2026-08-01',
+            lastmod: '2026-08-01',
+            fingerprint: 'x',
+            left: 'gone',
+            right: 'gpt-5',
+          },
+        },
+      },
+    );
+    return renderRetiredComparisonPage(set.retiredComparisons[0]!, recordingContext());
+  }
+
+  it('is noindex and canonical to the model that survives, so it neither ranks nor 404s', () => {
+    const html = retired();
+    expect(html).toContain('<meta name="robots" content="noindex, follow" />');
+    expect(html).toContain('<link rel="canonical" href="https://promptspend.com/models/gpt-5/" />');
+  });
+
+  it('explains itself and links on to the survivor and the index', () => {
+    const html = retired();
+    expect(html).toContain('This comparison has been retired');
+    expect(html).toContain('Gone Model');
+    expect(html).toContain('<a href="/models/gpt-5/">gpt-5</a>');
+    expect(html).toContain('<a href="/compare/">Every current comparison</a>');
   });
 });
 

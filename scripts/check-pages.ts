@@ -39,7 +39,9 @@ import { fileURLToPath } from 'node:url';
 
 import type { PricingCatalog } from '@/lib/pricing/types';
 import { assertCatalog } from '@/lib/pricing/types';
-import { buildPages } from '@/lib/seo/pages';
+import { buildPages, isoDate, ledgerPages } from '@/lib/seo/pages';
+import { ledgerDrift, updateLedger } from '@/lib/seo/ledger';
+import { LEDGER_FILE, readLedger, writeLedger } from './lib/page-ledger';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG = resolve(ROOT, 'public/data/pricing.json');
@@ -83,7 +85,29 @@ function expectAll(label: string, haystack: string, pattern: RegExp, expected: n
 const raw: unknown = JSON.parse(await readFile(CATALOG, 'utf8'));
 assertCatalog(raw);
 const catalog: PricingCatalog = raw;
-const set = buildPages(catalog, { asOf: new Date(catalog.generatedAt) });
+const asOf = new Date(catalog.generatedAt);
+const FIX_LEDGER = process.argv.includes('--fix');
+let ledger = await readLedger();
+
+/* ── The page ledger ──
+   `data/published-pages.json` remembers every page ever published, the date its
+   content last changed, and every comparison pair — see src/lib/seo/ledger.ts.
+   `--fix` records this catalogue's pages in it (dated by the catalogue, not the
+   clock, so the same catalogue always writes the same file). Without `--fix` a
+   page the ledger has not recorded is a failure: it would publish dated today
+   on every build until somebody noticed, which is the bug the ledger exists to
+   end. Fixed first and then counted, because recording a comparison is what
+   keeps it in the set. */
+if (FIX_LEDGER) {
+  const recorded = updateLedger(ledger, ledgerPages(buildPages(catalog, { asOf, ledger })), isoDate(asOf));
+  if (JSON.stringify(recorded) !== JSON.stringify(ledger)) {
+    await writeLedger(recorded);
+    console.log(`  rewrote ${LEDGER_FILE}`);
+  }
+  ledger = recorded;
+}
+
+const set = buildPages(catalog, { asOf, ledger });
 
 const models = set.models.length;
 const providers = set.providers.length;
@@ -97,6 +121,14 @@ if (models + providers + comparisons + INDEXES !== total) {
   fail(
     `the page set does not add up: ${models} + ${providers} + ${comparisons} + ${INDEXES} ` +
       `= ${models + providers + comparisons + INDEXES}, but set.all holds ${total}`,
+  );
+}
+
+const drift = ledgerDrift(ledger, ledgerPages(set));
+if (drift.length > 0) {
+  fail(
+    `${LEDGER_FILE} has not recorded ${drift.length} page(s) as built today (${drift.slice(0, 3).join(', ')}${drift.length > 3 ? ', …' : ''}). ` +
+      'Run `npx tsx scripts/check-pages.ts --fix` and commit the file.',
   );
 }
 
@@ -365,7 +397,13 @@ if (problems.length > 0) {
   console.log(
     '✓ docs/PAGES.md, README.md and the pages.ts doc comment all agree, and the total is the sum of its parts',
   );
+  console.log(`✓ ${LEDGER_FILE} records every page this catalogue builds`);
   if (set.droppedComparisons > 0) {
     console.log(`  note: ${set.droppedComparisons} qualifying comparison(s) dropped by the page ceiling`);
+  }
+  const kept = set.comparisons.filter((page) => page.kept).length;
+  if (kept > 0) console.log(`  note: ${kept} comparison(s) built only because they were published before`);
+  if (set.retiredComparisons.length > 0) {
+    console.log(`  note: ${set.retiredComparisons.length} retired comparison(s) left as noindex signposts`);
   }
 }

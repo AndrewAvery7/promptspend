@@ -201,8 +201,10 @@ async function main(): Promise<void> {
 
   const discoveredPages = await findPages();
   const pages: string[] = [];
+  const noIndexPages: string[] = [];
   for (const path of discoveredPages) {
-    if (!(await isNoIndexPage(path))) pages.push(path);
+    if (await isNoIndexPage(path)) noIndexPages.push(path);
+    else pages.push(path);
   }
   if (pages.length === 0) {
     problems.push('no generated pages found — did `npm run build:pages` run?');
@@ -239,6 +241,13 @@ async function main(): Promise<void> {
       // The sitemap carries absolute URLs, whose pathname already includes the
       // base path; compare the two on the same footing.
       if (!listed.has(`${basePath}${path.slice(1)}`)) problems.push(`${path} is not in sitemap.xml`);
+    }
+    // The reverse: a sitemap is a list of pages to index, so naming one that
+    // says noindex is a contradiction Search Console reports as an error. The
+    // retired-comparison signposts are the pages this guards.
+    for (const path of noIndexPages) {
+      if (listed.has(`${basePath}${path.slice(1)}`))
+        problems.push(`${path} is noindex but listed in sitemap.xml`);
     }
   }
 

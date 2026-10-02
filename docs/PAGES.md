@@ -5,11 +5,11 @@ for a tool and the wrong shape for search: nobody types "LLM cost estimator" int
 Google. They type **"gpt-5.6 pricing"** and **"claude opus vs gemini pro cost"**.
 
 `scripts/build-pages.ts` gives every one of those questions a real page, built
-from the same catalog and costed by the same engine as the app. 171 of them
-today: 81 models, 12 providers, 75 comparisons, 3 indexes.
+from the same catalog and costed by the same engine as the app. 188 of them
+today: 81 models, 12 providers, 92 comparisons, 3 indexes.
 
 `/receipt/` is also a real crawlable page, but it is a product route rather than a catalog-generated page and
-is therefore not included in the 164-page arithmetic below. Vite builds it from `receipt/index.html`; the
+is therefore not included in the page arithmetic below. Vite builds it from `receipt/index.html`; the
 post-build step adds it to the sitemap and `llms.txt`.
 
 ---
@@ -23,10 +23,17 @@ post-build step adds it to the sitemap and `llms.txt`.
 | `/providers/`          | 1     | Every provider, model counts, cheapest model                        |
 | `/providers/<slug>/`   | 12    | That provider's models, cheapest first                              |
 | `/compare/`            | 1     | Every head-to-head                                                  |
-| `/compare/<a>-vs-<b>/` | 75    | Two models side by side on the same three workloads                 |
+| `/compare/<a>-vs-<b>/` | 92    | Two models side by side on the same three workloads                 |
 
 Aliases and rows upstream has stopped listing do not get pages. Two URLs for one
 purchasable model would compete with each other.
+
+A comparison URL that was published once but can no longer be built — one of
+its two models has lost its page — is written as a short signpost instead of
+being left to 404: it says the comparison is retired, links to whichever model
+survives and to `/compare/`, carries `<meta name="robots" content="noindex">`
+and a canonical to the surviving model's page (or `/compare/`), and is kept out
+of the sitemap and out of the counts above. There are none today.
 
 ## The rule these pages live or die by
 
@@ -52,6 +59,64 @@ gpt", never "gpt-5 vs gpt-5-mini"), both scored, and within 3× of each other on
 blended rate. Each model contributes its three nearest peers by capability; the
 union is deduplicated and capped. **Reaching the cap is logged**, because a page
 set that quietly shrank looks exactly like one that is complete.
+
+### A comparison, once published, stays published
+
+The rule above is re-run on every build, and a model arriving shifts everyone's
+nearest peers. Until October 2026 that meant a pair could qualify one morning
+and not the next, and its URL fell through to GitHub Pages' bare 404 along with
+whatever it had earned in search: 92 pairs had been built at one time or
+another, and only 75 were still live.
+
+Now every pair ever published is recorded in `data/published-pages.json` (the
+page ledger, below), and the build keeps generating it for as long as both of
+its models have pages — even when the rule would no longer pick it, and even
+when one side has since been retired by its vendor (the page then says so). The
+cap applies only to pairs being published for the first time. The 17 pairs
+that had dropped out were recovered by replaying every catalog since
+2026-08-02 through the page builder, and checked against the live sitemap and
+the Wayback Machine.
+
+The copy is deliberately data-driven rather than templated: besides the three
+monthly bills and the rate cards, each comparison lists what separates the two
+apart from price — context window, output ceiling, reasoning, vision, caching,
+batch discount — and only the differences that actually exist for that pair.
+
+## The page ledger and `lastmod`
+
+`data/published-pages.json` records, for every generated page: the date it was
+first published, a fingerprint of its **material** content, and the date that
+fingerprint last moved. That last date is what `sitemap.xml` reports as
+`lastmod`.
+
+It used to report the build date on every URL, every day, which told Google
+that 170 pages changed each morning when on most mornings none had. Google uses
+`lastmod` only when it is "consistently and verifiably accurate", so a value that
+is always today is a value it learns to ignore.
+
+What counts as material, per page:
+
+| Page           | Changes when                                                                       |
+| -------------- | ---------------------------------------------------------------------------------- |
+| a model        | its rates (as in force that day, so a lapsing promotion counts), limits, status, … |
+| a comparison   | either of its two models changes                                                   |
+| a provider     | any of its models changes, arrives or leaves                                       |
+| an index       | any page it lists changes, arrives or leaves                                       |
+| the calculator | the model table changes — it shows the same prices                                 |
+
+Deliberately **not** material: `lastVerified`, which the sync moves every
+morning whether or not anything changed, the footer's catalog date, and anything
+on a model page that depends on other models (rank, cheaper alternatives) — one
+model arriving must not re-date eighty pages.
+
+The ledger is written by `npx tsx scripts/check-pages.ts --fix`, which the daily
+sync already runs before it commits; the date it records is the catalog's own
+`generatedAt`, so the same catalog always produces the same file and building
+twice on different days with the same catalog gives the same sitemap. Without
+`--fix` the script **fails** if the ledger has not recorded a page the build
+produces — otherwise that page would quietly be dated "today" on every build
+until somebody noticed. Entries are never removed. If you change the catalog or
+the page code by hand, run `--fix` and commit the file with your change.
 
 ## Three constraints, each the reason for the next
 
@@ -105,10 +170,14 @@ failure with no symptom: the page renders perfectly and the link is dead.
 
 ## IndexNow
 
-When prices move, `scripts/ping-indexnow.ts` submits exactly the pages a reader
-would now see differently — the changed models, every comparison they appear on,
-the providers that list them, the index tables and the calculator. It runs from
-the same workflow that notifies subscribers, on the same trigger.
+When prices move, `scripts/ping-indexnow.ts` submits exactly the pages whose
+`lastmod` moved in that commit, read by diffing the page ledger against the
+previous commit's — the same dates the sitemap reports, so the two cannot
+disagree. A morning that re-verified every price without moving one submits
+nothing. It runs from the same workflow that notifies subscribers, on the same
+trigger. (On the first deploy after the ledger was introduced there is no
+previous ledger to diff, so it falls back to working the set out from the price
+changes.)
 
 **Bing, Yandex, Seznam and Naver read this. Google does not** — it has never
 joined IndexNow and finds these pages through the sitemap and ordinary crawling.

@@ -2,10 +2,16 @@
  * Tell IndexNow that specific pages changed, the moment they actually change.
  *
  * Runs alongside `notify-alerts.ts`, on a push to `main` that moved
- * `public/data/pricing.json`, and submits exactly the pages that a reader would
- * see differently: the model pages for the models whose rates moved, every
- * comparison page one of them appears on, and the two index tables that list
- * them.
+ * `public/data/pricing.json`, and submits exactly the pages whose `lastmod`
+ * moved in that commit — read straight from the page ledger
+ * (`data/published-pages.json`), which is also what the sitemap reports. So
+ * IndexNow and the sitemap cannot disagree about what changed, and a morning
+ * that re-verified every price without moving one submits nothing.
+ *
+ * When the previous commit has no ledger to compare against (the first deploy
+ * after it was introduced), it falls back to working the set out from the
+ * price changes: the changed models, every comparison they appear on, the
+ * providers that list them, and the index tables.
  *
  *   npx tsx scripts/ping-indexnow.ts [--dry-run]
  *
@@ -28,27 +34,48 @@ import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { buildOutboundChanges } from './lib/notify';
 import { submitUrls } from './lib/indexnow';
+import { LEDGER_FILE, ledgerFromText, readLedger } from './lib/page-ledger';
 import { buildPages } from '@/lib/seo/pages';
+import { changedPaths, type PageLedger } from '@/lib/seo/ledger';
 import type { PricingCatalog } from '@/lib/pricing/types';
 
 const CATALOG_PATH = 'public/data/pricing.json';
 const DRY_RUN = process.argv.includes('--dry-run');
 
-function readAtRevision(revision: string, path: string): PricingCatalog | undefined {
+function textAtRevision(revision: string, path: string): string | undefined {
   try {
-    const raw = execFileSync('git', ['show', `${revision}:${path}`], {
+    return execFileSync('git', ['show', `${revision}:${path}`], {
       encoding: 'utf8',
       maxBuffer: 64 * 1024 * 1024,
     });
-    return JSON.parse(raw) as PricingCatalog;
   } catch {
     return undefined;
   }
 }
 
-/** Every page whose visible content depends on one of these models. */
-export function affectedPaths(catalog: PricingCatalog, changedIds: readonly string[]): string[] {
-  const set = buildPages(catalog, { asOf: new Date(catalog.generatedAt) });
+function readAtRevision(revision: string, path: string): PricingCatalog | undefined {
+  const raw = textAtRevision(revision, path);
+  return raw === undefined ? undefined : (JSON.parse(raw) as PricingCatalog);
+}
+
+/**
+ * The pages whose `lastmod` moved between two ledgers, plus the calculator
+ * when the model table did — it shows the same prices, and its sitemap entry
+ * carries the newest of their dates.
+ */
+export function ledgerPaths(previous: PageLedger, next: PageLedger): string[] {
+  const paths = changedPaths(previous, next);
+  return paths.includes('/models/') ? ['/', ...paths] : paths;
+}
+
+/** Every page whose visible content depends on one of these models. The
+ *  fallback for a commit with no previous ledger to diff against. */
+export function affectedPaths(
+  catalog: PricingCatalog,
+  changedIds: readonly string[],
+  ledger?: PageLedger,
+): string[] {
+  const set = buildPages(catalog, { asOf: new Date(catalog.generatedAt), ledger });
   const changed = new Set(changedIds);
   const paths = new Set<string>();
 
@@ -72,11 +99,22 @@ export function affectedPaths(catalog: PricingCatalog, changedIds: readonly stri
 async function main(): Promise<void> {
   const siteUrl = (process.env.SITE_URL ?? '').trim().replace(/\/+$/, '');
   const next = JSON.parse(readFileSync(CATALOG_PATH, 'utf8')) as PricingCatalog;
-  const previous = readAtRevision('HEAD~1', CATALOG_PATH);
+  const nextLedger = await readLedger();
+  const previousLedgerText = textAtRevision('HEAD~1', LEDGER_FILE);
 
-  const changes = buildOutboundChanges(previous, next);
-  if (changes.length === 0) {
-    console.log('No user-visible price changes in this commit — nothing to submit.');
+  let paths: string[];
+  let summary: string;
+  if (previousLedgerText !== undefined && Object.keys(nextLedger).length > 0) {
+    paths = ledgerPaths(ledgerFromText(previousLedgerText), nextLedger);
+    summary = `${paths.length} page(s) changed content in this commit`;
+  } else {
+    const changes = buildOutboundChanges(readAtRevision('HEAD~1', CATALOG_PATH), next);
+    const ids = changes.map((change) => change.modelId);
+    paths = changes.length === 0 ? [] : affectedPaths(next, ids, nextLedger);
+    summary = `${changes.length} changed model(s) touch ${paths.length} page(s)`;
+  }
+  if (paths.length === 0) {
+    console.log('No page content changed in this commit — nothing to submit.');
     return;
   }
 
@@ -97,13 +135,9 @@ async function main(): Promise<void> {
     return;
   }
 
-  const paths = affectedPaths(
-    next,
-    changes.map((change) => change.modelId),
-  );
   const urls = paths.map((path) => `${siteUrl}${path}`);
 
-  console.log(`${changes.length} changed model(s) touch ${urls.length} page(s):`);
+  console.log(`${summary}:`);
   for (const url of urls.slice(0, 10)) console.log(`  ${url}`);
   if (urls.length > 10) console.log(`  … and ${urls.length - 10} more`);
 
