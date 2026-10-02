@@ -33,6 +33,14 @@ updates:
         update-types:
           - minor
           - patch
+    # Major versions are deliberate migrations, done by hand when there is a
+    # reason to. As standing pull requests they only piled up (TypeScript 7,
+    # Vite 8, ESLint 10, Vitest 5 and @types/node 26 sat open for weeks), so
+    # they are not proposed at all. Security updates still arrive regardless.
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
 
   # The Expo client. Its runtime is not the website's, and verify.yml gives it
   # its own job — install, tests, typecheck, lint and a full export for all
@@ -106,6 +114,14 @@ updates:
         update-types:
           - minor
           - patch
+    # Major versions are deliberate migrations, done by hand when there is a
+    # reason to. As standing pull requests they only piled up (TypeScript 7,
+    # Vite 8, ESLint 10, Vitest 5 and @types/node 26 sat open for weeks), so
+    # they are not proposed at all. Security updates still arrive regardless.
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
 
   - package-ecosystem: npm
     directory: /api
@@ -118,6 +134,14 @@ updates:
         update-types:
           - minor
           - patch
+    # Major versions are deliberate migrations, done by hand when there is a
+    # reason to. As standing pull requests they only piled up (TypeScript 7,
+    # Vite 8, ESLint 10, Vitest 5 and @types/node 26 sat open for weeks), so
+    # they are not proposed at all. Security updates still arrive regardless.
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
 
   # The self-hosted over-the-air update server for the app. Nothing here
   # changes what a phone runs (only a signed publish does), so a routine bump
@@ -133,6 +157,14 @@ updates:
         update-types:
           - minor
           - patch
+    # Major versions are deliberate migrations, done by hand when there is a
+    # reason to. As standing pull requests they only piled up (TypeScript 7,
+    # Vite 8, ESLint 10, Vitest 5 and @types/node 26 sat open for weeks), so
+    # they are not proposed at all. Security updates still arrive regardless.
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
 
   - package-ecosystem: npm
     directory: /mcp
@@ -145,6 +177,14 @@ updates:
         update-types:
           - minor
           - patch
+    # Major versions are deliberate migrations, done by hand when there is a
+    # reason to. As standing pull requests they only piled up (TypeScript 7,
+    # Vite 8, ESLint 10, Vitest 5 and @types/node 26 sat open for weeks), so
+    # they are not proposed at all. Security updates still arrive regardless.
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
 
   # The VS Code extension. Published to a marketplace rather than deployed, so
   # nothing else in the repository fails when its dependencies age — which is
@@ -160,3 +200,15 @@ updates:
         update-types:
           - minor
           - patch
+    # Major versions are deliberate migrations, done by hand when there is a
+    # reason to. As standing pull requests they only piled up (TypeScript 7,
+    # Vite 8, ESLint 10, Vitest 5 and @types/node 26 sat open for weeks), so
+    # they are not proposed at all. Security updates still arrive regardless.
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
+      # @types/vscode must never be newer than engines.vscode (^1.85.0), or
+      # vsce refuses to package the extension; #163 failed exactly that way.
+      # It moves only when the engine floor is raised on purpose.
+      - dependency-name: '@types/vscode'
