@@ -19,6 +19,7 @@ import {
 } from '@promptspend/core';
 
 import { AppText as Text } from '@/components/AppText';
+import { AppFooter } from '@/components/AppFooter';
 import { AppearanceSheet, CommandSheet, GlobalActions, type AppSection } from '@/components/AppChrome';
 import { TourTarget, useGuidedTour } from '@/components/GuidedTour';
 import { WebDocumentHead } from '@/components/WebDocumentHead';
@@ -367,6 +368,7 @@ function ReceiptContent() {
           >
             <Text style={styles.helpText}>Open the complete specification and demonstration ↗</Text>
           </Pressable>
+          <AppFooter />
         </ScrollView>
       </SafeAreaView>
       <AppearanceSheet onClose={() => setAppearanceOpen(false)} visible={appearanceOpen} />

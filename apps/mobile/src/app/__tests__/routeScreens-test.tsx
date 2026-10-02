@@ -213,6 +213,7 @@ describe('top-level route screens', () => {
       </SafeAreaProvider>,
     );
     expect(view.getByText(heading)).toBeTruthy();
+    expect(view.getByText('Private by design · validated prices · no account required')).toBeTruthy();
   });
 
   test('Estimate keeps optional cost assumptions behind a labeled disclosure', async () => {

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import { AppText as Text, TYPE_ROLES } from '@/components/AppText';
+import { AppFooter } from '@/components/AppFooter';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { conversationCost, costAtScale, formatMoney, type Model } from '@promptspend/core';
@@ -590,7 +591,7 @@ export default function HomeScreen() {
             </View>
           )}
 
-          <Text style={styles.footer}>Private by design · validated prices · no account required</Text>
+          <AppFooter />
         </ScrollView>
 
         {deletedScenario && (
@@ -1139,13 +1140,6 @@ function createStyles(theme: MobileTheme) {
     watchReview: { color: theme.warning, ...TYPE_ROLES.caption },
     watchRemove: { alignItems: 'center', alignSelf: 'flex-start', justifyContent: 'center', minHeight: 48 },
     watchRemoveText: { color: theme.danger, fontSize: 11, fontWeight: '800' },
-    footer: {
-      color: theme.mutedText,
-      fontSize: 11,
-      lineHeight: 18,
-      paddingVertical: 12,
-      textAlign: 'center',
-    },
     undoBar: {
       alignItems: 'center',
       backgroundColor: theme.text,

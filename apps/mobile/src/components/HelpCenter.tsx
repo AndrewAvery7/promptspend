@@ -4,7 +4,6 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import {
-  DEFAULT_HELP_ENTRY_ID,
   findHelpEntry,
   HELP_CATEGORIES,
   HELP_ENTRIES,
@@ -37,7 +36,7 @@ export function HelpCenter({ initialEntryId, onNavigate }: HelpCenterProps) {
   const [activeCategory, setActiveCategory] = useState<HelpCategoryId | 'all'>(
     initialEntry ? 'all' : 'start',
   );
-  const [openId, setOpenId] = useState<string | null>(initialEntry?.id ?? DEFAULT_HELP_ENTRY_ID);
+  const [openId, setOpenId] = useState<string | null>(initialEntry?.id ?? null);
   const [query, setQuery] = useState(initialEntry?.question ?? '');
 
   // Expo Router can update a deep link while Learn remains mounted. React supports
@@ -70,7 +69,7 @@ export function HelpCenter({ initialEntryId, onNavigate }: HelpCenterProps) {
   const clearSearch = () => {
     setQuery('');
     setActiveCategory('start');
-    setOpenId(DEFAULT_HELP_ENTRY_ID);
+    setOpenId(null);
   };
 
   return (
