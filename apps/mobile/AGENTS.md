@@ -1,3 +1,3 @@
-# Expo HAS CHANGED
+# Expo SDK 57
 
-Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before writing any code.
+This app is on Expo SDK 57, which may be newer than your training data. Before writing code, check the APIs you use against the versioned docs at https://docs.expo.dev/versions/v57.0.0/.
