@@ -3,8 +3,8 @@
   "pages": {
     "/compare/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-02",
-      "fingerprint": "14c99d456299e8"
+      "lastmod": "2026-10-03",
+      "fingerprint": "157d4900e4e0db"
     },
     "/compare/amazon-nova-2-lite-v1-0-vs-dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
@@ -43,22 +43,29 @@
     },
     "/compare/amazon-nova-2-pro-preview-20251202-v1-0-vs-gpt-5-1/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-03",
-      "fingerprint": "1077bb5855edde",
+      "lastmod": "2026-10-03",
+      "fingerprint": "1f0b7b9c95020a",
       "left": "amazon-nova-2-pro-preview-20251202-v1-0",
       "right": "gpt-5-1"
     },
+    "/compare/amazon-nova-2-pro-preview-20251202-v1-0-vs-xai-grok-4-3/": {
+      "published": "2026-10-03",
+      "lastmod": "2026-10-03",
+      "fingerprint": "1baa566d3cb0ce",
+      "left": "amazon-nova-2-pro-preview-20251202-v1-0",
+      "right": "xai-grok-4-3"
+    },
     "/compare/amazon-nova-2-pro-preview-20251202-v1-0-vs-zai-glm-5-1/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "12b6b430ed44e5",
+      "lastmod": "2026-10-03",
+      "fingerprint": "0edcf8bee3912b",
       "left": "amazon-nova-2-pro-preview-20251202-v1-0",
       "right": "zai-glm-5-1"
     },
     "/compare/amazon-nova-2-pro-preview-20251202-v1-0-vs-zai-glm-5-code/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "186235c6ff76ac",
+      "lastmod": "2026-10-03",
+      "fingerprint": "1a461c14bb4975",
       "left": "amazon-nova-2-pro-preview-20251202-v1-0",
       "right": "zai-glm-5-code"
     },
@@ -652,8 +659,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-29",
-      "fingerprint": "187bb259a3bbe6"
+      "lastmod": "2026-10-03",
+      "fingerprint": "032a5e4484aeec"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -662,8 +669,8 @@
     },
     "/models/amazon-nova-2-pro-preview-20251202-v1-0/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "133f435f7d9e3a"
+      "lastmod": "2026-10-03",
+      "fingerprint": "0493722d15ed8c"
     },
     "/models/claude-fable-5-1/": {
       "published": "2026-09-02",
@@ -1062,8 +1069,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-29",
-      "fingerprint": "077459492a8ce9"
+      "lastmod": "2026-10-03",
+      "fingerprint": "034d0c0f488229"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -1072,8 +1079,8 @@
     },
     "/providers/amazon/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "1209457545d8ee"
+      "lastmod": "2026-10-03",
+      "fingerprint": "0f0725555255e7"
     },
     "/providers/anthropic/": {
       "published": "2026-08-02",

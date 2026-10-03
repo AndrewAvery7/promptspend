@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-02T11:05:46.762Z",
+  "checkedAt": "2026-10-03T11:10:34.780Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -90,7 +90,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": false,
-      "note": "page is 819086 characters — too large to be a pricing page",
+      "note": "page is 818743 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -121,7 +121,7 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "16021 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "16226 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",
@@ -397,19 +397,19 @@
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 819086 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 818743 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 819086 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 818743 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 819086 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 818743 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
