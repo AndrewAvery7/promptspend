@@ -15,9 +15,9 @@ to publish past it.
 
 ## What the suite covers
 
-**1289 tests in all**: 550 unit and integration tests in this package, 230 in
+**1293 tests in all**: 550 unit and integration tests in this package, 230 in
 `apps/mobile/`, 102 in `worker/`, 49 in `api/`, 48 in `mcp/`, 9 in `updates/`, 137 in `vscode/`,
-and 164 browser tests across four viewports. Those eight figures are the whole suite and they sum to the
+and 168 browser tests across four viewports. Those eight figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
 of its own list nor inclusive of `mcp/` at all; the next claimed 580, which was
 correct when written and went stale the moment the VS Code extension landed with
@@ -99,7 +99,7 @@ browser run:
 | `mcp/`         | 48    | That no tool can return a price without provenance, that `estimate_cost` agrees with the site's own engine, that `get_price` quotes the rate actually in force and cannot drift from what `estimate_cost` bills, that the server reports the version it was published as, and that the real fetch path names what arrived when the catalog is not JSON.                                                         |
 | `updates/`     | 9     | The self-hosted over-the-air update server inside workerd against a local R2: protocol headers, multipart framing, a manifest served byte-for-byte with a signature that verifies, rollback directives, per-platform and per-version isolation, and immutable content-addressed assets.                                                                                                                         |
 | `vscode/`      | 137   | The editor extension: which lines in which languages name a model, hover, status-bar and inline rendering, that every surface quotes the rate in force rather than the standard one during a promotional window, the catalog fetch when the server is unreachable or answers malformed, selection estimates that name an impossible request rather than pricing it, and diagnostics that stay quiet by default. |
-| Browser        | 164   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA, plus the Receipt copy, outage, machine-contract, share-import, and local PNG-export flows. See below.                                                                                                                                                                |
+| Browser        | 168   | Layout and accessibility at 320/390/768/1280 in real Chromium — overflow, touch targets, text size, table scrolling, axe at WCAG 2.1 A/AA, plus the Receipt copy, outage, machine-contract, share-import, and local PNG-export flows. See below.                                                                                                                                                                |
 
 ## Layout is checked in a real browser
 
