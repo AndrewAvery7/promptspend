@@ -13,7 +13,7 @@
  *    `'unsafe-inline'`. The hash is computed over the string that is actually
  *    emitted (see `hashInline`), so the two cannot drift apart.
  * 3. **Therefore no external anything**: no fonts, no analytics, no images
- *    beyond an inline SVG favicon and the two same-origin listing badges in the
+ *    beyond an inline SVG favicon and the same-origin listing badges in the
  *    footer. Which is also the honest position for a site whose footer says
  *    "no accounts, no tracking" - the directory that asked for that badge hosts
  *    its own copy, and linking to it would have put their server in the request
@@ -258,6 +258,12 @@ ${input.body}
           </a>
           <a href="https://peerpush.com/p/promptspend" target="_blank" rel="noopener noreferrer">
             <img src="${escapeHtml(href(ctx, '/peerpush-badge.png'))}" alt="PromptSpend on PeerPush" width="142" height="40" />
+          </a>
+          <a href="https://launchnest.io/p/promptspend" target="_blank" rel="noopener noreferrer">
+            <picture>
+              <source srcset="${escapeHtml(href(ctx, '/launchnest-badge-dark.svg'))}" media="(prefers-color-scheme: dark)" />
+              <img src="${escapeHtml(href(ctx, '/launchnest-badge-light.svg'))}" alt="PromptSpend on LaunchNest" width="157" height="40" />
+            </picture>
           </a>
         </p>
       </footer>
