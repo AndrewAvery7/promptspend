@@ -257,7 +257,7 @@ ${input.body}
             </picture>
           </a>
           <a href="https://peerpush.com/p/promptspend" target="_blank" rel="noopener noreferrer">
-            <img class="listing__peerpush" src="${escapeHtml(href(ctx, '/peerpush-badge.png'))}" alt="PromptSpend on PeerPush" width="230" height="65" />
+            <img src="${escapeHtml(href(ctx, '/peerpush-badge.png'))}" alt="PromptSpend on PeerPush" width="142" height="40" />
           </a>
         </p>
       </footer>

@@ -44,7 +44,8 @@
   gap: 12px;
 }
 
-/* The artwork is 40px tall, four short of the 44px a thumb needs and that the
+/* Both badges are drawn 40px tall (PeerPush's 460 x 130 card at 142 x 40, to
+   match Sell With boost's), four short of the 44px a thumb needs and that the
    mobile e2e run enforces. The link, not the picture, is the target, so the
    link carries the height and the artwork stays the size it was drawn. */
 .footer__badge a {
@@ -57,12 +58,4 @@
   display: block;
   height: 40px;
   width: auto;
-}
-
-/* PeerPush's card is drawn at the size their embed asks for (230 x 65, half
-   its 460 x 130 artwork). It is already taller than 44px, so it is its own
-   target. */
-.footer__badge img.footer__badge-peerpush {
-  height: 65px;
-  max-width: 100%;
 }

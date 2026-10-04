@@ -72,8 +72,9 @@ export const SWB_BADGE_DARK = `${import.meta.env.BASE_URL}sellwithboost-dark.svg
  * Self-hosted for the same two reasons as `SWB_BADGE_LIGHT`: their embed
  * snippet hot-links `peerpush.com/p/promptspend/badge.png`, which `img-src
  * 'self'` would block and which would hand them every visitor's IP. The PNG is
- * their official 460x130 artwork, unedited, drawn at half size. It is a white
- * card with its own border, so one file serves both themes.
+ * their official 460x130 artwork, unedited, drawn at 142x40 so it stands the
+ * same 40px tall as the Sell With Boost badge. It is a white card with its own
+ * border, so one file serves both themes.
  *
  * Their badge is generated on their side and changes with the listing's state
  * (it read "Coming soon - Launching on PeerPush" when copied). This copy does

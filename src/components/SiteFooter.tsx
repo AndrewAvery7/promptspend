@@ -83,13 +83,7 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
             />
           </a>
           <a href={PEERPUSH_URL} target="_blank" rel="noopener noreferrer">
-            <img
-              className="footer__badge-peerpush"
-              src={PEERPUSH_BADGE}
-              alt="PromptSpend on PeerPush"
-              width={230}
-              height={65}
-            />
+            <img src={PEERPUSH_BADGE} alt="PromptSpend on PeerPush" width={142} height={40} />
           </a>
         </div>
       </div>
