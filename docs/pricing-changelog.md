@@ -1049,3 +1049,8 @@ value that moves in the same run as its source URL is a correction.
 - **Price** `amazon.nova-2-pro-preview-20251202-v1-0` — output down 17.5 → 10
 - **Price** `amazon.nova-2-pro-preview-20251202-v1-0` — cachedInput down 0.546875 → 0.3125
 - **Review** `amazon.nova-2-pro-preview-20251202-v1-0` — provenance.lastChanged: — → 2026-10-03
+
+## 2026-10-04
+
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: — → OpenRouter disagrees (76%): $0.72/$13 vs $3/$15
