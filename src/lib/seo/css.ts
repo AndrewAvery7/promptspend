@@ -129,10 +129,12 @@ footer {
   color: var(--muted); font-size: 0.85rem;
 }
 footer a { color: var(--muted); }
-footer .listing { margin: 1.1rem 0 0; }
+footer .listing { margin: 1.1rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
 /* The link carries the 44px a thumb needs; the artwork stays 40px. */
 footer .listing a { display: inline-flex; align-items: center; min-height: 44px; }
 footer .listing img { display: block; height: 40px; width: auto; }
+/* PeerPush's card, at the 230 x 65 their embed asks for. */
+footer .listing img.listing__peerpush { height: 65px; max-width: 100%; }
 /* The app page. Badge links carry the 44px a thumb needs; the artwork is the
    stores' standard 40px. The QR codes show only on a wide screen with a
    hovering pointer, because the phone in your hand cannot scan itself. */
