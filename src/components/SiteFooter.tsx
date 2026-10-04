@@ -6,6 +6,8 @@ import {
   MCP_PACKAGE_URL,
   MODELS_INDEX_URL,
   OPEN_VSX_URL,
+  PEERPUSH_BADGE,
+  PEERPUSH_URL,
   PROVIDERS_INDEX_URL,
   REPO_URL,
   SWB_BADGE_DARK,
@@ -68,9 +70,9 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
             {catalog.sourcesLastChecked() ? ` · sources checked ${catalog.sourcesLastChecked()}` : ''}
           </div>
         )}
-        {/* The directory listing's price: a link back, on a page they can
+        {/* The directory listings' price: a link back, on a page they can
             fetch. The artwork is served from here, not from theirs - see
-            `SWB_BADGE_LIGHT` in `@/config` for why. */}
+            `SWB_BADGE_LIGHT` and `PEERPUSH_BADGE` in `@/config` for why. */}
         <div className="footer__badge">
           <a href={SWB_URL} target="_blank" rel="noopener noreferrer">
             <img
@@ -78,6 +80,15 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               alt="Listed on Sell With boost"
               width={160}
               height={40}
+            />
+          </a>
+          <a href={PEERPUSH_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              className="footer__badge-peerpush"
+              src={PEERPUSH_BADGE}
+              alt="PromptSpend on PeerPush"
+              width={230}
+              height={65}
             />
           </a>
         </div>

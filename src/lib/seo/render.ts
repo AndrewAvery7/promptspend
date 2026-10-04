@@ -256,6 +256,9 @@ ${input.body}
               <img src="${escapeHtml(href(ctx, '/sellwithboost-light.svg'))}" alt="Listed on Sell With boost" width="160" height="40" />
             </picture>
           </a>
+          <a href="https://peerpush.com/p/promptspend" target="_blank" rel="noopener noreferrer">
+            <img class="listing__peerpush" src="${escapeHtml(href(ctx, '/peerpush-badge.png'))}" alt="PromptSpend on PeerPush" width="230" height="65" />
+          </a>
         </p>
       </footer>
     </div>

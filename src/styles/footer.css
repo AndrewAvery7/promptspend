@@ -35,11 +35,13 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The Sell With boost listing badge. Its artwork carries whatever frame it
-   needs, so nothing is added here but a height. */
+/* The directory listing badges - Sell With boost, then PeerPush. Their artwork
+   carries whatever frame it needs, so nothing is added here but a height. */
 .footer__badge {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 12px;
 }
 
 /* The artwork is 40px tall, four short of the 44px a thumb needs and that the
@@ -55,4 +57,12 @@
   display: block;
   height: 40px;
   width: auto;
+}
+
+/* PeerPush's card is drawn at the size their embed asks for (230 x 65, half
+   its 460 x 130 artwork). It is already taller than 44px, so it is its own
+   target. */
+.footer__badge img.footer__badge-peerpush {
+  height: 65px;
+  max-width: 100%;
 }

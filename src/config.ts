@@ -67,6 +67,22 @@ export const SWB_BADGE_LIGHT = `${import.meta.env.BASE_URL}sellwithboost-light.s
 export const SWB_BADGE_DARK = `${import.meta.env.BASE_URL}sellwithboost-dark.svg`;
 
 /**
+ * The PeerPush listing, and its badge, beside the Sell With Boost one.
+ *
+ * Self-hosted for the same two reasons as `SWB_BADGE_LIGHT`: their embed
+ * snippet hot-links `peerpush.com/p/promptspend/badge.png`, which `img-src
+ * 'self'` would block and which would hand them every visitor's IP. The PNG is
+ * their official 460x130 artwork, unedited, drawn at half size. It is a white
+ * card with its own border, so one file serves both themes.
+ *
+ * Their badge is generated on their side and changes with the listing's state
+ * (it read "Coming soon - Launching on PeerPush" when copied). This copy does
+ * not follow it; refresh `public/peerpush-badge.png` by hand if it matters.
+ */
+export const PEERPUSH_URL = 'https://peerpush.com/p/promptspend';
+export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.png`;
+
+/**
  * Install routes for the two things that are not this website.
  *
  * Defined in `@/lib/links` and re-exported here so components keep importing
