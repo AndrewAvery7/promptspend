@@ -84,6 +84,26 @@ export const PEERPUSH_URL = 'https://peerpush.com/p/promptspend';
 export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.png`;
 
 /**
+ * The LaunchNest listing, and its badge, after the PeerPush one.
+ *
+ * Self-hosted for the same two reasons as `SWB_BADGE_LIGHT`: their embed
+ * snippet hot-links `launchnest.io/badge/promptspend.svg`, which `img-src
+ * 'self'` would block and which would hand them every visitor's IP. The two
+ * SVGs are their "featured" artwork, light and dark, unedited and
+ * self-contained (the font is a data URI inside the file), drawn at 157x40 -
+ * their 590x150 card at the same 40px height as the other badges.
+ *
+ * LaunchNest publishes the listing only once its verifier finds this link on
+ * the home page, and the verifier reads the HTML without running JavaScript.
+ * So `index.html` carries a copy of this badge inside `#root`, which React
+ * replaces with the real footer on mount; keep the two in step. The link must
+ * not carry `nofollow`, `sponsored` or `ugc`, or the listing is refused.
+ */
+export const LAUNCHNEST_URL = 'https://launchnest.io/p/promptspend';
+export const LAUNCHNEST_BADGE_LIGHT = `${import.meta.env.BASE_URL}launchnest-badge-light.svg`;
+export const LAUNCHNEST_BADGE_DARK = `${import.meta.env.BASE_URL}launchnest-badge-dark.svg`;
+
+/**
  * Install routes for the two things that are not this website.
  *
  * Defined in `@/lib/links` and re-exported here so components keep importing

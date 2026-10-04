@@ -86,7 +86,32 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- The LaunchNest listing badge, in the HTML itself. Their verifier reads
+           this page without running JavaScript, so a link drawn only by the
+           React footer is invisible to it. React replaces everything inside
+           #root on mount, and SiteFooter then draws the same badge, so it never
+           shows twice. Keep this in step with LAUNCHNEST_* in src/config.ts, and
+           never give the link nofollow, sponsored or ugc: the listing is
+           refused if it carries any of them. -->
+      <footer class="footer">
+        <div class="footer__inner">
+          <div class="footer__badge">
+            <a href="https://launchnest.io/p/promptspend" target="_blank" rel="noopener noreferrer">
+              <picture>
+                <source srcset="/launchnest-badge-dark.svg" media="(prefers-color-scheme: dark)" />
+                <img
+                  src="/launchnest-badge-light.svg"
+                  alt="PromptSpend on LaunchNest"
+                  width="157"
+                  height="40"
+                />
+              </picture>
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
     <noscript>
       PromptSpend is an interactive calculator and needs JavaScript. The underlying pricing data is a plain
       JSON file you can read directly at

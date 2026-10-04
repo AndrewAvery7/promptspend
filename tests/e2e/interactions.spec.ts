@@ -41,6 +41,20 @@ test('the CHECK popover opens fully on screen, at any width', async ({ page }) =
   });
 });
 
+test('the LaunchNest badge is in the HTML, and on screen exactly once', async ({ page, request }) => {
+  // Their verifier reads the page without running scripts, so the link has to
+  // be in the HTML as served - not only in what React draws.
+  const html = await (await request.get('/')).text();
+  expect(html).toContain('href="https://launchnest.io/p/promptspend"');
+
+  // React replaces that copy on mount and the footer draws its own: one, not two.
+  await page.goto('/');
+  await expect(page.locator('main')).toBeVisible();
+  const links = page.locator('a[href="https://launchnest.io/p/promptspend"]');
+  await expect(links).toHaveCount(1);
+  await expect(links.locator('img')).toHaveAttribute('src', /launchnest-badge-(light|dark)\.svg$/);
+});
+
 test('Clear all empties the selection and leaves the workload alone', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('main')).toBeVisible();

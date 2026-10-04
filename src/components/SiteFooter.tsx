@@ -3,6 +3,9 @@ import {
   COMPARE_INDEX_URL,
   CONTACT_EMAIL,
   DEVELOPER_HUB_URL,
+  LAUNCHNEST_BADGE_DARK,
+  LAUNCHNEST_BADGE_LIGHT,
+  LAUNCHNEST_URL,
   MCP_PACKAGE_URL,
   MODELS_INDEX_URL,
   OPEN_VSX_URL,
@@ -72,7 +75,8 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
         )}
         {/* The directory listings' price: a link back, on a page they can
             fetch. The artwork is served from here, not from theirs - see
-            `SWB_BADGE_LIGHT` and `PEERPUSH_BADGE` in `@/config` for why. */}
+            `SWB_BADGE_LIGHT` in `@/config` for why. LaunchNest's link is also
+            in `index.html`, for a verifier that does not run this code. */}
         <div className="footer__badge">
           <a href={SWB_URL} target="_blank" rel="noopener noreferrer">
             <img
@@ -84,6 +88,14 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
           </a>
           <a href={PEERPUSH_URL} target="_blank" rel="noopener noreferrer">
             <img src={PEERPUSH_BADGE} alt="PromptSpend on PeerPush" width={142} height={40} />
+          </a>
+          <a href={LAUNCHNEST_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              src={theme === 'dark' ? LAUNCHNEST_BADGE_DARK : LAUNCHNEST_BADGE_LIGHT}
+              alt="PromptSpend on LaunchNest"
+              width={157}
+              height={40}
+            />
           </a>
         </div>
       </div>

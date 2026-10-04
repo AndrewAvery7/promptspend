@@ -138,6 +138,24 @@ async function main(): Promise<void> {
   if (!canonical) problems.push('no canonical link');
   else if (!absolute(canonical)) problems.push(`canonical is not an absolute https URL: ${canonical}`);
 
+  // LaunchNest lists the site only while its verifier, which does not run
+  // JavaScript, finds a followed link to the listing in this page's HTML. The
+  // React footer draws one too, but only after scripts run - so the copy in
+  // index.html is the one that counts, and nothing else would notice it gone.
+  const launchnest = /<a href="https:\/\/launchnest\.io\/p\/promptspend"([^>]*)>([\s\S]*?)<\/a>/.exec(html);
+  if (!launchnest) problems.push('no LaunchNest listing link in the static HTML');
+  else {
+    const rel = /\brel="([^"]*)"/.exec(launchnest[1]!)?.[1] ?? '';
+    if (/\b(nofollow|sponsored|ugc)\b/.test(rel)) {
+      problems.push(
+        `the LaunchNest link is rel="${rel}"; their verifier refuses nofollow, sponsored and ugc`,
+      );
+    }
+    if (!/<img\s[^>]*src="[^"]*launchnest-badge-light\.svg"/.test(launchnest[2]!)) {
+      problems.push('the LaunchNest link in the static HTML has no self-hosted badge image');
+    }
+  }
+
   const ogImage = attr(html, /<meta property="og:image" content="([^"]*)"/);
   if (!ogImage) problems.push('no og:image — shares will render as a bare link');
   else if (!absolute(ogImage)) problems.push(`og:image is not absolute: ${ogImage}`);
