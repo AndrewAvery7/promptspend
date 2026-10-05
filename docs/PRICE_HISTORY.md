@@ -6,6 +6,10 @@ first catalog (2026-08-02 UTC) onwards. It is the table form of
 [`pricing-changelog.md`](pricing-changelog.md), and it reproduces that
 changelog's model additions and rate changes exactly.
 
+**Archived on Zenodo:** version 2026-10-05 is
+[doi:10.5281/zenodo.23170741](https://doi.org/10.5281/zenodo.23170741) (380
+rows, 82 models, 12 providers, 2026-08-02 to 2026-10-03).
+
 It is built by replaying every version of `public/data/pricing.json` on the
 `main` branch, in order, through the same comparison the daily sync uses to
 write the changelog:
@@ -92,5 +96,6 @@ changelog but not in this file.
 The data (`price-history.csv`) is dedicated to the public domain under
 [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Prices are
 facts; you may use them for anything without asking. Citation is still
-appreciated — the archived versions carry a DOI. The code that generates the
+appreciated — cite the archived version you used by its DOI (the 2026-10-05
+version is `10.5281/zenodo.23170741`). The code that generates the
 file is MIT, like the rest of the repository.
