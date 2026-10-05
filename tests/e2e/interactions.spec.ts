@@ -41,13 +41,17 @@ test('the CHECK popover opens fully on screen, at any width', async ({ page }) =
   });
 });
 
-test('the LaunchNest badge is in the HTML, and on screen exactly once', async ({ page, request }) => {
-  // Their verifier reads the page without running scripts, so the link has to
-  // be in the HTML as served - not only in what React draws.
+test('the LaunchNest and Fazier badges are in the HTML, and on screen exactly once', async ({
+  page,
+  request,
+}) => {
+  // Their verifiers read the page without running scripts, so the links have
+  // to be in the HTML as served - not only in what React draws.
   const html = await (await request.get('/')).text();
   expect(html).toContain('href="https://launchnest.io/p/promptspend"');
+  expect(html).toContain('href="https://fazier.com"');
 
-  // React replaces that copy on mount and the footer draws its own: one, not two.
+  // React replaces those copies on mount and the footer draws its own: one, not two.
   await page.goto('/');
   await expect(page.locator('main')).toBeVisible();
   const links = page.locator('a[href="https://launchnest.io/p/promptspend"]');
@@ -56,6 +60,9 @@ test('the LaunchNest badge is in the HTML, and on screen exactly once', async ({
     'src',
     /^https:\/\/launchnest\.io\/badge\/promptspend\.svg\?variant=featured/,
   );
+  const fazier = page.locator('a[href="https://fazier.com"]');
+  await expect(fazier).toHaveCount(1);
+  await expect(fazier.locator('img')).toHaveAttribute('src', /\/fazier-badge-(light|dark)\.svg$/);
 });
 
 test('Clear all empties the selection and leaves the workload alone', async ({ page }) => {
