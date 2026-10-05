@@ -161,6 +161,30 @@ def load(name):
     return _shots[name]
 
 
+def trimmed(name, pad=28):
+    """A captured panel with its empty lower half removed.
+
+    `.panel` stretches to its grid row, so the flagged-for-review panel comes
+    back about twice as tall as its text whenever its neighbour is taller - one
+    flagged row and a paragraph, then two hundred rows of nothing. Only rows of
+    plain panel background are cut; nothing the page drew is altered, and
+    place() redraws the rounded border the crop removes.
+    """
+    key = name + ":trimmed"
+    if key not in _shots:
+        shot = load(name)
+        w, h = shot.size
+        bg = shot.getpixel((w // 2, h - 12))
+        px = shot.load()
+        last = 0
+        for y in range(h - 6):
+            if any(sum(abs(px[x, y][i] - bg[i]) for i in range(3)) > 30
+                   for x in range(8, w - 8, 2)):
+                last = y
+        _shots[key] = shot.crop((0, 0, w, min(h, last + pad)))
+    return _shots[key]
+
+
 def rounded_mask(size, radius):
     m = Image.new("L", size, 0)
     ImageDraw.Draw(m).rounded_rectangle([0, 0, size[0] - 1, size[1] - 1], radius=radius, fill=255)
@@ -275,6 +299,7 @@ N_PROVIDERS = len(CATALOG["providers"])
 N_FLAGGED = len([m for m in CATALOG["models"] if m["provenance"].get("needsReview")])
 
 SITE = "promptspend.com"
+SURFACES_LINE = "WEB  ·  IPHONE  ·  ANDROID  ·  VS CODE  ·  MCP  ·  API"
 
 # The catalog's own timestamp, so "today" in the video is a real date this data
 # actually carries rather than whenever the render happened to run.
@@ -296,35 +321,26 @@ def _date_between(start, end, progress):
     return (a + timedelta(days=round((b - a).days * max(0.0, min(1.0, progress))))).isoformat()
 
 
-def _blended(m):
-    """Catalog.blendedRate: input-weighted 75/25, the value map's X axis."""
-    return m["pricing"]["input"] * 0.75 + m["pricing"]["output"] * 0.25
-
-
-# Catalog.rateSpread's population, matched exactly: primary models with a real
-# price that upstream still lists.
-#
-# Filtering on `status === 'current'` instead — the obvious guess — gives 191x
-# against the 218x the site's own Compare headline shows, because it drops
-# Claude Opus 4.1. A promo that contradicts the product is worse than no promo,
-# so this mirrors the rule rather than inventing a defensible-sounding one.
-_priced = [m for m in PRIMARY
-           if _blended(m) > 0 and m["provenance"].get("stale") is not True]
-_cheap = min(_priced, key=_blended)
-_dear = max(_priced, key=_blended)
-SPREAD_MULTIPLE = _blended(_dear) / _blended(_cheap)
-SPREAD = "{:.0f}x".format(SPREAD_MULTIPLE)
-SPREAD_FROM = _cheap["displayName"]
-SPREAD_TO = _dear["displayName"]
-
-# The four in the captured estimate, and the saving the engine computed for
-# them. Asserted against the catalog by --check so a stale capture cannot leave
-# a wrong number on screen.
-SAVING = "$184,702/year"
-DEAREST_CARD = "Claude Opus 5"
-CHEAPEST_CARD = "DeepSeek V3.2"
-CARD_LOW = "$646"
-CARD_HIGH = "$16,038"
+# The four in the captured estimate - the `m=` list in tools/capture-ui.ts, in
+# the same order - and the figures the engine computed for them, read off the
+# 2026-10-05 capture (01-cards.png, 01-saving.png). Asserted against the catalog
+# by --check so a stale capture cannot leave a wrong number on screen.
+SCENARIO_IDS = [
+    "claude-opus-5-5",
+    "gpt-5.6-terra",
+    "gemini-gemini-3.5-flash",
+    "deepseek-deepseek-v4-flash",
+]
+DEAREST_ID, CHEAPEST_ID = "claude-opus-5-5", "deepseek-deepseek-v4-flash"
+SAVING = "$143,325/year"
+DEAREST_CARD = "Claude Opus 5.5"
+CHEAPEST_CARD = "DeepSeek V4 Flash"
+CARD_LOW = "$887"
+CARD_HIGH = "$12,830"
+# (input + output) of the dearest over the cheapest at capture time: (4 + 20) /
+# (0.3 + 1.2). The saving is proportional to the monthly gap, so a move of more
+# than a few percent in either rate means the figure above is stale.
+CAPTURED_RATIO = 16.0
 
 
 # --------------------------------------------------------------------------
@@ -369,21 +385,6 @@ def scene_problem(fr, n):
     a4 = ease(seg(t, 0.88, 0.12))
     if a4 > 0.01:
         centred(im, "The prices it quotes no longer exist.", 800, F("body", 36), MUTED, a4)
-    return im
-
-
-def scene_spread(fr, n):
-    """The decision being got wrong is not a rounding error."""
-    t = fr / n
-    im = base()
-    eyebrow(im, "WHY IT MATTERS", ease(seg(t, 0.02, 0.12)))
-    headline(im, "And price is a {} decision.".format(SPREAD), ease(seg(t, 0.04, 0.14)),
-             sub="{} against {}, measured the same way on both sides.".format(SPREAD_FROM, SPREAD_TO),
-             sub_alpha=ease(seg(t, 0.16, 0.14)), highlight=SPREAD)
-
-    a = ease(seg(t, 0.26, 0.20))
-    zoom = kenburns(seg(t, 0.26, 0.74), 1.0, 1.05)
-    place(im, load("02-valuemap"), W / 2, 690, 1180 * zoom, a)
     return im
 
 
@@ -449,7 +450,7 @@ def scene_trust(fr, n):
     place(im, load("02-health"), W / 2, 370, 1420, a, radius=12)
 
     a2 = ease(seg(t, 0.44, 0.18))
-    place(im, load("02-flagged"), 1290, 740, 620, a2)
+    place(im, trimmed("02-flagged"), 1290, 740, 620, a2)
 
     a3 = ease(seg(t, 0.58, 0.18))
     if a3 > 0.01:
@@ -472,150 +473,33 @@ def scene_trust(fr, n):
     return im
 
 
-def scene_agent(fr, n):
-    """Where the provenance actually pays off: inside somebody's editor.
+def scene_surfaces(fr, n):
+    """Where the same catalog reaches: an agent, an API, an editor, a phone.
 
-    The argument the whole film has been building lands here. A person reading
-    a web page can see the interface around a number and calibrate. A model
-    handed a bare figure cannot, and repeats it with whatever confidence the
-    sentence implies. So the same paperwork that appears on screen travels into
-    the agent - which is the one thing no competing pricing server does.
-
-    The terminal block is real output, taken from the built server's response
-    rather than composed for the shot, on the same principle as every other
-    screen in this film.
+    This replaces two scenes from the August cut - a drawn MCP panel and a VS
+    Code screenshot - with one screenshot of the site's own "Use it where you
+    work" panel. Both old scenes had gone stale in the way this file exists to
+    prevent: the agent panel carried a hand-typed `last_verified` date, and the
+    editor frame showed Claude Sonnet 5 at $3 / $15 after it was repriced to
+    $2 / $10. A captured panel cannot drift like that, and it shows the news the
+    August cut could only promise: the phone apps are live, store badges and all.
     """
     t = fr / n
     im = base()
-    d = ImageDraw.Draw(im)
     eyebrow(im, "AND WHERE YOU WORK", ease(seg(t, 0.02, 0.12)))
-    headline(im, "The paperwork travels with it.", ease(seg(t, 0.04, 0.14)),
-             sub="An MCP server for Claude Code, Cursor and Windsurf.",
+    headline(im, "Now on iPhone and Android, too.", ease(seg(t, 0.04, 0.14)),
+             highlight="iPhone and Android", highlight_colour=ACCENT,
+             sub="The same catalog, sources and dates: in your agent, your code, your editor.",
              sub_alpha=ease(seg(t, 0.16, 0.14)))
 
-    # The install line, as a terminal token.
-    a = ease(seg(t, 0.24, 0.16))
-    if a > 0.01:
-        fm = F("mono-bold", 34)
-        cmd = "claude mcp add promptspend -- npx -y @promptspend/mcp"
-        pad = 40
-        w = tw(cmd, fm) + pad * 2
-        box = [W / 2 - w / 2, 300, W / 2 + w / 2, 380]
-        d.rounded_rectangle(box, radius=12, fill=lerp(BG, SURFACE, a),
-                            outline=fade(BORDER, a), width=2)
-        d.text((W / 2 - tw(cmd, fm) / 2, 322), cmd, font=fm, fill=fade(ACCENT, a))
+    a = ease(seg(t, 0.26, 0.20))
+    zoom = kenburns(seg(t, 0.26, 0.74), 1.0, 1.03)
+    place(im, load("02-surfaces"), W / 2, 625, 1440 * zoom, a, radius=12)
 
-    # What a competing server returns, against what this one does. Not a
-    # comparison table with a rival's name on it - just the shape of an answer
-    # with its paperwork and one without.
-    a2 = ease(seg(t, 0.40, 0.18))
+    a2 = ease(seg(t, 0.78, 0.16))
     if a2 > 0.01:
-        fl = F("mono-bold", 24)
-        fv = F("mono", 26)
-        left = [180, 440, 920, 800]
-        right = [1000, 440, 1740, 800]
-        d.rounded_rectangle(left, radius=12, fill=lerp(BG, SURFACE, a2 * 0.7),
-                            outline=fade(BORDER, a2), width=2)
-        d.text((left[0] + 28, left[1] + 24), "A PRICE", font=fl, fill=fade(MUTED, a2))
-        d.text((left[0] + 28, left[1] + 78), "$1.25 / $10", font=F("mono-bold", 44),
-               fill=fade(INK, a2 * 0.8))
-        d.text((left[0] + 28, left[1] + 160), "per million tokens.", font=fv,
-               fill=fade(MUTED, a2 * 0.8))
-        d.text((left[0] + 28, left[1] + 210), "From when? Says who?", font=F("body", 30),
-               fill=fade(COST, ease(seg(t, 0.54, 0.14))))
-
-    a3 = ease(seg(t, 0.52, 0.18))
-    if a3 > 0.01:
-        fl = F("mono-bold", 24)
-        d.rounded_rectangle(right, radius=12, fill=lerp(BG, SURFACE, a3),
-                            outline=fade(SAVE, a3), width=2)
-        d.text((right[0] + 28, right[1] + 24), "A PRICE THAT SHOWS ITS WORK",
-               font=fl, fill=fade(SAVE, a3))
-        rows = [
-            ('"source"', '"vendor"'),
-            ('"last_verified"', '"2026-08-01"'),
-            ('"verified_url"', '"openai.com/..."'),
-            ('"disputed"', 'false'),
-        ]
-        fk = F("mono", 26)
-        for i, (k, v) in enumerate(rows):
-            aa = ease(seg(t, 0.56 + i * 0.06, 0.12))
-            if aa < 0.01:
-                continue
-            y = right[1] + 82 + i * 46
-            d.text((right[0] + 28, y), k, font=fk, fill=fade(ACCENT, aa))
-            d.text((right[0] + 300, y), v, font=fk, fill=fade(INK, aa))
-
-    a4 = ease(seg(t, 0.82, 0.16))
-    if a4 > 0.01:
-        centred(im, "A model repeats a number with whatever confidence you gave it.",
-                842, F("display-mid", 40), INK, a4)
-    a5 = ease(seg(t, 0.90, 0.10))
-    if a5 > 0.01:
-        centred(im, "So it is given the date.", 900, F("body", 34), MUTED, a5)
-    return im
-
-
-def scene_editor(fr, n):
-    """The last surface: the line of code that names the model.
-
-    The agent scene argues that the paperwork travels. This one shows the place
-    it travels *to*, and it is the only scene in the film whose screenshot did
-    not come from `capture-ui.ts` - Playwright drives a browser and cannot
-    photograph an editor.
-
-    It is still a real screenshot. Drawing an editor in PIL would have been
-    quicker and would have broken this project's first rule on the one frame
-    claiming the product notices things. So `assets/promo-frames/04-editor.png`
-    is a native-resolution crop of VS Code with the published extension running
-    against the published catalog, and the three annotations in it are the
-    extension's own output, not typed here.
-
-    What the frame happens to prove, without a caption having to claim it:
-    `gpt-5-mini` shows a rate and no ceiling while sitting between two calls
-    that have one. That is the neighbour-bound fix in 0.1.6 - before it, a call
-    with no cap of its own borrowed the cap above it and priced it at its own
-    rate.
-    """
-    t = fr / n
-    im = base()
-    d = ImageDraw.Draw(im)
-    eyebrow(im, "AND ON THE LINE THAT CHOOSES", ease(seg(t, 0.02, 0.12)))
-    headline(im, "The price, where the decision is.", ease(seg(t, 0.04, 0.14)),
-             sub="A VS Code extension - the same catalog, on the line naming the model.",
-             sub_alpha=ease(seg(t, 0.16, 0.14)))
-
-    # Left, large: the editor itself. Everything else is annotation around it.
-    a = ease(seg(t, 0.24, 0.18))
-    place(im, load("04-editor"), 690, 610, 1040, a, radius=12)
-
-    # Right: what to look at, in the order the eye should take it.
-    points = [
-        ("THE RATE", "on the line that names the model", ACCENT),
-        ("THE CEILING", "a nearby max_tokens, in money", SAVE),
-        ("THE FLAG", "legacy rows reach the Problems panel", WARN),
-    ]
-    for i, (label, body, colour) in enumerate(points):
-        aa = ease(seg(t, 0.44 + i * 0.09, 0.16))
-        if aa < 0.01:
-            continue
-        y = 330 + i * 132
-        badge(im, 1300, y, label, colour, aa, 26)
-        d.text((1300, y + 54), body, font=F("body", 30), fill=fade(MUTED, aa))
-
-    # The closing argument, and the reason the status bar carries a date at all.
-    a4 = ease(seg(t, 0.74, 0.16))
-    if a4 > 0.01:
-        d.text((1300, 762), "No bundled prices, here either.",
-               font=F("display-mid", 38), fill=fade(INK, a4))
-        a5 = ease(seg(t, 0.82, 0.14))
-        d.text((1300, 816), "Unreachable catalog, no number -",
-               font=F("body", 30), fill=fade(MUTED, a5))
-        d.text((1300, 852), "and the date is on screen throughout.",
-               font=F("body", 30), fill=fade(MUTED, a5))
-
-    a6 = ease(seg(t, 0.88, 0.12))
-    place(im, load("04-status"), 1490, 940, 400, a6, radius=8, shadow=False)
+        centred(im, "Free on the App Store and Google Play. Pasted text stays on the phone.",
+                955, F("body", 34), MUTED, a2)
     return im
 
 
@@ -670,6 +554,12 @@ def scene_pipeline(fr, n):
     return im
 
 
+# The website's own wording since 2026-10-05: "no accounts, no ads, no cookies".
+# NOT "no tracking" - the site runs cookieless Cloudflare Web Analytics, so that
+# chip from the August cut stopped being true. check() keeps it from returning.
+CTA_CHIPS = ["FREE", "NO ACCOUNTS", "NO ADS", "NO COOKIES", "MIT", "OPEN DATA API"]
+
+
 def scene_cta(fr, n):
     """Where to go, and what it costs."""
     t = fr / n
@@ -691,7 +581,7 @@ def scene_cta(fr, n):
 
     a2 = ease(seg(t, 0.50, 0.18))
     if a2 > 0.01:
-        chips = ["FREE", "NO ACCOUNTS", "NO TRACKING", "MIT", "OPEN DATA API"]
+        chips = CTA_CHIPS
         fc = F("mono-bold", 26)
         widths = [tw(c, fc) + 44 for c in chips]
         total = sum(widths) + 20 * (len(chips) - 1)
@@ -732,14 +622,12 @@ def scene_cta(fr, n):
 # to take in than one headline, which is why the estimate scene holds longest
 # alongside the trust scene.
 HOLD = {  # seconds of settled time after everything has appeared
-    "problem": 4.0,    # 39 words, mostly large type
-    "spread": 5.0,     # short copy, but a 69-point scatter plot to take in
-    "estimate": 6.5,   # four cost cards, ~15 figures each - the densest frame
+    "problem": 3.5,    # 39 words, mostly large type
+    "estimate": 6.0,   # four cost cards, ~15 figures each - the densest frame
     "saving": 5.0,     # one big number lands fast, then a two-line callout
-    "trust": 6.3,      # two panels plus three lines; the heaviest for text
-    "agent": 6.0,      # a command, two panels and a closing pair
-    "editor": 6.3,     # a screenshot to read as code, plus three labels
-    "pipeline": 6.0,   # a three-step ladder, two counters, a closing line
+    "trust": 5.8,      # two panels plus three lines; the heaviest for text
+    "surfaces": 5.5,   # a four-card panel to scan, plus one closing line
+    "pipeline": 5.0,   # a three-step ladder, two counters, a closing line
     "cta": 4.5,        # light, but it is the address and it should linger
 }
 
@@ -748,14 +636,18 @@ def _frames(seconds):
     return int(round(seconds * FPS))
 
 
+# The 2026-10 cut is seven scenes, down from nine, to bring the film from 2:08
+# to about a minute and a half for YouTube and the product directories. Dropped:
+# the value-map spread (the estimate and saving scenes already make that point
+# with the same catalog) and the separate agent and editor scenes, folded into
+# scene_surfaces. Holds were trimmed by half a second or so where the frame is
+# mostly a screenshot to scan.
 SCENES = [
     (scene_problem, 180 + _frames(HOLD["problem"]), 180),      # the snapshot problem
-    (scene_spread, 165 + _frames(HOLD["spread"]), 165),        # the size of the decision
     (scene_estimate, 205 + _frames(HOLD["estimate"]), 205),    # the product working
     (scene_saving, 150 + _frames(HOLD["saving"]), 150),        # the payoff
     (scene_trust, 195 + _frames(HOLD["trust"]), 195),          # provenance and flags
-    (scene_agent, 200 + _frames(HOLD["agent"]), 200),          # into the agent
-    (scene_editor, 200 + _frames(HOLD["editor"]), 200),        # onto the line of code
+    (scene_surfaces, 180 + _frames(HOLD["surfaces"]), 180),    # agent, API, editor, phone
     (scene_pipeline, 200 + _frames(HOLD["pipeline"]), 200),    # the daily sync
     (scene_cta, 145 + _frames(HOLD["cta"]), 145),              # where to go
 ]
@@ -774,40 +666,54 @@ def check():
     def rate(model_id, field):
         return ids[model_id]["pricing"][field]
 
-    # The four cards, exactly as the capture scenario selects them.
-    for model_id, name in [
-        ("claude-opus-5", DEAREST_CARD),
-        ("deepseek-deepseek-v3.2", CHEAPEST_CARD),
-    ]:
-        if model_id not in ids:
+    # The four cards, exactly as the capture scenario selects them. Each must
+    # still be a model somebody should build on: current, priced by its vendor,
+    # not flagged, and not on a promotional rate that will lapse while the
+    # video is still being watched.
+    for model_id in SCENARIO_IDS:
+        m = ids.get(model_id)
+        if m is None:
             problems.append("{} is no longer in the catalog".format(model_id))
-        elif ids[model_id]["displayName"] != name:
+            continue
+        prov = m["provenance"]
+        if m["status"] != "current":
+            problems.append("{} is now {!r}, not current".format(model_id, m["status"]))
+        if prov.get("source") != "vendor":
+            problems.append("{} is priced from {!r}, not the vendor".format(
+                model_id, prov.get("source")))
+        if prov.get("stale") or prov.get("needsReview"):
+            problems.append("{} is stale or flagged for review".format(model_id))
+        if "intro" in m["pricing"]:
+            problems.append("{} is on an intro rate; its card will go stale".format(model_id))
+
+    for model_id, name in [(DEAREST_ID, DEAREST_CARD), (CHEAPEST_ID, CHEAPEST_CARD)]:
+        if model_id in ids and ids[model_id]["displayName"] != name:
             problems.append("{} is now called {!r}, the video says {!r}".format(
                 model_id, ids[model_id]["displayName"], name))
 
-    if "claude-opus-5" in ids and "deepseek-deepseek-v3.2" in ids:
+    if DEAREST_ID in ids and CHEAPEST_ID in ids:
         # The saving is proportional to the monthly gap, so if either rate has
         # moved the figure on screen is stale even though the screenshot shows
         # it. Compare the ratio rather than re-implementing the cost engine.
-        ratio = ((rate("claude-opus-5", "input") + rate("claude-opus-5", "output")) /
-                 (rate("deepseek-deepseek-v3.2", "input") + rate("deepseek-deepseek-v3.2", "output")))
-        if not 40 < ratio < 50:
+        ratio = ((rate(DEAREST_ID, "input") + rate(DEAREST_ID, "output")) /
+                 (rate(CHEAPEST_ID, "input") + rate(CHEAPEST_ID, "output")))
+        if abs(ratio / CAPTURED_RATIO - 1) > 0.03:
             problems.append(
                 "the {} / {} rate ratio is now {:.1f}; the captured saving of {} "
-                "was computed at ~44 and needs re-capturing".format(
-                    DEAREST_CARD, CHEAPEST_CARD, ratio, SAVING))
+                "was computed at {:.1f} and needs re-capturing".format(
+                    DEAREST_CARD, CHEAPEST_CARD, ratio, SAVING, CAPTURED_RATIO))
 
-    for path in ["01-cards", "01-saving", "02-valuemap", "02-health", "02-flagged"]:
+    for path in ["01-cards", "01-saving", "02-health", "02-flagged", "02-surfaces"]:
         if not (FRAMES / (path + ".png")).exists():
             problems.append("missing capture {}.png".format(path))
 
-    # The spread is spoken over a screenshot of the Compare view, whose own
-    # headline states it. If the two ever disagree the video is arguing with
-    # the product on camera.
-    valuemap = FRAMES / "02-compare-top.png"
-    if valuemap.exists():
-        expected = "Price is a {} decision.".format(SPREAD.replace("x", "×"))
-        print("  the Compare headline should read: {!r}".format(expected))
+    # Claims the website has withdrawn. It runs cookieless Cloudflare Web
+    # Analytics (since 2026-10-05), so it says "no cookies" - never "no
+    # tracking" or "no analytics". Checked here so a future edit to the chips
+    # cannot quietly put the old promise back on screen.
+    for chip in CTA_CHIPS:
+        if "TRACKING" in chip or "ANALYTICS" in chip:
+            problems.append("CTA chip {!r} makes a claim the site no longer makes".format(chip))
 
     for problem in problems:
         print("  x {}".format(problem))
@@ -815,8 +721,8 @@ def check():
         print("\n  re-run `npx tsx tools/capture-ui.ts` and update the constants "
               "in this file")
         return 1
-    print("  ok - {} models, {} providers, {} flagged, spread {}".format(
-        N_MODELS, N_PROVIDERS, N_FLAGGED, SPREAD))
+    print("  ok - {} models, {} providers, {} flagged, saving {}".format(
+        N_MODELS, N_PROVIDERS, N_FLAGGED, SAVING))
     return 0
 
 
@@ -875,7 +781,7 @@ def make_poster(out):
     word_w = tw("Prompt", fw) + tw("Spend", fw)
     total = mark + gap + word_w
     x = (W - total) / 2
-    y = 372
+    y = 344  # 372 before the surfaces line; moved up to keep the block centred
 
     draw_mark(d, x, y, mark, ACCENT)
     wordmark(d, x + mark + gap, y + 6, 128, INK, ACCENT)
@@ -883,6 +789,12 @@ def make_poster(out):
     d.text((W / 2 - tw(tagline, ft) / 2, y + mark + 56), tagline, font=ft, fill=MUTED)
     rule(im, y + mark + 140, 1.0, width=620)
     d.text((W / 2 - tw(stat, fs) / 2, y + mark + 186), stat, font=fs, fill=fade(MUTED, 0.85))
+    # Where it runs. Added for the 2026-10 cut, whose frame 0 is also the
+    # YouTube and directory thumbnail: the apps going live is the news, and a
+    # thumbnail is the one frame everybody sees.
+    fp = F("mono-bold", 26)
+    d.text((W / 2 - tw(SURFACES_LINE, fp) / 2, y + mark + 240), SURFACES_LINE,
+           font=fp, fill=fade(ACCENT, 0.9))
 
     im.save(out / "poster.png")
     print("wrote poster.png (the video's first frame, and its README thumbnail)")
