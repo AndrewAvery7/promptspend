@@ -22,23 +22,20 @@ blob-report
 # `npx tsx tools/capture-ui.ts` and `python tools/make-promo.py`, and they SHOULD
 # be regenerated rather than kept — a stale screenshot of a price is the one
 # thing this repository exists to prevent.
-# `/*` rather than `/`: git cannot re-include a file whose parent directory is
-# excluded, so ignoring the directory itself would make the two negations below
-# silently do nothing.
-assets/promo-frames/*
-# ...except the two frames nothing in this repository can regenerate.
 #
-# Every other frame comes back from `npx tsx tools/capture-ui.ts`, which is why
-# keeping them would be worse than useless — a committed screenshot of a price
-# is the one thing this project exists to prevent. The editor scene is the
-# exception: Playwright drives a browser and cannot photograph an editor, so
-# these two are hand-taken from VS Code. Ignoring them is how the promo bookends
-# were lost earlier the same day, at $4.80 to replace. 96 KB is the cheaper side
-# of that trade.
-!assets/promo-frames/04-editor.png
-!assets/promo-frames/04-status.png
+# Until 2026-10 two hand-taken VS Code frames (04-editor.png, 04-status.png)
+# were re-included here, because Playwright cannot photograph an editor. The
+# 2026-10 cut dropped that scene after its frame went stale (it showed a price
+# that had since changed), so the exception went with it. If an editor scene
+# returns, re-add a `!assets/promo-frames/<name>.png` line — and note that git
+# cannot re-include a file whose parent directory is excluded, which is why the
+# rule below is `/*` and not `/`.
+assets/promo-frames/*
 assets/core.mp4
 assets/*-promo.mp4
+assets/*-promo-web.mp4
+assets/*-promo-thumb.png
+assets/.p2*
 assets/.bed-looped.mp3
 .promo-fonts/
 

@@ -46,7 +46,12 @@ XF2=0.6           # core -> end card crossfade
 TITLE_IN=1.1      # lower-third fade in
 TITLE_OUT=4.5     # lower-third fade out (clears before the crossfade)
 LOGO_IN=0.5       # end-card logo fade in
-HERO_VOL=1.00     # native hero audio owns the opening on its own
+# Native hero audio owns the opening on its own. 0.80, not 1.00: Veo's track
+# peaks at 0.0 dBFS, and at unity the finished film measured a -0.1 dBFS true
+# peak in its first seconds - one lossy re-encode (YouTube's, or the small web
+# copy) away from clipping. -1.9 dB leaves headroom and still sits within a
+# couple of dB of the bed.
+HERO_VOL=0.80
 BED_VOL=0.90      # trim after loudnorm has already set the bed's loudness
 
 # The end card's framing is measured, never assumed.

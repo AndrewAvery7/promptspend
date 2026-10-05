@@ -26,11 +26,20 @@ const BASE = process.env.CAPTURE_BASE ?? 'http://127.0.0.1:4173';
 
 /**
  * A support assistant at real scale, chosen so the spread is the story: four
- * models people genuinely choose between, across four providers, with a ~40x
+ * models people genuinely choose between, across four providers, with a ~17x
  * gap between the cheapest and dearest output rate.
+ *
+ * All four must be `current` and vendor-sourced. The 2026-08 cut used DeepSeek
+ * V3.2 as the cheap end; by October it was `deprecated`, and a promo whose
+ * headline saving rests on a model the catalog itself has retired is quietly
+ * recommending something nobody should build on. Avoid models on an `intro`
+ * rate too (Gemini 3.6/3.7 Flash run one until 2026-12-31): the card shows the
+ * promotional price, and the frame goes stale the day it ends. Re-check this
+ * list against the catalog before every re-cut; `make-promo.py --check` fails
+ * if any of the four stops being current, vendor-priced and intro-free.
  */
 const SCENARIO = new URLSearchParams({
-  m: 'claude-opus-5,gpt-5,gemini-gemini-3.6-flash,deepseek-deepseek-v3.2',
+  m: 'claude-opus-5-5,gpt-5.6-terra,gemini-gemini-3.5-flash,deepseek-deepseek-v4-flash',
   sys: '1200',
   usr: '180',
   out: '350',
@@ -60,6 +69,17 @@ async function element(page: Page, name: string, selector: string, problems: str
     return;
   }
   await target.scrollIntoViewIfNeeded();
+  // Clear the sticky `.header`. scrollIntoViewIfNeeded only guarantees the
+  // element is inside the viewport, not that nothing sits on top of it, and an
+  // element screenshot is a crop of the viewport - so the 2026-10 capture of the
+  // "Use it where you work" panel came back with the nav bar painted over its
+  // title. Scrolling it to just below the header fixes that for every element
+  // short enough to fit; taller ones (the catalog table) are unaffected.
+  await target.evaluate((el) => {
+    const header = document.querySelector('.header');
+    const offset = header ? header.getBoundingClientRect().height : 0;
+    window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - offset - 24);
+  });
   await page.waitForTimeout(250);
   await target.screenshot({ path: resolve(OUT, `${name}.png`) });
   const box = await target.boundingBox();
@@ -84,6 +104,7 @@ async function main(): Promise<void> {
     localStorage.setItem('ps.accent', 'cobalt');
     localStorage.setItem('ps.canvas', 'cool');
     localStorage.setItem('ps.welcomeDismissed', '1');
+    localStorage.setItem('ps.appsLiveBannerDismissed', '1');
   });
 
   const page = await context.newPage();
@@ -134,6 +155,10 @@ async function main(): Promise<void> {
       // corner in the video clipped the P off "PRICES LAST CHANGED".
       await element(page, '02-health', '.panel:has(.health-grid)', problems);
       await element(page, '02-flagged', '.panel:has-text("FLAGGED FOR REVIEW")', problems);
+      // The four surfaces - agent, API, editor, phone - as the site itself
+      // presents them, store badges included. The 2026-10 cut uses this in
+      // place of drawn panels, so the "where you work" claim is a screenshot.
+      await element(page, '02-surfaces', '.panel:has(.build-grid)', problems);
     }
   }
 

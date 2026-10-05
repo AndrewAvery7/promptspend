@@ -1,16 +1,47 @@
 # The promo video
 
-`promptspend-promo.mp4` — 2 minutes 8, 1920×1080, shipped as a **release asset**
-rather than committed. At ~23 MB it would otherwise be by far the heaviest thing
-in the repository, and every rebuild would add another copy to history forever.
+`promptspend-promo.mp4` — about a minute and a half, 1920×1080, shipped as a
+**release asset** rather than committed. At ~23 MB it would otherwise be by far
+the heaviest thing in the repository, and every rebuild would add another copy
+to history forever.
 
 ```
-[ title card 1.7s ] → [ AI hero shot 6.4s ] → [ real-UI core 118s ] → [ AI end card 3.6s ]
+[ title card 1.7s ] → [ AI hero shot 6.4s ] → [ real-UI core ~88s ] → [ AI end card 3.6s ]
 ```
 
-Nine scenes in the core: the snapshot problem, the size of the decision, the
-estimate working, the saving, provenance and flags, the MCP server, **the editor
-extension**, the daily pipeline, and the address.
+Seven scenes in the core: the snapshot problem, the estimate working, the
+saving, provenance and flags, **where you work** (agent, API, editor and the
+phone apps, as one captured panel), the daily pipeline, and the address.
+
+### The 2026-10 cut
+
+Rebuilt on 2026-10-05 for YouTube and the product directories, which wanted
+something nearer 90 seconds than 128 and, above all, something current. What
+changed and why:
+
+- **Two scenes went stale, so they went.** The agent scene's JSON carried a
+  hand-typed `"last_verified": "2026-08-01"`, and the editor screenshot showed
+  Claude Sonnet 5 at $3 / $15 after it was repriced to $2 / $10. Both were the
+  only drawn or hand-taken frames in the film, which is exactly why they were
+  the ones that rotted. They are replaced by `scene_surfaces`, a capture of
+  the site's own _Use it where you work_ panel — MCP server, API, VS Code
+  extension and the live App Store and Google Play badges. The value-map
+  scene was dropped for length; the estimate and saving scenes make its point.
+- **The scenario changed.** The August cut's cheap end was DeepSeek V3.2,
+  which the catalog has since marked `deprecated`. A headline saving that
+  recommends a retired model is technically true and practically wrong. The
+  four are now Claude Opus 5.5, GPT-5.6 Terra, Gemini 3.5 Flash and DeepSeek
+  V4 Flash — all `current`, all vendor-sourced, none on an `intro` rate (Gemini
+  3.6/3.7 Flash were skipped because their cards show a promotional price that
+  ends 2026-12-31). `--check` now fails if any of the four stops meeting that.
+- **"No tracking" is gone.** The site runs cookieless Cloudflare Web Analytics
+  and says _no accounts, no ads, no cookies_. The closing chips follow it, and
+  `--check` rejects a chip claiming no tracking or no analytics.
+- **The capture clears the sticky header.** The new panel came back with the
+  nav bar painted over its title, because `scrollIntoViewIfNeeded` only
+  promises the element is inside the viewport, not uncovered.
+- **A second, small file for upload forms.** Directory upload tools cap a file
+  at 10 MB, so the cut is also encoded under 9.5 MB (see _Rebuilding it_).
 
 The title card is frame 0, and frame 0 is the thumbnail. GitHub's inline player
 is generated from a bare attachment URL and its markdown sanitiser strips
@@ -96,16 +127,17 @@ node node_modules/vite/bin/vite.js preview --port 4173 --strictPort --host 127.0
 npx tsx tools/capture-ui.ts
 ```
 
-Step 3 is the one screenshot Playwright cannot take: `04-editor.png` and
-`04-status.png` are crops of VS Code with the published extension running. See
-**The editor scene** below. They change far less often than the site does, so
-this step is usually skipped.
+Since the 2026-10 cut every frame comes from step 2; there is no hand-taken
+screenshot left (see **The editor scene** below). Before rendering, read the new
+`01-cards.png` and `01-saving.png` and copy their figures into the constants at
+the top of `make-promo.py` — `--check` verifies the rates behind them, but the
+dollar amounts are read off the capture by a person.
 
 ```bash
-# 4. Render the 118s core (also checks the figures, and writes the overlays)
+# 3. Render the ~88s core (also checks the figures, and writes the overlays)
 python tools/make-promo.py
 
-# 5. Stitch. The bed is COPIED first: stitch-promo.sh writes its loop to
+# 4. Stitch. The bed is COPIED first: stitch-promo.sh writes its loop to
 #    assets/.bed-looped.mp3, so passing that same path as the input makes ffmpeg
 #    read and write one file.
 cp assets/.bed-looped.mp3 assets/bed-source.mp3
@@ -113,7 +145,26 @@ bash tools/stitch-promo.sh assets/hero.mp4 assets/core.mp4 assets/endcard.mp4 \
   assets/title-overlay.png assets/endcard-logo.png assets/bed-source.mp3 \
   assets/poster.png assets/promptspend-promo.mp4
 rm assets/bed-source.mp3
+
+# 5. The small copy, for upload forms that cap a file at 10 MB (product
+#    directories). Two-pass at 640k video + 96k audio landed the 97s cut at
+#    8.8 MB; scale the bitrate with the duration rather than reusing it blind,
+#    then pull a frame from the trust and "where you work" scenes and read the
+#    smallest text before shipping it.
+ffmpeg -y -i assets/promptspend-promo.mp4 -c:v libx264 -preset slower -b:v 640k \
+  -pass 1 -passlogfile assets/.p2 -an -f null -
+ffmpeg -y -i assets/promptspend-promo.mp4 -c:v libx264 -preset slower -b:v 640k \
+  -pass 2 -passlogfile assets/.p2 -pix_fmt yuv420p -c:a aac -b:a 96k \
+  -movflags +faststart assets/promptspend-promo-web.mp4
+
+# 6. A 1280x720 thumbnail from the title card, cropped to the artwork before
+#    scaling so the type is larger than a straight downscale would leave it.
+python -c "from PIL import Image; Image.open('assets/poster.png').crop((240,152,1680,962)).resize((1280,720),Image.LANCZOS).save('assets/promptspend-promo-thumb.png')"
 ```
+
+The web copy, the thumbnail and the two-pass logs are build products and are
+ignored alongside the main MP4 (rules added in the 2026-10 cut — the old
+`assets/*-promo.mp4` pattern does not match a `-web.mp4` name).
 
 `assets/hero.mp4` and `assets/endcard.mp4` are gitignored and will not be in a
 fresh clone — regenerate them from the prompts and seeds recorded below.
@@ -123,17 +174,25 @@ fresh clone — regenerate them from the prompts and seeds recorded below.
 needs a fresh drag-and-drop and a new URL in the README, as well as
 `gh release upload --clobber`.
 
-`python tools/make-promo.py --check` runs step 4's verification alone. It fails
+`python tools/make-promo.py --check` runs step 3's verification alone. It fails
 if a model in the captured estimate has been renamed or retired, or if the rates
 have moved far enough that the saving shown on screen is no longer what the
 engine would compute. **The screenshots stay current because they are captured;
 the risk here is the reverse — the hand-written captions rotting around them.**
 
-## The editor scene
+## The editor scene (retired in the 2026-10 cut)
 
-One scene's screenshot does not come from `capture-ui.ts`, and cannot: Playwright
+Kept for whoever brings it back. The scene was dropped on 2026-10-05 because its
+screenshot had gone stale — it showed Claude Sonnet 5 at $3 / $15 after a
+reprice to $2 / $10 — and a hand-taken frame cannot be refreshed by re-running
+the capture. `04-editor.png` and `04-status.png` were removed from the tree at
+the same time; they are in git history before that commit. A returning editor
+scene needs a fresh screenshot, taken as below, and a `--check` rule for the
+rates it shows.
+
+One scene's screenshot did not come from `capture-ui.ts`, and cannot: Playwright
 drives a browser and cannot photograph an editor. `04-editor.png` and
-`04-status.png` are native-resolution crops of VS Code with the **published**
+`04-status.png` were native-resolution crops of VS Code with the **published**
 extension running against the **published** catalog.
 
 Drawing an editor in PIL would have been quicker. It would also have broken this
