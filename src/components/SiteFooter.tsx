@@ -95,6 +95,7 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               alt="PromptSpend on LaunchNest"
               width={157}
               height={40}
+              referrerPolicy="no-referrer"
             />
           </a>
         </div>

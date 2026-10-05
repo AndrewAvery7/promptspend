@@ -466,7 +466,9 @@ just a confident guess.
 ## Privacy, precisely
 
 **The estimator itself sends nothing anywhere.** No accounts, no analytics, no cookies. Fonts are
-self-hosted. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable
+self-hosted. One image is not: the footer's LaunchNest listing badge loads from launchnest.io (their
+directory requires it), with no referrer, so LaunchNest's server sees a visitor's IP address but not
+which page they were on. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable
 URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds two things:
 whether you dismissed the welcome banner, and your theme choice.
 
@@ -475,7 +477,8 @@ and they are the only reason this project has a server at all
 (a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)). Precisely what changes:
 
 - The Content Security Policy opens `connect-src` for that one API origin, and — only where Turnstile is
-  configured — `script-src` and `frame-src` for `challenges.cloudflare.com`. Nothing else, ever. That
+  configured — `script-src` and `frame-src` for `challenges.cloudflare.com`. Nothing else, ever (the
+  only other remote origin is `img-src` for the LaunchNest badge, which carries no data). That
   `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is
   generated from one configured value rather than hand-maintained.
 - **Browser push stores nothing personal.** A push subscription is an opaque URL the browser issues. No

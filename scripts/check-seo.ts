@@ -151,8 +151,9 @@ async function main(): Promise<void> {
         `the LaunchNest link is rel="${rel}"; their verifier refuses nofollow, sponsored and ugc`,
       );
     }
-    if (!/<img\s[^>]*src="[^"]*launchnest-badge-light\.svg"/.test(launchnest[2]!)) {
-      problems.push('the LaunchNest link in the static HTML has no self-hosted badge image');
+    // Their verifier refuses a self-hosted copy: the image must be theirs.
+    if (!/<img\s[^>]*src="https:\/\/launchnest\.io\/badge\/promptspend\.svg[^"]*"/.test(launchnest[2]!)) {
+      problems.push('the LaunchNest link in the static HTML has no launchnest.io badge image');
     }
   }
 

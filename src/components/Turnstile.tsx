@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 /**
  * Cloudflare Turnstile, loaded only when it is actually required.
  *
- * This is the one place the site reaches a third-party origin, and it is a
+ * This is the one place the site runs third-party code (the only other
+ * third-party request is the footer's LaunchNest badge image), and it is a
  * deliberate trade: without it, the subscribe endpoint sends a confirmation
  * email for every address posted to it, so a script could burn the sending
  * quota and the domain's reputation in an afternoon. The Content Security

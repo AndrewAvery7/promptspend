@@ -113,6 +113,13 @@ test.describe('PromptSpend Receipt', () => {
     await page.getByRole('button', { name: 'Download PNG' }).click();
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toMatch(/^promptspend-ai-receipt-\d{4}-\d{2}-\d{2}\.png$/);
-    expect(requests.filter((url) => !url.startsWith('http://127.0.0.1:4173'))).toEqual([]);
+    // The footer's LaunchNest badge is the one approved remote request (a fixed
+    // image URL that carries no receipt data, which LaunchNest redirects to its
+    // static artwork); anything else would be a leak.
+    const badge =
+      /^https:\/\/launchnest\.io\/(badge\/promptspend\.svg\?variant=featured(&theme=light)?|brand\/badges\/featured-(light|dark)\.svg)$/;
+    expect(requests.filter((url) => !url.startsWith('http://127.0.0.1:4173') && !badge.test(url))).toEqual(
+      [],
+    );
   });
 });

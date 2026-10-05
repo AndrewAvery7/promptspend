@@ -1,7 +1,9 @@
 # Security policy
 
 PromptSpend is a static site with no accounts and no login. The calculator itself
-sends nothing anywhere, which removes most of the usual attack surface.
+sends nothing anywhere, which removes most of the usual attack surface. (The only
+remote origin the pages load from is `https://launchnest.io`, for one badge image,
+admitted by `img-src` alone.)
 
 There are two servers, both Cloudflare Workers, and only one of them holds
 anything:

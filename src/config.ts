@@ -52,8 +52,9 @@ export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
  * That directory approves a listing only once it can fetch a page on this
  * domain carrying a link back to theirs. The artwork is copied into `public/`
  * rather than hot-linked from their CDN, for two reasons that point the same
- * way: `img-src` is `'self' data:` on every surface here, so their URL would
- * simply be blocked, and a footer that says "no tracking" should not hand a
+ * way: `img-src` was `'self' data:` on every surface here (it now also admits
+ * launchnest.io, for that badge alone), so their URL would simply be blocked,
+ * and a footer that says "no tracking" should not hand a
  * directory the IP of every visitor. Their verifier reads the link, which is
  * unchanged. Both files are self-contained - the mark is a data URI inside the
  * SVG - so neither reaches the network.
@@ -86,12 +87,15 @@ export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.png`;
 /**
  * The LaunchNest listing, and its badge, after the PeerPush one.
  *
- * Self-hosted for the same two reasons as `SWB_BADGE_LIGHT`: their embed
- * snippet hot-links `launchnest.io/badge/promptspend.svg`, which `img-src
- * 'self'` would block and which would hand them every visitor's IP. The two
- * SVGs are their "featured" artwork, light and dark, unedited and
- * self-contained (the font is a data URI inside the file), drawn at 157x40 -
- * their 590x150 card at the same 40px height as the other badges.
+ * The one badge NOT self-hosted. LaunchNest's verifier refused a local copy
+ * ("We couldn't find the badge image on that page") and only accepts its own
+ * `launchnest.io/badge/promptspend.svg`, so the owner approved, on 2026-10-05,
+ * letting `img-src` admit `https://launchnest.io` on every surface that shows
+ * the footer, and nothing else. The image is requested with
+ * `referrerpolicy="no-referrer"`, so LaunchNest learns a visitor's IP but not
+ * which page they were on; their badge sets no cookies. The privacy policy
+ * says so under "Network requests". Drawn at 157x40 - their 590x150 card at
+ * the same 40px height as the other badges; `&theme=light` is the light card.
  *
  * LaunchNest publishes the listing only once its verifier finds this link on
  * the home page, and the verifier reads the HTML without running JavaScript.
@@ -100,8 +104,9 @@ export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.png`;
  * not carry `nofollow`, `sponsored` or `ugc`, or the listing is refused.
  */
 export const LAUNCHNEST_URL = 'https://launchnest.io/p/promptspend';
-export const LAUNCHNEST_BADGE_LIGHT = `${import.meta.env.BASE_URL}launchnest-badge-light.svg`;
-export const LAUNCHNEST_BADGE_DARK = `${import.meta.env.BASE_URL}launchnest-badge-dark.svg`;
+export const LAUNCHNEST_ORIGIN = 'https://launchnest.io';
+export const LAUNCHNEST_BADGE_LIGHT = `${LAUNCHNEST_ORIGIN}/badge/promptspend.svg?variant=featured&theme=light`;
+export const LAUNCHNEST_BADGE_DARK = `${LAUNCHNEST_ORIGIN}/badge/promptspend.svg?variant=featured`;
 
 /**
  * Install routes for the two things that are not this website.
