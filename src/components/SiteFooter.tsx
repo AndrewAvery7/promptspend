@@ -12,6 +12,9 @@ import {
   MCP_PACKAGE_URL,
   MODELS_INDEX_URL,
   OPEN_VSX_URL,
+  PEERLIST_BADGE_DARK,
+  PEERLIST_BADGE_LIGHT,
+  PEERLIST_URL,
   PEERPUSH_BADGE,
   PEERPUSH_URL,
   PRODUCTHUNT_BADGE_DARK,
@@ -98,6 +101,14 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
           </a>
           <a href={PEERPUSH_URL} target="_blank" rel="noopener noreferrer">
             <img src={PEERPUSH_BADGE} alt="PromptSpend on PeerPush" width={142} height={40} />
+          </a>
+          <a href={PEERLIST_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              src={theme === 'dark' ? PEERLIST_BADGE_DARK : PEERLIST_BADGE_LIGHT}
+              alt="PromptSpend on Peerlist"
+              width={136}
+              height={40}
+            />
           </a>
           <a href={LAUNCHNEST_URL} target="_blank" rel="noopener noreferrer">
             <img
