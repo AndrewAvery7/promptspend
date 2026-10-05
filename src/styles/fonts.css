@@ -4,8 +4,8 @@
  * These used to come from Google Fonts. Two `<link>` tags is the cheapest way
  * to load a typeface and the most expensive way to keep a privacy claim: every
  * visitor's IP address and user agent reached a third party before the first
- * cost card rendered, on a site whose footer says "no tracking". Serving the
- * files ourselves makes that sentence true, removes two DNS lookups and two TLS
+ * cost card rendered, on a site that promises to keep visitors' details to
+ * itself. Serving the files ourselves keeps that promise, removes two DNS lookups and two TLS
  * handshakes from the critical path, and lets the page declare a Content
  * Security Policy with no external font or style origins at all.
  *

@@ -22,7 +22,7 @@
 
 <p align="center">
   <a href="https://promptspend.com"><b>&rarr; Open PromptSpend</b></a>
-  &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no tracking
+  &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no ads, no cookies
   &nbsp;·&nbsp; <a href="https://promptspend.com/writing/what-llm-cost-calculators-get-wrong/">Writing: What LLM Cost Calculators Get Wrong</a>
   &nbsp;·&nbsp; <a href="https://promptspend.com/writing/2026-09-price-movement-report/">September 2026 Price Movement Report</a>
 </p>
@@ -465,10 +465,13 @@ just a confident guess.
 
 ## Privacy, precisely
 
-**The estimator itself sends nothing anywhere.** No accounts, no analytics, no cookies. Fonts are
+**The estimator itself sends nothing anywhere.** No accounts, no ads, no cookies. Fonts are
 self-hosted. One image is not: the footer's LaunchNest listing badge loads from launchnest.io (their
 directory requires it), with no referrer, so LaunchNest's server sees a visitor's IP address but not
-which page they were on. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable
+which page they were on. The website counts visits with Cloudflare Web Analytics, a cookieless beacon
+that reports a page's address, referrer, country and load timings to promptspend.com's own
+`/cdn-cgi/rum` (the Content Security Policy lets it post nowhere else); it never sees pasted text. The
+apps, the VS Code extension and the API carry no analytics. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable
 URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds two things:
 whether you dismissed the welcome banner, and your theme choice.
 

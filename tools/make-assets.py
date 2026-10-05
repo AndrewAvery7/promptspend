@@ -248,7 +248,7 @@ def make_social_card(path):
     foot = find_font("medium", 20 * SCALE)
     d.text(
         (inner, h - pad - 62 * SCALE),
-        "Open source  ·  MIT  ·  no accounts, no tracking",
+        "Open source  ·  MIT  ·  no accounts, no ads, no cookies",
         font=foot,
         fill=theme["muted"],
     )

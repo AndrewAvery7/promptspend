@@ -29,6 +29,12 @@ const PAGES = [
 /** Directives that must be present and non-empty, whatever else changes. */
 const REQUIRED = ['default-src', 'script-src', 'connect-src', 'base-uri', 'object-src'] as const;
 
+/** The only remote origins any page may load script from. */
+const SCRIPT_ORIGINS = new Set([
+  'https://challenges.cloudflare.com',
+  'https://static.cloudflareinsights.com',
+]);
+
 async function main(): Promise<void> {
   const problems: string[] = [];
 
@@ -62,6 +68,23 @@ async function main(): Promise<void> {
     }
     if (/script-src[^;]*'unsafe-eval'/.test(policy)) {
       problems.push(`${page.name}: script-src allows 'unsafe-eval'`);
+    }
+    // Remote script origins are an allowlist: Turnstile, and Cloudflare Web
+    // Analytics' beacon (owner-approved 2026-10-05). Anything else is a mistake.
+    const scriptSrc = /script-src ([^;]*)/.exec(policy)?.[1] ?? '';
+    for (const origin of scriptSrc
+      .trim()
+      .split(/\s+/)
+      .filter((s) => s.startsWith('http'))) {
+      if (!SCRIPT_ORIGINS.has(origin)) problems.push(`${page.name}: script-src admits unapproved ${origin}`);
+    }
+    // The beacon posts to the site's own /cdn-cgi/rum. Admitting Cloudflare's
+    // shared collector instead would let any injected script post data to an
+    // analytics account its author controls.
+    if (/connect-src[^;]*cloudflareinsights/.test(policy)) {
+      problems.push(
+        `${page.name}: connect-src admits cloudflareinsights.com; the beacon must report to 'self'`,
+      );
     }
     if (page.strictStyle && /style-src[^;]*'unsafe-inline'/.test(policy)) {
       problems.push(`${page.name}: style-src unnecessarily allows 'unsafe-inline'`);

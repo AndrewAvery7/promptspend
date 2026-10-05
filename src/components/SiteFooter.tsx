@@ -47,7 +47,7 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
     <footer className="footer">
       <div className="footer__inner">
         <div>
-          <b>PromptSpend</b> · open source, MIT · no accounts, no tracking ·{' '}
+          <b>PromptSpend</b> · open source, MIT · no accounts, no ads, no cookies ·{' '}
           <a href={REPO_URL}>star it on GitHub</a> · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
         </div>
         {/* The generated pages. Every model has a permanent URL of its own —

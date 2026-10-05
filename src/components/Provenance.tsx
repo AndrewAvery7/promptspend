@@ -108,7 +108,7 @@ export function Provenance({ catalog, onOpenData }: ProvenanceProps) {
             <path d="m9 12 2 2 4-4" />
           </svg>
           <span>
-            <b>0</b> accounts, trackers or cookies.
+            <b>0</b> accounts, ads or cookies.
           </span>
         </li>
         <li>

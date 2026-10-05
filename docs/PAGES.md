@@ -127,11 +127,14 @@ the page code by hand, run `--fix` and commit the file with your change.
 2. **Therefore a very tight policy** — `default-src 'none'`, with the JSON-LD
    admitted by its exact SHA-256 rather than `'unsafe-inline'`. The hash is
    computed over the string that is actually emitted, so the two cannot drift.
-3. **Therefore almost no external anything**: no fonts, no analytics, no images
-   beyond an inline SVG favicon and the footer badges. The LaunchNest badge is
-   the one image loaded from another server (launchnest.io, no referrer); its
-   verifier refuses a local copy, and the owner approved the exception on
-   2026-10-05.
+3. **Therefore almost no external anything**: no fonts, no images beyond an
+   inline SVG favicon and the footer badges. The LaunchNest badge is the one
+   image loaded from another server (launchnest.io, no referrer); its verifier
+   refuses a local copy, and the owner approved the exception on 2026-10-05.
+   The same day he approved Cloudflare Web Analytics: Cloudflare injects its
+   beacon as it serves each page, so `script-src` also admits
+   `https://static.cloudflareinsights.com`, and `connect-src 'self'` lets the
+   beacon report only to this site's own `/cdn-cgi/rum`.
 
 A consequence worth knowing: `style-src 'self'` with no `'unsafe-inline'` means
 **an inline `style=` attribute is silently dropped**. There is a test asserting

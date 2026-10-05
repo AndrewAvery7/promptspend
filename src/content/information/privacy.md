@@ -22,7 +22,13 @@ On the website, prompt text is processed in the browser. PromptSpend does not pl
 
 The native app uses encrypted HTTPS requests to download PromptSpend's public pricing catalog and source-check status. These requests do not include your pasted text, saved scenarios, contacts, advertising identifier, or precise location. Like other internet services, hosting and network providers may process ordinary connection information, such as an IP address, request time, and user agent, to deliver and secure the service. PromptSpend does not use that information to build advertising profiles or track activity across apps or websites.
 
-The website's footer shows a badge for PromptSpend's listing on LaunchNest, a product directory. That one image is loaded from launchnest.io, so your browser contacts LaunchNest's server when a page loads, which tells it your IP address and browser type. It is requested without telling LaunchNest which page you were on, and it sets no cookies. Every other part of the website loads from PromptSpend's own domain.
+The website's footer shows a badge for PromptSpend's listing on LaunchNest, a product directory. That one image is loaded from launchnest.io, so your browser contacts LaunchNest's server when a page loads, which tells it your IP address and browser type. It is requested without telling LaunchNest which page you were on, and it sets no cookies.
+
+## Website visit statistics
+
+The website, promptspend.com, counts visits with Cloudflare Web Analytics, so we can see which pages are read and which sites send visitors. Each page loads a small script from static.cloudflareinsights.com that reports the page's address, the referring site, your browser and device type, your country, and how quickly the page loaded. It sets no cookies, uses no local storage, and does not build a profile of you or follow you across other websites. We see only totals, such as page views per day and the top referring sites, never an individual visit. The script never reads text you paste into the estimator, and PromptSpend never places pasted text in a page address. Cloudflare also hosts the website and counts the requests it serves, as any host does.
+
+This applies to the website only. The native apps, the VS Code extension, and the pricing API contain no analytics.
 
 ## App updates
 

@@ -54,7 +54,7 @@ export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
  * rather than hot-linked from their CDN, for two reasons that point the same
  * way: `img-src` was `'self' data:` on every surface here (it now also admits
  * launchnest.io, for that badge alone), so their URL would simply be blocked,
- * and a footer that says "no tracking" should not hand a
+ * and a site that keeps visitors' details to itself should not hand a
  * directory the IP of every visitor. Their verifier reads the link, which is
  * unchanged. Both files are self-contained - the mark is a data URI inside the
  * SVG - so neither reaches the network.

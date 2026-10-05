@@ -79,7 +79,12 @@ in spare time, so please allow a reasonable window before disclosing publicly.
 
 ## Data handling
 
-There is no analytics and no cookie. Pasted prompt text stays in the tab: it is
+There is no cookie. The website (not the apps, extension or API) counts visits
+with Cloudflare Web Analytics: a cookieless beacon, injected by Cloudflare, that
+reports page address, referrer, country and timings to the site's own
+`/cdn-cgi/rum`. The Content Security Policy admits its script origin
+(`static.cloudflareinsights.com`) but keeps `connect-src` closed to it, so no
+script on the page can post to a remote collector. Pasted prompt text stays in the tab: it is
 tokenised locally, is deliberately excluded from the shareable URL, and is held
 in a bounded in-memory cache that is cleared when the scenario is reset and
 discarded when the tab closes. `localStorage` holds two things: whether the
