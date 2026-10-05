@@ -16,8 +16,17 @@ import { renderReceiptInstructions, renderReceiptSpecJson } from './src/receipt/
 const base =
   (process.env.BASE_PATH ?? '').trim() || (process.env.NODE_ENV === 'production' ? '/promptspend/' : '/');
 
-/** Turnstile's widget. The only third-party origin the site may run code from. */
+/** Turnstile's widget. A third-party origin the site may run code from. */
 const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
+
+/**
+ * Cloudflare Web Analytics' beacon, the other one (owner-approved 2026-10-05).
+ * Cloudflare injects it into every page because promptspend.com is proxied
+ * through Cloudflare with Web Analytics' automatic setup. That setup reports to
+ * the site's own `/cdn-cgi/rum`, so `connect-src` stays `'self'` for it: no
+ * script may post anywhere new, which is the property `connect-src` exists for.
+ */
+const WEB_ANALYTICS_SCRIPT_ORIGIN = 'https://static.cloudflareinsights.com';
 
 const CSP_PLACEHOLDER = '%CSP%';
 const SITE_URL_PLACEHOLDER = '%SITE_URL%';
@@ -140,7 +149,8 @@ function receiptAssets(): Plugin {
  * `connect-src` is the line that matters. It is what stops a compromised
  * dependency posting a pasted prompt somewhere, so it opens for the alerts API
  * and nothing else. When no API is configured the policy stays strictly
- * self-only, which is what the site ships with today.
+ * self-only, which is what the site ships with today. The analytics beacon
+ * needs no exception here: it reports to the site's own `/cdn-cgi/rum`.
  */
 function contentSecurityPolicy(alertsApi: string): Plugin {
   return {
@@ -148,7 +158,7 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
     transformIndexHtml(html) {
       const api = alertsApi;
       const connect = ["'self'", api].filter(Boolean);
-      const script = ["'self'"];
+      const script = ["'self'", WEB_ANALYTICS_SCRIPT_ORIGIN];
       const frame = ["'none'"];
       // The Receipt uses a stylesheet and no style attributes, so it can carry
       // a stricter policy than the calculator, whose charts use inline geometry.

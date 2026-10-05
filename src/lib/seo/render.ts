@@ -6,18 +6,21 @@
  * 1. **No JavaScript.** These pages state numbers. A React bundle to render
  *    static text would cost every visitor a download and every crawler a render
  *    pass, and would make the content invisible to anything that does not run
- *    scripts. The only `<script>` on the page is the JSON-LD data block, which
- *    is not executed.
+ *    scripts. The only `<script>` in the page we emit is the JSON-LD data block,
+ *    which is not executed. Cloudflare adds one more as it serves the page: the
+ *    Web Analytics beacon (owner-approved 2026-10-05), which counts the visit
+ *    and reports to the site's own `/cdn-cgi/rum`. The page works without it.
  * 2. **Therefore a very tight Content Security Policy** — `default-src 'none'`,
  *    with the JSON-LD admitted by its exact SHA-256 rather than by
  *    `'unsafe-inline'`. The hash is computed over the string that is actually
  *    emitted (see `hashInline`), so the two cannot drift apart.
- * 3. **Therefore almost no external anything**: no fonts, no analytics, no
- *    images beyond an inline SVG favicon and the listing badges in the footer.
- *    Those are same-origin copies, except LaunchNest's: its verifier refuses a
- *    copy, so - approved 2026-10-05 - its image loads from launchnest.io, with
- *    no referrer, and `img-src` admits that one origin. Nothing else here
- *    reaches another server.
+ * 3. **Therefore almost no external anything**: no fonts, no third-party
+ *    images beyond the listing badges in the footer. Those are same-origin
+ *    copies, except LaunchNest's: its verifier refuses a copy, so - approved
+ *    2026-10-05 - its image loads from launchnest.io, with no referrer, and
+ *    `img-src` admits that one origin. The analytics beacon's script is the
+ *    one other origin (`script-src`); it posts only to this site, so
+ *    `connect-src` stays `'self'`.
  *
  * Every string that reaches the output goes through `escapeHtml`. Catalog data
  * is not user input, but it is *upstream* input — it arrives from LiteLLM and
@@ -199,7 +202,8 @@ function layout(ctx: RenderContext, input: LayoutInput): string {
     "default-src 'none'",
     "style-src 'self'",
     "img-src 'self' data: https://launchnest.io",
-    `script-src 'sha256-${ctx.hashInline(ld)}'`,
+    `script-src 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com`,
+    "connect-src 'self'",
     "base-uri 'self'",
     "form-action 'none'",
     "frame-ancestors 'none'",
@@ -221,9 +225,9 @@ ${input.extraHead ?? ''}    <meta property="og:type" content="article" />
     <meta property="og:url" content="${escapeHtml(canonical)}" />
     <meta property="og:title" content="${escapeHtml(input.title)}" />
     <meta property="og:description" content="${escapeHtml(input.description)}" />
-    <meta property="og:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=9f6a9f7b'))}" />
+    <meta property="og:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=a0fd6116'))}" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=9f6a9f7b'))}" />
+    <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=a0fd6116'))}" />
     <link rel="stylesheet" href="${escapeHtml(href(ctx, ctx.cssPath))}" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1.5' y='1.5' width='23' height='23' rx='6' fill='none' stroke='%232456E6' stroke-width='2'/%3E%3Cpath d='M7 9.5h12M7 13.5h8M7 17.5h10' stroke='%232456E6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
     <script type="application/ld+json">${ld}</script>

@@ -307,7 +307,9 @@ views; each of those would be ceremony. Styling is plain CSS custom properties o
 
 ## Deliberate non-goals
 
-No accounts, no analytics, no tracking. Those hold, and they are the ones that matter.
+No accounts, no ads, no cookies, no user-level tracking. Those hold, and they are the ones that matter.
+Since 2026-10-05 the website (only) counts visits in aggregate with Cloudflare Web Analytics, a cookieless
+beacon disclosed in the privacy policy; the owner approved it to measure which pages and referrers work.
 
 Three entries that used to sit in this list have since been built, and recording that is more useful than
 quietly deleting them: the opt-in alerts worker, the hosted API, and static pre-rendering — 159 crawlable

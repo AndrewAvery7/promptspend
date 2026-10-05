@@ -41,8 +41,10 @@ export default defineConfig({
   use: {
     baseURL: BASE,
     trace: 'on-first-retry',
-    // The site ships no analytics and the tests should not invent any traffic
-    // to third parties either; anything unexpected is a finding, not noise.
+    // The built site contains no analytics (in production Cloudflare injects
+    // its Web Analytics beacon at the edge, which a local server never does),
+    // and the tests should not invent any traffic to third parties either;
+    // anything unexpected is a finding, not noise.
     bypassCSP: false,
   },
 

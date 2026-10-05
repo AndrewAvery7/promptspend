@@ -329,15 +329,20 @@ describe('rendered pages', () => {
     expect(html).toContain('<span class="pill">legacy</span>');
   });
 
-  it('declares a policy with no unsafe-inline and no remote origin but the LaunchNest badge image', () => {
+  it('declares a policy with no unsafe-inline and no remote origin but the two approved ones', () => {
     for (const { html } of everyPage(SAMPLE)) {
       const csp = /content="(default-src[^"]*)"/.exec(html)?.[1] ?? '';
       expect(csp).toContain('default-src &#39;none&#39;');
       expect(csp).not.toContain('unsafe-inline');
-      // The one approved exception (2026-10-05): LaunchNest's badge, images only.
+      // Approved exceptions (2026-10-05): LaunchNest's badge, images only...
       const img = 'img-src &#39;self&#39; data: https://launchnest.io;';
       expect(csp).toContain(img);
-      expect(csp.replace(img, '')).not.toContain('http');
+      // ...and Cloudflare Web Analytics' beacon script, which may load but may
+      // post only to this site: connect-src admits nothing remote.
+      const beacon = ' https://static.cloudflareinsights.com;';
+      expect(csp).toMatch(/script-src &#39;sha256-[^&]*&#39; https:\/\/static\.cloudflareinsights\.com;/);
+      expect(csp).toContain('connect-src &#39;self&#39;;');
+      expect(csp.replace(img, '').replace(beacon, ';')).not.toContain('http');
     }
   });
 
