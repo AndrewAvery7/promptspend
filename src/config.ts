@@ -85,7 +85,26 @@ export const PEERPUSH_URL = 'https://peerpush.com/p/promptspend';
 export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.png`;
 
 /**
- * The LaunchNest listing, and its badge, after the PeerPush one.
+ * The Peerlist Launchpad listing (Week 41, 2026), and its badge, after the
+ * PeerPush one.
+ *
+ * A local copy of the "Live on Peerlist Launchpad" badge from the project's
+ * Launch Dashboard, which their embed hot-links from
+ * `peerlist.io/api/v1/projects/embed/...`; `img-src 'self'` would block it.
+ * The version without the upvote counter, so the copy cannot go stale. Both
+ * SVGs are Peerlist's own files, unedited: 245x72, the text drawn as paths and
+ * the PromptSpend icon embedded as a data URI, so there are no fonts, scripts
+ * or outside references. `peerlist-badge-light.svg` is the white card,
+ * `peerlist-badge-dark.svg` the dark one, drawn at 136x40 to stand the same
+ * 40px tall as the other badges. The link is the embed's, which carries no
+ * tracking parameters.
+ */
+export const PEERLIST_URL = 'https://peerlist.io/andrewavery7/project/promptspend';
+export const PEERLIST_BADGE_LIGHT = `${import.meta.env.BASE_URL}peerlist-badge-light.svg`;
+export const PEERLIST_BADGE_DARK = `${import.meta.env.BASE_URL}peerlist-badge-dark.svg`;
+
+/**
+ * The LaunchNest listing, and its badge, after the Peerlist one.
  *
  * The one badge NOT self-hosted. LaunchNest's verifier refused a local copy
  * ("We couldn't find the badge image on that page") and only accepts its own
