@@ -30,6 +30,8 @@ const GENERATED = [
   { path: '/providers/anthropic/', name: 'a provider page' },
   { path: '/compare/claude-opus-5-vs-gpt-5-5/', name: 'a comparison page' },
   { path: '/app/', name: 'the apps page' },
+  { path: '/free-tiers/', name: 'the free-tier comparison' },
+  { path: '/providers/cohere/free/', name: 'a free-tier page' },
 ] as const;
 
 /**

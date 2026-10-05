@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-81-2456E6.svg" alt="81 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-1298-blue.svg" alt="1298 tests">
+  <img src="https://img.shields.io/badge/tests-1372-blue.svg" alt="1372 tests">
   <img src="https://img.shields.io/badge/initial%20payload-99%20KB%20gzip-blue.svg" alt="99 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -72,6 +72,10 @@ automatically without anyone touching code.
 - **Learn** — seven short interactive lessons on tokens, why output costs more, how wide the price spread
   is, compounding chat history, hidden reasoning tokens, caching and batching, and how the data pipeline
   works.
+- **Free tiers** — which providers let a new account start without paying, card rules, limits and
+  whether free use trains their models, quoted word for word from each vendor's own pages with a link
+  and date on every fact, and re-checked each morning. One comparison page and one page per provider;
+  see [docs/FREE_TIERS.md](docs/FREE_TIERS.md).
 - **Data & Alerts** — pipeline health, full provenance for every number with a link to the vendor page it
   came from, what is currently flagged, and four ways to hear about a price change: an Atom feed, the
   repository's own pull requests, browser push, and an email digest.
@@ -404,7 +408,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                             |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1298 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1372 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                 |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 189 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline      |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live   |

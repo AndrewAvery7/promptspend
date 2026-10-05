@@ -25,6 +25,13 @@ post-build step adds it to the sitemap and `llms.txt`.
 | `/compare/`            | 1     | Every head-to-head                                                  |
 | `/compare/<a>-vs-<b>/` | 93    | Two models side by side on the same three workloads                 |
 
+Beside these, and outside the counts above because they are built from
+`data/free-tiers.json` rather than from the catalog, the build writes the
+free-tier pages: `/free-tiers/`, comparing all 12 providers, and one
+`/providers/<slug>/free/` per provider, quoting what each vendor's own pages say
+about free use, with a link and a read date on every fact. They have their own
+rules and a daily check of every quote; see [FREE_TIERS.md](FREE_TIERS.md).
+
 Aliases and rows upstream has stopped listing do not get pages. Two URLs for one
 purchasable model would compete with each other.
 

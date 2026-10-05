@@ -37,6 +37,7 @@
     "check:test-badge": "tsx scripts/check-test-badge.ts",
     "check:csp": "tsx scripts/check-csp.ts",
     "check:receipt": "tsx scripts/check-receipt.ts",
+    "check:free-tiers": "tsx scripts/check-free-tiers.ts",
     "check:pages": "tsx scripts/check-pages.ts",
     "check:social-card": "tsx scripts/check-social-card.ts",
     "check:encoding": "tsx scripts/check-encoding.ts",

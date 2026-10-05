@@ -3,9 +3,14 @@ import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
 import { PAGE_CSS } from './css';
 import { buildPages } from './pages';
+import { Catalog } from '@/lib/pricing/catalog';
+import type { FreeTierFile } from '@/lib/free-tiers/types';
+import { buildFreeTierPages } from './free-tier-pages';
 import {
   renderComparisonPage,
   renderComparisonsIndex,
+  renderFreeTierIndex,
+  renderFreeTierPage,
   renderModelPage,
   renderModelsIndex,
   renderProviderPage,
@@ -55,6 +60,49 @@ const catalog: PricingCatalog = {
 
 const SET = buildPages(catalog, { asOf: new Date('2026-08-02T00:00:00Z') });
 
+// One record per verdict, so every badge colour and the conflict and
+// "unpublished" blocks are all emitted at least once.
+const freeFact = (id: string, extra: Record<string, unknown> = {}) => ({
+  id,
+  topic: 'free',
+  statement: 's',
+  quote: 'q',
+  url: 'https://x.example',
+  readOn: '2026-08-01',
+  ...extra,
+});
+const freeRecord = (verdict: string, facts: unknown[]) => ({
+  verdict,
+  answer: 'a',
+  card: 'no',
+  training: 'yes',
+  trainingNote: 'n',
+  whatsFree: 'w',
+  updated: '2026-08-01',
+  basis: { verdict: ['f1'], card: ['f1'], training: ['f1'] },
+  facts,
+  unpublished: ['u'],
+});
+const FREE = buildFreeTierPages(
+  {
+    schemaVersion: 1,
+    providers: {
+      openai: freeRecord('ongoing', [
+        freeFact('f1', { conflictsWith: 'f2' }),
+        freeFact('f2', { conflictsWith: 'f1' }),
+      ]),
+      anthropic: freeRecord('unclear', [freeFact('f1')]),
+    },
+  } as unknown as FreeTierFile,
+  {
+    checkedAt: null,
+    facts: { f2: { status: 'missing', lastConfirmed: '2026-08-01', changedOn: '2026-08-02' } },
+  },
+  new Catalog(catalog),
+  SET,
+  new Date('2026-08-02T00:00:00Z'),
+);
+
 /** Every distinct class token the renderers actually emit. */
 function emittedClasses(): Set<string> {
   const html = [
@@ -64,6 +112,15 @@ function emittedClasses(): Set<string> {
     ...SET.models.map((page) => renderModelPage(page, CTX)),
     ...SET.providers.map((page) => renderProviderPage(page, CTX)),
     ...SET.comparisons.map((page) => renderComparisonPage(page, CTX)),
+    renderFreeTierIndex(FREE, CTX),
+    ...FREE.pages.map((page) => renderFreeTierPage(page, CTX)),
+    ...SET.providers.map((page) => renderProviderPage(page, CTX, { verdict: 'one-time', path: '/x/' })),
+    ...(['none', 'one-time'] as const).map((verdict) =>
+      renderFreeTierIndex(
+        { ...FREE, pages: FREE.pages.map((p) => ({ ...p, record: { ...p.record, verdict } })) },
+        CTX,
+      ),
+    ),
   ].join('\n');
 
   const classes = new Set<string>();

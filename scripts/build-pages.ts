@@ -24,6 +24,10 @@ import { fileURLToPath } from 'node:url';
 import type { PricingCatalog } from '@/lib/pricing/types';
 import { assertCatalog } from '@/lib/pricing/types';
 import { buildPages } from '@/lib/seo/pages';
+import { Catalog } from '@/lib/pricing/catalog';
+import { assertFreeTiers } from '@/lib/free-tiers/types';
+import { EMPTY_CHECK_REPORT, parseCheckReport } from '@/lib/free-tiers/check';
+import { buildFreeTierPages, FREE_TIERS_PATH } from '@/lib/seo/free-tier-pages';
 import { PAGE_CSS } from '@/lib/seo/css';
 import { renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
@@ -34,6 +38,8 @@ import {
   renderAppPage,
   renderComparisonPage,
   renderComparisonsIndex,
+  renderFreeTierIndex,
+  renderFreeTierPage,
   renderInformationPage,
   renderModelPage,
   renderModelsIndex,
@@ -41,6 +47,7 @@ import {
   renderProvidersIndex,
   renderRetiredComparisonPage,
   renderWritingPage,
+  type FreeTierLink,
   type InformationPage,
   type RenderContext,
   type WritingPage,
@@ -53,6 +60,8 @@ const DIST = resolve(ROOT, 'dist');
 const CATALOG = resolve(ROOT, 'public/data/pricing.json');
 const WRITING_DIR = resolve(ROOT, 'src/content/writing');
 const INFORMATION_DIR = resolve(ROOT, 'src/content/information');
+const FREE_TIERS = resolve(ROOT, 'data/free-tiers.json');
+const FREE_TIER_CHECK = resolve(ROOT, 'public/data/free-tier-check.json');
 
 /** Same defaults as `vite.config.ts`, and for the same reasons: an unset
  *  GitHub Actions variable arrives as `""`, so `??` would not catch it. */
@@ -173,6 +182,23 @@ async function main(): Promise<void> {
   const ledger = await readLedger();
   const set = buildPages(catalog, { asOf, ledger });
 
+  // Free-tier pages: hand-verified facts plus this morning's re-check of their
+  // sources. The facts must cover exactly the catalog's providers; the report
+  // is optional (a fresh clone has never run the check) and, if damaged, only
+  // costs the pages their "still there on" dates.
+  const freeTierRaw: unknown = JSON.parse(await readFile(FREE_TIERS, 'utf8'));
+  assertFreeTiers(
+    freeTierRaw,
+    catalog.providers.map((provider) => provider.id),
+  );
+  const checkReport = existsSync(FREE_TIER_CHECK)
+    ? parseCheckReport(JSON.parse(await readFile(FREE_TIER_CHECK, 'utf8')))
+    : EMPTY_CHECK_REPORT;
+  const freeTiers = buildFreeTierPages(freeTierRaw, checkReport, new Catalog(catalog), set, asOf);
+  const freeTierLinks = new Map<string, FreeTierLink>(
+    freeTiers.pages.map((page) => [page.providerId, { verdict: page.record.verdict, path: page.path }]),
+  );
+
   // Content-hashed, because these pages are served with whatever cache headers
   // GitHub Pages chooses and a fixed filename would leave visitors on the old
   // stylesheet after a change.
@@ -197,10 +223,20 @@ async function main(): Promise<void> {
   };
 
   await writeFileAt(fileFor(set.modelsIndex.path), renderModelsIndex(set, ctx));
-  await writeFileAt(fileFor(set.providersIndex.path), renderProvidersIndex(set, ctx));
+  await writeFileAt(fileFor(set.providersIndex.path), renderProvidersIndex(set, ctx, freeTierLinks));
   await writeFileAt(fileFor(set.comparisonsIndex.path), renderComparisonsIndex(set, ctx));
   for (const page of set.models) await writeFileAt(fileFor(page.path), renderModelPage(page, ctx));
-  for (const page of set.providers) await writeFileAt(fileFor(page.path), renderProviderPage(page, ctx));
+  for (const page of set.providers) {
+    await writeFileAt(fileFor(page.path), renderProviderPage(page, ctx, freeTierLinks.get(page.id)));
+  }
+  await writeFileAt(fileFor(FREE_TIERS_PATH), renderFreeTierIndex(freeTiers, ctx));
+  for (const page of freeTiers.pages) await writeFileAt(fileFor(page.path), renderFreeTierPage(page, ctx));
+  // The same facts as data, beside pricing.json: the file a script or another
+  // site should read instead of scraping the pages.
+  await writeFileAt(
+    'data/free-tiers.json',
+    `${JSON.stringify({ ...freeTierRaw, $comment: undefined, generatedAt: catalog.generatedAt, check: checkReport }, null, 2)}\n`,
+  );
   for (const page of set.comparisons) await writeFileAt(fileFor(page.path), renderComparisonPage(page, ctx));
   // Published pairs that can no longer be built: a noindex signpost rather than
   // a 404. Deliberately absent from the sitemap below.
@@ -251,6 +287,12 @@ async function main(): Promise<void> {
         lastmod: page.updatedDate,
         priority: '0.4',
       })),
+      { loc: `${siteUrl}${freeTiers.index.path}`, lastmod: freeTiers.index.lastmod, priority: '0.8' },
+      ...freeTiers.pages.map((page) => ({
+        loc: `${siteUrl}${page.path}`,
+        lastmod: page.lastmod,
+        priority: '0.6',
+      })),
     ]),
   );
 
@@ -262,6 +304,7 @@ async function main(): Promise<void> {
       siteUrl,
       apiUrl,
       generatedAt: catalog.generatedAt,
+      freeTiers,
     }),
   );
 
@@ -269,11 +312,12 @@ async function main(): Promise<void> {
   // key is public by design — see scripts/lib/indexnow.ts.
   await writeFileAt(INDEXNOW_KEY_FILE, `${INDEXNOW_KEY}\n`);
 
+  const freeTierCount = freeTiers.pages.length + 1;
   console.log(
-    `✓ ${set.all.length + writingPages.length + informationPages.length + 1} pages written under ${DIST}`,
+    `✓ ${set.all.length + writingPages.length + informationPages.length + freeTierCount + 1} pages written under ${DIST}`,
   );
   console.log(
-    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing, ${informationPages.length} information, 1 app`,
+    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing, ${informationPages.length} information, ${freeTierCount} free tier, 1 app`,
   );
   const kept = set.comparisons.filter((page) => page.kept).length;
   if (kept > 0) console.log(`  ${kept} comparison(s) kept because they were published before`);
@@ -284,7 +328,7 @@ async function main(): Promise<void> {
   }
   console.log(`  stylesheet ${cssName}`);
   console.log(
-    `  sitemap    ${set.all.length + writingPages.length + informationPages.length + 3} URLs at ${siteUrl}/sitemap.xml`,
+    `  sitemap    ${set.all.length + writingPages.length + informationPages.length + freeTierCount + 3} URLs at ${siteUrl}/sitemap.xml`,
   );
   console.log(`  llms.txt   ${siteUrl}/llms.txt`);
   if (set.droppedComparisons > 0) {

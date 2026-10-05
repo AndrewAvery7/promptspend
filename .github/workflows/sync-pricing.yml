@@ -79,6 +79,18 @@ jobs:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: npm run verify:vendors
 
+      # The free-tier pages quote each vendor word for word. This re-reads every
+      # quoted page and records whether each quote is still there; a quote that
+      # has gone is shown as "under review" on its page, and the step below
+      # tells a person. It never edits a fact and never fails the morning:
+      # an unreadable page is recorded as unread and changes nothing.
+      - name: Re-check the free-tier quotes
+        id: free-tiers
+        continue-on-error: true
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+        run: npm run check:free-tiers
+
       - name: Fetch, merge and validate pricing
         id: sync
         run: npm run sync:pricing
@@ -126,7 +138,7 @@ jobs:
           echo "Sources stable — recording the verification."
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json data/published-pages.json README.md docs/PAGES.md src/lib/seo/pages.ts
+          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json public/data/free-tier-check.json data/pricing-overrides.json data/published-pages.json README.md docs/PAGES.md src/lib/seo/pages.ts
           if git diff --staged --quiet; then
             echo "Nothing staged — nothing to record."
           else
@@ -143,7 +155,7 @@ jobs:
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json
+          git add public/data/sync-status.json public/data/vendor-check.json public/data/free-tier-check.json data/pricing-overrides.json
           if git diff --staged --quiet; then
             echo "Nothing staged — the manifest is unchanged."
           else
@@ -167,7 +179,7 @@ jobs:
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json data/pricing-overrides.json data/published-pages.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
+          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json public/data/free-tier-check.json data/pricing-overrides.json data/published-pages.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
           note=""
           if [ "$NEEDS_REVIEW" = "true" ]; then note=" (flagged)"; fi
           git commit -m "data: $SYNC_SUMMARY$note"
@@ -220,6 +232,33 @@ jobs:
           else
             gh issue create --title "$title" --body "$body" --label pricing --label needs-review >/dev/null
             echo "  opened a new review issue"
+          fi
+
+      # Only on the morning a quote disappears, not every morning it stays gone:
+      # the page already says "under review", and a bot that repeats itself is
+      # a bot people mute. Same rolling-issue discipline as the step above.
+      - name: Note free-tier wording that changed
+        if: steps.free-tiers.outputs.newly_missing != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          NEWLY_MISSING: ${{ steps.free-tiers.outputs.newly_missing }}
+        run: |
+          set -euo pipefail
+          title='Free-tier wording changed at the source'
+          body=$(cat <<EOF
+          This morning's free-tier check could no longer find these quotes on the vendor pages they came from:
+
+          $NEWLY_MISSING
+
+          Each is now shown as **under review** on its free-tier page. Re-read the source: if the vendor reworded the same terms, update the quote in \`data/free-tiers.json\` and move its \`readOn\`; if the terms changed, update the statement, the provider's \`answer\` and \`updated\` too. The fact ids are listed in the step summary of the sync run with their URLs.
+          EOF
+          )
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body" --label needs-review >/dev/null
           fi
 
       # A push made with GITHUB_TOKEN deliberately does not start another

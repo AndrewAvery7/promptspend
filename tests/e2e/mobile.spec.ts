@@ -25,6 +25,8 @@ const GENERATED = [
   { path: '/providers/anthropic/', name: 'a provider page' },
   { path: '/compare/', name: 'the comparison index' },
   { path: '/app/', name: 'the apps page' },
+  { path: '/free-tiers/', name: 'the free-tier comparison' },
+  { path: '/providers/cohere/free/', name: 'a free-tier page' },
 ] as const;
 
 test.describe('the app', () => {
@@ -105,6 +107,29 @@ test.describe('the generated pages', () => {
     const offenders = await horizontalOverflow(page);
     expect(offenders, report('elements push the page sideways', offenders)).toEqual([]);
 
+    await context.close();
+  });
+
+  test('a free-tier page still fits with every quote opened, and works without JavaScript', async ({
+    browser,
+  }) => {
+    // The vendors' own words sit in <details> blocks, closed by default. Long
+    // unbroken text - a URL inside a quote - is exactly what pushes a phone
+    // sideways, and it only shows once a reader opens one.
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    const response = await page.goto('/providers/zai/free/');
+    expect(response?.status()).toBe(200);
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('free');
+
+    const summaries = page.locator('details.quote summary');
+    const count = await summaries.count();
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i += 1) await summaries.nth(i).click();
+    await expect(page.locator('details.quote[open]')).toHaveCount(count);
+
+    const offenders = await horizontalOverflow(page);
+    expect(offenders, report('elements push the page sideways', offenders)).toEqual([]);
     await context.close();
   });
 

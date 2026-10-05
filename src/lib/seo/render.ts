@@ -42,6 +42,15 @@ import {
   type ProviderPage,
   type RetiredComparisonPage,
 } from './pages';
+import type { FreeTierRecord } from '../free-tiers/types';
+import {
+  FREE_TIERS_PATH,
+  TOPIC_SECTIONS,
+  VERDICT_LABEL,
+  type CheckedFact,
+  type FreeTierPage,
+  type FreeTierPageSet,
+} from './free-tier-pages';
 
 export interface RenderContext {
   /** Absolute origin the build is served from, no trailing slash. */
@@ -248,6 +257,7 @@ ${input.body}
           <a href="${escapeHtml(href(ctx, '/models/'))}">All models</a> &middot;
           <a href="${escapeHtml(href(ctx, '/providers/'))}">Providers</a> &middot;
           <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
+          <a href="${escapeHtml(href(ctx, '/free-tiers/'))}">Free tiers</a> &middot;
           <a href="${escapeHtml(href(ctx, '/support/'))}">Support</a> &middot;
           <a href="${escapeHtml(href(ctx, '/privacy/'))}">Privacy</a> &middot;
           <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a> &middot;
@@ -621,7 +631,13 @@ function ordinal(value: number): string {
 
 // ----------------------------------------------------------- provider page
 
-export function renderProviderPage(page: ProviderPage, ctx: RenderContext): string {
+/** The one-line pointer from a provider's pricing page to its free-tier page. */
+export interface FreeTierLink {
+  verdict: FreeTierRecord['verdict'];
+  path: string;
+}
+
+export function renderProviderPage(page: ProviderPage, ctx: RenderContext, freeTier?: FreeTierLink): string {
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
     { label: 'Providers', path: '/providers/' },
@@ -651,7 +667,12 @@ export function renderProviderPage(page: ProviderPage, ctx: RenderContext): stri
           ${page.models.length} model${page.models.length === 1 ? '' : 's'} tracked &middot;
           headquartered in ${escapeHtml(page.provider.country)}
           ${page.provider.pricingUrl ? ` &middot; <a href="${escapeHtml(page.provider.pricingUrl)}" rel="nofollow noopener">official pricing</a>` : ''}
-        </p>
+        </p>${
+          freeTier
+            ? `
+        <p class="lede">Free tier: ${verdictBadge(freeTier.verdict)} <a href="${escapeHtml(href(ctx, freeTier.path))}">What ${escapeHtml(page.provider.name)} gives you free, in its own words</a></p>`
+            : ''
+        }
         <div class="card tablewrap" tabindex="0">
           <table>
             <caption class="unit cap">USD per 1M tokens, cheapest first by blended rate</caption>
@@ -949,7 +970,16 @@ ${rows}
   });
 }
 
-export function renderProvidersIndex(set: PageSet, ctx: RenderContext): string {
+function freeTierCell(ctx: RenderContext, link: FreeTierLink | undefined): string {
+  if (!link) return '<span class="muted">—</span>';
+  return `<a href="${escapeHtml(href(ctx, link.path))}">${escapeHtml(VERDICT_LABEL[link.verdict])}</a>`;
+}
+
+export function renderProvidersIndex(
+  set: PageSet,
+  ctx: RenderContext,
+  freeTiers?: ReadonlyMap<string, FreeTierLink>,
+): string {
   const page = set.providersIndex;
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
@@ -963,7 +993,12 @@ export function renderProvidersIndex(set: PageSet, ctx: RenderContext): string {
               <td>${escapeHtml(entry.provider.country)}</td>
               <td class="num">${entry.models.length}</td>
               <td>${entry.cheapest ? escapeHtml(entry.cheapest.displayName) : '—'}</td>
-              <td class="num">${entry.models[0] ? rateCell(entry.models[0].model, entry.models[0].effective, 'input') : '—'}</td>
+              <td class="num">${entry.models[0] ? rateCell(entry.models[0].model, entry.models[0].effective, 'input') : '—'}</td>${
+                freeTiers
+                  ? `
+              <td>${freeTierCell(ctx, freeTiers.get(entry.id))}</td>`
+                  : ''
+              }
             </tr>`,
     )
     .join('\n');
@@ -974,7 +1009,7 @@ export function renderProvidersIndex(set: PageSet, ctx: RenderContext): string {
         <p class="lede">${set.providers.length} providers tracked. &ldquo;Cheapest model&rdquo; is by blended rate, not by input price alone — a model with cheap input and expensive output is not a cheap model.</p>
         <div class="card tablewrap" tabindex="0">
           <table>
-            <thead><tr><th>Provider</th><th>Country</th><th class="num">Models</th><th>Cheapest model</th><th class="num">Its input rate</th></tr></thead>
+            <thead><tr><th>Provider</th><th>Country</th><th class="num">Models</th><th>Cheapest model</th><th class="num">Its input rate</th>${freeTiers ? '<th>Free tier</th>' : ''}</tr></thead>
             <tbody>
 ${rows}
             </tbody>
@@ -1231,6 +1266,232 @@ export function renderAppPage(ctx: RenderContext): string {
       },
       app('PromptSpend for iPhone and iPad', 'iOS', APP_STORE_URL),
       app('PromptSpend for Android', 'Android', GOOGLE_PLAY_URL),
+    ],
+    body,
+  });
+}
+
+// ---------------------------------------------------------- free-tier pages
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/** `2026-10-05` as "5 Oct 2026" inside a machine-readable `<time>`. Built by
+ *  hand rather than with `toLocaleDateString`, so two builds on machines with
+ *  different locales still write identical pages. */
+function dateTag(iso: string): string {
+  const [year, month, day] = iso.split('-').map(Number);
+  const label = `${day} ${MONTHS[(month ?? 1) - 1]} ${year}`;
+  return `<time datetime="${escapeHtml(iso)}">${escapeHtml(label)}</time>`;
+}
+
+/** The host a link goes to, which is what tells a reader whose page it is. */
+function sourceHost(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
+}
+
+const CARD_LABEL: Record<FreeTierRecord['card'], string> = { yes: 'Yes', no: 'No', unclear: 'Not stated' };
+const TRAINING_LABEL: Record<FreeTierRecord['training'], string> = {
+  yes: 'Yes',
+  no: 'No',
+  'opt-out': 'Yes, unless you opt out',
+  unclear: 'Not clear',
+};
+
+function verdictBadge(verdict: FreeTierRecord['verdict']): string {
+  return `<span class="verdict verdict-${escapeHtml(verdict)}">${escapeHtml(VERDICT_LABEL[verdict])}</span>`;
+}
+
+function factHtml(fact: CheckedFact, conflictName: string | null): string {
+  const check = fact.check;
+  const status =
+    check.status === 'missing'
+      ? `\n              <p class="note">When we re-read this page on ${dateTag(check.changedOn ?? check.lastConfirmed)}, this wording was no longer there. It is under review; treat it as possibly out of date.</p>`
+      : '';
+  const confirmed =
+    check.lastConfirmed > fact.readOn ? ` &middot; still there on ${dateTag(check.lastConfirmed)}` : '';
+  const conflict = conflictName
+    ? `\n              <p class="conflict">Another of ${escapeHtml(conflictName)}&rsquo;s own pages says something different. Both are shown; we don&rsquo;t pick one.</p>`
+    : '';
+  return `            <li class="fact" id="${escapeHtml(fact.id)}">
+              <p>${escapeHtml(fact.statement)}</p>${conflict}
+              <details class="quote">
+                <summary>Their exact words</summary>
+                <blockquote cite="${escapeHtml(fact.url)}"><p>&ldquo;${escapeHtml(fact.quote)}&rdquo;</p></blockquote>
+              </details>
+              <p class="src">Source: <a href="${escapeHtml(fact.url)}" rel="nofollow noopener">${escapeHtml(sourceHost(fact.url))}</a> &middot; read ${dateTag(fact.readOn)}${confirmed}</p>${status}
+            </li>`;
+}
+
+export function renderFreeTierPage(page: FreeTierPage, ctx: RenderContext): string {
+  const name = page.provider.name;
+  const record = page.record;
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: 'Free tiers', path: FREE_TIERS_PATH },
+    { label: name, path: null },
+  ];
+
+  const sections = TOPIC_SECTIONS.map((section) => {
+    const facts = page.facts.filter((fact) => section.topics.includes(fact.topic));
+    if (facts.length === 0) return '';
+    const items = facts.map((fact) => factHtml(fact, fact.conflictsWith ? name : null)).join('\n');
+    return `        <h2>${escapeHtml(section.heading)}</h2>
+        <ul class="facts">
+${items}
+        </ul>`;
+  })
+    .filter(Boolean)
+    .join('\n');
+
+  const unpublished =
+    record.unpublished.length > 0
+      ? `        <h2>What ${escapeHtml(name)} doesn&rsquo;t publish</h2>
+        <p>We looked for these on ${escapeHtml(name)}&rsquo;s own pages and could not find them. We leave them blank rather than guess.</p>
+        <ul class="plain">
+${record.unpublished.map((item) => `          <li>${escapeHtml(item)}</li>`).join('\n')}
+        </ul>`
+      : '';
+
+  const after = page.after
+    ? `        <h2>After the free tier</h2>
+        <p>${escapeHtml(name)}&rsquo;s lowest-priced model on sale today is
+          <a href="${escapeHtml(href(ctx, page.after.path))}">${escapeHtml(page.after.model.displayName)}</a>, at
+          ${rateCell(page.after.model, page.after.effective, 'input')} per million input tokens and
+          ${rateCell(page.after.model, page.after.effective, 'output')} per million output tokens.
+          <a href="${escapeHtml(href(ctx, page.providerPath))}">Every ${escapeHtml(name)} price</a> is checked against ${escapeHtml(name)}&rsquo;s own pricing page each morning.</p>
+        ${calculatorLink(ctx, [page.after.model.id], `Estimate what ${page.after.model.displayName} would cost you`)}`
+    : '';
+
+  const training = `${TRAINING_LABEL[record.training]}${record.trainingNote ? ` (${record.trainingNote})` : ''}`;
+
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <h1>${escapeHtml(page.heading)}</h1>
+        <div class="card answer">
+          <p>${verdictBadge(record.verdict)}</p>
+          <p class="answer-text">${escapeHtml(record.answer)}</p>
+        </div>
+        <div class="card tablewrap" tabindex="0">
+          <table>
+            <caption class="unit cap">At a glance, from ${escapeHtml(name)}&rsquo;s own pages &middot; last updated ${dateTag(record.updated)}</caption>
+            <tbody>
+              <tr><th scope="row">Free to start</th><td>${escapeHtml(VERDICT_LABEL[record.verdict])}</td></tr>
+              <tr><th scope="row">What is free</th><td>${escapeHtml(record.whatsFree)}</td></tr>
+              <tr><th scope="row">Payment card needed</th><td>${escapeHtml(CARD_LABEL[record.card])}</td></tr>
+              <tr><th scope="row">Free use trains their models</th><td>${escapeHtml(training)}</td></tr>
+            </tbody>
+          </table>
+        </div>
+${[sections, unpublished, after].filter(Boolean).join('\n')}
+        <h2>How this page is kept accurate</h2>
+        <p class="small muted">Every fact above is ${escapeHtml(name)}&rsquo;s own wording, with a link to the page it came from and the date it was read. Each morning we re-read those pages and check the wording is still there; if it has gone, the fact is marked as under review rather than quietly changed. <a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">Compare every provider&rsquo;s free tier</a>.</p>
+      </main>`;
+
+  return layout(ctx, {
+    path: page.path,
+    title: page.title,
+    description: page.description,
+    graph: [
+      breadcrumbLd(ctx, crumbs, page.path),
+      {
+        '@type': 'WebPage',
+        name: page.heading,
+        description: page.description,
+        url: absolute(ctx, page.path),
+        dateModified: page.lastmod,
+        about: {
+          '@type': 'Organization',
+          name,
+          ...(page.provider.pricingUrl ? { url: page.provider.pricingUrl } : {}),
+        },
+        citation: [...new Set(page.facts.map((fact) => fact.url))],
+      },
+    ],
+    body,
+  });
+}
+
+export function renderFreeTierIndex(set: FreeTierPageSet, ctx: RenderContext): string {
+  const page = set.index;
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: 'Free tiers', path: null },
+  ];
+  const count = (verdict: FreeTierRecord['verdict']) =>
+    set.pages.filter((p) => p.record.verdict === verdict).length;
+  const unclear = count('unclear');
+  const verb = (n: number, one: string, many: string) => (n === 1 ? one : many);
+
+  const rows = set.pages
+    .map(
+      (entry) => `            <tr>
+              <td><a href="${escapeHtml(href(ctx, entry.path))}">${escapeHtml(entry.provider.name)}</a></td>
+              <td>${verdictBadge(entry.record.verdict)}</td>
+              <td>${escapeHtml(entry.record.whatsFree)}</td>
+              <td>${escapeHtml(CARD_LABEL[entry.record.card])}</td>
+              <td>${escapeHtml(TRAINING_LABEL[entry.record.training])}${entry.record.trainingNote ? '<sup>*</sup>' : ''}</td>
+            </tr>`,
+    )
+    .join('\n');
+  const notes = set.pages
+    .filter((entry) => entry.record.trainingNote)
+    .map(
+      (entry) =>
+        `        <p class="small muted"><sup>*</sup> ${escapeHtml(entry.provider.name)}: ${escapeHtml(entry.record.trainingNote!)}.</p>`,
+    )
+    .join('\n');
+
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <h1>${escapeHtml(page.heading)}</h1>
+        <p class="lede">Of ${set.pages.length} providers, ${count('ongoing')} ${verb(count('ongoing'), 'has', 'have')} an ongoing free tier, ${count('one-time')} ${verb(count('one-time'), 'gives', 'give')} one-time credit, ${count('none')} ${verb(count('none'), 'has', 'have')} none, and ${unclear} ${verb(unclear, 'is', 'are')} unclear because the provider&rsquo;s own pages don&rsquo;t settle it. Every answer links to a page quoting the provider&rsquo;s own words, with sources and dates.</p>
+        <div class="card tablewrap" tabindex="0">
+          <table>
+            <caption class="unit cap">Ongoing free tiers first. &ldquo;Trains models&rdquo; means the provider says it may use free-tier prompts and responses to train or improve its models.</caption>
+            <thead><tr><th>Provider</th><th>Free to start</th><th>What is free</th><th>Card needed</th><th>Free use trains models</th></tr></thead>
+            <tbody>
+${rows}
+            </tbody>
+          </table>
+        </div>
+${notes}
+        <h2>What the answers mean</h2>
+        <ul class="plain">
+          <li><b>Ongoing free tier</b>: you can keep using some models without paying, within limits.</li>
+          <li><b>One-time credit</b>: a starting allowance that runs out or expires; after that you pay.</li>
+          <li><b>No free tier</b>: you pay, usually in advance, before your first real request.</li>
+          <li><b>Unclear</b>: the provider&rsquo;s own pages contradict each other or leave the terms unpublished. We show what they say rather than guess.</li>
+        </ul>
+        <p class="small muted">Free tiers change often and are phrased loosely, so each provider page quotes the provider word for word and links to the source. We re-read every source each morning and mark any wording that has disappeared. For prices once the free part ends, see <a href="${escapeHtml(href(ctx, '/providers/'))}">every provider&rsquo;s pricing</a>.</p>
+      </main>`;
+
+  return layout(ctx, {
+    path: page.path,
+    title: page.title,
+    description: page.description,
+    graph: [
+      breadcrumbLd(ctx, crumbs, page.path),
+      {
+        '@type': 'CollectionPage',
+        name: page.heading,
+        url: absolute(ctx, page.path),
+        description: page.description,
+        dateModified: page.lastmod,
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: set.pages.length,
+          itemListElement: set.pages.map((entry, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: `${entry.provider.name} free tier`,
+            url: absolute(ctx, entry.path),
+          })),
+        },
+      },
     ],
     body,
   });

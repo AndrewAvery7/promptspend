@@ -22,6 +22,7 @@ export const PAGE_CSS = `:root {
   --accent: #2456e6;
   --accent-soft: #e4eafc;
   --save: #0e7b43;
+  --save-soft: #e3f0e8;
   --cost: #c62828;
   --warn: #9a5b08;
   --warn-soft: #f6ebd8;
@@ -38,6 +39,7 @@ export const PAGE_CSS = `:root {
     --accent: #7c9dff;
     --accent-soft: rgb(124 157 255 / 15%);
     --save: #3ccb7f;
+    --save-soft: rgb(51 166 100 / 14%);
     --cost: #f97066;
     --warn: #f5b849;
     --warn-soft: rgb(245 184 73 / 13%);
@@ -77,7 +79,7 @@ table { border-collapse: collapse; width: 100%; font-size: 0.93rem; }
 th, td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--border); }
 th { color: var(--muted); font-weight: 600; white-space: nowrap; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-tbody tr:last-child td { border-bottom: 0; }
+tbody tr:last-child td, tbody tr:last-child th { border-bottom: 0; }
 .big { font-size: 1.6rem; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 .unit { color: var(--muted); font-size: 0.85rem; }
 .muted { color: var(--muted); }
@@ -149,4 +151,44 @@ footer .listing img { display: block; height: 40px; width: auto; }
 .store-qr__code img { display: block; width: 132px; height: 132px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
 @media (max-width: 860px), (hover: none) { .store-qr { display: none; } }
 .credit { color: var(--muted); font-size: 0.78rem; margin-top: 2rem; }
+/* Free-tier pages. The verdict is a word first and a colour second: the label
+ * carries the answer, the tint only helps a reader scan the comparison table.
+ * Green is reserved for "you can start free", matching the app's rule that
+ * green always means money kept. */
+.verdict {
+  display: inline-block; border-radius: 999px; padding: 0.15rem 0.7rem;
+  font-size: 0.82rem; font-weight: 650; white-space: nowrap;
+  background: var(--surface-2); color: var(--muted); border: 1px solid var(--border);
+}
+.verdict-ongoing { background: var(--save-soft); color: var(--save); border-color: transparent; }
+.verdict-one-time { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.verdict-unclear { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.verdict-none { background: var(--surface-2); color: var(--muted); }
+.answer { margin-top: 1rem; }
+.answer p { margin: 0; }
+.answer .answer-text { margin-top: 0.6rem; font-size: 1.08rem; line-height: 1.5; max-width: 42rem; }
+ul.facts { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
+.fact {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+.fact > p { margin: 0 0 0.4rem; max-width: 46rem; }
+.fact .src { font-size: 0.85rem; color: var(--muted); margin: 0.45rem 0 0; }
+.fact .src a { color: var(--muted); }
+.fact .conflict { font-size: 0.88rem; color: var(--warn); font-weight: 600; }
+/* The vendor's own words, folded by default: the statement above is the
+ * readable version, and this is the evidence for it. <details> opens without
+ * a script, which is why it is used rather than a toggle. */
+details.quote summary {
+  cursor: pointer; font-size: 0.88rem; color: var(--accent); font-weight: 600;
+  min-height: 24px; display: inline-flex; align-items: center;
+}
+details.quote blockquote {
+  margin: 0.5rem 0 0; padding: 0.5rem 0.85rem; border-left: 3px solid var(--border);
+  background: var(--surface-2); border-radius: 0 8px 8px 0; font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+details.quote blockquote p { margin: 0; }
+@media (pointer: coarse) { details.quote summary { min-height: 44px; } }
+th[scope='row'] { width: 40%; white-space: normal; }
 `;

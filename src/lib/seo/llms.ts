@@ -16,6 +16,7 @@
  */
 
 import type { PageSet } from './pages';
+import { VERDICT_LABEL, type FreeTierPageSet } from './free-tier-pages';
 import {
   APP_PAGE_PATH,
   APP_STORE_URL,
@@ -32,6 +33,8 @@ export interface LlmsTxtInput {
   apiUrl: string;
   /** The catalog timestamp behind this build. */
   generatedAt: string;
+  /** The free-tier pages, when this build has them. */
+  freeTiers?: FreeTierPageSet;
 }
 
 /** Models worth naming individually, so an agent can jump straight to one. */
@@ -42,7 +45,24 @@ function markdownLabel(value: string): string {
 }
 
 export function renderLlmsTxt(set: PageSet, input: LlmsTxtInput): string {
-  const { siteUrl, apiUrl, generatedAt } = input;
+  const { siteUrl, apiUrl, generatedAt, freeTiers } = input;
+  const freeTierSection = freeTiers
+    ? `
+## Free tiers
+
+Whether each provider lets you start without paying, quoted from the provider's
+own pages with a link and date on every fact, and re-checked each morning.
+
+- [Free LLM API tiers compared](${siteUrl}${freeTiers.index.path}): all ${freeTiers.pages.length} providers in one table
+${freeTiers.pages
+  .map(
+    (page) =>
+      `- [${markdownLabel(page.provider.name)}](${siteUrl}${page.path}): ${VERDICT_LABEL[page.record.verdict].toLowerCase()}`,
+  )
+  .join('\n')}
+- [As data](${siteUrl}/data/free-tiers.json): every fact with its quote, source URL and read date
+`
+    : '';
 
   // The cheapest handful and the best-known names are the ones an agent is
   // most likely to be asked about; listing every model would bury them.
@@ -124,6 +144,7 @@ ${highlights}
 
 ${providers}
 
+${freeTierSection}
 ## Reading a price correctly
 
 - \`cachedInput\` is the rate for input served from the provider's prompt cache;
