@@ -36,7 +36,7 @@
 }
 
 /* The directory listing badges - Sell With boost, PeerPush, LaunchNest, Uneed,
-   then Fazier.
+   Fazier, then Product Hunt.
    Their artwork carries whatever frame it needs, so nothing is added here but
    a height. */
 .footer__badge {
@@ -48,7 +48,8 @@
 
 /* Every badge is drawn 40px tall (PeerPush's 460 x 130 card at 142 x 40 and
    LaunchNest's 590 x 150 at 157 x 40, Uneed's 582 x 152 at 153 x 40, Fazier's
-   103 x 44 at 94 x 40, to match Sell With boost's), four short
+   103 x 44 at 94 x 40, Product Hunt's 204 x 54 at 151 x 40, to match Sell With
+   boost's), four short
    of the 44px a thumb needs and that the mobile e2e run enforces. The link,
    not the picture, is the target, so the link carries the height and the
    artwork stays the size it was drawn. */

@@ -143,6 +143,25 @@ export const FAZIER_BADGE_LIGHT = `${import.meta.env.BASE_URL}fazier-badge-light
 export const FAZIER_BADGE_DARK = `${import.meta.env.BASE_URL}fazier-badge-dark.svg`;
 
 /**
+ * The Product Hunt listing, and its badge, after the Fazier one.
+ *
+ * A local copy of the "featured" badge Product Hunt's embed hot-links from
+ * `api.producthunt.com/widgets/embed-image/v1/featured.svg`, which `img-src`
+ * would block. Their live upvote counter is removed, so the copy cannot go
+ * stale. Both SVGs are 204x54 - `producthunt-badge-light.svg` the white card
+ * with red text, `producthunt-badge-dark.svg` the dark one - with no scripts
+ * or outside references (the text uses the system Helvetica), drawn at 151x40
+ * to stand the same 40px tall as the other badges.
+ *
+ * Product Hunt has no badge verifier, so unlike LaunchNest's and Fazier's this
+ * one is not in `index.html`. The link drops the embed's `?embed=true&utm_...`
+ * query string.
+ */
+export const PRODUCTHUNT_URL = 'https://www.producthunt.com/products/promptspend/launches/promptspend';
+export const PRODUCTHUNT_BADGE_LIGHT = `${import.meta.env.BASE_URL}producthunt-badge-light.svg`;
+export const PRODUCTHUNT_BADGE_DARK = `${import.meta.env.BASE_URL}producthunt-badge-dark.svg`;
+
+/**
  * Install routes for the two things that are not this website.
  *
  * Defined in `@/lib/links` and re-exported here so components keep importing

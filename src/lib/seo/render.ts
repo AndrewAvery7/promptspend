@@ -277,6 +277,12 @@ ${input.body}
               <img src="${escapeHtml(href(ctx, '/fazier-badge-light.svg'))}" alt="PromptSpend on Fazier" width="94" height="40" />
             </picture>
           </a>
+          <a href="https://www.producthunt.com/products/promptspend/launches/promptspend" target="_blank" rel="noopener noreferrer">
+            <picture>
+              <source srcset="${escapeHtml(href(ctx, '/producthunt-badge-dark.svg'))}" media="(prefers-color-scheme: dark)" />
+              <img src="${escapeHtml(href(ctx, '/producthunt-badge-light.svg'))}" alt="PromptSpend on Product Hunt" width="151" height="40" />
+            </picture>
+          </a>
         </p>
       </footer>
     </div>
