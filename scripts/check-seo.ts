@@ -157,6 +157,24 @@ async function main(): Promise<void> {
     }
   }
 
+  // Fazier's free launch needs a followed link to fazier.com on the home page,
+  // and its verifier is assumed to read the HTML as LaunchNest's does. The
+  // badge is a self-hosted copy, so the image is ours, under the base path.
+  const fazier = /<a href="https:\/\/fazier\.com"([^>]*)>([\s\S]*?)<\/a>/.exec(html);
+  if (!fazier) problems.push('no Fazier link in the static HTML');
+  else {
+    const rel = /\brel="([^"]*)"/.exec(fazier[1]!)?.[1] ?? '';
+    if (/\b(nofollow|sponsored|ugc)\b/.test(rel)) {
+      problems.push(`the Fazier link is rel="${rel}"; a listing link must not be nofollow, sponsored or ugc`);
+    }
+    const badge = `${basePath}fazier-badge-light.svg`;
+    if (!fazier[2]!.includes(`src="${badge}"`)) {
+      problems.push(`the Fazier link in the static HTML has no self-hosted ${badge} image`);
+    } else if (!existsSync(resolve(DIST, 'fazier-badge-light.svg'))) {
+      problems.push('the static Fazier badge points at fazier-badge-light.svg, which is not in the build');
+    }
+  }
+
   const ogImage = attr(html, /<meta property="og:image" content="([^"]*)"/);
   if (!ogImage) problems.push('no og:image — shares will render as a bare link');
   else if (!absolute(ogImage)) problems.push(`og:image is not absolute: ${ogImage}`);

@@ -3,6 +3,9 @@ import {
   COMPARE_INDEX_URL,
   CONTACT_EMAIL,
   DEVELOPER_HUB_URL,
+  FAZIER_BADGE_DARK,
+  FAZIER_BADGE_LIGHT,
+  FAZIER_URL,
   LAUNCHNEST_BADGE_DARK,
   LAUNCHNEST_BADGE_LIGHT,
   LAUNCHNEST_URL,
@@ -78,8 +81,9 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
         )}
         {/* The directory listings' price: a link back, on a page they can
             fetch. The artwork is served from here, not from theirs - see
-            `SWB_BADGE_LIGHT` in `@/config` for why. LaunchNest's link is also
-            in `index.html`, for a verifier that does not run this code. */}
+            `SWB_BADGE_LIGHT` in `@/config` for why. LaunchNest's and Fazier's
+            links are also in `index.html`, for verifiers that do not run this
+            code. */}
         <div className="footer__badge">
           <a href={SWB_URL} target="_blank" rel="noopener noreferrer">
             <img
@@ -106,6 +110,14 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               src={theme === 'dark' ? UNEED_BADGE_DARK : UNEED_BADGE_LIGHT}
               alt="PromptSpend on Uneed"
               width={153}
+              height={40}
+            />
+          </a>
+          <a href={FAZIER_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              src={theme === 'dark' ? FAZIER_BADGE_DARK : FAZIER_BADGE_LIGHT}
+              alt="PromptSpend on Fazier"
+              width={94}
               height={40}
             />
           </a>

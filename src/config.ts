@@ -124,6 +124,25 @@ export const UNEED_BADGE_LIGHT = `${import.meta.env.BASE_URL}uneed-badge-light.p
 export const UNEED_BADGE_DARK = `${import.meta.env.BASE_URL}uneed-badge-dark.png`;
 
 /**
+ * The Fazier listing, and its badge, after the Uneed one.
+ *
+ * A local copy of the badge Fazier's embed hot-links from
+ * `fazier.com/api/v1//public/badges/launch_badges.svg`, which `img-src` would
+ * block. Both SVGs are their 103x44 "launched" artwork - `fazier-badge-light.svg`
+ * for the light theme, `fazier-badge-dark.svg` the dark one - plain paths with
+ * no fonts, scripts or outside references, drawn at 94x40 to stand the same
+ * 40px tall as the other badges.
+ *
+ * Fazier's free launch needs this link on the home page, and its verifier
+ * probably reads the HTML without running JavaScript, as LaunchNest's does. So
+ * `index.html` carries a copy of this badge inside `#root` too; keep the two in
+ * step. The link must not carry `nofollow`, `sponsored` or `ugc`.
+ */
+export const FAZIER_URL = 'https://fazier.com';
+export const FAZIER_BADGE_LIGHT = `${import.meta.env.BASE_URL}fazier-badge-light.svg`;
+export const FAZIER_BADGE_DARK = `${import.meta.env.BASE_URL}fazier-badge-dark.svg`;
+
+/**
  * Install routes for the two things that are not this website.
  *
  * Defined in `@/lib/links` and re-exported here so components keep importing

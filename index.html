@@ -87,15 +87,17 @@
   </head>
   <body>
     <div id="root">
-      <!-- The LaunchNest listing badge, in the HTML itself. Their verifier reads
-           this page without running JavaScript, so a link drawn only by the
-           React footer is invisible to it. React replaces everything inside
-           #root on mount, and SiteFooter then draws the same badge, so it never
-           shows twice. Keep this in step with LAUNCHNEST_* in src/config.ts, and
-           never give the link nofollow, sponsored or ugc: the listing is
-           refused if it carries any of them. The image must come from
-           launchnest.io itself (their verifier refuses a local copy); the CSP
-           admits that origin for images only. -->
+      <!-- The LaunchNest and Fazier listing badges, in the HTML itself. Their
+           verifiers read this page without running JavaScript (Fazier's, we
+           assume, as LaunchNest's does), so a link drawn only by the React
+           footer is invisible to them. React replaces everything inside #root
+           on mount, and SiteFooter then draws the same badges, so they never
+           show twice. Keep these in step with LAUNCHNEST_* and FAZIER_* in
+           src/config.ts, and never give either link nofollow, sponsored or ugc:
+           a listing is refused if its link carries any of them. LaunchNest's
+           image must come from launchnest.io itself (their verifier refuses a
+           local copy); the CSP admits that origin for images only. Fazier's is
+           a self-hosted copy, which img-src 'self' already covers. -->
       <footer class="footer">
         <div class="footer__inner">
           <div class="footer__badge">
@@ -112,6 +114,12 @@
                   height="40"
                   referrerpolicy="no-referrer"
                 />
+              </picture>
+            </a>
+            <a href="https://fazier.com" target="_blank" rel="noopener noreferrer">
+              <picture>
+                <source srcset="/fazier-badge-dark.svg" media="(prefers-color-scheme: dark)" />
+                <img src="/fazier-badge-light.svg" alt="PromptSpend on Fazier" width="94" height="40" />
               </picture>
             </a>
           </div>

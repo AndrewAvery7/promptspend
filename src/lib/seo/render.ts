@@ -271,6 +271,12 @@ ${input.body}
               <img src="${escapeHtml(href(ctx, '/uneed-badge-light.png'))}" alt="PromptSpend on Uneed" width="153" height="40" />
             </picture>
           </a>
+          <a href="https://fazier.com" target="_blank" rel="noopener noreferrer">
+            <picture>
+              <source srcset="${escapeHtml(href(ctx, '/fazier-badge-dark.svg'))}" media="(prefers-color-scheme: dark)" />
+              <img src="${escapeHtml(href(ctx, '/fazier-badge-light.svg'))}" alt="PromptSpend on Fazier" width="94" height="40" />
+            </picture>
+          </a>
         </p>
       </footer>
     </div>
