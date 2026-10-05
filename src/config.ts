@@ -109,6 +109,21 @@ export const LAUNCHNEST_BADGE_LIGHT = `${LAUNCHNEST_ORIGIN}/badge/promptspend.sv
 export const LAUNCHNEST_BADGE_DARK = `${LAUNCHNEST_ORIGIN}/badge/promptspend.svg?variant=featured`;
 
 /**
+ * The Uneed listing, and its badge, after the LaunchNest one.
+ *
+ * A local copy, like Sell With Boost's and PeerPush's: Uneed has no badge
+ * verifier, so nothing needs their hot-linked `uneed.best/EMBED3B.png`, which
+ * `img-src` would block and which would hand them every visitor's IP. Both
+ * PNGs are their official 582x152 artwork, unedited - `uneed-badge-light.png`
+ * is the cream card, `uneed-badge-dark.png` the dark one - drawn at 153x40 to
+ * stand the same 40px tall as the other badges. They read "Launching soon on
+ * Uneed" as copied; refresh them by hand if the listing's state matters.
+ */
+export const UNEED_URL = 'https://www.uneed.best/tool/promptspend';
+export const UNEED_BADGE_LIGHT = `${import.meta.env.BASE_URL}uneed-badge-light.png`;
+export const UNEED_BADGE_DARK = `${import.meta.env.BASE_URL}uneed-badge-dark.png`;
+
+/**
  * Install routes for the two things that are not this website.
  *
  * Defined in `@/lib/links` and re-exported here so components keep importing

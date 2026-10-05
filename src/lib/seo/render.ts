@@ -265,6 +265,12 @@ ${input.body}
               <img src="https://launchnest.io/badge/promptspend.svg?variant=featured&amp;theme=light" alt="PromptSpend on LaunchNest" width="157" height="40" referrerpolicy="no-referrer" />
             </picture>
           </a>
+          <a href="https://www.uneed.best/tool/promptspend" target="_blank" rel="noopener noreferrer">
+            <picture>
+              <source srcset="${escapeHtml(href(ctx, '/uneed-badge-dark.png'))}" media="(prefers-color-scheme: dark)" />
+              <img src="${escapeHtml(href(ctx, '/uneed-badge-light.png'))}" alt="PromptSpend on Uneed" width="153" height="40" />
+            </picture>
+          </a>
         </p>
       </footer>
     </div>
