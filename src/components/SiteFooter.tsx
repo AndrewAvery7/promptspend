@@ -14,6 +14,9 @@ import {
   OPEN_VSX_URL,
   PEERPUSH_BADGE,
   PEERPUSH_URL,
+  PRODUCTHUNT_BADGE_DARK,
+  PRODUCTHUNT_BADGE_LIGHT,
+  PRODUCTHUNT_URL,
   PROVIDERS_INDEX_URL,
   REPO_URL,
   SWB_BADGE_DARK,
@@ -118,6 +121,14 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               src={theme === 'dark' ? FAZIER_BADGE_DARK : FAZIER_BADGE_LIGHT}
               alt="PromptSpend on Fazier"
               width={94}
+              height={40}
+            />
+          </a>
+          <a href={PRODUCTHUNT_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              src={theme === 'dark' ? PRODUCTHUNT_BADGE_DARK : PRODUCTHUNT_BADGE_LIGHT}
+              alt="PromptSpend on Product Hunt"
+              width={151}
               height={40}
             />
           </a>
