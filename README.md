@@ -38,10 +38,10 @@
      committing - a live attachment answers an unsigned request with 302 or 403,
      never 404. See docs/PROMO.md. -->
 
-https://github.com/user-attachments/assets/8ddf3e53-2a97-4d86-ac93-d09507c387de
+https://github.com/user-attachments/assets/6bfecd10-84a9-408b-b08c-ff9481648692
 
 <p align="center">
-  <i>2 minutes 8 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
+  <i>1 minute 37 &mdash; press play, and hit &#128266; to unmute (GitHub starts videos silent).</i>
   &nbsp;·&nbsp;
   <a href="https://github.com/AndrewAvery7/promptspend/releases/latest/download/promptspend-promo.mp4">Download the MP4</a>
 </p>
