@@ -63,7 +63,7 @@ export interface CatalogDiff {
 }
 
 /** Rates and discounts. A change here changes what somebody pays. */
-const PRICING_FIELDS = [
+export const PRICING_FIELDS = [
   'input',
   'output',
   'cachedInput',
