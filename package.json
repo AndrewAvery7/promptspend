@@ -44,6 +44,7 @@
     "ping:indexnow:dry": "tsx scripts/ping-indexnow.ts --dry-run",
     "sync:pricing": "tsx scripts/sync-pricing.ts",
     "sync:pricing:dry": "tsx scripts/sync-pricing.ts --dry-run",
+    "export:price-history": "tsx scripts/export-price-history.ts",
     "verify:vendors": "tsx scripts/verify-vendors.ts",
     "verify:vendors:dry": "tsx scripts/verify-vendors.ts --dry-run",
     "verify": "npm run typecheck && npm run lint && npm run format:check && npm run check:encoding && npm run test:coverage && npm run check:test-badge && npm run check:pages && npm run check:social-card && npm run build && npm run validate:catalog && npm run check:budget && npm run check:csp && npm run check:receipt && npm run check:seo",

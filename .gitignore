@@ -60,3 +60,6 @@ mcp/dist/
 
 # Python bytecode from the promo tooling.
 tools/__pycache__/
+
+# npm run export:price-history output; published as a release asset, not committed
+/price-history.csv
