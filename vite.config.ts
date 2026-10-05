@@ -16,7 +16,7 @@ import { renderReceiptInstructions, renderReceiptSpecJson } from './src/receipt/
 const base =
   (process.env.BASE_PATH ?? '').trim() || (process.env.NODE_ENV === 'production' ? '/promptspend/' : '/');
 
-/** Turnstile's widget. The only third-party origin the site can ever load. */
+/** Turnstile's widget. The only third-party origin the site may run code from. */
 const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
 
 const CSP_PLACEHOLDER = '%CSP%';
@@ -168,7 +168,9 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
         "default-src 'self'",
         `script-src ${script.join(' ')}`,
         `style-src ${style}`,
-        "img-src 'self' data:",
+        // launchnest.io for the footer's LaunchNest badge alone (approved
+        // 2026-10-05; their verifier refuses a self-hosted copy).
+        "img-src 'self' data: https://launchnest.io",
         "font-src 'self'",
         `connect-src ${connect.join(' ')}`,
         `frame-src ${frame.join(' ')}`,

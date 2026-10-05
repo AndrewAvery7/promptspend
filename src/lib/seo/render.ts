@@ -12,12 +12,12 @@
  *    with the JSON-LD admitted by its exact SHA-256 rather than by
  *    `'unsafe-inline'`. The hash is computed over the string that is actually
  *    emitted (see `hashInline`), so the two cannot drift apart.
- * 3. **Therefore no external anything**: no fonts, no analytics, no images
- *    beyond an inline SVG favicon and the same-origin listing badges in the
- *    footer. Which is also the honest position for a site whose footer says
- *    "no accounts, no tracking" - the directory that asked for that badge hosts
- *    its own copy, and linking to it would have put their server in the request
- *    path of every page here.
+ * 3. **Therefore almost no external anything**: no fonts, no analytics, no
+ *    images beyond an inline SVG favicon and the listing badges in the footer.
+ *    Those are same-origin copies, except LaunchNest's: its verifier refuses a
+ *    copy, so - approved 2026-10-05 - its image loads from launchnest.io, with
+ *    no referrer, and `img-src` admits that one origin. Nothing else here
+ *    reaches another server.
  *
  * Every string that reaches the output goes through `escapeHtml`. Catalog data
  * is not user input, but it is *upstream* input — it arrives from LiteLLM and
@@ -198,7 +198,7 @@ function layout(ctx: RenderContext, input: LayoutInput): string {
   const csp = [
     "default-src 'none'",
     "style-src 'self'",
-    "img-src 'self' data:",
+    "img-src 'self' data: https://launchnest.io",
     `script-src 'sha256-${ctx.hashInline(ld)}'`,
     "base-uri 'self'",
     "form-action 'none'",
@@ -261,8 +261,8 @@ ${input.body}
           </a>
           <a href="https://launchnest.io/p/promptspend" target="_blank" rel="noopener noreferrer">
             <picture>
-              <source srcset="${escapeHtml(href(ctx, '/launchnest-badge-dark.svg'))}" media="(prefers-color-scheme: dark)" />
-              <img src="${escapeHtml(href(ctx, '/launchnest-badge-light.svg'))}" alt="PromptSpend on LaunchNest" width="157" height="40" />
+              <source srcset="https://launchnest.io/badge/promptspend.svg?variant=featured" media="(prefers-color-scheme: dark)" />
+              <img src="https://launchnest.io/badge/promptspend.svg?variant=featured&amp;theme=light" alt="PromptSpend on LaunchNest" width="157" height="40" referrerpolicy="no-referrer" />
             </picture>
           </a>
         </p>

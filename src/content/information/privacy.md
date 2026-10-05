@@ -3,7 +3,7 @@ slug: privacy
 title: Privacy Policy | PromptSpend
 description: How PromptSpend handles pasted text, local app data, public pricing requests, app updates, sharing, alerts, and support communications.
 heading: Privacy Policy
-updated: 2026-09-29
+updated: 2026-10-05
 ---
 
 PromptSpend is designed to estimate AI costs without turning your prompts into our data. This policy covers the PromptSpend native apps, website, pricing API, and optional alert and support services.
@@ -21,6 +21,8 @@ On the website, prompt text is processed in the browser. PromptSpend does not pl
 ## Network requests
 
 The native app uses encrypted HTTPS requests to download PromptSpend's public pricing catalog and source-check status. These requests do not include your pasted text, saved scenarios, contacts, advertising identifier, or precise location. Like other internet services, hosting and network providers may process ordinary connection information, such as an IP address, request time, and user agent, to deliver and secure the service. PromptSpend does not use that information to build advertising profiles or track activity across apps or websites.
+
+The website's footer shows a badge for PromptSpend's listing on LaunchNest, a product directory. That one image is loaded from launchnest.io, so your browser contacts LaunchNest's server when a page loads, which tells it your IP address and browser type. It is requested without telling LaunchNest which page you were on, and it sets no cookies. Every other part of the website loads from PromptSpend's own domain.
 
 ## App updates
 

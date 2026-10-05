@@ -127,9 +127,11 @@ the page code by hand, run `--fix` and commit the file with your change.
 2. **Therefore a very tight policy** — `default-src 'none'`, with the JSON-LD
    admitted by its exact SHA-256 rather than `'unsafe-inline'`. The hash is
    computed over the string that is actually emitted, so the two cannot drift.
-3. **Therefore no external anything**: no fonts, no analytics, no images beyond
-   an inline SVG favicon. Which is also the honest position for a site whose
-   footer says "no accounts, no tracking".
+3. **Therefore almost no external anything**: no fonts, no analytics, no images
+   beyond an inline SVG favicon and the footer badges. The LaunchNest badge is
+   the one image loaded from another server (launchnest.io, no referrer); its
+   verifier refuses a local copy, and the owner approved the exception on
+   2026-10-05.
 
 A consequence worth knowing: `style-src 'self'` with no `'unsafe-inline'` means
 **an inline `style=` attribute is silently dropped**. There is a test asserting

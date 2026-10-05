@@ -52,7 +52,10 @@ test('the LaunchNest badge is in the HTML, and on screen exactly once', async ({
   await expect(page.locator('main')).toBeVisible();
   const links = page.locator('a[href="https://launchnest.io/p/promptspend"]');
   await expect(links).toHaveCount(1);
-  await expect(links.locator('img')).toHaveAttribute('src', /launchnest-badge-(light|dark)\.svg$/);
+  await expect(links.locator('img')).toHaveAttribute(
+    'src',
+    /^https:\/\/launchnest\.io\/badge\/promptspend\.svg\?variant=featured/,
+  );
 });
 
 test('Clear all empties the selection and leaves the workload alone', async ({ page }) => {

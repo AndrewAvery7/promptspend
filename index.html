@@ -93,18 +93,24 @@
            #root on mount, and SiteFooter then draws the same badge, so it never
            shows twice. Keep this in step with LAUNCHNEST_* in src/config.ts, and
            never give the link nofollow, sponsored or ugc: the listing is
-           refused if it carries any of them. -->
+           refused if it carries any of them. The image must come from
+           launchnest.io itself (their verifier refuses a local copy); the CSP
+           admits that origin for images only. -->
       <footer class="footer">
         <div class="footer__inner">
           <div class="footer__badge">
             <a href="https://launchnest.io/p/promptspend" target="_blank" rel="noopener noreferrer">
               <picture>
-                <source srcset="/launchnest-badge-dark.svg" media="(prefers-color-scheme: dark)" />
+                <source
+                  srcset="https://launchnest.io/badge/promptspend.svg?variant=featured"
+                  media="(prefers-color-scheme: dark)"
+                />
                 <img
-                  src="/launchnest-badge-light.svg"
+                  src="https://launchnest.io/badge/promptspend.svg?variant=featured&amp;theme=light"
                   alt="PromptSpend on LaunchNest"
                   width="157"
                   height="40"
+                  referrerpolicy="no-referrer"
                 />
               </picture>
             </a>

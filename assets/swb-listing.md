@@ -63,7 +63,8 @@ back to sellwithboost.com. Directories re-check this, so **removing the footer
 badge risks delisting.**
 
 Their embed snippet hot-links the artwork from their CDN and was not used.
-`img-src` is `'self' data:` on every surface here, so the browser would have
+`img-src` was `'self' data:` on every surface here (since 2026-10-05 it also
+admits launchnest.io, for that directory's badge only), so the browser would have
 blocked it and shipped a broken image on every page; and a footer that says "no
 tracking" should not hand a directory the IP of every visitor. The two SVGs in
 `public/sellwithboost-*.svg` are local copies, self-contained (the mark is a data
