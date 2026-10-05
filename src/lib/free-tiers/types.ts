@@ -24,7 +24,8 @@ export const FREE_TIER_SCHEMA_VERSION = 1;
 
 /** Can a new account use the API without paying? */
 export type FreeTierVerdict = 'ongoing' | 'one-time' | 'none' | 'unclear';
-/** Does starting need a payment method? */
+/** Does starting need a payment method — a card, PayPal, WeChat Pay, a top-up? Not
+ *  "a card" specifically: several vendors take other methods. */
 export type CardRequirement = 'yes' | 'no' | 'unclear';
 /** Is free usage used to train the vendor's models? `opt-out` means yes by default. */
 export type TrainingUse = 'yes' | 'no' | 'opt-out' | 'unclear';
@@ -109,8 +110,11 @@ function nonEmpty(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+/** A real calendar day: "2026-02-31" is refused, not rolled into March. */
 function isDate(value: unknown): value is string {
-  return typeof value === 'string' && DATE.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+  if (typeof value !== 'string' || !DATE.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
 function isHttps(value: unknown): value is string {

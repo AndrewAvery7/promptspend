@@ -184,6 +184,27 @@ export function buildFreeTierPages(
   return { index, pages };
 }
 
+/**
+ * `/data/free-tiers.json`: the facts as the pages show them. Each fact carries
+ * the check state the page rendered — after a hand re-read has superseded an
+ * older check — so the file and the page can never disagree about whether a
+ * quote is under review.
+ */
+export function publishedFreeTiers(
+  set: FreeTierPageSet,
+  generatedAt: string,
+  checkedAt: string | null,
+): unknown {
+  return {
+    schemaVersion: 1,
+    generatedAt,
+    checkedAt,
+    providers: Object.fromEntries(
+      set.pages.map((page) => [page.providerId, { ...page.record, page: page.path, facts: page.facts }]),
+    ),
+  };
+}
+
 /** Facts grouped for display, in a fixed reading order, empty groups dropped. */
 export const TOPIC_SECTIONS: readonly { topics: FreeTierFact['topic'][]; heading: string }[] = [
   { topics: ['free', 'models'], heading: 'What is free' },

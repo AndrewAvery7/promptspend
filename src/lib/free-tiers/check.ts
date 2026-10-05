@@ -35,26 +35,43 @@ export interface FreeTierCheckReport {
 export const EMPTY_CHECK_REPORT: FreeTierCheckReport = { checkedAt: null, facts: {} };
 
 const STATUSES: readonly FactCheckStatus[] = ['confirmed', 'missing', 'unread'];
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-/** A report from disk, or the empty report if the shape is wrong. Never throws:
- *  a damaged report must not stop the site building, it only loses the daily dates. */
+/** A real calendar day: "2026-02-31" is refused, not rolled into March. */
+export function isCalendarDate(value: unknown): value is string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+/** An entry the report holds but could not be read: its date is unknown. */
+const DAMAGED = '0000-00-00';
+
+/**
+ * A report from disk. Never throws: a damaged report must not stop the site
+ * building. But it must never fail *open* either — an entry that exists and
+ * cannot be read is kept as `unread` (or `missing`, if that much survived)
+ * with an unknown date, never dropped, because a dropped entry would fall back
+ * to "confirmed" and could hide a quote the check had seen disappear.
+ */
 export function parseCheckReport(raw: unknown): FreeTierCheckReport {
   if (typeof raw !== 'object' || raw === null) return EMPTY_CHECK_REPORT;
   const record = raw as Record<string, unknown>;
   const facts: Record<string, FactCheck> = {};
   if (typeof record.facts === 'object' && record.facts !== null) {
     for (const [id, value] of Object.entries(record.facts as Record<string, unknown>)) {
-      if (typeof value !== 'object' || value === null) continue;
-      const entry = value as Record<string, unknown>;
-      if (!STATUSES.includes(entry.status as FactCheckStatus)) continue;
-      if (typeof entry.lastConfirmed !== 'string' || !DATE.test(entry.lastConfirmed)) continue;
+      const entry = typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {};
+      const status =
+        entry.status === 'missing'
+          ? 'missing'
+          : STATUSES.includes(entry.status as FactCheckStatus)
+            ? (entry.status as FactCheckStatus)
+            : 'unread';
+      const dated = isCalendarDate(entry.lastConfirmed);
       facts[id] = {
-        status: entry.status as FactCheckStatus,
-        lastConfirmed: entry.lastConfirmed,
-        ...(typeof entry.changedOn === 'string' && DATE.test(entry.changedOn)
-          ? { changedOn: entry.changedOn }
-          : {}),
+        // A "confirmed" whose date is unreadable is not evidence of anything.
+        status: dated || status === 'missing' ? status : 'unread',
+        lastConfirmed: dated ? (entry.lastConfirmed as string) : DAMAGED,
+        ...(isCalendarDate(entry.changedOn) ? { changedOn: entry.changedOn } : {}),
       };
     }
   }
@@ -65,6 +82,8 @@ export function parseCheckReport(raw: unknown): FreeTierCheckReport {
 export function factCheckFor(report: FreeTierCheckReport, id: string, readOn: string): FactCheck {
   const entry = report.facts[id];
   if (!entry) return { status: 'confirmed', lastConfirmed: readOn };
+  // A damaged entry: keep what it says about the wording, borrow the read date.
+  if (entry.lastConfirmed === DAMAGED) return { ...entry, lastConfirmed: readOn };
   // A fact re-read by hand after the check last saw it supersedes that check.
   if (entry.lastConfirmed < readOn) return { status: 'confirmed', lastConfirmed: readOn };
   return entry;

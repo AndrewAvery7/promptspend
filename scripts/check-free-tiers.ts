@@ -55,19 +55,29 @@ async function fetchWithTimeout(url: string, init: RequestInit = {}): Promise<Re
 }
 
 /** The page as text, or undefined if it could not be read. */
+/**
+ * Markdown first, then anything. Vendors disagree about the `Accept` header in
+ * both directions: Moonshot's docs serve their rate-limit table only in the
+ * Markdown they return when asked for it (the HTML builds it in a script), and
+ * docs.x.ai answers a `.md` request that names its types with a 404 but serves
+ * the same file to `*\/*`.
+ */
+const ACCEPTS = ['text/markdown, text/plain, text/html;q=0.9', '*/*'];
+
 async function plainRead(url: string): Promise<string | undefined> {
-  try {
-    const response = await fetchWithTimeout(url, {
-      headers: { 'user-agent': USER_AGENT, accept: 'text/markdown, text/plain, text/html;q=0.9' },
-    });
-    if (!response.ok) return undefined;
-    const body = await response.text();
-    const type = response.headers.get('content-type') ?? '';
-    const text = /html/.test(type) || /^\s*<(!doctype|html)/i.test(body) ? htmlText(body) : body;
-    return text.trim().length >= 200 ? text : undefined;
-  } catch {
-    return undefined;
+  for (const accept of ACCEPTS) {
+    try {
+      const response = await fetchWithTimeout(url, { headers: { 'user-agent': USER_AGENT, accept } });
+      if (!response.ok) continue;
+      const body = await response.text();
+      const type = response.headers.get('content-type') ?? '';
+      const text = /html/.test(type) || /^\s*<(!doctype|html)/i.test(body) ? htmlText(body) : body;
+      if (text.trim().length >= 200) return text;
+    } catch {
+      // try the next Accept, then give up: an unreadable page is "unread", never "missing"
+    }
   }
+  return undefined;
 }
 
 let firecrawlDisabled = !process.env.FIRECRAWL_API_KEY;
@@ -101,12 +111,21 @@ async function renderedRead(url: string): Promise<string | undefined> {
   }
 }
 
-/** For each fact on one source: true found, false read-but-absent, null unreadable. */
+/**
+ * For each fact on one source: true found, false absent, null not established.
+ *
+ * Only the rendered page can prove a quote absent. A plain fetch that lacks the
+ * words proves nothing on its own — several vendor pages (OpenAI's model pages,
+ * Moonshot's limits in HTML) draw the very table we quote with JavaScript — so
+ * a plain miss stays undecided until Firecrawl has rendered the page too. If it
+ * cannot, the fact is "unread" today rather than raised as gone: a false alarm
+ * would put "under review" on a page that is perfectly right.
+ */
 async function checkSource(readUrl: string, facts: FreeTierFact[]): Promise<Map<string, boolean | null>> {
   const results = new Map<string, boolean | null>();
   const first = await plainRead(readUrl);
   for (const fact of facts)
-    results.set(fact.id, first === undefined ? null : pageContainsQuote(first, fact.quote));
+    results.set(fact.id, first !== undefined && pageContainsQuote(first, fact.quote) ? true : null);
 
   const unresolved = facts.filter((fact) => results.get(fact.id) !== true);
   if (unresolved.length === 0) return results;
@@ -118,10 +137,7 @@ async function checkSource(readUrl: string, facts: FreeTierFact[]): Promise<Map<
   for (const [url, group] of byUrl) {
     const second = await renderedRead(url);
     if (second === undefined) continue;
-    for (const fact of group) {
-      if (pageContainsQuote(second, fact.quote)) results.set(fact.id, true);
-      else if (results.get(fact.id) === null) results.set(fact.id, false);
-    }
+    for (const fact of group) results.set(fact.id, pageContainsQuote(second, fact.quote));
   }
   return results;
 }

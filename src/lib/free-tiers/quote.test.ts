@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { htmlText, pageContainsQuote, quoteParts, reduceText, stripMarkdownLinks } from './quote';
 
 describe('reduceText', () => {
-  it('keeps only lowercase letters and digits', () => {
-    expect(reduceText("Free Tier — $1,000/month (it's free)")).toBe('freetier1000monthitsfree');
+  it('keeps only lowercase letters and digits, spelling out currency', () => {
+    expect(reduceText("Free Tier — $1,000/month (it's free)")).toBe('freetierusd1000monthitsfree');
   });
 
   it('folds accents so a typographic difference is not a wording change', () => {
-    expect(reduceText('Café €20')).toBe('cafe20');
+    expect(reduceText('Café 20')).toBe('cafe20');
   });
 });
 
@@ -50,6 +50,20 @@ describe('pageContainsQuote', () => {
   it('fails when a figure changes', () => {
     const page = 'The minimum purchase is $10, and the default amount is $20.';
     expect(pageContainsQuote(page, 'The minimum purchase is $5, and the default amount is $10.')).toBe(false);
+  });
+
+  it('fails when only the currency changes', () => {
+    expect(pageContainsQuote('Test models. €10 /mo in API credits.', '$10 /mo in API credits.')).toBe(false);
+    expect(pageContainsQuote('Test models. $10 /mo in API credits.', '$10 /mo in API credits.')).toBe(true);
+    expect(pageContainsQuote('a 50% discount', 'a 50 discount')).toBe(false);
+  });
+
+  it('decodes the named entities vendor pages use', () => {
+    const page = htmlText(
+      '<p>No, the credit can&rsquo;t be used &ndash; see &ldquo;Billing&rdquo;&hellip;</p>',
+    );
+    expect(page).toContain('can’t be used – see “Billing”…');
+    expect(pageContainsQuote(page, 'No, the credit can\'t be used - see "Billing"')).toBe(true);
   });
 
   it('fails when the wording is gone', () => {

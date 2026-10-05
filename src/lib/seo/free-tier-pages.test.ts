@@ -5,7 +5,7 @@ import { SCHEMA_VERSION } from '@/lib/pricing/types';
 import { EMPTY_CHECK_REPORT, type FreeTierCheckReport } from '@/lib/free-tiers/check';
 import type { FreeTierFile } from '@/lib/free-tiers/types';
 import { buildPages } from './pages';
-import { buildFreeTierPages, FREE_TIERS_PATH } from './free-tier-pages';
+import { buildFreeTierPages, FREE_TIERS_PATH, publishedFreeTiers } from './free-tier-pages';
 import {
   renderFreeTierIndex,
   renderFreeTierPage,
@@ -142,6 +142,23 @@ describe('buildFreeTierPages', () => {
   });
 });
 
+describe('publishedFreeTiers', () => {
+  it('publishes the check state the page shows, not the raw report', () => {
+    // An older "missing" superseded by a hand re-read must not linger in the data file.
+    const report: FreeTierCheckReport = {
+      checkedAt: '2026-10-05T06:00:00Z',
+      facts: { 'a-free': { status: 'missing', lastConfirmed: '2026-09-01', changedOn: '2026-09-02' } },
+    };
+    const data = publishedFreeTiers(build(report), '2026-10-05T02:00:00Z', report.checkedAt) as {
+      checkedAt: string;
+      providers: Record<string, { page: string; facts: { id: string; check: { status: string } }[] }>;
+    };
+    expect(data.checkedAt).toBe('2026-10-05T06:00:00Z');
+    expect(data.providers.acme!.page).toBe('/providers/acme/free/');
+    expect(data.providers.acme!.facts.find((f) => f.id === 'a-free')!.check.status).toBe('confirmed');
+  });
+});
+
 describe('renderFreeTierPage', () => {
   const free = build();
   const acme = free.pages.find((page) => page.providerId === 'acme')!;
@@ -191,6 +208,17 @@ describe('renderFreeTierPage', () => {
   it('carries the training qualifier and the price after the free tier', () => {
     expect(html).toContain('Yes, unless you opt out (not in the EU)');
     expect(html).toContain('href="/models/acme-mini/"');
+  });
+
+  it('leaves the directory badges off, while the pages the directories verify keep them', () => {
+    // Owner's call, 2026-10-05: badges belong on the primary pages only. The
+    // catalog pages must keep them - Sell With Boost verifies /models/ and
+    // keeps the listing only while its badge links back.
+    expect(html).not.toContain('class="listing"');
+    expect(renderFreeTierIndex(free, CTX)).not.toContain('class="listing"');
+    const providerPage = SET.providers.find((page) => page.id === 'acme')!;
+    expect(renderProviderPage(providerPage, CTX)).toContain('class="listing"');
+    expect(renderProviderPage(providerPage, CTX)).toContain('https://sellwithboost.com');
   });
 
   it('uses no inline style attribute, which the page policy would drop', () => {

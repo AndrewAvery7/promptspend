@@ -19,7 +19,7 @@ three.
 | --------------------------- | ------------------------------------------------------------------------------------------- |
 | `verdict`                   | `ongoing`, `one-time`, `none` or `unclear` — the headline answer                            |
 | `answer`                    | One or two sentences a reader came for                                                      |
-| `card`, `training`          | Whether a payment card is needed; whether free use trains the vendor's models               |
+| `card`, `training`          | Whether any payment is needed to start; whether free use trains the vendor's models         |
 | `trainingNote`, `whatsFree` | Short qualifiers for the comparison table                                                   |
 | `updated`                   | When this record's _content_ last changed — the sitemap date, never the check date          |
 | `basis`                     | The fact ids each headline field rests on. A headline with no basis fails the build         |
@@ -58,8 +58,11 @@ the vendor price check. For every source page it:
 2. for any quote not found there, reads the human `url` rendered by Firecrawl,
    when `FIRECRAWL_API_KEY` is set (some pages — DeepSeek's FAQ, x.ai — exist
    only after JavaScript runs);
-3. records each fact as `confirmed`, `missing` (read, and the words are gone)
-   or `unread` (could not read the page today — says nothing about the wording).
+3. records each fact as `confirmed`, `missing` or `unread`. Only the rendered
+   page can make a fact `missing`: a plain fetch that lacks the words proves
+   nothing, because several vendors draw the quoted table with JavaScript. If
+   the page cannot be rendered today the fact is `unread`, which says nothing
+   about the wording and raises nothing.
 
 Matching reduces both sides to lowercase letters and digits, so markup,
 punctuation, curly quotes and line breaks never cause a false alarm while a
@@ -71,7 +74,10 @@ The report is `public/data/free-tier-check.json`. The pages read it:
 - a missing fact shows a notice with the date it disappeared, and stays
   otherwise unchanged until a person looks;
 - the day a quote disappears (or comes back) moves that page's sitemap `lastmod`;
-  a routine confirmation never does.
+  a routine confirmation never does. The "still there on" date changes most
+  mornings and is deliberately not material, the same rule the model pages
+  apply to `lastVerified`: a sitemap that called every page changed each day
+  would teach crawlers to ignore it.
 
 On the morning a quote first goes missing the workflow comments on (or opens) a
 rolling issue, **Free-tier wording changed at the source**. It does not repeat

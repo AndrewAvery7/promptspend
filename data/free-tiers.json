@@ -12,7 +12,7 @@
       "updated": "2026-10-05",
       "basis": {
         "verdict": ["google-free-tier"],
-        "card": ["google-card"],
+        "card": ["google-free-requirement", "google-card"],
         "training": ["google-data-unpaid"]
       },
       "facts": [
@@ -62,6 +62,15 @@
           "readOn": "2026-10-05"
         },
         {
+          "id": "google-free-requirement",
+          "topic": "card",
+          "statement": "The only requirement listed for the free tier is an active project or free trial.",
+          "quote": "Free · Active project or free trial · N/A",
+          "url": "https://ai.google.dev/gemini-api/docs/rate-limits",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/rate-limits.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
           "id": "google-limits",
           "topic": "limits",
           "statement": "Free-tier request and token limits are shown in Google AI Studio, not in the public documentation.",
@@ -73,8 +82,8 @@
         {
           "id": "google-search-grounding",
           "topic": "limits",
-          "statement": "Grounding answers with Google Search is free for 500 requests a day on Flash and Flash-Lite, and not available on Pro.",
-          "quote": "500 RPD free (limit shared for Flash and Flash-Lite). Not available for Pro.",
+          "statement": "Grounding answers with Google Search is free for 500 requests a day on Gemini 2.5 Flash and 2.5 Flash-Lite (a shared limit). The newer Gemini 3.x models list it as not available on the free tier, and Pro models do not offer it free.",
+          "quote": "Grounding with Google Search · Free of charge, up to 500 RPD (limit shared with Flash-Lite RPD)",
           "url": "https://ai.google.dev/gemini-api/docs/pricing",
           "readUrl": "https://ai.google.dev/gemini-api/docs/pricing.md.txt",
           "readOn": "2026-10-05"
@@ -82,8 +91,8 @@
         {
           "id": "google-data-unpaid",
           "topic": "data",
-          "statement": "On the free tier, Google uses your prompts and its responses to improve its products.",
-          "quote": "When you use Unpaid Services, including, for example, Google AI Studio and the unpaid quota on Gemini API, Google uses the content you submit to the Services and any generated responses to provide, improve, and develop Google products",
+          "statement": "On the free tier, Google uses your prompts and its responses to improve its products and machine-learning technologies.",
+          "quote": "When you use Unpaid Services, including, for example, Google AI Studio and the unpaid quota on Gemini API, Google uses the content you submit to the Services and any generated responses to provide, improve, and develop Google products and services and machine learning technologies",
           "url": "https://ai.google.dev/gemini-api/terms",
           "readUrl": "https://ai.google.dev/gemini-api/terms.md.txt",
           "readOn": "2026-10-05"
@@ -92,7 +101,7 @@
           "id": "google-data-review",
           "topic": "data",
           "statement": "People at Google may read free-tier prompts and responses, and Google asks you not to send anything sensitive.",
-          "quote": "Do not submit sensitive, confidential, or personal information to the Unpaid Services.",
+          "quote": "To help with quality and improve our products, human reviewers may read, annotate, and process your API input and output. … Do not submit sensitive, confidential, or personal information to the Unpaid Services.",
           "url": "https://ai.google.dev/gemini-api/terms",
           "readUrl": "https://ai.google.dev/gemini-api/terms.md.txt",
           "readOn": "2026-10-05"
@@ -118,7 +127,7 @@
         {
           "id": "google-tiers",
           "topic": "upgrade",
-          "statement": "Limits rise with spend: Tier 1 needs a linked billing account, Tier 2 needs $100 paid and 3 days, Tier 3 needs $1,000 paid and 30 days.",
+          "statement": "Limits rise with spend: Tier 1 needs a linked billing account, Tier 2 needs $100 paid and 3 days, Tier 3 needs $1,000 paid and 30 days (counted across all Google Cloud spend on the linked billing account).",
           "quote": "Tier 2 · Paid $100 + 3 days from first successful payment",
           "url": "https://ai.google.dev/gemini-api/docs/rate-limits",
           "readUrl": "https://ai.google.dev/gemini-api/docs/rate-limits.md.txt",
@@ -186,7 +195,7 @@
           "id": "mistral-data-free",
           "topic": "data",
           "statement": "In Free mode, Mistral may use your inputs and outputs to train its models, and you can opt out at any time.",
-          "quote": "Free mode: As stated during subscription, we may use your data (input and output) to train our artificial intelligence models. You have the right to opt out of this program at any time.",
+          "quote": "As stated during subscription, we may use your data (input and output) to train our artificial intelligence models. … You have the right to opt out of this program at any time.",
           "url": "https://help.mistral.ai/en/articles/347617-do-you-use-my-user-data-to-train-your-artificial-intelligence-models",
           "readOn": "2026-10-05"
         },
@@ -224,13 +233,13 @@
       "verdict": "ongoing",
       "answer": "Yes, for three models. Z.ai prices GLM-4.7-Flash, GLM-4.5-Flash and GLM-4.6V-Flash at $0; every other model is paid.",
       "card": "unclear",
-      "training": "unclear",
+      "training": "no",
       "whatsFree": "GLM-4.7-Flash, GLM-4.5-Flash and the GLM-4.6V-Flash vision model",
       "updated": "2026-10-05",
       "basis": {
         "verdict": ["zai-free-models"],
         "card": ["zai-top-up"],
-        "training": ["zai-data-not-stored", "zai-data-individual"]
+        "training": ["zai-data-api", "zai-data-not-stored"]
       },
       "facts": [
         {
@@ -285,18 +294,25 @@
           "quote": "The Company do not store any of the content the Customer or its End Users provide or generate while using our Services.",
           "url": "https://docs.z.ai/legal-agreement/privacy-policy",
           "readUrl": "https://docs.z.ai/legal-agreement/privacy-policy.md",
-          "readOn": "2026-10-05",
-          "conflictsWith": "zai-data-individual"
+          "readOn": "2026-10-05"
         },
         {
           "id": "zai-data-individual",
           "topic": "data",
-          "statement": "The terms of use say Z.ai may use individual users' content to improve its services. They do not say whether this covers the API.",
+          "statement": "The terms of use say Z.ai may use individual users' content to improve its services; a separate clause covers API users.",
           "quote": "For individual users, we may use User Content to provide, maintain, develop, and improve our Services",
           "url": "https://docs.z.ai/legal-agreement/terms-of-use",
           "readUrl": "https://docs.z.ai/legal-agreement/terms-of-use.md",
-          "readOn": "2026-10-05",
-          "conflictsWith": "zai-data-not-stored"
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-data-api",
+          "topic": "data",
+          "statement": "For developers using the API, Z.ai does not use your content to develop or improve its services unless you explicitly agree.",
+          "quote": "For enterprises and developers using API Services, we will not use your User Content for developing or improving Services unless you explicitly agree to such use.",
+          "url": "https://docs.z.ai/legal-agreement/terms-of-use",
+          "readUrl": "https://docs.z.ai/legal-agreement/terms-of-use.md",
+          "readOn": "2026-10-05"
         },
         {
           "id": "zai-regions",
@@ -430,11 +446,11 @@
       "answer": "A one-time allowance, not an ongoing free tier. New Model Studio users get a free token quota per model, valid for 90 days, then pay as they go.",
       "card": "unclear",
       "training": "no",
-      "whatsFree": "About 1 million tokens per model for 90 days, Singapore region only",
+      "whatsFree": "Typically 1 million tokens per participating model for 90 days, Singapore (International) only",
       "updated": "2026-10-05",
       "basis": {
         "verdict": ["alibaba-quota", "alibaba-validity"],
-        "card": ["alibaba-account-info", "alibaba-signup"],
+        "card": ["alibaba-account-info", "alibaba-signup", "alibaba-free-trial-signup"],
         "training": ["alibaba-data"]
       },
       "facts": [
@@ -473,8 +489,8 @@
         {
           "id": "alibaba-not-all-models",
           "topic": "models",
-          "statement": "Not every model takes part. The pricing table shows the quota for each model that does.",
-          "quote": "Some models do not participate in the new user free quota program.",
+          "statement": "Not every model takes part. Alibaba says to check each model's details page in the console.",
+          "quote": "Some models do not participate in the new user free quota program. To check whether a specific model is eligible for a free quota, go to the Model Gallery page in the console and open that model's details page.",
           "url": "https://www.alibabacloud.com/help/en/model-studio/new-free-quota",
           "readOn": "2026-10-05"
         },
@@ -497,9 +513,17 @@
           "conflictsWith": "alibaba-account-info"
         },
         {
+          "id": "alibaba-free-trial-signup",
+          "topic": "card",
+          "statement": "The same guide's table shows that activating a free trial is not supported until sign-up is complete.",
+          "quote": "Activate a free trial · Unsupported · Supported",
+          "url": "https://www.alibabacloud.com/help/en/account/step-1-register-an-alibaba-cloud-account",
+          "readOn": "2026-10-05"
+        },
+        {
           "id": "alibaba-same-speed",
           "topic": "limits",
-          "statement": "Free and paid calls run on the same infrastructure at the same speed, under the same per-model limits.",
+          "statement": "Free and paid calls run on the same infrastructure at the same generation speed.",
           "quote": "Free quota and paid calls use the same Model service infrastructure, and the generation speed of the same Model is identical.",
           "url": "https://www.alibabacloud.com/help/en/model-studio/rate-limit",
           "readUrl": "https://www.alibabacloud.com/help/en/model-studio/rate-limit.md",
@@ -631,10 +655,10 @@
     },
     "openai": {
       "verdict": "none",
-      "answer": "No general free tier. The OpenAI API is prepaid with a $5 minimum; the free exceptions are the moderation model and an opt-in scheme that trades your data for daily tokens.",
+      "answer": "No general free tier. The OpenAI API is prepaid with a $5 minimum; the free exceptions are the moderation model and an opt-in scheme that gives some eligible organisations daily tokens in exchange for their data.",
       "card": "yes",
       "training": "no",
-      "whatsFree": "The moderation model; daily tokens only if you opt in to sharing your data",
+      "whatsFree": "The moderation model; daily tokens only for eligible organisations that opt in to sharing their data",
       "updated": "2026-10-05",
       "basis": {
         "verdict": ["openai-prepaid", "openai-minimum"],
@@ -670,17 +694,26 @@
         {
           "id": "openai-free-row",
           "topic": "limits",
-          "statement": "OpenAI's rate-limit table has a 'Free' tier whose only condition is location. A few model pages, such as text-embedding-3-small, show limits for it; the GPT-5 family's tables start at Tier 1.",
+          "statement": "OpenAI's rate-limit table has a 'Free' tier whose only condition is location. Some model pages, such as text-embedding-3-small and omni-moderation-latest, give limits for it; GPT-5 and GPT-5 mini list it as 'Not supported'.",
           "quote": "Free · User must be in an allowed geography · $100 / month",
           "url": "https://developers.openai.com/api/docs/guides/rate-limits",
           "readUrl": "https://developers.openai.com/api/docs/guides/rate-limits.md",
           "readOn": "2026-10-05"
         },
         {
+          "id": "openai-gpt5-free",
+          "topic": "limits",
+          "statement": "The GPT-5 model page lists the Free tier as not supported.",
+          "quote": "Free · Not supported",
+          "url": "https://developers.openai.com/api/docs/models/gpt-5",
+          "readUrl": "https://developers.openai.com/api/docs/models/gpt-5.md",
+          "readOn": "2026-10-05"
+        },
+        {
           "id": "openai-data-sharing",
           "topic": "credits",
-          "statement": "Organisations that opt in to share their API traffic with OpenAI can get complimentary daily tokens, but still need a positive balance.",
-          "quote": "You need a positive account balance to use OpenAI models and the free tokens.",
+          "statement": "Some organisations that opt in to share their API traffic with OpenAI qualify for complimentary daily tokens, but they still need a positive balance.",
+          "quote": "Some organizations may qualify for daily complimentary tokens on traffic shared with OpenAI. … You need a positive account balance to use OpenAI models and the free tokens.",
           "url": "https://help.openai.com/en/articles/10306912-sharing-feedback-evaluation-and-fine-tuning-data-and-api-inputs-and-outputs-with-openai",
           "readOn": "2026-10-05"
         },
@@ -726,7 +759,7 @@
       "updated": "2026-10-05",
       "basis": {
         "verdict": ["anthropic-free-credits", "anthropic-buy-first"],
-        "card": ["anthropic-prepaid"],
+        "card": ["anthropic-buy-first", "anthropic-prepaid"],
         "training": ["anthropic-data"]
       },
       "facts": [
@@ -743,8 +776,8 @@
         {
           "id": "anthropic-buy-first",
           "topic": "credits",
-          "statement": "The help centre's getting-started article says to add credits to your balance before using the API, and mentions no free grant.",
-          "quote": "To use the Claude API and the playground, add usage credits to your organization's balance.",
+          "statement": "The help centre's getting-started article says to add credits and enter payment details before using the API, and mentions no free grant.",
+          "quote": "To use the Claude API and the playground, add usage credits to your organization's balance. … Then, you'll enter your payment details and fund your account.",
           "url": "https://support.claude.com/en/articles/8114531-i-created-a-claude-console-organization-how-do-i-start-using-the-claude-api",
           "readOn": "2026-10-05",
           "conflictsWith": "anthropic-free-credits"
@@ -793,7 +826,8 @@
       "verdict": "unclear",
       "answer": "Unclear. MiniMax's documentation mentions a free quota and a free tier for new users, but publishes no amount, duration or list of models.",
       "card": "unclear",
-      "training": "yes",
+      "training": "unclear",
+      "trainingNote": "its terms allow using inputs to improve its services, but do not mention training",
       "whatsFree": "An unspecified free quota for new pay-as-you-go users",
       "updated": "2026-10-05",
       "basis": {
@@ -841,7 +875,7 @@
         {
           "id": "minimax-data",
           "topic": "data",
-          "statement": "MiniMax's terms allow it to use inputs and generated content to improve its services. Nothing separates free from paid use.",
+          "statement": "MiniMax's terms allow it to use inputs and generated content to develop and improve its services. They do not mention training, and nothing separates free from paid use.",
           "quote": "We may use the input and generated content to provide, maintain, develop, and improve our Services",
           "url": "https://platform.minimax.io/protocol/terms-of-service",
           "readOn": "2026-10-05"
@@ -1048,7 +1082,7 @@
         {
           "id": "deepseek-limits",
           "topic": "limits",
-          "statement": "DeepSeek caps concurrent requests per account rather than requests per minute: 2,500 for deepseek-flash and 500 for deepseek-v4-pro.",
+          "statement": "DeepSeek publishes per-account concurrency limits: 2,500 concurrent requests for deepseek-flash and 500 for deepseek-v4-pro.",
           "quote": "Concurrency Limit · 2500 · 500",
           "url": "https://api-docs.deepseek.com/quick_start/rate_limit",
           "readOn": "2026-10-05"

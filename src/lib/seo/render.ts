@@ -199,6 +199,14 @@ interface LayoutInput {
   /** Nodes for the JSON-LD `@graph`. */
   graph: unknown[];
   body: string;
+  /**
+   * The directory-listing badges in the footer. On by default, and they must
+   * stay on the pages the directories verify (`/models/` and the other catalog
+   * pages: the calculator's own footer is drawn by script, so a fetch-only
+   * verifier cannot see it there). Sell With Boost keeps the listing only while
+   * a badge links back. Pages added since can leave them off.
+   */
+  listingBadges?: boolean;
 }
 
 function layout(ctx: RenderContext, input: LayoutInput): string {
@@ -263,7 +271,10 @@ ${input.body}
           <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a> &middot;
           <a href="https://github.com/AndrewAvery7/promptspend">Source</a>
         </p>
-        <p class="listing">
+${
+  input.listingBadges === false
+    ? ''
+    : `        <p class="listing">
           <a href="https://sellwithboost.com" target="_blank" rel="noopener noreferrer">
             <picture>
               <source srcset="${escapeHtml(href(ctx, '/sellwithboost-dark.svg'))}" media="(prefers-color-scheme: dark)" />
@@ -304,7 +315,8 @@ ${input.body}
             </picture>
           </a>
         </p>
-      </footer>
+`
+}      </footer>
     </div>
   </body>
 </html>
@@ -1381,7 +1393,7 @@ ${record.unpublished.map((item) => `          <li>${escapeHtml(item)}</li>`).joi
             <tbody>
               <tr><th scope="row">Free to start</th><td>${escapeHtml(VERDICT_LABEL[record.verdict])}</td></tr>
               <tr><th scope="row">What is free</th><td>${escapeHtml(record.whatsFree)}</td></tr>
-              <tr><th scope="row">Payment card needed</th><td>${escapeHtml(CARD_LABEL[record.card])}</td></tr>
+              <tr><th scope="row">Payment needed to start</th><td>${escapeHtml(CARD_LABEL[record.card])}</td></tr>
               <tr><th scope="row">Free use trains their models</th><td>${escapeHtml(training)}</td></tr>
             </tbody>
           </table>
@@ -1412,6 +1424,7 @@ ${[sections, unpublished, after].filter(Boolean).join('\n')}
       },
     ],
     body,
+    listingBadges: false,
   });
 }
 
@@ -1452,7 +1465,7 @@ export function renderFreeTierIndex(set: FreeTierPageSet, ctx: RenderContext): s
         <div class="card tablewrap" tabindex="0">
           <table>
             <caption class="unit cap">Ongoing free tiers first. &ldquo;Trains models&rdquo; means the provider says it may use free-tier prompts and responses to train or improve its models.</caption>
-            <thead><tr><th>Provider</th><th>Free to start</th><th>What is free</th><th>Card needed</th><th>Free use trains models</th></tr></thead>
+            <thead><tr><th>Provider</th><th>Free to start</th><th>What is free</th><th>Payment to start</th><th>Free use trains models</th></tr></thead>
             <tbody>
 ${rows}
             </tbody>
@@ -1494,5 +1507,6 @@ ${notes}
       },
     ],
     body,
+    listingBadges: false,
   });
 }

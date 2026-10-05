@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EMPTY_CHECK_REPORT, factCheckFor, nextFactCheck, parseCheckReport } from './check';
+import { EMPTY_CHECK_REPORT, factCheckFor, isCalendarDate, nextFactCheck, parseCheckReport } from './check';
 
 const READ = '2026-10-05';
 
@@ -75,7 +75,7 @@ describe('factCheckFor', () => {
 });
 
 describe('parseCheckReport', () => {
-  it('keeps well-formed entries and drops the rest without throwing', () => {
+  it('keeps every entry, marking what it cannot read rather than dropping it', () => {
     const report = parseCheckReport({
       checkedAt: '2026-10-06T06:00:00Z',
       facts: {
@@ -85,8 +85,31 @@ describe('parseCheckReport', () => {
         notObject: 4,
       },
     });
-    expect(Object.keys(report.facts)).toEqual(['good']);
+    expect(report.facts.good).toEqual({ status: 'confirmed', lastConfirmed: '2026-10-06' });
+    expect(report.facts.badStatus?.status).toBe('unread');
+    expect(report.facts.badDate?.status).toBe('missing');
+    expect(report.facts.notObject?.status).toBe('unread');
     expect(report.checkedAt).toBe('2026-10-06T06:00:00Z');
+  });
+
+  it('never turns a damaged entry into a confirmation', () => {
+    const report = parseCheckReport({
+      checkedAt: null,
+      facts: {
+        wasMissing: { status: 'missing', lastConfirmed: 'garbled' },
+        wasConfirmed: { status: 'confirmed', lastConfirmed: '2026-02-31' },
+        noShape: 'x',
+      },
+    });
+    expect(factCheckFor(report, 'wasMissing', READ).status).toBe('missing');
+    expect(factCheckFor(report, 'wasConfirmed', READ).status).toBe('unread');
+    expect(factCheckFor(report, 'noShape', READ)).toEqual({ status: 'unread', lastConfirmed: READ });
+  });
+
+  it('accepts only real calendar days', () => {
+    expect(isCalendarDate('2026-10-05')).toBe(true);
+    expect(isCalendarDate('2026-02-31')).toBe(false);
+    expect(isCalendarDate('2026-13-01')).toBe(false);
   });
 
   it('returns the empty report for anything that is not an object', () => {

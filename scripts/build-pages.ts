@@ -27,7 +27,7 @@ import { buildPages } from '@/lib/seo/pages';
 import { Catalog } from '@/lib/pricing/catalog';
 import { assertFreeTiers } from '@/lib/free-tiers/types';
 import { EMPTY_CHECK_REPORT, parseCheckReport } from '@/lib/free-tiers/check';
-import { buildFreeTierPages, FREE_TIERS_PATH } from '@/lib/seo/free-tier-pages';
+import { buildFreeTierPages, FREE_TIERS_PATH, publishedFreeTiers } from '@/lib/seo/free-tier-pages';
 import { PAGE_CSS } from '@/lib/seo/css';
 import { renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
@@ -235,7 +235,7 @@ async function main(): Promise<void> {
   // site should read instead of scraping the pages.
   await writeFileAt(
     'data/free-tiers.json',
-    `${JSON.stringify({ ...freeTierRaw, $comment: undefined, generatedAt: catalog.generatedAt, check: checkReport }, null, 2)}\n`,
+    `${JSON.stringify(publishedFreeTiers(freeTiers, catalog.generatedAt, checkReport.checkedAt), null, 2)}\n`,
   );
   for (const page of set.comparisons) await writeFileAt(fileFor(page.path), renderComparisonPage(page, ctx));
   // Published pairs that can no longer be built: a noindex signpost rather than

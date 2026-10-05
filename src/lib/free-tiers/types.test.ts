@@ -97,6 +97,12 @@ describe('freeTierProblems', () => {
     expect(freeTierProblems(file).join()).toContain('url: must be an https URL');
   });
 
+  it('refuses a date that is not on the calendar', () => {
+    const file = sample();
+    file.providers.acme!.facts[0]!.readOn = '2026-02-31';
+    expect(freeTierProblems(file).join()).toContain('readOn: must be a YYYY-MM-DD date');
+  });
+
   it('refuses a read date after the record was last updated', () => {
     const file = sample();
     file.providers.acme!.facts[0]!.readOn = '2026-10-06';
