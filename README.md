@@ -418,6 +418,9 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | [docs/PRICE_HISTORY.md](docs/PRICE_HISTORY.md)         | The same history as a citable CSV (CC0): its columns, units, and what the data does and does not claim    |
 | [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                        |
 | [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                      |
+| [docs/FREE_TIERS.md](docs/FREE_TIERS.md)               | The free-tier pages: where the facts live, the daily quote check, and how to update a record              |
+| [docs/ACCOUNTS_PLAN.md](docs/ACCOUNTS_PLAN.md)         | The plan for user accounts: sign-in, where it must live, data, duties, phases. Not built yet              |
+| [docs/SPONSORS.md](docs/SPONSORS.md)                   | The sponsor policy: never in the data, always labelled, one slot per page. No sponsor yet                 |
 | [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                 |
 | [mcp/README.md](mcp/README.md)                         | The MCP server — pricing for coding agents, with the source and date on every number                      |
 | [vscode/README.md](vscode/README.md)                   | The VS Code extension — prices on the line of code that chooses the model                                 |
