@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-81-2456E6.svg" alt="81 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-1385-blue.svg" alt="1385 tests">
+  <img src="https://img.shields.io/badge/tests-1392-blue.svg" alt="1392 tests">
   <img src="https://img.shields.io/badge/initial%20payload-99%20KB%20gzip-blue.svg" alt="99 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -405,27 +405,28 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 
 ## Documentation
 
-| Document                                               | What is in it                                                                                             |
-| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1385 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                 |
-| [docs/PAGES.md](docs/PAGES.md)                         | The 189 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline      |
-| [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live   |
-| [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                  |
-| [docs/ALERTS.md](docs/ALERTS.md)                       | The price-alerts Worker — push and email architecture, the cost model, the domain cutover                 |
-| [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                           |
-| [docs/PRICE_HISTORY.md](docs/PRICE_HISTORY.md)         | The same history as a citable CSV (CC0): its columns, units, and what the data does and does not claim    |
-| [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                        |
-| [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                      |
-| [docs/FREE_TIERS.md](docs/FREE_TIERS.md)               | The free-tier pages: where the facts live, the daily quote check, and how to update a record              |
-| [docs/ACCOUNTS_PLAN.md](docs/ACCOUNTS_PLAN.md)         | The plan for user accounts: sign-in, where it must live, data, duties, phases. Not built yet              |
-| [docs/SPONSORS.md](docs/SPONSORS.md)                   | The sponsor policy: never in the data, always labelled, one slot per page. No sponsor yet                 |
-| [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                 |
-| [mcp/README.md](mcp/README.md)                         | The MCP server — pricing for coding agents, with the source and date on every number                      |
-| [vscode/README.md](vscode/README.md)                   | The VS Code extension — prices on the line of code that chooses the model                                 |
-| [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                    |
-| [SECURITY.md](SECURITY.md)                             | What is in scope — including a wrong price, which is treated as the most serious class of bug             |
+| Document                                               | What is in it                                                                                                                       |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1392 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
+| [docs/PAGES.md](docs/PAGES.md)                         | The 189 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
+| [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live                             |
+| [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                                            |
+| [docs/ALERTS.md](docs/ALERTS.md)                       | The price-alerts Worker — push and email architecture, the cost model, the domain cutover                                           |
+| [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                                                     |
+| [docs/PRICE_HISTORY.md](docs/PRICE_HISTORY.md)         | The same history as a citable CSV (CC0): its columns, units, and what the data does and does not claim                              |
+| [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                                                  |
+| [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                                                |
+| [docs/FREE_TIERS.md](docs/FREE_TIERS.md)               | The free-tier pages: where the facts live, the daily quote check, and how to update a record                                        |
+| [docs/ACCOUNTS_PLAN.md](docs/ACCOUNTS_PLAN.md)         | The plan for user accounts: sign-in, where it must live, data, duties, phases. Not built yet                                        |
+| [docs/SPONSORS.md](docs/SPONSORS.md)                   | The sponsor policy: never in the data, always labelled, one slot per page. No sponsor yet                                           |
+| [docs/AUTOMATION.md](docs/AUTOMATION.md)               | What runs by itself while working on the project: the hooks, `/ship`, the reviewers, the test-count self-fix, and the Worker deploy |
+| [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                                           |
+| [mcp/README.md](mcp/README.md)                         | The MCP server — pricing for coding agents, with the source and date on every number                                                |
+| [vscode/README.md](vscode/README.md)                   | The VS Code extension — prices on the line of code that chooses the model                                                           |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                     | Adding a model, the house style, and the rules that are not negotiable                                                              |
+| [SECURITY.md](SECURITY.md)                             | What is in scope — including a wrong price, which is treated as the most serious class of bug                                       |
 
 ## Contributing
 

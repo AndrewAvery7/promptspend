@@ -1,0 +1,205 @@
+name: Deploy the API and alerts Workers
+
+# The pricing API (promptspend.dev) and the alerts Worker (api.promptspend.dev)
+# are Cloudflare Workers. The Pages deploy publishes the website and touches
+# neither, so a merge that changed their code left the live services on the old
+# version until somebody ran `npm run deploy` by hand. On 2026-10-06 the
+# corrected privacy wording reached the website through Pages while the API's
+# own pages said the old thing for the length of that manual step.
+#
+# This runs the same `wrangler deploy` the manual step does, after the same
+# `npm run verify` the package's CI job ran, and only for the Worker whose code
+# changed. It needs two repository secrets (see docs/AUTOMATION.md):
+#
+#   CLOUDFLARE_API_TOKEN    an API token allowed to edit Workers
+#   CLOUDFLARE_ACCOUNT_ID   the account the Workers live in
+#
+# Without them it does NOT fail: it prints a warning naming the manual command
+# and exits green, so a missing secret degrades to the old behaviour rather than
+# turning every merge red. Database migrations are never run from here: if a
+# push touches `worker/migrations/`, the alerts job fails on purpose and says to
+# run `npm run release`, because new code that expects a table the database does
+# not have yet is worse than old code.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'worker/**'
+      - '.github/workflows/deploy-services.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deployment at a time, never cancelling one in flight: an interrupted
+# `wrangler deploy` is the thing to avoid, not a slow queue.
+concurrency:
+  group: deploy-services
+  cancel-in-progress: false
+
+jobs:
+  # Which services this push actually changed. A manual run deploys both.
+  changes:
+    if: github.repository == 'AndrewAvery7/promptspend'
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.which.outputs.api }}
+      worker: ${{ steps.which.outputs.worker }}
+      migrations: ${{ steps.which.outputs.migrations }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Work out what changed
+        id: which
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "workflow_dispatch" ] || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            # A manual run, or a push whose previous commit is not available:
+            # deploy both, and treat migrations as unchanged (a manual run is
+            # somebody who already decided).
+            echo "api=true" >> "$GITHUB_OUTPUT"
+            echo "worker=true" >> "$GITHUB_OUTPUT"
+            echo "migrations=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed=$(git diff --name-only "$BEFORE" "$AFTER")
+          has() { printf '%s\n' "$changed" | grep -q "$1" && echo true || echo false; }
+          echo "api=$(has '^api/')" >> "$GITHUB_OUTPUT"
+          echo "worker=$(has '^worker/')" >> "$GITHUB_OUTPUT"
+          echo "migrations=$(has '^worker/migrations/')" >> "$GITHUB_OUTPUT"
+          # A change to this workflow itself redeploys both, so editing it is
+          # how it gets exercised.
+          if printf '%s\n' "$changed" | grep -q '^\.github/workflows/deploy-services\.yml$'; then
+            echo "api=true" >> "$GITHUB_OUTPUT"
+            echo "worker=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  api:
+    needs: changes
+    if: needs.changes.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Check for Cloudflare credentials
+        id: creds
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::warning title=The pricing API was not deployed::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are not set as repository secrets, so this run did nothing. Deploy by hand: cd api && npm run deploy. See docs/AUTOMATION.md."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: steps.creds.outputs.ready == 'true'
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        if: steps.creds.outputs.ready == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install reviewed dependencies only
+        if: steps.creds.outputs.ready == 'true'
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild workerd
+
+      - name: Verify before publishing
+        if: steps.creds.outputs.ready == 'true'
+        run: npm run verify
+
+      - name: Deploy the pricing API
+        if: steps.creds.outputs.ready == 'true'
+        run: npm run deploy
+
+      - name: Confirm the live API answers
+        if: steps.creds.outputs.ready == 'true'
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if curl -fsS "https://promptspend.dev/openapi.json?run=${GITHUB_RUN_ID}" > /dev/null; then
+              echo "promptspend.dev is answering."
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "::error::promptspend.dev did not answer after the deploy."
+          exit 1
+
+  alerts:
+    needs: changes
+    if: needs.changes.outputs.worker == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Check for Cloudflare credentials
+        id: creds
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::warning title=The alerts Worker was not deployed::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are not set as repository secrets, so this run did nothing. Deploy by hand: cd worker && npm run deploy (npm run release if a migration changed). See docs/AUTOMATION.md."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Never deploy code that may expect a schema the database does not have.
+      - name: Stop if a migration changed
+        if: steps.creds.outputs.ready == 'true' && needs.changes.outputs.migrations == 'true'
+        run: |
+          echo "::error title=Apply the migration first::This push changed worker/migrations/. The alerts Worker was not deployed automatically, because the new code may expect tables the live database does not have yet. Run: cd worker && npm run release (it migrates the database, then deploys)."
+          exit 1
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: steps.creds.outputs.ready == 'true'
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        if: steps.creds.outputs.ready == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+
+      - name: Install reviewed dependencies only
+        if: steps.creds.outputs.ready == 'true'
+        run: |
+          npm ci --ignore-scripts
+          npm rebuild esbuild workerd
+
+      - name: Verify before publishing
+        if: steps.creds.outputs.ready == 'true'
+        run: npm run verify
+
+      - name: Deploy the alerts Worker
+        if: steps.creds.outputs.ready == 'true'
+        run: npm run deploy
+
+      - name: Confirm the live Worker answers
+        if: steps.creds.outputs.ready == 'true'
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if curl -fsS "https://api.promptspend.dev/v1/config?run=${GITHUB_RUN_ID}" > /dev/null; then
+              echo "api.promptspend.dev is answering."
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "::error::api.promptspend.dev did not answer after the deploy."
+          exit 1

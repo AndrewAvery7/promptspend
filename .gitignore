@@ -55,8 +55,24 @@ mcp/dist/
 
 # Claude Code's working directory. Git worktrees are created under
 # .claude/worktrees/<branch>, so this is a complete second copy of the
-# repository nested inside the first — never something to commit.
-.claude/
+# repository nested inside the first — never something to commit. `.claude/*`
+# rather than `.claude/`: git cannot re-include a file whose parent directory
+# is excluded, and the project's own automations (shared settings, hooks,
+# skills, agents) are meant to be committed so every checkout and every
+# worktree has them. Personal state (settings.local.json, launch.json,
+# worktrees, lock files) stays ignored.
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
+!.claude/skills/
+!.claude/agents/
+# Nested workspaces keep their own personal Claude settings; those stay local.
+**/.claude/
+!/.claude/
+
+# Screenshots and page snapshots from the browser tools: diagnostic output,
+# not source, and never something the format gate should have to read.
+.playwright-mcp/
 
 # Python bytecode from the promo tooling.
 tools/__pycache__/
