@@ -39,6 +39,11 @@ export const HEALTH_URL = `${import.meta.env.BASE_URL}data/sync-status.json`;
 export const MODELS_INDEX_URL = `${import.meta.env.BASE_URL}models/`;
 export const PROVIDERS_INDEX_URL = `${import.meta.env.BASE_URL}providers/`;
 export const COMPARE_INDEX_URL = `${import.meta.env.BASE_URL}compare/`;
+/** Which providers let a new account start without paying. Linked from the
+ *  header, the footer, the command palette and the Compare view, because a
+ *  page only the generated pages link to is a page the calculator's visitors
+ *  never find. */
+export const FREE_TIERS_URL = `${import.meta.env.BASE_URL}free-tiers/`;
 
 /** A real multi-page entry, not one of the calculator's client-state views. */
 export const RECEIPT_URL = `${import.meta.env.BASE_URL}receipt/`;
