@@ -225,8 +225,8 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
               <article>
                 <h3>In your own code</h3>
                 <p>
-                  A free, keyless, CORS-open API. No account, no rate limit, no logging of who calls it. JSON,
-                  CSV and OpenAPI 3.1.
+                  A free, keyless, CORS-open API. No account, no key, no rate limit. JSON, CSV and OpenAPI
+                  3.1.
                 </p>
                 {/* `tabIndex` because this scrolls: `.build-grid pre` is
                     `overflow-x: auto`, and a scrollable box that cannot take

@@ -200,7 +200,7 @@ missing one by a day.
 ## Use the data yourself
 
 There is a free, keyless, CORS-open API at **[promptspend.dev](https://promptspend.dev)** — no account, no
-rate limit, no logging of who calls it:
+key, no rate limit:
 
 ```bash
 curl https://promptspend.dev/v1/prices          # flat rows: the numbers only
@@ -477,23 +477,26 @@ which page they were on. The website counts visits with Cloudflare Web Analytics
 that reports a page's address, referrer, country and load timings to promptspend.com's own
 `/cdn-cgi/rum` (the Content Security Policy lets it post nowhere else); it never sees pasted text. The
 apps, the VS Code extension and the API carry no analytics. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable
-URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds two things:
-whether you dismissed the welcome banner, and your theme choice.
+URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds only
+interface choices: your theme, accent and background, and whether you dismissed the welcome and apps
+banners.
 
 **Price alerts are the one exception, and only if you opt in.** They are a feature you have to switch on,
 and they are the only reason this project has a server at all
 (a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)). Precisely what changes:
 
-- The Content Security Policy opens `connect-src` for that one API origin, and — only where Turnstile is
-  configured — `script-src` and `frame-src` for `challenges.cloudflare.com`. Nothing else, ever (the
-  only other remote origin is `img-src` for the LaunchNest badge, which carries no data). That
+- The Content Security Policy opens `connect-src` for that one API origin and, whenever an API is
+  configured, `script-src`, `connect-src` and `frame-src` for Turnstile's `challenges.cloudflare.com`
+  (whether Turnstile is actually required is decided at runtime, so the build permits it). Nothing else:
+  the other remote origins are `img-src` for the LaunchNest badge and `script-src` for the analytics
+  beacon, which posts only to this site. That
   `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is
   generated from one configured value rather than hand-maintained.
 - **Browser push stores nothing personal.** A push subscription is an opaque URL the browser issues. No
   address, no name, nothing that identifies you.
 - **Email stores your address**, the models you follow, and the date you asked. That is the whole record.
-  No name, no raw IP (consent is recorded as a salted hash), no opens, no clicks, no third-party
-  processor. Double opt-in, one-click unsubscribe, and unconfirmed addresses are deleted within a week.
+  No name, no raw IP (consent is recorded as a salted hash), no opens, no clicks. Cloudflare hosts the
+  database and sends the mail; no other company receives it. Double opt-in, one-click unsubscribe, and unconfirmed addresses are deleted within a week.
 - The alerts form never sees anything you paste into the estimator. Those are different parts of the page
   and the prompt text never leaves the browser.
 

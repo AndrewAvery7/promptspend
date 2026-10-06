@@ -486,7 +486,7 @@ async function handleEmailConfirm(request: Request, env: Env): Promise<Response>
     body: `<p>PromptSpend will email this address ${
       subscriber.cadence === 'weekly' ? 'once a week' : 'as soon as prices move'
     }.</p>
-      <p class="muted">Every message carries a one-click unsubscribe. Nothing is tracked — no opens, no clicks, no third parties.</p>
+      <p class="muted">Every message carries a one-click unsubscribe. Nothing is tracked: no opens, no clicks.</p>
       <a class="btn" href="${manageUrl}">Manage what you get</a>`,
   });
 }

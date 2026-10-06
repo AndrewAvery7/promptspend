@@ -9,6 +9,25 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Free-tier pages.** `/free-tiers/` compares whether each of the 12 providers lets a new account start
+  without paying, and `/providers/<slug>/free/` answers it per provider, quoting the vendor's own pages
+  with a link and read date on every fact. A daily check re-reads every source and marks a quote that has
+  disappeared as under review. See `docs/FREE_TIERS.md`.
+- **Cloudflare Web Analytics on the website** (owner-approved 2026-10-05): a cookieless beacon, injected
+  at the edge, reporting page views to the site's own `/cdn-cgi/rum`. Not in the apps, the extension or
+  the API.
+- **The LaunchNest listing badge loads from launchnest.io** (owner-approved 2026-10-05), with no
+  referrer; its verifier refuses a local copy.
+
+### Changed
+
+- **The privacy wording now matches what the site does.** The apps page no longer says "no tracking" of a
+  page that carries the analytics beacon (it now says the apps have none). The API, the MCP server and the
+  Data view no longer say "no logging of who calls it": the API keeps Cloudflare's request logs for
+  debugging. Alert emails and the docs no longer say "no third parties", since Cloudflare hosts the alert
+  database and sends the mail. The security and architecture docs list every remote origin the pages load,
+  and the browser-storage description lists all five interface keys.
+
 - **The iPhone and Android apps are live, and the site says so.** The "coming to iPhone and Android"
   banner now announces both apps with the official App Store and Google Play badges and, on a computer, a QR
   code per store. A permanent page at `/app/` holds both, and is linked from the header, the footer of every

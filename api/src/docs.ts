@@ -85,8 +85,7 @@ export function docsPage(origin: string, siteOrigin: string): string {
         <h1>PromptSpend Pricing API</h1>
         <p class="lede">
           Current published API prices for every language model this catalog tracks, as JSON. No key, no
-          account, no rate limit,
-          no logging of who calls it. Re-checked against every vendor each morning, and every row tells you
+          account, no rate limit. Re-checked against every vendor each morning, and every row tells you
           where its number came from and when it was last confirmed.
         </p>
 
