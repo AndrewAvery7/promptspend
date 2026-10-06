@@ -1,0 +1,1113 @@
+{
+  "$comment": "Hand-verified free-tier facts, one entry per catalog provider. Every fact carries the provider's own wording (quote), the page it was read from (url; readUrl when a machine-readable twin of the same page was the copy actually read) and the date it was read. Quotes are verbatim; the only edits are markup: table cells are joined with ' · ', a link keeps its words but not its address, and ' … ' marks an omission. Nothing here is inferred: where a provider does not publish something, it goes in 'unpublished', and where two of its own pages disagree, both facts stay and point at each other through 'conflictsWith'. scripts/check-free-tiers.ts re-reads every source each morning and reports any quote that has disappeared; it never edits this file. See docs/FREE_TIERS.md.",
+  "schemaVersion": 1,
+  "providers": {
+    "google": {
+      "verdict": "ongoing",
+      "answer": "Yes. New Gemini API accounts start on a free tier that covers many current Gemini models, with no payment card needed.",
+      "card": "no",
+      "training": "yes",
+      "trainingNote": "not in the EEA, Switzerland or the UK, where paid-tier data terms apply",
+      "whatsFree": "Gemini Flash and Flash-Lite, Gemini 2.5 Pro, Gemma 4 and more, up to per-model limits",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["google-free-tier"],
+        "card": ["google-free-requirement", "google-card"],
+        "training": ["google-data-unpaid"]
+      },
+      "facts": [
+        {
+          "id": "google-free-tier",
+          "topic": "free",
+          "statement": "New accounts begin on the Free Tier, which gives access to some Gemini models up to each model's free rate limits.",
+          "quote": "New accounts begin on the Free Tier, which allows access to certain models in the Gemini API and AI Studio, up to the models' free tier rate limits.",
+          "url": "https://ai.google.dev/gemini-api/docs/billing",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/billing.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-free-models",
+          "topic": "models",
+          "statement": "The pricing page marks free-tier rates 'Free of charge' for Gemini 3.8, 3.7, 3.6 and 3.5 Flash, the Flash-Lite models, Gemini 2.5 Pro and 2.5 Flash, Gemini Embedding 2 and Gemma 4, among others.",
+          "quote": "Input price · Free of charge",
+          "url": "https://ai.google.dev/gemini-api/docs/pricing",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/pricing.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-paid-only-models",
+          "topic": "models",
+          "statement": "Some models have no free tier at all, including Gemini 3.1 Pro Preview and the Nano Banana image models, which the pricing page lists as 'Not available' on the free tier.",
+          "quote": "Input price · Not available",
+          "url": "https://ai.google.dev/gemini-api/docs/pricing",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/pricing.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-welcome-credit",
+          "topic": "credits",
+          "statement": "Google Cloud's $300 Welcome credit and free trial cannot be spent on the Gemini API.",
+          "quote": "No, the Google Cloud Welcome credit or free trial credit can't be used towards the Gemini API or AI Studio.",
+          "url": "https://ai.google.dev/gemini-api/docs/billing",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/billing.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-card",
+          "topic": "card",
+          "statement": "No card is needed for the free tier. Moving to the paid tier means linking a billing account and prepaying at least $5.",
+          "quote": "Upgrading from the Free Tier to the Paid Tier means linking a billing account and prepaying to add a minimum of $5 (or equivalent in other currencies) of credits to your account.",
+          "url": "https://ai.google.dev/gemini-api/docs/billing",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/billing.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-free-requirement",
+          "topic": "card",
+          "statement": "The only requirement listed for the free tier is an active project or free trial.",
+          "quote": "Free · Active project or free trial · N/A",
+          "url": "https://ai.google.dev/gemini-api/docs/rate-limits",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/rate-limits.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-limits",
+          "topic": "limits",
+          "statement": "Free-tier request and token limits are shown in Google AI Studio, not in the public documentation.",
+          "quote": "Rate limits depend on a variety of factors (such as your usage tier) and can be viewed in Google AI Studio.",
+          "url": "https://ai.google.dev/gemini-api/docs/rate-limits",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/rate-limits.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-search-grounding",
+          "topic": "limits",
+          "statement": "Grounding answers with Google Search is free for 500 requests a day on Gemini 2.5 Flash and 2.5 Flash-Lite (a shared limit). The newer Gemini 3.x models list it as not available on the free tier, and Pro models do not offer it free.",
+          "quote": "Grounding with Google Search · Free of charge, up to 500 RPD (limit shared with Flash-Lite RPD)",
+          "url": "https://ai.google.dev/gemini-api/docs/pricing",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/pricing.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-data-unpaid",
+          "topic": "data",
+          "statement": "On the free tier, Google uses your prompts and its responses to improve its products and machine-learning technologies.",
+          "quote": "When you use Unpaid Services, including, for example, Google AI Studio and the unpaid quota on Gemini API, Google uses the content you submit to the Services and any generated responses to provide, improve, and develop Google products and services and machine learning technologies",
+          "url": "https://ai.google.dev/gemini-api/terms",
+          "readUrl": "https://ai.google.dev/gemini-api/terms.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-data-review",
+          "topic": "data",
+          "statement": "People at Google may read free-tier prompts and responses, and Google asks you not to send anything sensitive.",
+          "quote": "To help with quality and improve our products, human reviewers may read, annotate, and process your API input and output. … Do not submit sensitive, confidential, or personal information to the Unpaid Services.",
+          "url": "https://ai.google.dev/gemini-api/terms",
+          "readUrl": "https://ai.google.dev/gemini-api/terms.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-data-eea",
+          "topic": "regions",
+          "statement": "In the European Economic Area, Switzerland and the UK, the paid-tier data terms apply even to free use.",
+          "quote": "If you're in the European Economic Area, Switzerland, or the United Kingdom, the terms under \"How Google uses Your Data\" in \"Paid Services\" apply to all Services, including Google AI Studio and unpaid quota",
+          "url": "https://ai.google.dev/gemini-api/terms",
+          "readUrl": "https://ai.google.dev/gemini-api/terms.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-eea-apps",
+          "topic": "regions",
+          "statement": "An app offered to users in the EEA, Switzerland or the UK must use the paid tier.",
+          "quote": "You may use only Paid Services when making API Clients available to users in the European Economic Area, Switzerland, or the United Kingdom.",
+          "url": "https://ai.google.dev/gemini-api/terms",
+          "readUrl": "https://ai.google.dev/gemini-api/terms.md.txt",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "google-tiers",
+          "topic": "upgrade",
+          "statement": "Limits rise with spend: Tier 1 needs a linked billing account, Tier 2 needs $100 paid and 3 days, Tier 3 needs $1,000 paid and 30 days (counted across all Google Cloud spend on the linked billing account).",
+          "quote": "Tier 2 · Paid $100 + 3 days from first successful payment",
+          "url": "https://ai.google.dev/gemini-api/docs/rate-limits",
+          "readUrl": "https://ai.google.dev/gemini-api/docs/rate-limits.md.txt",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "Free-tier requests per minute, tokens per minute and requests per day for each model. Google shows these only inside AI Studio."
+      ]
+    },
+    "mistral": {
+      "verdict": "ongoing",
+      "answer": "Yes. New Mistral accounts start in a free mode with API access, a monthly allowance and no payment card needed.",
+      "card": "no",
+      "training": "opt-out",
+      "whatsFree": "$10 a month of API credit, shared with Mistral's other tools",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["mistral-free-mode", "mistral-default"],
+        "card": ["mistral-free-mode"],
+        "training": ["mistral-data-free", "mistral-opt-out"]
+      },
+      "facts": [
+        {
+          "id": "mistral-free-mode",
+          "topic": "free",
+          "statement": "API access is on by default in Free mode, with no card required. Usage and rate limits apply.",
+          "quote": "Free mode: API access is enabled by default with no credit card required. Usage and rate limits apply.",
+          "url": "https://docs.mistral.ai/getting-started/quickstarts/studio/activate-and-generate-api-key",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "mistral-default",
+          "topic": "free",
+          "statement": "Free mode is where every new account starts.",
+          "quote": "Free mode is the default state for new accounts.",
+          "url": "https://docs.mistral.ai/admin/billing-usage/subscriptions",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "mistral-credits",
+          "topic": "credits",
+          "statement": "The Free plan includes $10 a month in API credits.",
+          "quote": "$10 /mo in API credits.",
+          "url": "https://mistral.ai/pricing",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "mistral-shared-allowance",
+          "topic": "credits",
+          "statement": "The monthly allowance is shared between Studio, the API and Vibe Code, and is used up first.",
+          "quote": "Each Mistral plan includes monthly usage that is shared across Studio, the API, and Vibe Code. Usage consumes this monthly allowance first.",
+          "url": "https://docs.mistral.ai/admin/billing-usage/subscriptions",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "mistral-limits",
+          "topic": "limits",
+          "statement": "Free mode has the lowest rate limits. The actual numbers are shown on the Limits page of the logged-in Admin panel.",
+          "quote": "Free mode (the default) has the lowest limits, intended for evaluation and prototyping. See your current limits, usage, and tier on the Limits page of the Admin panel.",
+          "url": "https://help.mistral.ai/en/articles/698531-why-am-i-hitting-api-rate-limits-and-how-do-i-increase-them",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "mistral-data-free",
+          "topic": "data",
+          "statement": "In Free mode, Mistral may use your inputs and outputs to train its models, and you can opt out at any time.",
+          "quote": "As stated during subscription, we may use your data (input and output) to train our artificial intelligence models. … You have the right to opt out of this program at any time.",
+          "url": "https://help.mistral.ai/en/articles/347617-do-you-use-my-user-data-to-train-your-artificial-intelligence-models",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "mistral-opt-out",
+          "topic": "data",
+          "statement": "The API training opt-out is separate from the one for Vibe, so each has to be switched off on its own.",
+          "quote": "Vibe and API opt-out toggles are separate. Opting out of one does not opt you out of the other",
+          "url": "https://help.mistral.ai/en/articles/455207-can-i-opt-out-of-my-input-or-output-data-being-used-for-training",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "mistral-tiers",
+          "topic": "upgrade",
+          "statement": "Turning on pay-as-you-go gives Tier 1. Higher tiers come at $20, $100 and $500 of total billing.",
+          "quote": "Tier 1 · Enabling pay-as-you-go · Tier 2 · Over €20 / $20 billed · Tier 3 · Over €100 / $100 billed · Tier 4 · Over €500 / $500 billed",
+          "url": "https://help.mistral.ai/en/articles/698531-why-am-i-hitting-api-rate-limits-and-how-do-i-increase-them",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "mistral-credits-no-limits",
+          "topic": "upgrade",
+          "statement": "Buying credit does not raise your limits on its own; only billed usage does.",
+          "quote": "Adding credits does not raise your rate limits, you need to use our services and reach the required total-billing thresholds to unlock the next tier.",
+          "url": "https://help.mistral.ai/en/articles/698531-why-am-i-hitting-api-rate-limits-and-how-do-i-increase-them",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "Free-mode request and token limits per model. Mistral shows these only in the logged-in Admin panel.",
+        "Which models can be used in Free mode. No public per-model list."
+      ]
+    },
+    "zai": {
+      "verdict": "ongoing",
+      "answer": "Yes, for three models. Z.ai prices GLM-4.7-Flash, GLM-4.5-Flash and GLM-4.6V-Flash at $0; every other model is paid.",
+      "card": "unclear",
+      "training": "no",
+      "whatsFree": "GLM-4.7-Flash, GLM-4.5-Flash and the GLM-4.6V-Flash vision model",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["zai-free-models"],
+        "card": ["zai-top-up"],
+        "training": ["zai-data-api", "zai-data-not-stored"]
+      },
+      "facts": [
+        {
+          "id": "zai-free-models",
+          "topic": "models",
+          "statement": "The pricing page lists GLM-4.7-Flash as free for input, cached input, cache storage and output.",
+          "quote": "GLM-4.7-Flash · Free · Free · Free · Free",
+          "url": "https://docs.z.ai/guides/overview/pricing",
+          "readUrl": "https://docs.z.ai/guides/overview/pricing.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-free-models-more",
+          "topic": "models",
+          "statement": "GLM-4.5-Flash and the GLM-4.6V-Flash vision model are listed as free in the same way.",
+          "quote": "GLM-4.5-Flash · Free · Free · Free · Free",
+          "url": "https://docs.z.ai/guides/overview/pricing",
+          "readUrl": "https://docs.z.ai/guides/overview/pricing.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-completely-free",
+          "topic": "models",
+          "statement": "Z.ai's own model page describes GLM-4.7-Flash as completely free.",
+          "quote": "Lightweight, Completely Free",
+          "url": "https://docs.z.ai/guides/llm/glm-4.7",
+          "readUrl": "https://docs.z.ai/guides/llm/glm-4.7.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-top-up",
+          "topic": "card",
+          "statement": "The quick start says to top up 'if needed'. It does not say whether a payment method is needed before calling the free models.",
+          "quote": "Access Billing Page to top up if needed.",
+          "url": "https://docs.z.ai/guides/overview/quick-start",
+          "readUrl": "https://docs.z.ai/guides/overview/quick-start.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-limits",
+          "topic": "limits",
+          "statement": "Rate limits are shown in the logged-in console, which the FAQ links to.",
+          "quote": "You can check the rate limits from here: https://z.ai/manage-apikey/rate-limits",
+          "url": "https://docs.z.ai/help/faq",
+          "readUrl": "https://docs.z.ai/help/faq.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-data-not-stored",
+          "topic": "data",
+          "statement": "The privacy policy says Z.ai does not store what you send or generate through its services.",
+          "quote": "The Company do not store any of the content the Customer or its End Users provide or generate while using our Services.",
+          "url": "https://docs.z.ai/legal-agreement/privacy-policy",
+          "readUrl": "https://docs.z.ai/legal-agreement/privacy-policy.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-data-individual",
+          "topic": "data",
+          "statement": "The terms of use say Z.ai may use individual users' content to improve its services; a separate clause covers API users.",
+          "quote": "For individual users, we may use User Content to provide, maintain, develop, and improve our Services",
+          "url": "https://docs.z.ai/legal-agreement/terms-of-use",
+          "readUrl": "https://docs.z.ai/legal-agreement/terms-of-use.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-data-api",
+          "topic": "data",
+          "statement": "For developers using the API, Z.ai does not use your content to develop or improve its services unless you explicitly agree.",
+          "quote": "For enterprises and developers using API Services, we will not use your User Content for developing or improving Services unless you explicitly agree to such use.",
+          "url": "https://docs.z.ai/legal-agreement/terms-of-use",
+          "readUrl": "https://docs.z.ai/legal-agreement/terms-of-use.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "zai-regions",
+          "topic": "regions",
+          "statement": "Users must not be in Iran, North Korea, Cuba, Crimea, Donetsk or Zaporizhzhia.",
+          "quote": "You confirm that you are not located in the following regions: Iran, North Korea, Cuba, Crimea, Donetsk, or Zaporizhzhia.",
+          "url": "https://docs.z.ai/legal-agreement/terms-of-use",
+          "readUrl": "https://docs.z.ai/legal-agreement/terms-of-use.md",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "Whether a payment method or top-up is needed before calling the free models.",
+        "Rate limits for the free models. Z.ai shows these only in its logged-in console.",
+        "Whether the free models will stay free. The pricing page says only 'Free'.",
+        "Any sign-up credit for new accounts."
+      ]
+    },
+    "cohere": {
+      "verdict": "ongoing",
+      "answer": "Yes, for testing. Cohere's trial keys are free and need no card, but they are rate-limited and may not be used in production or commercially.",
+      "card": "no",
+      "training": "yes",
+      "whatsFree": "Trial keys for every Cohere model, capped at 1,000 calls a month and not for commercial use",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["cohere-trial"],
+        "card": ["cohere-card-trial"],
+        "training": ["cohere-data-trial"]
+      },
+      "facts": [
+        {
+          "id": "cohere-trial",
+          "topic": "free",
+          "statement": "Calls made with a trial key are free, but trial keys are rate-limited and not allowed for production or commercial use.",
+          "quote": "API calls made from a Trial API key are free. However, trial keys are rate limited and are not permitted to be used for production or commercial purposes.",
+          "url": "https://cohere.com/pricing",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "cohere-trial-auto",
+          "topic": "free",
+          "statement": "A trial key is created for you automatically when you open an account.",
+          "quote": "When an account is created, we automatically create an Trial API key for you.",
+          "url": "https://cohere.com/pricing",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "cohere-models",
+          "topic": "models",
+          "statement": "Every Cohere model and API can be tried with a trial key.",
+          "quote": "Developers wanting to test different applications or build proofs of concept can use all of Cohere's models and APIs can do so with a trial key",
+          "url": "https://docs.cohere.com/docs/how-does-cohere-pricing-work",
+          "readUrl": "https://docs.cohere.com/docs/how-does-cohere-pricing-work.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "cohere-card-trial",
+          "topic": "card",
+          "statement": "Cohere's privacy policy defines trial users as having no payment method on file.",
+          "quote": "Trial Users : Individuals who create or access a free trial account to test out our Platform under our standard Terms of Use with no payment method on file.",
+          "url": "https://cohere.com/privacy",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "cohere-monthly-cap",
+          "topic": "limits",
+          "statement": "Trial keys are capped at 1,000 API calls a month.",
+          "quote": "Trial keys (and prod keys on newer Chat model variants) are limited to 1,000 API calls a month.",
+          "url": "https://docs.cohere.com/docs/rate-limits",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "cohere-chat-limit",
+          "topic": "limits",
+          "statement": "On a trial key, Command A allows 20 requests a minute, against 500 on a production key.",
+          "quote": "Command A · 20 req / min · 500 req / min",
+          "url": "https://docs.cohere.com/docs/rate-limits",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "cohere-embed-limit",
+          "topic": "limits",
+          "statement": "The rate-limits page gives the trial Embed limit as 2,000 inputs a minute.",
+          "quote": "Embed · 2,000 inputs / min · 2,000 inputs / min",
+          "url": "https://docs.cohere.com/docs/rate-limits",
+          "readOn": "2026-10-05",
+          "conflictsWith": "cohere-embed-faq"
+        },
+        {
+          "id": "cohere-embed-faq",
+          "topic": "limits",
+          "statement": "Cohere's FAQ gives a different trial Embed limit: 5 calls a minute.",
+          "quote": "the Embed endpoint is limited to 5 calls per minute, while the Chat endpoint is limited to 20 calls per minute.",
+          "url": "https://docs.cohere.com/docs/cohere-faqs",
+          "readOn": "2026-10-05",
+          "conflictsWith": "cohere-embed-limit"
+        },
+        {
+          "id": "cohere-data-trial",
+          "topic": "data",
+          "statement": "For trial users, Cohere collects what you send and what its models return, and may use it for research and development.",
+          "quote": "We may use this input and output data to conduct research and development.",
+          "url": "https://cohere.com/privacy",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "cohere-data-commitments",
+          "topic": "data",
+          "statement": "Cohere's enterprise data commitments cover paying customers only; trial-key data falls under the general terms and privacy policy.",
+          "quote": "Our Terms of Use and Privacy Policy apply to data we receive from users using a trial API key",
+          "url": "https://cohere.com/enterprise-data-commitments",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "cohere-upgrade",
+          "topic": "upgrade",
+          "statement": "Moving from trial to paid asks for payment information.",
+          "quote": "To move from a Trial User to an Enterprise User, you will be asked to provide payment information so that we can process payments and manage billing to your company.",
+          "url": "https://cohere.com/privacy",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "Whether trial users can opt out of training. The opt-out is described only for enterprise customers.",
+        "Token-per-minute limits. Only requests or inputs per minute are published."
+      ]
+    },
+    "alibaba": {
+      "verdict": "one-time",
+      "answer": "A one-time allowance, not an ongoing free tier. New Model Studio users get a free token quota per model, valid for 90 days, then pay as they go.",
+      "card": "unclear",
+      "training": "no",
+      "whatsFree": "Typically 1 million tokens per participating model for 90 days, Singapore (International) only",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["alibaba-quota", "alibaba-validity"],
+        "card": ["alibaba-account-info", "alibaba-signup", "alibaba-free-trial-signup"],
+        "training": ["alibaba-data"]
+      },
+      "facts": [
+        {
+          "id": "alibaba-quota",
+          "topic": "credits",
+          "statement": "Each model has its own free quota, typically 1,000,000 tokens, which cannot be combined or moved between models.",
+          "quote": "Each model (such as qwen-plus, qwen3.6-plus, or qwen3.6-plus-2026-04-02) has its own independent free quota (typically 1,000,000 tokens). Quota cannot be merged or transferred across models.",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/new-free-quota",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-validity",
+          "topic": "credits",
+          "statement": "The quota lasts 90 days from activation, the model's release or approval of your request, whichever is latest.",
+          "quote": "The free quota is valid for 90 days, starting from the date you activate Alibaba Cloud Model Studio, the model is released, or your model request is approved (whichever is later).",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/new-free-quota",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-auto-billing",
+          "topic": "free",
+          "statement": "When the quota runs out you are billed automatically, unless you have switched on 'Free Quota Only' beforehand.",
+          "quote": "After the free quota is exhausted, you are automatically billed on a pay-as-you-go basis. To avoid unexpected charges, enable [Free Quota Only] in advance so that the service stops when the quota runs out.",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/new-free-quota",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-realtime-only",
+          "topic": "credits",
+          "statement": "The quota covers ordinary real-time calls only, not batch jobs, fine-tuning or deployments.",
+          "quote": "The free quota only covers charges for real-time inference (invocations).",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/new-free-quota",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-not-all-models",
+          "topic": "models",
+          "statement": "Not every model takes part. Alibaba says to check each model's details page in the console.",
+          "quote": "Some models do not participate in the new user free quota program. To check whether a specific model is eligible for a free quota, go to the Model Gallery page in the console and open that model's details page.",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/new-free-quota",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-account-info",
+          "topic": "card",
+          "statement": "You must complete your account information before activating Model Studio and receiving the quota. The page links that step to mobile-number verification.",
+          "quote": "You must [complete your account information] before you can activate Model Studio. After completing your information, you can activate Model Studio, receive a free quota, and start your free trial.",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/new-free-quota",
+          "readOn": "2026-10-05",
+          "conflictsWith": "alibaba-signup"
+        },
+        {
+          "id": "alibaba-signup",
+          "topic": "card",
+          "statement": "Alibaba Cloud's general sign-up guide lists a payment method as part of completing sign-up.",
+          "quote": "Complete sign-up · Mobile number, payment method, billing address, tax information (optional)",
+          "url": "https://www.alibabacloud.com/help/en/account/step-1-register-an-alibaba-cloud-account",
+          "readOn": "2026-10-05",
+          "conflictsWith": "alibaba-account-info"
+        },
+        {
+          "id": "alibaba-free-trial-signup",
+          "topic": "card",
+          "statement": "The same guide's table shows that activating a free trial is not supported until sign-up is complete.",
+          "quote": "Activate a free trial · Unsupported · Supported",
+          "url": "https://www.alibabacloud.com/help/en/account/step-1-register-an-alibaba-cloud-account",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-same-speed",
+          "topic": "limits",
+          "statement": "Free and paid calls run on the same infrastructure at the same generation speed.",
+          "quote": "Free quota and paid calls use the same Model service infrastructure, and the generation speed of the same Model is identical.",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/rate-limit",
+          "readUrl": "https://www.alibabacloud.com/help/en/model-studio/rate-limit.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-data",
+          "topic": "data",
+          "statement": "Without separate consent, Alibaba does not use your inputs, outputs or files to train its models.",
+          "quote": "Without your separate consent, we will not use your business data (including inputs, outputs, and files) to train, fine-tune or improve any foundation model.",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/data-retention-policy",
+          "readUrl": "https://www.alibabacloud.com/help/en/model-studio/data-retention-policy.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-region",
+          "topic": "regions",
+          "statement": "Only models in the Singapore region with International deployment get the free quota.",
+          "quote": "Only models in the Singapore region with the service deployment scope set to [International] are eligible for a free quota.",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/new-free-quota",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "alibaba-upgrade",
+          "topic": "upgrade",
+          "statement": "Topping up does not raise rate limits; higher limits are arranged separately.",
+          "quote": "Top Up does not change the model's default RPM and TPM rate limit thresholds.",
+          "url": "https://www.alibabacloud.com/help/en/model-studio/rate-limit",
+          "readUrl": "https://www.alibabacloud.com/help/en/model-studio/rate-limit.md",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "Whether a payment method must be on file to activate the free quota. Alibaba's two pages on this point differ."
+      ]
+    },
+    "amazon": {
+      "verdict": "one-time",
+      "answer": "No Bedrock-specific free tier. New AWS accounts get general sign-up credits, which can be spent on Bedrock along with other AWS services.",
+      "card": "no",
+      "training": "no",
+      "whatsFree": "$100 of AWS credit at sign-up, plus up to $100 more for completing activities",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["amazon-credits", "amazon-bedrock-activity"],
+        "card": ["amazon-card"],
+        "training": ["amazon-data"]
+      },
+      "facts": [
+        {
+          "id": "amazon-credits",
+          "topic": "credits",
+          "statement": "A new AWS Free Tier account gets $100 in credits straight away and can earn up to $100 more.",
+          "quote": "When you create a new AWS Free Tier account, you get $100 in credits immediately. As you explore key services, you can earn up to $100 more.",
+          "url": "https://aws.amazon.com/free/",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "amazon-bedrock-activity",
+          "topic": "credits",
+          "statement": "Trying a model in the Bedrock playground is one of the credit-earning activities, and its cost comes out of your Free Tier credits.",
+          "quote": "This activity incurs AWS service charges that are deducted from your AWS Free Tier credits.",
+          "url": "https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans-activities.html",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "amazon-expiry-faq",
+          "topic": "credits",
+          "statement": "AWS's Free Tier FAQ says the credits expire 6 months after you open the account.",
+          "quote": "Free Tier credits expire 6 months from the date you create your AWS account.",
+          "url": "https://aws.amazon.com/free/free-tier-faqs/",
+          "readOn": "2026-10-05",
+          "conflictsWith": "amazon-expiry-terms"
+        },
+        {
+          "id": "amazon-expiry-terms",
+          "topic": "credits",
+          "statement": "AWS's Free Tier terms say the credits expire twelve months after you open the account.",
+          "quote": "Free Tier Credits expire twelve months from the date you opened your account.",
+          "url": "https://aws.amazon.com/free/terms/",
+          "readOn": "2026-10-05",
+          "conflictsWith": "amazon-expiry-faq"
+        },
+        {
+          "id": "amazon-card",
+          "topic": "card",
+          "statement": "Most new customers do not need a payment method to sign up, though AWS may ask for one to verify identity.",
+          "quote": "A payment method isn't required to sign up for most new customers. In some cases, we may request additional information, such as a payment method, to verify your identity.",
+          "url": "https://aws.amazon.com/free/free-tier-faqs/",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "amazon-free-plan-limits",
+          "topic": "models",
+          "statement": "The Free plan excludes some AWS Marketplace offers. AWS does not say which Bedrock models that affects.",
+          "quote": "Some service examples include Savings Plans, Reserved Instances, and certain AWS Marketplace offers that can incur charges.",
+          "url": "https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "amazon-quotas",
+          "topic": "limits",
+          "statement": "Bedrock has no separate free-tier limits. Account quotas apply and can depend on payment history.",
+          "quote": "the default quotas assigned to an account might be updated depending on regional factors, payment history, fraudulent usage, and/or approval of a quota increase request.",
+          "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/quotas.html",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "amazon-data",
+          "topic": "data",
+          "statement": "AWS and the model providers do not use Bedrock inputs or outputs to train their models.",
+          "quote": "No, AWS and the third-party model providers will not use any inputs to or outputs from Amazon Bedrock to train Amazon Nova, Amazon Titan, or any third-party models.",
+          "url": "https://aws.amazon.com/bedrock/faqs/",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "amazon-regions",
+          "topic": "regions",
+          "statement": "Free Tier credits are not available in AWS's China regions.",
+          "quote": "The AWS Free Tier credits and account plan selections are not available in the China (ZHY) and China (BJS) regions.",
+          "url": "https://aws.amazon.com/free/free-tier-faqs/",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "Exactly which Bedrock models a Free plan account can call.",
+        "Default Bedrock request and token limits for a brand-new account. AWS publishes them per model in Service Quotas."
+      ]
+    },
+    "openai": {
+      "verdict": "none",
+      "answer": "No general free tier. The OpenAI API is prepaid with a $5 minimum; the free exceptions are the moderation model and an opt-in scheme that gives some eligible organisations daily tokens in exchange for their data.",
+      "card": "yes",
+      "training": "no",
+      "whatsFree": "The moderation model; daily tokens only for eligible organisations that opt in to sharing their data",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["openai-prepaid", "openai-minimum"],
+        "card": ["openai-minimum"],
+        "training": ["openai-data"]
+      },
+      "facts": [
+        {
+          "id": "openai-prepaid",
+          "topic": "free",
+          "statement": "API use is paid for in advance: you buy credits and usage draws them down. Any free credits on an account are used first, but OpenAI does not say who gets them or how much.",
+          "quote": "Prepaid billing lets you purchase credits before using the API. Your credit balance decreases as you use the API. If your account has free credits, those are used before purchased credits.",
+          "url": "https://help.openai.com/en/articles/8264644-setting-up-and-managing-prepaid-api-billing",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "openai-minimum",
+          "topic": "card",
+          "statement": "You add payment details and buy at least $5 of credit to start.",
+          "quote": "The minimum purchase is $5, and the default amount is $10.",
+          "url": "https://help.openai.com/en/articles/8264644-setting-up-and-managing-prepaid-api-billing",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "openai-moderation",
+          "topic": "models",
+          "statement": "The moderation model is priced as free.",
+          "quote": "Moderation · omni-moderation-latest · Free",
+          "url": "https://developers.openai.com/api/docs/pricing",
+          "readUrl": "https://developers.openai.com/api/docs/pricing.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "openai-free-row",
+          "topic": "limits",
+          "statement": "OpenAI's rate-limit table has a 'Free' tier whose only condition is location. Some model pages, such as text-embedding-3-small and omni-moderation-latest, give limits for it; GPT-5 and GPT-5 mini list it as 'Not supported'.",
+          "quote": "Free · User must be in an allowed geography · $100 / month",
+          "url": "https://developers.openai.com/api/docs/guides/rate-limits",
+          "readUrl": "https://developers.openai.com/api/docs/guides/rate-limits.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "openai-gpt5-free",
+          "topic": "limits",
+          "statement": "The GPT-5 model page lists the Free tier as not supported.",
+          "quote": "Free · Not supported",
+          "url": "https://developers.openai.com/api/docs/models/gpt-5",
+          "readUrl": "https://developers.openai.com/api/docs/models/gpt-5.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "openai-data-sharing",
+          "topic": "credits",
+          "statement": "Some organisations that opt in to share their API traffic with OpenAI qualify for complimentary daily tokens, but they still need a positive balance.",
+          "quote": "Some organizations may qualify for daily complimentary tokens on traffic shared with OpenAI. … You need a positive account balance to use OpenAI models and the free tokens.",
+          "url": "https://help.openai.com/en/articles/10306912-sharing-feedback-evaluation-and-fine-tuning-data-and-api-inputs-and-outputs-with-openai",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "openai-data",
+          "topic": "data",
+          "statement": "API data is not used for training unless you opt in.",
+          "quote": "As of March 1, 2023, data sent to the OpenAI API is not used to train or improve OpenAI models (unless you explicitly opt in to share data with us).",
+          "url": "https://developers.openai.com/api/docs/guides/your-data",
+          "readUrl": "https://developers.openai.com/api/docs/guides/your-data.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "openai-tiers",
+          "topic": "upgrade",
+          "statement": "Limits rise automatically with total spend: Tier 1 at $5, up to Tier 5 at $1,000.",
+          "quote": "As your spend on our API goes up, we automatically graduate you to the next usage tier.",
+          "url": "https://developers.openai.com/api/docs/guides/rate-limits",
+          "readUrl": "https://developers.openai.com/api/docs/guides/rate-limits.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "openai-regions",
+          "topic": "regions",
+          "statement": "Using the API outside OpenAI's supported countries can get an account blocked.",
+          "quote": "Accessing or offering access to our services outside of the countries and territories listed below may result in your account being blocked or suspended.",
+          "url": "https://developers.openai.com/api/docs/supported-countries",
+          "readUrl": "https://developers.openai.com/api/docs/supported-countries.md",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "Who receives the 'free credits' the billing article mentions, how much, and for how long.",
+        "Whether usage in the 'Free' rate-limit tier costs nothing, or is simply the tier before an organisation has paid."
+      ]
+    },
+    "anthropic": {
+      "verdict": "unclear",
+      "answer": "Anthropic's own pages disagree. Its pricing page says new users get a small amount of free credit; its help centre says you must buy credits before using the API.",
+      "card": "yes",
+      "training": "no",
+      "whatsFree": "Possibly a small trial credit; no ongoing free tier",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["anthropic-free-credits", "anthropic-buy-first"],
+        "card": ["anthropic-buy-first", "anthropic-prepaid"],
+        "training": ["anthropic-data"]
+      },
+      "facts": [
+        {
+          "id": "anthropic-free-credits",
+          "topic": "credits",
+          "statement": "The pricing page's FAQ says new users get a small amount of free credit to test the API. No amount or expiry is given.",
+          "quote": "New users receive a small amount of free credits to test the API.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "readUrl": "https://platform.claude.com/docs/en/about-claude/pricing.md",
+          "readOn": "2026-10-05",
+          "conflictsWith": "anthropic-buy-first"
+        },
+        {
+          "id": "anthropic-buy-first",
+          "topic": "credits",
+          "statement": "The help centre's getting-started article says to add credits and enter payment details before using the API, and mentions no free grant.",
+          "quote": "To use the Claude API and the playground, add usage credits to your organization's balance. … Then, you'll enter your payment details and fund your account.",
+          "url": "https://support.claude.com/en/articles/8114531-i-created-a-claude-console-organization-how-do-i-start-using-the-claude-api",
+          "readOn": "2026-10-05",
+          "conflictsWith": "anthropic-free-credits"
+        },
+        {
+          "id": "anthropic-prepaid",
+          "topic": "card",
+          "statement": "API use is prepaid. When credits run out, the API stops until you add more.",
+          "quote": "If you run out of credits, you can no longer call the API or use the playground until you add more.",
+          "url": "https://support.claude.com/en/articles/8977456-how-do-i-pay-for-my-claude-api-usage",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "anthropic-evaluation",
+          "topic": "limits",
+          "statement": "New organisations may start in an Evaluation tier with lower limits than the published ones. That tier sets limits, not free usage.",
+          "quote": "New organizations and organizations with limited usage history may start in the Evaluation tier, with limits below the standard limits shown on this page while account history is established.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "readUrl": "https://platform.claude.com/docs/en/api/rate-limits.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "anthropic-data",
+          "topic": "data",
+          "statement": "By default, Anthropic does not train on API inputs or outputs.",
+          "quote": "By default, we will not use your inputs or outputs from our commercial products (e.g. Claude for Work, Anthropic API, Claude Gov, etc.) to train our models.",
+          "url": "https://privacy.claude.com/en/articles/7996868-is-my-data-used-for-model-training",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "anthropic-tiers",
+          "topic": "upgrade",
+          "statement": "Organisations move up tiers automatically as their usage history builds.",
+          "quote": "Organizations are placed on a tier automatically based on usage history and account standing and can move to a higher tier over time as they use the API.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "readUrl": "https://platform.claude.com/docs/en/api/rate-limits.md",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "The amount, expiry and conditions of the 'small amount of free credits'.",
+        "Evaluation-tier rate limits. Anthropic shows these only in the Claude Console."
+      ]
+    },
+    "minimax": {
+      "verdict": "unclear",
+      "answer": "Unclear. MiniMax's documentation mentions a free quota and a free tier for new users, but publishes no amount, duration or list of models.",
+      "card": "unclear",
+      "training": "unclear",
+      "trainingNote": "its terms allow using inputs to improve its services, but do not mention training",
+      "whatsFree": "An unspecified free quota for new pay-as-you-go users",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["minimax-free-quota", "minimax-free-tier"],
+        "card": ["minimax-top-up"],
+        "training": ["minimax-data"]
+      },
+      "facts": [
+        {
+          "id": "minimax-free-quota",
+          "topic": "free",
+          "statement": "An integration guide says new users without a subscription can try a free quota through pay-as-you-go. It gives no amount.",
+          "quote": "New users without subscription can try the free quota from Pay-as-you-go",
+          "url": "https://platform.minimax.io/docs/solutions/eigent",
+          "readUrl": "https://platform.minimax.io/docs/solutions/eigent.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "minimax-free-tier",
+          "topic": "free",
+          "statement": "The rate-limits page refers to a free tier, from which speech-to-text is excluded.",
+          "quote": "Speech to Text is available to paid accounts only and is not accessible on the free tier.",
+          "url": "https://platform.minimax.io/docs/guides/rate-limits",
+          "readUrl": "https://platform.minimax.io/docs/guides/rate-limits.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "minimax-top-up",
+          "topic": "card",
+          "statement": "The quick start says to top up 'if needed', without saying whether that is needed before the first call.",
+          "quote": "For pay-as-you-go, access Billing/Balance to top up if needed.",
+          "url": "https://platform.minimax.io/docs/guides/quickstart-preparation",
+          "readUrl": "https://platform.minimax.io/docs/guides/quickstart-preparation.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "minimax-limits",
+          "topic": "limits",
+          "statement": "One rate-limit table is published, with no separate free-tier figures: MiniMax-M3 allows 200 requests and 10 million tokens a minute.",
+          "quote": "MiniMax-M3 · 200 · 10,000,000",
+          "url": "https://platform.minimax.io/docs/guides/rate-limits",
+          "readUrl": "https://platform.minimax.io/docs/guides/rate-limits.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "minimax-data",
+          "topic": "data",
+          "statement": "MiniMax's terms allow it to use inputs and generated content to develop and improve its services. They do not mention training, and nothing separates free from paid use.",
+          "quote": "We may use the input and generated content to provide, maintain, develop, and improve our Services",
+          "url": "https://platform.minimax.io/protocol/terms-of-service",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "minimax-upgrade",
+          "topic": "upgrade",
+          "statement": "There is no published tier ladder; higher limits are requested by email.",
+          "quote": "If the current rate limits do not meet your needs, you can contact our business team via email",
+          "url": "https://platform.minimax.io/docs/guides/rate-limits",
+          "readUrl": "https://platform.minimax.io/docs/guides/rate-limits.md",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "The size, duration and model coverage of the new-user free quota.",
+        "Whether the published rate limits apply to free-tier accounts.",
+        "Whether a payment method or top-up is needed before the first call."
+      ]
+    },
+    "xai": {
+      "verdict": "none",
+      "answer": "No. xAI bills API use per token from prepaid credit; only the Console Playground is free to try.",
+      "card": "yes",
+      "training": "no",
+      "whatsFree": "The Console Playground only, not the API",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["xai-not-free"],
+        "card": ["xai-load-credits", "xai-rejected"],
+        "training": ["xai-data"]
+      },
+      "facts": [
+        {
+          "id": "xai-not-free",
+          "topic": "free",
+          "statement": "API use is billed per token. Every Console account can try models in the Playground before adding billing.",
+          "quote": "API usage is billed per token rather than free, but the Playground comes with every Console account, so you can test the latest Grok models before adding billing.",
+          "url": "https://x.ai/api",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "xai-load-credits",
+          "topic": "card",
+          "statement": "You load credits onto your account before using the API.",
+          "quote": "Sign up for an account at console.x.ai, then load it with credits to start using the API.",
+          "url": "https://docs.x.ai/developers/quickstart",
+          "readUrl": "https://docs.x.ai/developers/quickstart.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "xai-rejected",
+          "topic": "card",
+          "statement": "Requests are rejected once prepaid credit runs out.",
+          "quote": "Your API requests will be automatically rejected once your prepaid credits are depleted.",
+          "url": "https://docs.x.ai/console/billing",
+          "readUrl": "https://docs.x.ai/console/billing.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "xai-credits-for-data",
+          "topic": "credits",
+          "statement": "xAI's enterprise FAQ says it sometimes offers free credits in exchange for permission to train on your data. No amount or terms are published.",
+          "quote": "In some instances we may offer free credits in exchange for you agreeing to permit us to train on your business data.",
+          "url": "https://x.ai/legal/faq-enterprise",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "xai-data",
+          "topic": "data",
+          "statement": "xAI does not train on API inputs or outputs without your explicit permission.",
+          "quote": "SpaceXAI never trains on your API inputs or outputs without your explicit permission.",
+          "url": "https://docs.x.ai/developers/faq/security",
+          "readUrl": "https://docs.x.ai/developers/faq/security.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "xai-tiers",
+          "topic": "upgrade",
+          "statement": "Rate-limit tiers unlock automatically with total API spend since 1 January 2026.",
+          "quote": "Your tier is based on cumulative spend on the xAI API since January 1, 2026. Tiers unlock automatically as your spend increases.",
+          "url": "https://docs.x.ai/developers/rate-limits",
+          "readUrl": "https://docs.x.ai/developers/rate-limits.md",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": ["The amount and terms of the 'free credits in exchange for training' offer."]
+    },
+    "moonshot": {
+      "verdict": "none",
+      "answer": "No. Moonshot requires a top-up of at least $1 before any use; a $5 voucher follows once you have topped up $5 in total.",
+      "card": "yes",
+      "training": "yes",
+      "whatsFree": "Nothing up front; a $5 voucher after $5 of top-ups",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["moonshot-minimum"],
+        "card": ["moonshot-minimum", "moonshot-payment"],
+        "training": ["moonshot-data"]
+      },
+      "facts": [
+        {
+          "id": "moonshot-minimum",
+          "topic": "free",
+          "statement": "You must top up at least $1 to start, and receive a $5 voucher once your top-ups reach $5.",
+          "quote": "To prevent abuse, you need to recharge at least $1 to start using, and when your cumulative recharge reaches $5, you will receive a $5 voucher.",
+          "url": "https://platform.kimi.ai/docs/pricing/limits",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "moonshot-k3",
+          "topic": "models",
+          "statement": "Kimi K3 in particular unlocks only after a successful top-up.",
+          "quote": "Kimi K3 is unlocked after a successful top-up (minimum $1).",
+          "url": "https://platform.kimi.ai/docs/guide/troubleshooting",
+          "readUrl": "https://platform.kimi.ai/docs/guide/troubleshooting.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "moonshot-payment",
+          "topic": "card",
+          "statement": "The billing FAQ names WeChat Pay and Alipay for individual online top-ups and does not mention cards.",
+          "quote": "Online top-ups support WeChat Pay and Alipay QR code payments.",
+          "url": "https://platform.kimi.ai/docs/guide/account-and-payments",
+          "readUrl": "https://platform.kimi.ai/docs/guide/account-and-payments.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "moonshot-tier0",
+          "topic": "limits",
+          "statement": "The entry tier, after a $1 top-up, allows 1 concurrent request, 3 requests a minute, 500,000 tokens a minute and 1,500,000 tokens a day.",
+          "quote": "Tier0 · $1 · 1 · 3 · 500,000 · 1,500,000",
+          "url": "https://platform.kimi.ai/docs/pricing/limits",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "moonshot-data",
+          "topic": "data",
+          "statement": "Restricting the use of your content for training requires an enterprise arrangement or a separate written agreement.",
+          "quote": "Customer who requires restrictions on the use of Customer Content for training or improving Moonshot AI models may contact Moonshot AI to discuss available enterprise arrangements or separate written agreements.",
+          "url": "https://platform.kimi.ai/docs/agreement/modeluse",
+          "readUrl": "https://platform.kimi.ai/docs/agreement/modeluse.md",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "moonshot-tiers",
+          "topic": "upgrade",
+          "statement": "Rate limits rise with your total top-ups, from Tier0 at $1 up to Tier5 at $3,000.",
+          "quote": "we currently apply rate limits based on the cumulative recharge amount of each account.",
+          "url": "https://platform.kimi.ai/docs/pricing/limits",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "moonshot-region",
+          "topic": "regions",
+          "statement": "platform.kimi.ai serves users outside mainland China, with accounts separate from the China platform.",
+          "quote": "For users outside mainland China, use platform.kimi.ai. Accounts and keys from different regional platforms are independent and cannot be mixed.",
+          "url": "https://platform.kimi.ai/docs/guide/troubleshooting",
+          "readUrl": "https://platform.kimi.ai/docs/guide/troubleshooting.md",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "Whether card payments are accepted on the international platform. The docs name only WeChat Pay and Alipay for individuals."
+      ]
+    },
+    "deepseek": {
+      "verdict": "none",
+      "answer": "No. DeepSeek's API runs on a prepaid balance; calls fail once it is empty. A 'granted balance' is spent first, but DeepSeek publishes no amount or rules for it.",
+      "card": "yes",
+      "training": "unclear",
+      "whatsFree": "Nothing published",
+      "updated": "2026-10-05",
+      "basis": {
+        "verdict": ["deepseek-balance", "deepseek-402"],
+        "card": ["deepseek-top-up", "deepseek-402"],
+        "training": ["deepseek-privacy"]
+      },
+      "facts": [
+        {
+          "id": "deepseek-balance",
+          "topic": "free",
+          "statement": "Fees come out of your topped-up balance or a granted balance, with the granted balance used first.",
+          "quote": "The corresponding fees will be directly deducted from your topped-up balance or granted balance, with a preference for using the granted balance first when both balances are available.",
+          "url": "https://api-docs.deepseek.com/quick_start/pricing",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "deepseek-402",
+          "topic": "card",
+          "statement": "With no balance left, the API returns an 'Insufficient Balance' error.",
+          "quote": "402 - Insufficient Balance",
+          "url": "https://api-docs.deepseek.com/quick_start/error_codes",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "deepseek-top-up",
+          "topic": "card",
+          "statement": "You top up online by PayPal, bank card, Alipay or WeChat Pay.",
+          "quote": "You can top up online via PayPal, bank card, Alipay, or WeChat Pay",
+          "url": "https://static.deepseek.com/faq/index.html?lang=en#/question/top-up",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "deepseek-limits",
+          "topic": "limits",
+          "statement": "DeepSeek publishes per-account concurrency limits: 2,500 concurrent requests for deepseek-flash and 500 for deepseek-v4-pro.",
+          "quote": "Concurrency Limit · 2500 · 500",
+          "url": "https://api-docs.deepseek.com/quick_start/rate_limit",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "deepseek-privacy",
+          "topic": "data",
+          "statement": "DeepSeek's privacy policy, which also covers its consumer app, lists training its models as a purpose. The API terms say nothing specific about training.",
+          "quote": "To improve and develop the Services and to train and improve our technology, such as our machine learning models and algorithms.",
+          "url": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
+          "readOn": "2026-10-05"
+        },
+        {
+          "id": "deepseek-tiers",
+          "topic": "upgrade",
+          "statement": "There are no tiered plans; higher limits are requested.",
+          "quote": "There is a unified pricing standard and no tiered plans.",
+          "url": "https://static.deepseek.com/faq/index.html?lang=en#/question/rate-limits",
+          "readOn": "2026-10-05"
+        }
+      ],
+      "unpublished": [
+        "The amount, eligibility and expiry of any granted balance for new accounts.",
+        "Whether the privacy policy's training purpose applies to API inputs specifically."
+      ]
+    }
+  }
+}
