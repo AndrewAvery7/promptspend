@@ -16,7 +16,7 @@ The native app has no account system, advertising SDK, behavioral analytics, cro
 
 The native app may store appearance choices, onboarding state, saved scenarios, watched models, and a time-limited copy of the public pricing catalog. Saved scenarios contain model choices, numeric workload values, scale, and cost assumptions. They do not contain pasted prompt or response text. You can remove saved scenarios in the app; uninstalling the app removes its local app data subject to the operating system's normal backup and deletion behavior.
 
-On the website, prompt text is processed in the browser. PromptSpend does not place raw pasted text in shared links or browser storage. The website may store interface preferences and numeric scenario values locally in your browser.
+On the website, prompt text is processed in the browser. PromptSpend does not place raw pasted text in shared links or browser storage. The website stores only interface preferences in your browser: your theme, accent and background choices, and whether you dismissed the welcome and apps banners. A scenario's numeric values appear in the page address when you share a link, never your text.
 
 ## Network requests
 

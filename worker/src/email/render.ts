@@ -118,7 +118,7 @@ function footerHtml(unsubscribeUrl: string, preferencesUrl: string, siteUrl: str
   return `<p style="margin:0 0 8px;">You are getting this because you asked PromptSpend to tell you when LLM prices move.
 <a href="${escapeHtml(preferencesUrl)}" style="color:${BRAND};">Change what you get</a> ·
 <a href="${escapeHtml(unsubscribeUrl)}" style="color:${BRAND};">Unsubscribe</a></p>
-<p style="margin:0;">No tracking pixels, no click tracking, no third parties. <a href="${escapeHtml(siteUrl)}" style="color:${BRAND};">${escapeHtml(siteUrl.replace(/^https:\/\//, ''))}</a></p>`;
+<p style="margin:0;">No tracking pixels, no click tracking. <a href="${escapeHtml(siteUrl)}" style="color:${BRAND};">${escapeHtml(siteUrl.replace(/^https:\/\//, ''))}</a></p>`;
 }
 
 function footerText(unsubscribeUrl: string, preferencesUrl: string, siteUrl: string): string {
@@ -127,7 +127,7 @@ You are getting this because you asked PromptSpend to tell you when LLM prices m
 Change what you get: ${preferencesUrl}
 Unsubscribe:         ${unsubscribeUrl}
 
-No tracking pixels, no click tracking, no third parties.
+No tracking pixels, no click tracking.
 ${siteUrl}`;
 }
 

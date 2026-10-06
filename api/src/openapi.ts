@@ -194,7 +194,7 @@ export function openApiDocument(origin: string): unknown {
         'standard-tier, global-endpoint list prices in USD per 1,000,000 tokens. Regional premiums,',
         'priority tiers, server-side tool fees and negotiated discounts are not included.',
         '',
-        'No key, no rate limit, no logging of who calls it. Attribution is appreciated, not required.',
+        'No key, no account, no rate limit. Attribution is appreciated, not required.',
       ].join('\n'),
       license: { name: 'MIT', url: 'https://github.com/AndrewAvery7/promptspend/blob/main/LICENSE' },
       contact: { name: 'PromptSpend', url: 'https://github.com/AndrewAvery7/promptspend' },

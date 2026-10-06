@@ -1,9 +1,12 @@
 # Security policy
 
 PromptSpend is a static site with no accounts and no login. The calculator itself
-sends nothing anywhere, which removes most of the usual attack surface. (The only
-remote origin the pages load from is `https://launchnest.io`, for one badge image,
-admitted by `img-src` alone.)
+sends nothing anywhere, which removes most of the usual attack surface. The pages
+load from two remote origins: `https://launchnest.io`, for one badge image
+(`img-src` only), and `https://static.cloudflareinsights.com`, the Cloudflare Web
+Analytics beacon (`script-src`), which reports only to the site's own
+`/cdn-cgi/rum`. Where the alerts API is configured, Turnstile's
+`https://challenges.cloudflare.com` is admitted too.
 
 There are two servers, both Cloudflare Workers, and only one of them holds
 anything:
@@ -51,8 +54,9 @@ in spare time, so please allow a reasonable window before disclosing publicly.
 - **Anything that could transmit a pasted prompt.** Prompt text is the only
   sensitive data the page ever holds. It is never sent anywhere. The Content
   Security Policy is generated at build time (`vite.config.ts`) and opens
-  `connect-src` for the alerts API origin and nothing else, so a compromised
-  dependency still has nowhere to send it.
+  `connect-src` only for the alerts API origin and Turnstile's
+  `challenges.cloudflare.com`, so a compromised dependency has nowhere of its
+  own to send it.
 - **The alerts API.** Specifically: forging or replaying a `/v1/notify` call;
   using a confirm, unsubscribe or preferences token for a purpose or a
   subscriber it was not issued for; subscribing an address somebody does not
@@ -87,8 +91,9 @@ reports page address, referrer, country and timings to the site's own
 script on the page can post to a remote collector. Pasted prompt text stays in the tab: it is
 tokenised locally, is deliberately excluded from the shareable URL, and is held
 in a bounded in-memory cache that is cleared when the scenario is reset and
-discarded when the tab closes. `localStorage` holds two things: whether the
-welcome banner was dismissed, and your theme and accent choice.
+discarded when the tab closes. `localStorage` holds only interface choices:
+theme, accent and background, and whether the welcome and apps banners were
+dismissed.
 
 If — and only if — you subscribe to price alerts, the alerts database holds:
 
@@ -96,7 +101,8 @@ If — and only if — you subscribe to price alerts, the alerts database holds:
   encryption keys, plus the models you follow. Nothing that identifies a person.
 - **Email:** your address, the models you follow, your cadence, and the date you
   subscribed. Consent is recorded as a salted hash of the IP, never the address
-  itself. No name, no opens, no clicks, no third-party processor.
+  itself. No name, no opens, no clicks. Cloudflare hosts the database and
+  sends the mail; no other company receives the record.
 
 Unsubscribing deletes the row and the follow list rather than flagging them.
 Addresses that never confirm are deleted within a week.

@@ -24,8 +24,9 @@ the code, and README.md was corrected at the time. This file and SECURITY.md wer
 ordinary way a document goes wrong: nobody re-reads the paragraph they are not editing.
 
 Neither Worker is in the path of the estimator. Close the alerts form and the site is still a static page
-that sends nothing anywhere (its one remote request is the footer's LaunchNest badge image, which
-carries no data). There is still no account system.
+that sends nothing you type anywhere. Its remote requests are the footer's LaunchNest badge image,
+which carries no data, and Cloudflare's Web Analytics beacon, which reports page views to the site's
+own `/cdn-cgi/rum`. There is still no account system.
 
 ## The data pipeline (`scripts/`)
 

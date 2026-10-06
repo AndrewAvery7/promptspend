@@ -130,8 +130,9 @@ claude mcp add promptspend -- npx -y @promptspend/mcp
   grace period, the tools return an error rather than an old number.
 - **It has no benchmarks, latency or endpoint data.** Other servers do. Three
   tools is a deliberate choice about your context budget.
-- **It does not track you.** No key, no account, no logging of who calls it —
-  the same promise as [the API](https://promptspend.dev) it reads.
+- **It has no telemetry.** The server itself reports nothing about you, and
+  needs no key and no account — the same as [the API](https://promptspend.dev)
+  it reads.
 
 ## Scope of the prices
 

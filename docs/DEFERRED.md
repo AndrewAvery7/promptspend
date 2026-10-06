@@ -78,6 +78,13 @@ reseller's price as the vendor's, which for these providers runs 20–50% adrift
 Missing a model for a few days costs less than publishing a number that is wrong
 and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 
+> **Superseded 2026-10-05 and 2026-10-06.** The owner approved cookieless
+> Cloudflare Web Analytics for the website on 2026-10-05, and on 2026-10-06
+> decided to allow full analytics with cookies (behind a consent banner), the
+> site's own scripts on every page, planning for accounts, and clearly labelled
+> sponsors kept out of the price data. The promises quoted below have been
+> rewritten. The reasoning is kept as the record of why it was once refused.
+
 **Analytics on either host, for launch measurement.** Considered because a
 launch is the one moment traffic is worth watching closely, and rejected
 because the site makes an explicit, unscoped promise not to. README.md:434
