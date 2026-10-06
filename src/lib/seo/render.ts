@@ -1258,7 +1258,7 @@ export function renderAppPage(ctx: RenderContext): string {
           </ul>
 
           <h2>Private by design</h2>
-          <p>Text you paste is processed on your phone and is not uploaded or saved by PromptSpend. There is no account, advertising SDK, behavioural analytics or tracking identifier. The details are in the <a href="${escapeHtml(href(ctx, '/privacy/'))}">privacy policy</a>.</p>
+          <p>Text you paste is processed on your phone and is not uploaded or saved by PromptSpend. There is no account, advertising SDK, behavioural analytics or cross-app tracking, and the random installation code the update check carries is not read, logged or stored. The details are in the <a href="${escapeHtml(href(ctx, '/privacy/'))}">privacy policy</a>.</p>
 
           <h2>Rather use the browser?</h2>
           <p>Nothing to install: <a href="${escapeHtml(href(ctx, '/'))}">the PromptSpend calculator</a> runs the same estimates in any browser.</p>

@@ -95,9 +95,9 @@ current the data is without taking anyone's word for it.
 
 ## Privacy
 
-Nothing is sent anywhere. The extension makes exactly one network request — a
-`GET` for the public pricing catalog — and reads your files only in memory to
-find model ids. No telemetry, no account, no prompt text leaves your machine.
+Nothing about your code or prompts is sent anywhere. The extension makes exactly
+one network request — a `GET` for the public pricing catalog — and reads your
+files only in memory to find model ids. No telemetry, no account, no prompt text leaves your machine.
 Token counting runs locally, using the model's own tokenizer where one can be
 run and a clearly labelled ratio where it cannot.
 

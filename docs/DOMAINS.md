@@ -95,6 +95,12 @@ On `promptspend.com`:
 > the certificate challenge GitHub uses, and produces redirect loops when
 > Cloudflare's TLS mode and GitHub's HTTPS enforcement disagree. Every other
 > site on this account is already DNS-only for the same reason.
+>
+> **Update 2026-10-06:** the table above is the original cutover state. The
+> live apex now answers with `Server: cloudflare` and GitHub's request headers
+> together, i.e. it is proxied in front of GitHub Pages, which is how Cloudflare
+> Web Analytics' automatic setup injects its beacon (see `vite.config.ts`). The
+> privacy policy therefore names both: GitHub Pages hosts, Cloudflare serves.
 
 Verify before continuing:
 
