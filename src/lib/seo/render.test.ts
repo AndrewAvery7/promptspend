@@ -3,6 +3,7 @@ import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
 import { buildPages } from './pages';
 import {
+  layout,
   escapeHtml,
   renderAppPage,
   renderComparisonPage,
@@ -113,7 +114,7 @@ describe('rendered pages', () => {
       const emitted = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1];
       expect(emitted).toBeDefined();
       expect(ctx.hashed).toContain(emitted);
-      expect(html).toContain(`script-src &#39;sha256-LEN${emitted!.length}&#39;`);
+      expect(html).toContain(`script-src &#39;self&#39; &#39;sha256-LEN${emitted!.length}&#39;`);
     }
   });
 
@@ -340,10 +341,26 @@ describe('rendered pages', () => {
       // ...and Cloudflare Web Analytics' beacon script, which may load but may
       // post only to this site: connect-src admits nothing remote.
       const beacon = ' https://static.cloudflareinsights.com;';
-      expect(csp).toMatch(/script-src &#39;sha256-[^&]*&#39; https:\/\/static\.cloudflareinsights\.com;/);
+      // Since 2026-10-06 the pages may also load PromptSpend's own scripts:
+      // 'self', still with no unsafe-inline and no other remote origin.
+      expect(csp).toMatch(
+        /script-src &#39;self&#39; &#39;sha256-[^&]*&#39; https:\/\/static\.cloudflareinsights\.com;/,
+      );
       expect(csp).toContain('connect-src &#39;self&#39;;');
       expect(csp.replace(img, '').replace(beacon, ';')).not.toContain('http');
     }
+  });
+
+  it("loads a page's own scripts from this site, and refuses anything remote", () => {
+    const ctx = recordingContext({ basePath: '/promptspend/' });
+    const page = { path: '/x/', title: 't', description: 'd', graph: [], body: '<main id="main"></main>' };
+    const html = layout(ctx, { ...page, scripts: ['/assets/chart-abc.js'] });
+    expect(html).toContain('<script type="module" src="/promptspend/assets/chart-abc.js"></script>');
+    expect(layout(ctx, page).match(/<script/g)).toHaveLength(1);
+    expect(() => layout(ctx, { ...page, scripts: ['https://cdn.example/x.js'] })).toThrow(
+      /path on this site/,
+    );
+    expect(() => layout(ctx, { ...page, scripts: ['//cdn.example/x.js'] })).toThrow(/path on this site/);
   });
 
   it('never marks an ordinary page noindex', () => {
