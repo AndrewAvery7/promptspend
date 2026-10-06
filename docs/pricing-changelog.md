@@ -1058,3 +1058,7 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-10-05
 
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (76%): $0.72/$13 vs $3/$15 → OpenRouter disagrees (78%): $0.67/$14 vs $3/$15
+
+## 2026-10-06
+
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (78%): $0.67/$14 vs $3/$15 → OpenRouter disagrees (68%): $0.95/$14 vs $3/$15
