@@ -127,10 +127,13 @@ the page code by hand, run `--fix` and commit the file with your change.
 
 ## Three constraints, each the reason for the next
 
-1. **No JavaScript.** These pages state numbers. A React bundle to render static
-   text would cost every visitor a download and make the content invisible to
-   anything that does not run scripts. The only `<script>` is the JSON-LD data
-   block, which is not executed.
+1. **Complete without JavaScript.** These pages state numbers, and every one of
+   them is in the HTML, so a crawler or a reader with scripts off gets the whole
+   page. Since 2026-10-06 (owner decision) a page may add PromptSpend's own
+   scripts on top, from this site only (`script-src 'self'`, via `layout`'s
+   `scripts` option), to make a chart interactive or a table filterable.
+   Enhancement, never content: the no-JavaScript browser tests stay. The only
+   inline `<script>` is the JSON-LD data block, which is not executed.
 2. **Therefore a very tight policy** — `default-src 'none'`, with the JSON-LD
    admitted by its exact SHA-256 rather than `'unsafe-inline'`. The hash is
    computed over the string that is actually emitted, so the two cannot drift.

@@ -3,13 +3,15 @@
  *
  * Three deliberate constraints, each of which is the reason for the next:
  *
- * 1. **No JavaScript.** These pages state numbers. A React bundle to render
- *    static text would cost every visitor a download and every crawler a render
- *    pass, and would make the content invisible to anything that does not run
- *    scripts. The only `<script>` in the page we emit is the JSON-LD data block,
- *    which is not executed. Cloudflare adds one more as it serves the page: the
- *    Web Analytics beacon (owner-approved 2026-10-05), which counts the visit
- *    and reports to the site's own `/cdn-cgi/rum`. The page works without it.
+ * 1. **Complete without JavaScript.** These pages state numbers, and every one
+ *    of them must be in the HTML: a crawler, a reader on a hostile network and
+ *    anything that does not run scripts all get the whole page. Since
+ *    2026-10-06 (owner decision) a page may add *PromptSpend's own* scripts on
+ *    top, served from this site (`script-src 'self'`), to make a chart
+ *    interactive or a table filterable — enhancement, never content. No inline
+ *    script and no third-party script beyond the approved beacon: the
+ *    JSON-LD data block is admitted by its hash, and Cloudflare adds the Web
+ *    Analytics beacon (owner-approved 2026-10-05) as it serves the page.
  * 2. **Therefore a very tight Content Security Policy** — `default-src 'none'`,
  *    with the JSON-LD admitted by its exact SHA-256 rather than by
  *    `'unsafe-inline'`. The hash is computed over the string that is actually
@@ -184,7 +186,7 @@ function breadcrumbLd(ctx: RenderContext, crumbs: Crumb[], selfPath: string): un
   };
 }
 
-interface LayoutInput {
+export interface LayoutInput {
   path: string;
   /** Where the canonical link points, when it is not `path` itself. Only a
    *  `noindex` signpost should ever set this; see `renderRetiredComparisonPage`. */
@@ -200,6 +202,13 @@ interface LayoutInput {
   graph: unknown[];
   body: string;
   /**
+   * PromptSpend's own scripts for this page, as site paths (`/assets/x.js`),
+   * loaded as deferred modules from this origin. Enhancement only: the page
+   * must read completely without them, which the no-JavaScript browser tests
+   * check. Never a remote URL; `layout` refuses one rather than widen the policy.
+   */
+  scripts?: readonly string[];
+  /**
    * The directory-listing badges in the footer. On by default, and they must
    * stay on the pages the directories verify (`/models/` and the other catalog
    * pages: the calculator's own footer is drawn by script, so a fetch-only
@@ -209,17 +218,23 @@ interface LayoutInput {
   listingBadges?: boolean;
 }
 
-function layout(ctx: RenderContext, input: LayoutInput): string {
+export function layout(ctx: RenderContext, input: LayoutInput): string {
   const canonical = absolute(ctx, input.canonicalPath ?? input.path);
   const ld = jsonForScript({ '@context': 'https://schema.org', '@graph': input.graph });
-  // The policy names the data block by its own hash. `'unsafe-inline'` would be
-  // one word shorter and would also permit every future inline script, on pages
-  // that are supposed to have none.
+  const scripts = input.scripts ?? [];
+  for (const src of scripts) {
+    if (!src.startsWith('/') || src.startsWith('//')) {
+      throw new Error(`layout: script "${src}" must be a path on this site, not a URL`);
+    }
+  }
+  // `'self'` admits PromptSpend's own script files. The data block is named by
+  // its own hash: `'unsafe-inline'` would be one word shorter and would also
+  // permit every future inline script, which nothing here needs.
   const csp = [
     "default-src 'none'",
     "style-src 'self'",
     "img-src 'self' data: https://launchnest.io",
-    `script-src 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com`,
+    `script-src 'self' 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com`,
     "connect-src 'self'",
     "base-uri 'self'",
     "form-action 'none'",
@@ -248,7 +263,7 @@ ${input.extraHead ?? ''}    <meta property="og:type" content="article" />
     <link rel="stylesheet" href="${escapeHtml(href(ctx, ctx.cssPath))}" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1.5' y='1.5' width='23' height='23' rx='6' fill='none' stroke='%232456E6' stroke-width='2'/%3E%3Cpath d='M7 9.5h12M7 13.5h8M7 17.5h10' stroke='%232456E6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
     <script type="application/ld+json">${ld}</script>
-  </head>
+${scripts.map((src) => `    <script type="module" src="${escapeHtml(href(ctx, src))}"></script>\n`).join('')}  </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <div class="wrap">
