@@ -3,7 +3,7 @@ slug: privacy
 title: Privacy Policy | PromptSpend
 description: How PromptSpend handles pasted text, local app data, public pricing requests, app updates, sharing, alerts, and support communications.
 heading: Privacy Policy
-updated: 2026-10-05
+updated: 2026-10-06
 ---
 
 PromptSpend is designed to estimate AI costs without turning your prompts into our data. This policy covers the PromptSpend native apps, website, pricing API, and optional alert and support services.
@@ -16,7 +16,7 @@ The native app has no account system, advertising SDK, behavioral analytics, cro
 
 The native app may store appearance choices, onboarding state, saved scenarios, watched models, and a time-limited copy of the public pricing catalog. Saved scenarios contain model choices, numeric workload values, scale, and cost assumptions. They do not contain pasted prompt or response text. You can remove saved scenarios in the app; uninstalling the app removes its local app data subject to the operating system's normal backup and deletion behavior.
 
-On the website, prompt text is processed in the browser. PromptSpend does not place raw pasted text in shared links or browser storage. The website stores only interface preferences in your browser: your theme, accent and background choices, and whether you dismissed the welcome and apps banners. A scenario's numeric values appear in the page address when you share a link, never your text.
+On the website, prompt text is processed in the browser. PromptSpend does not place raw pasted text in shared links or browser storage. The website stores only interface preferences in your browser: your theme, accent and background choices, and whether you dismissed the welcome and apps banners. The page address always mirrors your current scenario, meaning the models you chose and numeric workload values, so that a link can recreate it. It never contains your text.
 
 ## Network requests
 
@@ -26,7 +26,7 @@ The website's footer shows a badge for PromptSpend's listing on LaunchNest, a pr
 
 ## Website visit statistics
 
-The website, promptspend.com, counts visits with Cloudflare Web Analytics, so we can see which pages are read and which sites send visitors. Each page loads a small script from static.cloudflareinsights.com that reports the page's address, the referring site, your browser and device type, your country, and how quickly the page loaded. It sets no cookies, uses no local storage, and does not build a profile of you or follow you across other websites. We see only totals, such as page views per day and the top referring sites, never an individual visit. The script never reads text you paste into the estimator, and PromptSpend never places pasted text in a page address. Cloudflare also hosts the website and counts the requests it serves, as any host does.
+The website, promptspend.com, counts visits with Cloudflare Web Analytics, so we can see which pages are read and which sites send visitors. Each page loads a small script from static.cloudflareinsights.com that reports the page's address without anything after a question mark or a hash sign, the referring site, your browser and device type, your country, and how quickly the page loaded, along with an identifier for that single page load. It sets no cookies, uses no local storage, and does not build a profile of you or follow you across other websites. The reports we read are totals, such as page views per day and the top referring sites, not individual visits. The script never reads text you paste into the estimator, and PromptSpend never places pasted text in a page address. Cloudflare also hosts the website and counts the requests it serves, as any host does.
 
 This applies to the website only. The native apps, the VS Code extension, and the pricing API contain no analytics.
 
@@ -44,7 +44,11 @@ Links to provider evidence, documentation, alerts, source code, or other resourc
 
 You may subscribe to email price alerts from the native app or website. The alert service stores the email address, delivery cadence, followed-model choices, confirmation status, and consent time needed to deliver the service. It also stores a keyed hash of the connection address for abuse prevention rather than the original network address. Cloudflare provides the database, bot-verification, hosting, and email-delivery infrastructure used for this service and processes the data under PromptSpend's instructions.
 
-New subscriptions require email confirmation. Unconfirmed subscriptions are deleted after seven days. Short-lived management codes expire after 10 minutes, and an in-app management credential expires after 30 minutes. A confirmed email subscription remains until you unsubscribe; unsubscribing deletes the address, preferences, follows, and active management codes from the alert database. Alert emails use no tracking pixels or click tracking. Native push notifications are not included in the current app release.
+New subscriptions require email confirmation. Unconfirmed subscriptions are deleted after seven days. Short-lived management codes expire after 10 minutes, and an in-app management credential expires after 30 minutes. A confirmed email subscription remains until you unsubscribe; unsubscribing deletes the address, preferences, follows, and active management codes from the alert database. Alert emails use no tracking pixels or click tracking.
+
+You can also turn on browser push notifications on the website. For that, the alert service stores the opaque subscription address your browser generates for the push service, its two encryption keys, and the models you follow, and nothing that identifies you. Unsubscribing, or the push service reporting the subscription as gone, deletes it. Native push notifications are not included in the current app release.
+
+Alert links carry a private token in their web address. For that reason the alert service's per-request logging is switched off, and its own diagnostic messages record counts and error types, never email addresses or tokens.
 
 ## Mobile app launch notification
 
@@ -66,7 +70,9 @@ PromptSpend is a technical cost-planning tool and is not directed to children un
 
 ## Security and retention
 
-PromptSpend minimizes collection, uses HTTPS for network traffic, and keeps private prompt processing on-device. No system is perfectly secure. Local app data remains until you remove it or uninstall the app. Alert records follow the time limits described above; operational security logs may be retained for the limited period used by the infrastructure provider to deliver, protect, and troubleshoot the service.
+PromptSpend minimizes collection, uses HTTPS for network traffic, and keeps private prompt processing on-device. No system is perfectly secure. Local app data remains until you remove it or uninstall the app. Alert records follow the time limits described above.
+
+The public pricing API, at promptspend.dev, has Cloudflare's request logging switched on so we can diagnose faults. A request log can include the address requested, the time, and connection details such as an IP address, and Cloudflare keeps these logs for up to seven days. The pricing API needs no account or key and its addresses carry no secrets. PromptSpend keeps no request logs for the website's pages, and the update server's logging is switched off; their hosts process ordinary connection information as described under Network requests.
 
 ## Changes and contact
 

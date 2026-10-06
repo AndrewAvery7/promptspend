@@ -87,9 +87,9 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 
 **Analytics on either host, for launch measurement.** Considered because a
 launch is the one moment traffic is worth watching closely, and rejected
-because the site makes an explicit, unscoped promise not to. README.md:434
-says "No accounts, no analytics, no cookies"; SECURITY.md:80's Data handling
-section — which covers the whole project, not just the calculator page — says
+because the site made an explicit, unscoped promise not to. README.md:434
+said "No accounts, no analytics, no cookies"; SECURITY.md:80's Data handling
+section — which covers the whole project, not just the calculator page — said
 "There is no analytics and no cookie"; the `og:description` every share
 renders (index.html:52) tells the reader the same thing before they have even
 clicked through. None of the three scope the promise to `promptspend.com`, so
@@ -115,7 +115,7 @@ only. So "it's cookieless, Cloudflare says so" is not a citable fact from the
 page a build would actually follow; treat it as marketing copy, not
 documentation, if it comes up again.
 
-Decision: launch measurement stays confined to the two instruments already in
+Decision at the time (superseded by the notice above): launch measurement stays confined to the two instruments already in
 place — Search Console (organic impressions and clicks, already tracked
 weekly per the section above) and the GitHub traffic API (views, clones,
 referrers, 14-day retention). That means no visibility into on-site

@@ -44,7 +44,8 @@ export default defineConfig({
     // The built site contains no analytics (in production Cloudflare injects
     // its Web Analytics beacon at the edge, which a local server never does),
     // and the tests should not invent any traffic to third parties either;
-    // anything unexpected is a finding, not noise.
+    // anything unexpected is a finding, not noise. tests/e2e/privacy.spec.ts is
+    // what holds the "no cookies, no stored identifiers" promise to account.
     bypassCSP: false,
   },
 

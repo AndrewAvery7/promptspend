@@ -1,10 +1,10 @@
 # PromptSpend Store Release Package
 
-Status: Android release-candidate preparation; copy and evidence are
-implementation-ready, but production declarations remain unsubmitted until
-the exact Play candidate and physical-device evidence are final.
+Status: both apps are live (Android since 2026-10-02, iOS since 2026-10-03).
+The declarations below are the ones submitted; review them against the privacy
+policy before any resubmission.
 
-Last reviewed: 2026-09-09
+Last reviewed: 2026-10-06
 
 ## Sources of truth
 

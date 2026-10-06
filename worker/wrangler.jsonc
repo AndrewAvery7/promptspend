@@ -3,7 +3,13 @@
   "name": "promptspend-alerts",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-01",
-  "observability": { "enabled": true },
+  // Per-request logs are off on purpose. Every alert link (confirm, unsubscribe,
+  // preferences) carries a private token in its query string, and a request log
+  // line records the URL. What stays on is the Worker's own console output,
+  // which logs counts and error types and never an address or a token. The
+  // privacy policy and README say this; turning invocation logs back on makes
+  // both untrue. (The pricing API keeps its request logs: no secrets in its URLs.)
+  "observability": { "enabled": true, "logs": { "invocation_logs": false } },
 
   // The API lives on .dev; the app lives on .com. Keeping them apart means the
   // marketing domain never carries API traffic or its CORS surface.

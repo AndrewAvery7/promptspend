@@ -1,7 +1,7 @@
 # Security policy
 
-PromptSpend is a static site with no accounts and no login. The calculator itself
-sends nothing anywhere, which removes most of the usual attack surface. The pages
+PromptSpend is a static site with no accounts and no login. Nothing a visitor types or
+pastes into the calculator is sent anywhere, which removes most of the usual attack surface. The pages
 load from two remote origins: `https://launchnest.io`, for one badge image
 (`img-src` only), and `https://static.cloudflareinsights.com`, the Cloudflare Web
 Analytics beacon (`script-src`), which reports only to the site's own
