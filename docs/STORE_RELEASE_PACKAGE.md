@@ -1,8 +1,10 @@
 # PromptSpend Store Release Package
 
-Status: both apps are live (Android since 2026-10-02, iOS since 2026-10-03).
-The declarations below are the ones submitted; review them against the privacy
-policy before any resubmission.
+Status: both apps are live in the stores. The sections below were written
+before launch and are kept as the record of what was submitted: where they say
+"provisional", "recommended" or "not certified yet", the apps have since
+launched. Review every declaration against the privacy policy before any
+resubmission.
 
 Last reviewed: 2026-10-06
 

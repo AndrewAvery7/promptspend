@@ -10,7 +10,7 @@ PromptSpend is designed to estimate AI costs without turning your prompts into o
 
 ## The short version
 
-The native app has no account system, advertising SDK, behavioral analytics, cross-app tracking, or tracking identifier. The random installation code its update check carries, described under App updates, is never stored or used to identify you. Text pasted into the estimator is processed on your device. PromptSpend does not transmit or save that pasted text. You choose whether to share a result, and shared results contain derived counts and costs rather than the pasted text. If you opt into email alerts, the app sends the email address and alert choices you enter to the PromptSpend alert service solely to provide and secure that feature.
+The native app has no account system, advertising SDK, behavioral analytics, cross-app tracking, or tracking identifier. The random installation code its update check carries, described under App updates, is not read, logged, or stored by PromptSpend and is not used to identify you. Text pasted into the estimator is processed on your device. PromptSpend does not transmit or save that pasted text. You choose whether to share a result, and shared results contain derived counts and costs rather than the pasted text. If you opt into email alerts, the app sends the email address and alert choices you enter to the PromptSpend alert service solely to provide and secure that feature.
 
 ## Information that stays on your device
 
@@ -26,7 +26,7 @@ The website's footer shows a badge for PromptSpend's listing on LaunchNest, a pr
 
 ## Website visit statistics
 
-The website, promptspend.com, counts visits with Cloudflare Web Analytics, so we can see which pages are read and which sites send visitors. Each page loads a small script from static.cloudflareinsights.com that reports the page's address without anything after a question mark or a hash sign, the referring site, your browser and device type, your country, and how quickly the page loaded, along with an identifier for that single page load. It sets no cookies, uses no local storage, and does not build a profile of you or follow you across other websites. The reports we read are totals, such as page views per day and the top referring sites, not individual visits. The script never reads text you paste into the estimator, and PromptSpend never places pasted text in a page address. Cloudflare also hosts the website and counts the requests it serves, as any host does.
+The website, promptspend.com, counts visits with Cloudflare Web Analytics, so we can see which pages are read and which sites send visitors. Each page loads a small script from static.cloudflareinsights.com that reports the page's address without anything after a question mark or a hash sign, the referring site, your browser and device type, your country, and how quickly the page loaded, along with an identifier for that single page load. It sets no cookies, uses no local storage, and does not build a profile of you or follow you across other websites. The reports we read are totals, such as page views per day and the top referring sites, not individual visits. The script never reads text you paste into the estimator, and PromptSpend never places pasted text in a page address. The website is hosted by GitHub Pages and served through Cloudflare, so both process ordinary connection information, such as an IP address, when a page is requested, as any host does.
 
 This applies to the website only. The native apps, the VS Code extension, and the pricing API contain no analytics.
 
@@ -48,7 +48,7 @@ New subscriptions require email confirmation. Unconfirmed subscriptions are dele
 
 You can also turn on browser push notifications on the website. For that, the alert service stores the opaque subscription address your browser generates for the push service, its two encryption keys, and the models you follow, and nothing that identifies you. Unsubscribing, or the push service reporting the subscription as gone, deletes it. Native push notifications are not included in the current app release.
 
-Alert links carry a private token in their web address. For that reason the alert service's per-request logging is switched off, and its own diagnostic messages record counts and error types, never email addresses or tokens.
+Alert links carry a private token in their web address. For that reason the alert service's per-request logging is switched off, and its own diagnostic messages are written to record counts, internal identifiers and error types rather than email addresses or tokens, and Cloudflare keeps them for the same limited period.
 
 ## Mobile app launch notification
 

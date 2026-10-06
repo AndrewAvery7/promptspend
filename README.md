@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-81-2456E6.svg" alt="81 models tracked">
   <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-1420-blue.svg" alt="1420 tests">
+  <img src="https://img.shields.io/badge/tests-1432-blue.svg" alt="1432 tests">
   <img src="https://img.shields.io/badge/initial%20payload-99%20KB%20gzip-blue.svg" alt="99 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -408,7 +408,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1420 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1432 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 189 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live                             |
@@ -500,7 +500,8 @@ and they are the only reason this project has a server at all
   address, no name, nothing that identifies you.
 - **Request logs.** Alert links carry a private token in their address, so the alerts Worker keeps no
   per-request logs (`invocation_logs` is off) and its own messages log counts and error types, never an
-  address. The public pricing API keeps Cloudflare's request logs, retained for up to seven days, because
+  address. The public pricing API keeps Cloudflare's request logs, retained for up to seven days (Cloudflare's
+  published maximum), because
   its addresses carry no secrets and they are how faults get diagnosed.
 - **Email stores your address**, the models you follow, and the date you asked. That is the whole record.
   No name, no raw IP (consent is recorded as a salted hash), no opens, no clicks. Cloudflare hosts the

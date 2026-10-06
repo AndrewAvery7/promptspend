@@ -5,7 +5,8 @@ pastes into the calculator is sent anywhere, which removes most of the usual att
 load from two remote origins: `https://launchnest.io`, for one badge image
 (`img-src` only), and `https://static.cloudflareinsights.com`, the Cloudflare Web
 Analytics beacon (`script-src`), which reports only to the site's own
-`/cdn-cgi/rum`. Where the alerts API is configured, Turnstile's
+`/cdn-cgi/rum`, and reports a page's address without its query string or
+fragment. Where the alerts API is configured, Turnstile's
 `https://challenges.cloudflare.com` is admitted too.
 
 There are two servers, both Cloudflare Workers, and only one of them holds

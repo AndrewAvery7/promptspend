@@ -17,10 +17,15 @@ import { expect, test } from '@playwright/test';
  * never injected (it is added at the edge), so the visitor counter is not
  * exercised here; its behaviour was checked against the live site: it reports
  * the page's address without the query string or fragment.
+ *
+ * Not covered, on purpose: Cloudflare's Turnstile bot-check, which only loads
+ * when the build has an alerts API configured (the test build has none), and
+ * anything that happens only on the live domain. Those rest on the manual
+ * check recorded in the privacy page's history.
  */
 
 /** One of each kind of page a visitor can land on. */
-const PAGES = ['/', '/models/claude-opus-5/', '/free-tiers/', '/receipt/'] as const;
+const PAGES = ['/', '/models/claude-opus-5/', '/free-tiers/', '/receipt/', '/app/', '/privacy/'] as const;
 
 /** Every localStorage key the site may write, and why. Anything else is new. */
 const INTERFACE_KEYS = new Set([
