@@ -40,3 +40,7 @@ apps/mobile/expo-env.d.ts
 # Local traffic exports are diagnostic evidence and may be intentionally kept
 # outside version control. Never rewrite them during a repository format gate.
 referrers-*.json
+
+# Screenshots and page snapshots written by the browser tools while checking a
+# change. Local diagnostics, not source; they twice failed a local format gate.
+.playwright-mcp

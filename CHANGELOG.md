@@ -19,6 +19,11 @@ on their own schedule and are not releases.
 - **The LaunchNest listing badge loads from launchnest.io** (owner-approved 2026-10-05), with no
   referrer; its verifier refuses a local copy.
 
+- **Project automation** (`docs/AUTOMATION.md`): hooks that format every edited file and refuse hand edits to
+  generated data; a `/ship` command for the whole release chain; two read-only reviewers (source facts,
+  privacy claims); `check:test-badge -- --fix`, which rewrites stale test counts; and a workflow that
+  deploys the API and alerts Workers when their code changes.
+
 ### Changed
 
 - **The privacy wording now matches what the site does.** The apps page no longer says "no tracking" of a

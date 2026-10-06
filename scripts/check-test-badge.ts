@@ -31,15 +31,24 @@
  * workspace is built somewhere before it lands. A hard-coded list, or a
  * hard-coded number, is wrong on one branch or the other by construction.
  *
- *   npm run check:test-badge
+ *   npm run check:test-badge             # report every stale figure
+ *   npm run check:test-badge -- --fix    # rewrite the ones that are only numbers
+ *
+ * `--fix` changes figures and nothing else (see `lib/test-count-fix.ts`): the
+ * badge, its alt text, the totals, each suite's count and each per-file row's
+ * count. A row for a new test file needs a description of what it guards, which
+ * is a person's job, so that stays reported.
  */
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { readdir, readFile } from 'node:fs/promises';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, relative, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import * as prettier from 'prettier';
+import { applyEdits, browserStrayEdits, claimEdits, tableEdits, type Edit } from './lib/test-count-fix';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const FIX = process.argv.includes('--fix');
 
 /** How the root package and the browser run are named in the output. */
 const THIS_PACKAGE = 'this package';
@@ -394,6 +403,13 @@ async function main(): Promise<void> {
       pattern: prose('\\*\\*(\\d+) tests in all\\*\\*'),
       expected: total,
     },
+    // The documentation table's row for docs/TESTING.md names the total too.
+    {
+      file: 'README.md',
+      what: 'the documentation table count',
+      pattern: prose('What the (\\d+) tests cover'),
+      expected: total,
+    },
     ...suites.flatMap(claimsFor),
   ];
 
@@ -402,16 +418,50 @@ async function main(): Promise<void> {
   const permitted = new Map<number, string>([[total, 'in all']]);
   for (const { name, count } of suites) permitted.set(count, `in ${name}`);
 
-  const problems = [
+  const findProblems = (): string[] => [
     ...claims.flatMap((claim) => problemsWith(sources.get(claim.file)!, claim)),
     ...SWEPT.flatMap((file) => strayCounts(file, sources.get(file)!, permitted)),
     ...tableProblems(sources.get('docs/TESTING.md')!, rootByFile),
   ];
 
+  if (FIX) {
+    const browserCount = suites.find((suite) => suite.name === BROWSER)?.count ?? 0;
+    const edits = new Map<string, Edit[]>();
+    const add = (file: string, list: Edit[]): void =>
+      void edits.set(file, [...(edits.get(file) ?? []), ...list]);
+    for (const claim of claims)
+      add(claim.file, claimEdits(sources.get(claim.file)!, claim.pattern, claim.expected));
+    add('docs/TESTING.md', tableEdits(sources.get('docs/TESTING.md')!, TABLE_ROW, rootByFile));
+    for (const file of SWEPT) {
+      add(file, browserStrayEdits(sources.get(file)!, ANY_COUNT, browserCount, permitted));
+    }
+
+    let changed = 0;
+    for (const [file, list] of edits) {
+      if (list.length === 0) continue;
+      const path = resolve(ROOT, file);
+      // A figure that gains a digit widens its table column, so the result goes
+      // through Prettier: the file leaves this script as the format gate wants it.
+      const config = (await prettier.resolveConfig(path)) ?? {};
+      const text = await prettier.format(applyEdits(sources.get(file)!, list), { ...config, filepath: path });
+      await writeFile(path, text, 'utf8');
+      sources.set(file, text);
+      changed += 1;
+    }
+    console.log(changed > 0 ? `✎ rewrote the stale figures in ${changed} file(s)` : '✎ nothing to rewrite');
+  }
+
+  const problems = findProblems();
+
   if (problems.length > 0) {
     console.error('✗ published test counts are stale:');
     for (const problem of problems) console.error(`  - ${problem}`);
     console.error(`\n  The suites report ${total}: ${breakdown}.`);
+    console.error(
+      FIX
+        ? '\n  What is left needs a person: a row for a new test file wants a description of what it guards.'
+        : '\n  `npm run check:test-badge -- --fix` rewrites the figures that are only numbers.',
+    );
     process.exitCode = 1;
     return;
   }
