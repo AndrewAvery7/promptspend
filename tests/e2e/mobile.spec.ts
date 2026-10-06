@@ -81,6 +81,30 @@ test.describe('the app', () => {
   });
 });
 
+test('the main navigation scrolls instead of squashing its items', async ({ page }) => {
+  // On a phone the six nav items do not fit. They must keep their size and
+  // scroll sideways; they used to shrink, wrap onto several lines and overlap.
+  await page.goto('/');
+  const boxes = await page.locator('nav[aria-label="Main"] > *').evaluateAll((items) =>
+    items.map((item) => {
+      const box = item.getBoundingClientRect();
+      return { left: box.left, right: box.right, height: box.height, text: item.textContent ?? '' };
+    }),
+  );
+  expect(boxes.length).toBeGreaterThanOrEqual(6);
+  for (let i = 1; i < boxes.length; i += 1) {
+    expect(boxes[i]!.left, `${boxes[i]!.text} overlaps ${boxes[i - 1]!.text}`).toBeGreaterThanOrEqual(
+      boxes[i - 1]!.right - 0.5,
+    );
+  }
+  const tallest = Math.max(...boxes.map((box) => box.height));
+  const shortest = Math.min(...boxes.map((box) => box.height));
+  expect(tallest - shortest, 'a nav item has wrapped onto a second line').toBeLessThan(2);
+  await expect(
+    page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Free tiers' }),
+  ).toHaveAttribute('href', /\/free-tiers\/$/);
+});
+
 test.describe('the generated pages', () => {
   for (const { path, name } of GENERATED) {
     test(`${name} fits its viewport`, async ({ page }) => {

@@ -1,6 +1,7 @@
 import {
   APP_PAGE_URL,
   COMPARE_INDEX_URL,
+  FREE_TIERS_URL,
   CONTACT_EMAIL,
   DEVELOPER_HUB_URL,
   FAZIER_BADGE_DARK,
@@ -58,7 +59,8 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
             run JavaScript can read this catalog at all. */}
         <div>
           <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
-          <a href={COMPARE_INDEX_URL}>Comparisons</a> · <a href={DEVELOPER_HUB_URL}>Pricing API</a>
+          <a href={FREE_TIERS_URL}>Free tiers</a> · <a href={COMPARE_INDEX_URL}>Comparisons</a> ·{' '}
+          <a href={DEVELOPER_HUB_URL}>Pricing API</a>
         </div>
         {/* The places this catalog answers that are not a web page. The footer
             is the only row present on every view, so it is where somebody who

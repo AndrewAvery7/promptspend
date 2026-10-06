@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ACCENTS, type Accent, type Canvas, type Theme } from '@/state/useAppearance';
-import { APP_PAGE_URL, RECEIPT_URL } from '@/config';
+import { APP_PAGE_URL, FREE_TIERS_URL, RECEIPT_URL } from '@/config';
 
 export type ViewId = 'estimate' | 'compare' | 'learn' | 'data';
 
@@ -91,6 +91,7 @@ export function Header(props: HeaderProps) {
             </button>
           ))}
           <a href={RECEIPT_URL}>PromptSpend It</a>
+          <a href={FREE_TIERS_URL}>Free tiers</a>
         </nav>
 
         <div className="header__spacer" />

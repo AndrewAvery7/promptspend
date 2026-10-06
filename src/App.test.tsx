@@ -230,6 +230,33 @@ describe('App', () => {
     expect(await screen.findByText(/Every number shows its work/)).toBeInTheDocument();
   });
 
+  it('can be reached: the free-tier comparison is linked from the header, home page, footer, palette and Compare', async () => {
+    // Shipped once with links only on the generated pages, so nobody arriving
+    // at the calculator could find it. Owner review, 2026-10-06.
+    const user = userEvent.setup();
+    await renderApp();
+
+    const nav = screen.getByRole('navigation', { name: 'Main' });
+    expect(within(nav).getByRole('link', { name: 'Free tiers' })).toHaveAttribute('href', '/free-tiers/');
+    // The home page says it too, so a phone, where the nav scrolls, still shows it.
+    expect(screen.getAllByRole('link', { name: /which providers have a free tier/ })[0]).toHaveAttribute(
+      'href',
+      '/free-tiers/',
+    );
+    const footer = screen.getByRole('contentinfo');
+    expect(within(footer).getByRole('link', { name: 'Free tiers' })).toHaveAttribute('href', '/free-tiers/');
+
+    await user.click(screen.getByRole('button', { name: 'Compare' }));
+    const compare = await screen.findByRole('region', { name: /Price is a/ });
+    expect(within(compare).getByRole('link', { name: /which providers have a free tier/ })).toHaveAttribute(
+      'href',
+      '/free-tiers/',
+    );
+
+    await user.keyboard('{Control>}k{/Control}');
+    expect(await screen.findByText(/Compare free tiers/)).toBeInTheDocument();
+  });
+
   it('reports a failure to load prices instead of rendering empty numbers', async () => {
     vi.stubGlobal(
       'fetch',

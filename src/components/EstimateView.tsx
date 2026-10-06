@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Catalog } from '@/lib/pricing/catalog';
-import { APP_PAGE_URL, PRICING_SCOPE, RECEIPT_URL } from '@/config';
+import { APP_PAGE_URL, FREE_TIERS_URL, PRICING_SCOPE, RECEIPT_URL } from '@/config';
 import { csvDocument } from '@/lib/engine/csv';
 import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
 import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
@@ -104,6 +104,9 @@ export function EstimateView({
           <p className="subhead">
             Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s
             bill side by side — at your scale, from prices re-checked every morning.
+          </p>
+          <p className="subhead">
+            Want to try before you pay? <a href={FREE_TIERS_URL}>See which providers have a free tier</a>.
           </p>
           <Provenance catalog={catalog} onOpenData={onOpenData} />
         </div>

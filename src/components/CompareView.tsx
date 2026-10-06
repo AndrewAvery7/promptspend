@@ -8,6 +8,7 @@ import { CountryFilter } from './CountryFilter';
 import { CountryTag, countryName } from './Flag';
 import { Rate, useAsOf } from './PromoRate';
 import { rateOn } from '@/lib/pricing/promo';
+import { FREE_TIERS_URL } from '@/config';
 
 interface CompareViewProps {
   catalog: Catalog;
@@ -64,6 +65,10 @@ export function CompareView({
       <p className="subhead">
         Every model we track, mapped by what it costs. Choose a dot or a table row to add it to your estimate,
         and sort the table on any column.
+      </p>
+      <p className="subhead">
+        Want to try before you pay? <a href={FREE_TIERS_URL}>See which providers have a free tier</a>, in
+        their own words.
       </p>
       {/* Above the chart, not beside the table: it governs both, and a control
           that sits under the thing it filters reads as belonging to the table

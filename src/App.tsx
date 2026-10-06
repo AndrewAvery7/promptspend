@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Catalog, loadCatalog } from '@/lib/pricing/catalog';
-import { HEALTH_URL, PRICING_URL, REPO_URL } from '@/config';
+import { FREE_TIERS_URL, HEALTH_URL, PRICING_URL, REPO_URL } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useAppearance, ACCENTS } from '@/state/useAppearance';
@@ -192,6 +192,12 @@ function Workspace({ catalog }: { catalog: Catalog }) {
         label: appearance.theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode',
         kind: 'theme',
         run: appearance.toggleTheme,
+      },
+      {
+        id: 'free-tiers',
+        label: 'Compare free tiers: which providers let you start free',
+        kind: 'page',
+        run: () => window.location.assign(FREE_TIERS_URL),
       },
       {
         id: 'reset',

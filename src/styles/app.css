@@ -126,7 +126,10 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 16px;
+  /* 12px, not 16: with "Free tiers" in the nav (2026-10-06) the first row is
+   * six links, search, two pills and two icon buttons, and at a 1280px window
+   * 16px gaps pushed the icon buttons onto a row of their own. */
+  gap: 8px 12px;
 }
 
 /* The freshness line is the only thing allowed to wrap onto a second row.
@@ -161,14 +164,14 @@ textarea {
 .nav {
   display: flex;
   gap: 2px;
-  margin-left: 10px;
+  margin-left: 4px;
 }
 .nav button,
 .nav a {
   background: none;
   border: none;
   color: var(--muted);
-  padding: 8px 14px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 0.93rem;
@@ -3032,6 +3035,16 @@ code {
   }
   .nav::-webkit-scrollbar {
     display: none;
+  }
+  /* The nav scrolls sideways on a narrow screen rather than squeezing. Without
+   * this its items were flex children free to shrink, so on a phone "Data &
+   * Alerts" wrapped onto three lines and "Estimate" ran into "Compare" - the
+   * row never overflowed, so it never scrolled. Found 2026-10-06 when "Free
+   * tiers" made the row one item longer. */
+  .nav button,
+  .nav a {
+    flex: none;
+    white-space: nowrap;
   }
   .tour-toggle {
     display: none;
