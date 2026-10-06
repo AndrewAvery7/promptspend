@@ -94,6 +94,8 @@ jobs:
     steps:
       - name: Check for Cloudflare credentials
         id: creds
+        # Before checkout, so the job's `working-directory` does not exist yet.
+        working-directory: ${{ github.workspace }}
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "::warning title=The pricing API was not deployed::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are not set as repository secrets, so this run did nothing. Deploy by hand: cd api && npm run deploy. See docs/AUTOMATION.md."
@@ -152,6 +154,8 @@ jobs:
     steps:
       - name: Check for Cloudflare credentials
         id: creds
+        # Before checkout, so the job's `working-directory` does not exist yet.
+        working-directory: ${{ github.workspace }}
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "::warning title=The alerts Worker was not deployed::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are not set as repository secrets, so this run did nothing. Deploy by hand: cd worker && npm run deploy (npm run release if a migration changed). See docs/AUTOMATION.md."
@@ -163,6 +167,7 @@ jobs:
       # Never deploy code that may expect a schema the database does not have.
       - name: Stop if a migration changed
         if: steps.creds.outputs.ready == 'true' && needs.changes.outputs.migrations == 'true'
+        working-directory: ${{ github.workspace }}
         run: |
           echo "::error title=Apply the migration first::This push changed worker/migrations/. The alerts Worker was not deployed automatically, because the new code may expect tables the live database does not have yet. Run: cd worker && npm run release (it migrates the database, then deploys)."
           exit 1
