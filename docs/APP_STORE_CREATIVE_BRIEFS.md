@@ -1,7 +1,10 @@
 # App Store creative asset briefs: PromptSpend and Vialmetry
 
-Status: artwork PRODUCED for owner review (2026-10-07). Nothing has been uploaded to
-App Store Connect.
+Status: SUBMITTED (2026-10-07). All six images (three per app) are uploaded to the App
+Store Connect Asset Library and were submitted to App Review on 2026-10-07 (PromptSpend
+10:03, Vialmetry 10:04). Apple says review can take up to 48 hours and emails when it
+finishes. Check each app's live page after approval; the images show on iOS 27 and
+later only.
 Sources: Apple, "App Store asset best practices" and App Store Connect Help,
 "Creative assets specifications" (both read 2026-10-07).
 
@@ -16,9 +19,9 @@ tab before you build." (header) and "Compare AI model costs" (search); Vialmetry
 
 Files (all opaque RGB PNG, exact Apple sizes, verified by script):
 
-- PromptSpend: `apps/mobile/store/assets/apple/` (uncommitted)
-- Vialmetry: `.claude/worktrees/store-submit/docs/store/assets/apple/` in the Vialmetry
-  repo (uncommitted, on branch `claude/affectionate-wozniak-756j7q`)
+- PromptSpend: `apps/mobile/store/assets/apple/` (merged to `main`, PR 231)
+- Vialmetry: `docs/store/assets/apple/` in the Vialmetry repo (merged to
+  `mobile/production-foundation`, PR 4)
 
 Each folder holds `*-universal-16x9-5244x2950.png`, `*-header-21x9-3840x1646.png` and
 `*-search-3x2-3840x2560.png`. Simulated 21:9 and 3:2 crops of both universal files
@@ -39,9 +42,13 @@ locally from the same spec. The Figma Vialmetry frames still use the first, tigh
 crops (the vial-list panel and the map-panel bottom edge), so they trail the PNGs by
 two small edits.
 
-**Not yet verified:** how the images look in App Store Connect's product page preview,
-and whether Apple accepts the 16:9 universal file as a single upload for both slots
-(Apple's wording suggests yes).
+**Submission record.** Apple classified every upload correctly: the 21:9 file as Product
+Page Header, the 3:2 file as Search Results, and the 16:9 file as Search Results plus one
+more slot, which confirms the universal file works for both. Each app's three images
+went into one draft submission and were submitted together.
+
+**Still open:** the approval result, and how the images look on the live pages. The
+product page preview in App Store Connect was not checked before submitting.
 
 ## 1. What these assets are
 
