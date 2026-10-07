@@ -5,8 +5,8 @@ for a tool and the wrong shape for search: nobody types "LLM cost estimator" int
 Google. They type **"gpt-5.6 pricing"** and **"claude opus vs gemini pro cost"**.
 
 `scripts/build-pages.ts` gives every one of those questions a real page, built
-from the same catalog and costed by the same engine as the app. 189 of them
-today: 81 models, 12 providers, 93 comparisons, 3 indexes.
+from the same catalog and costed by the same engine as the app. 191 of them
+today: 83 models, 12 providers, 93 comparisons, 3 indexes.
 
 `/receipt/` is also a real crawlable page, but it is a product route rather than a catalog-generated page and
 is therefore not included in the page arithmetic below. Vite builds it from `receipt/index.html`; the
@@ -19,7 +19,7 @@ post-build step adds it to the sitemap and `llms.txt`.
 | URL                    | Count | Contains                                                            |
 | ---------------------- | ----- | ------------------------------------------------------------------- |
 | `/models/`             | 1     | Every model by blended rate, with one workload costed on each       |
-| `/models/<slug>/`      | 81    | Full rate card, three monthly bills, rank, alternatives, provenance |
+| `/models/<slug>/`      | 83    | Full rate card, three monthly bills, rank, alternatives, provenance |
 | `/providers/`          | 1     | Every provider, model counts, cheapest model                        |
 | `/providers/<slug>/`   | 12    | That provider's models, cheapest first                              |
 | `/compare/`            | 1     | Every head-to-head                                                  |
@@ -56,7 +56,7 @@ description.
 
 ### Why the comparison set is curated
 
-The combinatorial answer is 81 × 80 ÷ 2 = 3,240 pages, nearly all comparing
+The combinatorial answer is 83 × 82 ÷ 2 = 3,403 pages, nearly all comparing
 things nobody would choose between. A $0.14 flash model against a $75 frontier
 model is not a decision, it is a category difference.
 

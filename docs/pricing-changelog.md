@@ -1062,3 +1062,9 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-10-06
 
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (78%): $0.67/$14 vs $3/$15 → OpenRouter disagrees (68%): $0.95/$14 vs $3/$15
+
+## 2026-10-07
+
+- **Added** `mistral-mistral-large-4` — Mistral Large 4 ($0.68 in / $2.09 out per 1M)
+- **Added** `mistral-mistral-large-4-0` — Mistral Large 4 0 ($0.68 in / $2.09 out per 1M)
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (68%): $0.95/$14 vs $3/$15 → OpenRouter disagrees (79%): $0.62/$15 vs $3/$15

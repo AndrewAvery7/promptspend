@@ -659,8 +659,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-03",
-      "fingerprint": "032a5e4484aeec"
+      "lastmod": "2026-10-07",
+      "fingerprint": "0cbab313cf7ca6"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -937,6 +937,16 @@
       "lastmod": "2026-08-30",
       "fingerprint": "011a8198e8829b"
     },
+    "/models/mistral-large-4-0/": {
+      "published": "2026-10-07",
+      "lastmod": "2026-10-07",
+      "fingerprint": "132cdead07721f"
+    },
+    "/models/mistral-large-4/": {
+      "published": "2026-10-07",
+      "lastmod": "2026-10-07",
+      "fingerprint": "0bfc33bfd36208"
+    },
     "/models/mistral-medium-3-5/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-30",
@@ -1069,8 +1079,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-03",
-      "fingerprint": "034d0c0f488229"
+      "lastmod": "2026-10-07",
+      "fingerprint": "1cb75899f5edda"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -1109,8 +1119,8 @@
     },
     "/providers/mistral/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-29",
-      "fingerprint": "0caad857ce2fa1"
+      "lastmod": "2026-10-07",
+      "fingerprint": "1c83673377ba2b"
     },
     "/providers/moonshot/": {
       "published": "2026-08-02",
