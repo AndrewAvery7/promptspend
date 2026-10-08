@@ -1068,3 +1068,14 @@ value that moves in the same run as its source URL is a correction.
 - **Added** `mistral-mistral-large-4` — Mistral Large 4 ($0.68 in / $2.09 out per 1M)
 - **Added** `mistral-mistral-large-4-0` — Mistral Large 4 0 ($0.68 in / $2.09 out per 1M)
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (68%): $0.95/$14 vs $3/$15 → OpenRouter disagrees (79%): $0.62/$15 vs $3/$15
+
+## 2026-10-08
+
+- **Added** `claude-haiku-5-5` — Claude Haiku 5 5 ($0.1 in / $0.5 out per 1M)
+- **Review** `claude-sonnet-5-5` — provenance.needsReview: — → true
+- **Review** `claude-sonnet-5-5` — provenance.reviewNote: — → the vendor's own page disagrees with the record — cached input $0.1 vs recorded $0.2
+- **Review** `mistral-mistral-large-4` — provenance.needsReview: true → —
+- **Review** `mistral-mistral-large-4` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `mistral-mistral-large-4-0` — provenance.needsReview: true → —
+- **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (79%): $0.62/$15 vs $3/$15 → OpenRouter disagrees (79%): $0.62/$12.3 vs $3/$15

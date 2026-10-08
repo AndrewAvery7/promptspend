@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-07T11:06:58.444Z",
+  "generatedAt": "2026-10-08T11:07:10.627Z",
   "providers": [
     {
       "id": "anthropic",
@@ -99,7 +99,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 64000,
       "capabilityIndex": 64
@@ -127,7 +127,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "lastChanged": "2026-10-03"
       },
       "maxOutput": 64000,
@@ -158,7 +158,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
@@ -189,7 +189,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000
@@ -219,11 +219,43 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 64000,
       "capabilityIndex": 74
+    },
+    {
+      "id": "claude-haiku-5-5",
+      "providerId": "anthropic",
+      "displayName": "Claude Haiku 5 5",
+      "status": "current",
+      "contextWindow": 1000000,
+      "pricing": {
+        "input": 0.1,
+        "output": 0.5,
+        "cachedInput": 0.01
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.6,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — Anthropic's tokenizer is server-side; ratio calibrated on English prose"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-08",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 128000
     },
     {
       "id": "claude-opus-4-1",
@@ -277,7 +309,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 64000,
@@ -306,7 +338,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
@@ -335,7 +367,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
@@ -366,7 +398,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
@@ -397,7 +429,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
@@ -428,7 +460,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
@@ -457,7 +489,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 64000,
@@ -486,7 +518,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
@@ -517,7 +549,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "lastChanged": "2026-09-01",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
@@ -550,7 +582,12 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-10-07",
-        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
+        "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
+        "needsReview": true,
+        "reviewNote": "the vendor's own page disagrees with the record — cached input $0.1 vs recorded $0.2",
+        "reviewCodes": [
+          "vendor-page-mismatch"
+        ]
       },
       "maxOutput": 128000,
       "capabilityIndex": 91
@@ -577,7 +614,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 8000,
       "capabilityIndex": 75
@@ -632,7 +669,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 65536
     },
@@ -798,7 +835,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "lastChanged": "2026-09-16",
         "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
       },
@@ -828,7 +865,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "lastChanged": "2026-08-16",
         "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
       },
@@ -859,7 +896,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536
@@ -894,7 +931,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
@@ -924,7 +961,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536
@@ -980,7 +1017,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536
@@ -1008,7 +1045,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 65536
     },
@@ -1041,7 +1078,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
@@ -1070,7 +1107,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536
@@ -1099,7 +1136,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
@@ -1135,7 +1172,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
@@ -1171,7 +1208,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536
@@ -1199,7 +1236,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 65536
     },
@@ -1224,7 +1261,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
@@ -1250,7 +1287,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
@@ -1276,7 +1313,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
@@ -1302,7 +1339,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1329,7 +1366,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1363,7 +1400,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1391,7 +1428,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1419,7 +1456,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1453,7 +1490,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1480,7 +1517,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "lastChanged": "2026-08-23",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
@@ -1517,7 +1554,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1560,7 +1597,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1597,7 +1634,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
@@ -1626,7 +1663,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 8192
     },
@@ -1653,7 +1690,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 8192
     },
@@ -1681,7 +1718,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo"
       },
       "maxOutput": 8192
@@ -1709,7 +1746,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -1737,7 +1774,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 262144,
       "capabilityIndex": 71
@@ -1765,12 +1802,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "lastVerified": "2026-10-08"
       }
     },
     {
@@ -1796,12 +1828,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "lastVerified": "2026-10-08"
       }
     },
     {
@@ -1854,7 +1881,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 262144,
       "capabilityIndex": 68
@@ -1937,7 +1964,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k26"
       },
       "maxOutput": 262144,
@@ -1966,10 +1993,10 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k3",
         "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (79%): $0.62/$15 vs $3/$15",
+        "reviewNote": "OpenRouter disagrees (79%): $0.62/$12.3 vs $3/$15",
         "reviewCodes": [
           "openrouter-disagreement"
         ]
@@ -1997,7 +2024,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 100000
@@ -2023,7 +2050,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 100000
@@ -2049,7 +2076,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 100000
@@ -2075,7 +2102,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 100000,
@@ -2130,7 +2157,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "lastChanged": "2026-08-30",
         "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement"
       },
@@ -2159,7 +2186,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "lastChanged": "2026-08-30",
         "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement"
       },
@@ -2188,7 +2215,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "lastChanged": "2026-08-30",
         "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement"
       },
@@ -2224,7 +2251,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 1000000
@@ -2258,7 +2285,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 1000000,
@@ -2293,7 +2320,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 500000,
@@ -2328,7 +2355,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 500000
@@ -2356,7 +2383,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 500000
     },
@@ -2383,7 +2410,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
@@ -2411,7 +2438,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
@@ -2439,7 +2466,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
@@ -2468,7 +2495,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-10-07"
+        "lastVerified": "2026-10-08"
       },
       "maxOutput": 128000,
       "capabilityIndex": 78
@@ -2496,7 +2523,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
@@ -2525,7 +2552,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
@@ -2553,7 +2580,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-07",
+        "lastVerified": "2026-10-08",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000
