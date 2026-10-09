@@ -1079,3 +1079,11 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `mistral-mistral-large-4-0` — provenance.needsReview: true → —
 - **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (79%): $0.62/$15 vs $3/$15 → OpenRouter disagrees (79%): $0.62/$12.3 vs $3/$15
+
+## 2026-10-09
+
+- **Metadata** `mistral-mistral-large-4` — contextWindow: 524288 → 1048576
+- **Metadata** `mistral-mistral-large-4-0` — contextWindow: 524288 → 1048576
+- **Review** `claude-haiku-5-5` — provenance.needsReview: true → —
+- **Review** `claude-haiku-5-5` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (79%): $0.62/$12.3 vs $3/$15 → OpenRouter disagrees (83%): $0.5/$12 vs $3/$15
