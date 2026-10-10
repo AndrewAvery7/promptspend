@@ -1,88 +1,77 @@
-# Google Play Developer Page package
+# Google Play Developer Page
 
-Status: draft preparation only. Nothing in this document has been uploaded or
-saved to Play Console.
+Status: **published 2026-10-10.** This file used to be the draft package
+(written 2026-09-08, before either app was in a store). It is now the record of
+what is live and how to change it.
 
-## Account-level fields
+## What is live
 
-Use the corporate developer identity on this page, not the app listing identity.
+The developer page belongs to the Google Play developer account, not to an app.
+The Crestwood Holdings organization account holds both PromptSpend and
+Vialmetry, so one page covers both.
 
-- **Developer name:** `Crestwood Holdings`
-- **Website:** `https://crestwood.holdings/`
-- **Featured app:** `PromptSpend` after the app listing has been created
-- **Promotional text (138/140 characters):**
-  `PromptSpend helps teams estimate, compare, and understand LLM API costs with current pricing evidence—before the first production invoice.`
+- **Public page:** <https://play.google.com/store/apps/dev?id=4914249645624372750>
+- **Edit in:** Play Console → Developer account → Play developer profile →
+  "Developer page" section → Save changes.
 
-The verified company website is `crestwood.holdings`; do not enter
-`crestwood.holdings.com`. The app listing itself continues to use
-`https://promptspend.com/` for its marketing, support, and privacy links.
+| Field                      | Published value                                                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Developer icon             | `apps/mobile/store/assets/google-play/developer-page/crestwood-play-icon-512.png`: the navy Crestwood shield, 512 × 512, opaque             |
+| Header image               | `apps/mobile/store/assets/google-play/developer-page/crestwood-play-header-4096x2304.png` (details below)                                   |
+| Featured app               | PromptSpend                                                                                                                                 |
+| Developer website          | `https://crestwood.holdings`                                                                                                                |
+| Promotional text (137/140) | `Crestwood Holdings Management LLC builds focused apps: PromptSpend estimates AI model costs; Vialmetry keeps a private log of your vials.` |
 
-## Required artwork
+The verified organization details above the developer page section (legal
+name, address and public developer email) are managed separately under
+Account details. They were already correct, so they were not touched.
 
-The current Play Console page is the authority for the exact upload validation.
-The official Developer Profile guidance specifies:
+### Header image
 
-- **Developer icon:** 512 × 512, JPEG or opaque 24-bit PNG as shown in the
-  current Console, maximum 1 MB. Do not add badges, prices, rankings, or store
-  marks.
-- **Header image:** 4096 × 2304, JPEG or opaque 24-bit PNG. Keep the focal
-  message and brand inside the center safe area; edge content may be cropped in
-  some placements.
+4096 × 2304, opaque PNG, about 190 KB. Google's limits are 1 MB, JPEG or 24-bit
+PNG, no transparency.
 
-Existing source assets:
+- Navy field `#0B1F3A`. This is the brand's primary colour; the brand guide
+  pairs it with the reversed (white) logo.
+- The white horizontal Crestwood logo, with its sub-line retypeset as
+  `HOLDINGS MANAGEMENT LLC` in Inter Bold. Store pages use the full legal name.
+- A short Heritage Gold (`#A88A4A`) rule, then `Focused, useful apps` in
+  Georgia, the brand's primary typeface, in Cool Mist (`#D9DEE3`).
+- All content sits in the central safe area (about x 1098–2998,
+  y 716–1588), because Google crops the edges in some placements.
 
-- `apps/mobile/assets/images/icon.png` — 1024 × 1024, opaque, 47 KB. This is a
-  good source for an opaque 512 × 512 developer icon export.
-- `assets/logo.png` — 834 × 197 with transparency. Useful as a design source,
-  but it cannot be uploaded directly as the header because it has alpha and the
-  wrong aspect ratio.
-- `assets/poster.png` — 1920 × 1080. Reference artwork only; it is not the
-  required Developer Page header size.
-- `assets/social-card.png` — 1280 × 640. Reference artwork only; it is not the
-  required Developer Page header size.
+The editable source assets (logo masters and the full-name logo PNG) live in the
+owner's Crestwood branding folder, outside this repository.
 
-## Recommended creative direction
+## Naming
 
-Because this is a developer-level page, the header should represent **Crestwood
-Holdings** while using the PromptSpend visual language. Use the cobalt/ink/cool
-paper palette, restrained typography, and a quiet evidence-led visual motif.
-The header should say what the company makes without pretending that Crestwood
-has a larger app portfolio than it does.
+The company is legally **Crestwood Holdings Management LLC** and does business
+as **Crestwood Holdings**. The store surfaces (this page, and Apple's seller
+name) use the legal name. The company website and the master logo use the
+trading name. Both are correct; do not "fix" one to match the other.
 
-Recommended draft concept:
+## Apple
 
-- Background: cool paper with a subtle cobalt-to-slate field, no transparent
-  areas.
-- Center-safe message: `Crestwood Holdings` and `Clearer decisions for AI
-costs.`
-- Supporting visual: a simplified cost-brief surface and provenance/freshness
-  cue derived from the real PromptSpend UI.
-- Do not show exact prices, rankings, awards, download counts, Google Play
-  badges, provider logos, fake testimonials, or device mockups.
-- Keep the PromptSpend icon secondary so it does not duplicate the icon shown
-  beside the developer page.
+Apple has no editable developer page. The App Store builds the seller page
+automatically: <https://apps.apple.com/us/developer/id6800386430>. It lists
+both apps under "Crestwood Holdings Management LLC". The iOS 27 header and
+search-results images are per-app product-page assets, not developer-page ones.
+See `docs/APP_STORE_CREATIVE_BRIEFS.md`.
 
-## Store-side sequence when the account is ready
+## Gotchas found while publishing
 
-1. Confirm the Google Play developer account shows the verified organization
-   identity and the intended developer name.
-2. Upload the final opaque developer icon and header image.
-3. Enter the promotional text and `https://crestwood.holdings/`.
-4. Create/select the PromptSpend app listing, then select it as the featured
-   app.
-5. Save and preview the page on desktop and mobile before accepting the result.
-6. Allow for Google’s propagation window: the profile preview may take up to an
-   hour and the public page may take up to 24 hours to appear or update.
+- **Website validation:** the field shows an `https://` prefix label, but the
+  value is only accepted with the scheme typed in full (`https://crestwood.holdings`).
+  Typing `crestwood.holdings` or `crestwood.holdings/` gives "Website URL is
+  invalid", and the save fails with "Your changes couldn't be saved".
+- **Featured app:** only one app can be featured. To feature Vialmetry instead,
+  remove the PromptSpend chip and pick it.
+- **Propagation:** Google says the public page can take up to 24 hours to show
+  a change.
 
-This page work is independent of the pending Apple organization migration. It
-does not authorize an Android upload, closed test, production-access request,
-store review, or public release.
+## When to update it
 
-## Final approval items
-
-Before generating the final header, Andrew should approve:
-
-- the corporate wording `Crestwood Holdings` / `Clearer decisions for AI costs`;
-- whether the developer icon should be the PromptSpend mark or a separate
-  Crestwood Holdings mark; and
-- whether PromptSpend should be featured immediately when its listing exists.
+- A third app ships: revisit the promotional text (140-character limit) and
+  decide which app is featured. The header names no apps on purpose, so it
+  does not go stale.
+- The trading name or logo changes: rebuild the header to the same layout.
