@@ -14,12 +14,12 @@ Vialmetry, so one page covers both.
 - **Edit in:** Play Console → Developer account → Play developer profile →
   "Developer page" section → Save changes.
 
-| Field | Published value |
-| --- | --- |
-| Developer icon | `apps/mobile/store/assets/google-play/developer-page/crestwood-play-icon-512.png`: the navy Crestwood shield, 512 × 512, opaque |
-| Header image | `apps/mobile/store/assets/google-play/developer-page/crestwood-play-header-4096x2304.png` (details below) |
-| Featured app | PromptSpend |
-| Developer website | `https://crestwood.holdings` |
+| Field                      | Published value                                                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Developer icon             | `apps/mobile/store/assets/google-play/developer-page/crestwood-play-icon-512.png`: the navy Crestwood shield, 512 × 512, opaque             |
+| Header image               | `apps/mobile/store/assets/google-play/developer-page/crestwood-play-header-4096x2304.png` (details below)                                   |
+| Featured app               | PromptSpend                                                                                                                                 |
+| Developer website          | `https://crestwood.holdings`                                                                                                                |
 | Promotional text (137/140) | `Crestwood Holdings Management LLC builds focused apps: PromptSpend estimates AI model costs; Vialmetry keeps a private log of your vials.` |
 
 The verified organization details above the developer page section (legal
