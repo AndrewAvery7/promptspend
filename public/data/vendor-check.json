@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-09T11:06:07.765Z",
+  "checkedAt": "2026-10-10T11:05:37.348Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "49522 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "50255 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "22711 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "23225 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -49,7 +49,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "99042 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "89530 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -90,7 +90,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": false,
-      "note": "page is 821116 characters — too large to be a pricing page",
+      "note": "page is 822430 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -100,7 +100,7 @@
     {
       "url": "https://docs.z.ai/guides/overview/pricing",
       "ok": true,
-      "note": "2618 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3056 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "zai-glm-5.1",
         "zai-glm-5.2",
@@ -222,8 +222,8 @@
     {
       "id": "gpt-5.6-sol",
       "url": "https://developers.openai.com/api/docs/pricing",
-      "status": "confirmed",
-      "detail": "page shows only the promotional rate $4/$20 until 2026-11-21, which agrees; the standard rate $5/$30 is not printed and stays unverified until the window closes"
+      "status": "mismatch",
+      "detail": "promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5"
     },
     {
       "id": "gpt-5.6-terra",
@@ -330,8 +330,8 @@
     {
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
-      "status": "confirmed",
-      "detail": "page lists $1.5/$7.5 (cached $0.15)"
+      "status": "unconfirmed",
+      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -366,8 +366,8 @@
     {
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
-      "status": "confirmed",
-      "detail": "page lists $1.5/$9 (cached $0.15)"
+      "status": "unconfirmed",
+      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite, Gemini 3.5 Transcribe, and Gemini 3.5 Live Translate are listed)"
     },
     {
       "id": "deepseek-deepseek-v4-pro",
@@ -397,19 +397,19 @@
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 821116 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 822430 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 821116 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 822430 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 821116 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 822430 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
@@ -496,7 +496,7 @@
       "detail": "page lists $1.25/$2.5"
     }
   ],
-  "confirmed": 55,
-  "mismatched": 1,
-  "unconfirmed": 3
+  "confirmed": 52,
+  "mismatched": 2,
+  "unconfirmed": 5
 }

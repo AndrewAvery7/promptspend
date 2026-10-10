@@ -659,8 +659,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-09",
-      "fingerprint": "15e7c06322ee0e"
+      "lastmod": "2026-10-10",
+      "fingerprint": "136c8133023ad7"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -729,8 +729,8 @@
     },
     "/models/claude-sonnet-4-5/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-17",
-      "fingerprint": "08d9fcaecbbd12"
+      "lastmod": "2026-10-10",
+      "fingerprint": "13f49910c9c68f"
     },
     "/models/claude-sonnet-4-6/": {
       "published": "2026-08-02",
@@ -1084,8 +1084,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-09",
-      "fingerprint": "17c4fa8ba689f9"
+      "lastmod": "2026-10-10",
+      "fingerprint": "16167d97ac0ae6"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -1099,8 +1099,8 @@
     },
     "/providers/anthropic/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-08",
-      "fingerprint": "03e7a10e6bedf4"
+      "lastmod": "2026-10-10",
+      "fingerprint": "074707479aa567"
     },
     "/providers/cohere/": {
       "published": "2026-08-02",

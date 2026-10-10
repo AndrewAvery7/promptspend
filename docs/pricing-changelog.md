@@ -1087,3 +1087,10 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `claude-haiku-5-5` — provenance.needsReview: true → —
 - **Review** `claude-haiku-5-5` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (79%): $0.62/$12.3 vs $3/$15 → OpenRouter disagrees (83%): $0.5/$12 vs $3/$15
+
+## 2026-10-10
+
+- **Metadata** `claude-sonnet-4-5` — contextWindow: 1000000 → 200000
+- **Review** `gpt-5.6-sol` — provenance.needsReview: — → true
+- **Review** `gpt-5.6-sol` — provenance.reviewNote: — → the vendor's own page disagrees with the record — promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (83%): $0.5/$12 vs $3/$15 → OpenRouter disagrees (79%): $0.64/$13.5 vs $3/$15
