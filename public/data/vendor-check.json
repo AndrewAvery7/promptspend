@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-10T11:05:37.348Z",
+  "checkedAt": "2026-10-11T11:05:34.126Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -89,8 +89,8 @@
     },
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "ok": false,
-      "note": "page is 822430 characters — too large to be a pricing page",
+      "ok": true,
+      "note": "575653 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -367,7 +367,7 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite, Gemini 3.5 Transcribe, and Gemini 3.5 Live Translate are listed)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite, Gemini 3.5 Live Translate, and Gemini 3.5 Transcribe are listed)"
     },
     {
       "id": "deepseek-deepseek-v4-pro",
@@ -396,20 +396,20 @@
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "unconfirmed",
-      "detail": "page could not be read: page is 822430 characters — too large to be a pricing page"
+      "status": "confirmed",
+      "detail": "page lists $2.5/$7.5"
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 822430 characters — too large to be a pricing page"
+      "detail": "not priced on the page (no Qwen3 Next model is listed on the page)"
     },
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 822430 characters — too large to be a pricing page"
+      "detail": "not priced on the page (only qwen3-vl-plus is listed under Qwen-VL; no Qwen3 VL 235B model appears)"
     },
     {
       "id": "zai-glm-5.1",
@@ -496,7 +496,7 @@
       "detail": "page lists $1.25/$2.5"
     }
   ],
-  "confirmed": 52,
+  "confirmed": 53,
   "mismatched": 2,
-  "unconfirmed": 5
+  "unconfirmed": 4
 }

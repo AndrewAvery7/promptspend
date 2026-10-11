@@ -1,81 +1,81 @@
 {
-  "checkedAt": "2026-10-10T11:06:02.986Z",
+  "checkedAt": "2026-10-11T11:06:07.252Z",
   "facts": {
     "alibaba-account-info": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-auto-billing": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-free-trial-signup": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-not-all-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-quota": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-realtime-only": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-region": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-same-speed": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-signup": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-upgrade": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "alibaba-validity": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "amazon-bedrock-activity": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "amazon-card": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "amazon-credits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "amazon-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "amazon-expiry-faq": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "amazon-expiry-terms": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "amazon-free-plan-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "amazon-quotas": {
       "status": "missing",
@@ -84,175 +84,175 @@
     },
     "amazon-regions": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "anthropic-buy-first": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "anthropic-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "anthropic-evaluation": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "anthropic-free-credits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "anthropic-prepaid": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "anthropic-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-card-trial": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-chat-limit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-data-commitments": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-data-trial": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-embed-faq": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-embed-limit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-monthly-cap": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-trial": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-trial-auto": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "cohere-upgrade": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "deepseek-402": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "deepseek-balance": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "deepseek-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "deepseek-privacy": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "deepseek-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "deepseek-top-up": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-card": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-data-eea": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-data-review": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-data-unpaid": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-eea-apps": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-free-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-free-requirement": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-free-tier": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-paid-only-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-search-grounding": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "google-welcome-credit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "minimax-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "minimax-free-quota": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "minimax-free-tier": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "minimax-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "minimax-top-up": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "minimax-upgrade": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "mistral-credits": {
       "status": "missing",
@@ -261,95 +261,95 @@
     },
     "mistral-credits-no-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "mistral-data-free": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "mistral-default": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "mistral-free-mode": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "mistral-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "mistral-opt-out": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "mistral-shared-allowance": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "mistral-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "moonshot-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "moonshot-k3": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "moonshot-minimum": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "moonshot-payment": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "moonshot-region": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "moonshot-tier0": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "moonshot-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-data-sharing": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-free-row": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-gpt5-free": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-minimum": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-moderation": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-prepaid": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-regions": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "openai-tiers": {
       "status": "missing",
@@ -358,63 +358,63 @@
     },
     "xai-credits-for-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "xai-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "xai-load-credits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "xai-not-free": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "xai-rejected": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "xai-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-completely-free": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-data-api": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-data-individual": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-data-not-stored": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-free-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-free-models-more": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-regions": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     },
     "zai-top-up": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-10"
+      "lastConfirmed": "2026-10-11"
     }
   }
 }
