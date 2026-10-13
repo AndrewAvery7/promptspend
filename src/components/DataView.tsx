@@ -26,6 +26,7 @@ interface DataViewProps {
 export function DataView({ catalog, theme, onToast }: DataViewProps) {
   const flagged = catalog.models.filter((model) => model.provenance.needsReview);
   const vendorVerified = catalog.models.filter((model) => model.provenance.source === 'vendor');
+  const vendorLinked = catalog.models.filter((model) => model.provenance.verifiedUrl);
   const health = catalog.health;
 
   return (
@@ -35,9 +36,10 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
         Every number shows its work.
       </h1>
       <p className="subhead">
-        A price you cannot trace is a price you cannot trust. Every model carries its source, a link to the
-        page that source came from, and the date it was last confirmed — and every change lands in a public
-        changelog.
+        A price you cannot trace is a price you cannot trust. Every model records where its price came from
+        and the date it was last confirmed. {vendorLinked.length} of {catalog.models.length} link straight to
+        the vendor&apos;s own pricing page; the rest come from the LiteLLM community catalog and say so. Every
+        change lands in a public changelog.
       </p>
 
       <div className="data-grid">

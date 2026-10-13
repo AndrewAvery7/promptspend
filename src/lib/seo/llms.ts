@@ -86,8 +86,9 @@ ${freeTiers.pages
   return `# PromptSpend
 
 > Current API prices for ${set.models.length} large language models from ${set.providers.length} providers,
-> re-checked against every vendor each morning. Every price records which source
-> it came from and when it was last confirmed. Free, open source, no accounts.
+> re-checked each morning. Every price records which source it came from and when
+> it was last confirmed: ${set.models.filter((page) => page.model.provenance.verifiedUrl).length} link the vendor's own pricing page, the rest come from
+> the LiteLLM community catalog. Free, open source, no accounts.
 
 Catalog behind this build: ${generatedAt}.
 
