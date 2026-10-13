@@ -38,11 +38,51 @@ on:
 permissions:
   contents: read
   issues: write
+  # Cancelling a frozen deploy run and dispatching a fresh one, below.
+  actions: write
 
 jobs:
   freshness:
     runs-on: ubuntu-latest
     steps:
+      # A fifth way to fail, found on 2026-10-13: a deploy run froze in
+      # `waiting` on the github-pages environment, with no reviewer and no wait
+      # timer to wait for, and sat there for six days. deploy.yml allows one run
+      # in the `pages` group at a time and never cancels the one in flight, so
+      # every morning's deploy queued behind it and was superseded by the next.
+      # The sync went green daily; the site served the 10-06 catalog all week.
+      #
+      # A healthy deploy finishes in about ten minutes (verify, then
+      # deploy-pages' own ten-minute ceiling). Anything still unfinished after
+      # three hours is not slow, it is stuck, and it is blocking every deploy
+      # behind it. Cancel it and dispatch a fresh one from main. This runs on
+      # every check, not only a stale one, so a freeze costs at most a day
+      # rather than the two the staleness budget allows.
+      - name: Clear a frozen deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          STUCK_AFTER_HOURS: 3
+        run: |
+          set -euo pipefail
+          cutoff=$(date -u -d "-${STUCK_AFTER_HOURS} hours" +%Y-%m-%dT%H:%M:%SZ)
+          stuck=$(gh run list --workflow deploy.yml --limit 50 \
+            --json databaseId,status,createdAt \
+            --jq ".[] | select(.status != \"completed\" and .createdAt < \"$cutoff\") | .databaseId")
+          if [ -z "$stuck" ]; then
+            echo "  no deploy run unfinished after ${STUCK_AFTER_HOURS}h"
+            exit 0
+          fi
+          for id in $stuck; do
+            echo "::warning title=Frozen deploy::Deploy run $id was still unfinished after ${STUCK_AFTER_HOURS}h; cancelling it."
+            gh run cancel "$id" || gh api -X POST "repos/$GH_REPO/actions/runs/$id/force-cancel"
+          done
+          # Give the cancellations a moment to release the concurrency group.
+          sleep 30
+          gh workflow run deploy.yml --ref main
+          echo "### Cleared a frozen deploy" >> "$GITHUB_STEP_SUMMARY"
+          echo "Cancelled run(s) $(echo $stuck | tr ' ' ','), dispatched a fresh deploy from main." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Check what the site is serving
         id: check
         env:
