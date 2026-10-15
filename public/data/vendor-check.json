@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-14T11:06:11.216Z",
+  "checkedAt": "2026-10-15T11:05:36.142Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "50258 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "50440 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -49,7 +49,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "93297 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "95973 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -90,7 +90,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "577002 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "576745 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -121,7 +121,7 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "16226 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "16368 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",
@@ -331,7 +331,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash listed on the page)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -367,7 +367,7 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash listed on the page; only Gemini 3.5 Flash-Lite)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite is listed)"
     },
     {
       "id": "deepseek-deepseek-v4-pro",
@@ -403,13 +403,13 @@
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Qwen3 Next 80B model is listed on the page)"
+      "detail": "not priced on the page (no Qwen3 Next model is listed on the page)"
     },
     {
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only qwen3-vl-plus is listed under Qwen-VL; no Qwen3 VL 235B model appears)"
+      "detail": "not priced on the page (only qwen3-vl-plus is listed under Qwen-VL; no qwen3-vl-235b-a22b-instruct row appears)"
     },
     {
       "id": "zai-glm-5.1",
