@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-15T11:05:36.142Z",
+  "checkedAt": "2026-10-16T11:06:29.392Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "50440 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "50411 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -409,7 +409,7 @@
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only qwen3-vl-plus is listed under Qwen-VL; no qwen3-vl-235b-a22b-instruct row appears)"
+      "detail": "not priced on the page (only qwen3-vl-plus is listed under Qwen-VL; no Qwen3 VL 235B model appears)"
     },
     {
       "id": "zai-glm-5.1",
