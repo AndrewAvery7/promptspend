@@ -1120,3 +1120,8 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-10-16
 
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (85%): $0.45/$15 vs $3/$15 → OpenRouter disagrees (90%): $0.304/$11.936 vs $3/$15
+
+## 2026-10-17
+
+- **Review** `gpt-5.6-sol` — provenance.needsReview: true → —
+- **Review** `gpt-5.6-sol` — provenance.reviewNote: the vendor's own page disagrees with the record — promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5 → —
