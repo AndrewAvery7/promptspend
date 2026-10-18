@@ -1125,3 +1125,10 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `gpt-5.6-sol` — provenance.needsReview: true → —
 - **Review** `gpt-5.6-sol` — provenance.reviewNote: the vendor's own page disagrees with the record — promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5 → —
+
+## 2026-10-18
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.needsReview: — → true
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: — → true
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
