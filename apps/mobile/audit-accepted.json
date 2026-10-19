@@ -1,0 +1,23 @@
+{
+  "$comment": "Advisories a person has reviewed and judged unreachable in the shipped app. Read by scripts/audit-triage.mjs and scripts/check-release.mjs. A high or critical finding is accepted only when every high or critical advisory it traces to is listed here, at the severity recorded, before its reviewBy date. A critical advisory can never be listed, and reviewBy may be at most 184 days after acceptedOn, so an acceptance lapses rather than lingering. The reasoning lives in SECURITY.md's exposure notes.",
+  "accepted": [
+    {
+      "advisory": "GHSA-vfj7-8cjw-p6xm",
+      "package": "braces",
+      "severity": "high",
+      "acceptedOn": "2026-10-19",
+      "reviewBy": "2027-04-19",
+      "acceptedBy": "Andrew",
+      "reason": "Reaches the project only through micromatch in Jest, Metro and the Expo CLI, matching globs from this repository's own config. Not in the Android or iOS bundle. No fixed release exists."
+    },
+    {
+      "advisory": "GHSA-86w9-cpqp-85rv",
+      "package": "node-forge",
+      "severity": "high",
+      "acceptedOn": "2026-10-19",
+      "reviewBy": "2027-04-19",
+      "acceptedBy": "Andrew",
+      "reason": "Reaches the project only through the expo-updates key-generation CLI and @expo/cli iOS certificate parsing. On the phone, update signatures are verified in native code, not node-forge. Not in the Android or iOS bundle. No fixed release exists."
+    }
+  ]
+}
