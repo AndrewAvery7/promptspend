@@ -21,11 +21,12 @@
  *                    otherwise put package.json and the lockfile back;
  *                 2. re-run the audit, regenerate the section, stamp the
  *                    fingerprint and today's date;
- *                 3. verdict: no high or critical advisory → accepted under
- *                    the standing policy, exit 0. Otherwise ESCALATED: the
- *                    record is still written, the exit code is 3, and the
- *                    workflow opens an issue. That one case is the only one a
- *                    person is asked to look at.
+ *                 3. verdict: no high or critical advisory, or only ones a
+ *                    person has already reviewed (audit-accepted.json) →
+ *                    accepted under the standing policy, exit 0. Otherwise
+ *                    ESCALATED: the record is still written, the exit code is
+ *                    3, and the workflow opens an issue. That one case is the
+ *                    only one a person is asked to look at.
  *   --refresh   re-run the audit and regenerate its factual section when the
  *               findings match the recorded fingerprint (exit 2 otherwise).
  *               No fixes.
@@ -35,7 +36,17 @@
  *
  * Nothing here judges whether a finding is *reachable*; the generated table
  * says so in as many words. That judgement, when it matters, is the escalated
- * case above.
+ * case above, and its answer is recorded in audit-accepted.json.
+ *
+ * Why an accept-list at all. From October 5, 2026 the run failed every Monday
+ * on 54 high findings that all traced to two advisories (`braces`,
+ * `node-forge`) with no fixed release, reached only through build and test
+ * tooling. The weekly red asked the same question each time and the answer
+ * could not change until upstream shipped a fix, so it taught people to ignore
+ * the one alarm meant to be read. A finding is accepted only when *every* high
+ * or critical advisory it traces to is listed, at the severity recorded,
+ * before its review date; a new advisory, a severity raised to critical, or a
+ * lapsed review date escalates again. Critical advisories cannot be listed.
  */
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
@@ -44,6 +55,8 @@ import { resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const SECURITY = resolve(ROOT, 'SECURITY.md');
+const ACCEPTED = resolve(ROOT, 'audit-accepted.json');
+const MAX_ACCEPT_DAYS = 184;
 const MARKER = /<!-- audit-fingerprint: ([0-9a-f]{12}) \(([^)]*)\) -->/;
 const REVIEWED = /^Last reviewed: ([A-Za-z]+ \d{1,2}, \d{4})$/m;
 const BEGIN = '<!-- audit:begin';
@@ -71,6 +84,35 @@ function run(cmd, args, opts = {}) {
     });
   }
   return spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', shell: false, ...opts });
+}
+
+const advisoryId = (via) =>
+  String(via.url ?? via.source)
+    .split('/')
+    .pop();
+
+/**
+ * The advisories a finding ultimately comes from. npm lists a dependent (jest,
+ * metro, expo) as vulnerable with `via` naming other packages rather than an
+ * advisory, so the walk follows those names to every advisory reachable from
+ * here. A full walk per finding, not a memoised one: the graph has cycles, and
+ * a cached partial answer could drop an advisory and make a finding look
+ * covered when it is not.
+ */
+function rootAdvisories(entries, name) {
+  const found = new Map();
+  const seen = new Set();
+  const stack = [name];
+  while (stack.length) {
+    const current = stack.pop();
+    if (seen.has(current)) continue;
+    seen.add(current);
+    for (const via of entries[current]?.via ?? []) {
+      if (typeof via === 'string') stack.push(via);
+      else if (via && typeof via === 'object') found.set(advisoryId(via), via.severity);
+    }
+  }
+  return [...found].map(([id, severity]) => ({ id, severity })).sort((a, b) => a.id.localeCompare(b.id));
 }
 
 /** Every finding npm reports, in a form that changes only when the finding does. */
@@ -111,6 +153,7 @@ function audit() {
         range: entry.range,
         direct: entry.isDirect === true,
         advisories,
+        roots: rootAdvisories(entries, name),
         chain,
         fix,
         line: `${name}|${entry.severity}|${entry.range}|${advisories.map((a) => a.url).join(',')}`,
@@ -135,6 +178,80 @@ function audit() {
 
 function today() {
   return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+/**
+ * The reviewed accept-list, refused outright if it tries to waive more than a
+ * person may: a critical advisory, or a review date further out than
+ * MAX_ACCEPT_DAYS. A malformed list fails the run rather than accepting
+ * nothing quietly or everything loudly.
+ */
+function acceptedList() {
+  const raw = JSON.parse(readFileSync(ACCEPTED, 'utf8'));
+  const iso = /^\d{4}-\d{2}-\d{2}$/;
+  const problems = [];
+  const list = (raw.accepted ?? []).map((entry, i) => {
+    const at = `audit-accepted.json entry ${i + 1} (${entry.advisory ?? 'no advisory'})`;
+    if (!/^GHSA-[\w-]+$/.test(entry.advisory ?? '')) problems.push(`${at}: advisory must be a GHSA id`);
+    if (!['low', 'moderate', 'high'].includes(entry.severity))
+      problems.push(`${at}: severity must be low, moderate or high; a critical advisory cannot be accepted`);
+    if (!iso.test(entry.acceptedOn ?? '') || !iso.test(entry.reviewBy ?? ''))
+      problems.push(`${at}: acceptedOn and reviewBy must be YYYY-MM-DD`);
+    else {
+      const days = (Date.parse(entry.reviewBy) - Date.parse(entry.acceptedOn)) / 86_400_000;
+      if (!(days > 0 && days <= MAX_ACCEPT_DAYS))
+        problems.push(`${at}: reviewBy must fall within ${MAX_ACCEPT_DAYS} days after acceptedOn`);
+    }
+    if (!String(entry.reason ?? '').trim()) problems.push(`${at}: a reason is required`);
+    return entry;
+  });
+  if (problems.length) {
+    for (const problem of problems) console.error(`✗ ${problem}`);
+    process.exit(1);
+  }
+  return list;
+}
+
+/**
+ * Which high and critical findings the accept-list covers. A finding is
+ * covered only when it traces to at least one high or critical advisory and
+ * every one of those is listed, unexpired, at the severity npm reports today.
+ * Moderate and low advisories behind the same finding are left out of the
+ * test: on their own they never escalate, and Jest's dependents carry
+ * `sprintf-js` alongside `braces`.
+ */
+function classify(a, list) {
+  const now = new Date().toISOString().slice(0, 10);
+  const live = new Map(list.filter((e) => e.reviewBy >= now).map((e) => [e.advisory, e]));
+  const expired = list.filter((e) => e.reviewBy < now);
+  const isSerious = (severity) => severity === 'high' || severity === 'critical';
+  const serious = a.findings.filter((f) => isSerious(f.severity));
+  const isCovered = (f) => {
+    const behind = f.roots.filter((r) => isSerious(r.severity));
+    return behind.length > 0 && behind.every((r) => live.get(r.id)?.severity === r.severity);
+  };
+  const covered = serious.filter(isCovered);
+  const open = serious.filter((f) => !isCovered(f));
+  const used = list.filter((e) => covered.some((f) => f.roots.some((r) => r.id === e.advisory)));
+  const unused = list.filter((e) => !a.findings.some((f) => f.roots.some((r) => r.id === e.advisory)));
+  return { covered, open, expired, used, unused };
+}
+
+function verdictFor(a, c, reverted) {
+  const names = (entries) => entries.map((e) => `\`${e.package}\` ${e.advisory}`).join(', ');
+  if (c.open.length) {
+    const lapsed = c.expired.length
+      ? ` The review date has passed for ${names(c.expired)}; re-assess it and renew or remove the entry in audit-accepted.json.`
+      : '';
+    return `ESCALATED — ${c.open.length} high or critical findings are not covered by a reviewed acceptance (${a.counts.high} high and ${a.counts.critical} critical in all).${lapsed} The standing policy does not accept these automatically; a person must assess reachability in the exposure notes and, if the finding stands, block the release until it is fixed.`;
+  }
+  const accepted = c.covered.length
+    ? ` ${c.covered.length} high findings trace only to advisories a person reviewed and accepted in audit-accepted.json (${names(c.used)}, review by ${[...new Set(c.used.map((e) => e.reviewBy))].sort()[0]}); they stay in the table above and escalate again if that date passes, their severity rises, or another advisory joins them.`
+    : '';
+  const stale = c.unused.length
+    ? ` No finding traces to ${names(c.unused)} any more; its entry can be removed from audit-accepted.json.`
+    : '';
+  return `Accepted under the standing policy below: no unreviewed high or critical advisory${reverted ? ', and the only automatic change on offer was reverted for the reason above' : ''}.${accepted}${stale} Moderate and low findings with no compatible fix are recorded here, not waived — the policy names the conditions that reopen them.`;
 }
 
 function lockVersion(pkg) {
@@ -228,9 +345,12 @@ if (!reviewed) {
   process.exit(1);
 }
 
-function stamp(source, a) {
+// check-release.mjs reads "; N accepted" from this marker and subtracts it from
+// the high and critical counts before deciding whether a release is blocked.
+function stamp(source, a, c) {
   let next = source.replace(REVIEWED, `Last reviewed: ${today()}`);
-  const marker = `<!-- audit-fingerprint: ${a.fingerprint} (${a.summary}) -->`;
+  const accepted = c.covered.length ? `; ${c.covered.length} accepted` : '';
+  const marker = `<!-- audit-fingerprint: ${a.fingerprint} (${a.summary}${accepted}) -->`;
   next = MARKER.test(next)
     ? next.replace(MARKER, marker)
     : next.replace(/^(Last reviewed: .*)$/m, `$1\n${marker}`);
@@ -244,11 +364,9 @@ function output(key, value) {
 if (mode === '--auto') {
   const fixNote = noFix ? 'Fix attempts disabled for this run (--no-fix).' : tryFix(audit());
   const a = audit();
-  const escalate = a.counts.high + a.counts.critical > 0;
-  const reverted = fixNote.includes('reverted');
-  const verdict = escalate
-    ? `ESCALATED — ${a.counts.high} high and ${a.counts.critical} critical advisories. The standing policy does not accept these automatically; a person must assess reachability in the exposure notes and, if the finding stands, block the release until it is fixed.`
-    : `Accepted under the standing policy below: no high or critical advisory${reverted ? ', and the only automatic change on offer was reverted for the reason above' : ''}. Moderate and low findings with no compatible fix are recorded here, not waived — the policy names the conditions that reopen them.`;
+  const c = classify(a, acceptedList());
+  const escalate = c.open.length > 0;
+  const verdict = verdictFor(a, c, fixNote.includes('reverted'));
   const begin = text.indexOf(BEGIN);
   const end = text.indexOf(END);
   let next;
@@ -261,7 +379,7 @@ if (mode === '--auto') {
       `$1\n${section(a, fixNote, verdict)}\n`,
     );
   }
-  next = stamp(next, a);
+  next = stamp(next, a, c);
   writeFileSync(SECURITY, next);
   output('verdict', escalate ? 'escalate' : 'accepted');
   output('summary', a.summary);
@@ -270,20 +388,21 @@ if (mode === '--auto') {
   console.log(`fix:            ${fixNote}`);
   console.log(
     escalate
-      ? `✗ ESCALATED: ${a.summary}`
-      : `✓ accepted: ${a.summary}; SECURITY.md regenerated and stamped ${today()}`,
+      ? `✗ ESCALATED: ${c.open.length} unreviewed high/critical (${a.summary})`
+      : `✓ accepted: ${a.summary}${c.covered.length ? `, ${c.covered.length} under a reviewed acceptance` : ''}; SECURITY.md regenerated and stamped ${today()}`,
   );
   process.exit(escalate ? 3 : 0);
 }
 
 const a = audit();
+const c = classify(a, acceptedList());
 console.log(`audit now:      ${a.fingerprint} (${a.summary})`);
 console.log(
   `SECURITY.md:    ${recorded ? `${recorded[1]} (${recorded[2]})` : 'no fingerprint recorded yet'}, reviewed ${reviewed}`,
 );
 
 if (mode === '--stamp') {
-  writeFileSync(SECURITY, stamp(text, a));
+  writeFileSync(SECURITY, stamp(text, a, c));
   console.log(`✓ stamped ${a.fingerprint}, reviewed ${today()}`);
   process.exit(0);
 }
@@ -308,14 +427,15 @@ if (mode === '--check') {
 // only the date and leaving the evidence stale.
 const begin = text.indexOf(BEGIN);
 const end = text.indexOf(END);
-const verdict =
-  'Accepted under the standing policy below: no high or critical advisory. Moderate and low findings with no compatible fix are recorded here, not waived — the policy names the conditions that reopen them.';
+// Matching fingerprints say the findings are unchanged, not that they were
+// accepted: an acceptance can lapse between runs, so the verdict is re-derived.
+const verdict = verdictFor(a, c, false);
 const refreshedSection = section(a, 'Fix attempts disabled for this run (--refresh).', verdict);
 let next =
   begin >= 0 && end > begin
     ? text.slice(0, begin) + refreshedSection + text.slice(end + END.length)
     : text.replace(/^(Last reviewed: .*\n(?:<!-- audit-fingerprint:.*-->\n)?)/m, `$1\n${refreshedSection}\n`);
-next = stamp(next, a);
+next = stamp(next, a, c);
 writeFileSync(SECURITY, next);
 console.log(
   reviewed === today()

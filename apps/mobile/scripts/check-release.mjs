@@ -327,15 +327,33 @@ if (!securityReviewed) {
 } else if (!/<!-- audit-fingerprint: [0-9a-f]{12} /.test(security)) {
   fail('SECURITY.md carries no audit fingerprint — run scripts/audit-triage.mjs --stamp after triaging');
 } else {
+  // "; N accepted" counts high findings that trace only to advisories reviewed
+  // in audit-accepted.json; audit-triage.mjs writes it and is the only judge of
+  // which findings it covers.
   const stamped =
-    /<!-- audit-fingerprint: [0-9a-f]{12} \((\d+) findings: (\d+) moderate, (\d+) high, (\d+) critical\)/.exec(
+    /<!-- audit-fingerprint: [0-9a-f]{12} \((\d+) findings: (\d+) moderate, (\d+) high, (\d+) critical(?:; (\d+) accepted)?\)/.exec(
       security,
     );
-  const serious = stamped ? Number(stamped[3]) + Number(stamped[4]) : 0;
+  const accepted = stamped ? Number(stamped[5] ?? 0) : 0;
+  const serious = stamped ? Number(stamped[3]) + Number(stamped[4]) - accepted : 0;
   if (serious > 0) {
-    const message = `SECURITY.md records ${serious} high/critical advisories; the standing policy blocks a release until they are assessed and fixed`;
+    const message = `SECURITY.md records ${serious} high/critical advisories not covered by a reviewed acceptance; the standing policy blocks a release until they are assessed and fixed`;
     if (process.env.RELEASE_CHECK === '1') fail(message);
     else console.warn(`⚠ ${message}`);
+  }
+  // An acceptance that lapsed after the record was stamped no longer covers
+  // anything; the next weekly run would escalate it, and a release must not
+  // ship in the gap.
+  if (accepted > 0) {
+    const now = new Date().toISOString().slice(0, 10);
+    const lapsed = (
+      JSON.parse(readFileSync(resolve(ROOT, 'audit-accepted.json'), 'utf8')).accepted ?? []
+    ).filter((entry) => !(entry.reviewBy >= now));
+    if (lapsed.length) {
+      const message = `audit-accepted.json review date has passed for ${lapsed.map((e) => e.advisory).join(', ')}; re-assess before release`;
+      if (process.env.RELEASE_CHECK === '1') fail(message);
+      else console.warn(`⚠ ${message}`);
+    }
   }
   const ageDays = Math.floor((Date.now() - new Date(securityReviewed).getTime()) / (24 * 60 * 60 * 1000));
   if (ageDays > 14) {
