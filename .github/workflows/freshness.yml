@@ -172,7 +172,7 @@ jobs:
           ### Where to look, in order
 
           1. **[Sync pricing](../../actions/workflows/sync-pricing.yml)** — did today's run succeed? A degraded run holds the catalog back on purpose and fails loudly.
-          2. **Did it actually push?** The run log names the step that committed, or says nothing was staged. There is no review gate any more: a flagged diff publishes like any other, so an open `needs-review` issue is *not* a reason for a stale date.
+          2. **Did it actually push?** The run log names the step that committed, or says nothing was staged. There is no review gate any more: a flagged diff publishes like any other, so an open \`needs-review\` issue is *not* a reason for a stale date.
           3. **[Deploy to GitHub Pages](../../actions/workflows/deploy.yml)** — a green sync still needs a green deploy, and since the review gate went, this dispatch is the only thing that publishes the catalog.
 
           This issue is reused rather than replaced. It closes itself on the next run that finds a fresh catalog.
