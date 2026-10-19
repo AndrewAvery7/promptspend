@@ -21,7 +21,7 @@ and 228 browser tests across four viewports. Those eight figures are the whole s
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
 of its own list nor inclusive of `mcp/` at all; the next claimed 580, which was
 correct when written and went stale the moment the VS Code extension landed with
-its own 137 tests. A total that is not re-derived from a run is a number that
+its own 138 tests. A total that is not re-derived from a run is a number that
 decays. The distribution is deliberately uneven: depth follows the cost of being
 wrong, not the size of the file.
 
