@@ -156,14 +156,33 @@ describe('warningsFor', () => {
     expect(warningsFor({ written: model!.id, model: model!, start: 0, end: 0 })).toEqual([]);
   });
 
+  // The row is borrowed from the real catalog, so its provenance arrives with
+  // whatever the last sync wrote. When the first row picked up its own review
+  // note ("vendor verification is 32 days old"), the note replaced the generic
+  // wording, as it should, and this test failed on the catalog's state rather
+  // than the renderer's. Clear the note to test the fallback; test the note
+  // separately.
   it('flags a disputed price rather than presenting it plainly', () => {
     const disputed = {
       ...catalog.models[0]!,
-      provenance: { ...catalog.models[0]!.provenance, needsReview: true },
+      provenance: { ...catalog.models[0]!.provenance, needsReview: true, reviewNote: undefined },
     };
     const warnings = warningsFor({ written: disputed.id, model: disputed, start: 0, end: 0 });
     expect(warnings).toHaveLength(1);
     expect(warnings[0]).toContain('disagree');
+  });
+
+  it("shows the sync's own review note in place of the generic one", () => {
+    const disputed = {
+      ...catalog.models[0]!,
+      provenance: {
+        ...catalog.models[0]!.provenance,
+        needsReview: true,
+        reviewNote: 'OpenRouter says $9.',
+      },
+    };
+    const warnings = warningsFor({ written: disputed.id, model: disputed, start: 0, end: 0 });
+    expect(warnings).toEqual(['OpenRouter says $9.']);
   });
 });
 
