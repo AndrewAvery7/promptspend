@@ -1143,3 +1143,10 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
 - **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+
+## 2026-10-21
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `mistral-mistral-large-4-0` — provenance.needsReview: — → true
+- **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: — → OpenRouter disagrees (50%): $1.36/$4.18 vs $0.68/$2.09
