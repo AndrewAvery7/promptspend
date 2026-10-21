@@ -246,22 +246,22 @@
     },
     "/compare/claude-sonnet-5-5-vs-gemini-3-1-pro-preview/": {
       "published": "2026-09-29",
-      "lastmod": "2026-09-29",
-      "fingerprint": "0fec0f132eddb2",
+      "lastmod": "2026-10-21",
+      "fingerprint": "14422f10f4e79c",
       "left": "claude-sonnet-5-5",
       "right": "gemini-3-1-pro-preview"
     },
     "/compare/claude-sonnet-5-5-vs-gpt-5-4/": {
       "published": "2026-09-29",
-      "lastmod": "2026-09-29",
-      "fingerprint": "1fcb4b3246fae8",
+      "lastmod": "2026-10-21",
+      "fingerprint": "194a99888e6c9b",
       "left": "claude-sonnet-5-5",
       "right": "gpt-5-4"
     },
     "/compare/claude-sonnet-5-5-vs-gpt-5-5/": {
       "published": "2026-09-29",
-      "lastmod": "2026-09-29",
-      "fingerprint": "0ac2516e2a57c8",
+      "lastmod": "2026-10-21",
+      "fingerprint": "113debb4f1b8e9",
       "left": "claude-sonnet-5-5",
       "right": "gpt-5-5"
     },
@@ -659,8 +659,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-10",
-      "fingerprint": "136c8133023ad7"
+      "lastmod": "2026-10-21",
+      "fingerprint": "08d901f03bfe8f"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -739,8 +739,8 @@
     },
     "/models/claude-sonnet-5-5/": {
       "published": "2026-09-29",
-      "lastmod": "2026-09-29",
-      "fingerprint": "09a2fc79d44b13"
+      "lastmod": "2026-10-21",
+      "fingerprint": "14756f8b9407a0"
     },
     "/models/claude-sonnet-5/": {
       "published": "2026-08-02",
@@ -944,13 +944,13 @@
     },
     "/models/mistral-large-4-0/": {
       "published": "2026-10-07",
-      "lastmod": "2026-10-09",
-      "fingerprint": "180271f495d142"
+      "lastmod": "2026-10-21",
+      "fingerprint": "09319907afff12"
     },
     "/models/mistral-large-4/": {
       "published": "2026-10-07",
-      "lastmod": "2026-10-09",
-      "fingerprint": "03d477dd3fe1ed"
+      "lastmod": "2026-10-21",
+      "fingerprint": "0a73b894dc6dbb"
     },
     "/models/mistral-medium-3-5/": {
       "published": "2026-08-02",
@@ -979,8 +979,8 @@
     },
     "/models/moonshot-kimi-k3/": {
       "published": "2026-08-22",
-      "lastmod": "2026-08-22",
-      "fingerprint": "1bb61fd21253dd"
+      "lastmod": "2026-10-21",
+      "fingerprint": "137c2437ec78a7"
     },
     "/models/o1/": {
       "published": "2026-08-02",
@@ -1084,8 +1084,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-10",
-      "fingerprint": "16167d97ac0ae6"
+      "lastmod": "2026-10-21",
+      "fingerprint": "0cd3328dd19893"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -1099,8 +1099,8 @@
     },
     "/providers/anthropic/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-10",
-      "fingerprint": "074707479aa567"
+      "lastmod": "2026-10-21",
+      "fingerprint": "04f14b3808f13b"
     },
     "/providers/cohere/": {
       "published": "2026-08-02",
@@ -1124,13 +1124,13 @@
     },
     "/providers/mistral/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-09",
-      "fingerprint": "0775bdb443c37d"
+      "lastmod": "2026-10-21",
+      "fingerprint": "1a0084483e47d0"
     },
     "/providers/moonshot/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-29",
-      "fingerprint": "1c741847f42cb9"
+      "lastmod": "2026-10-21",
+      "fingerprint": "1cedd312dd65aa"
     },
     "/providers/openai/": {
       "published": "2026-08-02",

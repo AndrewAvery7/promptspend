@@ -1150,3 +1150,26 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
 - **Review** `mistral-mistral-large-4-0` — provenance.needsReview: — → true
 - **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: — → OpenRouter disagrees (50%): $1.36/$4.18 vs $0.68/$2.09
+
+## 2026-10-21
+
+- **Price** `claude-sonnet-5-5` — cachedInput down 0.2 → 0.1
+- **Price** `mistral-mistral-large-4` — input up 0.68 → 1.36
+- **Price** `mistral-mistral-large-4` — output up 2.09 → 4.18
+- **Price** `mistral-mistral-large-4` — cachedInput up 0.068 → 0.14
+- **Price** `mistral-mistral-large-4-0` — input up 0.68 → 1.36
+- **Price** `mistral-mistral-large-4-0` — output up 2.09 → 4.18
+- **Price** `mistral-mistral-large-4-0` — cachedInput up 0.068 → 0.14
+- **Coverage** `moonshot-kimi-k3` — cacheWrite now tracked: — → 3
+- **Metadata** `mistral-mistral-large-4-0` — displayName: Mistral Large 4 0 → Mistral Large 4.0
+- **Review** `claude-sonnet-5-5` — provenance.lastChanged: — → 2026-10-21
+- **Review** `mistral-mistral-large-4` — provenance.source: litellm → vendor
+- **Review** `mistral-mistral-large-4` — provenance.needsReview: — → true
+- **Review** `mistral-mistral-large-4` — provenance.reviewNote: — → vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18
+- **Review** `mistral-mistral-large-4` — provenance.verifiedUrl: — → https://docs.mistral.ai/models/mistral-large-4
+- **Review** `mistral-mistral-large-4-0` — provenance.source: litellm → vendor
+- **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: OpenRouter disagrees (50%): $1.36/$4.18 vs $0.68/$2.09 → vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18
+- **Review** `mistral-mistral-large-4-0` — provenance.verifiedUrl: — → https://docs.mistral.ai/models/mistral-large-4
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (92%): $0.239/$11.936 vs $3/$15 → —
+- **Review** `moonshot-kimi-k3` — provenance.verifiedUrl: https://platform.kimi.ai/docs/pricing/chat-k3 → https://platform.kimi.ai/docs/pricing/chat
