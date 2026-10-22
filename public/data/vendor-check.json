@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-21T11:06:07.490Z",
+  "checkedAt": "2026-10-22T11:05:45.686Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "50411 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "50701 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -80,7 +80,7 @@
       ]
     },
     {
-      "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
+      "url": "https://platform.kimi.ai/docs/pricing/chat",
       "ok": true,
       "note": "2926 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
@@ -90,7 +90,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "579674 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "592980 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -100,7 +100,7 @@
     {
       "url": "https://docs.z.ai/guides/overview/pricing",
       "ok": true,
-      "note": "2935 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3008 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "zai-glm-5.1",
         "zai-glm-5.2",
@@ -137,6 +137,15 @@
         "xai-grok-4-1-fast",
         "xai-grok-3",
         "xai-grok-4"
+      ]
+    },
+    {
+      "url": "https://docs.mistral.ai/models/mistral-large-4",
+      "ok": true,
+      "note": "2872 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "mistral-mistral-large-4",
+        "mistral-mistral-large-4-0"
       ]
     }
   ],
@@ -180,8 +189,8 @@
     {
       "id": "claude-sonnet-5-5",
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
-      "status": "mismatch",
-      "detail": "cached input $0.1 vs recorded $0.2"
+      "status": "confirmed",
+      "detail": "page lists $2/$10 (cached $0.1)"
     },
     {
       "id": "claude-haiku-4-5",
@@ -385,11 +394,11 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table is empty in the page content; no price for kimi-k2.6 is printed)"
+      "detail": "not priced on the page (the K2 Series pricing table on the page is empty; no price for kimi-k2.6 is printed)"
     },
     {
       "id": "moonshot-kimi-k3",
-      "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
+      "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
       "detail": "not priced on the page (the K3 Series Models pricing table on the page is empty; no prices are printed for kimi-k3)"
     },
@@ -451,7 +460,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no MiniMax-M2.5 row is listed; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
+      "detail": "not priced on the page (MiniMax-M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -494,9 +503,21 @@
       "url": "https://docs.x.ai/developers/migration/may-15-retirement",
       "status": "confirmed",
       "detail": "page lists $1.25/$2.5"
+    },
+    {
+      "id": "mistral-mistral-large-4",
+      "url": "https://docs.mistral.ai/models/mistral-large-4",
+      "status": "confirmed",
+      "detail": "page lists $1.36/$4.18 (cached $0.14)"
+    },
+    {
+      "id": "mistral-mistral-large-4-0",
+      "url": "https://docs.mistral.ai/models/mistral-large-4",
+      "status": "unconfirmed",
+      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row is shown)"
     }
   ],
-  "confirmed": 51,
-  "mismatched": 1,
-  "unconfirmed": 7
+  "confirmed": 53,
+  "mismatched": 0,
+  "unconfirmed": 8
 }

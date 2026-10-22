@@ -1173,3 +1173,10 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (92%): $0.239/$11.936 vs $3/$15 → —
 - **Review** `moonshot-kimi-k3` — provenance.verifiedUrl: https://platform.kimi.ai/docs/pricing/chat-k3 → https://platform.kimi.ai/docs/pricing/chat
+
+## 2026-10-22
+
+- **Review** `claude-sonnet-5-5` — provenance.needsReview: true → —
+- **Review** `claude-sonnet-5-5` — provenance.reviewNote: the vendor's own page disagrees with the record — cached input $0.1 vs recorded $0.2 → —
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → vendor verification is 35 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → vendor verification is 35 days old — re-read the first-party pricing page
