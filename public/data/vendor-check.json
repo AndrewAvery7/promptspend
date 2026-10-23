@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-22T11:05:45.686Z",
+  "checkedAt": "2026-10-23T11:06:01.535Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "50701 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "53380 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -49,7 +49,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "95973 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "93728 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -74,7 +74,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "ok": true,
-      "note": "2926 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "2944 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k2.6"
       ]
@@ -82,7 +82,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "ok": true,
-      "note": "2926 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "2944 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k3"
       ]
@@ -113,7 +113,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "19766 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "19772 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -340,7 +340,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only Gemini 3.8 Flash and Gemini 3.6 Flash are listed)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only 3.8 Flash and 3.6 Flash are listed)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -376,7 +376,7 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite is listed)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only 3.5 Flash-Lite is listed)"
     },
     {
       "id": "deepseek-deepseek-v4-pro",
@@ -418,7 +418,7 @@
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (Qwen-VL section lists only qwen3-vl-plus; no Qwen3 VL 235B model is listed)"
+      "detail": "not priced on the page (Qwen-VL section lists only qwen3-vl-plus; no qwen3-vl-235b-a22b-instruct row)"
     },
     {
       "id": "zai-glm-5.1",
@@ -460,7 +460,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (MiniMax-M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
+      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -514,7 +514,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row is shown)"
+      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row)"
     }
   ],
   "confirmed": 53,

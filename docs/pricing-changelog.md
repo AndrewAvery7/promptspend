@@ -1180,3 +1180,8 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `claude-sonnet-5-5` — provenance.reviewNote: the vendor's own page disagrees with the record — cached input $0.1 vs recorded $0.2 → —
 - **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → vendor verification is 35 days old — re-read the first-party pricing page
 - **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → vendor verification is 35 days old — re-read the first-party pricing page
+
+## 2026-10-23
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 35 days old — re-read the first-party pricing page → vendor verification is 36 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 35 days old — re-read the first-party pricing page → vendor verification is 36 days old — re-read the first-party pricing page
