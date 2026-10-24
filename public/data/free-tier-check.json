@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-24T17:48:20.987Z",
+  "checkedAt": "2026-10-24T19:24:01.763Z",
   "facts": {
     "alibaba-account-info": {
       "status": "confirmed",
@@ -408,9 +408,8 @@
       "lastConfirmed": "2026-10-24"
     },
     "moonshot-k3": {
-      "status": "missing",
-      "lastConfirmed": "2026-10-23",
-      "changedOn": "2026-10-24"
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
     },
     "moonshot-minimum": {
       "status": "confirmed",

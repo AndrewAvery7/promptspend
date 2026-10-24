@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-24T17:46:59.480Z",
+  "checkedAt": "2026-10-24T19:22:47.111Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -102,9 +102,7 @@
       "ok": true,
       "note": "592980 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
-        "dashscope-qwen3.7-max",
-        "dashscope-qwen3-next-80b-a3b-instruct",
-        "dashscope-qwen3-vl-235b-a22b-instruct"
+        "dashscope-qwen3.7-max"
       ]
     },
     {
@@ -529,18 +527,6 @@
       "detail": "page lists $2.5/$7.5"
     },
     {
-      "id": "dashscope-qwen3-next-80b-a3b-instruct",
-      "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "unconfirmed",
-      "detail": "not priced on the page (no Qwen3 Next 80B model is listed on the page)"
-    },
-    {
-      "id": "dashscope-qwen3-vl-235b-a22b-instruct",
-      "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "unconfirmed",
-      "detail": "not priced on the page (Qwen-VL section lists only qwen3-vl-plus; no qwen3-vl-235b-a22b-instruct row)"
-    },
-    {
       "id": "zai-glm-5.1",
       "url": "https://docs.z.ai/guides/overview/pricing",
       "status": "confirmed",
@@ -676,7 +662,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row is shown)"
+      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",
@@ -729,5 +715,5 @@
   ],
   "confirmed": 78,
   "mismatched": 0,
-  "unconfirmed": 8
+  "unconfirmed": 6
 }
