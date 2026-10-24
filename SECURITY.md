@@ -106,6 +106,15 @@ counts visits two ways.
   `/cdn-cgi/rum`. The policy admits its script origin
   (`static.cloudflareinsights.com`) but keeps `connect-src` closed to it.
 
+Some of what the privacy page says rests on settings in the Google Analytics
+account rather than in this repository, so they are recorded here: event data
+retention **2 months**; Google signals **off**; and under the web stream's
+Enhanced measurement, **"Page changes based on browser history events" off**
+(the calculator rewrites its own address as the scenario changes, and Google's
+automatic page view for that would report the full address, query string
+included), with **Form interactions** and **Site search** off too. If any of
+these is changed, change the privacy page in the same breath.
+
 What that costs: `connect-src` now admits Google Analytics' collection hosts,
 so a script that got onto the page could post data to an analytics account of
 its own there. The hosts are named one by one (no wildcard) and
