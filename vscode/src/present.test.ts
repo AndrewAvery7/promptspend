@@ -162,10 +162,21 @@ describe('warningsFor', () => {
   // wording, as it should, and this test failed on the catalog's state rather
   // than the renderer's. Clear the note to test the fallback; test the note
   // separately.
+  //
+  // Borrow an ordinary current row, not `models[0]`: that row is whatever the
+  // catalog lists first, and the day it was archived as deprecated it gained a
+  // retirement warning of its own and both tests below failed on the catalog's
+  // state rather than the renderer's.
+  const ordinary = () => {
+    const model = catalog.models.find((m) => m.status === 'current' && !m.aliasOf && !m.provenance.stale);
+    expect(model, 'catalog has no plain current model to test with').toBeDefined();
+    return model!;
+  };
+
   it('flags a disputed price rather than presenting it plainly', () => {
     const disputed = {
-      ...catalog.models[0]!,
-      provenance: { ...catalog.models[0]!.provenance, needsReview: true, reviewNote: undefined },
+      ...ordinary(),
+      provenance: { ...ordinary().provenance, needsReview: true, reviewNote: undefined },
     };
     const warnings = warningsFor({ written: disputed.id, model: disputed, start: 0, end: 0 });
     expect(warnings).toHaveLength(1);
@@ -174,9 +185,9 @@ describe('warningsFor', () => {
 
   it("shows the sync's own review note in place of the generic one", () => {
     const disputed = {
-      ...catalog.models[0]!,
+      ...ordinary(),
       provenance: {
-        ...catalog.models[0]!.provenance,
+        ...ordinary().provenance,
         needsReview: true,
         reviewNote: 'OpenRouter says $9.',
       },
