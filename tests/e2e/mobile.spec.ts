@@ -101,7 +101,7 @@ test('the main navigation scrolls instead of squashing its items', async ({ page
   const shortest = Math.min(...boxes.map((box) => box.height));
   expect(tallest - shortest, 'a nav item has wrapped onto a second line').toBeLessThan(2);
   await expect(
-    page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Free tiers' }),
+    page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Free Tiers' }),
   ).toHaveAttribute('href', /\/free-tiers\/$/);
 });
 

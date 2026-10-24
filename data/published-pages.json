@@ -3,8 +3,8 @@
   "pages": {
     "/compare/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-03",
-      "fingerprint": "157d4900e4e0db"
+      "lastmod": "2026-10-24",
+      "fingerprint": "06c9516acffceb"
     },
     "/compare/amazon-nova-2-lite-v1-0-vs-dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
@@ -69,6 +69,13 @@
       "left": "amazon-nova-2-pro-preview-20251202-v1-0",
       "right": "zai-glm-5-code"
     },
+    "/compare/claude-fable-5-vs-gemini-4-argon/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1ca0f3daa8f95d",
+      "left": "claude-fable-5",
+      "right": "gemini-4-argon"
+    },
     "/compare/claude-fable-5-vs-gpt-5-5/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-02",
@@ -132,12 +139,40 @@
       "left": "claude-opus-4-6",
       "right": "gpt-5-6-terra"
     },
+    "/compare/claude-opus-4-6-vs-gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "010132885fda56",
+      "left": "claude-opus-4-6",
+      "right": "gpt-6-1-sol"
+    },
+    "/compare/claude-opus-4-6-vs-gpt-6-astra/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1b9792fbb1a9c9",
+      "left": "claude-opus-4-6",
+      "right": "gpt-6-astra"
+    },
+    "/compare/claude-opus-4-6-vs-gpt-6-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0a4157b12084d2",
+      "left": "claude-opus-4-6",
+      "right": "gpt-6-sol"
+    },
     "/compare/claude-opus-4-7-vs-gemini-3-1-pro-preview/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-16",
       "fingerprint": "17c372c8b60442",
       "left": "claude-opus-4-7",
       "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-opus-4-7-vs-gemini-4-argon/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1f6912947e68e6",
+      "left": "claude-opus-4-7",
+      "right": "gemini-4-argon"
     },
     "/compare/claude-opus-4-7-vs-gpt-5-5/": {
       "published": "2026-08-02",
@@ -152,6 +187,20 @@
       "fingerprint": "10d4f4b501baf3",
       "left": "claude-opus-4-7",
       "right": "gpt-5-6-sol"
+    },
+    "/compare/claude-opus-4-7-vs-gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "19bef5c8c48982",
+      "left": "claude-opus-4-7",
+      "right": "gpt-6-1-sol"
+    },
+    "/compare/claude-opus-4-7-vs-gpt-6-astra/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1140beaca4af01",
+      "left": "claude-opus-4-7",
+      "right": "gpt-6-astra"
     },
     "/compare/claude-opus-4-8-vs-gemini-3-1-pro-preview/": {
       "published": "2026-08-02",
@@ -174,6 +223,13 @@
       "left": "claude-opus-4-8",
       "right": "gpt-5-6-sol"
     },
+    "/compare/claude-opus-4-8-vs-gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1cacf24e1f05de",
+      "left": "claude-opus-4-8",
+      "right": "gpt-6-1-sol"
+    },
     "/compare/claude-opus-5-5-vs-gemini-3-1-pro-preview/": {
       "published": "2026-09-29",
       "lastmod": "2026-09-29",
@@ -194,6 +250,13 @@
       "fingerprint": "012e54e989a905",
       "left": "claude-opus-5-5",
       "right": "gpt-5-6-sol"
+    },
+    "/compare/claude-opus-5-5-vs-gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0138b86d75c8d6",
+      "left": "claude-opus-5-5",
+      "right": "gpt-6-1-sol"
     },
     "/compare/claude-opus-5-vs-gemini-3-1-pro-preview/": {
       "published": "2026-08-02",
@@ -216,12 +279,26 @@
       "left": "claude-opus-5",
       "right": "gpt-5-6-sol"
     },
+    "/compare/claude-opus-5-vs-gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0e37b78cc7b0ab",
+      "left": "claude-opus-5",
+      "right": "gpt-6-1-sol"
+    },
     "/compare/claude-sonnet-4-6-vs-dashscope-qwen3-7-max/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-22",
       "fingerprint": "18572a0e33bc77",
       "left": "claude-sonnet-4-6",
       "right": "dashscope-qwen3-7-max"
+    },
+    "/compare/claude-sonnet-4-6-vs-dashscope-qwen3-8-max/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "061081fe374046",
+      "left": "claude-sonnet-4-6",
+      "right": "dashscope-qwen3-8-max"
     },
     "/compare/claude-sonnet-4-6-vs-gpt-5-4/": {
       "published": "2026-08-02",
@@ -251,6 +328,13 @@
       "left": "claude-sonnet-5-5",
       "right": "gemini-3-1-pro-preview"
     },
+    "/compare/claude-sonnet-5-5-vs-gemini-4-argon/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "073c064dbb89bd",
+      "left": "claude-sonnet-5-5",
+      "right": "gemini-4-argon"
+    },
     "/compare/claude-sonnet-5-5-vs-gpt-5-4/": {
       "published": "2026-09-29",
       "lastmod": "2026-10-21",
@@ -265,12 +349,33 @@
       "left": "claude-sonnet-5-5",
       "right": "gpt-5-5"
     },
+    "/compare/claude-sonnet-5-5-vs-gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "10e0492cac4748",
+      "left": "claude-sonnet-5-5",
+      "right": "gpt-6-1-sol"
+    },
+    "/compare/claude-sonnet-5-5-vs-gpt-6-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "10a311e9a91d5c",
+      "left": "claude-sonnet-5-5",
+      "right": "gpt-6-sol"
+    },
     "/compare/claude-sonnet-5-vs-gemini-3-1-pro-preview/": {
       "published": "2026-08-02",
       "lastmod": "2026-09-01",
       "fingerprint": "0234e7d202f668",
       "left": "claude-sonnet-5",
       "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/claude-sonnet-5-vs-gemini-4-argon/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1bb2b5d0ba7ed9",
+      "left": "claude-sonnet-5",
+      "right": "gemini-4-argon"
     },
     "/compare/claude-sonnet-5-vs-gpt-5-4/": {
       "published": "2026-08-02",
@@ -285,6 +390,20 @@
       "fingerprint": "1021115e135190",
       "left": "claude-sonnet-5",
       "right": "gpt-5-5"
+    },
+    "/compare/claude-sonnet-5-vs-gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "015f2689a44519",
+      "left": "claude-sonnet-5",
+      "right": "gpt-6-1-sol"
+    },
+    "/compare/claude-sonnet-5-vs-gpt-6-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1b73e29d33d545",
+      "left": "claude-sonnet-5",
+      "right": "gpt-6-sol"
     },
     "/compare/command-a-03-2025-vs-gpt-5-4-mini/": {
       "published": "2026-08-02",
@@ -334,6 +453,27 @@
       "fingerprint": "17b1de7e99db7a",
       "left": "dashscope-qwen3-7-max",
       "right": "xai-grok-4-5"
+    },
+    "/compare/dashscope-qwen3-8-max-vs-gemini-3-1-pro-preview/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "09d6769130585d",
+      "left": "dashscope-qwen3-8-max",
+      "right": "gemini-3-1-pro-preview"
+    },
+    "/compare/dashscope-qwen3-8-max-vs-gpt-5-4/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1dafb53174176d",
+      "left": "dashscope-qwen3-8-max",
+      "right": "gpt-5-4"
+    },
+    "/compare/dashscope-qwen3-8-max-vs-gpt-5-6-terra/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "14e0449d46b225",
+      "left": "dashscope-qwen3-8-max",
+      "right": "gpt-5-6-terra"
     },
     "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-deepseek-v4-flash/": {
       "published": "2026-08-02",
@@ -489,6 +629,13 @@
       "left": "gemini-3-1-pro-preview",
       "right": "gpt-5-6-terra"
     },
+    "/compare/gemini-3-1-pro-preview-vs-gpt-6-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1add7c2ff7a94f",
+      "left": "gemini-3-1-pro-preview",
+      "right": "gpt-6-sol"
+    },
     "/compare/gemini-3-5-flash-lite-vs-gpt-5-4-nano/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-16",
@@ -523,6 +670,20 @@
       "fingerprint": "0f6a8b20c1737b",
       "left": "gemini-3-6-flash",
       "right": "moonshot-kimi-k2-6"
+    },
+    "/compare/gemini-4-argon-vs-gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "09e38644da800a",
+      "left": "gemini-4-argon",
+      "right": "gpt-6-1-sol"
+    },
+    "/compare/gemini-4-argon-vs-gpt-6-astra/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "07dcce53404f1b",
+      "left": "gemini-4-argon",
+      "right": "gpt-6-astra"
     },
     "/compare/gpt-5-1-vs-xai-grok-4-3/": {
       "published": "2026-08-02",
@@ -587,12 +748,40 @@
       "left": "gpt-5-6-luna",
       "right": "mistral-large-3"
     },
+    "/compare/gpt-5-6-luna-vs-xiaomi-mimo-mimo-v2-6-flash/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "17b7c37050cf0c",
+      "left": "gpt-5-6-luna",
+      "right": "xiaomi-mimo-mimo-v2-6-flash"
+    },
     "/compare/gpt-5-6-terra-vs-xai-grok-4-5/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-22",
       "fingerprint": "088efe0baa3335",
       "left": "gpt-5-6-terra",
       "right": "xai-grok-4-5"
+    },
+    "/compare/gpt-6-luna-vs-xiaomi-mimo-mimo-v2-6-flash/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1989a052b44af1",
+      "left": "gpt-6-luna",
+      "right": "xiaomi-mimo-mimo-v2-6-flash"
+    },
+    "/compare/gpt-6-luna-vs-xiaomi-mimo-mimo-v2-6-pro/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0bbaed44c45e9d",
+      "left": "gpt-6-luna",
+      "right": "xiaomi-mimo-mimo-v2-6-pro"
+    },
+    "/compare/gpt-6-luna-vs-zai-glm-5-3-flash/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "09ae31e66d5f14",
+      "left": "gpt-6-luna",
+      "right": "zai-glm-5-3-flash"
     },
     "/compare/minimax-m3-vs-mistral-large-3/": {
       "published": "2026-08-02",
@@ -643,6 +832,13 @@
       "left": "moonshot-kimi-k2-6",
       "right": "xai-grok-4-5"
     },
+    "/compare/xai-grok-4-3-vs-xiaomi-mimo-mimo-v2-6-pro/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "01f50b8660ef7e",
+      "left": "xai-grok-4-3",
+      "right": "xiaomi-mimo-mimo-v2-6-pro"
+    },
     "/compare/xai-grok-4-3-vs-zai-glm-5-1/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-06",
@@ -656,6 +852,20 @@
       "fingerprint": "01c44326aaff6f",
       "left": "xai-grok-4-3",
       "right": "zai-glm-5-code"
+    },
+    "/compare/xiaomi-mimo-mimo-v2-6-flash-vs-zai-glm-5-3-flash/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "038d29100b46d8",
+      "left": "xiaomi-mimo-mimo-v2-6-flash",
+      "right": "zai-glm-5-3-flash"
+    },
+    "/compare/xiaomi-mimo-mimo-v2-6-pro-vs-zai-glm-5-3-flash/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1c1521744523ad",
+      "left": "xiaomi-mimo-mimo-v2-6-pro",
+      "right": "zai-glm-5-3-flash"
     },
     "/models/": {
       "published": "2026-08-02",

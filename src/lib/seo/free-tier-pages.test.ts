@@ -214,10 +214,10 @@ describe('renderFreeTierPage', () => {
     // Owner's call, 2026-10-05: badges belong on the primary pages only. The
     // catalog pages must keep them - Sell With Boost verifies /models/ and
     // keeps the listing only while its badge links back.
-    expect(html).not.toContain('class="listing"');
-    expect(renderFreeTierIndex(free, CTX)).not.toContain('class="listing"');
+    expect(html).not.toContain('class="footer__badge"');
+    expect(renderFreeTierIndex(free, CTX)).not.toContain('class="footer__badge"');
     const providerPage = SET.providers.find((page) => page.id === 'acme')!;
-    expect(renderProviderPage(providerPage, CTX)).toContain('class="listing"');
+    expect(renderProviderPage(providerPage, CTX)).toContain('class="footer__badge"');
     expect(renderProviderPage(providerPage, CTX)).toContain('https://sellwithboost.com');
   });
 
