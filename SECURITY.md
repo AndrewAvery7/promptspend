@@ -7,7 +7,8 @@ load from these remote origins: `https://launchnest.io`, for one badge image
 Analytics beacon (`script-src`), which reports only to the site's own
 `/cdn-cgi/rum`, and reports a page's address without its query string or
 fragment; and Google Analytics 4 (since 2026-10-24): `gtag.js` from
-`https://www.googletagmanager.com` (`script-src`), reporting to
+`https://www.googletagmanager.com` (`script-src`, and also `connect-src`
+and `img-src`), reporting to
 `https://www.google-analytics.com`, `https://region1.google-analytics.com` and
 `https://region1.analytics.google.com` (`connect-src` and `img-src`). Where the
 alerts API is configured, Turnstile's `https://challenges.cloudflare.com` is
@@ -112,8 +113,11 @@ retention **2 months**; Google signals **off**; and under the web stream's
 Enhanced measurement, **"Page changes based on browser history events" off**
 (the calculator rewrites its own address as the scenario changes, and Google's
 automatic page view for that would report the full address, query string
-included), with **Form interactions** and **Site search** off too. If any of
-these is changed, change the privacy page in the same breath.
+included), with **Form interactions** and **Site search** off too; no
+User-ID or user-provided data collection, and no Google Ads or BigQuery link.
+"Granular location and device data collection" decides how precise the
+location the privacy page describes ("such as your city or country") is. If
+any of these is changed, change the privacy page in the same breath.
 
 What that costs: `connect-src` now admits Google Analytics' collection hosts,
 so a script that got onto the page could post data to an analytics account of

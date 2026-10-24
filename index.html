@@ -26,10 +26,11 @@
       The placeholder below is filled in at build time by the `promptspend-csp`
       plugin in vite.config.ts, from the same VITE_ALERTS_API value the app
       itself reads — a hand-written policy here would drift from the API origin
-      the moment one of them moved. With no API configured it resolves to a
-      strictly self-only policy; `connect-src` is what stops a compromised
+      the moment one of them moved. `connect-src` is what stops a compromised
       dependency exfiltrating a pasted prompt, which is the one genuinely
-      sensitive thing this page holds. (Do not write the placeholder token
+      sensitive thing this page holds, so it admits only this site, the alerts
+      API and Turnstile when one is configured, and Google Analytics' named
+      collection hosts (owner decision 2026-10-06; src/lib/analytics/config.ts). (Do not write the placeholder token
       anywhere above this tag: the build fills every occurrence.)
     -->
     <meta http-equiv="Content-Security-Policy" content="%CSP%" />

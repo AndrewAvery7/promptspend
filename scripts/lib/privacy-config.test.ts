@@ -109,14 +109,22 @@ describe('Google Analytics stays on the website', () => {
 describe('the privacy page describes the analytics switch as it is set', () => {
   const policy = read('src/content/information/privacy.md');
 
-  it('says when Google Analytics loads', () => {
-    if (ANALYTICS_REQUIRES_CONSENT) {
-      expect(policy).toContain('Google Analytics loads only after you click Accept');
-      expect(policy).not.toContain('Google Analytics loads when a page opens');
-    } else {
-      expect(policy).toContain('Google Analytics loads when a page opens');
-      expect(policy).not.toContain('Google Analytics loads only after you click Accept');
-    }
+  // Each position of the switch has sentences only it makes true. Flipping the
+  // switch fails this test until the privacy page is rewritten to match.
+  const NOTICE_MODE = [
+    'Google Analytics loads when a page opens',
+    'until you choose OK or Turn off',
+    'choose Turn off on the notice',
+    'If your browser sends Global Privacy Control, Google Analytics does not load at all.',
+  ];
+  const CONSENT_MODE = ['Google Analytics loads only after you click Accept', 'choose Decline on the notice'];
+
+  it('says when Google Analytics loads, and how to refuse it, for the way the switch is set', () => {
+    const [required, forbidden] = ANALYTICS_REQUIRES_CONSENT
+      ? [CONSENT_MODE, NOTICE_MODE]
+      : [NOTICE_MODE, CONSENT_MODE];
+    for (const sentence of required) expect(policy).toContain(sentence);
+    for (const sentence of forbidden) expect(policy).not.toContain(sentence);
   });
 
   it('names the cookies, what Google receives, and how to turn it off', () => {

@@ -23,10 +23,13 @@ export const GA_MEASUREMENT_ID = 'G-08GFGLY4VD';
  * visitor, and a notice says so, with a "Turn off" button.
  * `true`: nothing from Google loads until the visitor clicks "Accept".
  *
- * Changing this one word is the whole change; the notice's wording and
- * buttons follow it. If you flip it, also change the "When it loads" sentence
- * on the privacy page (`src/content/information/privacy.md`) - a test fails
- * until the two agree.
+ * Changing this one word is the whole code change; the notice's wording and
+ * buttons follow it. The words that describe it do not change themselves: the
+ * privacy page (`src/content/information/privacy.md`) says when Google
+ * Analytics loads and how to refuse it, and `scripts/lib/privacy-config.test.ts`
+ * fails until those sentences match the switch. README.md ("Privacy,
+ * precisely") and SECURITY.md ("Data handling") describe the default too, so
+ * reword them in the same commit.
  */
 export const ANALYTICS_REQUIRES_CONSENT: boolean = false;
 
