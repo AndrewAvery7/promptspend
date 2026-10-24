@@ -970,7 +970,7 @@
       "card": "yes",
       "training": "yes",
       "whatsFree": "Nothing up front; a $5 voucher after $5 of top-ups",
-      "updated": "2026-10-05",
+      "updated": "2026-10-24",
       "basis": {
         "verdict": ["moonshot-minimum"],
         "card": ["moonshot-minimum", "moonshot-payment"],
@@ -988,11 +988,11 @@
         {
           "id": "moonshot-k3",
           "topic": "models",
-          "statement": "Kimi K3 in particular unlocks only after a successful top-up.",
-          "quote": "Kimi K3 is unlocked after a successful top-up (minimum $1).",
+          "statement": "The newest model, Kimi K3.1 Pro, unlocks only after a successful top-up of at least $1.",
+          "quote": "Kimi K3.1 Pro is unlocked after a successful top-up (minimum $1).",
           "url": "https://platform.kimi.ai/docs/guide/troubleshooting",
           "readUrl": "https://platform.kimi.ai/docs/guide/troubleshooting.md",
-          "readOn": "2026-10-05"
+          "readOn": "2026-10-24"
         },
         {
           "id": "moonshot-payment",
