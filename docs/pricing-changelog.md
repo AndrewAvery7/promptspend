@@ -1227,3 +1227,8 @@ value that moves in the same run as its source URL is a correction.
 - **Provider** `xiaomi` — provider: — → added
 - **Provider** `inception` — provider: — → added
 - **Provider** `microsoft` — provider: — → added
+
+## 2026-10-24
+
+- **Review** `inception-mercury-2.5` — provenance.needsReview: true → —
+- **Review** `inception-mercury-2.5` — provenance.reviewNote: OpenRouter disagrees (80%): $0.04/$0.15 vs $0.2/$0.75 → —
