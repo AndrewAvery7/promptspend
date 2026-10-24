@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-24T11:05:33.427Z",
+  "checkedAt": "2026-10-24T17:48:20.987Z",
   "facts": {
     "alibaba-account-info": {
       "status": "confirmed",
@@ -230,6 +230,118 @@
       "status": "confirmed",
       "lastConfirmed": "2026-10-24"
     },
+    "inception-add-payment-when-low": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "inception-faq-one-time-credit": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "inception-faq-retention-custom": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "inception-free-100m-tokens": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "inception-privacy-training-purpose": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "inception-rate-limits-free-tier": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "inception-tou-train-optout": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-billing-setup-needs-card": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-contributor-mode-trains": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-muse-code-defaults-to-contributor": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-pay-as-you-go-or-subscription": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-promotional-credits-clause": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-rate-limit-muse-spark": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-signup-payment-method-before-requests": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-standard-mode-no-training": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-subscription-flat-rate": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "meta-tos-standard-services-no-training": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-azure-free-account-credit": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-azure-free-account-needs-card": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-data-not-used-to-improve-models": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-data-not-used-to-train": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-foundry-billed-at-normal-rates": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-mai-are-models-sold-by-azure": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-mai-image-free-tier-zero": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-mai-needs-paid-account": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-mai-thinking-default-quota-zero": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-mai-thinking-price": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "microsoft-mai-voice-free-subscription": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
     "minimax-data": {
       "status": "confirmed",
       "lastConfirmed": "2026-10-24"
@@ -379,6 +491,58 @@
       "lastConfirmed": "2026-10-24"
     },
     "xai-tiers": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-agreement-recharge-in-advance": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-bonus-expires-40-days": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-changelog-registration-credit": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-changelog-trial-credit": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-desktop-privacy-trains": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-negative-balance-stops-service": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-overseas-topup-methods": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-pay-as-you-go-balance": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-privacy-no-training": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-promotions-faq-bonus-credit": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-rate-limit-flash": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-tts-free-limited-time": {
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-24"
+    },
+    "xiaomi-welcome-bonus-needs-first-recharge": {
       "status": "confirmed",
       "lastConfirmed": "2026-10-24"
     },

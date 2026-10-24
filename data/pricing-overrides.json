@@ -8,10 +8,11 @@
   "$verificationPass20260905": "The last hand pass, and the reason it is the last. Sixteen rows verified together on 2026-08-03 (six Claude, nine OpenAI, Gemini 3.5 Flash — all provenance-only) crossed the 30-day rule together on 2026-09-05 and were re-read against their three pages that morning: every figure the catalog carries for them matched, so only lastVerified moved. Nothing automated had ever re-read a page behind an override before; from this date scripts/verify-vendors.ts does it every morning ahead of the sync (see docs/ARCHITECTURE.md, 'Why the vendors' own pages are re-read every morning'). It moves a date only when the page agrees, raises vendor-page-mismatch when it does not, and never writes a price. The same pass retired Kimi K2.5's provenance and marked it and Mistral Medium 3 legacy — see their notes.",
   "models": [
     {
-      "$note": "Confirmed on 2026-09-02 against Anthropic's own pricing page: $10 base input, $50 output, $12.50 for a 5-minute cache write, and a $0.25 cache hit. THE CACHE-HIT RATE IS THE TRAP HERE and is why this row records a price rather than provenance alone: every other Claude model reads a cache hit at 0.1x base input, which would make it $1.00 — the figure its sibling Claude Fable 5 correctly carries. Anthropic's page footnotes an exception: \"Cache hits and refreshes on Claude Fable 5.1 and Claude Mythos 5.1 are priced at 0.025x the base input price.\" Deriving this one from the house multiplier instead of reading the footnote would overstate cached reads fourfold. The batch table reconciles independently at $5/$25, exactly the recorded 50%.",
+      "$note": "Confirmed on 2026-09-02 against Anthropic's own pricing page: $10 base input, $50 output, $12.50 for a 5-minute cache write, and a $0.25 cache hit. THE CACHE-HIT RATE IS THE TRAP HERE and is why this row records a price rather than provenance alone: every other Claude model reads a cache hit at 0.1x base input, which would make it $1.00 — the figure its sibling Claude Fable 5 correctly carries. Anthropic's page footnotes an exception: \"Cache hits and refreshes on Claude Fable 5.1 and Claude Mythos 5.1 are priced at 0.025x the base input price.\" Deriving this one from the house multiplier instead of reading the footnote would overstate cached reads fourfold. The batch table reconciles independently at $5/$25, exactly the recorded 50%. Capability score 90: Artificial Analysis Intelligence Index 53 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there. The older Claude Fable 5 still carries 100, which that index does not support; they should be rescored together.",
       "id": "claude-fable-5-1",
       "providerId": "anthropic",
       "displayName": "Claude Fable 5.1",
+      "capabilityIndex": 90,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
@@ -468,9 +469,11 @@
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
+      "$note": "Capability score 83 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between Gemini 3.6 Flash (82) and Gemini 3.8 Flash (85), at the same price as 3.6.",
       "id": "gemini-gemini-3.7-flash",
       "providerId": "google",
       "displayName": "Gemini 3.7 Flash",
+      "capabilityIndex": 83,
       "pricing": {
         "input": 1.5,
         "output": 7.5,
@@ -665,9 +668,10 @@
       }
     },
     {
-      "$note": "Confirmed on 2026-09-02 against Z.ai's own pricing page, which prints $1.4 input / $0.26 cached / $4.4 output — matching the feed exactly. Recording the price rather than provenance alone is deliberate: this row carried an `openrouter-disagreement` flag ($0.966/$3.036), and only a supplied base price stands that cross-check down — `vendorVerified` alone does not. OpenRouter's figure is its own reseller margin, the 20-50% gap `$coverage` describes, not a Z.ai rate. No `capabilityIndex`: that field is illustrative, and picking one to get a new model onto the value map would dress a guess as a measurement.",
+      "$note": "Confirmed on 2026-09-02 against Z.ai's own pricing page, which prints $1.4 input / $0.26 cached / $4.4 output — matching the feed exactly. Recording the price rather than provenance alone is deliberate: this row carried an `openrouter-disagreement` flag ($0.966/$3.036), and only a supplied base price stands that cross-check down — `vendorVerified` alone does not. OpenRouter's figure is its own reseller margin, the 20-50% gap `$coverage` describes, not a Z.ai rate. No `capabilityIndex`: that field is illustrative, and picking one to get a new model onto the value map would dress a guess as a measurement. Capability score 83 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between GLM-5.1 (80) and GLM-5.3 (87), at the same price as both.",
       "id": "zai-glm-5.2",
       "displayName": "GLM-5.2",
+      "capabilityIndex": 83,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
@@ -678,9 +682,10 @@
       }
     },
     {
-      "$note": "Confirmed on 2026-09-02 against Z.ai's own pricing page at $1.4 / $0.26 / $4.4 — the same rate as GLM-5.1 and GLM-5.2, which the vendor prints as three separate rows rather than one shared figure, so the repetition is real and not a copied placeholder. Not to be confused with GLM-5.3-Flash, a different model the same page discounts 50% to $0.075/$0.25 through 2026-09-09; that model is not in this catalog and its promotional rate must not be attached here. No `capabilityIndex`, for the reason given on GLM-5.2.",
+      "$note": "Confirmed on 2026-09-02 against Z.ai's own pricing page at $1.4 / $0.26 / $4.4 — the same rate as GLM-5.1 and GLM-5.2, which the vendor prints as three separate rows rather than one shared figure, so the repetition is real and not a copied placeholder. Not to be confused with GLM-5.3-Flash, a different model the same page discounts 50% to $0.075/$0.25 through 2026-09-09; that model is not in this catalog and its promotional rate must not be attached here. No `capabilityIndex`, for the reason given on GLM-5.2. Capability score 87: Artificial Analysis Intelligence Index 45 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "zai-glm-5.3",
       "displayName": "GLM-5.3",
+      "capabilityIndex": 87,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
@@ -749,9 +754,11 @@
       }
     },
     {
+      "$note": "Capability score 85 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between Grok 4.5 (84) and Grok 4.7 (87), at the same price as both.",
       "id": "xai-grok-4.6",
       "providerId": "xai",
       "displayName": "Grok 4.6",
+      "capabilityIndex": 85,
       "contextWindow": 500000,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
@@ -883,9 +890,10 @@
       "capabilityIndex": 71
     },
     {
-      "$note": "Read on 2026-10-21 to answer an openrouter-disagreement flag (OpenRouter $1.36/$4.18 vs recorded $0.68/$2.09). Mistral's model page (rendered in a browser, USD) prints Mistral Large 4 at $1.36 input, $0.14 cached input, $4.18 output per 1M tokens, with no strikethrough or promotional wording; the API pricing page's Flagship table prints the same three figures. Mistral's changelog explains the gap: the model went into Public Preview on 2026-10-06 with \"Launch pricing: 50% off for 2 weeks\". The recorded $0.68/$0.068/$2.09 was that launch discount, published from the feed when the model was discovered; the window has now run out, so this is a genuine move to list price, not a correction. The promotion can no longer be recorded as `intro` because it has already lapsed. Same treatment as the pinned alias mistral-mistral-large-4-0.",
+      "$note": "Read on 2026-10-21 to answer an openrouter-disagreement flag (OpenRouter $1.36/$4.18 vs recorded $0.68/$2.09). Mistral's model page (rendered in a browser, USD) prints Mistral Large 4 at $1.36 input, $0.14 cached input, $4.18 output per 1M tokens, with no strikethrough or promotional wording; the API pricing page's Flagship table prints the same three figures. Mistral's changelog explains the gap: the model went into Public Preview on 2026-10-06 with \"Launch pricing: 50% off for 2 weeks\". The recorded $0.68/$0.068/$2.09 was that launch discount, published from the feed when the model was discovered; the window has now run out, so this is a genuine move to list price, not a correction. The promotion can no longer be recorded as `intro` because it has already lapsed. Same treatment as the pinned alias mistral-mistral-large-4-0. Capability score 81: Artificial Analysis Intelligence Index 38 for Mistral Large 4 Preview (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "mistral-mistral-large-4",
       "displayName": "Mistral Large 4",
+      "capabilityIndex": 81,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4",
@@ -988,7 +996,7 @@
       "status": "deprecated"
     },
     {
-      "$note": "Added 2026-10-24 (coverage pass). OpenAI's pricing page lists the GPT-6 family under 'Flagship models'; the filter only matched gpt-5, so none of it was published. Figures read from the page's Standard table (short context <=272K input tokens, long context above it, '30m write' column as the cache write) and the Batch table (exactly half). No capabilityIndex yet: that score is an editorial judgement and is left for the maintainer.",
+      "$note": "Added 2026-10-24 (coverage pass). OpenAI's pricing page lists the GPT-6 family under 'Flagship models'; the filter only matched gpt-5, so none of it was published. Figures read from the page's Standard table (short context <=272K input tokens, long context above it, '30m write' column as the cache write) and the Batch table (exactly half). No capabilityIndex yet: that score is an editorial judgement and is left for the maintainer. Capability score 90: Artificial Analysis Intelligence Index 53 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "gpt-6-astra",
       "providerId": "openai",
       "displayName": "GPT-6 Astra",
@@ -1012,6 +1020,7 @@
       }
     },
     {
+      "$note": "Capability score 90: Artificial Analysis Intelligence Index 52 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "gpt-6.1-sol",
       "providerId": "openai",
       "displayName": "GPT-6.1 Sol",
@@ -1035,6 +1044,7 @@
       }
     },
     {
+      "$note": "Capability score 89 is an ESTIMATE, not a measurement: the index lists no standard GPT-6 Sol, so it sits one point under GPT-6.1 Sol (90), at the same price.",
       "id": "gpt-6-sol",
       "providerId": "openai",
       "displayName": "GPT-6 Sol",
@@ -1058,6 +1068,7 @@
       }
     },
     {
+      "$note": "Capability score 81: Artificial Analysis Intelligence Index 38 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "gpt-6-luna",
       "providerId": "openai",
       "displayName": "GPT-6 Luna",
@@ -1118,7 +1129,7 @@
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
-      "$note": "Added 2026-10-24. Read from Google's pricing page: $2.00 in / $10.00 out / $0.10 cached through November 30, 2026, then $4.00 / $20.00 / $0.20 from December 1, 2026. The feed reports the promotional rate as if it were the base, so the in-force rate is recorded as `intro` with its expiry and the base is the post-window price. Implicit caching only (no explicit-cache storage fee). WHEN THE WINDOW CLOSES the `intro` block must be removed or the catalog will fail validation ('intro expired before catalog.generatedAt').",
+      "$note": "Added 2026-10-24. Read from Google's pricing page: $2.00 in / $10.00 out / $0.10 cached through November 30, 2026, then $4.00 / $20.00 / $0.20 from December 1, 2026. The feed reports the promotional rate as if it were the base, so the in-force rate is recorded as `intro` with its expiry and the base is the post-window price. Implicit caching only (no explicit-cache storage fee). WHEN THE WINDOW CLOSES the `intro` block must be removed or the catalog will fail validation ('intro expired before catalog.generatedAt'). Capability score 90: Artificial Analysis Intelligence Index 53 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "gemini-gemini-4-argon",
       "providerId": "google",
       "displayName": "Gemini 4 Argon",
@@ -1175,7 +1186,7 @@
       }
     },
     {
-      "$note": "Added 2026-10-24. Z.ai's pricing page, 'Latest Models' table: $0.15 in / $0.03 cached / $0.50 out. GLM-5.3-FlashX and GLM-4.7-FlashX are on the page but not yet in the feed, so per `$coverage` they arrive when the feed catches up. The free Flash models (GLM-4.7-Flash, GLM-4.5-Flash) are not added: a $0 row has no cost to compare.",
+      "$note": "Added 2026-10-24. Z.ai's pricing page, 'Latest Models' table: $0.15 in / $0.03 cached / $0.50 out. GLM-5.3-FlashX and GLM-4.7-FlashX are on the page but not yet in the feed, so per `$coverage` they arrive when the feed catches up. The free Flash models (GLM-4.7-Flash, GLM-4.5-Flash) are not added: a $0 row has no cost to compare. Capability score 86: Artificial Analysis Intelligence Index 42 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "zai-glm-5.3-flash",
       "providerId": "zai",
       "displayName": "GLM-5.3 Flash",
@@ -1260,7 +1271,7 @@
       }
     },
     {
-      "$note": "Added 2026-10-24. The August exclusion ('no vendor price page yet') no longer holds: Alibaba now publishes alibabacloud.com/help/en/model-studio/qwen3-8-max. Its Singapore (International) table prints $2 in / $6 out / $0.25 implicit-cache input, matching the feed. Read from this per-model page rather than the general pricing page, which is already 592,980 characters against the daily reader's 600,000 limit. The page renders a table per region, so the reader is steered to Singapore exactly as for Qwen 3.7 Max.",
+      "$note": "Added 2026-10-24. The August exclusion ('no vendor price page yet') no longer holds: Alibaba now publishes alibabacloud.com/help/en/model-studio/qwen3-8-max. Its Singapore (International) table prints $2 in / $6 out / $0.25 implicit-cache input, matching the feed. Read from this per-model page rather than the general pricing page, which is already 592,980 characters against the daily reader's 600,000 limit. The page renders a table per region, so the reader is steered to Singapore exactly as for Qwen 3.7 Max. Capability score 87: Artificial Analysis Intelligence Index 45 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "dashscope-qwen3.8-max",
       "providerId": "alibaba",
       "displayName": "Qwen 3.8 Max",
@@ -1285,15 +1296,17 @@
       "verifiedUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
     },
     {
+      "$note": "Capability score 90: Artificial Analysis Intelligence Index 52 for Muse Wonder (read 2026-10-24; the same $4 / $20 per million tokens as this row), mapped onto this scale through four existing rows that also appear there.",
       "id": "meta-muse-wonder-1.0",
       "providerId": "meta",
       "displayName": "Muse Wonder 1.0",
+      "capabilityIndex": 90,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
     },
     {
-      "$note": "Added 2026-10-24 with the Xiaomi provider. The page prints TWO tables for the same models: a domestic one in yuan (pro 3.00 / 6.00) and an 'Overseas Pricing' one in dollars ($0.435 in / $0.0036 cache hit / $0.87 out for pro, $0.14 / $0.0028 / $0.28 for flash). The dollar table is the one recorded and it matches the feed to the digit. The Batch API rows are exactly half (pro $0.2175 / $0.435, flash $0.07 / $0.14), recorded as batchDiscount 0.5. mimo-v2.6-pro-ultraspeed ($4.35 / $8.70, no batch) is on the page but not yet in the feed, so per `$coverage` it arrives when the feed catches up. The catalog id repeats 'mimo' because the feed's routing prefix is 'xiaomi_mimo'.",
+      "$note": "Added 2026-10-24 with the Xiaomi provider. The page prints TWO tables for the same models: a domestic one in yuan (pro 3.00 / 6.00) and an 'Overseas Pricing' one in dollars ($0.435 in / $0.0036 cache hit / $0.87 out for pro, $0.14 / $0.0028 / $0.28 for flash). The dollar table is the one recorded and it matches the feed to the digit. The Batch API rows are exactly half (pro $0.2175 / $0.435, flash $0.07 / $0.14), recorded as batchDiscount 0.5. mimo-v2.6-pro-ultraspeed ($4.35 / $8.70, no batch) is on the page but not yet in the feed, so per `$coverage` it arrives when the feed catches up. The catalog id repeats 'mimo' because the feed's routing prefix is 'xiaomi_mimo'. Capability score 87: Artificial Analysis Intelligence Index 46 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "xiaomi-mimo-mimo-v2.6-pro",
       "providerId": "xiaomi",
       "displayName": "MiMo V2.6 Pro",
@@ -1311,6 +1324,7 @@
       }
     },
     {
+      "$note": "Capability score 81: Artificial Analysis Intelligence Index 38 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "xiaomi-mimo-mimo-v2.6-flash",
       "providerId": "xiaomi",
       "displayName": "MiMo V2.6 Flash",
@@ -1360,6 +1374,22 @@
       "verifiedUrl": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
       "verifiedAs": "MAI-Thinking-1 Global",
       "verifyHint": "Read the MAI-Thinking-1 Global row only. The same table prices other models and has Regional rows for some; ignore those."
+    },
+    {
+      "id": "claude-haiku-5-5",
+      "displayName": "Claude Haiku 5.5",
+      "capabilityIndex": 86,
+      "$note": "Capability score 86: Artificial Analysis Intelligence Index 43 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there."
+    },
+    {
+      "id": "gemini-gemini-3.8-flash",
+      "capabilityIndex": 85,
+      "$note": "Capability score 85: Artificial Analysis Intelligence Index 41 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there."
+    },
+    {
+      "id": "xai-grok-4.7",
+      "capabilityIndex": 87,
+      "$note": "Capability score 87: Artificial Analysis Intelligence Index 46 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there."
     }
   ],
   "$verificationPasses": "2026-08-01: Anthropic and OpenAI flagship rows read against the first-party pricing pages; all matched the automated feed, and the additions were the modifiers the feed does not carry (cache writes, long-context tiers, batch discounts). 2026-08-03: a second pass covering 27 more rows across Anthropic, OpenAI, Google, xAI and DeepSeek. Every one of the 27 matched the feed exactly, so these entries record provenance ONLY — no `pricing` block — which leaves the rate flowing from the feed and self-correcting. Recording a price we did not need to change would freeze it for no reason. NOT verifiable on 2026-08-03, and deliberately left as `litellm`: Mistral Large 3 and Medium 3.5, Command A, all four Kimi rows, all four MiniMax rows and GLM-5-Code are absent from their vendors' own pricing pages; Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are not listed on the pages that carry their siblings. An aggregator would have numbers for all of them, which is exactly why this catalog does not accept one. 2026-08-09: Kimi K2.6 read against Moonshot's own per-model pricing page and moved to `vendor`. The 2026-08-03 pass recorded it as not verifiable because no such page existed; the platform has since moved from platform.moonshot.ai to platform.kimi.ai and now publishes a page per model. The vendor's figures match the feed exactly — $0.95 input on a cache miss, $4.00 output, $0.16 on a cache hit — so this row records provenance ONLY and its rate keeps flowing from the feed. That also settles the standing cross-source flag on it: OpenRouter's $0.58/$2.44 is a reseller-routed price, the 20-50% adrift case `$coverage` describes, and the published number was the right one all along. NOT verified in this pass and deliberately still `litellm`: Kimi K2.5 and K2-thinking, which the vendor's pricing index no longer lists — it now carries K3, K2.7 Code, K2.6 and the sunsetting Moonshot V1. The vendor publishes K3 and K2.7 Code, which the feed does not yet carry; per `$coverage` those are left to arrive on their own rather than hand-added. 2026-09-02: a pass over all 23 standing flags, clearing 16. Fourteen were `vendor-verification-stale` — the 30-day re-read rule coming due at once on ten Anthropic and OpenAI rows and four Z.ai rows. All three vendor pages were re-read in full and EVERY figure still matched what was published, so only the dates move; no rate changed. Two more cleared by first-party confirmation of newly arrived models: Claude Fable 5.1 (note the 0.025x cache-hit exception, which the house 0.1x multiplier would have got fourfold wrong) and GLM-5.2. Also recorded, though they were not flagged: xAI retired grok-3, grok-4-0709 and grok-4-1-fast on 2026-05-15 and now bills all of them at grok-4.3's $1.25/$2.50, which is why three unrelated rows share one figure — it looks exactly like a feed placeholder and is not; those rows move from `litellm` to `vendor` and are marked legacy. Grok 4.20 gains the long-context tier the feed omits. NOT cleared, each now carrying a note saying why so the next pass does not re-tread it: DeepSeek R1 (the `deepseek-reasoner` name was discontinued 2026-07-24, so no current first-party price exists), Mistral Medium 3 (absent from Mistral's own page, with the feed and OpenRouter 73% apart and no way to adjudicate), Grok 2 (retirement confirmed from xAI's model list, but removing the row is a human's call), and Kimi K2.5, Gemini 3.6/3.7 Flash and GPT-5.6 Sol, whose flags are correct by design — a live promotional rate reported by the feed as if it were the base. 2026-09-16: a pass aimed only at the two rows the daily vendor-page check was calling mismatches, which are a different animal from the OpenRouter cross-check flags and were worth separating. One was a real price cut: DeepSeek's own page has renamed its cheap model to `deepseek-flash` (DeepSeek-V4.1-Flash) and cut the peak rate to $0.30/$1.20 with a $0.006 cache hit, down from $0.44/$1.32/$0.014, while stating that the legacy `deepseek-v4-flash` name is still accepted and billed at the Flash price - so the row keeps its id and takes the new figures. The column mapping was proved rather than assumed: the page's other column is V4 Pro at $1.32/$3.96/$0.044, matching this catalog's separately verified V4 Pro row on all three figures. The other was not a price problem at all: Qwen 3.7 Max's recorded $2.5/$7.5 is exactly what Alibaba's Singapore (International) table prints, and the $1.65/$4.951 the checker kept reporting is the China (Beijing) table on the same page. The page renders six regional tables and the reader had no way to tell them apart, so this pass added an optional `verifyHint` to an override - one sentence naming where on a page to read, handed to the reader verbatim, narrowing where to look and never saying what to find - and set it on that row. Deliberately NOT re-attempted, because each already carries a note saying why it cannot be settled: DeepSeek R1, Mistral Medium 3, Kimi K2.5 and Grok 2.",

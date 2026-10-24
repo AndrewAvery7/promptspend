@@ -93,6 +93,17 @@ export interface RenderContext {
    * because each one looks fine alone.
    */
   apiUrl: string;
+  /**
+   * The figures the calculator's footer prints under its links: how many models
+   * the catalog tracks and when prices last moved and sources were last read.
+   * Optional so a test context need not invent them; the build always supplies
+   * them, and the row is left out where they are absent.
+   */
+  freshness?: {
+    models: number;
+    pricesChangedOn: string | null;
+    sourcesCheckedOn: string | null;
+  };
 }
 
 const ESCAPES: Record<string, string> = {
@@ -220,14 +231,6 @@ export interface LayoutInput {
    */
   scripts?: readonly string[];
   /**
-   * The directory-listing badges in the footer. On by default, and they must
-   * stay on the pages the directories verify (`/models/` and the other catalog
-   * pages: the calculator's own footer is drawn by script, so a fetch-only
-   * verifier cannot see it there). Sell With Boost keeps the listing only while
-   * a badge links back. Pages added since can leave them off.
-   */
-  listingBadges?: boolean;
-  /**
    * The apps band at the top of the footer: both store badges and both QR codes.
    * On by default, so every page offers the apps. Off only on the app page
    * itself, which already shows the same badges and codes as its content.
@@ -286,6 +289,9 @@ ${scripts.map((src) => `    <script type="module" src="${escapeHtml(href(ctx, sr
 ${siteHeader(ctx, input.path)}
     <div class="wrap">
 ${input.body}
+      <p class="credit">
+        Standard-tier, global-endpoint list prices in USD. This build read the catalog generated ${escapeHtml(ctx.generatedAt.slice(0, 10))}.
+      </p>
     </div>
 ${siteFooter(ctx, input)}
   </body>
@@ -357,24 +363,29 @@ function appBand(ctx: RenderContext): string {
 `;
 }
 
+/** The calculator footer's counts row, as HTML; empty where the figures are not known. */
+function footerStats(ctx: RenderContext): string {
+  const f = ctx.freshness;
+  if (!f) return '';
+  const changed = f.pricesChangedOn ?? 'no change recorded since tracking began';
+  const checked = f.sourcesCheckedOn ? ` &middot; sources checked ${escapeHtml(f.sourcesCheckedOn)}` : '';
+  return `        <div class="footer__stats">${f.models} models &middot; prices last changed ${escapeHtml(changed)}${checked}</div>
+`;
+}
+
 /**
- * The footer every generated page closes with: the same rows of links as the
- * calculator's (`SiteFooter.tsx`), then the badges the directories verify.
- *
- * The first block is the one thing the calculator's footer does not have - where
- * this page's numbers came from and when the catalog behind them was built.
- * `SiteFooter.test.tsx` renders both footers and fails if their links drift.
+ * The footer every generated page closes with, identical in content to the
+ * calculator's (`SiteFooter.tsx`): the apps band, three rows of links, the
+ * counts row and the directory badges. It carries no note of its own - the
+ * "where these prices come from" sentence sits at the foot of each page's
+ * content - because a page with a different footer is a page that reads as a
+ * different site. `SiteChrome.test.tsx` fails if the two drift.
  */
 function siteFooter(ctx: RenderContext, input: LayoutInput): string {
   const external = 'target="_blank" rel="noreferrer noopener"';
   return `    <footer class="footer">
       <div class="footer__inner">
-${input.appBand === false ? '' : appBand(ctx)}        <p class="footer__note">
-          Prices from a catalog re-checked every morning against the vendors&rsquo; own pages;
-          this build read the catalog generated ${escapeHtml(ctx.generatedAt.slice(0, 10))}.
-          Standard-tier, global-endpoint list prices in USD.
-        </p>
-        <div>
+${input.appBand === false ? '' : appBand(ctx)}        <div>
           <b>PromptSpend</b> &middot; open source, MIT &middot; no accounts, no ads, no cookies &middot;
           <a href="https://github.com/AndrewAvery7/promptspend">star it on GitHub</a> &middot;
           <a href="mailto:info@promptspend.com">info@promptspend.com</a> &middot;
@@ -394,10 +405,7 @@ ${input.appBand === false ? '' : appBand(ctx)}        <p class="footer__note">
           <a href="${escapeHtml(VSCODE_MARKETPLACE_URL)}" ${external}>VS Code extension</a> &middot;
           <a href="${escapeHtml(OPEN_VSX_URL)}" ${external}>Open VSX</a>
         </div>
-${
-  input.listingBadges === false
-    ? ''
-    : `        <div class="footer__badge">
+${footerStats(ctx)}        <div class="footer__badge">
           <a href="https://sellwithboost.com" target="_blank" rel="noopener noreferrer">
             <picture>
               <source srcset="${escapeHtml(href(ctx, '/sellwithboost-dark.svg'))}" media="(prefers-color-scheme: dark)" />
@@ -438,8 +446,7 @@ ${
             </picture>
           </a>
         </div>
-`
-}      </div>
+      </div>
     </footer>`;
 }
 
@@ -1339,7 +1346,7 @@ export function renderAppPage(ctx: RenderContext): string {
 
   const body = `      ${breadcrumbHtml(ctx, crumbs)}
       <main id="main">
-        <article>
+        <article class="app-page">
           <h1>PromptSpend for iPhone and Android</h1>
           <p class="lede">The same catalog, the same sources and dates, built for a phone. The apps are free, with no account, no ads and no tracking inside the app.</p>
           <div class="store-badges">
@@ -1546,7 +1553,6 @@ ${[sections, unpublished, after].filter(Boolean).join('\n')}
       },
     ],
     body,
-    listingBadges: false,
   });
 }
 
@@ -1629,6 +1635,5 @@ ${notes}
       },
     ],
     body,
-    listingBadges: false,
   });
 }

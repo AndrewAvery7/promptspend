@@ -1247,10 +1247,17 @@ value that moves in the same run as its source URL is a correction.
 
 ## 2026-10-24
 
-- **Metadata** `dashscope-qwen3-next-80b-a3b-instruct` — status: current → deprecated
-- **Metadata** `dashscope-qwen3-next-80b-a3b-thinking` — status: current → deprecated
-- **Metadata** `dashscope-qwen3-vl-235b-a22b-instruct` — status: current → deprecated
-- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.needsReview: true → —
-- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
-- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: true → —
-- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
+- **Metadata** `claude-fable-5-1` — capabilityIndex: — → 90
+- **Metadata** `claude-haiku-5-5` — capabilityIndex: — → 86
+- **Metadata** `gemini-gemini-3.7-flash` — capabilityIndex: — → 83
+- **Metadata** `gemini-gemini-3.8-flash` — capabilityIndex: — → 85
+- **Metadata** `meta-muse-wonder-1.0` — capabilityIndex: — → 90
+- **Metadata** `mistral-mistral-large-4` — capabilityIndex: — → 81
+- **Metadata** `xai-grok-4.6` — capabilityIndex: — → 85
+- **Metadata** `xai-grok-4.7` — capabilityIndex: — → 87
+- **Metadata** `zai-glm-5.2` — capabilityIndex: — → 83
+- **Metadata** `zai-glm-5.3` — capabilityIndex: — → 87
+
+## 2026-10-24
+
+- **Metadata** `claude-haiku-5-5` — displayName: Claude Haiku 5 5 → Claude Haiku 5.5

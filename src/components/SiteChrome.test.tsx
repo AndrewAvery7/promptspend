@@ -4,6 +4,8 @@ import { Header } from './Header';
 import { SiteFooter } from './SiteFooter';
 import { ReceiptPage } from '@/receipt/ReceiptPage';
 import { DEVELOPER_HUB_URL } from '@/config';
+import { Catalog } from '@/lib/pricing/catalog';
+import { SCHEMA_VERSION } from '@/lib/pricing/types';
 import { layout, renderAppPage, type RenderContext } from '@/lib/seo/render';
 
 /**
@@ -24,10 +26,11 @@ const CONTEXT: RenderContext = {
   generatedAt: '2026-08-02T02:00:00.000Z',
   apiUrl: DEVELOPER_HUB_URL,
   hashInline: () => 'hash',
+  freshness: { models: 1, pricesChangedOn: '2026-07-04', sourcesCheckedOn: '2026-07-05' },
 };
 
-function generated(path = '/models/') {
-  const html = layout(CONTEXT, {
+function generated(path = '/models/', ctx: RenderContext = CONTEXT) {
+  const html = layout(ctx, {
     path,
     title: 'A page',
     description: 'A page.',
@@ -126,6 +129,51 @@ describe('the footer', () => {
     const mine = textLinks(container);
     const theirs = textLinks(generated().querySelector('footer')!);
     expect(theirs).toEqual(mine);
+  });
+
+  it('carries the same counts row and the same directory badges on every page, the Free Tiers pages included', () => {
+    const catalog = new Catalog(
+      {
+        schemaVersion: SCHEMA_VERSION,
+        generatedAt: '2026-07-05T06:00:00.000Z',
+        providers: [{ id: 'acme', name: 'Acme', country: 'US' }],
+        models: [
+          {
+            id: 'acme-1',
+            providerId: 'acme',
+            displayName: 'Acme 1',
+            status: 'current',
+            contextWindow: 1000,
+            pricing: { input: 1, output: 2 },
+            tokenizer: { kind: 'approx', charsPerToken: 4, cjkCharsPerToken: 2 },
+            capabilities: { reasoning: false, vision: false },
+            capabilityIndex: 50,
+            provenance: { source: 'vendor', lastVerified: '2026-07-04' },
+          },
+        ],
+      },
+      { schemaVersion: 1, outcome: 'ok', succeededAt: '2026-07-05T06:00:00.000Z' } as never,
+    );
+    const { container } = render(<SiteFooter catalog={catalog} theme="light" />);
+    // The same three figures the build takes from the catalog (scripts/build-pages.ts).
+    const ctx: RenderContext = {
+      ...CONTEXT,
+      freshness: {
+        models: catalog.primaryModels.length,
+        pricesChangedOn: catalog.pricesLastChanged(),
+        sourcesCheckedOn: catalog.sourcesLastChecked(),
+      },
+    };
+    const alts = (root: ParentNode) =>
+      [...root.querySelectorAll('.footer__badge img')].map((img) => img.getAttribute('alt'));
+    const stats = (root: ParentNode) => words(root, '.footer__stats');
+    expect(stats(container)).toHaveLength(1);
+    for (const path of ['/models/', '/free-tiers/', '/free-tiers/acme/']) {
+      const footer = generated(path, ctx).querySelector('footer')!;
+      expect(alts(footer)).toEqual(alts(container));
+      expect(alts(footer).length).toBeGreaterThanOrEqual(7);
+      expect(stats(footer)).toEqual(stats(container));
+    }
   });
 
   it('offers both apps, with both QR codes and the robot credit, at the top of every footer', () => {

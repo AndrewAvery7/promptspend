@@ -210,12 +210,12 @@ describe('renderFreeTierPage', () => {
     expect(html).toContain('href="/models/acme-mini/"');
   });
 
-  it('leaves the directory badges off, while the pages the directories verify keep them', () => {
-    // Owner's call, 2026-10-05: badges belong on the primary pages only. The
-    // catalog pages must keep them - Sell With Boost verifies /models/ and
-    // keeps the listing only while its badge links back.
-    expect(html).not.toContain('class="footer__badge"');
-    expect(renderFreeTierIndex(free, CTX)).not.toContain('class="footer__badge"');
+  it('carries the directory badges like every other page', () => {
+    // They were left off these pages on 2026-10-05 ("primary pages only"). The
+    // owner then asked for one footer on every page (2026-10-24), so they are
+    // here too; Sell With Boost still verifies /models/ through the same footer.
+    expect(html).toContain('class="footer__badge"');
+    expect(renderFreeTierIndex(free, CTX)).toContain('class="footer__badge"');
     const providerPage = SET.providers.find((page) => page.id === 'acme')!;
     expect(renderProviderPage(providerPage, CTX)).toContain('class="footer__badge"');
     expect(renderProviderPage(providerPage, CTX)).toContain('https://sellwithboost.com');
