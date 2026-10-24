@@ -60,47 +60,6 @@ textarea {
   white-space: nowrap;
 }
 
-/* ---------------------------------------------------------------- ticker */
-.ticker {
-  background: var(--ink);
-  color: var(--bg);
-  overflow: hidden;
-  white-space: nowrap;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-}
-.ticker__lane {
-  display: inline-block;
-  /* Was 7px, which left the tape crowded against the top edge of the viewport
-     and against the header below it. */
-  padding: 12px 0;
-  animation: ticker-scroll 60s linear infinite;
-}
-.ticker:hover .ticker__lane,
-.ticker:focus-within .ticker__lane {
-  animation-play-state: paused;
-}
-@keyframes ticker-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-.ticker__item {
-  margin: 0 26px;
-}
-.ticker__up {
-  color: #3ccb7f;
-}
-.ticker__chg {
-  color: #f5b849;
-}
-.ticker__dim {
-  opacity: 0.55;
-}
-
 /* ---------------------------------------------------------------- layout */
 .main {
   max-width: 1280px;

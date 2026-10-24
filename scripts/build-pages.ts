@@ -27,6 +27,9 @@ import { assertCatalog } from '@/lib/pricing/types';
 import { buildPages } from '@/lib/seo/pages';
 import { Catalog } from '@/lib/pricing/catalog';
 import { isSyncStatus, type SyncStatus } from '@/lib/pricing/health';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Ticker } from '@/components/Ticker';
 import { assertFreeTiers } from '@/lib/free-tiers/types';
 import { EMPTY_CHECK_REPORT, parseCheckReport } from '@/lib/free-tiers/check';
 import { buildFreeTierPages, FREE_TIERS_PATH, publishedFreeTiers } from '@/lib/seo/free-tier-pages';
@@ -131,11 +134,35 @@ async function headerAssets(): Promise<NonNullable<RenderContext['chrome']>> {
   };
   visit(entryKey);
 
+  // The faces the header is drawn in, found by name rather than listed by hash.
+  // These are the ones it actually uses: the wordmark, the nav and its buttons,
+  // and the freshness line with its bold lead.
+  const HEADER_FONTS = [
+    'space-grotesk-latin-700-normal.woff2',
+    'ibm-plex-sans-latin-400-normal.woff2',
+    'ibm-plex-sans-latin-600-normal.woff2',
+    'jetbrains-mono-latin-400-normal.woff2',
+    'jetbrains-mono-latin-700-normal.woff2',
+  ];
+  // Vite names a font `<face>-<hash>.woff2`.
+  const fonts = HEADER_FONTS.map((name) => {
+    const face = name.replace('.woff2', '');
+    const found = Object.values(manifest).find(
+      (entry) => entry.file.startsWith(`assets/${face}-`) && entry.file.endsWith('.woff2'),
+    );
+    return found ? `/${found.file}` : null;
+  }).filter((font): font is string => font !== null);
+  if (fonts.length !== HEADER_FONTS.length) {
+    throw new Error(
+      `Expected ${HEADER_FONTS.length} header fonts in the Vite manifest, found ${fonts.length}.`,
+    );
+  }
+
   const themeInit = `assets/site-theme.${sha256Base64(THEME_INIT)
     .replace(/[^a-zA-Z0-9]/g, '')
     .slice(0, 8)}.js`;
   await writeFileAt(themeInit, THEME_INIT);
-  return { script: `/${manifest[entryKey].file}`, themeInit: `/${themeInit}`, styles };
+  return { script: `/${manifest[entryKey].file}`, themeInit: `/${themeInit}`, styles, fonts };
 }
 
 /** `/models/gpt-5/` becomes `models/gpt-5/index.html`. */
@@ -293,6 +320,9 @@ async function main(): Promise<void> {
     generatedAt: catalog.generatedAt,
     apiUrl,
     chrome,
+    // The tape above the header, drawn from the same component the calculator
+    // runs and dated by the catalog, so a rebuild of one commit is identical.
+    ticker: renderToStaticMarkup(createElement(Ticker, { catalog: liveCatalog, asOf })),
     freshness: {
       models: liveCatalog.primaryModels.length,
       pricesChangedOn: liveCatalog.pricesLastChanged(),
