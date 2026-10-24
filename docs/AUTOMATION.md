@@ -84,6 +84,10 @@ manual command, and succeeds, so a missing secret never turns a merge red.
 
 Never paste the token into a chat or a file in the repository.
 
+## The weekly watch on deferred additions
+
+`data/later-additions.json` lists models and labs that have a vendor price page but are not in the catalogue because the automated price feed does not carry them yet. `.github/workflows/watch-later-additions.yml` reads the feed every Monday and opens one issue, "Later additions now in the price feed", the week any of them appears. It adds nothing itself, and the issue closes itself once everything on it has been added. To put something on the list, add an item with a feed-key pattern anchored on the vendor's own prefix, so a copy hosted by a cloud never counts.
+
 ## Formatting and screenshots
 
 `.playwright-mcp/` (screenshots and page snapshots from the browser tools) is
