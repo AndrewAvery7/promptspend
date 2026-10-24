@@ -126,15 +126,61 @@ article code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monos
 article :not(pre) > code {
   background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.88em;
 }
-footer {
-  margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
-  color: var(--muted); font-size: 0.85rem;
+/* The site header, drawn to match the calculator's (src/styles/app.css) and the
+ * Receipt page's: the same bar, logo and six links. The calculator's search,
+ * tour and appearance controls need a script, which these pages do not load. */
+.site-header { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); }
+.site-header__inner {
+  max-width: 1280px; min-height: 66px; margin: 0 auto; padding: 14px 24px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
 }
-footer a { color: var(--muted); }
-footer .listing { margin: 1.1rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.logo {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--ink);
+  font-size: 1.2rem; font-weight: 700; letter-spacing: -0.03em; text-decoration: none; white-space: nowrap;
+}
+.logo svg, .logo__mark { color: var(--accent); }
+.site-nav { display: flex; flex-wrap: wrap; gap: 2px; margin-left: 4px; }
+.site-nav a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 8px;
+  color: var(--muted); font-size: 0.93rem; font-weight: 600; text-decoration: none;
+}
+.site-nav a:hover { color: var(--ink); background: var(--surface-2); }
+.site-nav a[aria-current] { color: var(--accent); background: var(--accent-soft); }
+@media (max-width: 640px) {
+  /* Six links wrap onto two rows here, and a bar that tall left pinned over the
+   * top of a phone would cover a quarter of the page, so it scrolls away. */
+  .site-header { position: static; }
+  .site-header__inner { padding: 10px 14px; }
+  .site-nav { margin-left: 0; }
+}
+/* The footer, drawn to match the calculator's (src/styles/footer.css). */
+.footer { margin-top: 3rem; border-top: 1px solid var(--border); }
+.footer__inner {
+  max-width: 1280px; margin: 0 auto; padding: 22px 24px; display: flex; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; font-size: max(0.75rem, 12px); color: var(--muted);
+}
+.footer a { color: var(--accent); }
+.footer__note { flex: 1 1 100%; margin: 0; }
+.footer__badge { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 /* The link carries the 44px a thumb needs; every badge's artwork stays 40px. */
-footer .listing a { display: inline-flex; align-items: center; min-height: 44px; }
-footer .listing img { display: block; height: 40px; width: auto; }
+.footer__badge a { display: inline-flex; align-items: center; min-height: 44px; }
+.footer__badge img { display: block; height: 40px; width: auto; }
+/* The apps band at the top of every footer (src/styles/footer.css draws the
+ * same one in the calculator). The store badge and QR rules below are the app
+ * page's; inside the band they are re-sized to match the calculator's. */
+.footer__apps {
+  flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px 24px; background: var(--accent-soft); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px 18px;
+}
+.footer__apps-title { margin: 0; font-size: 1rem; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
+.footer__apps-sub { margin: 3px 0 0; max-width: 52ch; line-height: 1.5; }
+.footer__apps .store-badges { margin: 10px 0 0; gap: 10px; }
+.footer__apps .store-qr { margin: 0; gap: 12px; }
+.footer .store-qr__code { color: var(--muted); font-size: max(0.75rem, 12px); }
+.footer__apps .store-qr__code img { width: 92px; height: 92px; border-radius: 8px; }
+.footer__apps-credit { flex-basis: 100%; margin: 0; line-height: 1.5; }
+@media (max-width: 860px), (hover: none) { .footer__apps-credit { display: none; } }
 /* The app page. Badge links carry the 44px a thumb needs; the artwork is the
    stores' standard 40px. The QR codes show only on a wide screen with a
    hovering pointer, because the phone in your hand cannot scan itself. */

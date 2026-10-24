@@ -45,6 +45,10 @@ export const COMPARE_INDEX_URL = `${import.meta.env.BASE_URL}compare/`;
  *  never find. */
 export const FREE_TIERS_URL = `${import.meta.env.BASE_URL}free-tiers/`;
 
+/** The help and policy pages, which the generated pages' footers already linked. */
+export const SUPPORT_URL = `${import.meta.env.BASE_URL}support/`;
+export const PRIVACY_URL = `${import.meta.env.BASE_URL}privacy/`;
+
 /** A real multi-page entry, not one of the calculator's client-state views. */
 export const RECEIPT_URL = `${import.meta.env.BASE_URL}receipt/`;
 
