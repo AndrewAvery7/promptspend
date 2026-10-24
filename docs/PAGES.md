@@ -5,8 +5,8 @@ for a tool and the wrong shape for search: nobody types "LLM cost estimator" int
 Google. They type **"gpt-5.6 pricing"** and **"claude opus vs gemini pro cost"**.
 
 `scripts/build-pages.ts` gives every one of those questions a real page, built
-from the same catalog and costed by the same engine as the app. 221 of them
-today: 109 models, 16 providers, 93 comparisons, 3 indexes.
+from the same catalog and costed by the same engine as the app. 251 of them
+today: 109 models, 16 providers, 123 comparisons, 3 indexes.
 
 `/receipt/` is also a real crawlable page, but it is a product route rather than a catalog-generated page and
 is therefore not included in the page arithmetic below. Vite builds it from `receipt/index.html`; the
@@ -23,7 +23,7 @@ post-build step adds it to the sitemap and `llms.txt`.
 | `/providers/`          | 1     | Every provider, model counts, cheapest model                        |
 | `/providers/<slug>/`   | 16    | That provider's models, cheapest first                              |
 | `/compare/`            | 1     | Every head-to-head                                                  |
-| `/compare/<a>-vs-<b>/` | 93    | Two models side by side on the same three workloads                 |
+| `/compare/<a>-vs-<b>/` | 123   | Two models side by side on the same three workloads                 |
 
 Beside these, and outside the counts above because they are built from
 `data/free-tiers.json` rather than from the catalog, the build writes the
