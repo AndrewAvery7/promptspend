@@ -501,8 +501,9 @@ only interface choices: your theme, accent and background, whether you dismissed
 banners, and your answer to the analytics notice.
 
 **Price alerts are the one exception, and only if you opt in.** They are a feature you have to switch on,
-and they are the only reason this project has a server at all
-(a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)). Precisely what changes:
+and they are the only reason this project has a server that stores anything
+(a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)); the pricing API stores nothing but Cloudflare's
+request logs (kept up to seven days), and the apps' update server has its logging switched off. Precisely what changes:
 
 - The Content Security Policy opens `connect-src` for that one API origin and, whenever an API is
   configured, `script-src`, `connect-src` and `frame-src` for Turnstile's `challenges.cloudflare.com`
@@ -528,9 +529,9 @@ and they are the only reason this project has a server at all
 - The alerts form never sees anything you paste into the estimator. Those are different parts of the page
   and the prompt text never leaves the browser.
 
-A deployment with no API configured — which is what this repository builds by default — keeps a strictly
-self-only policy and says on screen that alerts are not switched on, rather than rendering a form that
-cannot work.
+A deployment with no API configured — which is what this repository builds by default — leaves the alerts
+API and Turnstile out of its policy (the analytics and badge origins above stay) and says on screen that
+alerts are not switched on, rather than rendering a form that cannot work.
 
 ## Security
 

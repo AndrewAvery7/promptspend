@@ -233,7 +233,8 @@ function receiptAssets(): Plugin {
  *
  * `connect-src` is the line that matters. It is what stops a compromised
  * dependency posting a pasted prompt somewhere, so it opens for the alerts API
- * and Google Analytics' collection hosts and nothing else. The Cloudflare
+ * (and Turnstile with it) and Google Analytics' tag and collection hosts, and
+ * nothing else. The Cloudflare
  * beacon needs no exception here: it reports to the site's own `/cdn-cgi/rum`.
  * Google Analytics does (owner decision 2026-10-06), and that is a real cost:
  * a script that got onto the page could post to an analytics account of its

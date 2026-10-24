@@ -58,7 +58,8 @@ const GOOGLE_COLLECT = [
  *
  * - script-src: Turnstile (only when the alerts API is configured), Cloudflare
  *   Web Analytics' beacon (2026-10-05), and gtag.js (2026-10-06).
- * - connect-src: Turnstile, the alerts API, and Google Analytics' reports. The
+ * - connect-src: Turnstile, the alerts API, and Google Analytics (its tag host
+ *   and the collection hosts it reports to). The
  *   alerts API's origin is whatever the build was given, so it is read from
  *   the same variable the build reads.
  * - img-src: the LaunchNest badge (2026-10-05) and Google Analytics' image

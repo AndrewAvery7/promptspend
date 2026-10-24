@@ -1447,7 +1447,7 @@ export function renderAppPage(ctx: RenderContext): string {
       <main id="main">
         <article class="app-page">
           <h1>PromptSpend for iPhone and Android</h1>
-          <p class="lede">The same catalog, the same sources and dates, built for a phone. The apps are free, with no account, no ads and no tracking inside the app.</p>
+          <p class="lede">The same catalog, the same sources and dates, built for a phone. The apps are free, with no account, no ads and no tracking in the app's own code.</p>
           <div class="store-badges">
             <a ${store(APP_STORE_URL)}><img src="${asset('/store/app-store-badge.svg')}" alt="Download on the App Store" width="120" height="40" /></a>
             <a ${store(GOOGLE_PLAY_URL)}><img src="${asset('/store/google-play-badge.png')}" alt="Get it on Google Play" width="134" height="40" /></a>

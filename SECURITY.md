@@ -14,7 +14,7 @@ and `img-src`), reporting to
 alerts API is configured, Turnstile's `https://challenges.cloudflare.com` is
 admitted too.
 
-There are two servers, both Cloudflare Workers, and only one of them holds
+There are three servers, all Cloudflare Workers, and only one of them holds
 anything:
 
 - **The opt-in price-alerts API** in [`worker/`](worker), on a D1 database
@@ -25,6 +25,10 @@ anything:
   stateless, keyless and read-only — it holds no data and has no accounts — but
   it re-serves prices to callers who cannot see the catalog behind it, which
   puts it inside the blast radius of the first item below.
+- **The apps' update server** in [`updates/`](updates), serving
+  `updates.promptspend.dev`: signed app updates for the iPhone and Android
+  apps. It keeps no record of who asks: its request logging is switched off
+  (see the privacy policy, "App updates").
 
 Two more surfaces re-serve those prices without being servers at all: the MCP
 server ([`mcp/`](mcp)) and the VS Code extension ([`vscode/`](vscode)). Neither
