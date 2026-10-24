@@ -1264,6 +1264,16 @@ value that moves in the same run as its source URL is a correction.
 
 ## 2026-10-24
 
+- **Metadata** `dashscope-qwen3-next-80b-a3b-instruct` — status: current → deprecated
+- **Metadata** `dashscope-qwen3-next-80b-a3b-thinking` — status: current → deprecated
+- **Metadata** `dashscope-qwen3-vl-235b-a22b-instruct` — status: current → deprecated
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
+
+## 2026-10-24
+
 - **Metadata** `amazon.nova-2-lite-v1-0` — capabilityIndex: 64 → 60
 - **Metadata** `amazon.nova-2-pro-preview-20251202-v1-0` — capabilityIndex: 80 → 61
 - **Metadata** `claude-fable-5` — capabilityIndex: 100 → 89
@@ -1277,7 +1287,6 @@ value that moves in the same run as its source URL is a correction.
 - **Metadata** `claude-sonnet-4-6` — capabilityIndex: 85 → 76
 - **Metadata** `claude-sonnet-5` — capabilityIndex: 90 → 81
 - **Metadata** `command-a-03-2025` — capabilityIndex: 75 → 55
-- **Metadata** `dashscope-qwen3-next-80b-a3b-instruct` — capabilityIndex: 70 → 58
 - **Metadata** `dashscope-qwen3.7-max` — capabilityIndex: 83 → 74
 - **Metadata** `deepseek-deepseek-v4-flash` — capabilityIndex: 68 → 87
 - **Metadata** `gemini-gemini-2.5-pro` — capabilityIndex: 74 → 63
