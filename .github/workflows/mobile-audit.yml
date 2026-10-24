@@ -14,12 +14,19 @@ name: Mobile dependency triage
 # generated section of SECURITY.md; stamps the fingerprint and date; commits.
 #
 #   no high/critical advisory → accepted under the standing policy. Green,
-#                               committed, nobody needed.
-#   any high/critical advisory → the record is still written and committed,
+#   (or only reviewed ones)     committed, nobody needed, and an open
+#                               escalation issue is closed.
+#   any other high/critical   → the record is still written and committed,
 #                               but the run fails and an issue is opened.
 #                               That is the one case a person is asked to
 #                               read, on purpose: a serious advisory must not
 #                               accept itself.
+#
+# "Reviewed" means listed in apps/mobile/audit-accepted.json by a person, with
+# a reason and a review date at most six months out. From 2026-10-05 this job
+# failed every Monday on two unfixable, build-tooling-only advisories, a red
+# that could not change until upstream did and so stopped being read; Andrew
+# accepted both on 2026-10-19. See the script's header for the exact rule.
 #
 # Nothing deploys from this workflow and nothing gates on it; verify.yml only
 # warns on ordinary pushes and enforces the policy when RELEASE_CHECK=1.
@@ -97,6 +104,16 @@ jobs:
             gh issue create --title "$TITLE" --body "$BODY"
           fi
           exit 1
+
+      - name: Close the escalation once nothing unreviewed remains
+        if: steps.triage.outputs.verdict == 'accepted'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh issue list --state open --search "Mobile audit: high or critical advisory in:title" --json number --jq '.[0].number')
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --comment "The weekly triage found no unreviewed high or critical advisory (${{ steps.triage.outputs.summary }}). Anything still listed is covered by apps/mobile/audit-accepted.json; the verdict in apps/mobile/SECURITY.md names it. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
 
       - name: Fail if the triage itself failed for another reason
         if: steps.triage.outcome == 'failure' && steps.triage.outputs.verdict != 'escalate'

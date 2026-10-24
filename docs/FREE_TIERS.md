@@ -2,7 +2,7 @@
 
 `/free-tiers/` compares whether each provider in the catalog lets a new account
 use its API without paying, and `/providers/<slug>/free/` answers that question
-for one provider at a time. Thirteen pages, built with the rest of the site.
+for one provider at a time. Seventeen pages, built with the rest of the site.
 
 Prices have two independent feeds to check them against. Free tiers have none:
 there is no aggregator for "does a new account need a card", vendors phrase

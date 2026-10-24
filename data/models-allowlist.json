@@ -57,6 +57,30 @@
       "name": "Amazon",
       "country": "US",
       "pricingUrl": "https://aws.amazon.com/bedrock/pricing/"
+    },
+    {
+      "id": "meta",
+      "name": "Meta",
+      "country": "US",
+      "pricingUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
+    },
+    {
+      "id": "xiaomi",
+      "name": "Xiaomi (MiMo)",
+      "country": "CN",
+      "pricingUrl": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go"
+    },
+    {
+      "id": "inception",
+      "name": "Inception",
+      "country": "US",
+      "pricingUrl": "https://docs.inceptionlabs.ai/get-started/models"
+    },
+    {
+      "id": "microsoft",
+      "name": "Microsoft",
+      "country": "US",
+      "pricingUrl": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/"
     }
   ],
   "globalExclude": [
@@ -86,16 +110,24 @@
     {
       "id": "openai-gpt",
       "providerId": "openai",
-      "include": ["^gpt-5(\\.\\d+)?(-mini|-nano|-terra|-luna|-sol)?$", "^o\\d+(-mini|-pro)?$"],
+      "include": ["^gpt-(5|6)(\\.\\d+)?(-mini|-nano|-terra|-luna|-sol|-astra)?$", "^o\\d+(-mini|-pro)?$"],
       "tokenizer": { "kind": "tiktoken", "encoding": "o200k_base" },
       "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "openai-gpt-4",
+      "providerId": "openai",
+      "include": ["^gpt-4\\.1(-mini)?$", "^gpt-4o(-mini)?$"],
+      "tokenizer": { "kind": "tiktoken", "encoding": "o200k_base" },
+      "capabilities": { "reasoning": false, "vision": true }
     },
     {
       "id": "google-gemini",
       "providerId": "google",
       "include": [
         "^gemini/gemini-3(\\.\\d+)?-(pro|flash)(-lite)?(-preview)?$",
-        "^gemini/gemini-2\\.5-(pro|flash)$"
+        "^gemini/gemini-2\\.5-(pro|flash)(-lite)?$",
+        "^gemini/gemini-4-[a-z]+$"
       ],
       "stripPrefix": "gemini/",
       "tokenizer": {
@@ -140,7 +172,6 @@
         "^dashscope/qwen3-next-80b-a3b-(instruct|thinking)$",
         "^dashscope/qwen3-vl-235b-a22b-instruct$"
       ],
-      "exclude": ["^dashscope/qwen3\\.8-max$"],
       "stripPrefix": "dashscope/",
       "tokenizer": {
         "kind": "approx",
@@ -153,7 +184,12 @@
     {
       "id": "zai-glm",
       "providerId": "zai",
-      "include": ["^zai/glm-(5(\\.\\d+)?|4\\.[67])(-code)?$"],
+      "include": [
+        "^zai/glm-(5(\\.\\d+)?|4\\.[67])(-code)?$",
+        "^zai/glm-5\\.3-flash$",
+        "^zai/glm-4\\.5(-x|-air|-airx)?$",
+        "^zai/glm-4-32b-0414-128k$"
+      ],
       "stripPrefix": "zai/",
       "tokenizer": {
         "kind": "approx",
@@ -179,7 +215,11 @@
     {
       "id": "xai-grok",
       "providerId": "xai",
-      "include": ["^xai/grok-\\d+(\\.\\d+)?$", "^xai/grok-\\d+(-\\d+)?-fast$"],
+      "include": [
+        "^xai/grok-\\d+(\\.\\d+)?$",
+        "^xai/grok-\\d+(-\\d+)?-fast$",
+        "^xai/grok-build-\\d+(\\.\\d+)?$"
+      ],
       "stripPrefix": "xai/",
       "tokenizer": {
         "kind": "approx",
@@ -226,6 +266,59 @@
         "note": "Estimate — Nova tokenizer"
       },
       "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "meta-muse",
+      "providerId": "meta",
+      "include": ["^meta/muse-(spark|wonder)-\\d+(\\.\\d+)?$"],
+      "exclude": ["^meta/muse-spark-1\\.[12]$"],
+      "stripPrefix": "meta/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Muse tokenizer; Meta publishes no ratio"
+      },
+      "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "xiaomi-mimo",
+      "providerId": "xiaomi",
+      "include": ["^xiaomi_mimo/mimo-v\\d+(\\.\\d+)?-(pro|flash)$"],
+      "stripPrefix": "xiaomi_mimo/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — MiMo tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "inception-mercury",
+      "providerId": "inception",
+      "include": ["^inception/mercury-\\d+(\\.\\d+)?$"],
+      "stripPrefix": "inception/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Mercury tokenizer; Inception publishes no ratio"
+      },
+      "capabilities": { "reasoning": true, "vision": false }
+    },
+    {
+      "id": "microsoft-mai",
+      "providerId": "microsoft",
+      "include": ["^azure_ai/MAI-Thinking-\\d+$"],
+      "stripPrefix": "azure_ai/",
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — MAI tokenizer; Microsoft publishes no ratio"
+      },
+      "capabilities": { "reasoning": true, "vision": false }
     }
   ]
 }

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-17T11:04:59.839Z",
+  "checkedAt": "2026-10-24T17:46:59.480Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "50411 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "53380 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "23225 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22443 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -43,13 +43,21 @@
         "o4-mini",
         "o3",
         "o3-mini",
-        "o1"
+        "o1",
+        "gpt-6-astra",
+        "gpt-6.1-sol",
+        "gpt-6-sol",
+        "gpt-6-luna",
+        "gpt-4.1",
+        "gpt-4.1-mini",
+        "gpt-4o",
+        "gpt-4o-mini"
       ]
     },
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "95973 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "93728 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -59,7 +67,9 @@
         "gemini-gemini-2.5-flash",
         "gemini-gemini-3-flash-preview",
         "gemini-gemini-3.1-flash-lite",
-        "gemini-gemini-3.5-flash"
+        "gemini-gemini-3.5-flash",
+        "gemini-gemini-4-argon",
+        "gemini-gemini-2.5-flash-lite"
       ]
     },
     {
@@ -74,15 +84,15 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "ok": true,
-      "note": "4628 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3561 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k2.6"
       ]
     },
     {
-      "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
+      "url": "https://platform.kimi.ai/docs/pricing/chat",
       "ok": true,
-      "note": "4628 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3561 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k3"
       ]
@@ -90,7 +100,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "576745 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "592980 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3-next-80b-a3b-instruct",
@@ -100,20 +110,26 @@
     {
       "url": "https://docs.z.ai/guides/overview/pricing",
       "ok": true,
-      "note": "3056 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3008 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "zai-glm-5.1",
         "zai-glm-5.2",
         "zai-glm-5.3",
         "zai-glm-5",
         "zai-glm-4.7",
-        "zai-glm-4.6"
+        "zai-glm-4.6",
+        "zai-glm-5.3-flash",
+        "zai-glm-4.5",
+        "zai-glm-4.5-x",
+        "zai-glm-4.5-air",
+        "zai-glm-4.5-airx",
+        "zai-glm-4-32b-0414-128k"
       ]
     },
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "30966 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22341 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -121,12 +137,13 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "16368 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "16539 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",
         "xai-grok-4.3",
-        "xai-grok-4.20"
+        "xai-grok-4.20",
+        "xai-grok-build-0.1"
       ]
     },
     {
@@ -137,6 +154,58 @@
         "xai-grok-4-1-fast",
         "xai-grok-3",
         "xai-grok-4"
+      ]
+    },
+    {
+      "url": "https://docs.mistral.ai/models/mistral-large-4",
+      "ok": true,
+      "note": "2882 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "mistral-mistral-large-4",
+        "mistral-mistral-large-4-0"
+      ]
+    },
+    {
+      "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
+      "ok": true,
+      "note": "35682 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "dashscope-qwen3.8-max"
+      ]
+    },
+    {
+      "url": "https://dev.meta.ai/docs/pricing-rate-limits",
+      "ok": true,
+      "note": "11192 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "meta-muse-spark-1.3",
+        "meta-muse-wonder-1.0"
+      ]
+    },
+    {
+      "url": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
+      "ok": true,
+      "note": "5575 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "xiaomi-mimo-mimo-v2.6-pro",
+        "xiaomi-mimo-mimo-v2.6-flash"
+      ]
+    },
+    {
+      "url": "https://docs.inceptionlabs.ai/get-started/models",
+      "ok": true,
+      "note": "13582 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "inception-mercury-2",
+        "inception-mercury-2.5"
+      ]
+    },
+    {
+      "url": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
+      "ok": true,
+      "note": "11391 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "azure-ai-mai-thinking-1"
       ]
     }
   ],
@@ -180,8 +249,8 @@
     {
       "id": "claude-sonnet-5-5",
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
-      "status": "mismatch",
-      "detail": "cached input $0.1 vs recorded $0.2"
+      "status": "confirmed",
+      "detail": "page lists $2/$10 (cached $0.1)"
     },
     {
       "id": "claude-haiku-4-5",
@@ -316,6 +385,54 @@
       "detail": "page lists $15/$60 (cached $7.5)"
     },
     {
+      "id": "gpt-6-astra",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $10/$50 (cached $1)"
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$10 (cached $0.1)"
+    },
+    {
+      "id": "gpt-6-sol",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$10 (cached $0.2)"
+    },
+    {
+      "id": "gpt-6-luna",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.1/$0.5 (cached $0.01)"
+    },
+    {
+      "id": "gpt-4.1",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2/$8 (cached $0.5)"
+    },
+    {
+      "id": "gpt-4.1-mini",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.4/$1.6 (cached $0.1)"
+    },
+    {
+      "id": "gpt-4o",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2.5/$10 (cached $1.25)"
+    },
+    {
+      "id": "gpt-4o-mini",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.15/$0.6 (cached $0.075)"
+    },
+    {
       "id": "gemini-gemini-3.1-pro-preview",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "confirmed",
@@ -331,7 +448,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only Gemini 3.8 Flash and Gemini 3.6 Flash are listed)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only 3.8 Flash and 3.6 Flash are listed)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -367,7 +484,19 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite is listed)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only 3.5 Flash-Lite is listed)"
+    },
+    {
+      "id": "gemini-gemini-4-argon",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $4/$20 (cached $0.2)"
+    },
+    {
+      "id": "gemini-gemini-2.5-flash-lite",
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.1/$0.4 (cached $0.01)"
     },
     {
       "id": "deepseek-deepseek-v4-pro",
@@ -384,14 +513,14 @@
     {
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
-      "status": "confirmed",
-      "detail": "page lists $0.95/$4 (cached $0.16)"
+      "status": "unconfirmed",
+      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price is printed for kimi-k2.6)"
     },
     {
       "id": "moonshot-kimi-k3",
-      "url": "https://platform.kimi.ai/docs/pricing/chat-k3",
-      "status": "confirmed",
-      "detail": "page lists $3/$15 (cached $0.3)"
+      "url": "https://platform.kimi.ai/docs/pricing/chat",
+      "status": "unconfirmed",
+      "detail": "not priced on the page (the K3 Series Models pricing table on the page is empty; no price for kimi-k3 is printed)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -409,7 +538,7 @@
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Qwen3 VL 235B model is listed; the Qwen-VL section lists only qwen3-vl-plus)"
+      "detail": "not priced on the page (Qwen-VL section lists only qwen3-vl-plus; no qwen3-vl-235b-a22b-instruct row)"
     },
     {
       "id": "zai-glm-5.1",
@@ -448,10 +577,46 @@
       "detail": "page lists $0.6/$2.2 (cached $0.11)"
     },
     {
+      "id": "zai-glm-5.3-flash",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.15/$0.5 (cached $0.03)"
+    },
+    {
+      "id": "zai-glm-4.5",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.6/$2.2 (cached $0.11)"
+    },
+    {
+      "id": "zai-glm-4.5-x",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2.2/$8.9 (cached $0.45)"
+    },
+    {
+      "id": "zai-glm-4.5-air",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.2/$1.1 (cached $0.03)"
+    },
+    {
+      "id": "zai-glm-4.5-airx",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1.1/$4.5 (cached $0.22)"
+    },
+    {
+      "id": "zai-glm-4-32b-0414-128k",
+      "url": "https://docs.z.ai/guides/overview/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.1/$0.1"
+    },
+    {
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
-      "status": "confirmed",
-      "detail": "page lists $0.3/$1.2 (cached $0.03)"
+      "status": "unconfirmed",
+      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -478,6 +643,12 @@
       "detail": "page lists $1.25/$2.5 (cached $0.2)"
     },
     {
+      "id": "xai-grok-build-0.1",
+      "url": "https://docs.x.ai/developers/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1/$2 (cached $0.2)"
+    },
+    {
       "id": "xai-grok-4-1-fast",
       "url": "https://docs.x.ai/developers/migration/may-15-retirement",
       "status": "confirmed",
@@ -494,9 +665,69 @@
       "url": "https://docs.x.ai/developers/migration/may-15-retirement",
       "status": "confirmed",
       "detail": "page lists $1.25/$2.5"
+    },
+    {
+      "id": "mistral-mistral-large-4",
+      "url": "https://docs.mistral.ai/models/mistral-large-4",
+      "status": "confirmed",
+      "detail": "page lists $1.36/$4.18 (cached $0.14)"
+    },
+    {
+      "id": "mistral-mistral-large-4-0",
+      "url": "https://docs.mistral.ai/models/mistral-large-4",
+      "status": "unconfirmed",
+      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row is shown)"
+    },
+    {
+      "id": "dashscope-qwen3.8-max",
+      "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
+      "status": "confirmed",
+      "detail": "page lists $2/$6 (cached $0.25)"
+    },
+    {
+      "id": "meta-muse-spark-1.3",
+      "url": "https://dev.meta.ai/docs/pricing-rate-limits",
+      "status": "confirmed",
+      "detail": "page lists $1.25/$4.25 (cached $0.15)"
+    },
+    {
+      "id": "meta-muse-wonder-1.0",
+      "url": "https://dev.meta.ai/docs/pricing-rate-limits",
+      "status": "confirmed",
+      "detail": "page lists $4/$20 (cached $0.2)"
+    },
+    {
+      "id": "xiaomi-mimo-mimo-v2.6-pro",
+      "url": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
+      "status": "confirmed",
+      "detail": "page lists $0.435/$0.87 (cached $0.0036)"
+    },
+    {
+      "id": "xiaomi-mimo-mimo-v2.6-flash",
+      "url": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
+      "status": "confirmed",
+      "detail": "page lists $0.14/$0.28 (cached $0.0028)"
+    },
+    {
+      "id": "inception-mercury-2",
+      "url": "https://docs.inceptionlabs.ai/get-started/models",
+      "status": "confirmed",
+      "detail": "page lists $0.25/$0.75 (cached $0.025)"
+    },
+    {
+      "id": "inception-mercury-2.5",
+      "url": "https://docs.inceptionlabs.ai/get-started/models",
+      "status": "confirmed",
+      "detail": "page lists $0.2/$0.75 (cached $0.02)"
+    },
+    {
+      "id": "azure-ai-mai-thinking-1",
+      "url": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
+      "status": "confirmed",
+      "detail": "page lists $2/$8 (cached $0.2)"
     }
   ],
-  "confirmed": 54,
-  "mismatched": 1,
-  "unconfirmed": 4
+  "confirmed": 78,
+  "mismatched": 0,
+  "unconfirmed": 8
 }

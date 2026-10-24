@@ -1108,6 +1108,457 @@
         "The amount, eligibility and expiry of any granted balance for new accounts.",
         "Whether the privacy policy's training purpose applies to API inputs specifically."
       ]
+    },
+    "meta": {
+      "verdict": "none",
+      "answer": "No. Meta's Model API is pay-as-you-go (or a Muse Code subscription), and its sign-up guide has you add a payment method before you make requests. The cheaper Contributor-mode models are discounted, not free.",
+      "card": "yes",
+      "training": "no",
+      "trainingNote": "Only the opt-in Contributor-mode model variants, and Muse Code subscriptions (which default to Contributor mode), are used for training.",
+      "whatsFree": "None (pay-as-you-go only)",
+      "updated": "2026-10-24",
+      "basis": {
+        "verdict": ["meta-pay-as-you-go-or-subscription", "meta-signup-payment-method-before-requests"],
+        "card": ["meta-signup-payment-method-before-requests", "meta-billing-setup-needs-card"],
+        "training": ["meta-standard-mode-no-training", "meta-tos-standard-services-no-training"]
+      },
+      "unpublished": [
+        "A free tier, free trial or starter credit for new Model API accounts: none found on the pricing, quickstart, authentication, billing or sign-up pages, and no page states outright that no free tier exists (the Terms only say Meta may grant promotional credits).",
+        "Whether Muse Code browser sign-in can be used without a payment method or a subscription.",
+        "Separate rate limits for accounts that have not paid: only one limits table is published."
+      ],
+      "facts": [
+        {
+          "id": "meta-pay-as-you-go-or-subscription",
+          "topic": "free",
+          "statement": "Meta's pricing page offers pay-as-you-go billing or a monthly Muse Code subscription; it lists no free allowance.",
+          "quote": "Use our models with pay-as-you-go billing on Meta Model API and in Muse Code, or in Muse Code with a monthly subscription.",
+          "url": "https://dev.meta.ai/docs/pricing-rate-limits",
+          "readUrl": "https://dev.meta.ai/docs/pricing-rate-limits.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-signup-payment-method-before-requests",
+          "topic": "card",
+          "statement": "Meta's own sign-up guide says a payment method is one of the two things to set up before you make requests.",
+          "quote": "To start making requests, set up two more things: Add a payment method.",
+          "url": "https://dev.meta.ai/help/accounts-and-login/sign-up",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-billing-setup-needs-card",
+          "topic": "card",
+          "statement": "Setting up Model API billing means adding a payment method (a card) and business details.",
+          "quote": "To set up billing for Model API, an admin needs to add a payment method and enter your business information.",
+          "url": "https://dev.meta.ai/help/billing/set-up-billing",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-standard-mode-no-training",
+          "topic": "data",
+          "statement": "In Standard mode Meta says your prompts and outputs are not used to train its models.",
+          "quote": "In Standard mode, you pay standard prices and your content is not used to train Meta models.",
+          "url": "https://dev.meta.ai/docs/pricing-rate-limits",
+          "readUrl": "https://dev.meta.ai/docs/pricing-rate-limits.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-tos-standard-services-no-training",
+          "topic": "data",
+          "statement": "The Model API Terms of Service repeat the no-training promise for the Standard Services.",
+          "quote": "… and will not use Content submitted in a request to the Standard Services to train Meta Models.",
+          "url": "https://dev.meta.ai/legal/terms-of-service",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-contributor-mode-trains",
+          "topic": "data",
+          "statement": "The discounted Contributor-mode model variants are cheaper because Meta may train on what you send; this is a separate model choice, not the default.",
+          "quote": "Contributor mode offers discounted pricing or more usage in exchange for permission to use your content — the prompts, code, files, and context you send, plus the model responses you get back — to train future Meta models.",
+          "url": "https://dev.meta.ai/docs/pricing-rate-limits",
+          "readUrl": "https://dev.meta.ai/docs/pricing-rate-limits.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-muse-code-defaults-to-contributor",
+          "topic": "data",
+          "statement": "Muse Code subscriptions start with Contributor mode on, so training use is on by default there until you switch it off.",
+          "quote": "Muse Code subscriptions default to Contributor mode. In Contributor mode, you get more usage from your plan in exchange for letting Meta use your content to train future Meta models.",
+          "url": "https://dev.meta.ai/docs/muse-code/subscriptions",
+          "readUrl": "https://dev.meta.ai/docs/muse-code/subscriptions.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-rate-limit-muse-spark",
+          "topic": "limits",
+          "statement": "Published pay-as-you-go limit for muse-spark-1.3 is 3,000 requests and 4,000,000 tokens per minute, per team; no separate unpaid tier is listed.",
+          "quote": "muse-spark-1.3 · 3,000 · 4,000,000",
+          "url": "https://dev.meta.ai/docs/pricing-rate-limits",
+          "readUrl": "https://dev.meta.ai/docs/pricing-rate-limits.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-promotional-credits-clause",
+          "topic": "credits",
+          "statement": "The Terms only say Meta may grant promotional credits; no standing credit offer is published.",
+          "quote": "Meta may provide you with promotional credits in your Accounts that can only be used with the Services.",
+          "url": "https://dev.meta.ai/legal/terms-of-service",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "meta-subscription-flat-rate",
+          "topic": "upgrade",
+          "statement": "The alternative to per-token billing is a flat monthly Muse Code subscription.",
+          "quote": "With a Muse Code subscription, you pay a flat monthly rate for usage of Muse Code, instead of paying per token.",
+          "url": "https://dev.meta.ai/docs/muse-code/subscriptions",
+          "readUrl": "https://dev.meta.ai/docs/muse-code/subscriptions.md",
+          "readOn": "2026-10-24"
+        }
+      ]
+    },
+    "xiaomi": {
+      "verdict": "unclear",
+      "answer": "Unclear. Xiaomi's own pages disagree on whether registration alone earns credit: the Welcome Bonus page ($0.72) requires a first top-up, while the promotions FAQ and older changelog entries describe free or trial credit on sign-up. Paid usage is charged against a prepaid balance, and some text-to-speech models are free for a limited time.",
+      "card": "unclear",
+      "training": "no",
+      "trainingNote": "This is the API platform's privacy policy. The separate MiMo Desktop app has its own policy that says inputs may be used for training with an opt-out.",
+      "whatsFree": "Unclear: bonus credit after a first top-up; TTS models free for a limited time",
+      "updated": "2026-10-24",
+      "basis": {
+        "verdict": [
+          "xiaomi-welcome-bonus-needs-first-recharge",
+          "xiaomi-promotions-faq-bonus-credit",
+          "xiaomi-changelog-registration-credit",
+          "xiaomi-changelog-trial-credit"
+        ],
+        "card": [
+          "xiaomi-agreement-recharge-in-advance",
+          "xiaomi-welcome-bonus-needs-first-recharge",
+          "xiaomi-changelog-registration-credit"
+        ],
+        "training": ["xiaomi-privacy-no-training"]
+      },
+      "unpublished": [
+        "Which of the registration-credit statements is current: the changelog entries (2026-01-20, 2026-04-29) are older than the Welcome Bonus page (updated 2026-10-15), which requires a first recharge, and the FAQ adds that eligibility and amounts vary by campaign.",
+        "When the limited-time free period for the TTS models ends, and whether calling them needs a positive balance.",
+        "Separate rate limits for accounts on free or bonus credit: only one limits table is published."
+      ],
+      "facts": [
+        {
+          "id": "xiaomi-pay-as-you-go-balance",
+          "topic": "free",
+          "statement": "The API is pay-as-you-go: each call draws down an account balance, and the pricing page lists no standing free allowance for the language models.",
+          "quote": "Pay-as-you-go for the Xiaomi MiMo API uses the ordinary API Key of the Open Platform and consumes the account balance based on the actual Token usage, which is not interoperable with the Token Plan package quota.",
+          "url": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
+          "readUrl": "https://mimo.mi.com/static/docs/price/pay-as-you-go.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-tts-free-limited-time",
+          "topic": "free",
+          "statement": "Three text-to-speech models are marked free for a limited time; no end date or balance requirement is given.",
+          "quote": "Free for a limited time: mimo-v2.5-tts, mimo-v2.5-tts-voiceclone, mimo-v2.5-tts-voicedesign",
+          "url": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
+          "readUrl": "https://mimo.mi.com/static/docs/price/pay-as-you-go.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-welcome-bonus-needs-first-recharge",
+          "topic": "credits",
+          "statement": "The Welcome Bonus page offers overseas users a $0.72 bonus, paid out after the first top-up.",
+          "quote": "Overseas users who make their first recharge of any amount on the Xiaomi MiMo Open Platform will receive an additional $0.72 bonus, which will be credited to their account in real time.",
+          "url": "https://mimo.mi.com/docs/en-US/quick-start/promotions/Welcome%20Bonus",
+          "readUrl": "https://mimo.mi.com/static/docs/quick-start/promotions/Welcome%20Bonus.md",
+          "readOn": "2026-10-24",
+          "conflictsWith": "xiaomi-promotions-faq-bonus-credit"
+        },
+        {
+          "id": "xiaomi-bonus-expires-40-days",
+          "topic": "credits",
+          "statement": "The welcome bonus expires 40 days after it arrives.",
+          "quote": "Validity Period: 40 days from the date of arrival in the account; please use it within the validity period.",
+          "url": "https://mimo.mi.com/docs/en-US/quick-start/promotions/Welcome%20Bonus",
+          "readUrl": "https://mimo.mi.com/static/docs/quick-start/promotions/Welcome%20Bonus.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-promotions-faq-bonus-credit",
+          "topic": "credits",
+          "statement": "The promotions FAQ says bonus credit comes from Refer & Earn or new user registration, which is vaguer than the Welcome Bonus page (first top-up required).",
+          "quote": "You can receive bonus credit through Refer & Earn or new user registration.",
+          "url": "https://mimo.mi.com/docs/en-US/quick-start/faq/promotions",
+          "readUrl": "https://mimo.mi.com/static/docs/quick-start/faq/promotions.md",
+          "readOn": "2026-10-24",
+          "conflictsWith": "xiaomi-welcome-bonus-needs-first-recharge"
+        },
+        {
+          "id": "xiaomi-agreement-recharge-in-advance",
+          "topic": "card",
+          "statement": "The service agreement says paid usage needs a topped-up balance first.",
+          "quote": "When using the Xiaomi MiMo Open Platform Paid Service, you should complete the account recharge in advance. As long as the account balance is sufficient, you can use the services of this platform normally.",
+          "url": "https://mimo.mi.com/docs/quick-start/terms/user-agreement",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-overseas-topup-methods",
+          "topic": "card",
+          "statement": "Overseas users top up with a card or a wallet such as Apple Pay or Google Pay.",
+          "quote": "for overseas users, it provides commonly used top-up methods such as Apple Pay, Google Pay, credit/debit cards, etc.",
+          "url": "https://mimo.mi.com/docs/en-US/quick-start/faq/payment",
+          "readUrl": "https://mimo.mi.com/static/docs/quick-start/faq/payment.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-negative-balance-stops-service",
+          "topic": "limits",
+          "statement": "Once the balance goes negative the models stop working until you top up.",
+          "quote": "Once the balance becomes negative, the model inference service can no longer be used, and the next recharge order will first deduct the overdue amount.",
+          "url": "https://mimo.mi.com/docs/en-US/quick-start/faq/payment",
+          "readUrl": "https://mimo.mi.com/static/docs/quick-start/faq/payment.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-rate-limit-flash",
+          "topic": "limits",
+          "statement": "Published limit for mimo-v2.6-flash is 100 requests and 10M tokens per minute per account; one table, no separate unpaid tier.",
+          "quote": "mimo-v2.6-flash · 100 · 10M",
+          "url": "https://mimo.mi.com/docs/en-US/api/guidance/rate-limit",
+          "readUrl": "https://mimo.mi.com/static/docs/api/guidance/rate-limit.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-privacy-no-training",
+          "topic": "data",
+          "statement": "Xiaomi's MiMo platform privacy policy says content sent through the API is not used for model training.",
+          "quote": "Xiaomi will not use the content you provide for model training or any other purposes.",
+          "url": "https://mimo.mi.com/docs/en-US/quick-start/terms/privacy-policy",
+          "readUrl": "https://privacy.mi.com/XiaomiMiMoPlatformos/en_GB/",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-changelog-registration-credit",
+          "topic": "credits",
+          "statement": "The platform changelog's 2026-01-20 entry on the launch of recharge says new users receive free credit upon registration. It predates the Welcome Bonus page, which requires a first recharge.",
+          "quote": "Existing users' free credit will be automatically credited, and new users will receive free credit upon registration.",
+          "url": "https://mimo.mi.com/docs/en-US/updates/feature/platform",
+          "readUrl": "https://mimo.mi.com/static/docs/updates/feature/platform.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-changelog-trial-credit",
+          "topic": "credits",
+          "statement": "The platform changelog's 2026-04-29 Refer & earn entry says signing up gets $2 in trial credits for API calls; it is not stated whether that offer is still running.",
+          "quote": "Invite builders to try Xiaomi's flagship MiMo V2.5 — sign up to instantly get $2 in trial credits, redeemable for API calls (Token Plan not supported).",
+          "url": "https://mimo.mi.com/docs/en-US/updates/feature/platform",
+          "readUrl": "https://mimo.mi.com/static/docs/updates/feature/platform.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "xiaomi-desktop-privacy-trains",
+          "topic": "data",
+          "statement": "The separate MiMo Desktop app's privacy policy says inputs and outputs may be used for training, with an opt-out in its settings.",
+          "quote": "We may use your Inputs and Outputs to train and improve our models and services. If you do not wish to use your input or provided content data for model training and optimization, you can opt out through the [Settings-General-Privacy-Experience Optimization Plan].",
+          "url": "https://mimo.xiaomi.com/legal/privacy-policy",
+          "readOn": "2026-10-24"
+        }
+      ]
+    },
+    "inception": {
+      "verdict": "one-time",
+      "answer": "Yes, once: every new account gets 100 million free tokens shared across all models, with no payment details required. After that you add a payment method to carry on.",
+      "card": "no",
+      "training": "opt-out",
+      "trainingNote": "The Terms of Use allow training on your submissions; the API Platform has an 'Improve the model for everyone' setting that turns it off. The default state is not stated.",
+      "whatsFree": "100M tokens, one-time, no card",
+      "updated": "2026-10-24",
+      "basis": {
+        "verdict": ["inception-free-100m-tokens", "inception-faq-one-time-credit"],
+        "card": ["inception-free-100m-tokens", "inception-add-payment-when-low"],
+        "training": ["inception-tou-train-optout", "inception-privacy-training-purpose"]
+      },
+      "unpublished": [
+        "Whether the 'Improve the model for everyone' setting is on or off by default for a new account.",
+        "Whether the free tokens expire after a set time: no expiry date is stated.",
+        "A zero-data-retention option for self-serve accounts: only case-by-case arrangements through support are mentioned."
+      ],
+      "facts": [
+        {
+          "id": "inception-free-100m-tokens",
+          "topic": "free",
+          "statement": "Every new account gets 100 million free tokens and Inception says no payment details are needed to start.",
+          "quote": "Every new account includes 100 million free tokens — no payment details required.",
+          "url": "https://docs.inceptionlabs.ai/get-started",
+          "readUrl": "https://docs.inceptionlabs.ai/get-started.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "inception-faq-one-time-credit",
+          "topic": "credits",
+          "statement": "The free tokens are a one-time grant shared across every model, not a monthly allowance.",
+          "quote": "Every new account includes a one-time credit of 100 million free tokens. The credit is shared across all models rather than granted per model.",
+          "url": "https://docs.inceptionlabs.ai/resources/faq",
+          "readUrl": "https://docs.inceptionlabs.ai/resources/faq.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "inception-add-payment-when-low",
+          "topic": "upgrade",
+          "statement": "Once the free tokens run low you add payment information in Billing to keep using the API.",
+          "quote": "When your free tokens are running low, navigate to Billing to add your payment information for continued usage beyond the free tier.",
+          "url": "https://docs.inceptionlabs.ai/get-started",
+          "readUrl": "https://docs.inceptionlabs.ai/get-started.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "inception-rate-limits-free-tier",
+          "topic": "limits",
+          "statement": "The Free Tier column allows 1,000 requests per minute, 1,000,000 input tokens and 100,000 output tokens per minute.",
+          "quote": "Free Tier · Pay As You Go Tier · Enterprise Tier … API Requests · 1,000 · 3,000 · Custom … Input Tokens · 1,000,000 · 3,000,000 · Custom … Output Tokens · 100,000 · 300,000 · Custom",
+          "url": "https://docs.inceptionlabs.ai/get-started/rate-limits",
+          "readUrl": "https://docs.inceptionlabs.ai/get-started/rate-limits.md",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "inception-tou-train-optout",
+          "topic": "data",
+          "statement": "The Terms of Use let Inception train on what you submit, and give API Platform users a setting to turn that off.",
+          "quote": "… we may use User Submissions to provide and maintain our Services, comply with applicable law, enforce our terms and policies, and train our models. If you do not want us to use your User Submissions to train our models, you can opt-out by setting the ‘Improve the model for everyone’ option under User Settings in the API Platform to OFF.",
+          "url": "https://www.inceptionlabs.ai/docs/terms-of-use",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "inception-privacy-training-purpose",
+          "topic": "data",
+          "statement": "The Privacy Policy lists training and refining its models as a purpose for which it uses personal data.",
+          "quote": "Improving the Services, including testing, research, internal analytics and product development, including training and refining our models and analyzing usage patters to improve speed and efficiency.",
+          "url": "https://www.inceptionlabs.ai/docs/privacy-policy",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "inception-faq-retention-custom",
+          "topic": "data",
+          "statement": "Zero-retention arrangements exist only case by case; the standard terms are the Privacy Policy and Terms of Use.",
+          "quote": "Custom data-handling arrangements, including zero-retention configurations for regulated workloads, are handled case by case — contact support with your requirements.",
+          "url": "https://docs.inceptionlabs.ai/resources/faq",
+          "readUrl": "https://docs.inceptionlabs.ai/resources/faq.md",
+          "readOn": "2026-10-24"
+        }
+      ]
+    },
+    "microsoft": {
+      "verdict": "unclear",
+      "answer": "Unclear for MAI-Thinking-1. Microsoft's MAI-Thinking guide lists an Azure subscription with a valid payment method as a prerequisite and its default quota tier shows 0 requests per minute, while the MAI-Voice guide says you can create an Azure subscription for free. No page says whether Azure's $200 free-account credit can be spent on MAI models.",
+      "card": "yes",
+      "training": "no",
+      "whatsFree": "Unclear for MAI models (Azure free-account credit may or may not apply)",
+      "updated": "2026-10-24",
+      "basis": {
+        "verdict": [
+          "microsoft-mai-needs-paid-account",
+          "microsoft-mai-voice-free-subscription",
+          "microsoft-azure-free-account-credit",
+          "microsoft-mai-thinking-default-quota-zero"
+        ],
+        "card": ["microsoft-mai-needs-paid-account", "microsoft-azure-free-account-needs-card"],
+        "training": ["microsoft-data-not-used-to-improve-models", "microsoft-data-not-used-to-train"]
+      },
+      "unpublished": [
+        "Whether the $200 Azure free-account credit can be spent on MAI models: the free-account page does not name them and the MAI how-to pages ask for a paid account.",
+        "A data-use statement written specifically for MAI models: the covering statement is the general one for Foundry models sold by Azure.",
+        "MAI-Thinking-1 tier-assignment rules: the page says the tier depends on your subscription and deployment configuration but not how."
+      ],
+      "facts": [
+        {
+          "id": "microsoft-mai-needs-paid-account",
+          "topic": "card",
+          "statement": "The MAI-Thinking-1 how-to lists an Azure subscription with a valid payment method as the first prerequisite and points new users to a paid Azure account.",
+          "quote": "An Azure subscription with a valid payment method. If you don't have an Azure subscription, create a paid Azure account.",
+          "url": "https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-mai-thinking",
+          "readOn": "2026-10-24",
+          "conflictsWith": "microsoft-azure-free-account-credit"
+        },
+        {
+          "id": "microsoft-mai-thinking-default-quota-zero",
+          "topic": "limits",
+          "statement": "The MAI-Thinking-1 quota table lists the Low (Default) tier at 0 tokens and 0 requests per minute and Medium at 100,000 TPM and 100 RPM; the page says which tier you get depends on your subscription and deployment configuration.",
+          "quote": "Global Standard · Low (Default) · 0 · 0 … Global Standard · Medium · 100,000 · 100",
+          "url": "https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-mai-thinking",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "microsoft-mai-image-free-tier-zero",
+          "topic": "limits",
+          "statement": "For the MAI image models the quota table's free tier (tier 0) allows 0 requests per minute on every model.",
+          "quote": "0 (Free) · 0 · 0 · 0 · 0 · 0",
+          "url": "https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-mai-image",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "microsoft-azure-free-account-credit",
+          "topic": "credits",
+          "statement": "Microsoft advertises a $200, 30-day credit for a new Azure free account on this same MAI pricing page, but does not say MAI models are covered.",
+          "quote": "Get free cloud services and a $200 credit to explore Azure for 30 days.",
+          "url": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
+          "readOn": "2026-10-24",
+          "conflictsWith": "microsoft-mai-needs-paid-account"
+        },
+        {
+          "id": "microsoft-azure-free-account-needs-card",
+          "topic": "card",
+          "statement": "Even the Azure free account needs a credit or debit card at sign-up (for identity checks).",
+          "quote": "All you need is a phone number, a credit card or a debit card (non-prepaid), and a Microsoft account or a GitHub account.",
+          "url": "https://azure.microsoft.com/en-us/free/",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "microsoft-foundry-billed-at-normal-rates",
+          "topic": "free",
+          "statement": "The Foundry platform itself is free to explore, but the features you use are billed at their normal rates.",
+          "quote": "The Foundry platform is free to use and explore. Individual features customers access and consume are billed at their normal rates.",
+          "url": "https://azure.microsoft.com/en-us/pricing/details/microsoft-foundry/",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "microsoft-mai-thinking-price",
+          "topic": "models",
+          "statement": "MAI-Thinking-1 (Global) costs $2 per million input tokens, $0.20 cached input and $8 output.",
+          "quote": "MAI-Thinking-1 Global · $2 · $0.20 · $8",
+          "url": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "microsoft-mai-are-models-sold-by-azure",
+          "topic": "models",
+          "statement": "This sentence sits under the 'Microsoft models sold by Azure' heading, which puts MAI models in the group the data-privacy page covers.",
+          "quote": "Microsoft models include various model groups such as Model Router, MAI models, Phi models, healthcare AI models, and more.",
+          "url": "https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "microsoft-data-not-used-to-improve-models",
+          "topic": "data",
+          "statement": "Microsoft's data-privacy page for Foundry models sold by Azure says your prompts and completions are not used by the model providers to improve their models.",
+          "quote": "are NOT used by providers of Models sold by Azure to improve their models or services.",
+          "url": "https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/data-privacy",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "microsoft-data-not-used-to-train",
+          "topic": "data",
+          "statement": "The same page says inputs, outputs and training data are not used to train generative AI foundation models without your permission.",
+          "quote": "are NOT used to train any generative AI foundation models without your permission or instruction.",
+          "url": "https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/data-privacy",
+          "readOn": "2026-10-24"
+        },
+        {
+          "id": "microsoft-mai-voice-free-subscription",
+          "topic": "free",
+          "statement": "The MAI-Voice how-to, one of the other MAI models, describes the Azure subscription prerequisite as something you can create for free, unlike the MAI-Thinking guide.",
+          "quote": "An Azure subscription. You can create one for free.",
+          "url": "https://learn.microsoft.com/en-us/azure/ai-services/speech-service/mai-voices",
+          "readOn": "2026-10-24"
+        }
+      ]
     }
   }
 }

@@ -64,3 +64,107 @@
   height: 40px;
   width: auto;
 }
+
+/* ---- store badges and QR codes (StoreBadges.tsx) ----
+   Shared by the launch banner, Data & Alerts and the footer's app band. Each link is at least 44px
+   tall, the minimum tap target the mobile e2e suite enforces; the artwork
+   itself is the stores' standard 40px. */
+.store-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.store-badges a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.store-badges img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+.store-qr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+.store-qr__code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: max(0.72rem, 12px);
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+}
+/* White whatever the theme: a QR code needs its light quiet zone to scan. */
+.store-qr__code img {
+  display: block;
+  width: 92px;
+  height: 92px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.store-qr__credit {
+  flex-basis: 100%;
+  margin: 0;
+  max-width: 60ch;
+  font-size: max(0.72rem, 12px);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* A code on the screen you are holding cannot be scanned, so the codes (and the
+   credit that belongs to them) appear only on a wide screen with a hovering
+   pointer — a computer with a phone in reach. */
+@media (max-width: 860px), (hover: none) {
+  .store-qr,
+  .footer__apps-credit {
+    display: none;
+  }
+}
+
+/* The app band: first thing in every footer, on every page. A tinted card with
+   the two store badges and, on a computer, the two QR codes. It is permanent -
+   unlike the launch banner it has nothing to dismiss - so the apps stay one
+   glance away once that banner has been closed. */
+.footer__apps {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.footer__apps-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.footer__apps-sub {
+  margin: 3px 0 0;
+  max-width: 52ch;
+  line-height: 1.5;
+}
+.footer__apps .store-badges {
+  margin-top: 10px;
+}
+/* The footer paints every link in the accent; the code's label is a caption. */
+.footer .store-qr__code {
+  color: var(--muted);
+}
+.footer__apps-credit {
+  flex-basis: 100%;
+  margin: 0;
+  line-height: 1.5;
+}

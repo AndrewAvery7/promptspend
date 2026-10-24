@@ -24,7 +24,11 @@ const README = resolve(ROOT, 'README.md');
 
 /** Gzipped kilobytes. Raise deliberately, with a note about what bought it. */
 const BUDGETS = {
-  initialJs: 100,
+  // 100 until 2026-10-24, then 105: the generated pages' live header (its script,
+  // the shared header sheet and the theme script) is built into this same folder
+  // and this check adds up every file in it, so those ~3 KB are counted here
+  // although the calculator never loads them.
+  initialJs: 105,
   initialCss: 40,
   tokenizer: 2048,
 };

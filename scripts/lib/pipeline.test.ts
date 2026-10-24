@@ -174,6 +174,41 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(sonnet.pricing.intro?.input).toBe(2);
   });
 
+  it('publishes a promotion through its last day and not a morning longer', () => {
+    const overrides = [
+      {
+        id: 'claude-sonnet-5',
+        vendorVerified: true,
+        lastVerified: '2026-08-31',
+        verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+        pricing: { input: 3, output: 15, intro: { input: 2, output: 10, until: '2026-08-31' } },
+      },
+    ];
+    const merge = (at: string) =>
+      mergeCatalog({
+        litellm,
+        openrouter: new Map(),
+        allowlist: ALLOWLIST,
+        overrides,
+        generatedAt: new Date(at),
+      }).catalog;
+
+    // The last day: still in force, still published.
+    const lastDay = merge('2026-08-31T11:00:00.000Z');
+    expect(lastDay.models.find((m) => m.id === 'claude-sonnet-5')!.pricing.intro?.until).toBe('2026-08-31');
+    expect(validateCatalog(lastDay)).toEqual([]);
+
+    // The morning after: the block falls out and the base price stands, so the
+    // catalogue still validates. Before this, an expired block failed validation
+    // and held back the whole morning's catalogue until somebody edited the file.
+    const nextDay = merge('2026-09-01T11:00:00.000Z');
+    const sonnet = nextDay.models.find((m) => m.id === 'claude-sonnet-5')!;
+    expect(sonnet.pricing.intro).toBeUndefined();
+    expect(sonnet.pricing.input).toBe(3);
+    expect(sonnet.pricing.output).toBe(15);
+    expect(validateCatalog(nextDay)).toEqual([]);
+  });
+
   it('flags a cross-source disagreement instead of publishing it quietly', () => {
     const openrouter = fromOpenRouter({
       data: [{ id: 'anthropic/claude-sonnet-5', pricing: { prompt: '0.000006', completion: '0.00003' } }],

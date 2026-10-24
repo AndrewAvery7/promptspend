@@ -5,8 +5,8 @@ for a tool and the wrong shape for search: nobody types "LLM cost estimator" int
 Google. They type **"gpt-5.6 pricing"** and **"claude opus vs gemini pro cost"**.
 
 `scripts/build-pages.ts` gives every one of those questions a real page, built
-from the same catalog and costed by the same engine as the app. 192 of them
-today: 84 models, 12 providers, 93 comparisons, 3 indexes.
+from the same catalog and costed by the same engine as the app. 347 of them
+today: 109 models, 16 providers, 219 comparisons, 3 indexes.
 
 `/receipt/` is also a real crawlable page, but it is a product route rather than a catalog-generated page and
 is therefore not included in the page arithmetic below. Vite builds it from `receipt/index.html`; the
@@ -19,15 +19,15 @@ post-build step adds it to the sitemap and `llms.txt`.
 | URL                    | Count | Contains                                                            |
 | ---------------------- | ----- | ------------------------------------------------------------------- |
 | `/models/`             | 1     | Every model by blended rate, with one workload costed on each       |
-| `/models/<slug>/`      | 84    | Full rate card, three monthly bills, rank, alternatives, provenance |
+| `/models/<slug>/`      | 109   | Full rate card, three monthly bills, rank, alternatives, provenance |
 | `/providers/`          | 1     | Every provider, model counts, cheapest model                        |
-| `/providers/<slug>/`   | 12    | That provider's models, cheapest first                              |
+| `/providers/<slug>/`   | 16    | That provider's models, cheapest first                              |
 | `/compare/`            | 1     | Every head-to-head                                                  |
-| `/compare/<a>-vs-<b>/` | 93    | Two models side by side on the same three workloads                 |
+| `/compare/<a>-vs-<b>/` | 219   | Two models side by side on the same three workloads                 |
 
 Beside these, and outside the counts above because they are built from
 `data/free-tiers.json` rather than from the catalog, the build writes the
-free-tier pages: `/free-tiers/`, comparing all 12 providers, and one
+free-tier pages: `/free-tiers/`, comparing all 16 providers, and one
 `/providers/<slug>/free/` per provider, quoting what each vendor's own pages say
 about free use, with a link and a read date on every fact. They have their own
 rules and a daily check of every quote; see [FREE_TIERS.md](FREE_TIERS.md).
@@ -56,7 +56,7 @@ description.
 
 ### Why the comparison set is curated
 
-The combinatorial answer is 84 × 83 ÷ 2 = 3,486 pages, nearly all comparing
+The combinatorial answer is 109 × 108 ÷ 2 = 5,886 pages, nearly all comparing
 things nobody would choose between. A $0.14 flash model against a $75 frontier
 model is not a decision, it is a category difference.
 
@@ -133,11 +133,17 @@ the page code by hand, run `--fix` and commit the file with your change.
    scripts on top, from this site only (`script-src 'self'`, via `layout`'s
    `scripts` option), to make a chart interactive or a table filterable.
    Enhancement, never content: the no-JavaScript browser tests stay. The only
-   inline `<script>` is the JSON-LD data block, which is not executed.
+   inline `<script>` is the JSON-LD data block, which is not executed. Every page
+   now carries two such scripts: the calculator's live header (search, accent and
+   canvas picker, dark mode; `src/chrome/site-header.tsx`) and a tiny blocking one
+   that applies the saved theme before first paint. Both are files on this site,
+   and the header is also in the HTML, drawn at build time from the same
+   component, so it is there without them.
 2. **Therefore a very tight policy** — `default-src 'none'`, with the JSON-LD
    admitted by its exact SHA-256 rather than `'unsafe-inline'`. The hash is
    computed over the string that is actually emitted, so the two cannot drift.
-3. **Therefore almost no external anything**: no fonts, no images beyond an
+3. **Therefore almost no external anything**: no fonts from anywhere but this site
+   (`font-src 'self'`, for the header's typefaces), no images beyond an
    inline SVG favicon and the footer badges. The LaunchNest badge is the one
    image loaded from another server (launchnest.io, no referrer); its verifier
    refuses a local copy, and the owner approved the exception on 2026-10-05.

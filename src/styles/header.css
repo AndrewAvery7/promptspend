@@ -1,0 +1,506 @@
+/*
+ * The site header and the command palette, shared by every page that draws
+ * them: the calculator (`app.css`), the Receipt page (`receipt/receipt.css`) and
+ * the generated pages, which load it through the `site-header` entry
+ * (`src/chrome/site-header.tsx`). It was part of `app.css`; it moved here so the
+ * header is one piece of CSS rather than three that drift.
+ *
+ * It has to stand on its own, because the pages that borrow it carry none of the
+ * calculator's global rules. The `:where()` block below supplies the few the
+ * header leans on (a reset, inherited button type, the visually-hidden class)
+ * at zero specificity, so nothing in it can override a rule written for the
+ * header itself.
+ */
+
+:where(.header, .header *, .cmdk, .cmdk *) {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+:where(.header, .cmdk) {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+:where(.header button, .cmdk button, .cmdk input) {
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+:where(.header, .cmdk) .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.header :focus-visible,
+.cmdk :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+/* WCAG 2.2 SC 2.5.8: 24x24 on every pointer; 44x44 on a touch screen. */
+.header button,
+.cmdk button {
+  min-height: 24px;
+  min-width: 24px;
+}
+
+/* ---------------------------------------------------------------- header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.header__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  /* Breathing room under the ticker: the two were flush against each other,
+   * which made a dark bar and a light bar read as one crowded block. Raised
+   * twice — 12px, then 22px — and both still read as crowded against a
+   * full-bleed dark bar. NB two media queries below override this; a change
+   * here alone moves nothing for anyone under 1021px wide. */
+  padding: 30px 24px 12px;
+  /* Wrapping is unconditional rather than switched on at a breakpoint.
+   * Breakpoints are matched against the viewport *including* the scrollbar, so
+   * a `max-width: 1020px` rule does not fire in a 1024px window whose content
+   * box is 1009px — which is exactly the gap the header used to overflow in. A
+   * header that can always wrap has no such gap. */
+  min-height: 66px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  /* 12px, not 16: with "Free tiers" in the nav (2026-10-06) the first row is
+   * six links, search, two pills and two icon buttons, and at a 1280px window
+   * 16px gaps pushed the icon buttons onto a row of their own. */
+  gap: 8px 12px;
+}
+
+/* The freshness line is the only thing allowed to wrap onto a second row.
+ *
+ * It carries two dates now, which is long enough to push the appearance and
+ * theme controls off the first line — and a control that moves depending on how
+ * long a date string is has effectively been hidden. Ordering it last, on its
+ * own full-width row, keeps every button in a fixed place. */
+.freshness {
+  order: 9;
+  flex: 1 1 100%;
+}
+.palette {
+  order: 7;
+}
+.header .icon-button {
+  order: 8;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.logo__mark {
+  color: var(--accent);
+}
+.nav {
+  display: flex;
+  gap: 2px;
+  margin-left: 4px;
+}
+.nav button,
+.nav a {
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.93rem;
+  transition: all 0.18s;
+  text-decoration: none;
+}
+.nav button:hover,
+.nav a:hover {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+.nav button[aria-current='page'],
+.nav a[aria-current='page'] {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.header__spacer {
+  flex: 1;
+}
+.kbd-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  transition: all 0.18s;
+}
+.kbd-button:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+.kbd-button kbd {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+.tour-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 7px 14px 7px 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.tour-toggle--on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+/* The "Get the app" link wears the same pill as the tour button. */
+a.tour-toggle {
+  text-decoration: none;
+}
+a.tour-toggle:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+/* The header is capped at 1280px, so at every screen width it has room for
+   one more pill only if something gives: the search button reads "Search"
+   (was "Search & commands") and this link reads "Apps". Both keep their full
+   names for screen readers via `.visually-hidden`. Under 1020px this pill hides
+   with the tour button and the footer carries the link. */
+.get-app {
+  padding-right: 12px;
+}
+.tour-toggle--pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--accent);
+  border-radius: 99px;
+  animation: ring-pulse 2s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes ring-pulse {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.96);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.icon-button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  transition: all 0.18s;
+  flex: none;
+}
+.icon-button:hover {
+  color: var(--ink);
+  border-color: var(--muted);
+}
+.freshness {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: max(0.7rem, 12px);
+  color: var(--muted);
+  min-width: 0;
+}
+.freshness__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--save);
+  animation: soft-pulse 2.5s infinite;
+}
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* palette popover */
+.palette {
+  position: relative;
+}
+.palette__pop {
+  position: absolute;
+  right: 0;
+  top: 46px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  z-index: 60;
+}
+.palette__row {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.palette__label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  padding: 0;
+}
+.swatch[aria-pressed='true'] {
+  border-color: var(--ink);
+}
+.canvas-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 4px 11px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: var(--surface);
+  color: var(--muted);
+}
+.canvas-chip[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.canvas-chip i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+
+.cmdk {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgb(11 14 20 / 45%);
+  backdrop-filter: blur(2px);
+}
+.cmdk__box {
+  max-width: 560px;
+  margin: 12vh auto 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.cmdk__box input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 16px 18px;
+  font-size: 1rem;
+}
+.cmdk__box input:focus {
+  outline: none;
+}
+.cmdk__list {
+  max-height: 320px;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+  list-style: none;
+}
+.cmdk__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 18px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+}
+.cmdk__item[aria-selected='true'] {
+  background: var(--accent-soft);
+}
+.cmdk__item .kind {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  color: var(--muted);
+  margin-left: auto;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.cmdk__item .marker {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  width: 18px;
+  text-align: center;
+}
+
+.freshness__text b {
+  font-weight: 700;
+  color: var(--ink);
+}
+.freshness__checked {
+  color: var(--muted);
+}
+.freshness--degraded .freshness__dot {
+  background: var(--cost);
+  animation: none;
+}
+
+/* The header needs about 1000px to lay out in one row, so it wraps from the
+ * same breakpoint the workspace does. It used to scroll sideways instead, which
+ * put the theme and appearance controls off the edge of the screen with nothing
+ * to say they were there — and at tablet widths pushed the whole document wide. */
+@media (max-width: 1020px) {
+  .header__inner {
+    gap: 8px 10px;
+    /* Top padding tracks the desktop rule rather than resetting it: the ticker
+       is full-bleed at every width, so the gap under it has to exist at every
+       width too. */
+    padding: 20px 20px 8px;
+    min-height: 60px;
+  }
+  /* Same rule as on desktop: the appearance and theme controls stay beside the
+   * search button, and only the nav and the freshness line take their own rows. */
+  .palette {
+    order: 2;
+  }
+  .header .icon-button {
+    order: 3;
+  }
+  .nav {
+    order: 5;
+    flex: 1 1 100%;
+    min-width: 0;
+    margin-left: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+  /* The nav scrolls sideways on a narrow screen rather than squeezing. Without
+   * this its items were flex children free to shrink, so on a phone "Data &
+   * Alerts" wrapped onto three lines and "Estimate" ran into "Compare" - the
+   * row never overflowed, so it never scrolled. Found 2026-10-06 when "Free
+   * tiers" made the row one item longer. */
+  .nav button,
+  .nav a {
+    flex: none;
+    white-space: nowrap;
+  }
+  .tour-toggle {
+    display: none;
+  }
+  .freshness {
+    min-width: 0;
+    /* Two dates on one line is wider than a phone. Wrapping is the whole point
+     * of moving it onto its own row. */
+    white-space: normal;
+    align-items: flex-start;
+  }
+  .freshness__dot {
+    margin-top: 5px;
+    flex: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .header__inner {
+    padding: 16px 14px 8px;
+  }
+  .kbd-button span {
+    display: none;
+  }
+  .freshness {
+    font-size: max(0.68rem, 12px);
+  }
+}
+
+/* A floor on the small type (nothing under 12px). It has to come after the rules
+   that set these sizes: same specificity, so the later one wins. */
+.kbd-button kbd,
+.palette__label,
+.canvas-chip {
+  font-size: max(0.75rem, 12px);
+}
+
+@media (pointer: coarse) {
+  .header button,
+  .header [role='button'],
+  .cmdk button,
+  .cmdk input {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .nav a,
+  .get-app {
+    min-height: 44px;
+  }
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+  }
+  .swatch,
+  .canvas-chip {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

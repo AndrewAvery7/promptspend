@@ -137,7 +137,7 @@ test('the install command copy button writes to the clipboard', async ({ page, c
  * another. Placement now tries four positions and drops a label that fits
  * nowhere.
  *
- * Measured with `getBBox`, not estimated, because the placement code estimates
+ * Measured on screen, not estimated, because the placement code estimates
  * — if that estimate drifts from what the font actually does, this is the thing
  * that notices. It regresses quietly the next time a model lands near a crowded
  * corner, which is why it is a test rather than a look.
@@ -155,13 +155,23 @@ test('the value map never prints one model label through another', async ({ page
   expect(await labels.count(), 'no labels were drawn, so nothing was checked').toBeGreaterThan(4);
 
   const overlaps = await page.evaluate(() => {
-    // Read the rect properties explicitly. `SVGRect` exposes x/y/width/height as
-    // prototype accessors, not own enumerable properties, so spreading getBBox()
+    // Read the rect properties explicitly. A rect exposes x/y/width/height as
+    // prototype accessors, not own enumerable properties, so spreading one
     // copies nothing and every comparison silently comes out false. That is how
     // the first version of this test passed against a chart with four visible
     // collisions on screen.
+    //
+    // Measured where the text is *drawn* (`getBoundingClientRect`), not in each
+    // element's own coordinates (`getBBox`). The y-axis title is rotated with a
+    // transform, and `getBBox` ignores that: it reports the title as a wide,
+    // flat box lying across the plot's left edge, where it never is. For as long
+    // as no label sat in that phantom box the difference was invisible. It
+    // surfaced the day two cheap, mid-scale models (GPT-6 Luna, MiMo V2.6 Flash)
+    // were scored and their labels landed there, and the test failed on a
+    // collision that the screen does not have. On screen the title is a 13px
+    // strip in the gutter, and labels are kept out of the gutter by placement.
     const measure = (t: Element) => {
-      const r = (t as SVGGraphicsElement).getBBox();
+      const r = t.getBoundingClientRect();
       return { name: t.textContent ?? '', x: r.x, y: r.y, w: r.width, h: r.height };
     };
     const all = [...document.querySelectorAll('.value-map svg text')];

@@ -1125,3 +1125,188 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `gpt-5.6-sol` — provenance.needsReview: true → —
 - **Review** `gpt-5.6-sol` — provenance.reviewNote: the vendor's own page disagrees with the record — promotional rate $2/$10 vs recorded intro $4/$20 until 2026-11-21; standard rate $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5 → —
+
+## 2026-10-18
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.needsReview: — → true
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: — → true
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-10-19
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (90%): $0.304/$11.936 vs $3/$15 → OpenRouter disagrees (92%): $0.239/$11.936 vs $3/$15
+
+## 2026-10-20
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+
+## 2026-10-21
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+- **Review** `mistral-mistral-large-4-0` — provenance.needsReview: — → true
+- **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: — → OpenRouter disagrees (50%): $1.36/$4.18 vs $0.68/$2.09
+
+## 2026-10-21
+
+- **Price** `claude-sonnet-5-5` — cachedInput down 0.2 → 0.1
+- **Price** `mistral-mistral-large-4` — input up 0.68 → 1.36
+- **Price** `mistral-mistral-large-4` — output up 2.09 → 4.18
+- **Price** `mistral-mistral-large-4` — cachedInput up 0.068 → 0.14
+- **Price** `mistral-mistral-large-4-0` — input up 0.68 → 1.36
+- **Price** `mistral-mistral-large-4-0` — output up 2.09 → 4.18
+- **Price** `mistral-mistral-large-4-0` — cachedInput up 0.068 → 0.14
+- **Coverage** `moonshot-kimi-k3` — cacheWrite now tracked: — → 3
+- **Metadata** `mistral-mistral-large-4-0` — displayName: Mistral Large 4 0 → Mistral Large 4.0
+- **Review** `claude-sonnet-5-5` — provenance.lastChanged: — → 2026-10-21
+- **Review** `mistral-mistral-large-4` — provenance.source: litellm → vendor
+- **Review** `mistral-mistral-large-4` — provenance.needsReview: — → true
+- **Review** `mistral-mistral-large-4` — provenance.reviewNote: — → vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18
+- **Review** `mistral-mistral-large-4` — provenance.verifiedUrl: — → https://docs.mistral.ai/models/mistral-large-4
+- **Review** `mistral-mistral-large-4-0` — provenance.source: litellm → vendor
+- **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: OpenRouter disagrees (50%): $1.36/$4.18 vs $0.68/$2.09 → vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18
+- **Review** `mistral-mistral-large-4-0` — provenance.verifiedUrl: — → https://docs.mistral.ai/models/mistral-large-4
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: OpenRouter disagrees (92%): $0.239/$11.936 vs $3/$15 → —
+- **Review** `moonshot-kimi-k3` — provenance.verifiedUrl: https://platform.kimi.ai/docs/pricing/chat-k3 → https://platform.kimi.ai/docs/pricing/chat
+
+## 2026-10-22
+
+- **Review** `claude-sonnet-5-5` — provenance.needsReview: true → —
+- **Review** `claude-sonnet-5-5` — provenance.reviewNote: the vendor's own page disagrees with the record — cached input $0.1 vs recorded $0.2 → —
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → vendor verification is 35 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → vendor verification is 35 days old — re-read the first-party pricing page
+
+## 2026-10-23
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 35 days old — re-read the first-party pricing page → vendor verification is 36 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 35 days old — re-read the first-party pricing page → vendor verification is 36 days old — re-read the first-party pricing page
+
+## 2026-10-24
+
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 36 days old — re-read the first-party pricing page → vendor verification is 37 days old — re-read the first-party pricing page
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 36 days old — re-read the first-party pricing page → vendor verification is 37 days old — re-read the first-party pricing page
+- **Review** `minimax-minimax-m2.5` — provenance.needsReview: true → —
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2 → —
+
+## 2026-10-24
+
+- **Added** `dashscope-qwen3.8-max` — Qwen 3.8 Max ($2 in / $6 out per 1M)
+- **Added** `gemini-gemini-2.5-flash-lite` — Gemini 2.5 Flash-Lite ($0.1 in / $0.4 out per 1M)
+- **Added** `gemini-gemini-4-argon` — Gemini 4 Argon ($4 in / $20 out per 1M)
+- **Added** `gpt-4.1` — GPT-4.1 ($2 in / $8 out per 1M)
+- **Added** `gpt-4.1-mini` — GPT-4.1 Mini ($0.4 in / $1.6 out per 1M)
+- **Added** `gpt-4o` — GPT-4o ($2.5 in / $10 out per 1M)
+- **Added** `gpt-4o-mini` — GPT-4o Mini ($0.15 in / $0.6 out per 1M)
+- **Added** `gpt-6-astra` — GPT-6 Astra ($10 in / $50 out per 1M)
+- **Added** `gpt-6-luna` — GPT-6 Luna ($0.1 in / $0.5 out per 1M)
+- **Added** `gpt-6-sol` — GPT-6 Sol ($2 in / $10 out per 1M)
+- **Added** `gpt-6.1-sol` — GPT-6.1 Sol ($2 in / $10 out per 1M)
+- **Added** `xai-grok-build-0.1` — Grok Build 0.1 ($1 in / $2 out per 1M)
+- **Added** `zai-glm-4-32b-0414-128k` — GLM-4 32B ($0.1 in / $0.1 out per 1M)
+- **Added** `zai-glm-4.5` — GLM-4.5 ($0.6 in / $2.2 out per 1M)
+- **Added** `zai-glm-4.5-air` — GLM-4.5-Air ($0.2 in / $1.1 out per 1M)
+- **Added** `zai-glm-4.5-airx` — GLM-4.5-AirX ($1.1 in / $4.5 out per 1M)
+- **Added** `zai-glm-4.5-x` — GLM-4.5-X ($2.2 in / $8.9 out per 1M)
+- **Added** `zai-glm-5.3-flash` — GLM-5.3 Flash ($0.15 in / $0.5 out per 1M)
+
+## 2026-10-24
+
+- **Added** `azure-ai-mai-thinking-1` — MAI-Thinking-1 ($2 in / $8 out per 1M)
+- **Added** `inception-mercury-2` — Mercury 2 ($0.25 in / $0.75 out per 1M)
+- **Added** `inception-mercury-2.5` — Mercury 2.5 ($0.2 in / $0.75 out per 1M)
+- **Added** `meta-muse-spark-1.3` — Muse Spark 1.3 ($1.25 in / $4.25 out per 1M)
+- **Added** `meta-muse-wonder-1.0` — Muse Wonder 1.0 ($4 in / $20 out per 1M)
+- **Added** `xiaomi-mimo-mimo-v2.6-flash` — MiMo V2.6 Flash ($0.14 in / $0.28 out per 1M)
+- **Added** `xiaomi-mimo-mimo-v2.6-pro` — MiMo V2.6 Pro ($0.435 in / $0.87 out per 1M)
+- **Provider** `meta` — provider: — → added
+- **Provider** `xiaomi` — provider: — → added
+- **Provider** `inception` — provider: — → added
+- **Provider** `microsoft` — provider: — → added
+
+## 2026-10-24
+
+- **Review** `inception-mercury-2.5` — provenance.needsReview: true → —
+- **Review** `inception-mercury-2.5` — provenance.reviewNote: OpenRouter disagrees (80%): $0.04/$0.15 vs $0.2/$0.75 → —
+
+## 2026-10-24
+
+- **Metadata** `dashscope-qwen3.8-max` — capabilityIndex: — → 87
+- **Metadata** `gemini-gemini-4-argon` — capabilityIndex: — → 90
+- **Metadata** `gpt-6-astra` — capabilityIndex: — → 90
+- **Metadata** `gpt-6-luna` — capabilityIndex: — → 81
+- **Metadata** `gpt-6-sol` — capabilityIndex: — → 89
+- **Metadata** `gpt-6.1-sol` — capabilityIndex: — → 90
+- **Metadata** `xiaomi-mimo-mimo-v2.6-flash` — capabilityIndex: — → 81
+- **Metadata** `xiaomi-mimo-mimo-v2.6-pro` — capabilityIndex: — → 87
+- **Metadata** `zai-glm-5.3-flash` — capabilityIndex: — → 86
+
+## 2026-10-24
+
+- **Metadata** `claude-fable-5-1` — capabilityIndex: — → 90
+- **Metadata** `claude-haiku-5-5` — capabilityIndex: — → 86
+- **Metadata** `gemini-gemini-3.7-flash` — capabilityIndex: — → 83
+- **Metadata** `gemini-gemini-3.8-flash` — capabilityIndex: — → 85
+- **Metadata** `meta-muse-wonder-1.0` — capabilityIndex: — → 90
+- **Metadata** `mistral-mistral-large-4` — capabilityIndex: — → 81
+- **Metadata** `xai-grok-4.6` — capabilityIndex: — → 85
+- **Metadata** `xai-grok-4.7` — capabilityIndex: — → 87
+- **Metadata** `zai-glm-5.2` — capabilityIndex: — → 83
+- **Metadata** `zai-glm-5.3` — capabilityIndex: — → 87
+
+## 2026-10-24
+
+- **Metadata** `claude-haiku-5-5` — displayName: Claude Haiku 5 5 → Claude Haiku 5.5
+
+## 2026-10-24
+
+- **Metadata** `dashscope-qwen3-next-80b-a3b-instruct` — status: current → deprecated
+- **Metadata** `dashscope-qwen3-next-80b-a3b-thinking` — status: current → deprecated
+- **Metadata** `dashscope-qwen3-vl-235b-a22b-instruct` — status: current → deprecated
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
+
+## 2026-10-24
+
+- **Metadata** `amazon.nova-2-lite-v1-0` — capabilityIndex: 64 → 60
+- **Metadata** `amazon.nova-2-pro-preview-20251202-v1-0` — capabilityIndex: 80 → 61
+- **Metadata** `claude-fable-5` — capabilityIndex: 100 → 89
+- **Metadata** `claude-haiku-4-5` — capabilityIndex: 74 → 66
+- **Metadata** `claude-opus-4-5` — capabilityIndex: 86 → 79
+- **Metadata** `claude-opus-4-6` — capabilityIndex: 89 → 82
+- **Metadata** `claude-opus-4-7` — capabilityIndex: 92 → 85
+- **Metadata** `claude-opus-4-8` — capabilityIndex: 94 → 86
+- **Metadata** `claude-opus-5` — capabilityIndex: 96 → 89
+- **Metadata** `claude-sonnet-4-5` — capabilityIndex: 78 → 69
+- **Metadata** `claude-sonnet-4-6` — capabilityIndex: 85 → 76
+- **Metadata** `claude-sonnet-5` — capabilityIndex: 90 → 81
+- **Metadata** `command-a-03-2025` — capabilityIndex: 75 → 55
+- **Metadata** `dashscope-qwen3.7-max` — capabilityIndex: 83 → 74
+- **Metadata** `deepseek-deepseek-v4-flash` — capabilityIndex: 68 → 87
+- **Metadata** `gemini-gemini-2.5-pro` — capabilityIndex: 74 → 63
+- **Metadata** `gemini-gemini-3.1-pro-preview` — capabilityIndex: 88 → 74
+- **Metadata** `gemini-gemini-3.6-flash` — capabilityIndex: 82 → 77
+- **Metadata** `gemini-gemini-3.7-flash` — capabilityIndex: 83 → 81
+- **Metadata** `gpt-5.1` — capabilityIndex: 80 → 70
+- **Metadata** `gpt-5.2` — capabilityIndex: 82 → 74
+- **Metadata** `gpt-5.4` — capabilityIndex: 87 → 81
+- **Metadata** `gpt-5.4-mini` — capabilityIndex: 76 → 69
+- **Metadata** `gpt-5.4-nano` — capabilityIndex: 62 → 67
+- **Metadata** `gpt-5.5` — capabilityIndex: 93 → 81
+- **Metadata** `gpt-5.6-luna` — capabilityIndex: 72 → 80
+- **Metadata** `gpt-5.6-sol` — capabilityIndex: 95 → 88
+- **Metadata** `mistral-mistral-large-3` — capabilityIndex: 71 → 57
+- **Metadata** `mistral-mistral-medium-3-5` — capabilityIndex: 68 → 61
+- **Metadata** `moonshot-kimi-k2.6` — capabilityIndex: 82 → 72
+- **Metadata** `o4-mini` — capabilityIndex: 70 → 63
+- **Metadata** `xai-grok-4.3` — capabilityIndex: 80 → 70
+- **Metadata** `zai-glm-5` — capabilityIndex: 76 → 71
+- **Metadata** `zai-glm-5-code` — capabilityIndex: 78 → 71
+- **Metadata** `zai-glm-5.1` — capabilityIndex: 80 → 71
+- **Metadata** `zai-glm-5.2` — capabilityIndex: 83 → 79

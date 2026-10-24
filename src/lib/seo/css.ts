@@ -1,18 +1,28 @@
 /**
  * The whole stylesheet for the generated pages, as one string.
  *
- * These pages ship no JavaScript, so the theme is `prefers-color-scheme` alone —
- * there is no toggle, because a toggle needs a script and a script needs a
- * Content Security Policy exception, and neither is worth it on a page whose
- * job is to state some numbers and be readable in a search result.
+ * Without scripts, the theme is `prefers-color-scheme` alone. With them (since
+ * 2026-10-24 every page carries the calculator's live header, from
+ * `src/chrome/site-header.tsx`) a small blocking script sets `data-theme`,
+ * `data-accent` and `data-canvas` from the visitor's saved choices before first
+ * paint, and the site's token sheet - linked beside this one - takes over. So
+ * the tokens below apply only while `data-theme` is absent: the page reads
+ * completely either way, which is what a crawler and a reader with scripts off
+ * get.
  *
  * The colours are lifted from `src/styles/tokens.css` so a visitor arriving
  * from Google and then clicking into the calculator does not appear to change
  * websites. They are duplicated rather than imported because the app's tokens
  * are compiled into a hashed bundle these pages deliberately do not load.
  */
-export const PAGE_CSS = `:root {
-  color-scheme: light dark;
+export const PAGE_CSS = `:root { color-scheme: light dark; }
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
+/* These tokens are the page's own, for a visitor with no scripts. Once the
+ * theme script has set data-theme (it does so before first paint), the same
+ * names come from the site's token sheet instead, which is what lets the
+ * header's theme switch, accent and canvas pickers repaint the whole page. */
+:root:not([data-theme]) {
   --bg: #ebeff5;
   --surface: #ffffff;
   --surface-2: #fafbfd;
@@ -29,7 +39,7 @@ export const PAGE_CSS = `:root {
   --shadow: 0 1px 2px rgb(21 24 29 / 5%), 0 6px 24px rgb(21 24 29 / 7%);
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --bg: #0b0e14;
     --surface: #121722;
     --surface-2: #1a2130;
@@ -54,7 +64,11 @@ body {
   font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-text-size-adjust: 100%;
 }
-.wrap { max-width: 62rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+/* The same 1280px frame and 24px gutter as the calculator's header and footer
+ * (src/styles/app.css, footer.css), so moving between the calculator and these
+ * pages does not change the page width. Long prose keeps its own measure below. */
+.wrap { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+@media (min-width: 641px) { .wrap { padding-left: 24px; padding-right: 24px; } }
 a { color: var(--accent); }
 a:hover { text-decoration: none; }
 .skip {
@@ -118,6 +132,9 @@ caption.cap { text-align: left; padding-bottom: 0.5rem; }
 ul.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
 ul.plain { margin: 0; padding-left: 1.1rem; }
 article p { margin: 0 0 1.1rem; max-width: 42rem; }
+/* The app page is a few short paragraphs among a full-width list and badges, so
+ * a 42rem cap on only the paragraphs made the page look narrower than it is. */
+article.app-page p { max-width: none; }
 article pre {
   background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
   padding: 0.85rem 1rem; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 0 0 1.1rem;
@@ -126,15 +143,38 @@ article code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monos
 article :not(pre) > code {
   background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.88em;
 }
-footer {
-  margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
-  color: var(--muted); font-size: 0.85rem;
+/* The header is the calculator's own (src/styles/header.css, loaded beside this
+ * sheet). Its mount point must not make a box of its own: a sticky header only
+ * sticks inside its parent, and this parent would be exactly as tall as it. */
+#site-header { display: contents; }
+/* The footer, drawn to match the calculator's (src/styles/footer.css). */
+.footer { margin-top: 3rem; border-top: 1px solid var(--border); }
+.footer__inner {
+  max-width: 1280px; margin: 0 auto; padding: 22px 24px; display: flex; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; font-size: max(0.75rem, 12px); color: var(--muted);
 }
-footer a { color: var(--muted); }
-footer .listing { margin: 1.1rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.footer a { color: var(--accent); }
+.footer__stats { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+.footer__badge { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 /* The link carries the 44px a thumb needs; every badge's artwork stays 40px. */
-footer .listing a { display: inline-flex; align-items: center; min-height: 44px; }
-footer .listing img { display: block; height: 40px; width: auto; }
+.footer__badge a { display: inline-flex; align-items: center; min-height: 44px; }
+.footer__badge img { display: block; height: 40px; width: auto; }
+/* The apps band at the top of every footer (src/styles/footer.css draws the
+ * same one in the calculator). The store badge and QR rules below are the app
+ * page's; inside the band they are re-sized to match the calculator's. */
+.footer__apps {
+  flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px 24px; background: var(--accent-soft); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px 18px;
+}
+.footer__apps-title { margin: 0; font-size: 1rem; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
+.footer__apps-sub { margin: 3px 0 0; max-width: 52ch; line-height: 1.5; }
+.footer__apps .store-badges { margin: 10px 0 0; gap: 10px; }
+.footer__apps .store-qr { margin: 0; gap: 12px; }
+.footer .store-qr__code { color: var(--muted); font-size: max(0.75rem, 12px); }
+.footer__apps .store-qr__code img { width: 92px; height: 92px; border-radius: 8px; }
+.footer__apps-credit { flex-basis: 100%; margin: 0; line-height: 1.5; }
+@media (max-width: 860px), (hover: none) { .footer__apps-credit { display: none; } }
 /* The app page. Badge links carry the 44px a thumb needs; the artwork is the
    stores' standard 40px. The QR codes show only on a wide screen with a
    hovering pointer, because the phone in your hand cannot scan itself. */

@@ -148,6 +148,58 @@ jobs:
             echo "  catalog is $age_days days old (generated $generated) — within the $MAX_AGE_DAYS-day budget"
           fi
 
+      # A different promise from the same place: that the site opens at all. On
+      # 2026-10-23 GitHub Pages' own certificate for promptspend.com turned out
+      # to be eight days from expiry and unable to renew, because Cloudflare
+      # sits in front of it and GitHub will not issue a certificate for a
+      # proxied hostname. Nothing here looked at certificates, so it surfaced
+      # only by accident. See docs/DOMAINS.md, "Certificates".
+      #
+      # This checks the certificate a VISITOR is handed on each public host,
+      # which is Cloudflare's edge certificate everywhere. It deliberately does
+      # not check GitHub's certificate behind Cloudflare: that one is expected
+      # to stay expired (Cloudflare's Full mode accepts it), and alarming on it
+      # every morning would teach everyone to ignore this step.
+      #
+      # Cloudflare renews its certificates from 30 days before expiry, so a
+      # certificate inside 14 days means renewal has been failing for over two
+      # weeks. That is the threshold: early enough to act, late enough that a
+      # normal renewal never trips it.
+      - name: Check the certificates visitors see
+        id: certs
+        env:
+          HOSTS: promptspend.com www.promptspend.com promptspend.dev api.promptspend.dev updates.promptspend.dev
+          MIN_DAYS: 14
+        run: |
+          set -uo pipefail
+          problems=""
+          for host in $HOSTS; do
+            # curl validates the whole thing a browser would: chain, hostname
+            # and dates. Exit 60 is a certificate it would refuse.
+            if ! curl -sS -o /dev/null --max-time 30 "https://$host/" 2>/tmp/curl-err; then
+              problems="$problems $host: no secure connection could be made ($(tr '\n' ' ' </tmp/curl-err | head -c 160));"
+              continue
+            fi
+            end=$(echo | timeout 30 openssl s_client -connect "$host:443" -servername "$host" 2>/dev/null \
+              | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
+            if [ -z "$end" ]; then
+              problems="$problems $host: the certificate could not be read;"
+              continue
+            fi
+            days=$(( ( $(date -u -d "$end" +%s) - $(date -u +%s) ) / 86400 ))
+            echo "  $host: certificate valid until $end ($days days)"
+            if [ "$days" -lt "$MIN_DAYS" ]; then
+              problems="$problems $host: certificate expires $end, in $days days;"
+            fi
+          done
+          if [ -n "$problems" ]; then
+            echo "problem=yes" >> "$GITHUB_OUTPUT"
+            echo "detail=Certificate trouble on:$problems Cloudflare renews from 30 days out, so this means renewal has been failing." >> "$GITHUB_OUTPUT"
+          else
+            echo "problem=" >> "$GITHUB_OUTPUT"
+            echo "  every certificate has at least $MIN_DAYS days left"
+          fi
+
       # One issue, reopened and updated rather than a new one every morning. A
       # monitor that files a duplicate daily is a monitor people mute.
       - name: Raise or update the alert
@@ -172,7 +224,7 @@ jobs:
           ### Where to look, in order
 
           1. **[Sync pricing](../../actions/workflows/sync-pricing.yml)** — did today's run succeed? A degraded run holds the catalog back on purpose and fails loudly.
-          2. **Did it actually push?** The run log names the step that committed, or says nothing was staged. There is no review gate any more: a flagged diff publishes like any other, so an open `needs-review` issue is *not* a reason for a stale date.
+          2. **Did it actually push?** The run log names the step that committed, or says nothing was staged. There is no review gate any more: a flagged diff publishes like any other, so an open \`needs-review\` issue is *not* a reason for a stale date.
           3. **[Deploy to GitHub Pages](../../actions/workflows/deploy.yml)** — a green sync still needs a green deploy, and since the review gate went, this dispatch is the only thing that publishes the catalog.
 
           This issue is reused rather than replaced. It closes itself on the next run that finds a fresh catalog.
@@ -204,13 +256,68 @@ jobs:
             echo "  closed issue #$existing"
           fi
 
+      # Its own issue, not a comment on the catalog one: the two faults have
+      # different owners and different fixes, and one closing must not close
+      # the other.
+      - name: Raise or update the certificate alert
+        if: steps.certs.outputs.problem != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          DETAIL: ${{ steps.certs.outputs.detail }}
+        run: |
+          set -euo pipefail
+          title='Certificate expiry alert'
+
+          body=$(cat <<EOF
+          **$DETAIL**
+
+          Checked at $(date -u '+%Y-%m-%d %H:%M UTC').
+
+          ### Where to look, in order
+
+          1. **Cloudflare → the zone → SSL/TLS → Edge Certificates.** Every host here is served with Cloudflare's Universal certificate, which renews itself. A pending or failed renewal shows there, usually with the validation step that is stuck.
+          2. **Is every hostname still proxied (orange cloud)?** Automatic renewal needs each name on the certificate to resolve to Cloudflare. A record switched to "DNS only" is the usual cause. See [docs/DOMAINS.md](https://github.com/$GH_REPO/blob/main/docs/DOMAINS.md#certificates).
+          3. **SSL/TLS mode must stay "Full", not "Full (strict)".** GitHub's own certificate behind Cloudflare is expected to be expired; strict mode would turn that into an Error 526 for every visitor.
+
+          This issue is reused rather than replaced. It closes itself on the next run that finds every certificate healthy.
+          EOF
+          )
+
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+            echo "  updated issue #$existing"
+          else
+            gh issue create --title "$title" --body "$body" >/dev/null
+            echo "  opened a new certificate alert issue"
+          fi
+
+      - name: Close the certificate alert once it is healthy again
+        if: steps.certs.outputs.problem == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          existing=$(gh issue list --state open --search "Certificate expiry alert in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Recovered — every public host now has a certificate with at least 14 days left."
+            gh issue close "$existing"
+            echo "  closed issue #$existing"
+          fi
+
       # Last, so the issue is filed before the job goes red. Failing as well as
       # filing means the run shows up in the Actions list and in the failure
       # email, rather than only in a notification someone may have muted.
       - name: Fail the run so it is visible
-        if: steps.check.outputs.problem != ''
+        if: steps.check.outputs.problem != '' || steps.certs.outputs.problem != ''
+        env:
+          CATALOG_DETAIL: ${{ steps.check.outputs.detail }}
+          CERT_DETAIL: ${{ steps.certs.outputs.detail }}
         run: |
-          echo "::error title=Catalog freshness::${{ steps.check.outputs.detail }}"
+          if [ -n "$CATALOG_DETAIL" ]; then echo "::error title=Catalog freshness::$CATALOG_DETAIL"; fi
+          if [ -n "$CERT_DETAIL" ]; then echo "::error title=Certificate expiry::$CERT_DETAIL"; fi
           exit 1
 
       # This one watches the watchman, and that distinction decides the
@@ -227,13 +334,14 @@ jobs:
         env:
           HC_PING_KEY: ${{ secrets.HC_PING_KEY }}
           CHECK_OUTCOME: ${{ steps.check.outcome }}
+          CERTS_OUTCOME: ${{ steps.certs.outcome }}
         run: |
           if [ -z "${HC_PING_KEY:-}" ]; then
             echo "HC_PING_KEY not configured - skipping ping."
             exit 0
           fi
           suffix=""
-          if [ "$CHECK_OUTCOME" != "success" ]; then suffix="/fail"; fi
+          if [ "$CHECK_OUTCOME" != "success" ] || [ "$CERTS_OUTCOME" != "success" ]; then suffix="/fail"; fi
           # Never fail the job over its own monitoring.
           curl -fsS -m 10 --retry 3 \
             "https://hc-ping.com/${HC_PING_KEY}/promptspend-freshness${suffix}" \
