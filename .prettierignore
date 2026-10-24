@@ -44,3 +44,8 @@ referrers-*.json
 # Screenshots and page snapshots written by the browser tools while checking a
 # change. Local diagnostics, not source; they twice failed a local format gate.
 .playwright-mcp
+
+# The Impeccable design tool's hook cache. Written locally as compact JSON and
+# kept out of version control; it made `npm run format:check`, and so the local
+# `npm run verify`, fail on any machine that has the tool.
+.impeccable
