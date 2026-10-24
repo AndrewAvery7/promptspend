@@ -79,3 +79,6 @@ tools/__pycache__/
 
 # npm run export:price-history output; published as a release asset, not committed
 /price-history.csv
+
+# Written by scripts/watch-later-additions.ts when it runs locally.
+later-additions-report.md

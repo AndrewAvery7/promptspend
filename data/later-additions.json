@@ -1,0 +1,85 @@
+{
+  "$comment": "Models and labs that have a readable vendor price page but are not in the catalog yet because the automated price feed (LiteLLM) does not carry them. The catalog's rule is to wait for the feed rather than hand-add a price that nothing can correct (see `$coverage` in pricing-overrides.json). This file is what turns 'wait' from a hope into a check: scripts/watch-later-additions.ts runs weekly and opens one issue the week the feed starts carrying any of them. `feedKey` is a regular expression over the feed's own keys, anchored on the vendor's own prefix so a copy hosted by somebody else (tencent/glm-5.3-flashx, novita/stepfun/..., writer.palmyra-* on Bedrock) never counts. Once an item reaches the catalog the watcher stops listing it. Prices in `note` were read on the date given and are leads, not records: adding one still means reading the page again.",
+  "items": [
+    {
+      "id": "sakana",
+      "kind": "lab",
+      "label": "Sakana (Fugu, Namazu)",
+      "feedKey": "^sakana(_ai)?/",
+      "vendorPage": "https://console.sakana.ai/pricing",
+      "note": "2026-10-24: Fugu Ultra v2 $5/$30, Fugu Max $2/$6, Namazu $0.95/$4; OpenRouter agrees. Needs a new provider, a free-tier record and an allowlist family."
+    },
+    {
+      "id": "stepfun",
+      "kind": "lab",
+      "label": "StepFun (Step)",
+      "feedKey": "^stepfun/",
+      "vendorPage": "https://platform.stepfun.ai/docs/en/guides/pricing/details",
+      "note": "2026-10-24: Step 5 Preview $1.00/$2.70, Step 3.7 Flash $0.20/$1.15, Step 3.5 Flash $0.10/$0.30; OpenRouter agrees. Needs a new provider, a free-tier record and an allowlist family."
+    },
+    {
+      "id": "tencent",
+      "kind": "lab",
+      "label": "Tencent (Hy)",
+      "feedKey": "^tencent/hy[0-9]",
+      "vendorPage": "https://www.tencentcloud.com/document/product/1300/78937",
+      "note": "2026-10-24: Hy4 preview $0.834/$2.501, Hy3 $0.132/$0.528. Every other tencent/ row in the feed is another lab's model hosted by Tencent Cloud and must not be added. Needs a new provider, a free-tier record and an allowlist family."
+    },
+    {
+      "id": "upstage",
+      "kind": "lab",
+      "label": "Upstage (Solar)",
+      "feedKey": "^upstage(_ai)?/",
+      "vendorPage": "https://www.upstage.ai/pricing/api",
+      "note": "2026-10-24: Solar Pro 4 $0.30/$1.20 list, Solar Mini 4 $0.10/$0.40, with a launch promotion running (record it as an intro block). Needs a new provider, a free-tier record and an allowlist family."
+    },
+    {
+      "id": "writer",
+      "kind": "lab",
+      "label": "Writer (Palmyra)",
+      "feedKey": "^writer/",
+      "vendorPage": "https://dev.writer.com/home/pricing",
+      "note": "2026-10-24: Palmyra X6 $2/$8, X5 $0.60/$6, X4 $2.50/$10 (X4 and X5 deprecate 2026-12-14). The writer.palmyra-* rows in the feed are Bedrock-hosted copies and do not count. Needs a new provider, a free-tier record and an allowlist family."
+    },
+    {
+      "id": "inception-mercury-3",
+      "kind": "model",
+      "label": "Inception Mercury 3",
+      "feedKey": "^inception/mercury-3",
+      "vendorPage": "https://docs.inceptionlabs.ai/get-started/models",
+      "note": "2026-10-24: regular $0.20/$0.02 cached/$0.70, launch rate 50% off ($0.10/$0.35). Record the regular rate with the launch rate as an intro block that keeps its expiry. The Inception family pattern already matches it."
+    },
+    {
+      "id": "xiaomi-ultraspeed",
+      "kind": "model",
+      "label": "Xiaomi MiMo V2.6 Pro Ultraspeed",
+      "feedKey": "^xiaomi_mimo/mimo-v2\\.6-pro-ultraspeed$",
+      "vendorPage": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
+      "note": "2026-10-24: $4.35 in / $0.036 cached / $8.70 out, no batch. Read the dollar 'Overseas Pricing' table. The Xiaomi family pattern ends in (pro|flash) and must be widened first."
+    },
+    {
+      "id": "zai-glm-5-3-flashx",
+      "kind": "model",
+      "label": "Z.ai GLM-5.3-FlashX",
+      "feedKey": "^zai/glm-5\\.3-flashx$",
+      "vendorPage": "https://docs.z.ai/guides/overview/pricing",
+      "note": "2026-10-24: $0.37 in / $0.075 cached / $1.25 out. The Z.ai flash pattern matches only glm-5.3-flash and must be widened first."
+    },
+    {
+      "id": "zai-glm-4-7-flashx",
+      "kind": "model",
+      "label": "Z.ai GLM-4.7-FlashX",
+      "feedKey": "^zai/glm-4\\.7-flashx$",
+      "vendorPage": "https://docs.z.ai/guides/overview/pricing",
+      "note": "2026-10-24: $0.07 in / $0.01 cached / $0.4 out, listed under Other Pricing, so mark it legacy. The Z.ai patterns must be widened first."
+    },
+    {
+      "id": "kimi-k3-1",
+      "kind": "model",
+      "label": "Moonshot Kimi K3.1 Pro",
+      "feedKey": "^moonshot/kimi-k3\\.1",
+      "vendorPage": "https://platform.kimi.ai/docs/pricing/chat",
+      "note": "2026-10-24: named on the page but its price table only renders in a browser, so the price was not read. The Kimi family pattern matches kimi-k3.1 but not a -pro suffix, so check the feed key and widen it if needed; read the table with a rendered fetch before recording."
+    }
+  ]
+}
