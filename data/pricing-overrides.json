@@ -622,9 +622,10 @@
       }
     },
     {
-      "$note": "Read on 2026-08-26: the Model Studio pricing page lists qwen3-next-80b-a3b-instruct (International/Singapore, non-thinking) at $0.15 input / $1.2 output per 1M tokens, matching what was already published. The numbers are written out explicitly rather than left to the feed because a bare `vendorVerified` does NOT silence the OpenRouter cross-check — that check only stands down when the override supplies a base price. OpenRouter resells this at $0.1/$1.1; the gap is its own routing margin, not a vendor repricing.",
+      "$note": "ARCHIVED 2026-10-24 (status `deprecated`): Alibaba Cloud Model Studio retired this model on 2026-10-10. Evidence: Alibaba's service notice \"[Model Studio] Notice of Retirement for Selected Legacy Snapshot Models\" (alibabacloud.com/notice/detail?id=1949, published 2026-06-08, affected time 2026-10-10 00:00 UTC+08) says it \"will retire the snapshot models listed in the table below on October 10, 2026\"; the table (an image on the notice page) lists qwen3-next-80b-a3b-instruct, qwen3-next-80b-a3b-thinking and qwen3-vl-235b-a22b-instruct with qwen3.7-plus as the replacement. Corroboration read the same day: the Model Studio pricing page no longer lists the model, its per-model doc page redirects, and its qwencloud.com model page returns 404. The feed (LiteLLM) still carries the old rate, which is why the model drew a stale-verification flag. The $0.15/$1.2 record was read from the Model Studio pricing page on 2026-08-26 (International/Singapore, non-thinking); lastVerified stays at the last real price read.",
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "displayName": "Qwen3 Next 80B",
+      "status": "deprecated",
       "capabilityIndex": 70,
       "vendorVerified": true,
       "lastVerified": "2026-09-17",
@@ -635,13 +636,16 @@
       }
     },
     {
+      "$note": "ARCHIVED 2026-10-24 (status `deprecated`): retired by Alibaba Cloud Model Studio on 2026-10-10 in the same notice as its Instruct sibling (alibabacloud.com/notice/detail?id=1949, \"will retire the snapshot models listed in the table below on October 10, 2026\"; the image table names qwen3-next-80b-a3b-thinking, replacement qwen3.7-plus). Not flagged only because it carried no vendor verification; it is archived with the rest of the family so a retired model is not left selectable.",
       "id": "dashscope-qwen3-next-80b-a3b-thinking",
-      "displayName": "Qwen3 Next 80B Thinking"
+      "displayName": "Qwen3 Next 80B Thinking",
+      "status": "deprecated"
     },
     {
-      "$note": "Read on 2026-08-26: the Model Studio pricing page lists qwen3-vl-235b-a22b-instruct (International/Singapore, non-thinking) at $0.4 input / $1.6 output per 1M tokens, matching what was already published. Written out explicitly for the same reason as the sibling Qwen row — `vendorVerified` alone does not stand the OpenRouter cross-check down, only a supplied base price does. OpenRouter resells at $0.21/$1.9, which is its own margin rather than a vendor move.",
+      "$note": "ARCHIVED 2026-10-24 (status `deprecated`): Alibaba Cloud Model Studio retired this model on 2026-10-10. Evidence: the service notice \"[Model Studio] Notice of Retirement for Selected Legacy Snapshot Models\" (alibabacloud.com/notice/detail?id=1949, published 2026-06-08, affected time 2026-10-10 00:00 UTC+08) says it \"will retire the snapshot models listed in the table below on October 10, 2026\"; the table (an image on the notice page) names qwen3-vl-235b-a22b-instruct, replacement qwen3.7-plus. Corroboration read the same day: absent from the Model Studio pricing page, its qwencloud.com model page returns 404. The $0.4/$1.6 record was read from the Model Studio pricing page on 2026-08-26 (International/Singapore, non-thinking); lastVerified stays at the last real price read.",
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "displayName": "Qwen3 VL 235B",
+      "status": "deprecated",
       "vendorVerified": true,
       "lastVerified": "2026-09-17",
       "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",

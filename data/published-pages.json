@@ -4,12 +4,12 @@
     "/compare/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-24",
-      "fingerprint": "0ded3fb44e5c25"
+      "fingerprint": "0ef4d3558c999c"
     },
     "/compare/amazon-nova-2-lite-v1-0-vs-dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-02",
-      "fingerprint": "06970400e3cbe7",
+      "lastmod": "2026-10-24",
+      "fingerprint": "018ba3222495a2",
       "left": "amazon-nova-2-lite-v1-0",
       "right": "dashscope-qwen3-next-80b-a3b-instruct"
     },
@@ -575,43 +575,43 @@
     },
     "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-deepseek-v4-flash/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-16",
-      "fingerprint": "0146cac8786a4f",
+      "lastmod": "2026-10-24",
+      "fingerprint": "17cae1bb48c4e4",
       "left": "dashscope-qwen3-next-80b-a3b-instruct",
       "right": "deepseek-v4-flash"
     },
     "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-gemini-3-5-flash-lite/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-16",
-      "fingerprint": "0efe9ec5b2bc13",
+      "lastmod": "2026-10-24",
+      "fingerprint": "176d832d49f6f1",
       "left": "dashscope-qwen3-next-80b-a3b-instruct",
       "right": "gemini-3-5-flash-lite"
     },
     "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-gpt-5-6-luna/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-22",
-      "fingerprint": "189bd9d8249b66",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0b883febdd4a1d",
       "left": "dashscope-qwen3-next-80b-a3b-instruct",
       "right": "gpt-5-6-luna"
     },
     "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-minimax-m3/": {
       "published": "2026-08-16",
-      "lastmod": "2026-08-16",
-      "fingerprint": "17c604cef09b49",
+      "lastmod": "2026-10-24",
+      "fingerprint": "092f170d0dec7d",
       "left": "dashscope-qwen3-next-80b-a3b-instruct",
       "right": "minimax-m3"
     },
     "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-mistral-large-3/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-30",
-      "fingerprint": "12b393035349d1",
+      "lastmod": "2026-10-24",
+      "fingerprint": "114ec8180b73f9",
       "left": "dashscope-qwen3-next-80b-a3b-instruct",
       "right": "mistral-large-3"
     },
     "/compare/dashscope-qwen3-next-80b-a3b-instruct-vs-xai-grok-4-1-fast/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-02",
-      "fingerprint": "028642cbf7e77f",
+      "lastmod": "2026-10-24",
+      "fingerprint": "09b407489b58ed",
       "left": "dashscope-qwen3-next-80b-a3b-instruct",
       "right": "xai-grok-4-1-fast"
     },
@@ -656,6 +656,13 @@
       "fingerprint": "126644305b39a1",
       "left": "deepseek-v4-flash",
       "right": "gpt-5-6-luna"
+    },
+    "/compare/deepseek-v4-flash-vs-minimax-m3/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1be9e49a9723e5",
+      "left": "deepseek-v4-flash",
+      "right": "minimax-m3"
     },
     "/compare/deepseek-v4-flash-vs-mistral-large-3/": {
       "published": "2026-09-16",
@@ -1136,7 +1143,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-24",
-      "fingerprint": "128845b0702164"
+      "fingerprint": "0974f79d39dcfd"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1245,18 +1252,18 @@
     },
     "/models/dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-16",
-      "fingerprint": "173fca2cb6c22d"
+      "lastmod": "2026-10-24",
+      "fingerprint": "0ef98aa1e32526"
     },
     "/models/dashscope-qwen3-next-80b-a3b-thinking/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "0ec0390ff1156b"
+      "lastmod": "2026-10-24",
+      "fingerprint": "1134a9b25dc653"
     },
     "/models/dashscope-qwen3-vl-235b-a22b-instruct/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-16",
-      "fingerprint": "18a0a69b9add00"
+      "lastmod": "2026-10-24",
+      "fingerprint": "0af2203ede2d5c"
     },
     "/models/deepseek-r1/": {
       "published": "2026-08-02",
@@ -1686,12 +1693,12 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-24",
-      "fingerprint": "05b467c976d695"
+      "fingerprint": "1561a217b9d277"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-24",
-      "fingerprint": "0f9c416b856dd3"
+      "fingerprint": "07470e611bfa11"
     },
     "/providers/amazon/": {
       "published": "2026-08-02",

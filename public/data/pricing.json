@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T17:49:01.559Z",
+  "generatedAt": "2026-10-24T17:50:56.301Z",
   "providers": [
     {
       "id": "anthropic",
@@ -668,7 +668,7 @@
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "providerId": "alibaba",
       "displayName": "Qwen3 Next 80B",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 262144,
       "pricing": {
         "input": 0.15,
@@ -687,12 +687,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-09-17",
-        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 37 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 65536,
       "capabilityIndex": 70
@@ -701,7 +696,7 @@
       "id": "dashscope-qwen3-next-80b-a3b-thinking",
       "providerId": "alibaba",
       "displayName": "Qwen3 Next 80B Thinking",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 262144,
       "pricing": {
         "input": 0.15,
@@ -727,7 +722,7 @@
       "id": "dashscope-qwen3-vl-235b-a22b-instruct",
       "providerId": "alibaba",
       "displayName": "Qwen3 VL 235B",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 131072,
       "pricing": {
         "input": 0.4,
@@ -746,12 +741,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-09-17",
-        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 37 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 32768
     },

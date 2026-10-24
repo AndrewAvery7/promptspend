@@ -1261,3 +1261,13 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-10-24
 
 - **Metadata** `claude-haiku-5-5` — displayName: Claude Haiku 5 5 → Claude Haiku 5.5
+
+## 2026-10-24
+
+- **Metadata** `dashscope-qwen3-next-80b-a3b-instruct` — status: current → deprecated
+- **Metadata** `dashscope-qwen3-next-80b-a3b-thinking` — status: current → deprecated
+- **Metadata** `dashscope-qwen3-vl-235b-a22b-instruct` — status: current → deprecated
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
