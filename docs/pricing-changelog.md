@@ -1192,3 +1192,24 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 36 days old — re-read the first-party pricing page → vendor verification is 37 days old — re-read the first-party pricing page
 - **Review** `minimax-minimax-m2.5` — provenance.needsReview: true → —
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2 → —
+
+## 2026-10-24
+
+- **Added** `dashscope-qwen3.8-max` — Qwen 3.8 Max ($2 in / $6 out per 1M)
+- **Added** `gemini-gemini-2.5-flash-lite` — Gemini 2.5 Flash-Lite ($0.1 in / $0.4 out per 1M)
+- **Added** `gemini-gemini-4-argon` — Gemini 4 Argon ($4 in / $20 out per 1M)
+- **Added** `gpt-4.1` — GPT-4.1 ($2 in / $8 out per 1M)
+- **Added** `gpt-4.1-mini` — GPT-4.1 Mini ($0.4 in / $1.6 out per 1M)
+- **Added** `gpt-4o` — GPT-4o ($2.5 in / $10 out per 1M)
+- **Added** `gpt-4o-mini` — GPT-4o Mini ($0.15 in / $0.6 out per 1M)
+- **Added** `gpt-6-astra` — GPT-6 Astra ($10 in / $50 out per 1M)
+- **Added** `gpt-6-luna` — GPT-6 Luna ($0.1 in / $0.5 out per 1M)
+- **Added** `gpt-6-sol` — GPT-6 Sol ($2 in / $10 out per 1M)
+- **Added** `gpt-6.1-sol` — GPT-6.1 Sol ($2 in / $10 out per 1M)
+- **Added** `xai-grok-build-0.1` — Grok Build 0.1 ($1 in / $2 out per 1M)
+- **Added** `zai-glm-4-32b-0414-128k` — GLM-4 32B ($0.1 in / $0.1 out per 1M)
+- **Added** `zai-glm-4.5` — GLM-4.5 ($0.6 in / $2.2 out per 1M)
+- **Added** `zai-glm-4.5-air` — GLM-4.5-Air ($0.2 in / $1.1 out per 1M)
+- **Added** `zai-glm-4.5-airx` — GLM-4.5-AirX ($1.1 in / $4.5 out per 1M)
+- **Added** `zai-glm-4.5-x` — GLM-4.5-X ($2.2 in / $8.9 out per 1M)
+- **Added** `zai-glm-5.3-flash` — GLM-5.3 Flash ($0.15 in / $0.5 out per 1M)

@@ -982,6 +982,287 @@
       "id": "moonshot-kimi-k2-thinking",
       "displayName": "Kimi K2 Thinking",
       "status": "deprecated"
+    },
+    {
+      "$note": "Added 2026-10-24 (coverage pass). OpenAI's pricing page lists the GPT-6 family under 'Flagship models'; the filter only matched gpt-5, so none of it was published. Figures read from the page's Standard table (short context <=272K input tokens, long context above it, '30m write' column as the cache write) and the Batch table (exactly half). No capabilityIndex yet: that score is an editorial judgement and is left for the maintainer.",
+      "id": "gpt-6-astra",
+      "providerId": "openai",
+      "displayName": "GPT-6 Astra",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 10,
+        "output": 50,
+        "cachedInput": 1,
+        "cacheWrite": 12.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 20,
+          "output": 75,
+          "cachedInput": 2,
+          "cacheWrite": 25
+        }
+      }
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "providerId": "openai",
+      "displayName": "GPT-6.1 Sol",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 2,
+        "output": 10,
+        "cachedInput": 0.1,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 4,
+          "output": 15,
+          "cachedInput": 0.2,
+          "cacheWrite": 5
+        }
+      }
+    },
+    {
+      "id": "gpt-6-sol",
+      "providerId": "openai",
+      "displayName": "GPT-6 Sol",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 2,
+        "output": 10,
+        "cachedInput": 0.2,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 4,
+          "output": 15,
+          "cachedInput": 0.4,
+          "cacheWrite": 5
+        }
+      }
+    },
+    {
+      "id": "gpt-6-luna",
+      "providerId": "openai",
+      "displayName": "GPT-6 Luna",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 0.1,
+        "output": 0.5,
+        "cachedInput": 0.01,
+        "cacheWrite": 0.125,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 0.2,
+          "output": 0.75,
+          "cachedInput": 0.02,
+          "cacheWrite": 0.25
+        }
+      }
+    },
+    {
+      "$note": "Added 2026-10-24. OpenAI still sells the GPT-4.1 and GPT-4o families (listed under 'Other text/chat models' on the pricing page) but they are two generations behind, so they are marked legacy: shown with their rate card, kept out of comparisons. Provenance only: the page's figures match the feed, so the rate keeps flowing from the feed. gpt-4.1-nano is deliberately absent: the feed gives it a deprecation date of 2026-10-23 while the page still lists it, and that conflict is not ours to settle.",
+      "id": "gpt-4.1",
+      "providerId": "openai",
+      "displayName": "GPT-4.1",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "gpt-4.1-mini",
+      "providerId": "openai",
+      "displayName": "GPT-4.1 Mini",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "gpt-4o",
+      "providerId": "openai",
+      "displayName": "GPT-4o",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "id": "gpt-4o-mini",
+      "providerId": "openai",
+      "displayName": "GPT-4o Mini",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+    },
+    {
+      "$note": "Added 2026-10-24. Read from Google's pricing page: $2.00 in / $10.00 out / $0.10 cached through November 30, 2026, then $4.00 / $20.00 / $0.20 from December 1, 2026. The feed reports the promotional rate as if it were the base, so the in-force rate is recorded as `intro` with its expiry and the base is the post-window price. Implicit caching only (no explicit-cache storage fee). WHEN THE WINDOW CLOSES the `intro` block must be removed or the catalog will fail validation ('intro expired before catalog.generatedAt').",
+      "id": "gemini-gemini-4-argon",
+      "providerId": "google",
+      "displayName": "Gemini 4 Argon",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+      "pricing": {
+        "input": 4,
+        "output": 20,
+        "cachedInput": 0.2,
+        "intro": {
+          "input": 2,
+          "output": 10,
+          "cachedInput": 0.1,
+          "until": "2026-11-30"
+        }
+      }
+    },
+    {
+      "$note": "Added 2026-10-24. Google's pricing page still lists it, $0.10 text/image/video input, $0.40 output, $0.01 cached, $1.00 per million tokens per hour storage. The Vertex copy of this model carries a 2026-10-20 deprecation date in the feed, the Gemini API row does not. Legacy: two generations behind.",
+      "id": "gemini-gemini-2.5-flash-lite",
+      "providerId": "google",
+      "displayName": "Gemini 2.5 Flash-Lite",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+      "pricing": {
+        "input": 0.1,
+        "output": 0.4,
+        "cachedInput": 0.01,
+        "cacheStoragePerMillionTokenHour": 1
+      }
+    },
+    {
+      "$note": "Added 2026-10-24. xAI's pricing page prints $1.00 in / $0.20 cached / $2.00 out under 200k prompt tokens and $2.00 / $0.40 / $4.00 at or above it, 256k context. The feed carries only the short-context pair, so the long-context tier is recorded here. Grok 4.20's three variants stay one row (see xai-grok-4.20); grok-code-fast is not on the page and is not added.",
+      "id": "xai-grok-build-0.1",
+      "providerId": "xai",
+      "displayName": "Grok Build 0.1",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://docs.x.ai/developers/pricing",
+      "pricing": {
+        "input": 1,
+        "output": 2,
+        "cachedInput": 0.2,
+        "longContext": {
+          "thresholdTokens": 200000,
+          "input": 2,
+          "output": 4,
+          "cachedInput": 0.4
+        }
+      }
+    },
+    {
+      "$note": "Added 2026-10-24. Z.ai's pricing page, 'Latest Models' table: $0.15 in / $0.03 cached / $0.50 out. GLM-5.3-FlashX and GLM-4.7-FlashX are on the page but not yet in the feed, so per `$coverage` they arrive when the feed catches up. The free Flash models (GLM-4.7-Flash, GLM-4.5-Flash) are not added: a $0 row has no cost to compare.",
+      "id": "zai-glm-5.3-flash",
+      "providerId": "zai",
+      "displayName": "GLM-5.3 Flash",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": {
+        "input": 0.15,
+        "output": 0.5,
+        "cachedInput": 0.03
+      }
+    },
+    {
+      "$note": "Added 2026-10-24. The GLM-4.5 family and GLM-4-32B sit under 'Other Pricing' on Z.ai's page, still sold but superseded, so they are marked legacy. Prices per 1M tokens (input / cached / output): GLM-4.5 0.6 / 0.11 / 2.2, GLM-4.5-X 2.2 / 0.45 / 8.9, GLM-4.5-Air 0.2 / 0.03 / 1.1, GLM-4.5-AirX 1.1 / 0.22 / 4.5, GLM-4-32B-0414-128K 0.1 / none / 0.1.",
+      "id": "zai-glm-4.5",
+      "providerId": "zai",
+      "displayName": "GLM-4.5",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": {
+        "input": 0.6,
+        "output": 2.2,
+        "cachedInput": 0.11
+      }
+    },
+    {
+      "id": "zai-glm-4.5-x",
+      "providerId": "zai",
+      "displayName": "GLM-4.5-X",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": {
+        "input": 2.2,
+        "output": 8.9,
+        "cachedInput": 0.45
+      }
+    },
+    {
+      "id": "zai-glm-4.5-air",
+      "providerId": "zai",
+      "displayName": "GLM-4.5-Air",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": {
+        "input": 0.2,
+        "output": 1.1,
+        "cachedInput": 0.03
+      }
+    },
+    {
+      "id": "zai-glm-4.5-airx",
+      "providerId": "zai",
+      "displayName": "GLM-4.5-AirX",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": {
+        "input": 1.1,
+        "output": 4.5,
+        "cachedInput": 0.22
+      }
+    },
+    {
+      "id": "zai-glm-4-32b-0414-128k",
+      "providerId": "zai",
+      "displayName": "GLM-4 32B",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
+      "pricing": {
+        "input": 0.1,
+        "output": 0.1
+      }
+    },
+    {
+      "$note": "Added 2026-10-24. The August exclusion ('no vendor price page yet') no longer holds: Alibaba now publishes alibabacloud.com/help/en/model-studio/qwen3-8-max. Its Singapore (International) table prints $2 in / $6 out / $0.25 implicit-cache input, matching the feed. Read from this per-model page rather than the general pricing page, which is already 592,980 characters against the daily reader's 600,000 limit. The page renders a table per region, so the reader is steered to Singapore exactly as for Qwen 3.7 Max.",
+      "id": "dashscope-qwen3.8-max",
+      "providerId": "alibaba",
+      "displayName": "Qwen 3.8 Max",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-24",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
+      "verifyHint": "Read the Singapore (International) table only. This page renders a separate pricing table for each region (Singapore, China (Beijing), Germany (Frankfurt), US (Virginia), Japan (Tokyo) and others) and they list this model at different prices. The Singapore table is the one whose rows carry International as their deployment scope; ignore every other table.",
+      "pricing": {
+        "input": 2,
+        "output": 6,
+        "cachedInput": 0.25
+      }
     }
   ],
   "$verificationPasses": "2026-08-01: Anthropic and OpenAI flagship rows read against the first-party pricing pages; all matched the automated feed, and the additions were the modifiers the feed does not carry (cache writes, long-context tiers, batch discounts). 2026-08-03: a second pass covering 27 more rows across Anthropic, OpenAI, Google, xAI and DeepSeek. Every one of the 27 matched the feed exactly, so these entries record provenance ONLY — no `pricing` block — which leaves the rate flowing from the feed and self-correcting. Recording a price we did not need to change would freeze it for no reason. NOT verifiable on 2026-08-03, and deliberately left as `litellm`: Mistral Large 3 and Medium 3.5, Command A, all four Kimi rows, all four MiniMax rows and GLM-5-Code are absent from their vendors' own pricing pages; Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are not listed on the pages that carry their siblings. An aggregator would have numbers for all of them, which is exactly why this catalog does not accept one. 2026-08-09: Kimi K2.6 read against Moonshot's own per-model pricing page and moved to `vendor`. The 2026-08-03 pass recorded it as not verifiable because no such page existed; the platform has since moved from platform.moonshot.ai to platform.kimi.ai and now publishes a page per model. The vendor's figures match the feed exactly — $0.95 input on a cache miss, $4.00 output, $0.16 on a cache hit — so this row records provenance ONLY and its rate keeps flowing from the feed. That also settles the standing cross-source flag on it: OpenRouter's $0.58/$2.44 is a reseller-routed price, the 20-50% adrift case `$coverage` describes, and the published number was the right one all along. NOT verified in this pass and deliberately still `litellm`: Kimi K2.5 and K2-thinking, which the vendor's pricing index no longer lists — it now carries K3, K2.7 Code, K2.6 and the sunsetting Moonshot V1. The vendor publishes K3 and K2.7 Code, which the feed does not yet carry; per `$coverage` those are left to arrive on their own rather than hand-added. 2026-09-02: a pass over all 23 standing flags, clearing 16. Fourteen were `vendor-verification-stale` — the 30-day re-read rule coming due at once on ten Anthropic and OpenAI rows and four Z.ai rows. All three vendor pages were re-read in full and EVERY figure still matched what was published, so only the dates move; no rate changed. Two more cleared by first-party confirmation of newly arrived models: Claude Fable 5.1 (note the 0.025x cache-hit exception, which the house 0.1x multiplier would have got fourfold wrong) and GLM-5.2. Also recorded, though they were not flagged: xAI retired grok-3, grok-4-0709 and grok-4-1-fast on 2026-05-15 and now bills all of them at grok-4.3's $1.25/$2.50, which is why three unrelated rows share one figure — it looks exactly like a feed placeholder and is not; those rows move from `litellm` to `vendor` and are marked legacy. Grok 4.20 gains the long-context tier the feed omits. NOT cleared, each now carrying a note saying why so the next pass does not re-tread it: DeepSeek R1 (the `deepseek-reasoner` name was discontinued 2026-07-24, so no current first-party price exists), Mistral Medium 3 (absent from Mistral's own page, with the feed and OpenRouter 73% apart and no way to adjudicate), Grok 2 (retirement confirmed from xAI's model list, but removing the row is a human's call), and Kimi K2.5, Gemini 3.6/3.7 Flash and GPT-5.6 Sol, whose flags are correct by design — a live promotional rate reported by the feed as if it were the base. 2026-09-16: a pass aimed only at the two rows the daily vendor-page check was calling mismatches, which are a different animal from the OpenRouter cross-check flags and were worth separating. One was a real price cut: DeepSeek's own page has renamed its cheap model to `deepseek-flash` (DeepSeek-V4.1-Flash) and cut the peak rate to $0.30/$1.20 with a $0.006 cache hit, down from $0.44/$1.32/$0.014, while stating that the legacy `deepseek-v4-flash` name is still accepted and billed at the Flash price - so the row keeps its id and takes the new figures. The column mapping was proved rather than assumed: the page's other column is V4 Pro at $1.32/$3.96/$0.044, matching this catalog's separately verified V4 Pro row on all three figures. The other was not a price problem at all: Qwen 3.7 Max's recorded $2.5/$7.5 is exactly what Alibaba's Singapore (International) table prints, and the $1.65/$4.951 the checker kept reporting is the China (Beijing) table on the same page. The page renders six regional tables and the reader had no way to tell them apart, so this pass added an optional `verifyHint` to an override - one sentence naming where on a page to read, handed to the reader verbatim, narrowing where to look and never saying what to find - and set it on that row. Deliberately NOT re-attempted, because each already carries a note saying why it cannot be settled: DeepSeek R1, Mistral Medium 3, Kimi K2.5 and Grok 2.",

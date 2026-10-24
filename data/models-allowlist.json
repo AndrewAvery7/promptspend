@@ -86,16 +86,24 @@
     {
       "id": "openai-gpt",
       "providerId": "openai",
-      "include": ["^gpt-5(\\.\\d+)?(-mini|-nano|-terra|-luna|-sol)?$", "^o\\d+(-mini|-pro)?$"],
+      "include": ["^gpt-(5|6)(\\.\\d+)?(-mini|-nano|-terra|-luna|-sol|-astra)?$", "^o\\d+(-mini|-pro)?$"],
       "tokenizer": { "kind": "tiktoken", "encoding": "o200k_base" },
       "capabilities": { "reasoning": true, "vision": true }
+    },
+    {
+      "id": "openai-gpt-4",
+      "providerId": "openai",
+      "include": ["^gpt-4\\.1(-mini)?$", "^gpt-4o(-mini)?$"],
+      "tokenizer": { "kind": "tiktoken", "encoding": "o200k_base" },
+      "capabilities": { "reasoning": false, "vision": true }
     },
     {
       "id": "google-gemini",
       "providerId": "google",
       "include": [
         "^gemini/gemini-3(\\.\\d+)?-(pro|flash)(-lite)?(-preview)?$",
-        "^gemini/gemini-2\\.5-(pro|flash)$"
+        "^gemini/gemini-2\\.5-(pro|flash)(-lite)?$",
+        "^gemini/gemini-4-[a-z]+$"
       ],
       "stripPrefix": "gemini/",
       "tokenizer": {
@@ -140,7 +148,6 @@
         "^dashscope/qwen3-next-80b-a3b-(instruct|thinking)$",
         "^dashscope/qwen3-vl-235b-a22b-instruct$"
       ],
-      "exclude": ["^dashscope/qwen3\\.8-max$"],
       "stripPrefix": "dashscope/",
       "tokenizer": {
         "kind": "approx",
@@ -153,7 +160,12 @@
     {
       "id": "zai-glm",
       "providerId": "zai",
-      "include": ["^zai/glm-(5(\\.\\d+)?|4\\.[67])(-code)?$"],
+      "include": [
+        "^zai/glm-(5(\\.\\d+)?|4\\.[67])(-code)?$",
+        "^zai/glm-5\\.3-flash$",
+        "^zai/glm-4\\.5(-x|-air|-airx)?$",
+        "^zai/glm-4-32b-0414-128k$"
+      ],
       "stripPrefix": "zai/",
       "tokenizer": {
         "kind": "approx",
@@ -179,7 +191,11 @@
     {
       "id": "xai-grok",
       "providerId": "xai",
-      "include": ["^xai/grok-\\d+(\\.\\d+)?$", "^xai/grok-\\d+(-\\d+)?-fast$"],
+      "include": [
+        "^xai/grok-\\d+(\\.\\d+)?$",
+        "^xai/grok-\\d+(-\\d+)?-fast$",
+        "^xai/grok-build-\\d+(\\.\\d+)?$"
+      ],
       "stripPrefix": "xai/",
       "tokenizer": {
         "kind": "approx",

@@ -659,8 +659,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-21",
-      "fingerprint": "08d901f03bfe8f"
+      "lastmod": "2026-10-24",
+      "fingerprint": "0a1be8836feabc"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -757,6 +757,11 @@
       "lastmod": "2026-08-16",
       "fingerprint": "0da62f20dd6e3d"
     },
+    "/models/dashscope-qwen3-8-max/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0fc60ad46acd4e"
+    },
     "/models/dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-16",
@@ -796,6 +801,11 @@
       "published": "2026-08-02",
       "lastmod": "2026-08-16",
       "fingerprint": "1ff93d6d68a79f"
+    },
+    "/models/gemini-2-5-flash-lite/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1f3fbac82061ff"
     },
     "/models/gemini-2-5-flash/": {
       "published": "2026-08-02",
@@ -857,6 +867,31 @@
       "lastmod": "2026-09-29",
       "fingerprint": "119e4bd71b20d1"
     },
+    "/models/gemini-4-argon/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0465a4b4616539"
+    },
+    "/models/gpt-4-1-mini/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "01bf52fed26a41"
+    },
+    "/models/gpt-4-1/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "00fd9ff216930f"
+    },
+    "/models/gpt-4o-mini/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1fe2c233dad8b1"
+    },
+    "/models/gpt-4o/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1149946a054732"
+    },
     "/models/gpt-5-1/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-03",
@@ -916,6 +951,26 @@
       "published": "2026-08-02",
       "lastmod": "2026-08-03",
       "fingerprint": "07ebee7ea40b02"
+    },
+    "/models/gpt-6-1-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "026d905bbb32dc"
+    },
+    "/models/gpt-6-astra/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "184ccfe898dc1d"
+    },
+    "/models/gpt-6-luna/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "02cd3b10cd8697"
+    },
+    "/models/gpt-6-sol/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0f50f3ab8a4829"
     },
     "/models/minimax-m2-1/": {
       "published": "2026-08-02",
@@ -1047,6 +1102,36 @@
       "lastmod": "2026-09-02",
       "fingerprint": "0245dd75f99c15"
     },
+    "/models/xai-grok-build-0-1/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0e9113184aae56"
+    },
+    "/models/zai-glm-4-32b-0414-128k/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "14ece440967adb"
+    },
+    "/models/zai-glm-4-5-air/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0dcb8ccd346279"
+    },
+    "/models/zai-glm-4-5-airx/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0785b7fedd7794"
+    },
+    "/models/zai-glm-4-5-x/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "07fbb237b56869"
+    },
+    "/models/zai-glm-4-5/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1a7e7b9db47f19"
+    },
     "/models/zai-glm-4-6/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-02",
@@ -1067,6 +1152,11 @@
       "lastmod": "2026-09-02",
       "fingerprint": "1d8f64f7e272d9"
     },
+    "/models/zai-glm-5-3-flash/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0e0818acbddbf2"
+    },
     "/models/zai-glm-5-3/": {
       "published": "2026-08-28",
       "lastmod": "2026-09-02",
@@ -1084,13 +1174,13 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-21",
-      "fingerprint": "0cd3328dd19893"
+      "lastmod": "2026-10-24",
+      "fingerprint": "182a9f3f37c87d"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-16",
-      "fingerprint": "1257838eba5d21"
+      "lastmod": "2026-10-24",
+      "fingerprint": "0f9c416b856dd3"
     },
     "/providers/amazon/": {
       "published": "2026-08-02",
@@ -1114,8 +1204,8 @@
     },
     "/providers/google/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-29",
-      "fingerprint": "10beeb431c41d8"
+      "lastmod": "2026-10-24",
+      "fingerprint": "0de03dea1f3f77"
     },
     "/providers/minimax/": {
       "published": "2026-08-02",
@@ -1134,18 +1224,18 @@
     },
     "/providers/openai/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-26",
-      "fingerprint": "06044ab9348555"
+      "lastmod": "2026-10-24",
+      "fingerprint": "15a11733718957"
     },
     "/providers/xai/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-29",
-      "fingerprint": "04445c5ae56bd9"
+      "lastmod": "2026-10-24",
+      "fingerprint": "0e352a18acfde9"
     },
     "/providers/zai/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-02",
-      "fingerprint": "0a5e19148598ea"
+      "lastmod": "2026-10-24",
+      "fingerprint": "14a3f124efc7c9"
     }
   }
 }
