@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { formatContext, formatCount, formatMoney, formatRate } from '@/lib/engine/format';
@@ -173,6 +173,16 @@ const LABEL_SPOTS = [
 
 function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareViewProps & { asOf: Date }) {
   const [hover, setHover] = useState<{ model: Model; x: number; y: number } | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  // Set when a keyboard toggle is about to move a dot in the document, so the
+  // effect below can hand focus back to it once it has landed.
+  const refocus = useRef<string | null>(null);
+  useEffect(() => {
+    const id = refocus.current;
+    if (id === null) return;
+    refocus.current = null;
+    svgRef.current?.querySelector<SVGGElement>(`[data-model="${CSS.escape(id)}"]`)?.focus();
+  });
 
   const points = useMemo(() => {
     // Only models with a capability estimate are plotted.
@@ -313,6 +323,12 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
     );
   }
 
+  // Stable: models keep their order within each group, so only a model that
+  // joins or leaves the estimate moves.
+  const drawn = [...points.models].sort(
+    (a, b) => Number(selectedIds.includes(a.model.id)) - Number(selectedIds.includes(b.model.id)),
+  );
+
   return (
     <div className="value-map" id="panel-valuemap">
       <h2 className="panel__title">
@@ -329,6 +345,7 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
           answer, which is why it is sortable and selectable. */}
       <div className="value-map__scroll">
         <svg
+          ref={svgRef}
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           role="group"
           aria-label={`Scatter plot of ${points.models.length} models: blended price on a logarithmic x axis against an illustrative capability index on the y axis. Each point can be focused and activated to add that model to the estimate. The full data is in the table below.`}
@@ -400,7 +417,16 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
             CAPABILITY (ILLUSTRATIVE)
           </text>
 
-          {points.models.map(({ model, cx, cy }) => {
+          {/* Dots in the estimate are drawn last, so they sit on top. Each dot's
+              invisible hit area is much larger than the dot, and a later dot's
+              is drawn over an earlier dot's visible mark, so two models close
+              together left the earlier one unclickable: a mouse click on it
+              landed on its neighbour. That is worst for a dot already in the
+              estimate, the one you click to take back out. DeepSeek V4 Flash
+              was buried this way under MiMo V2.6 Pro once a rescore put the two
+              four pixels apart. Keyboard users are unaffected, but a node moved
+              in the document loses focus, so a keyboard toggle puts it back. */}
+          {drawn.map(({ model, cx, cy }) => {
             const selected = selectedIds.includes(model.id);
             // The rates in force, not the catalog's standard ones — the same
             // figures the tooltip and the table show. A promotion is named,
@@ -415,6 +441,7 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
                     chart's only interaction reachable by mouse alone. */}
                 <g
                   className="value-map__point"
+                  data-model={model.id}
                   role="button"
                   tabIndex={0}
                   aria-pressed={selected}
@@ -427,6 +454,7 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault();
+                      refocus.current = model.id;
                       onToggle(model.id);
                     }
                   }}
