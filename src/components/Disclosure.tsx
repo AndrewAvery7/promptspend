@@ -67,7 +67,11 @@ export function ReviewBadge({ note, verifiedUrl }: { note?: string; verifiedUrl?
         <button
           type="button"
           className="badge badge--review badge--button"
-          aria-label="Why this price is flagged"
+          // The visible word has to be part of the spoken name (WCAG 2.5.3,
+          // Label in Name), or someone who says "click CHECK" to a voice
+          // control tool is not understood. A newer axe-core reports the old
+          // label, "Why this price is flagged", as a serious violation.
+          aria-label="CHECK: why this price is flagged"
           aria-expanded={open}
           aria-controls={open ? id : undefined}
           onClick={() => setOpen(!open)}
