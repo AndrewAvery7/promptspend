@@ -36,6 +36,8 @@ export const ROUTE_PREFIXES: ReadonlySet<string> = new Set([
   'dashscope',
   'deepseek',
   'gemini',
+  'inception',
+  'meta',
   'minimax',
   'mistral',
   'moonshot',
@@ -50,12 +52,18 @@ export const ROUTE_PREFIXES: ReadonlySet<string> = new Set([
  */
 export const NATIVE_PREFIXES: ReadonlySet<string> = new Set([
   'amazon.nova',
+  // `azure` and `xiaomi` are two-word routing prefixes upstream (`azure_ai/`,
+  // `xiaomi_mimo/`). Stripping only the first word would write a form nobody
+  // types (`ai-mai-thinking-1`), so they are left alone: the extension knows
+  // these models by catalog id only until prefixes can span two words.
+  'azure',
   'claude',
   'command',
   'gpt',
   'o1',
   'o3',
   'o4',
+  'xiaomi',
 ]);
 
 /** The part of an id before its first hyphen. `gpt-5.6` → `gpt`, `o3` → `o3`. */

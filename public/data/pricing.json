@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T14:08:26.214Z",
+  "generatedAt": "2026-10-24T14:34:13.023Z",
   "providers": [
     {
       "id": "anthropic",
@@ -73,6 +73,30 @@
       "name": "Amazon",
       "country": "US",
       "pricingUrl": "https://aws.amazon.com/bedrock/pricing/"
+    },
+    {
+      "id": "meta",
+      "name": "Meta",
+      "country": "US",
+      "pricingUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
+    },
+    {
+      "id": "xiaomi",
+      "name": "Xiaomi (MiMo)",
+      "country": "CN",
+      "pricingUrl": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go"
+    },
+    {
+      "id": "inception",
+      "name": "Inception",
+      "country": "US",
+      "pricingUrl": "https://docs.inceptionlabs.ai/get-started/models"
+    },
+    {
+      "id": "microsoft",
+      "name": "Microsoft",
+      "country": "US",
+      "pricingUrl": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/"
     }
   ],
   "models": [
@@ -132,6 +156,34 @@
       },
       "maxOutput": 64000,
       "capabilityIndex": 80
+    },
+    {
+      "id": "azure-ai-mai-thinking-1",
+      "providerId": "microsoft",
+      "displayName": "MAI-Thinking-1",
+      "status": "current",
+      "contextWindow": 256000,
+      "pricing": {
+        "input": 2,
+        "output": 8,
+        "cachedInput": 0.2
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — MAI tokenizer; Microsoft publishes no ratio"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/"
+      },
+      "maxOutput": 64000
     },
     {
       "id": "claude-fable-5",
@@ -1977,6 +2029,123 @@
       "maxOutput": 128000
     },
     {
+      "id": "inception-mercury-2",
+      "providerId": "inception",
+      "displayName": "Mercury 2",
+      "status": "current",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 0.25,
+        "output": 0.75,
+        "cachedInput": 0.025
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Mercury tokenizer; Inception publishes no ratio"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models"
+      },
+      "maxOutput": 50000
+    },
+    {
+      "id": "inception-mercury-2.5",
+      "providerId": "inception",
+      "displayName": "Mercury 2.5",
+      "status": "current",
+      "contextWindow": 260000,
+      "pricing": {
+        "input": 0.2,
+        "output": 0.75,
+        "cachedInput": 0.02
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Mercury tokenizer; Inception publishes no ratio"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models",
+        "needsReview": true,
+        "reviewNote": "OpenRouter disagrees (80%): $0.04/$0.15 vs $0.2/$0.75",
+        "reviewCodes": [
+          "openrouter-disagreement"
+        ]
+      },
+      "maxOutput": 65536
+    },
+    {
+      "id": "meta-muse-spark-1.3",
+      "providerId": "meta",
+      "displayName": "Muse Spark 1.3",
+      "status": "current",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 1.25,
+        "output": 4.25,
+        "cachedInput": 0.15
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Muse tokenizer; Meta publishes no ratio"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
+      },
+      "maxOutput": 131072
+    },
+    {
+      "id": "meta-muse-wonder-1.0",
+      "providerId": "meta",
+      "displayName": "Muse Wonder 1.0",
+      "status": "current",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 4,
+        "output": 20,
+        "cachedInput": 0.2
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Muse tokenizer; Meta publishes no ratio"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
+      },
+      "maxOutput": 131072
+    },
+    {
       "id": "minimax-minimax-m2",
       "providerId": "minimax",
       "displayName": "MiniMax M2",
@@ -2764,6 +2933,64 @@
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 256000
+    },
+    {
+      "id": "xiaomi-mimo-mimo-v2.6-flash",
+      "providerId": "xiaomi",
+      "displayName": "MiMo V2.6 Flash",
+      "status": "current",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 0.14,
+        "output": 0.28,
+        "cachedInput": 0.0028,
+        "batchDiscount": 0.5
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — MiMo tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go"
+      },
+      "maxOutput": 131072
+    },
+    {
+      "id": "xiaomi-mimo-mimo-v2.6-pro",
+      "providerId": "xiaomi",
+      "displayName": "MiMo V2.6 Pro",
+      "status": "current",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 0.435,
+        "output": 0.87,
+        "cachedInput": 0.0036,
+        "batchDiscount": 0.5
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — MiMo tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go"
+      },
+      "maxOutput": 131072
     },
     {
       "id": "zai-glm-4-32b-0414-128k",

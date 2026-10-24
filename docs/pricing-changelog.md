@@ -1213,3 +1213,17 @@ value that moves in the same run as its source URL is a correction.
 - **Added** `zai-glm-4.5-airx` — GLM-4.5-AirX ($1.1 in / $4.5 out per 1M)
 - **Added** `zai-glm-4.5-x` — GLM-4.5-X ($2.2 in / $8.9 out per 1M)
 - **Added** `zai-glm-5.3-flash` — GLM-5.3 Flash ($0.15 in / $0.5 out per 1M)
+
+## 2026-10-24
+
+- **Added** `azure-ai-mai-thinking-1` — MAI-Thinking-1 ($2 in / $8 out per 1M)
+- **Added** `inception-mercury-2` — Mercury 2 ($0.25 in / $0.75 out per 1M)
+- **Added** `inception-mercury-2.5` — Mercury 2.5 ($0.2 in / $0.75 out per 1M)
+- **Added** `meta-muse-spark-1.3` — Muse Spark 1.3 ($1.25 in / $4.25 out per 1M)
+- **Added** `meta-muse-wonder-1.0` — Muse Wonder 1.0 ($4 in / $20 out per 1M)
+- **Added** `xiaomi-mimo-mimo-v2.6-flash` — MiMo V2.6 Flash ($0.14 in / $0.28 out per 1M)
+- **Added** `xiaomi-mimo-mimo-v2.6-pro` — MiMo V2.6 Pro ($0.435 in / $0.87 out per 1M)
+- **Provider** `meta` — provider: — → added
+- **Provider** `xiaomi` — provider: — → added
+- **Provider** `inception` — provider: — → added
+- **Provider** `microsoft` — provider: — → added
