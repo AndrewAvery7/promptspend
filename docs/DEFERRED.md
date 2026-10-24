@@ -80,10 +80,15 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 
 > **Superseded 2026-10-05 and 2026-10-06.** The owner approved cookieless
 > Cloudflare Web Analytics for the website on 2026-10-05, and on 2026-10-06
-> decided to allow full analytics with cookies (behind a consent banner), the
-> site's own scripts on every page, planning for accounts, and clearly labelled
-> sponsors kept out of the price data. The promises quoted below have been
-> rewritten. The reasoning is kept as the record of why it was once refused.
+> decided to allow full analytics with cookies, the site's own scripts on every
+> page, planning for accounts, and clearly labelled sponsors kept out of the
+> price data. For analytics the decision was Google Analytics 4 loading for
+> every visitor with a visible, dismissible notice, plus a one-line switch to
+> "only after Accept" (`ANALYTICS_REQUIRES_CONSENT` in
+> `src/lib/analytics/config.ts`); it went live on 2026-10-24, on promptspend.com
+> only, sent page origin and path but never the query string, fragment or
+> anything typed. The promises quoted below have been rewritten. The reasoning
+> is kept as the record of why it was once refused.
 
 **Analytics on either host, for launch measurement.** Considered because a
 launch is the one moment traffic is worth watching closely, and rejected

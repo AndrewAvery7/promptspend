@@ -9,9 +9,10 @@
  *    2026-10-06 (owner decision) a page may add *PromptSpend's own* scripts on
  *    top, served from this site (`script-src 'self'`), to make a chart
  *    interactive or a table filterable — enhancement, never content. No inline
- *    script and no third-party script beyond the approved beacon: the
- *    JSON-LD data block is admitted by its hash, and Cloudflare adds the Web
- *    Analytics beacon (owner-approved 2026-10-05) as it serves the page.
+ *    script and no third-party script beyond the approved two: the JSON-LD
+ *    data block is admitted by its hash, Cloudflare adds the Web Analytics
+ *    beacon (owner-approved 2026-10-05) as it serves the page, and the site
+ *    header's script adds Google Analytics (owner decision 2026-10-06).
  * 2. **Therefore a very tight Content Security Policy** — `default-src 'none'`,
  *    with the JSON-LD admitted by its exact SHA-256 rather than by
  *    `'unsafe-inline'`. The hash is computed over the string that is actually
@@ -21,9 +22,10 @@
  *    images beyond the listing badges in the footer. Those are same-origin
  *    copies, except LaunchNest's: its verifier refuses a copy, so - approved
  *    2026-10-05 - its image loads from launchnest.io, with no referrer, and
- *    `img-src` admits that one origin. The analytics beacon's script is the
- *    one other origin (`script-src`); it posts only to this site, so
- *    `connect-src` stays `'self'`.
+ *    `img-src` admits that one origin. The Cloudflare beacon's script is
+ *    another (`script-src`); it posts only to this site. Google Analytics is
+ *    the last: its script host, and the collection hosts it reports to in
+ *    `connect-src` and `img-src`, all named in `src/lib/analytics/config.ts`.
  *
  * Every string that reaches the output goes through `escapeHtml`. Catalog data
  * is not user input, but it is *upstream* input — it arrives from LiteLLM and
@@ -35,6 +37,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Header } from '../../components/Header';
 import { DEFAULT_SCENARIO, encodeScenario } from '../url/scenario';
+import { GA_COLLECT_ORIGINS, GA_SCRIPT_ORIGIN } from '../analytics/config';
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { Model, Pricing } from '../pricing/types';
 import { promoFor, promoTitle, type RateField } from '../pricing/promo';
@@ -301,14 +304,17 @@ export function layout(ctx: RenderContext, input: LayoutInput): string {
   }
   // `'self'` admits PromptSpend's own script files. The data block is named by
   // its own hash: `'unsafe-inline'` would be one word shorter and would also
-  // permit every future inline script, which nothing here needs.
+  // permit every future inline script, which nothing here needs. Google
+  // Analytics (owner decision 2026-10-06) is loaded by the site header's own
+  // script and reports to the hosts listed in `src/lib/analytics/config.ts`.
+  const googleAnalytics = [GA_SCRIPT_ORIGIN, ...GA_COLLECT_ORIGINS].join(' ');
   const csp = [
     "default-src 'none'",
     "style-src 'self'",
     "font-src 'self'",
-    "img-src 'self' data: https://launchnest.io",
-    `script-src 'self' 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com`,
-    "connect-src 'self'",
+    `img-src 'self' data: https://launchnest.io ${googleAnalytics}`,
+    `script-src 'self' 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com ${GA_SCRIPT_ORIGIN}`,
+    `connect-src 'self' ${googleAnalytics}`,
     "base-uri 'self'",
     "form-action 'none'",
     "frame-ancestors 'none'",
@@ -330,9 +336,9 @@ ${input.extraHead ?? ''}    <meta property="og:type" content="article" />
     <meta property="og:url" content="${escapeHtml(canonical)}" />
     <meta property="og:title" content="${escapeHtml(input.title)}" />
     <meta property="og:description" content="${escapeHtml(input.description)}" />
-    <meta property="og:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=a0fd6116'))}" />
+    <meta property="og:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=b75d1de1'))}" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=a0fd6116'))}" />
+    <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=b75d1de1'))}" />
 ${fontLinks}    <link rel="stylesheet" href="${escapeHtml(href(ctx, ctx.cssPath))}" />
 ${chromeLinks}    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1.5' y='1.5' width='23' height='23' rx='6' fill='none' stroke='%232456E6' stroke-width='2'/%3E%3Cpath d='M7 9.5h12M7 13.5h8M7 17.5h10' stroke='%232456E6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
     <script type="application/ld+json">${ld}</script>
@@ -464,7 +470,7 @@ function siteFooter(ctx: RenderContext, input: LayoutInput): string {
   return `    <footer class="footer">
       <div class="footer__inner">
 ${input.appBand === false ? '' : appBand(ctx)}        <div>
-          <b>PromptSpend</b> &middot; open source, MIT &middot; no accounts, no ads, no cookies &middot;
+          <b>PromptSpend</b> &middot; open source, MIT &middot; no accounts, no ads &middot;
           <a href="https://github.com/AndrewAvery7/promptspend">star it on GitHub</a> &middot;
           <a href="mailto:info@promptspend.com">info@promptspend.com</a> &middot;
           <a href="${escapeHtml(href(ctx, SUPPORT_PATH))}">Support</a> &middot;
@@ -1325,7 +1331,7 @@ export function renderWritingPage(page: WritingPage, ctx: RenderContext): string
         <article>
           <h1>${escapeHtml(page.heading)}</h1>
           <p class="lede">Published ${escapeHtml(page.publishedDate)}</p>
-${page.bodyHtml}
+${analyticsChoice(page.bodyHtml)}
         </article>
       </main>`;
 
@@ -1361,6 +1367,21 @@ export interface InformationPage {
   bodyHtml: string;
 }
 
+/**
+ * Where a page's markdown asks for the Google Analytics on/off control, written
+ * on a line of its own. The generated HTML holds a sentence that is true
+ * without JavaScript (Google Analytics cannot load without it), which the site
+ * header's script replaces with the live control (`src/lib/analytics/notice.ts`).
+ */
+export const ANALYTICS_CHOICE_MARKER = '<p>[[analytics-choice]]</p>';
+
+function analyticsChoice(bodyHtml: string): string {
+  return bodyHtml.replace(
+    ANALYTICS_CHOICE_MARKER,
+    `<div id="analytics-choice" class="ga-choice"><p class="ga-choice__state">JavaScript is off, so Google Analytics is not running in this browser.</p></div>`,
+  );
+}
+
 export function renderInformationPage(page: InformationPage, ctx: RenderContext): string {
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
@@ -1372,7 +1393,7 @@ export function renderInformationPage(page: InformationPage, ctx: RenderContext)
         <article>
           <h1>${escapeHtml(page.heading)}</h1>
           <p class="lede">Last reviewed ${escapeHtml(page.updatedDate)}</p>
-${page.bodyHtml}
+${analyticsChoice(page.bodyHtml)}
         </article>
       </main>`;
 

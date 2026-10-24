@@ -9,6 +9,16 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Google Analytics 4 on the website, with cookies** (owner decision 2026-10-06). Every page of
+  promptspend.com loads it and shows a small notice that says so, links to the privacy policy and offers
+  _Turn off_; the privacy page has an on/off control. It is sent the page's origin and path only, never the
+  query string or `#fragment` (where scenarios and alert tokens live), and nothing anyone types, pastes or
+  enters in a form; GA's automatic page view, Google signals and ad personalisation are off, and it does not
+  load when the browser sends Global Privacy Control. One line, `ANALYTICS_REQUIRES_CONSENT` in
+  `src/lib/analytics/config.ts`, switches it to loading only after _Accept_. The Content Security Policy on
+  the calculator, the Receipt page and the generated pages admits `www.googletagmanager.com` and the three
+  Google Analytics collection hosts by name, and `check:csp`, `render.test.ts` and the browser privacy tests
+  pin them. The Cloudflare counter stays. Not in the apps, the VS Code extension, the MCP server or the API.
 - **Free-tier pages.** `/free-tiers/` compares whether each of the 16 providers lets a new account start
   without paying, and `/providers/<slug>/free/` answers it per provider, quoting the vendor's own pages
   with a link and read date on every fact. A daily check re-reads every source and marks a quote that has
@@ -26,6 +36,9 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **"No cookies" is withdrawn.** The footer, the README, the social card (redrawn, cache key `b75d1de1`),
+  the Provenance panel and the promo video's chips now say "no accounts, no ads"; the privacy policy,
+  `SECURITY.md` and the architecture docs describe Google Analytics, its cookies and how to turn it off.
 - **The privacy wording now matches what the site does.** The apps page no longer says "no tracking" of a
   page that carries the analytics beacon (it now says the apps have none). The API, the MCP server and the
   Data view no longer say "no logging of who calls it": the API keeps Cloudflare's request logs for

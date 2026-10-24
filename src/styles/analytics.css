@@ -1,0 +1,84 @@
+/*
+ * The Google Analytics notice (src/lib/analytics/notice.ts) and the on/off
+ * control on the privacy page.
+ *
+ * Loaded on every kind of page - the calculator, the Receipt page and the
+ * generated pages - so it uses classes only: the Receipt and generated pages'
+ * policies refuse inline styles. Small on purpose, at the foot of the window,
+ * clear of the content on a 320px phone.
+ */
+
+.ga-notice {
+  position: fixed;
+  z-index: 60;
+  inset: auto 12px 12px auto;
+  box-sizing: border-box;
+  width: min(440px, calc(100vw - 24px));
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface, #fff);
+  color: var(--ink, #15181d);
+  border: 1px solid var(--border, #dce2eb);
+  border-radius: var(--radius, 12px);
+  box-shadow: var(--shadow-lg, 0 12px 40px rgb(21 24 29 / 18%));
+  font-family: var(--font-body, system-ui, sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.ga-notice__text {
+  margin: 0;
+}
+
+.ga-notice__link {
+  color: var(--accent, #2456e6);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ga-notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ga-notice__button {
+  min-height: 32px;
+  min-width: 44px;
+  padding: 6px 14px;
+  border: 1px solid var(--accent, #2456e6);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--accent, #2456e6);
+  color: var(--accent-ink, #fff);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ga-notice__button--quiet {
+  background: transparent;
+  color: var(--ink, #15181d);
+  border-color: var(--border, #dce2eb);
+}
+
+.ga-notice__button:focus-visible,
+.ga-notice__link:focus-visible {
+  outline: 2px solid var(--accent, #2456e6);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  .ga-notice__button {
+    min-height: 44px;
+  }
+}
+
+.ga-choice__state {
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+.ga-choice {
+  margin: 0 0 1.25em;
+}

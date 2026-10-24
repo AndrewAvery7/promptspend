@@ -41,11 +41,13 @@ export default defineConfig({
   use: {
     baseURL: BASE,
     trace: 'on-first-retry',
-    // The built site contains no analytics (in production Cloudflare injects
-    // its Web Analytics beacon at the edge, which a local server never does),
-    // and the tests should not invent any traffic to third parties either;
-    // anything unexpected is a finding, not noise. tests/e2e/privacy.spec.ts is
-    // what holds the "no cookies, no stored identifiers" promise to account.
+    // Nothing here reaches an analytics service: Cloudflare injects its Web
+    // Analytics beacon at the edge, which a local server never does, and Google
+    // Analytics starts only on promptspend.com (tests/e2e/analytics.spec.ts
+    // visits as that host and stands in for Google). The tests should not
+    // invent traffic to third parties either; anything unexpected is a
+    // finding, not noise. tests/e2e/privacy.spec.ts holds the site's own code
+    // to "no cookies, no stored identifiers".
     bypassCSP: false,
   },
 
