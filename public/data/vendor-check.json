@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-23T11:06:01.535Z",
+  "checkedAt": "2026-10-24T11:04:58.103Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "22628 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22443 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -65,7 +65,7 @@
     {
       "url": "https://api-docs.deepseek.com/quick_start/pricing",
       "ok": true,
-      "note": "4648 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "4655 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "deepseek-deepseek-v4-pro",
         "deepseek-deepseek-v4-flash"
@@ -74,7 +74,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "ok": true,
-      "note": "2944 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3561 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k2.6"
       ]
@@ -82,7 +82,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "ok": true,
-      "note": "2944 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3561 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k3"
       ]
@@ -113,7 +113,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "19772 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22341 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -142,7 +142,7 @@
     {
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "ok": true,
-      "note": "2872 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "2882 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "mistral-mistral-large-4",
         "mistral-mistral-large-4-0"
@@ -394,13 +394,13 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table on the page is empty; no price for kimi-k2.6 is printed)"
+      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price is printed for kimi-k2.6)"
     },
     {
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table on the page is empty; no prices are printed for kimi-k3)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page; no price is printed for kimi-k3)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -460,7 +460,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
+      "detail": "not priced on the page (MiniMax-M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -514,7 +514,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row)"
+      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing shown)"
     }
   ],
   "confirmed": 53,
