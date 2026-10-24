@@ -1271,3 +1271,42 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
 - **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: true → —
 - **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
+
+## 2026-10-24
+
+- **Metadata** `amazon.nova-2-lite-v1-0` — capabilityIndex: 64 → 60
+- **Metadata** `amazon.nova-2-pro-preview-20251202-v1-0` — capabilityIndex: 80 → 61
+- **Metadata** `claude-fable-5` — capabilityIndex: 100 → 89
+- **Metadata** `claude-haiku-4-5` — capabilityIndex: 74 → 66
+- **Metadata** `claude-opus-4-5` — capabilityIndex: 86 → 79
+- **Metadata** `claude-opus-4-6` — capabilityIndex: 89 → 82
+- **Metadata** `claude-opus-4-7` — capabilityIndex: 92 → 85
+- **Metadata** `claude-opus-4-8` — capabilityIndex: 94 → 86
+- **Metadata** `claude-opus-5` — capabilityIndex: 96 → 89
+- **Metadata** `claude-sonnet-4-5` — capabilityIndex: 78 → 69
+- **Metadata** `claude-sonnet-4-6` — capabilityIndex: 85 → 76
+- **Metadata** `claude-sonnet-5` — capabilityIndex: 90 → 81
+- **Metadata** `command-a-03-2025` — capabilityIndex: 75 → 55
+- **Metadata** `dashscope-qwen3.7-max` — capabilityIndex: 83 → 74
+- **Metadata** `deepseek-deepseek-v4-flash` — capabilityIndex: 68 → 87
+- **Metadata** `gemini-gemini-2.5-pro` — capabilityIndex: 74 → 63
+- **Metadata** `gemini-gemini-3.1-pro-preview` — capabilityIndex: 88 → 74
+- **Metadata** `gemini-gemini-3.6-flash` — capabilityIndex: 82 → 77
+- **Metadata** `gemini-gemini-3.7-flash` — capabilityIndex: 83 → 81
+- **Metadata** `gpt-5.1` — capabilityIndex: 80 → 70
+- **Metadata** `gpt-5.2` — capabilityIndex: 82 → 74
+- **Metadata** `gpt-5.4` — capabilityIndex: 87 → 81
+- **Metadata** `gpt-5.4-mini` — capabilityIndex: 76 → 69
+- **Metadata** `gpt-5.4-nano` — capabilityIndex: 62 → 67
+- **Metadata** `gpt-5.5` — capabilityIndex: 93 → 81
+- **Metadata** `gpt-5.6-luna` — capabilityIndex: 72 → 80
+- **Metadata** `gpt-5.6-sol` — capabilityIndex: 95 → 88
+- **Metadata** `mistral-mistral-large-3` — capabilityIndex: 71 → 57
+- **Metadata** `mistral-mistral-medium-3-5` — capabilityIndex: 68 → 61
+- **Metadata** `moonshot-kimi-k2.6` — capabilityIndex: 82 → 72
+- **Metadata** `o4-mini` — capabilityIndex: 70 → 63
+- **Metadata** `xai-grok-4.3` — capabilityIndex: 80 → 70
+- **Metadata** `zai-glm-5` — capabilityIndex: 76 → 71
+- **Metadata** `zai-glm-5-code` — capabilityIndex: 78 → 71
+- **Metadata** `zai-glm-5.1` — capabilityIndex: 80 → 71
+- **Metadata** `zai-glm-5.2` — capabilityIndex: 83 → 79

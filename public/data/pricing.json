@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T17:50:56.301Z",
+  "generatedAt": "2026-10-24T18:06:38.470Z",
   "providers": [
     {
       "id": "anthropic",
@@ -126,7 +126,7 @@
         "lastVerified": "2026-10-24"
       },
       "maxOutput": 64000,
-      "capabilityIndex": 64
+      "capabilityIndex": 60
     },
     {
       "id": "amazon.nova-2-pro-preview-20251202-v1-0",
@@ -155,7 +155,7 @@
         "lastChanged": "2026-10-03"
       },
       "maxOutput": 64000,
-      "capabilityIndex": 80
+      "capabilityIndex": 61
     },
     {
       "id": "azure-ai-mai-thinking-1",
@@ -214,7 +214,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 100
+      "capabilityIndex": 89
     },
     {
       "id": "claude-fable-5-1",
@@ -276,7 +276,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 64000,
-      "capabilityIndex": 74
+      "capabilityIndex": 66
     },
     {
       "id": "claude-haiku-5-5",
@@ -362,7 +362,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 64000,
-      "capabilityIndex": 86
+      "capabilityIndex": 79
     },
     {
       "id": "claude-opus-4-6",
@@ -391,7 +391,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 89
+      "capabilityIndex": 82
     },
     {
       "id": "claude-opus-4-7",
@@ -420,7 +420,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 92
+      "capabilityIndex": 85
     },
     {
       "id": "claude-opus-4-8",
@@ -451,7 +451,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 94
+      "capabilityIndex": 86
     },
     {
       "id": "claude-opus-5",
@@ -482,7 +482,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 96
+      "capabilityIndex": 89
     },
     {
       "id": "claude-opus-5-5",
@@ -542,7 +542,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 64000,
-      "capabilityIndex": 78
+      "capabilityIndex": 69
     },
     {
       "id": "claude-sonnet-4-6",
@@ -571,7 +571,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 85
+      "capabilityIndex": 76
     },
     {
       "id": "claude-sonnet-5",
@@ -603,7 +603,7 @@
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 90
+      "capabilityIndex": 81
     },
     {
       "id": "claude-sonnet-5-5",
@@ -662,7 +662,7 @@
         "lastVerified": "2026-10-24"
       },
       "maxOutput": 8000,
-      "capabilityIndex": 75
+      "capabilityIndex": 55
     },
     {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
@@ -772,7 +772,7 @@
         "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 65536,
-      "capabilityIndex": 83
+      "capabilityIndex": 74
     },
     {
       "id": "dashscope-qwen3.8-max",
@@ -914,7 +914,7 @@
         "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
       },
       "maxOutput": 384000,
-      "capabilityIndex": 68
+      "capabilityIndex": 87
     },
     {
       "id": "deepseek-deepseek-v4-pro",
@@ -1038,7 +1038,7 @@
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
-      "capabilityIndex": 74
+      "capabilityIndex": 63
     },
     {
       "id": "gemini-gemini-3-flash-preview",
@@ -1185,7 +1185,7 @@
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
-      "capabilityIndex": 88
+      "capabilityIndex": 74
     },
     {
       "id": "gemini-gemini-3.5-flash",
@@ -1279,7 +1279,7 @@
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
-      "capabilityIndex": 82
+      "capabilityIndex": 77
     },
     {
       "id": "gemini-gemini-3.7-flash",
@@ -1315,7 +1315,7 @@
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
-      "capabilityIndex": 83
+      "capabilityIndex": 81
     },
     {
       "id": "gemini-gemini-3.8-flash",
@@ -1587,7 +1587,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 80
+      "capabilityIndex": 70
     },
     {
       "id": "gpt-5.2",
@@ -1614,7 +1614,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 82
+      "capabilityIndex": 74
     },
     {
       "id": "gpt-5.4",
@@ -1648,7 +1648,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 87
+      "capabilityIndex": 81
     },
     {
       "id": "gpt-5.4-mini",
@@ -1676,7 +1676,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 76
+      "capabilityIndex": 69
     },
     {
       "id": "gpt-5.4-nano",
@@ -1704,7 +1704,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 62
+      "capabilityIndex": 67
     },
     {
       "id": "gpt-5.5",
@@ -1738,7 +1738,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 93
+      "capabilityIndex": 81
     },
     {
       "id": "gpt-5.6",
@@ -1802,7 +1802,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 72
+      "capabilityIndex": 80
     },
     {
       "id": "gpt-5.6-sol",
@@ -1845,7 +1845,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 95
+      "capabilityIndex": 88
     },
     {
       "id": "gpt-5.6-terra",
@@ -2278,7 +2278,7 @@
         "lastVerified": "2026-10-24"
       },
       "maxOutput": 262144,
-      "capabilityIndex": 71
+      "capabilityIndex": 57
     },
     {
       "id": "mistral-mistral-large-4",
@@ -2398,7 +2398,7 @@
         "lastVerified": "2026-10-24"
       },
       "maxOutput": 262144,
-      "capabilityIndex": 68
+      "capabilityIndex": 61
     },
     {
       "id": "moonshot-kimi-k2-thinking",
@@ -2482,7 +2482,7 @@
         "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k26"
       },
       "maxOutput": 262144,
-      "capabilityIndex": 82
+      "capabilityIndex": 72
     },
     {
       "id": "moonshot-kimi-k3",
@@ -2616,7 +2616,7 @@
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 100000,
-      "capabilityIndex": 70
+      "capabilityIndex": 63
     },
     {
       "id": "xai-grok-2",
@@ -2799,7 +2799,7 @@
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
       "maxOutput": 1000000,
-      "capabilityIndex": 80
+      "capabilityIndex": 70
     },
     {
       "id": "xai-grok-4.5",
@@ -3215,7 +3215,7 @@
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 76
+      "capabilityIndex": 71
     },
     {
       "id": "zai-glm-5-code",
@@ -3243,7 +3243,7 @@
         "lastVerified": "2026-10-24"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 78
+      "capabilityIndex": 71
     },
     {
       "id": "zai-glm-5.1",
@@ -3272,7 +3272,7 @@
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 80
+      "capabilityIndex": 71
     },
     {
       "id": "zai-glm-5.2",
@@ -3301,7 +3301,7 @@
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
       "maxOutput": 128000,
-      "capabilityIndex": 83
+      "capabilityIndex": 79
     },
     {
       "id": "zai-glm-5.3",
