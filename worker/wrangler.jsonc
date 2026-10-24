@@ -64,5 +64,7 @@
 
   // Weekly digest. Monday 14:00 UTC is mid-morning in the US and late afternoon
   // in Europe — the compromise that puts it in a working day for most readers.
-  "triggers": { "crons": ["0 14 * * 1"] },
+  // Cloudflare numbers weekdays 1 = Sunday to 7 = Saturday (not 1 = Monday as on
+  // classic cron), so the day is written as MON to keep it unambiguous.
+  "triggers": { "crons": ["0 14 * * MON"] },
 }
