@@ -1234,7 +1234,7 @@ export function renderAppPage(ctx: RenderContext): string {
 
   const body = `      ${breadcrumbHtml(ctx, crumbs)}
       <main id="main">
-        <article>
+        <article class="app-page">
           <h1>PromptSpend for iPhone and Android</h1>
           <p class="lede">The same catalog, the same sources and dates, built for a phone. The apps are free, with no account, no ads and no tracking inside the app.</p>
           <div class="store-badges">

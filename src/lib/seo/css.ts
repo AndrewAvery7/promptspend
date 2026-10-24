@@ -54,7 +54,11 @@ body {
   font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-text-size-adjust: 100%;
 }
-.wrap { max-width: 62rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+/* The same 1280px frame and 24px gutter as the calculator's header and footer
+ * (src/styles/app.css, footer.css), so moving between the calculator and these
+ * pages does not change the page width. Long prose keeps its own measure below. */
+.wrap { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+@media (min-width: 641px) { .wrap { padding-left: 24px; padding-right: 24px; } }
 a { color: var(--accent); }
 a:hover { text-decoration: none; }
 .skip {
@@ -118,6 +122,9 @@ caption.cap { text-align: left; padding-bottom: 0.5rem; }
 ul.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
 ul.plain { margin: 0; padding-left: 1.1rem; }
 article p { margin: 0 0 1.1rem; max-width: 42rem; }
+/* The app page is a few short paragraphs among a full-width list and badges, so
+ * a 42rem cap on only the paragraphs made the page look narrower than it is. */
+article.app-page p { max-width: none; }
 article pre {
   background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
   padding: 0.85rem 1rem; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 0 0 1.1rem;
