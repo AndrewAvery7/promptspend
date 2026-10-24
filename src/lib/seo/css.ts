@@ -167,7 +167,7 @@ article :not(pre) > code {
   gap: 16px; flex-wrap: wrap; font-size: max(0.75rem, 12px); color: var(--muted);
 }
 .footer a { color: var(--accent); }
-.footer__note { flex: 1 1 100%; margin: 0; }
+.footer__stats { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
 .footer__badge { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 /* The link carries the 44px a thumb needs; every badge's artwork stays 40px. */
 .footer__badge a { display: inline-flex; align-items: center; min-height: 44px; }
