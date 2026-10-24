@@ -1230,6 +1230,11 @@ value that moves in the same run as its source URL is a correction.
 
 ## 2026-10-24
 
+- **Review** `inception-mercury-2.5` — provenance.needsReview: true → —
+- **Review** `inception-mercury-2.5` — provenance.reviewNote: OpenRouter disagrees (80%): $0.04/$0.15 vs $0.2/$0.75 → —
+
+## 2026-10-24
+
 - **Metadata** `dashscope-qwen3.8-max` — capabilityIndex: — → 87
 - **Metadata** `gemini-gemini-4-argon` — capabilityIndex: — → 90
 - **Metadata** `gpt-6-astra` — capabilityIndex: — → 90
