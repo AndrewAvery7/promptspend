@@ -5,8 +5,11 @@ import { Rate, useAsOf } from './PromoRate';
  * The freshness strip. Everything on it is derived from the live catalog, so it
  * cannot drift away from the data underneath.
  */
-export function Ticker({ catalog }: { catalog: Catalog }) {
-  const asOf = useAsOf();
+export function Ticker({ catalog, asOf: fixedAsOf }: { catalog: Catalog; asOf?: Date }) {
+  const now = useAsOf();
+  // The build gives the date it is building for, so two builds of the same
+  // commit draw the same tape; the browser leaves it out and gets now.
+  const asOf = fixedAsOf ?? now;
   const items = buildItems(catalog, asOf);
   const lane = [...items, ...items];
 

@@ -171,7 +171,7 @@ overwrote the first.
 ## Where it runs
 
 ```
-npm run build          # vite build, then build:pages
+npm run build          # build:chrome, vite build, then build:pages
 npm run build:pages    # just the pages, against an existing dist/
 npm run check:seo      # the gate
 ```

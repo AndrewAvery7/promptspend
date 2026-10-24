@@ -1,5 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
+import { Ticker } from './Ticker';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { Header } from './Header';
 import { SiteFooter } from './SiteFooter';
 import { ReceiptPage } from '@/receipt/ReceiptPage';
@@ -51,6 +54,31 @@ function textLinks(root: ParentNode): [string, string][] {
       a.getAttribute('href')!,
     ])
     .filter(([text]) => text !== '');
+}
+
+function tinyCatalog(): Catalog {
+  return new Catalog(
+    {
+      schemaVersion: SCHEMA_VERSION,
+      generatedAt: '2026-07-05T06:00:00.000Z',
+      providers: [{ id: 'acme', name: 'Acme', country: 'US' }],
+      models: [
+        {
+          id: 'acme-1',
+          providerId: 'acme',
+          displayName: 'Acme 1',
+          status: 'current',
+          contextWindow: 1000,
+          pricing: { input: 1, output: 2 },
+          tokenizer: { kind: 'approx', charsPerToken: 4, cjkCharsPerToken: 2 },
+          capabilities: { reasoning: false, vision: false },
+          capabilityIndex: 50,
+          provenance: { source: 'vendor', lastVerified: '2026-07-04' },
+        },
+      ],
+    },
+    { schemaVersion: 1, outcome: 'ok', succeededAt: '2026-07-05T06:00:00.000Z' } as never,
+  );
 }
 
 const noop = () => undefined;
@@ -162,28 +190,7 @@ describe('the footer', () => {
   });
 
   it('carries the same counts row and the same directory badges on every page, the Free Tiers pages included', () => {
-    const catalog = new Catalog(
-      {
-        schemaVersion: SCHEMA_VERSION,
-        generatedAt: '2026-07-05T06:00:00.000Z',
-        providers: [{ id: 'acme', name: 'Acme', country: 'US' }],
-        models: [
-          {
-            id: 'acme-1',
-            providerId: 'acme',
-            displayName: 'Acme 1',
-            status: 'current',
-            contextWindow: 1000,
-            pricing: { input: 1, output: 2 },
-            tokenizer: { kind: 'approx', charsPerToken: 4, cjkCharsPerToken: 2 },
-            capabilities: { reasoning: false, vision: false },
-            capabilityIndex: 50,
-            provenance: { source: 'vendor', lastVerified: '2026-07-04' },
-          },
-        ],
-      },
-      { schemaVersion: 1, outcome: 'ok', succeededAt: '2026-07-05T06:00:00.000Z' } as never,
-    );
+    const catalog = tinyCatalog();
     const { container } = render(<SiteFooter catalog={catalog} theme="light" />);
     // The same three figures the build takes from the catalog (scripts/build-pages.ts).
     const ctx: RenderContext = {
@@ -223,5 +230,48 @@ describe('the footer', () => {
     const page = new DOMParser().parseFromString(renderAppPage(CONTEXT), 'text/html');
     expect(page.querySelector('.footer__apps')).toBeNull();
     expect(page.querySelectorAll('.store-qr__code')).toHaveLength(2);
+  });
+});
+
+describe('the ticker tape', () => {
+  it('runs above the header on every generated page, with the same items as the calculator', () => {
+    const catalog = tinyCatalog();
+    const asOf = new Date(catalog.generatedAt);
+    const { container } = render(<Ticker catalog={catalog} asOf={asOf} />);
+    // What the build does: draw the same component to HTML, dated by the catalog.
+    const html = renderToStaticMarkup(createElement(Ticker, { catalog, asOf }));
+    const ctx: RenderContext = { ...CONTEXT, ticker: html };
+    for (const path of ['/models/', '/free-tiers/', '/receipt/']) {
+      const page = generated(path, ctx);
+      const tape = page.querySelector('.ticker');
+      expect(tape).not.toBeNull();
+      expect(words(tape!, '.ticker__item')).toEqual(words(container, '.ticker__item'));
+      // Above the header, as on the calculator.
+      const order = tape!.compareDocumentPosition(page.querySelector('.header')!);
+      expect(order & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    }
+    expect(words(container, '.ticker__item')[0]).toMatch(/^CHEAPEST INPUT TODAY/);
+  });
+});
+
+describe('first paint', () => {
+  it('asks for the header typefaces in the head, before the stylesheets, so the header is not redrawn', () => {
+    const fonts = ['/assets/a.woff2', '/assets/b.woff2'];
+    const ctx: RenderContext = {
+      ...CONTEXT,
+      chrome: { script: '/assets/h.js', themeInit: '/assets/t.js', styles: ['/assets/h.css'], fonts },
+    };
+    const head = generated('/free-tiers/', ctx).head;
+    const links = [...head.querySelectorAll('link')].map(
+      (link) => link.getAttribute('rel') + ' ' + link.getAttribute('href'),
+    );
+    expect(links.filter((link) => link.startsWith('preload'))).toEqual(
+      fonts.map((font) => `preload ${font}`),
+    );
+    // Preloaded before any stylesheet is read.
+    expect(links.findIndex((link) => link.startsWith('preload'))).toBeLessThan(
+      links.findIndex((link) => link.startsWith('stylesheet')),
+    );
+    expect(head.querySelector('link[rel="preload"]')?.getAttribute('crossorigin')).not.toBeNull();
   });
 });

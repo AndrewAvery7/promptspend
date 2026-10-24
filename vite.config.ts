@@ -57,6 +57,83 @@ function primaryModelCount(): number {
 }
 
 /**
+ * What the Receipt page shows in its tape and its header before its own fetch of
+ * the catalog has come back: the figures as they stand in this build.
+ *
+ * That page draws itself as soon as its script runs and learns the catalog a
+ * few hundred milliseconds later, so without these the freshness line and the
+ * tape appear a beat after everything else. They are the same figures the live
+ * fetch will return unless the data changes between the deploy and the visit,
+ * in which case the live ones replace them, as they always did.
+ *
+ * Written by `scripts/build-chrome-data.ts` (run by `npm run build` just before
+ * Vite) rather than computed here: this file is loaded by Node without the
+ * project's path aliases or module resolution, so it cannot import the tape's
+ * component. Absent (a dev server, a test run), the page simply waits for the
+ * fetch as before.
+ */
+function buildTimeChrome(): { freshness: object | null; tickerHtml: string | null } {
+  try {
+    const file = fileURLToPath(new URL('./.generated/chrome.json', import.meta.url));
+    const data = JSON.parse(readFileSync(file, 'utf8')) as { freshness?: object; tickerHtml?: string };
+    return { freshness: data.freshness ?? null, tickerHtml: data.tickerHtml ?? null };
+  } catch {
+    return { freshness: null, tickerHtml: null };
+  }
+}
+
+/**
+ * Ask for the header's typefaces in the page's `<head>`, on the calculator and
+ * the Receipt page.
+ *
+ * A font the page learns about only from its stylesheet is fetched once text
+ * that needs it has been laid out, so the header was drawn in a stand-in face
+ * and redrawn a moment later, with the buttons on its right shifting as the
+ * widths changed. A preload starts the fetch with the page, so the real faces are
+ * usually there for the first paint. The generated pages do the same, from
+ * `scripts/build-pages.ts`, which finds the same five files by the same names.
+ */
+function preloadHeaderFonts(): Plugin {
+  const faces = [
+    'space-grotesk-latin-700-normal',
+    'ibm-plex-sans-latin-400-normal',
+    'ibm-plex-sans-latin-600-normal',
+    'jetbrains-mono-latin-400-normal',
+    'jetbrains-mono-latin-700-normal',
+  ];
+  return {
+    name: 'promptspend-font-preload',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(_html, ctx) {
+        const bundle = ctx.bundle;
+        if (!bundle) return undefined;
+        const tags = [];
+        for (const face of faces) {
+          const file = Object.keys(bundle).find(
+            (name) => name.startsWith(`assets/${face}-`) && name.endsWith('.woff2'),
+          );
+          if (!file) continue;
+          tags.push({
+            tag: 'link',
+            attrs: {
+              rel: 'preload',
+              as: 'font',
+              type: 'font/woff2',
+              crossorigin: '',
+              href: `${base}${file}`,
+            },
+            injectTo: 'head-prepend' as const,
+          });
+        }
+        return tags;
+      },
+    },
+  };
+}
+
+/**
  * Where this build will actually be served from, with no trailing slash.
  *
  * Everything a search engine or a social card reads has to be an *absolute*
@@ -242,13 +319,24 @@ export default defineConfig(({ mode }) => {
   // build whose own API calls its CSP blocks. One source, both consumers.
   const env = loadEnv(mode, projectRoot, 'VITE_');
   const alertsApi = (env.VITE_ALERTS_API ?? '').replace(/\/+$/, '');
+  const buildTime = buildTimeChrome();
 
   return {
     base,
+    define: {
+      __PS_FRESHNESS__: JSON.stringify(buildTime.freshness),
+      __PS_TICKER_HTML__: JSON.stringify(buildTime.tickerHtml),
+    },
     // Pin both to this file's directory for the same reason.
     root: projectRoot,
     envDir: projectRoot,
-    plugins: [react(), contentSecurityPolicy(alertsApi), seoAssets(siteUrl), receiptAssets()],
+    plugins: [
+      react(),
+      contentSecurityPolicy(alertsApi),
+      seoAssets(siteUrl),
+      receiptAssets(),
+      preloadHeaderFonts(),
+    ],
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },

@@ -22,7 +22,8 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && npm run build:pages",
+    "build": "tsc --noEmit && npm run build:chrome && vite build && npm run build:pages",
+    "build:chrome": "tsx scripts/build-chrome-data.ts",
     "build:pages": "tsx scripts/build-pages.ts",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",

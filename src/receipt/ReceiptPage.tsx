@@ -92,6 +92,10 @@ export function ReceiptPage() {
           letting the whole page jump down when they do. */}
       {catalogState.status === 'ready' ? (
         <Ticker catalog={catalogState.catalog} />
+      ) : __PS_TICKER_HTML__ ? (
+        // The tape as it stood at build time, drawn from the same component, so
+        // it is on screen with the rest of the page and not a beat after it.
+        <div dangerouslySetInnerHTML={{ __html: __PS_TICKER_HTML__ }} />
       ) : (
         <div className="ticker" aria-hidden="true">
           <div className="ticker__lane ticker__lane--idle">
@@ -115,7 +119,7 @@ export function ReceiptPage() {
                 sourcesCheckedOn: catalogState.catalog.sourcesLastChecked(),
                 degraded: catalogState.catalog.health?.outcome === 'degraded',
               }
-            : null
+            : __PS_FRESHNESS__
         }
       />
 

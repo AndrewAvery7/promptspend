@@ -7,6 +7,8 @@ coverage/
 .env.*
 !.env.example
 .vite/
+# Figures the build bakes into the Receipt page (scripts/build-chrome-data.ts).
+.generated/
 
 # Playwright
 test-results
