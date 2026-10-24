@@ -237,14 +237,14 @@ describe('App', () => {
     await renderApp();
 
     const nav = screen.getByRole('navigation', { name: 'Main' });
-    expect(within(nav).getByRole('link', { name: 'Free tiers' })).toHaveAttribute('href', '/free-tiers/');
+    expect(within(nav).getByRole('link', { name: 'Free Tiers' })).toHaveAttribute('href', '/free-tiers/');
     // The home page says it too, so a phone, where the nav scrolls, still shows it.
     expect(screen.getAllByRole('link', { name: /which providers have a free tier/ })[0]).toHaveAttribute(
       'href',
       '/free-tiers/',
     );
     const footer = screen.getByRole('contentinfo');
-    expect(within(footer).getByRole('link', { name: 'Free tiers' })).toHaveAttribute('href', '/free-tiers/');
+    expect(within(footer).getByRole('link', { name: 'Free Tiers' })).toHaveAttribute('href', '/free-tiers/');
 
     await user.click(screen.getByRole('button', { name: 'Compare' }));
     const compare = await screen.findByRole('region', { name: /Price is a/ });

@@ -1,4 +1,5 @@
 import {
+  ANDROID_ROBOT_CREDIT,
   APP_PAGE_URL,
   COMPARE_INDEX_URL,
   FREE_TIERS_URL,
@@ -12,6 +13,7 @@ import {
   LAUNCHNEST_URL,
   MCP_PACKAGE_URL,
   MODELS_INDEX_URL,
+  PRIVACY_URL,
   OPEN_VSX_URL,
   PEERLIST_BADGE_DARK,
   PEERLIST_BADGE_LIGHT,
@@ -25,12 +27,15 @@ import {
   REPO_URL,
   SWB_BADGE_DARK,
   SWB_BADGE_LIGHT,
+  SUPPORT_URL,
   SWB_URL,
   UNEED_BADGE_DARK,
   UNEED_BADGE_LIGHT,
   UNEED_URL,
   VSCODE_MARKETPLACE_URL,
 } from '@/config';
+import { NAV_LABELS } from '@/lib/links';
+import { StoreBadges, StoreQrCodes } from '@/components/StoreBadges';
 import type { Catalog } from '@/lib/pricing/catalog';
 import type { Theme } from '@/state/useAppearance';
 
@@ -50,16 +55,34 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
   return (
     <footer className="footer">
       <div className="footer__inner">
+        {/* The apps, on every page. The launch banner can be dismissed and then
+            the apps are only in a link; this cannot, and the QR codes are for the
+            visitor on a computer. The robot's credit travels with its code. */}
+        <section className="footer__apps" aria-labelledby="footer-apps-title">
+          <div>
+            <p className="footer__apps-title" id="footer-apps-title">
+              PromptSpend on iPhone and Android
+            </p>
+            <p className="footer__apps-sub">
+              The same catalog, the same sources and dates, built for a phone. Free — no account, no ads, and
+              what you paste stays on your device.
+            </p>
+            <StoreBadges />
+          </div>
+          <StoreQrCodes credit={false} />
+          <p className="footer__apps-credit">{ANDROID_ROBOT_CREDIT}</p>
+        </section>
         <div>
           <b>PromptSpend</b> · open source, MIT · no accounts, no ads, no cookies ·{' '}
-          <a href={REPO_URL}>star it on GitHub</a> · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          <a href={REPO_URL}>star it on GitHub</a> · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> ·{' '}
+          <a href={SUPPORT_URL}>Support</a> · <a href={PRIVACY_URL}>Privacy</a>
         </div>
         {/* The generated pages. Every model has a permanent URL of its own —
             useful to link to, and the route by which anything that does not
             run JavaScript can read this catalog at all. */}
         <div>
           <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
-          <a href={FREE_TIERS_URL}>Free tiers</a> · <a href={COMPARE_INDEX_URL}>Comparisons</a> ·{' '}
+          <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a> · <a href={COMPARE_INDEX_URL}>Comparisons</a> ·{' '}
           <a href={DEVELOPER_HUB_URL}>Pricing API</a>
         </div>
         {/* The places this catalog answers that are not a web page. The footer

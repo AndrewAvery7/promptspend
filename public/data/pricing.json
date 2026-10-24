@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T14:34:13.023Z",
+  "generatedAt": "2026-10-24T15:45:13.276Z",
   "providers": [
     {
       "id": "anthropic",
@@ -808,7 +808,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max"
       },
-      "maxOutput": 131072
+      "maxOutput": 131072,
+      "capabilityIndex": 87
     },
     {
       "id": "deepseek-deepseek-r1",
@@ -1382,7 +1383,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
-      "maxOutput": 1048576
+      "maxOutput": 1048576,
+      "capabilityIndex": 90
     },
     {
       "id": "gpt-4.1",
@@ -1921,7 +1923,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 90
     },
     {
       "id": "gpt-6-luna",
@@ -1956,7 +1959,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 81
     },
     {
       "id": "gpt-6-sol",
@@ -1991,7 +1995,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 89
     },
     {
       "id": "gpt-6.1-sol",
@@ -2026,7 +2031,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 90
     },
     {
       "id": "inception-mercury-2",
@@ -2080,12 +2086,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-10-24",
-        "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (80%): $0.04/$0.15 vs $0.2/$0.75",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models"
       },
       "maxOutput": 65536
     },
@@ -2339,7 +2340,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-21",
+        "lastVerified": "2026-10-24",
         "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4",
         "needsReview": true,
         "reviewNote": "vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18",
@@ -2961,7 +2962,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go"
       },
-      "maxOutput": 131072
+      "maxOutput": 131072,
+      "capabilityIndex": 81
     },
     {
       "id": "xiaomi-mimo-mimo-v2.6-pro",
@@ -2990,7 +2992,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go"
       },
-      "maxOutput": 131072
+      "maxOutput": 131072,
+      "capabilityIndex": 87
     },
     {
       "id": "zai-glm-4-32b-0414-128k",
@@ -3355,7 +3358,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 86
     }
   ]
 }

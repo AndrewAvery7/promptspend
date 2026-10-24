@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { HEALTH_URL, PRICING_SCOPE, PRICING_URL, RECEIPT_URL } from '@/config';
+import { FREE_TIERS_URL, HEALTH_URL, PRICING_SCOPE, PRICING_URL, RECEIPT_URL } from '@/config';
+import { NAV_LABELS } from '@/lib/links';
 import { loadCatalog, type Catalog } from '@/lib/pricing/catalog';
 import { SiteFooter } from '@/components/SiteFooter';
 import { Ticker } from '@/components/Ticker';
@@ -123,13 +124,14 @@ export function ReceiptPage() {
             </span>
           </a>
           <nav className="receipt-nav" aria-label="Main">
-            <a href={import.meta.env.BASE_URL}>Estimate</a>
-            <a href={`${import.meta.env.BASE_URL}#compare`}>Compare</a>
-            <a href={`${import.meta.env.BASE_URL}#learn`}>Learn</a>
-            <a href={`${import.meta.env.BASE_URL}#data`}>Data &amp; Alerts</a>
+            <a href={import.meta.env.BASE_URL}>{NAV_LABELS.estimate}</a>
+            <a href={`${import.meta.env.BASE_URL}#compare`}>{NAV_LABELS.compare}</a>
+            <a href={`${import.meta.env.BASE_URL}#learn`}>{NAV_LABELS.learn}</a>
+            <a href={`${import.meta.env.BASE_URL}#data`}>{NAV_LABELS.data}</a>
             <a href={RECEIPT_URL} aria-current="page">
-              PromptSpend It
+              {NAV_LABELS.receipt}
             </a>
+            <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a>
           </nav>
           <div className="receipt-header__spacer" />
           <a className="receipt-header__api" href={PRICING_API_URL}>

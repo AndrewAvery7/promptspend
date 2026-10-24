@@ -53,3 +53,26 @@ export const VSCODE_INSTALL_COMMAND = 'code --install-extension promptspend.prom
  * landing view, the Data & Alerts panel, and `llms.txt`.
  */
 export const MCP_INSTALL_COMMAND = 'claude mcp add promptspend -- npx -y @promptspend/mcp';
+
+/**
+ * The words on the site's navigation, in one place.
+ *
+ * Three headers draw them: the calculator's (`Header.tsx`), the Receipt page's
+ * (`ReceiptPage.tsx`) and the generated pages' (`layout` in `seo/render.ts`).
+ * They are separate pieces of code because the calculator's is a live
+ * component, the Receipt's is a second entry point and the generated pages ship
+ * no JavaScript - and each had its own copy of these words until the Receipt
+ * page lost the Free Tiers link and the generated pages had no header at all.
+ */
+export const NAV_LABELS = {
+  estimate: 'Estimate',
+  compare: 'Compare',
+  learn: 'Learn',
+  data: 'Data & Alerts',
+  receipt: 'PromptSpend It',
+  freeTiers: 'Free Tiers',
+} as const;
+
+/** The two policy pages, relative to the site root. */
+export const SUPPORT_PATH = '/support/';
+export const PRIVACY_PATH = '/privacy/';

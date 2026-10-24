@@ -34,7 +34,18 @@ import { DEFAULT_SCENARIO, encodeScenario } from '../url/scenario';
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { Model, Pricing } from '../pricing/types';
 import { promoFor, promoTitle, type RateField } from '../pricing/promo';
-import { APP_PAGE_PATH, APP_STORE_ID, APP_STORE_URL, GOOGLE_PLAY_URL } from '../links';
+import {
+  APP_PAGE_PATH,
+  APP_STORE_ID,
+  APP_STORE_URL,
+  GOOGLE_PLAY_URL,
+  MCP_PACKAGE_URL,
+  NAV_LABELS,
+  OPEN_VSX_URL,
+  PRIVACY_PATH,
+  SUPPORT_PATH,
+  VSCODE_MARKETPLACE_URL,
+} from '../links';
 import {
   blendedRate,
   type ComparisonPage,
@@ -216,6 +227,12 @@ export interface LayoutInput {
    * a badge links back. Pages added since can leave them off.
    */
   listingBadges?: boolean;
+  /**
+   * The apps band at the top of the footer: both store badges and both QR codes.
+   * On by default, so every page offers the apps. Off only on the app page
+   * itself, which already shows the same badges and codes as its content.
+   */
+  appBand?: boolean;
 }
 
 export function layout(ctx: RenderContext, input: LayoutInput): string {
@@ -266,30 +283,121 @@ ${input.extraHead ?? ''}    <meta property="og:type" content="article" />
 ${scripts.map((src) => `    <script type="module" src="${escapeHtml(href(ctx, src))}"></script>\n`).join('')}  </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
+${siteHeader(ctx, input.path)}
     <div class="wrap">
 ${input.body}
-      <footer>
-        <p>
+    </div>
+${siteFooter(ctx, input)}
+  </body>
+</html>
+`;
+}
+
+/**
+ * The header every generated page opens with: the same logo and the same six
+ * links, in the same order, as the calculator's header and the Receipt page's.
+ *
+ * These pages ship no JavaScript, so the calculator's own views are plain links
+ * into it (it honours `#compare`, `#learn` and `#data`), and the search box,
+ * guided tour and appearance controls, which are the calculator's own
+ * machinery, are not drawn. The words come from `NAV_LABELS`, shared with the
+ * other two headers, so a link added or renamed there cannot be missed here.
+ */
+function siteHeader(ctx: RenderContext, currentPath: string): string {
+  const home = href(ctx, '/');
+  const current = (path: string): string =>
+    currentPath === path
+      ? ' aria-current="page"'
+      : currentPath.startsWith(path) && path !== '/'
+        ? ' aria-current="true"'
+        : '';
+  const link = (target: string, label: string, path?: string): string =>
+    `<a href="${escapeHtml(target)}"${path ? current(path) : ''}>${escapeHtml(label)}</a>`;
+  return `    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="logo" href="${escapeHtml(home)}" aria-label="PromptSpend home">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="23" height="23" rx="6" stroke="currentColor" stroke-width="2"/><path d="M7 9.5h12M7 13.5h8M7 17.5h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>Prompt<span class="logo__mark">Spend</span></span>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          ${link(home, NAV_LABELS.estimate)}
+          ${link(`${home}#compare`, NAV_LABELS.compare)}
+          ${link(`${home}#learn`, NAV_LABELS.learn)}
+          ${link(`${home}#data`, NAV_LABELS.data)}
+          ${link(href(ctx, '/receipt/'), NAV_LABELS.receipt, '/receipt/')}
+          ${link(href(ctx, FREE_TIERS_PATH), NAV_LABELS.freeTiers, FREE_TIERS_PATH)}
+        </nav>
+      </div>
+    </header>`;
+}
+
+/**
+ * The apps band, the first block of every footer: what `SiteFooter.tsx` draws
+ * with `StoreBadges` and `StoreQrCodes`, as HTML. The QR codes hide themselves
+ * on a phone, where a code on the screen in your hand cannot be scanned.
+ */
+function appBand(ctx: RenderContext): string {
+  const store = (url: string) => `href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"`;
+  const asset = (path: string) => escapeHtml(href(ctx, path));
+  return `        <section class="footer__apps" aria-labelledby="footer-apps-title">
+          <div>
+            <p class="footer__apps-title" id="footer-apps-title">PromptSpend on iPhone and Android</p>
+            <p class="footer__apps-sub">The same catalog, the same sources and dates, built for a phone. Free &mdash; no account, no ads, and what you paste stays on your device.</p>
+            <div class="store-badges">
+              <a ${store(APP_STORE_URL)}><img src="${asset('/store/app-store-badge.svg')}" alt="Download on the App Store" width="120" height="40" /></a>
+              <a ${store(GOOGLE_PLAY_URL)}><img src="${asset('/store/google-play-badge.png')}" alt="Get it on Google Play" width="134" height="40" /></a>
+            </div>
+          </div>
+          <div class="store-qr">
+            <a class="store-qr__code" ${store(APP_STORE_URL)}><img src="${asset('/store/qr-ios.svg')}" alt="QR code: PromptSpend on the App Store" width="92" height="92" /><span>iPhone</span></a>
+            <a class="store-qr__code" ${store(GOOGLE_PLAY_URL)}><img src="${asset('/store/qr-android.svg')}" alt="QR code: PromptSpend on Google Play" width="92" height="92" /><span>Android</span></a>
+          </div>
+          <p class="footer__apps-credit">${escapeHtml(ANDROID_ROBOT_CREDIT)}</p>
+        </section>
+`;
+}
+
+/**
+ * The footer every generated page closes with: the same rows of links as the
+ * calculator's (`SiteFooter.tsx`), then the badges the directories verify.
+ *
+ * The first block is the one thing the calculator's footer does not have - where
+ * this page's numbers came from and when the catalog behind them was built.
+ * `SiteFooter.test.tsx` renders both footers and fails if their links drift.
+ */
+function siteFooter(ctx: RenderContext, input: LayoutInput): string {
+  const external = 'target="_blank" rel="noreferrer noopener"';
+  return `    <footer class="footer">
+      <div class="footer__inner">
+${input.appBand === false ? '' : appBand(ctx)}        <p class="footer__note">
           Prices from a catalog re-checked every morning against the vendors&rsquo; own pages;
           this build read the catalog generated ${escapeHtml(ctx.generatedAt.slice(0, 10))}.
           Standard-tier, global-endpoint list prices in USD.
         </p>
-        <p>
-          <a href="${escapeHtml(href(ctx, '/'))}">PromptSpend calculator</a> &middot;
-          <a href="${escapeHtml(href(ctx, APP_PAGE_PATH))}">iPhone &amp; Android apps</a> &middot;
-          <a href="${escapeHtml(href(ctx, '/models/'))}">All models</a> &middot;
-          <a href="${escapeHtml(href(ctx, '/providers/'))}">Providers</a> &middot;
+        <div>
+          <b>PromptSpend</b> &middot; open source, MIT &middot; no accounts, no ads, no cookies &middot;
+          <a href="https://github.com/AndrewAvery7/promptspend">star it on GitHub</a> &middot;
+          <a href="mailto:info@promptspend.com">info@promptspend.com</a> &middot;
+          <a href="${escapeHtml(href(ctx, SUPPORT_PATH))}">Support</a> &middot;
+          <a href="${escapeHtml(href(ctx, PRIVACY_PATH))}">Privacy</a>
+        </div>
+        <div>
+          <a href="${escapeHtml(href(ctx, '/models/'))}">All model prices</a> &middot;
+          <a href="${escapeHtml(href(ctx, '/providers/'))}">By provider</a> &middot;
+          <a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">${escapeHtml(NAV_LABELS.freeTiers)}</a> &middot;
           <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
-          <a href="${escapeHtml(href(ctx, '/free-tiers/'))}">Free tiers</a> &middot;
-          <a href="${escapeHtml(href(ctx, '/support/'))}">Support</a> &middot;
-          <a href="${escapeHtml(href(ctx, '/privacy/'))}">Privacy</a> &middot;
-          <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a> &middot;
-          <a href="https://github.com/AndrewAvery7/promptspend">Source</a>
-        </p>
+          <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a>
+        </div>
+        <div>
+          <a href="${escapeHtml(href(ctx, APP_PAGE_PATH))}">iPhone &amp; Android apps</a> &middot;
+          <a href="${escapeHtml(MCP_PACKAGE_URL)}" ${external}>MCP server</a> &middot;
+          <a href="${escapeHtml(VSCODE_MARKETPLACE_URL)}" ${external}>VS Code extension</a> &middot;
+          <a href="${escapeHtml(OPEN_VSX_URL)}" ${external}>Open VSX</a>
+        </div>
 ${
   input.listingBadges === false
     ? ''
-    : `        <p class="listing">
+    : `        <div class="footer__badge">
           <a href="https://sellwithboost.com" target="_blank" rel="noopener noreferrer">
             <picture>
               <source srcset="${escapeHtml(href(ctx, '/sellwithboost-dark.svg'))}" media="(prefers-color-scheme: dark)" />
@@ -329,13 +437,10 @@ ${
               <img src="${escapeHtml(href(ctx, '/producthunt-badge-light.svg'))}" alt="PromptSpend on Product Hunt" width="151" height="40" />
             </picture>
           </a>
-        </p>
+        </div>
 `
-}      </footer>
-    </div>
-  </body>
-</html>
-`;
+}      </div>
+    </footer>`;
 }
 
 // ------------------------------------------------------------- shared blocks
@@ -1283,6 +1388,8 @@ export function renderAppPage(ctx: RenderContext): string {
       "Forecast what an AI conversation will cost and compare up to four models, with every price's source. Free on the App Store and Google Play, no account, no ads.",
     // Safari on iPhone turns this into its own "Open in the App Store" strip.
     extraHead: `    <meta name="apple-itunes-app" content="app-id=${APP_STORE_ID}" />\n`,
+    // This page is the apps; the footer band would repeat its own badges and codes.
+    appBand: false,
     graph: [
       breadcrumbLd(ctx, crumbs, APP_PAGE_PATH),
       {
@@ -1358,7 +1465,7 @@ export function renderFreeTierPage(page: FreeTierPage, ctx: RenderContext): stri
   const record = page.record;
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
-    { label: 'Free tiers', path: FREE_TIERS_PATH },
+    { label: NAV_LABELS.freeTiers, path: FREE_TIERS_PATH },
     { label: name, path: null },
   ];
 
@@ -1447,7 +1554,7 @@ export function renderFreeTierIndex(set: FreeTierPageSet, ctx: RenderContext): s
   const page = set.index;
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
-    { label: 'Free tiers', path: null },
+    { label: NAV_LABELS.freeTiers, path: null },
   ];
   const count = (verdict: FreeTierRecord['verdict']) =>
     set.pages.filter((p) => p.record.verdict === verdict).length;

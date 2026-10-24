@@ -2277,63 +2277,9 @@ table.catalog tbody tr:hover {
   }
 }
 
-/* ---- store badges and QR codes (StoreBadges.tsx) ----
-   Shared by the launch banner and Data & Alerts. Each link is at least 44px
-   tall, the minimum tap target the mobile e2e suite enforces; the artwork
-   itself is the stores' standard 40px. */
-.store-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.store-badges a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-}
-.store-badges img {
-  display: block;
-  height: 40px;
-  width: auto;
-}
-.store-qr {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: flex-start;
-}
-.store-qr__code {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  font-size: max(0.72rem, 12px);
-  font-weight: 600;
-  color: var(--muted);
-  text-decoration: none;
-}
-/* White whatever the theme: a QR code needs its light quiet zone to scan. */
-.store-qr__code img {
-  display: block;
-  width: 92px;
-  height: 92px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-.store-qr__credit {
-  flex-basis: 100%;
-  margin: 0;
-  max-width: 60ch;
-  font-size: max(0.72rem, 12px);
-  line-height: 1.5;
-  color: var(--muted);
-}
-/* A code on the screen you are holding cannot be scanned, so the codes (and the
-   credit that belongs to them) appear only on a wide screen with a hovering
-   pointer — a computer with a phone in reach. */
+/* The store badges and QR codes (`StoreBadges.tsx`) are styled in footer.css,
+   which both entry points load: the footer's app band uses them on every page. */
 @media (max-width: 860px), (hover: none) {
-  .store-qr,
   .launch__credit {
     display: none;
   }
