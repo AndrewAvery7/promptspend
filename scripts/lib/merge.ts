@@ -325,7 +325,16 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       ...(override?.pricing?.batchDiscount !== undefined
         ? { batchDiscount: override.pricing.batchDiscount }
         : {}),
-      ...(override?.pricing?.intro ? { intro: override.pricing.intro } : {}),
+      // A promotion is published through its last day and not after. The engine
+      // already stops applying it on the morning after (`effectivePricing`), so
+      // the price a visitor is billed is right either way; what an expired block
+      // used to do was fail catalogue validation, which held the whole morning's
+      // catalogue back until somebody deleted a block of data by hand. The
+      // override keeps the block (it is the record of what the vendor offered)
+      // and the vendor-page check still compares the base price it falls back to.
+      ...(override?.pricing?.intro && override.pricing.intro.until >= isoDate
+        ? { intro: override.pricing.intro }
+        : {}),
       ...(override?.pricing?.longContext ? { longContext: override.pricing.longContext } : {}),
     };
 

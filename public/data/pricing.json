@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T15:45:13.276Z",
+  "generatedAt": "2026-10-24T17:35:49.877Z",
   "providers": [
     {
       "id": "anthropic",
@@ -244,7 +244,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 90
     },
     {
       "id": "claude-haiku-4-5",
@@ -280,7 +281,7 @@
     {
       "id": "claude-haiku-5-5",
       "providerId": "anthropic",
-      "displayName": "Claude Haiku 5 5",
+      "displayName": "Claude Haiku 5.5",
       "status": "current",
       "contextWindow": 1000000,
       "pricing": {
@@ -302,7 +303,8 @@
         "source": "litellm",
         "lastVerified": "2026-10-24"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 86
     },
     {
       "id": "claude-opus-4-1",
@@ -1322,7 +1324,8 @@
         "lastVerified": "2026-10-09",
         "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
-      "maxOutput": 65536
+      "maxOutput": 65536,
+      "capabilityIndex": 83
     },
     {
       "id": "gemini-gemini-3.8-flash",
@@ -1349,7 +1352,8 @@
         "source": "litellm",
         "lastVerified": "2026-10-24"
       },
-      "maxOutput": 65536
+      "maxOutput": 65536,
+      "capabilityIndex": 85
     },
     {
       "id": "gemini-gemini-4-argon",
@@ -2144,7 +2148,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
       },
-      "maxOutput": 131072
+      "maxOutput": 131072,
+      "capabilityIndex": 90
     },
     {
       "id": "minimax-minimax-m2",
@@ -2315,7 +2320,8 @@
         "reviewCodes": [
           "override-drift"
         ]
-      }
+      },
+      "capabilityIndex": 81
     },
     {
       "id": "mistral-mistral-large-4-0",
@@ -2872,7 +2878,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://docs.x.ai/developers/pricing"
       },
-      "maxOutput": 500000
+      "maxOutput": 500000,
+      "capabilityIndex": 85
     },
     {
       "id": "xai-grok-4.7",
@@ -2899,7 +2906,8 @@
         "source": "litellm",
         "lastVerified": "2026-10-24"
       },
-      "maxOutput": 500000
+      "maxOutput": 500000,
+      "capabilityIndex": 87
     },
     {
       "id": "xai-grok-build-0.1",
@@ -3302,7 +3310,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 83
     },
     {
       "id": "zai-glm-5.3",
@@ -3330,7 +3339,8 @@
         "lastVerified": "2026-10-24",
         "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
       },
-      "maxOutput": 128000
+      "maxOutput": 128000,
+      "capabilityIndex": 87
     },
     {
       "id": "zai-glm-5.3-flash",
