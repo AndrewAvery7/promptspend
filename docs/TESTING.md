@@ -15,7 +15,7 @@ to publish past it.
 
 ## What the suite covers
 
-**1458 tests in all**: 654 unit and integration tests in this package, 230 in
+**1459 tests in all**: 655 unit and integration tests in this package, 230 in
 `apps/mobile/`, 102 in `worker/`, 49 in `api/`, 48 in `mcp/`, 9 in `updates/`, 138 in `vscode/`,
 and 228 browser tests across four viewports. Those eight figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
