@@ -1244,3 +1244,13 @@ value that moves in the same run as its source URL is a correction.
 - **Metadata** `xiaomi-mimo-mimo-v2.6-flash` — capabilityIndex: — → 81
 - **Metadata** `xiaomi-mimo-mimo-v2.6-pro` — capabilityIndex: — → 87
 - **Metadata** `zai-glm-5.3-flash` — capabilityIndex: — → 86
+
+## 2026-10-24
+
+- **Metadata** `dashscope-qwen3-next-80b-a3b-instruct` — status: current → deprecated
+- **Metadata** `dashscope-qwen3-next-80b-a3b-thinking` — status: current → deprecated
+- **Metadata** `dashscope-qwen3-vl-235b-a22b-instruct` — status: current → deprecated
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-next-80b-a3b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3-vl-235b-a22b-instruct` — provenance.reviewNote: vendor verification is 37 days old — re-read the first-party pricing page → —
