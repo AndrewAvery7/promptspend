@@ -25,6 +25,7 @@ import type { PricingCatalog } from '@/lib/pricing/types';
 import { assertCatalog } from '@/lib/pricing/types';
 import { buildPages } from '@/lib/seo/pages';
 import { Catalog } from '@/lib/pricing/catalog';
+import { isSyncStatus, type SyncStatus } from '@/lib/pricing/health';
 import { assertFreeTiers } from '@/lib/free-tiers/types';
 import { EMPTY_CHECK_REPORT, parseCheckReport } from '@/lib/free-tiers/check';
 import { buildFreeTierPages, FREE_TIERS_PATH, publishedFreeTiers } from '@/lib/seo/free-tier-pages';
@@ -62,6 +63,7 @@ const WRITING_DIR = resolve(ROOT, 'src/content/writing');
 const INFORMATION_DIR = resolve(ROOT, 'src/content/information');
 const FREE_TIERS = resolve(ROOT, 'data/free-tiers.json');
 const FREE_TIER_CHECK = resolve(ROOT, 'public/data/free-tier-check.json');
+const SYNC_STATUS = resolve(ROOT, 'public/data/sync-status.json');
 
 /** Same defaults as `vite.config.ts`, and for the same reasons: an unset
  *  GitHub Actions variable arrives as `""`, so `??` would not catch it. */
@@ -213,6 +215,16 @@ async function main(): Promise<void> {
   // and llms.txt point at different origins the first time this was overridden.
   const apiUrl = (process.env.PRICING_API_URL ?? '').trim() || 'https://promptspend.dev';
 
+  // The figures the calculator's footer prints, so the pages' footer prints the
+  // same ones. A missing or unreadable health file only costs the "sources
+  // checked" date, exactly as it does in the browser.
+  let health: SyncStatus | null = null;
+  if (existsSync(SYNC_STATUS)) {
+    const parsed: unknown = JSON.parse(await readFile(SYNC_STATUS, 'utf8'));
+    if (isSyncStatus(parsed)) health = parsed;
+  }
+  const liveCatalog = new Catalog(catalog, health);
+
   const ctx: RenderContext = {
     siteUrl,
     basePath,
@@ -220,6 +232,11 @@ async function main(): Promise<void> {
     hashInline: sha256Base64,
     generatedAt: catalog.generatedAt,
     apiUrl,
+    freshness: {
+      models: liveCatalog.primaryModels.length,
+      pricesChangedOn: liveCatalog.pricesLastChanged(),
+      sourcesCheckedOn: liveCatalog.sourcesLastChecked(),
+    },
   };
 
   await writeFileAt(fileFor(set.modelsIndex.path), renderModelsIndex(set, ctx));
