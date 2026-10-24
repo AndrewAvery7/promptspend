@@ -892,11 +892,11 @@
       }
     },
     {
-      "$note": "Pinned alias of mistral-mistral-large-4; Mistral's model page lists both `mistral-large-4` and `mistral-large-4-0` as API ids of the same model. Read on 2026-10-21 against that page: $1.36 input, $0.14 cached input, $4.18 output per 1M tokens, list price after the two-week 50%-off launch window that began 2026-10-06 ran out (see the sibling row). Also corrects the generated name \"Mistral Large 4 0\".",
+      "$note": "Pinned alias of mistral-mistral-large-4; Mistral's model page lists both `mistral-large-4` and `mistral-large-4-0` as API ids of the same model. Read on 2026-10-21 and again on 2026-10-24 against that page: $1.36 input, $0.14 cached input, $4.18 output per 1M tokens, no promotion shown, list price after the two-week 50%-off launch window that began 2026-10-06 ran out (see the sibling row). Also corrects the generated name \"Mistral Large 4 0\".",
       "id": "mistral-mistral-large-4-0",
       "displayName": "Mistral Large 4.0",
       "vendorVerified": true,
-      "lastVerified": "2026-10-21",
+      "lastVerified": "2026-10-24",
       "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4",
       "pricing": {
         "input": 1.36,
@@ -1324,12 +1324,18 @@
       "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models"
     },
     {
+      "$note": "Re-read 2026-10-24: docs.inceptionlabs.ai/get-started/models prints Mercury 2.5 at $0.20 input / $0.02 cached input / $0.75 output per 1M tokens, no promotion. The base price is written out explicitly because a bare `vendorVerified` does not stand the OpenRouter cross-check down, only a supplied base price does (same treatment as Kimi K3 and the Qwen rows). OpenRouter resells it at $0.04 / $0.15, 80% under the vendor's page; that is a reseller figure, not a vendor repricing.",
       "id": "inception-mercury-2.5",
       "providerId": "inception",
       "displayName": "Mercury 2.5",
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
-      "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models"
+      "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models",
+      "pricing": {
+        "input": 0.2,
+        "output": 0.75,
+        "cachedInput": 0.02
+      }
     },
     {
       "$note": "Added 2026-10-24 with the Microsoft provider. Rendered Azure Foundry Models pricing page: MAI-Thinking-1 Global $2 in / $0.20 cached / $8 out, matching the feed. Recorded at the Global deployment rate, consistent with this catalog's standard-tier global-endpoint scope. MAI-Cyber-1 Flash ($0.60 / $3.50) is deliberately NOT captured: it is a restricted-access security model (private preview for approved customers), the same reason GPT cyber and Claude Mythos were left out. MAI-Code-1.1-Flash is not captured (feed deprecation date 2026-12-09); MAI-DS-R1 is a DeepSeek derivative billed regionally.",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T14:34:13.023Z",
+  "generatedAt": "2026-10-24T15:36:31.660Z",
   "providers": [
     {
       "id": "anthropic",
@@ -2080,12 +2080,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-10-24",
-        "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (80%): $0.04/$0.15 vs $0.2/$0.75",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models"
       },
       "maxOutput": 65536
     },
@@ -2339,7 +2334,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-21",
+        "lastVerified": "2026-10-24",
         "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4",
         "needsReview": true,
         "reviewNote": "vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18",
