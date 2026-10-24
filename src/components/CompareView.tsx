@@ -155,7 +155,12 @@ const PAD = { left: 64, right: 24, top: 20, bottom: 48 };
  *  Estimated, not measured — see `labelled` for why. Erring high is the safe
  *  direction: it drops a borderline label rather than printing an overlap. */
 const LABEL_CHAR_W = 7.1;
-const LABEL_H = 13;
+/** Height above the baseline. Measured, not guessed: a 13px label's box spans
+ *  14px above its baseline and 3px below (17px in all). This was 13, one pixel
+ *  short, which let two labels one row apart touch without the placement ever
+ *  noticing — it surfaced when a rescore put two cheap models at nearly the
+ *  same price and capability. */
+const LABEL_H = 14;
 
 /** Tried in order. Above the dot reads best; the rest are fallbacks so a
  *  crowded cluster degrades to "moved" before it degrades to "missing". */

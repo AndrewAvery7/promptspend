@@ -25,6 +25,7 @@
       }
     },
     {
+      "$note": "Capability score rescored 100 -> 89 (2026-10-24): Artificial Analysis Intelligence Index 49.6, mapped onto this scale through four existing rows that also appear in the index. The earlier 100 pre-dated that measurement.",
       "id": "claude-fable-5",
       "providerId": "anthropic",
       "displayName": "Claude Fable 5",
@@ -33,7 +34,7 @@
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
-      "capabilityIndex": 100,
+      "capabilityIndex": 89,
       "pricing": {
         "input": 10,
         "output": 50,
@@ -43,6 +44,7 @@
       }
     },
     {
+      "$note": "Capability score rescored 96 -> 89 (2026-10-24): Artificial Analysis Intelligence Index 50.8, mapped onto this scale through four existing rows that also appear in the index. The earlier 96 pre-dated that measurement.",
       "id": "claude-opus-5",
       "providerId": "anthropic",
       "displayName": "Claude Opus 5",
@@ -51,7 +53,7 @@
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
-      "capabilityIndex": 96,
+      "capabilityIndex": 89,
       "pricing": {
         "input": 5,
         "output": 25,
@@ -80,6 +82,7 @@
       }
     },
     {
+      "$note": "Capability score rescored 94 -> 86 (2026-10-24): Artificial Analysis Intelligence Index 41.8, mapped onto this scale through four existing rows that also appear in the index. The earlier 94 pre-dated that measurement.",
       "id": "claude-opus-4-8",
       "providerId": "anthropic",
       "displayName": "Claude Opus 4.8",
@@ -88,7 +91,7 @@
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
-      "capabilityIndex": 94,
+      "capabilityIndex": 86,
       "pricing": {
         "input": 5,
         "output": 25,
@@ -98,7 +101,7 @@
       }
     },
     {
-      "$note": "The $2/$10 introductory window ran through 2026-08-31 with a planned step-up to $3/$15; the vendor cancelled it — on 2026-09-01 the pricing page stated the introductory rate \"is now the standard price\" and the increase \"will not occur\" — so the base price was rewritten to $2/$10 and the intro block removed the same morning. Recording the in-force rate as THE price is the specific trap here (it flattened this very window away once, on 2026-08-16): it reads correct on the day it is written, the weekly audit still says `agree` because LiteLLM lags the same way, and the row then silently misprices from the moment the window closes. An intro rate must always be written as `intro` + `until`, never as the base `pricing`; fold it into base only when the vendor retires the window, as here.",
+      "$note": "The $2/$10 introductory window ran through 2026-08-31 with a planned step-up to $3/$15; the vendor cancelled it — on 2026-09-01 the pricing page stated the introductory rate \"is now the standard price\" and the increase \"will not occur\" — so the base price was rewritten to $2/$10 and the intro block removed the same morning. Recording the in-force rate as THE price is the specific trap here (it flattened this very window away once, on 2026-08-16): it reads correct on the day it is written, the weekly audit still says `agree` because LiteLLM lags the same way, and the row then silently misprices from the moment the window closes. An intro rate must always be written as `intro` + `until`, never as the base `pricing`; fold it into base only when the vendor retires the window, as here. Capability score rescored 90 -> 81 (2026-10-24): Artificial Analysis Intelligence Index 38.2, mapped onto this scale through four existing rows that also appear in the index. The earlier 90 pre-dated that measurement.",
       "id": "claude-sonnet-5",
       "providerId": "anthropic",
       "displayName": "Claude Sonnet 5",
@@ -107,7 +110,7 @@
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
-      "capabilityIndex": 90,
+      "capabilityIndex": 81,
       "pricing": {
         "input": 2,
         "output": 10,
@@ -136,6 +139,7 @@
       }
     },
     {
+      "$note": "Capability score rescored 74 -> 66 (2026-10-24) as an ESTIMATE by family offset: the index measures only non-reasoning or no variant of this model, so its old score moved by the same amount as its measured siblings (measured Claude models moved by -8 on average).",
       "id": "claude-haiku-4-5",
       "providerId": "anthropic",
       "displayName": "Claude Haiku 4.5",
@@ -144,7 +148,7 @@
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 200000,
       "maxOutput": 64000,
-      "capabilityIndex": 74,
+      "capabilityIndex": 66,
       "pricing": {
         "input": 1,
         "output": 5,
@@ -154,26 +158,29 @@
       }
     },
     {
+      "$note": "Capability score rescored 92 -> 85 (2026-10-24): Artificial Analysis Intelligence Index 40.7, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
       "id": "claude-opus-4-7",
       "displayName": "Claude Opus 4.7",
-      "capabilityIndex": 92,
+      "capabilityIndex": 85,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
+      "$note": "Capability score rescored 89 -> 82 (2026-10-24) as an ESTIMATE by family offset: the index measures only non-reasoning or no variant of this model, so its old score moved by the same amount as its measured siblings (Claude Opus siblings measured by the index moved by -7 on average).",
       "id": "claude-opus-4-6",
       "displayName": "Claude Opus 4.6",
-      "capabilityIndex": 89,
+      "capabilityIndex": 82,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
+      "$note": "Capability score rescored 86 -> 79 (2026-10-24) as an ESTIMATE by family offset: the index measures only non-reasoning or no variant of this model, so its old score moved by the same amount as its measured siblings (Claude Opus siblings measured by the index moved by -7 on average).",
       "id": "claude-opus-4-5",
       "displayName": "Claude Opus 4.5",
       "status": "legacy",
-      "capabilityIndex": 86,
+      "capabilityIndex": 79,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
@@ -189,18 +196,20 @@
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
+      "$note": "Capability score rescored 85 -> 76 (2026-10-24) as an ESTIMATE by family offset: the index measures only non-reasoning or no variant of this model, so its old score moved by the same amount as its measured siblings (Claude Sonnet 5, the measured sibling, moved by -9).",
       "id": "claude-sonnet-4-6",
       "displayName": "Claude Sonnet 4.6",
-      "capabilityIndex": 85,
+      "capabilityIndex": 76,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
+      "$note": "Capability score rescored 78 -> 69 (2026-10-24) as an ESTIMATE by family offset: the index measures only non-reasoning or no variant of this model, so its old score moved by the same amount as its measured siblings (Claude Sonnet 5, the measured sibling, moved by -9).",
       "id": "claude-sonnet-4-5",
       "displayName": "Claude Sonnet 4.5",
       "status": "legacy",
-      "capabilityIndex": 78,
+      "capabilityIndex": 69,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
@@ -213,7 +222,7 @@
       "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
     },
     {
-      "$note": "Read on 2026-08-26. OpenAI’s pricing page now prints $4/$0.40/$5.00/$20 short-context and $8/$0.80/$10/$30 long-context for gpt-5.6-sol, and states: \"GPT-5.6 Sol’s promotional pricing is available at least through November 21, 2026.\" Those are promotional rates, not a repricing, so per the rule recorded on claude-sonnet-5 they go in `intro` and the list price stays as `pricing`. The list price is not reprinted on the page, but every promotional figure is exactly a uniform 20% off input and 33% off output of the recorded list set — 5→4, 30→20, 0.5→0.4, 6.25→5, 10→8, 45→30, 1→0.8, 12.5→10 — all eight reconcile, which is what confirms $5/$30 is still the correct base. Note \"at least through\": the window may be extended, so treat 2026-11-21 as a floor and re-read before it lapses. Schema limit: `intro` carries no long-context variant, so the promotional $8/$30 long-context tier cannot be expressed and `longContext` still shows list. This row stays flagged as `override-drift` by design — the feed reports the promotional $4/$20 while the base is $5/$30, exactly as it does for claude-sonnet-5. Re-read on 2026-10-14 to answer a recurring vendor-page-mismatch flag (\"promotional rate $2/$10 vs recorded intro $4/$20\"): the page is unchanged. Standard short-context still prints $4 / $0.40 cached / $5 cache writes / $20, long-context $8 / $0.80 / $10 / $30, and the promotion still runs \"at least through November 21, 2026\". The $2/$10 the automated reader reported is the Batch and Flex tiers, which print exactly half the Standard figures; reading those as the promotion then pushed the Standard $4/$20 into the list-price slot. The verifyHint below steers the reader to the Standard tier only. It names where to look, not what to find, so the reading stays blind.",
+      "$note": "Read on 2026-08-26. OpenAI’s pricing page now prints $4/$0.40/$5.00/$20 short-context and $8/$0.80/$10/$30 long-context for gpt-5.6-sol, and states: \"GPT-5.6 Sol’s promotional pricing is available at least through November 21, 2026.\" Those are promotional rates, not a repricing, so per the rule recorded on claude-sonnet-5 they go in `intro` and the list price stays as `pricing`. The list price is not reprinted on the page, but every promotional figure is exactly a uniform 20% off input and 33% off output of the recorded list set — 5→4, 30→20, 0.5→0.4, 6.25→5, 10→8, 45→30, 1→0.8, 12.5→10 — all eight reconcile, which is what confirms $5/$30 is still the correct base. Note \"at least through\": the window may be extended, so treat 2026-11-21 as a floor and re-read before it lapses. Schema limit: `intro` carries no long-context variant, so the promotional $8/$30 long-context tier cannot be expressed and `longContext` still shows list. This row stays flagged as `override-drift` by design — the feed reports the promotional $4/$20 while the base is $5/$30, exactly as it does for claude-sonnet-5. Re-read on 2026-10-14 to answer a recurring vendor-page-mismatch flag (\"promotional rate $2/$10 vs recorded intro $4/$20\"): the page is unchanged. Standard short-context still prints $4 / $0.40 cached / $5 cache writes / $20, long-context $8 / $0.80 / $10 / $30, and the promotion still runs \"at least through November 21, 2026\". The $2/$10 the automated reader reported is the Batch and Flex tiers, which print exactly half the Standard figures; reading those as the promotion then pushed the Standard $4/$20 into the list-price slot. The verifyHint below steers the reader to the Standard tier only. It names where to look, not what to find, so the reading stays blind. Capability score rescored 95 -> 88 (2026-10-24): Artificial Analysis Intelligence Index 47, mapped onto this scale through four existing rows that also appear in the index. The earlier 95 pre-dated that measurement.",
       "id": "gpt-5.6-sol",
       "providerId": "openai",
       "displayName": "GPT-5.6 Sol",
@@ -221,7 +230,7 @@
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "verifyHint": "Read the Standard tier only. This page lists every model under several processing tiers — Batch, Flex, Standard, and Fast (formerly Priority) — and Batch and Flex print lower figures for the same model; ignore every tier except Standard. Read both the short-context and long-context Standard rows.",
-      "capabilityIndex": 95,
+      "capabilityIndex": 88,
       "pricing": {
         "input": 5,
         "output": 30,
@@ -269,13 +278,14 @@
       }
     },
     {
+      "$note": "Capability score rescored 72 -> 80 (2026-10-24): Artificial Analysis Intelligence Index 37.3, mapped onto this scale through four existing rows that also appear in the index. The earlier 72 pre-dated that measurement.",
       "id": "gpt-5.6-luna",
       "providerId": "openai",
       "displayName": "GPT-5.6 Luna",
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-      "capabilityIndex": 72,
+      "capabilityIndex": 80,
       "pricing": {
         "input": 0.2,
         "output": 1.2,
@@ -292,13 +302,14 @@
       }
     },
     {
+      "$note": "Capability score rescored 93 -> 81 (2026-10-24): Artificial Analysis Intelligence Index 38.4, mapped onto this scale through four existing rows that also appear in the index. The earlier 93 pre-dated that measurement.",
       "id": "gpt-5.5",
       "providerId": "openai",
       "displayName": "GPT-5.5",
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-      "capabilityIndex": 93,
+      "capabilityIndex": 81,
       "pricing": {
         "input": 5,
         "output": 30,
@@ -313,13 +324,14 @@
       }
     },
     {
+      "$note": "Capability score rescored 87 -> 81 (2026-10-24): Artificial Analysis Intelligence Index 39, an ESTIMATED index (computed from a subset of evaluations); mapped value 83, held at GPT-5.5 (81) so an older model never outscores its measured successor, mapped onto this scale through four existing rows that also appear in the index.",
       "id": "gpt-5.4",
       "providerId": "openai",
       "displayName": "GPT-5.4",
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-      "capabilityIndex": 87,
+      "capabilityIndex": 81,
       "pricing": {
         "input": 2.5,
         "output": 15,
@@ -334,13 +346,14 @@
       }
     },
     {
+      "$note": "Capability score rescored 76 -> 69 (2026-10-24): Artificial Analysis Intelligence Index 24.1, mapped onto this scale through four existing rows that also appear in the index. The earlier 76 pre-dated that measurement.",
       "id": "gpt-5.4-mini",
       "providerId": "openai",
       "displayName": "GPT-5.4 Mini",
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-      "capabilityIndex": 76,
+      "capabilityIndex": 69,
       "pricing": {
         "input": 0.75,
         "output": 4.5,
@@ -349,13 +362,14 @@
       }
     },
     {
+      "$note": "Capability score rescored 62 -> 67 (2026-10-24): Artificial Analysis Intelligence Index 20.7, mapped onto this scale through four existing rows that also appear in the index. The earlier 62 pre-dated that measurement.",
       "id": "gpt-5.4-nano",
       "providerId": "openai",
       "displayName": "GPT-5.4 Nano",
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
-      "capabilityIndex": 62,
+      "capabilityIndex": 67,
       "pricing": {
         "input": 0.2,
         "output": 1.25,
@@ -364,17 +378,19 @@
       }
     },
     {
+      "$note": "Capability score rescored 82 -> 74 (2026-10-24): Artificial Analysis Intelligence Index 30.4, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
       "id": "gpt-5.2",
       "displayName": "GPT-5.2",
-      "capabilityIndex": 82,
+      "capabilityIndex": 74,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
+      "$note": "Capability score rescored 80 -> 70 (2026-10-24): Artificial Analysis Intelligence Index 24.7, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
       "id": "gpt-5.1",
       "displayName": "GPT-5.1",
-      "capabilityIndex": 80,
+      "capabilityIndex": 70,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
@@ -401,9 +417,10 @@
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
+      "$note": "Capability score rescored 70 -> 63 (2026-10-24): Artificial Analysis Intelligence Index 16.7, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
       "id": "o4-mini",
       "displayName": "o4-mini",
-      "capabilityIndex": 70,
+      "capabilityIndex": 63,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
@@ -430,9 +447,10 @@
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
+      "$note": "Capability score rescored 88 -> 74 (2026-10-24): Artificial Analysis Intelligence Index 29.7, mapped onto this scale through four existing rows that also appear in the index. The earlier 88 pre-dated that measurement.",
       "id": "gemini-gemini-3.1-pro-preview",
       "displayName": "Gemini 3.1 Pro",
-      "capabilityIndex": 88,
+      "capabilityIndex": 74,
       "pricing": {
         "input": 2,
         "output": 12,
@@ -449,9 +467,10 @@
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
+      "$note": "Capability score rescored 82 -> 77 (2026-10-24): Artificial Analysis Intelligence Index 34, mapped onto this scale through four existing rows that also appear in the index. The earlier 82 pre-dated that measurement.",
       "id": "gemini-gemini-3.6-flash",
       "displayName": "Gemini 3.6 Flash",
-      "capabilityIndex": 82,
+      "capabilityIndex": 77,
       "pricing": {
         "input": 1.5,
         "output": 7.5,
@@ -469,11 +488,11 @@
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
-      "$note": "Capability score 83 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between Gemini 3.6 Flash (82) and Gemini 3.8 Flash (85), at the same price as 3.6.",
+      "$note": "Capability score 83 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between Gemini 3.6 Flash (82) and Gemini 3.8 Flash (85), at the same price as 3.6. Capability score re-estimated 83 -> 81 (2026-10-24): now midway between Gemini 3.6 Flash (77) and Gemini 3.8 Flash (85), at the same price as 3.6. Still an ESTIMATE, not a measurement.",
       "id": "gemini-gemini-3.7-flash",
       "providerId": "google",
       "displayName": "Gemini 3.7 Flash",
-      "capabilityIndex": 83,
+      "capabilityIndex": 81,
       "pricing": {
         "input": 1.5,
         "output": 7.5,
@@ -502,9 +521,10 @@
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
+      "$note": "Capability score rescored 74 -> 63 (2026-10-24): Artificial Analysis Intelligence Index 16.1, mapped onto this scale through four existing rows that also appear in the index. The earlier 74 pre-dated that measurement.",
       "id": "gemini-gemini-2.5-pro",
       "displayName": "Gemini 2.5 Pro",
-      "capabilityIndex": 74,
+      "capabilityIndex": 63,
       "pricing": {
         "input": 1.25,
         "output": 10,
@@ -537,10 +557,10 @@
       "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
     },
     {
-      "$note": "PRICE CUT, read on 2026-09-16 on DeepSeek's own pricing page. The rate fell from $0.44/$1.32 with $0.014 cache-hit to $0.30/$1.20 with $0.006 — these are the PEAK figures, per $timeOfDay; the page's off-peak column is exactly half and is not modelled. The cut arrived with a rename: the page's first column is now `deepseek-flash`, model version DeepSeek-V4.1-Flash, and its footnote (1) reads \"The legacy names `deepseek-v4-flash` and `deepseek-v4-flash-vision-exp` are still accepted, but the corresponding models have been retired, their requests are served by the DeepSeek-V4.1-Flash model and billed at the Flash price.\" So the id this row describes is still callable and still billed at the figures recorded here — the row stays, and it is not marked legacy, because unlike DeepSeek R1 the name has not stopped working. The column mapping was cross-checked rather than trusted: the page's second column is deepseek-v4-pro at $1.32/$3.96/$0.044, which matches this catalog's independently verified V4 Pro row on all three figures, so the first column is unambiguously Flash. A displayName change to \"DeepSeek Flash\" was deliberately NOT made — the name is this model's public page heading and its search-result title, and renaming a live page is a human's call, not a verification pass's.",
+      "$note": "PRICE CUT, read on 2026-09-16 on DeepSeek's own pricing page. The rate fell from $0.44/$1.32 with $0.014 cache-hit to $0.30/$1.20 with $0.006 — these are the PEAK figures, per $timeOfDay; the page's off-peak column is exactly half and is not modelled. The cut arrived with a rename: the page's first column is now `deepseek-flash`, model version DeepSeek-V4.1-Flash, and its footnote (1) reads \"The legacy names `deepseek-v4-flash` and `deepseek-v4-flash-vision-exp` are still accepted, but the corresponding models have been retired, their requests are served by the DeepSeek-V4.1-Flash model and billed at the Flash price.\" So the id this row describes is still callable and still billed at the figures recorded here — the row stays, and it is not marked legacy, because unlike DeepSeek R1 the name has not stopped working. The column mapping was cross-checked rather than trusted: the page's second column is deepseek-v4-pro at $1.32/$3.96/$0.044, which matches this catalog's independently verified V4 Pro row on all three figures, so the first column is unambiguously Flash. A displayName change to \"DeepSeek Flash\" was deliberately NOT made — the name is this model's public page heading and its search-result title, and renaming a live page is a human's call, not a verification pass's. Capability score rescored 68 -> 87 (2026-10-24): Artificial Analysis Intelligence Index 45.1 for the V4.1 Flash release this row is billed as, mapped onto this scale through four existing rows that also appear in the index. The earlier 68 pre-dated that measurement.",
       "id": "deepseek-deepseek-v4-flash",
       "displayName": "DeepSeek V4 Flash",
-      "capabilityIndex": 68,
+      "capabilityIndex": 87,
       "contextWindow": 1000000,
       "maxOutput": 384000,
       "pricing": {
@@ -573,9 +593,10 @@
       "status": "deprecated"
     },
     {
+      "$note": "Capability score rescored 82 -> 72 (2026-10-24): Artificial Analysis Intelligence Index 27, mapped onto this scale through four existing rows that also appear in the index. The earlier 82 pre-dated that measurement.",
       "id": "moonshot-kimi-k2.6",
       "displayName": "Kimi K2.6",
-      "capabilityIndex": 82,
+      "capabilityIndex": 72,
       "contextWindow": 262144,
       "pricing": {
         "input": 0.95,
@@ -608,10 +629,10 @@
       "capabilityIndex": 78
     },
     {
-      "$note": "CONFIRMED CORRECT, re-read on 2026-09-16 — $2.5 input / $7.5 output is exactly what the Singapore (International) table of the Model Studio pricing page prints for qwen3.7-max, and for its qwen3.7-max-2026-06-08 and qwen3.7-max-2026-05-20 builds, over 0<Token<=1M. Two things have changed since the 2026-08-26 read carried below. First, that table now prints the figures flat: the only discount marked against the row is the context-caching link, with no 'Limited-time 50% off' label beside either price, so the concern recorded below that this row overstates the in-force rate by 50% does not apply to what the page shows today. Second, the daily vendor-page check began reporting this row as a mismatch at $1.65/$4.951. That is NOT a repricing and must never be copied here: the page renders a separate table for each of Singapore, China (Beijing), Hong Kong (China), Germany (Frankfurt), US (Virginia) and Japan (Tokyo), every one of them listing qwen3.7-max, and $1.65/$4.951 is the China (Beijing) table — whose row additionally carries a 50% batch-inference label the Singapore row does not. The reader was reading the wrong region, so this row now carries a `verifyHint` naming the table to read; the mismatch was a checker fault, not a price fault, and the record needed no correction. PREVIOUS NOTE (2026-08-26): Read on 2026-08-26 in the Singapore/International section of the Model Studio pricing page, which prints \"List price $2.5 / Limited-time 50% off\" for input and \"List price $7.5 / Limited-time 50% off\" for output. The list price is what is recorded here. The 50% discount is deliberately NOT written as `intro`: Alibaba states no end date for it anywhere on the page, and `intro` requires `until` — inventing a deadline would be fabricated provenance. Consequence: while the promotion runs, this row overstates the in-force rate by 50%. That is the safe direction to be wrong, but it is wrong; if Alibaba ever publishes an end date, add `intro` at $1.25/$3.75 with that date. Separately, the per-model page /model-studio/qwen3-7-max shows $1.65/$4.951 — that is the China/Global regional rate, NOT the International (Singapore) rate this catalog uses, so it must not be copied here. That page has no International table at all, which is why the earlier verification against it never settled anything.",
+      "$note": "CONFIRMED CORRECT, re-read on 2026-09-16 — $2.5 input / $7.5 output is exactly what the Singapore (International) table of the Model Studio pricing page prints for qwen3.7-max, and for its qwen3.7-max-2026-06-08 and qwen3.7-max-2026-05-20 builds, over 0<Token<=1M. Two things have changed since the 2026-08-26 read carried below. First, that table now prints the figures flat: the only discount marked against the row is the context-caching link, with no 'Limited-time 50% off' label beside either price, so the concern recorded below that this row overstates the in-force rate by 50% does not apply to what the page shows today. Second, the daily vendor-page check began reporting this row as a mismatch at $1.65/$4.951. That is NOT a repricing and must never be copied here: the page renders a separate table for each of Singapore, China (Beijing), Hong Kong (China), Germany (Frankfurt), US (Virginia) and Japan (Tokyo), every one of them listing qwen3.7-max, and $1.65/$4.951 is the China (Beijing) table — whose row additionally carries a 50% batch-inference label the Singapore row does not. The reader was reading the wrong region, so this row now carries a `verifyHint` naming the table to read; the mismatch was a checker fault, not a price fault, and the record needed no correction. PREVIOUS NOTE (2026-08-26): Read on 2026-08-26 in the Singapore/International section of the Model Studio pricing page, which prints \"List price $2.5 / Limited-time 50% off\" for input and \"List price $7.5 / Limited-time 50% off\" for output. The list price is what is recorded here. The 50% discount is deliberately NOT written as `intro`: Alibaba states no end date for it anywhere on the page, and `intro` requires `until` — inventing a deadline would be fabricated provenance. Consequence: while the promotion runs, this row overstates the in-force rate by 50%. That is the safe direction to be wrong, but it is wrong; if Alibaba ever publishes an end date, add `intro` at $1.25/$3.75 with that date. Separately, the per-model page /model-studio/qwen3-7-max shows $1.65/$4.951 — that is the China/Global regional rate, NOT the International (Singapore) rate this catalog uses, so it must not be copied here. That page has no International table at all, which is why the earlier verification against it never settled anything. Capability score rescored 83 -> 74 (2026-10-24): Artificial Analysis Intelligence Index 29.5, mapped onto this scale through four existing rows that also appear in the index. The earlier 83 pre-dated that measurement.",
       "id": "dashscope-qwen3.7-max",
       "displayName": "Qwen 3.7 Max",
-      "capabilityIndex": 83,
+      "capabilityIndex": 74,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
@@ -622,10 +643,10 @@
       }
     },
     {
-      "$note": "Read on 2026-08-26: the Model Studio pricing page lists qwen3-next-80b-a3b-instruct (International/Singapore, non-thinking) at $0.15 input / $1.2 output per 1M tokens, matching what was already published. The numbers are written out explicitly rather than left to the feed because a bare `vendorVerified` does NOT silence the OpenRouter cross-check — that check only stands down when the override supplies a base price. OpenRouter resells this at $0.1/$1.1; the gap is its own routing margin, not a vendor repricing.",
+      "$note": "Read on 2026-08-26: the Model Studio pricing page lists qwen3-next-80b-a3b-instruct (International/Singapore, non-thinking) at $0.15 input / $1.2 output per 1M tokens, matching what was already published. The numbers are written out explicitly rather than left to the feed because a bare `vendorVerified` does NOT silence the OpenRouter cross-check — that check only stands down when the override supplies a base price. OpenRouter resells this at $0.1/$1.1; the gap is its own routing margin, not a vendor repricing. Capability score rescored 70 -> 58 (2026-10-24): Artificial Analysis Intelligence Index 9.6, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "displayName": "Qwen3 Next 80B",
-      "capabilityIndex": 70,
+      "capabilityIndex": 58,
       "vendorVerified": true,
       "lastVerified": "2026-09-17",
       "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
@@ -651,9 +672,10 @@
       }
     },
     {
+      "$note": "Capability score rescored 80 -> 71 (2026-10-24): Artificial Analysis Intelligence Index 26.1, mapped onto this scale through four existing rows that also appear in the index. The earlier 80 pre-dated that measurement.",
       "id": "zai-glm-5.1",
       "displayName": "GLM-5.1",
-      "capabilityIndex": 80,
+      "capabilityIndex": 71,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
@@ -664,10 +686,10 @@
       }
     },
     {
-      "$note": "Confirmed on 2026-09-02 against Z.ai's own pricing page, which prints $1.4 input / $0.26 cached / $4.4 output — matching the feed exactly. Recording the price rather than provenance alone is deliberate: this row carried an `openrouter-disagreement` flag ($0.966/$3.036), and only a supplied base price stands that cross-check down — `vendorVerified` alone does not. OpenRouter's figure is its own reseller margin, the 20-50% gap `$coverage` describes, not a Z.ai rate. No `capabilityIndex`: that field is illustrative, and picking one to get a new model onto the value map would dress a guess as a measurement. Capability score 83 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between GLM-5.1 (80) and GLM-5.3 (87), at the same price as both.",
+      "$note": "Confirmed on 2026-09-02 against Z.ai's own pricing page, which prints $1.4 input / $0.26 cached / $4.4 output — matching the feed exactly. Recording the price rather than provenance alone is deliberate: this row carried an `openrouter-disagreement` flag ($0.966/$3.036), and only a supplied base price stands that cross-check down — `vendorVerified` alone does not. OpenRouter's figure is its own reseller margin, the 20-50% gap `$coverage` describes, not a Z.ai rate. No `capabilityIndex`: that field is illustrative, and picking one to get a new model onto the value map would dress a guess as a measurement. Capability score 83 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between GLM-5.1 (80) and GLM-5.3 (87), at the same price as both. Capability score re-estimated 83 -> 79 (2026-10-24): now midway between GLM-5.1 (71) and GLM-5.3 (87), at the same price as both. Still an ESTIMATE, not a measurement.",
       "id": "zai-glm-5.2",
       "displayName": "GLM-5.2",
-      "capabilityIndex": 83,
+      "capabilityIndex": 79,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
@@ -692,9 +714,10 @@
       }
     },
     {
+      "$note": "Capability score rescored 76 -> 71 (2026-10-24): Artificial Analysis Intelligence Index 27.9, an ESTIMATED index (computed from a subset of evaluations); mapped value 72, held at GLM-5.1 (71) so an older model never outscores its measured successor, mapped onto this scale through four existing rows that also appear in the index.",
       "id": "zai-glm-5",
       "displayName": "GLM-5",
-      "capabilityIndex": 76,
+      "capabilityIndex": 71,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
@@ -729,9 +752,10 @@
       }
     },
     {
+      "$note": "Capability score rescored 78 -> 71 (2026-10-24) as an ESTIMATE by family offset: the index measures only non-reasoning or no variant of this model, so its old score moved by the same amount as its measured siblings (measured GLM siblings (5 and 5.1) moved by -7 on average).",
       "id": "zai-glm-5-code",
       "displayName": "GLM-5 Code",
-      "capabilityIndex": 78
+      "capabilityIndex": 71
     },
     {
       "id": "minimax-minimax-m3",
@@ -791,9 +815,10 @@
       }
     },
     {
+      "$note": "Capability score rescored 80 -> 70 (2026-10-24): Artificial Analysis Intelligence Index 24.9, mapped onto this scale through four existing rows that also appear in the index. The earlier 80 pre-dated that measurement.",
       "id": "xai-grok-4.3",
       "displayName": "Grok 4.3",
-      "capabilityIndex": 80,
+      "capabilityIndex": 70,
       "vendorVerified": true,
       "lastVerified": "2026-10-24",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
@@ -881,9 +906,10 @@
       }
     },
     {
+      "$note": "Capability score rescored 71 -> 57 (2026-10-24): Artificial Analysis Intelligence Index 9.3, mapped onto this scale through four existing rows that also appear in the index. The earlier 71 pre-dated that measurement.",
       "id": "mistral-mistral-large-3",
       "displayName": "Mistral Large 3",
-      "capabilityIndex": 71
+      "capabilityIndex": 57
     },
     {
       "$note": "Read on 2026-10-21 to answer an openrouter-disagreement flag (OpenRouter $1.36/$4.18 vs recorded $0.68/$2.09). Mistral's model page (rendered in a browser, USD) prints Mistral Large 4 at $1.36 input, $0.14 cached input, $4.18 output per 1M tokens, with no strikethrough or promotional wording; the API pricing page's Flagship table prints the same three figures. Mistral's changelog explains the gap: the model went into Public Preview on 2026-10-06 with \"Launch pricing: 50% off for 2 weeks\". The recorded $0.68/$0.068/$2.09 was that launch discount, published from the feed when the model was discovered; the window has now run out, so this is a genuine move to list price, not a correction. The promotion can no longer be recorded as `intro` because it has already lapsed. Same treatment as the pinned alias mistral-mistral-large-4-0. Capability score 81: Artificial Analysis Intelligence Index 38 for Mistral Large 4 Preview (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
@@ -919,24 +945,28 @@
       "status": "deprecated"
     },
     {
+      "$note": "Capability score rescored 68 -> 61 (2026-10-24): Artificial Analysis Intelligence Index 14.2, mapped onto this scale through four existing rows that also appear in the index. The earlier 68 pre-dated that measurement.",
       "id": "mistral-mistral-medium-3-5",
       "displayName": "Mistral Medium 3.5",
-      "capabilityIndex": 68
+      "capabilityIndex": 61
     },
     {
+      "$note": "Capability score rescored 75 -> 55 (2026-10-24): Artificial Analysis Intelligence Index 7, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
       "id": "command-a-03-2025",
       "displayName": "Command A",
-      "capabilityIndex": 75
+      "capabilityIndex": 55
     },
     {
+      "$note": "Capability score rescored 80 -> 61 (2026-10-24): Artificial Analysis Intelligence Index 14.2, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
       "id": "amazon.nova-2-pro-preview-20251202-v1-0",
       "displayName": "Nova 2 Pro",
-      "capabilityIndex": 80
+      "capabilityIndex": 61
     },
     {
+      "$note": "Capability score rescored 64 -> 60 (2026-10-24): Artificial Analysis Intelligence Index 12.5, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
       "id": "amazon.nova-2-lite-v1-0",
       "displayName": "Nova 2 Lite",
-      "capabilityIndex": 64
+      "capabilityIndex": 60
     },
     {
       "id": "gemini-gemini-2.5-flash",
