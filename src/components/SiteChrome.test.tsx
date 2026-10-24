@@ -26,7 +26,7 @@ const CONTEXT: RenderContext = {
   generatedAt: '2026-08-02T02:00:00.000Z',
   apiUrl: DEVELOPER_HUB_URL,
   hashInline: () => 'hash',
-  freshness: { models: 1, pricesChangedOn: '2026-07-04', sourcesCheckedOn: '2026-07-05' },
+  freshness: { models: 1, pricesChangedOn: '2026-07-04', sourcesCheckedOn: '2026-07-05', degraded: false },
 };
 
 function generated(path = '/models/', ctx: RenderContext = CONTEXT) {
@@ -58,10 +58,11 @@ const noop = () => undefined;
 function calculatorHeader() {
   return render(
     <Header
+      base="/"
       view="estimate"
       onView={noop}
-      pricesChangedOn={null}
-      sourcesCheckedOn={null}
+      pricesChangedOn="2026-07-04"
+      sourcesCheckedOn="2026-07-05"
       degraded={false}
       tourActive={false}
       tourPulse={false}
@@ -90,6 +91,13 @@ afterEach(() => {
 
 const SIX = ['Estimate', 'Compare', 'Learn', 'Data & Alerts', 'PromptSpend It', 'Free Tiers'];
 
+/** Every control in a header, by the name a person would hear: label or words. */
+function controls(root: ParentNode): string[] {
+  return [...root.querySelectorAll('.header button, .header a')].map((el) =>
+    (el.getAttribute('aria-label') ?? el.textContent ?? '').replace(/\s+/g, ' ').trim(),
+  );
+}
+
 describe('the header', () => {
   it('has the same six links, with Tiers capitalised, on the calculator', () => {
     calculatorHeader();
@@ -97,11 +105,28 @@ describe('the header', () => {
     expect(words(nav, 'button, a')).toEqual(SIX);
   });
 
-  it('has the same six links on a generated page, and marks the page it is on', () => {
-    const page = generated('/free-tiers/');
-    const nav = page.querySelector('nav[aria-label="Main"]')!;
-    expect(words(nav, 'a')).toEqual(SIX);
+  it('is the calculator header, control for control, on a generated page', () => {
+    // Not a lookalike: the page draws the calculator's own component to static
+    // HTML at build time, so everything it has is here - search, Apps, Guided
+    // tour, the appearance picker, the dark-mode switch and the freshness line.
+    const { container } = calculatorHeader();
+    const page = generated('/models/');
+    expect(controls(page)).toEqual(controls(container));
+    expect(controls(page)).toContain('Appearance options');
+    expect(controls(page)).toContain('Switch to dark mode');
+    expect(words(page, '.header .freshness__text')).toEqual(words(container, '.freshness__text'));
+    expect(words(page, '.header .freshness__text')[0]).toBe(
+      'prices last changed 2026-07-04 · sources checked 2026-07-05',
+    );
+    expect(page.querySelector('.header .kbd-button')).not.toBeNull();
+    expect(page.querySelector('.header a.get-app')?.getAttribute('href')).toBe('/app/');
+  });
+
+  it('marks the page it is on', () => {
+    const nav = generated('/free-tiers/').querySelector('nav[aria-label="Main"]')!;
+    expect(words(nav, 'a')).toEqual(['PromptSpend It', 'Free Tiers']);
     expect(nav.querySelector('a[aria-current="page"]')?.textContent).toBe('Free Tiers');
+    expect(generated('/models/').querySelector('nav a[aria-current]')).toBeNull();
   });
 
   it('points the two real pages at the same addresses on the calculator and the generated pages', () => {
@@ -114,12 +139,17 @@ describe('the header', () => {
     }
   });
 
-  it('has the same six links on the Receipt page, Free Tiers included', async () => {
-    render(<ReceiptPage />);
-    const nav = screen.getByRole('navigation', { name: 'Main' });
-    expect(words(nav, 'a')).toEqual(SIX);
-    expect(within(nav).getByRole('link', { name: 'Free Tiers' })).toHaveAttribute('href', '/free-tiers/');
+  it('is the same header on the Receipt page, controls and all', async () => {
+    const { container } = calculatorHeader();
+    const calculator = controls(container);
+    const receipt = render(<ReceiptPage />);
     await waitFor(() => expect(fetch).toHaveBeenCalled());
+    const nav = within(receipt.container).getByRole('navigation', { name: 'Main' });
+    expect(words(nav, 'button, a')).toEqual(SIX);
+    expect(within(nav).getByRole('link', { name: 'Free Tiers' })).toHaveAttribute('href', '/free-tiers/');
+    expect(within(nav).getByRole('link', { name: 'PromptSpend It' })).toHaveAttribute('aria-current', 'page');
+    expect(controls(receipt.container)).toEqual(calculator);
+    expect(receipt.container.querySelector('.freshness')).not.toBeNull();
   });
 });
 
@@ -162,6 +192,7 @@ describe('the footer', () => {
         models: catalog.primaryModels.length,
         pricesChangedOn: catalog.pricesLastChanged(),
         sourcesCheckedOn: catalog.sourcesLastChecked(),
+        degraded: false,
       },
     };
     const alts = (root: ParentNode) =>

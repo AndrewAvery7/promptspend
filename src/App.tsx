@@ -123,11 +123,15 @@ function Workspace({ catalog }: { catalog: Catalog }) {
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   }, [view]);
-  const [tourStep, setTourStep] = useState<number | null>(null);
+  // The other pages' "Guided tour" button links here as `/#tour`. It is read
+  // while the first render is under way, because the estimator rewrites the
+  // address as soon as it mounts and that drops the hash.
+  const [tourRequested] = useState(() => window.location.hash === '#tour');
+  const [tourStep, setTourStep] = useState<number | null>(tourRequested ? 0 : null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [welcomeDismissed, setWelcomeDismissed] = useState(() => {
     try {
-      return localStorage.getItem(WELCOME_KEY) === '1';
+      return tourRequested || localStorage.getItem(WELCOME_KEY) === '1';
     } catch {
       return false;
     }
@@ -159,6 +163,25 @@ function Workspace({ catalog }: { catalog: Catalog }) {
   }, [dismissWelcome]);
 
   const stopTour = useCallback(() => setTourStep(null), []);
+
+  // A tour asked for by the address counts as seen, as starting it by hand does;
+  // and the same link followed on this page is handled the same way.
+  useEffect(() => {
+    if (tourRequested) {
+      try {
+        localStorage.setItem(WELCOME_KEY, '1');
+      } catch {
+        /* ignore */
+      }
+    }
+    const onHash = () => {
+      if (window.location.hash !== '#tour') return;
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+      startTour();
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, [tourRequested, startTour]);
 
   // Ctrl/Cmd-K opens the palette from anywhere.
   useEffect(() => {
@@ -252,6 +275,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
     <>
       <Ticker catalog={catalog} />
       <Header
+        base={import.meta.env.BASE_URL}
         view={view}
         onView={setView}
         pricesChangedOn={catalog.pricesLastChanged()}

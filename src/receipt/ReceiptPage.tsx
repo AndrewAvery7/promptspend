@@ -1,18 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FREE_TIERS_URL, HEALTH_URL, PRICING_SCOPE, PRICING_URL, RECEIPT_URL } from '@/config';
-import { NAV_LABELS } from '@/lib/links';
+import { HEALTH_URL, PRICING_SCOPE, PRICING_URL } from '@/config';
 import { loadCatalog, type Catalog } from '@/lib/pricing/catalog';
 import { SiteFooter } from '@/components/SiteFooter';
+import { SiteHeader } from '@/components/SiteHeader';
 import { Ticker } from '@/components/Ticker';
 import { useAppearance } from '@/state/useAppearance';
 import { ReceiptObject } from './ReceiptObject';
 import { ShareReceiptBuilder, dispatchReceiptEvent } from './ShareReceiptBuilder';
-import {
-  PRICING_API_URL,
-  RECEIPT_INSTRUCTIONS_URL,
-  RECEIPT_SPEC_URL,
-  renderReceiptInstructions,
-} from './receiptSpec';
+import { RECEIPT_INSTRUCTIONS_URL, RECEIPT_SPEC_URL, renderReceiptInstructions } from './receiptSpec';
 
 type CatalogState =
   { status: 'loading' } | { status: 'ready'; catalog: Catalog } | { status: 'error'; message: string };
@@ -104,49 +99,25 @@ export function ReceiptPage() {
           </div>
         </div>
       )}
-      {/* The same navigation as the calculator's header, so the Receipt reads as a
-          page of the site rather than a separate product (Andrew, 2026-09-05).
-          The view links go through the hash, which App.tsx honours. */}
-      <header className="receipt-header">
-        <div className="receipt-header__inner">
-          <a className="receipt-header__brand" href={import.meta.env.BASE_URL} aria-label="PromptSpend home">
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-              <rect x="1.5" y="1.5" width="23" height="23" rx="6" stroke="currentColor" strokeWidth="2" />
-              <path
-                d="M7 9.5h12M7 13.5h8M7 17.5h10"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-            <span>
-              Prompt<strong>Spend</strong>
-            </span>
-          </a>
-          <nav className="receipt-nav" aria-label="Main">
-            <a href={import.meta.env.BASE_URL}>{NAV_LABELS.estimate}</a>
-            <a href={`${import.meta.env.BASE_URL}#compare`}>{NAV_LABELS.compare}</a>
-            <a href={`${import.meta.env.BASE_URL}#learn`}>{NAV_LABELS.learn}</a>
-            <a href={`${import.meta.env.BASE_URL}#data`}>{NAV_LABELS.data}</a>
-            <a href={RECEIPT_URL} aria-current="page">
-              {NAV_LABELS.receipt}
-            </a>
-            <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a>
-          </nav>
-          <div className="receipt-header__spacer" />
-          <a className="receipt-header__api" href={PRICING_API_URL}>
-            Pricing API
-          </a>
-          <button
-            type="button"
-            className="receipt-header__theme"
-            onClick={appearance.toggleTheme}
-            aria-label={appearance.theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-          >
-            {appearance.theme === 'light' ? 'Dark' : 'Light'} mode
-          </button>
-        </div>
-      </header>
+      {/* The calculator's own header, whole: the same six links, search, Apps,
+          Guided tour, appearance controls and freshness line (Andrew,
+          2026-10-24; first the nav, 2026-09-05). Its views are links into the
+          calculator, which honours `/#compare` and the others. */}
+      <SiteHeader
+        base={import.meta.env.BASE_URL}
+        current="receipt"
+        appearance={appearance}
+        catalog={catalogState.status === 'ready' ? catalogState.catalog : null}
+        freshness={
+          catalogState.status === 'ready'
+            ? {
+                pricesChangedOn: catalogState.catalog.pricesLastChanged(),
+                sourcesCheckedOn: catalogState.catalog.sourcesLastChecked(),
+                degraded: catalogState.catalog.health?.outcome === 'degraded',
+              }
+            : null
+        }
+      />
 
       <main id="receipt-main">
         <section className="receipt-hero" aria-labelledby="receipt-heading">

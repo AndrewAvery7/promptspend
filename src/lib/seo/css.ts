@@ -1,18 +1,28 @@
 /**
  * The whole stylesheet for the generated pages, as one string.
  *
- * These pages ship no JavaScript, so the theme is `prefers-color-scheme` alone —
- * there is no toggle, because a toggle needs a script and a script needs a
- * Content Security Policy exception, and neither is worth it on a page whose
- * job is to state some numbers and be readable in a search result.
+ * Without scripts, the theme is `prefers-color-scheme` alone. With them (since
+ * 2026-10-24 every page carries the calculator's live header, from
+ * `src/chrome/site-header.tsx`) a small blocking script sets `data-theme`,
+ * `data-accent` and `data-canvas` from the visitor's saved choices before first
+ * paint, and the site's token sheet - linked beside this one - takes over. So
+ * the tokens below apply only while `data-theme` is absent: the page reads
+ * completely either way, which is what a crawler and a reader with scripts off
+ * get.
  *
  * The colours are lifted from `src/styles/tokens.css` so a visitor arriving
  * from Google and then clicking into the calculator does not appear to change
  * websites. They are duplicated rather than imported because the app's tokens
  * are compiled into a hashed bundle these pages deliberately do not load.
  */
-export const PAGE_CSS = `:root {
-  color-scheme: light dark;
+export const PAGE_CSS = `:root { color-scheme: light dark; }
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
+/* These tokens are the page's own, for a visitor with no scripts. Once the
+ * theme script has set data-theme (it does so before first paint), the same
+ * names come from the site's token sheet instead, which is what lets the
+ * header's theme switch, accent and canvas pickers repaint the whole page. */
+:root:not([data-theme]) {
   --bg: #ebeff5;
   --surface: #ffffff;
   --surface-2: #fafbfd;
@@ -29,7 +39,7 @@ export const PAGE_CSS = `:root {
   --shadow: 0 1px 2px rgb(21 24 29 / 5%), 0 6px 24px rgb(21 24 29 / 7%);
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --bg: #0b0e14;
     --surface: #121722;
     --surface-2: #1a2130;
@@ -133,33 +143,10 @@ article code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monos
 article :not(pre) > code {
   background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.88em;
 }
-/* The site header, drawn to match the calculator's (src/styles/app.css) and the
- * Receipt page's: the same bar, logo and six links. The calculator's search,
- * tour and appearance controls need a script, which these pages do not load. */
-.site-header { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); }
-.site-header__inner {
-  max-width: 1280px; min-height: 66px; margin: 0 auto; padding: 14px 24px;
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
-}
-.logo {
-  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--ink);
-  font-size: 1.2rem; font-weight: 700; letter-spacing: -0.03em; text-decoration: none; white-space: nowrap;
-}
-.logo svg, .logo__mark { color: var(--accent); }
-.site-nav { display: flex; flex-wrap: wrap; gap: 2px; margin-left: 4px; }
-.site-nav a {
-  display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 8px;
-  color: var(--muted); font-size: 0.93rem; font-weight: 600; text-decoration: none;
-}
-.site-nav a:hover { color: var(--ink); background: var(--surface-2); }
-.site-nav a[aria-current] { color: var(--accent); background: var(--accent-soft); }
-@media (max-width: 640px) {
-  /* Six links wrap onto two rows here, and a bar that tall left pinned over the
-   * top of a phone would cover a quarter of the page, so it scrolls away. */
-  .site-header { position: static; }
-  .site-header__inner { padding: 10px 14px; }
-  .site-nav { margin-left: 0; }
-}
+/* The header is the calculator's own (src/styles/header.css, loaded beside this
+ * sheet). Its mount point must not make a box of its own: a sticky header only
+ * sticks inside its parent, and this parent would be exactly as tall as it. */
+#site-header { display: contents; }
 /* The footer, drawn to match the calculator's (src/styles/footer.css). */
 .footer { margin-top: 3rem; border-top: 1px solid var(--border); }
 .footer__inner {

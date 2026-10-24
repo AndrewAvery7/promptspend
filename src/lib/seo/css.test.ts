@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
@@ -135,7 +137,10 @@ describe('the generated pages stylesheet', () => {
     // These two files can drift silently and the failure is invisible: the page
     // renders, the markup is valid, and one region is simply unstyled. It cost
     // an unaligned table caption once already.
-    const missing = [...emittedClasses()].filter((name) => !PAGE_CSS.includes(`.${name}`));
+    // The header's classes come from the site's header sheet, which every page
+    // links beside this one; it is checked here as part of the pair.
+    const sheets = PAGE_CSS + readFileSync(resolve(__dirname, '../../styles/header.css'), 'utf8');
+    const missing = [...emittedClasses()].filter((name) => !sheets.includes(`.${name}`));
     expect(missing).toEqual([]);
   });
 

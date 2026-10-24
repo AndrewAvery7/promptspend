@@ -17,6 +17,7 @@
 
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
+import { rm } from 'node:fs/promises';
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -81,6 +82,60 @@ async function writeFileAt(relative: string, content: string): Promise<void> {
   const target = resolve(DIST, relative);
   await mkdir(dirname(target), { recursive: true });
   await writeFile(target, content, 'utf8');
+}
+
+/**
+ * Applies the visitor's saved theme, accent and canvas before the page paints.
+ *
+ * A file and not an inline script: the pages' Content Security Policy allows
+ * scripts from this site and nothing inline. It has to block, because a script
+ * that ran after first paint would show every dark-mode visitor a light page for
+ * a moment on every navigation. It mirrors `useAppearance`: a saved choice wins,
+ * and with none saved the operating system's dark setting decides the theme.
+ */
+const THEME_INIT = `(function(){var d=document.documentElement,g=function(k){try{return localStorage.getItem(k)}catch(e){return null}},t=g('ps.theme'),a=g('ps.accent'),c=g('ps.canvas');if(t!=='light'&&t!=='dark'){try{t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){t='light'}}if(['cobalt','emerald','teal','violet'].indexOf(a)<0)a='cobalt';if(c!=='cool'&&c!=='warm')c='cool';d.dataset.theme=t;d.dataset.accent=a;d.dataset.canvas=c})();
+`;
+
+interface ManifestEntry {
+  file: string;
+  css?: string[];
+  imports?: string[];
+}
+
+/**
+ * Where Vite put the live header (`src/chrome/site-header.tsx`) and its
+ * stylesheets, plus the theme script this build writes beside them.
+ *
+ * Fails the build rather than shipping pages with a header that never comes to
+ * life: a missing entry means the build was run out of order.
+ */
+async function headerAssets(): Promise<NonNullable<RenderContext['chrome']>> {
+  const manifestPath = resolve(DIST, '.vite/manifest.json');
+  if (!existsSync(manifestPath)) {
+    throw new Error('dist/.vite/manifest.json is missing - run `vite build` before `build:pages`.');
+  }
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as Record<string, ManifestEntry>;
+  const entryKey = 'src/chrome/site-header.tsx';
+  if (!manifest[entryKey]) throw new Error(`${entryKey} is not in the Vite manifest.`);
+
+  // The entry's own stylesheets, and those of anything it imports.
+  const styles: string[] = [];
+  const seen = new Set<string>();
+  const visit = (key: string): void => {
+    if (seen.has(key)) return;
+    seen.add(key);
+    const entry = manifest[key];
+    if (!entry) return;
+    for (const imported of entry.imports ?? []) visit(imported);
+    for (const sheet of entry.css ?? []) if (!styles.includes(`/${sheet}`)) styles.push(`/${sheet}`);
+  };
+  visit(entryKey);
+
+  const themeInit = `assets/site-theme.${sha256Base64(THEME_INIT)
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .slice(0, 8)}.js`;
+  await writeFileAt(themeInit, THEME_INIT);
+  return { script: `/${manifest[entryKey].file}`, themeInit: `/${themeInit}`, styles };
 }
 
 /** `/models/gpt-5/` becomes `models/gpt-5/index.html`. */
@@ -225,6 +280,11 @@ async function main(): Promise<void> {
   }
   const liveCatalog = new Catalog(catalog, health);
 
+  // The live header the generated pages share with the calculator. Vite wrote
+  // it, under hashed names, and said where in the manifest; the one thing it
+  // cannot write is the theme script, which has to be a plain blocking file.
+  const chrome = await headerAssets();
+
   const ctx: RenderContext = {
     siteUrl,
     basePath,
@@ -232,10 +292,12 @@ async function main(): Promise<void> {
     hashInline: sha256Base64,
     generatedAt: catalog.generatedAt,
     apiUrl,
+    chrome,
     freshness: {
       models: liveCatalog.primaryModels.length,
       pricesChangedOn: liveCatalog.pricesLastChanged(),
       sourcesCheckedOn: liveCatalog.sourcesLastChecked(),
+      degraded: health?.outcome === 'degraded',
     },
   };
 
@@ -328,6 +390,9 @@ async function main(): Promise<void> {
   // Proof of control for IndexNow. Served as plain text at the site root; the
   // key is public by design — see scripts/lib/indexnow.ts.
   await writeFileAt(INDEXNOW_KEY_FILE, `${INDEXNOW_KEY}\n`);
+
+  // The manifest was for this script; nothing should serve it.
+  await rm(resolve(DIST, '.vite'), { recursive: true, force: true });
 
   const freeTierCount = freeTiers.pages.length + 1;
   console.log(

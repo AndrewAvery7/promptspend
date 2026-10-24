@@ -16,7 +16,8 @@
  *    with the JSON-LD admitted by its exact SHA-256 rather than by
  *    `'unsafe-inline'`. The hash is computed over the string that is actually
  *    emitted (see `hashInline`), so the two cannot drift apart.
- * 3. **Therefore almost no external anything**: no fonts, no third-party
+ * 3. **Therefore almost no external anything**: no fonts but this site's own (the
+ *    header's typefaces, `font-src 'self'`), no third-party
  *    images beyond the listing badges in the footer. Those are same-origin
  *    copies, except LaunchNest's: its verifier refuses a copy, so - approved
  *    2026-10-05 - its image loads from launchnest.io, with no referrer, and
@@ -30,6 +31,9 @@
  * in on.
  */
 
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Header } from '../../components/Header';
 import { DEFAULT_SCENARIO, encodeScenario } from '../url/scenario';
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { Model, Pricing } from '../pricing/types';
@@ -103,6 +107,21 @@ export interface RenderContext {
     models: number;
     pricesChangedOn: string | null;
     sourcesCheckedOn: string | null;
+    /** The last sync degraded: the header's dot goes red and says "last clean check". */
+    degraded: boolean;
+  };
+  /**
+   * The site's own header script and stylesheets, as site paths. They make the
+   * header the page already contains interactive (search, appearance, theme).
+   * Optional: without them the header is still there, as plain HTML, which is
+   * also what a visitor without scripts gets.
+   */
+  chrome?: {
+    /** The live header: a deferred module. */
+    script: string;
+    /** Applies the saved theme before first paint: a tiny blocking script. */
+    themeInit: string;
+    styles: readonly string[];
   };
 }
 
@@ -253,6 +272,7 @@ export function layout(ctx: RenderContext, input: LayoutInput): string {
   const csp = [
     "default-src 'none'",
     "style-src 'self'",
+    "font-src 'self'",
     "img-src 'self' data: https://launchnest.io",
     `script-src 'self' 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com`,
     "connect-src 'self'",
@@ -281,9 +301,25 @@ ${input.extraHead ?? ''}    <meta property="og:type" content="article" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=a0fd6116'))}" />
     <link rel="stylesheet" href="${escapeHtml(href(ctx, ctx.cssPath))}" />
+${(ctx.chrome?.styles ?? [])
+  .map(
+    (sheet) => `    <link rel="stylesheet" href="${escapeHtml(href(ctx, sheet))}" />
+`,
+  )
+  .join('')}${
+    ctx.chrome
+      ? `    <script src="${escapeHtml(href(ctx, ctx.chrome.themeInit))}"></script>
+`
+      : ''
+  }
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1.5' y='1.5' width='23' height='23' rx='6' fill='none' stroke='%232456E6' stroke-width='2'/%3E%3Cpath d='M7 9.5h12M7 13.5h8M7 17.5h10' stroke='%232456E6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
     <script type="application/ld+json">${ld}</script>
-${scripts.map((src) => `    <script type="module" src="${escapeHtml(href(ctx, src))}"></script>\n`).join('')}  </head>
+${[...(ctx.chrome ? [ctx.chrome.script] : []), ...scripts]
+  .map(
+    (src) => `    <script type="module" src="${escapeHtml(href(ctx, src))}"></script>
+`,
+  )
+  .join('')}  </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
 ${siteHeader(ctx, input.path)}
@@ -300,41 +336,56 @@ ${siteFooter(ctx, input)}
 }
 
 /**
- * The header every generated page opens with: the same logo and the same six
- * links, in the same order, as the calculator's header and the Receipt page's.
+ * The header every generated page opens with: the calculator's own `Header`,
+ * drawn to static HTML here at build time, so the markup is the same element for
+ * element and cannot be hand-copied wrong. It is complete without scripts;
+ * `src/chrome/site-header.tsx` replaces it with the live component, which is what
+ * makes search, the appearance picker and the theme switch work. Its views are
+ * links into the calculator, which honours `/#compare` and the others.
  *
- * These pages ship no JavaScript, so the calculator's own views are plain links
- * into it (it honours `#compare`, `#learn` and `#data`), and the search box,
- * guided tour and appearance controls, which are the calculator's own
- * machinery, are not drawn. The words come from `NAV_LABELS`, shared with the
- * other two headers, so a link added or renamed there cannot be missed here.
+ * The wrapper is `display: contents` (see `css.ts`) so the header still sticks
+ * to the top of the window: a sticky box only sticks inside its parent.
  */
 function siteHeader(ctx: RenderContext, currentPath: string): string {
-  const home = href(ctx, '/');
-  const current = (path: string): string =>
-    currentPath === path
-      ? ' aria-current="page"'
-      : currentPath.startsWith(path) && path !== '/'
-        ? ' aria-current="true"'
-        : '';
-  const link = (target: string, label: string, path?: string): string =>
-    `<a href="${escapeHtml(target)}"${path ? current(path) : ''}>${escapeHtml(label)}</a>`;
-  return `    <header class="site-header">
-      <div class="site-header__inner">
-        <a class="logo" href="${escapeHtml(home)}" aria-label="PromptSpend home">
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true" focusable="false"><rect x="1.5" y="1.5" width="23" height="23" rx="6" stroke="currentColor" stroke-width="2"/><path d="M7 9.5h12M7 13.5h8M7 17.5h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <span>Prompt<span class="logo__mark">Spend</span></span>
-        </a>
-        <nav class="site-nav" aria-label="Main">
-          ${link(home, NAV_LABELS.estimate)}
-          ${link(`${home}#compare`, NAV_LABELS.compare)}
-          ${link(`${home}#learn`, NAV_LABELS.learn)}
-          ${link(`${home}#data`, NAV_LABELS.data)}
-          ${link(href(ctx, '/receipt/'), NAV_LABELS.receipt, '/receipt/')}
-          ${link(href(ctx, FREE_TIERS_PATH), NAV_LABELS.freeTiers, FREE_TIERS_PATH)}
-        </nav>
-      </div>
-    </header>`;
+  const current = currentPath.startsWith(FREE_TIERS_PATH)
+    ? 'freeTiers'
+    : currentPath.startsWith('/receipt/')
+      ? 'receipt'
+      : undefined;
+  const f = ctx.freshness;
+  const markup = renderToStaticMarkup(
+    createElement(Header, {
+      base: ctx.basePath,
+      view: null,
+      current,
+      onView: () => undefined,
+      pricesChangedOn: f?.pricesChangedOn ?? null,
+      sourcesCheckedOn: f?.sourcesCheckedOn ?? null,
+      degraded: f?.degraded ?? false,
+      freshnessLoading: f === undefined,
+      tourActive: false,
+      tourPulse: false,
+      onTour: () => undefined,
+      onCommandPalette: () => undefined,
+      theme: 'light',
+      accent: 'cobalt',
+      canvas: 'cool',
+      onTheme: () => undefined,
+      onAccent: () => undefined,
+      onCanvas: () => undefined,
+    }),
+  );
+  const data = [
+    ['data-base', ctx.basePath],
+    ['data-current', current ?? ''],
+    ['data-prices-changed', f?.pricesChangedOn ?? ''],
+    ['data-sources-checked', f?.sourcesCheckedOn ?? ''],
+    ['data-degraded', f?.degraded ? '1' : '0'],
+    ['data-unknown', f ? '0' : '1'],
+  ]
+    .map(([name, value]) => `${name}="${escapeHtml(value!)}"`)
+    .join(' ');
+  return `    <div id="site-header" ${data}>${markup}</div>`;
 }
 
 /**
