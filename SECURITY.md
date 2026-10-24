@@ -15,7 +15,7 @@ alerts API is configured, Turnstile's `https://challenges.cloudflare.com` is
 admitted too.
 
 There are three servers, all Cloudflare Workers, and only one of them holds
-anything:
+personal data:
 
 - **The opt-in price-alerts API** in [`worker/`](worker), on a D1 database
   holding email subscribers and push subscriptions. Small and deliberately
