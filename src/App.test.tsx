@@ -216,6 +216,17 @@ describe('App', () => {
     expect(within(tour).getByText('STEP 2 / 6')).toBeInTheDocument();
   });
 
+  it('starts the guided tour when another page links to /#tour, and drops the word from the address', async () => {
+    // The Receipt page's and the generated pages' "Guided tour" button is a link
+    // to the calculator with #tour: their header cannot run the tour itself.
+    window.history.replaceState(null, '', '/#tour');
+    await renderApp();
+
+    const tour = await screen.findByRole('status');
+    expect(within(tour).getByText('STEP 1 / 6')).toBeInTheDocument();
+    expect(window.location.hash).toBe('');
+  });
+
   it('navigates to the other views', async () => {
     const user = userEvent.setup();
     await renderApp();

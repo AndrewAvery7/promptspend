@@ -133,11 +133,17 @@ the page code by hand, run `--fix` and commit the file with your change.
    scripts on top, from this site only (`script-src 'self'`, via `layout`'s
    `scripts` option), to make a chart interactive or a table filterable.
    Enhancement, never content: the no-JavaScript browser tests stay. The only
-   inline `<script>` is the JSON-LD data block, which is not executed.
+   inline `<script>` is the JSON-LD data block, which is not executed. Every page
+   now carries two such scripts: the calculator's live header (search, accent and
+   canvas picker, dark mode; `src/chrome/site-header.tsx`) and a tiny blocking one
+   that applies the saved theme before first paint. Both are files on this site,
+   and the header is also in the HTML, drawn at build time from the same
+   component, so it is there without them.
 2. **Therefore a very tight policy** — `default-src 'none'`, with the JSON-LD
    admitted by its exact SHA-256 rather than `'unsafe-inline'`. The hash is
    computed over the string that is actually emitted, so the two cannot drift.
-3. **Therefore almost no external anything**: no fonts, no images beyond an
+3. **Therefore almost no external anything**: no fonts from anywhere but this site
+   (`font-src 'self'`, for the header's typefaces), no images beyond an
    inline SVG favicon and the footer badges. The LaunchNest badge is the one
    image loaded from another server (launchnest.io, no referrer); its verifier
    refuses a local copy, and the owner approved the exception on 2026-10-05.

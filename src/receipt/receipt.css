@@ -1,6 +1,7 @@
 @import '../styles/fonts.css';
 @import '../styles/tokens.css';
 @import '../styles/footer.css';
+@import '../styles/header.css';
 
 *,
 *::before,
@@ -124,101 +125,6 @@ a {
 
 .ticker__dim {
   opacity: 0.55;
-}
-
-.receipt-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-}
-
-.receipt-header__inner {
-  max-width: 1280px;
-  min-height: 66px;
-  margin: 0 auto;
-  padding: 14px 24px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 16px;
-}
-
-.receipt-header__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.receipt-header__brand svg,
-.receipt-header__brand strong {
-  color: var(--accent);
-}
-
-.receipt-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  margin-left: 10px;
-}
-
-.receipt-nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 14px;
-  border-radius: var(--radius-sm);
-  color: var(--muted);
-  font-size: 0.93rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.18s;
-}
-
-.receipt-nav a:hover {
-  color: var(--ink);
-  background: var(--surface-2);
-}
-
-.receipt-nav a[aria-current='page'] {
-  color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.receipt-header__spacer {
-  flex: 1;
-}
-
-.receipt-header__api,
-.receipt-header__theme {
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.receipt-header__theme {
-  padding: 0 13px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.receipt-header__theme:hover,
-.receipt-header__api:hover {
-  color: var(--ink);
 }
 
 main {
@@ -917,19 +823,6 @@ main {
     width: min(100% - 28px, 1180px);
   }
 
-  .receipt-header__inner {
-    padding: 10px 14px;
-  }
-
-  .receipt-nav {
-    margin-left: 0;
-    gap: 0;
-  }
-
-  .receipt-nav a {
-    padding: 0 10px;
-  }
-
   .receipt-hero {
     gap: 40px;
     padding: 46px 0 62px;
@@ -967,9 +860,6 @@ main {
 }
 
 @media (pointer: coarse) {
-  .receipt-nav a,
-  .receipt-header__api,
-  .receipt-header__theme,
   .receipt-secondary-copy,
   .receipt-object__copy,
   .receipt-machine-links a,

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { ACCENTS, type Accent, type Canvas, type Theme } from '@/state/useAppearance';
-import { APP_PAGE_URL, FREE_TIERS_URL, RECEIPT_URL } from '@/config';
 import { NAV_LABELS } from '@/lib/links';
 
 export type ViewId = 'estimate' | 'compare' | 'learn' | 'data';
@@ -13,13 +12,32 @@ export const VIEWS: { id: ViewId; label: string }[] = [
 ];
 
 interface HeaderProps {
-  view: ViewId;
+  /**
+   * The calculator view in use, or null on a page that is not the calculator
+   * (the Receipt page, the generated pages), where no view is highlighted.
+   */
+  view: ViewId | null;
+  /** The page this header sits on, when it is one of the two linked pages. */
+  current?: 'receipt' | 'freeTiers';
+  /**
+   * The site's base path with its trailing slash (`/` on promptspend.com). A
+   * prop rather than an import of `@/config`, which reads `import.meta.env` and
+   * so cannot be loaded by the build script that draws this header into the
+   * generated pages.
+   */
+  base: string;
   onView: (view: ViewId) => void;
   /** The day a published rate last actually moved. */
   pricesChangedOn: string | null;
   /** The day the sources were last checked without a problem, if known. */
   sourcesCheckedOn: string | null;
   degraded: boolean;
+  /**
+   * True while the figures above are not known yet (the Receipt page draws its
+   * header before its catalog arrives). The line then holds its height with no
+   * words in it, rather than saying "no change recorded", which would be false.
+   */
+  freshnessLoading?: boolean;
   tourActive: boolean;
   tourPulse: boolean;
   onTour: () => void;
@@ -33,6 +51,9 @@ interface HeaderProps {
 }
 
 export function Header(props: HeaderProps) {
+  const appHref = `${props.base}app/`;
+  const receiptHref = `${props.base}receipt/`;
+  const freeTiersHref = `${props.base}free-tiers/`;
   const [paletteOpen, setPaletteOpen] = useState(false);
   const paletteRef = useRef<HTMLDivElement>(null);
 
@@ -91,8 +112,12 @@ export function Header(props: HeaderProps) {
               {view.label}
             </button>
           ))}
-          <a href={RECEIPT_URL}>{NAV_LABELS.receipt}</a>
-          <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a>
+          <a href={receiptHref} aria-current={props.current === 'receipt' ? 'page' : undefined}>
+            {NAV_LABELS.receipt}
+          </a>
+          <a href={freeTiersHref} aria-current={props.current === 'freeTiers' ? 'page' : undefined}>
+            {NAV_LABELS.freeTiers}
+          </a>
         </nav>
 
         <div className="header__spacer" />
@@ -107,7 +132,7 @@ export function Header(props: HeaderProps) {
         {/* The permanent way back to the apps once the launch banner has been
             dismissed. Styled as the tour pill and hidden with it on phones,
             where the header is already full and the footer carries the link. */}
-        <a className="tour-toggle get-app" href={APP_PAGE_URL} title="Get the iPhone and Android apps">
+        <a className="tour-toggle get-app" href={appHref} title="Get the iPhone and Android apps">
           <svg
             width="15"
             height="15"
@@ -155,16 +180,26 @@ export function Header(props: HeaderProps) {
             "Prices last changed" is a property of the market; "sources checked"
             is a property of our pipeline. A single "synced" date conflated them,
             so a week of stable prices looked identical to a broken cron job. */}
-        <div className={`freshness${props.degraded ? ' freshness--degraded' : ''}`}>
+        <div
+          className={`freshness${props.degraded ? ' freshness--degraded' : ''}`}
+          aria-hidden={props.freshnessLoading ? true : undefined}
+        >
           <span className="freshness__dot" />
           <span className="freshness__text">
-            <b>prices last changed</b> {props.pricesChangedOn ?? 'no change recorded since tracking began'}
-            {props.sourcesCheckedOn && (
+            {props.freshnessLoading ? (
+              <>&nbsp;</>
+            ) : (
               <>
-                {' · '}
-                <span className="freshness__checked">
-                  {props.degraded ? 'last clean check' : 'sources checked'} {props.sourcesCheckedOn}
-                </span>
+                <b>prices last changed</b>{' '}
+                {props.pricesChangedOn ?? 'no change recorded since tracking began'}
+                {props.sourcesCheckedOn && (
+                  <>
+                    {' · '}
+                    <span className="freshness__checked">
+                      {props.degraded ? 'last clean check' : 'sources checked'} {props.sourcesCheckedOn}
+                    </span>
+                  </>
+                )}
               </>
             )}
           </span>

@@ -263,10 +263,16 @@ export default defineConfig(({ mode }) => {
       // generic warning is noise. `npm run check:budget` enforces the limit that
       // actually matters — the size of the initial payload.
       chunkSizeWarningLimit: 4096,
+      // `scripts/build-pages.ts` reads the manifest to find the hashed file names
+      // of the header script and its stylesheets, which it links from every
+      // generated page, and removes the manifest from the published site.
+      manifest: true,
       rollupOptions: {
         input: {
           app: resolve(projectRoot, 'index.html'),
           receipt: resolve(projectRoot, 'receipt/index.html'),
+          // Not a page: the live header for the generated pages.
+          siteHeader: resolve(projectRoot, 'src/chrome/site-header.tsx'),
         },
         output: {
           // Keep the tokenizer out of the initial bundle — it is only fetched
