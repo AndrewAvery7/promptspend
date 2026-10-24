@@ -1227,3 +1227,15 @@ value that moves in the same run as its source URL is a correction.
 - **Provider** `xiaomi` — provider: — → added
 - **Provider** `inception` — provider: — → added
 - **Provider** `microsoft` — provider: — → added
+
+## 2026-10-24
+
+- **Metadata** `dashscope-qwen3.8-max` — capabilityIndex: — → 87
+- **Metadata** `gemini-gemini-4-argon` — capabilityIndex: — → 90
+- **Metadata** `gpt-6-astra` — capabilityIndex: — → 90
+- **Metadata** `gpt-6-luna` — capabilityIndex: — → 81
+- **Metadata** `gpt-6-sol` — capabilityIndex: — → 89
+- **Metadata** `gpt-6.1-sol` — capabilityIndex: — → 90
+- **Metadata** `xiaomi-mimo-mimo-v2.6-flash` — capabilityIndex: — → 81
+- **Metadata** `xiaomi-mimo-mimo-v2.6-pro` — capabilityIndex: — → 87
+- **Metadata** `zai-glm-5.3-flash` — capabilityIndex: — → 86

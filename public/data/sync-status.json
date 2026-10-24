@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "attemptedAt": "2026-10-24T14:34:13.023Z",
-  "succeededAt": "2026-10-24T14:34:13.023Z",
+  "attemptedAt": "2026-10-24T15:23:10.668Z",
+  "succeededAt": "2026-10-24T15:23:10.668Z",
   "outcome": "ok",
   "problems": [],
   "sources": [
@@ -20,7 +20,7 @@
   "modelCount": 110,
   "flaggedCount": 5,
   "staleCount": 0,
-  "catalogHash": "1657973c0b369351",
+  "catalogHash": "497e8eaa8848ba2e",
   "pricesLastChanged": "2026-10-21",
   "vendorCheck": {
     "checkedAt": "2026-10-24T11:04:58.103Z",
