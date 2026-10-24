@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-24T11:06:15.489Z",
+  "generatedAt": "2026-10-24T14:08:26.214Z",
   "providers": [
     {
       "id": "anthropic",
@@ -731,6 +731,34 @@
       "capabilityIndex": 83
     },
     {
+      "id": "dashscope-qwen3.8-max",
+      "providerId": "alibaba",
+      "displayName": "Qwen 3.8 Max",
+      "status": "current",
+      "contextWindow": 991808,
+      "pricing": {
+        "input": 2,
+        "output": 6,
+        "cachedInput": 0.25
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — Qwen tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max"
+      },
+      "maxOutput": 131072
+    },
+    {
       "id": "deepseek-deepseek-r1",
       "providerId": "deepseek",
       "displayName": "DeepSeek R1",
@@ -883,6 +911,35 @@
         "input": 0.3,
         "output": 2.5,
         "cachedInput": 0.03,
+        "cacheStoragePerMillionTokenHour": 1
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 4,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Gemini's tokenizer is server-side"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+      },
+      "maxOutput": 65536
+    },
+    {
+      "id": "gemini-gemini-2.5-flash-lite",
+      "providerId": "google",
+      "displayName": "Gemini 2.5 Flash-Lite",
+      "status": "legacy",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 0.1,
+        "output": 0.4,
+        "cachedInput": 0.01,
         "cacheStoragePerMillionTokenHour": 1
       },
       "tokenizer": {
@@ -1240,6 +1297,144 @@
         "lastVerified": "2026-10-24"
       },
       "maxOutput": 65536
+    },
+    {
+      "id": "gemini-gemini-4-argon",
+      "providerId": "google",
+      "displayName": "Gemini 4 Argon",
+      "status": "current",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 4,
+        "output": 20,
+        "cachedInput": 0.2,
+        "intro": {
+          "input": 2,
+          "output": 10,
+          "cachedInput": 0.1,
+          "until": "2026-11-30"
+        }
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 4,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Gemini's tokenizer is server-side"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+      },
+      "maxOutput": 1048576
+    },
+    {
+      "id": "gpt-4.1",
+      "providerId": "openai",
+      "displayName": "GPT-4.1",
+      "status": "legacy",
+      "contextWindow": 1047576,
+      "pricing": {
+        "input": 2,
+        "output": 8,
+        "cachedInput": 0.5
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": false,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 32768
+    },
+    {
+      "id": "gpt-4.1-mini",
+      "providerId": "openai",
+      "displayName": "GPT-4.1 Mini",
+      "status": "legacy",
+      "contextWindow": 1047576,
+      "pricing": {
+        "input": 0.4,
+        "output": 1.6,
+        "cachedInput": 0.1
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": false,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 32768
+    },
+    {
+      "id": "gpt-4o",
+      "providerId": "openai",
+      "displayName": "GPT-4o",
+      "status": "legacy",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 2.5,
+        "output": 10,
+        "cachedInput": 1.25
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": false,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 16384
+    },
+    {
+      "id": "gpt-4o-mini",
+      "providerId": "openai",
+      "displayName": "GPT-4o Mini",
+      "status": "legacy",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 0.15,
+        "output": 0.6,
+        "cachedInput": 0.075
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": false,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 16384
     },
     {
       "id": "gpt-5",
@@ -1640,6 +1835,146 @@
       },
       "maxOutput": 128000,
       "capabilityIndex": 86
+    },
+    {
+      "id": "gpt-6-astra",
+      "providerId": "openai",
+      "displayName": "GPT-6 Astra",
+      "status": "current",
+      "contextWindow": 922000,
+      "pricing": {
+        "input": 10,
+        "output": 50,
+        "cachedInput": 1,
+        "cacheWrite": 12.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 20,
+          "output": 75,
+          "cachedInput": 2,
+          "cacheWrite": 25
+        }
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 128000
+    },
+    {
+      "id": "gpt-6-luna",
+      "providerId": "openai",
+      "displayName": "GPT-6 Luna",
+      "status": "current",
+      "contextWindow": 922000,
+      "pricing": {
+        "input": 0.1,
+        "output": 0.5,
+        "cachedInput": 0.01,
+        "cacheWrite": 0.125,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 0.2,
+          "output": 0.75,
+          "cachedInput": 0.02,
+          "cacheWrite": 0.25
+        }
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 128000
+    },
+    {
+      "id": "gpt-6-sol",
+      "providerId": "openai",
+      "displayName": "GPT-6 Sol",
+      "status": "current",
+      "contextWindow": 922000,
+      "pricing": {
+        "input": 2,
+        "output": 10,
+        "cachedInput": 0.2,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 4,
+          "output": 15,
+          "cachedInput": 0.4,
+          "cacheWrite": 5
+        }
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 128000
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "providerId": "openai",
+      "displayName": "GPT-6.1 Sol",
+      "status": "current",
+      "contextWindow": 922000,
+      "pricing": {
+        "input": 2,
+        "output": 10,
+        "cachedInput": 0.1,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 4,
+          "output": 15,
+          "cachedInput": 0.2,
+          "cacheWrite": 5
+        }
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 128000
     },
     {
       "id": "minimax-minimax-m2",
@@ -2397,6 +2732,179 @@
       "maxOutput": 500000
     },
     {
+      "id": "xai-grok-build-0.1",
+      "providerId": "xai",
+      "displayName": "Grok Build 0.1",
+      "status": "current",
+      "contextWindow": 256000,
+      "pricing": {
+        "input": 1,
+        "output": 2,
+        "cachedInput": 0.2,
+        "longContext": {
+          "thresholdTokens": 200000,
+          "input": 2,
+          "output": 4,
+          "cachedInput": 0.4
+        }
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.7,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Grok tokenizer"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.x.ai/developers/pricing"
+      },
+      "maxOutput": 256000
+    },
+    {
+      "id": "zai-glm-4-32b-0414-128k",
+      "providerId": "zai",
+      "displayName": "GLM-4 32B",
+      "status": "legacy",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 0.1,
+        "output": 0.1
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — GLM tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
+      },
+      "maxOutput": 32000
+    },
+    {
+      "id": "zai-glm-4.5",
+      "providerId": "zai",
+      "displayName": "GLM-4.5",
+      "status": "legacy",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 0.6,
+        "output": 2.2,
+        "cachedInput": 0.11
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — GLM tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
+      },
+      "maxOutput": 32000
+    },
+    {
+      "id": "zai-glm-4.5-air",
+      "providerId": "zai",
+      "displayName": "GLM-4.5-Air",
+      "status": "legacy",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 0.2,
+        "output": 1.1,
+        "cachedInput": 0.03
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — GLM tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
+      },
+      "maxOutput": 32000
+    },
+    {
+      "id": "zai-glm-4.5-airx",
+      "providerId": "zai",
+      "displayName": "GLM-4.5-AirX",
+      "status": "legacy",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 1.1,
+        "output": 4.5,
+        "cachedInput": 0.22
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — GLM tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
+      },
+      "maxOutput": 32000
+    },
+    {
+      "id": "zai-glm-4.5-x",
+      "providerId": "zai",
+      "displayName": "GLM-4.5-X",
+      "status": "legacy",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 2.2,
+        "output": 8.9,
+        "cachedInput": 0.45
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — GLM tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
+      },
+      "maxOutput": 32000
+    },
+    {
       "id": "zai-glm-4.6",
       "providerId": "zai",
       "displayName": "GLM-4.6",
@@ -2576,6 +3084,34 @@
         "input": 1.4,
         "output": 4.4,
         "cachedInput": 0.26
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — GLM tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "vendor",
+        "lastVerified": "2026-10-24",
+        "verifiedUrl": "https://docs.z.ai/guides/overview/pricing"
+      },
+      "maxOutput": 128000
+    },
+    {
+      "id": "zai-glm-5.3-flash",
+      "providerId": "zai",
+      "displayName": "GLM-5.3 Flash",
+      "status": "current",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 0.15,
+        "output": 0.5,
+        "cachedInput": 0.03
       },
       "tokenizer": {
         "kind": "approx",
