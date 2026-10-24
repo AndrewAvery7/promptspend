@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { ACCENTS, type Accent, type Canvas, type Theme } from '@/state/useAppearance';
 import { APP_PAGE_URL, FREE_TIERS_URL, RECEIPT_URL } from '@/config';
+import { NAV_LABELS } from '@/lib/links';
 
 export type ViewId = 'estimate' | 'compare' | 'learn' | 'data';
 
 export const VIEWS: { id: ViewId; label: string }[] = [
-  { id: 'estimate', label: 'Estimate' },
-  { id: 'compare', label: 'Compare' },
-  { id: 'learn', label: 'Learn' },
-  { id: 'data', label: 'Data & Alerts' },
+  { id: 'estimate', label: NAV_LABELS.estimate },
+  { id: 'compare', label: NAV_LABELS.compare },
+  { id: 'learn', label: NAV_LABELS.learn },
+  { id: 'data', label: NAV_LABELS.data },
 ];
 
 interface HeaderProps {
@@ -90,8 +91,8 @@ export function Header(props: HeaderProps) {
               {view.label}
             </button>
           ))}
-          <a href={RECEIPT_URL}>PromptSpend It</a>
-          <a href={FREE_TIERS_URL}>Free tiers</a>
+          <a href={RECEIPT_URL}>{NAV_LABELS.receipt}</a>
+          <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a>
         </nav>
 
         <div className="header__spacer" />
