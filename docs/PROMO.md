@@ -35,8 +35,14 @@ changed and why:
   3.6/3.7 Flash were skipped because their cards show a promotional price that
   ends 2026-12-31). `--check` now fails if any of the four stops meeting that.
 - **"No tracking" is gone.** The site runs cookieless Cloudflare Web Analytics
-  and says _no accounts, no ads, no cookies_. The closing chips follow it, and
+  and said _no accounts, no ads, no cookies_. The closing chips follow it, and
   `--check` rejects a chip claiming no tracking or no analytics.
+- **"No cookies" is gone too (2026-10-24).** The website now runs Google
+  Analytics, which sets cookies, and says _no accounts, no ads_. `CTA_CHIPS` no
+  longer carries NO COOKIES and `--check` rejects any chip that mentions
+  cookies. **The published cut (the release asset and YouTube) was rendered
+  before this and still shows a NO COOKIES chip; it needs re-rendering** with
+  `python tools/make-promo.py` and re-uploading.
 - **The capture clears the sticky header.** The new panel came back with the
   nav bar painted over its title, because `scrollIntoViewIfNeeded` only
   promises the element is inside the viewport, not uncovered.

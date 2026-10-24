@@ -73,7 +73,7 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
           <p className="footer__apps-credit">{ANDROID_ROBOT_CREDIT}</p>
         </section>
         <div>
-          <b>PromptSpend</b> · open source, MIT · no accounts, no ads, no cookies ·{' '}
+          <b>PromptSpend</b> · open source, MIT · no accounts, no ads ·{' '}
           <a href={REPO_URL}>star it on GitHub</a> · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> ·{' '}
           <a href={SUPPORT_URL}>Support</a> · <a href={PRIVACY_URL}>Privacy</a>
         </div>

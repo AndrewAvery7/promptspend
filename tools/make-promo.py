@@ -554,10 +554,11 @@ def scene_pipeline(fr, n):
     return im
 
 
-# The website's own wording since 2026-10-05: "no accounts, no ads, no cookies".
-# NOT "no tracking" - the site runs cookieless Cloudflare Web Analytics, so that
-# chip from the August cut stopped being true. check() keeps it from returning.
-CTA_CHIPS = ["FREE", "NO ACCOUNTS", "NO ADS", "NO COOKIES", "MIT", "OPEN DATA API"]
+# The website's own wording since 2026-10-24: "no accounts, no ads".
+# NOT "no tracking" (the site counts visits) and NOT "no cookies" (since
+# 2026-10-24 it runs Google Analytics, which sets cookies). Both chips were true
+# once and are not now; check() keeps them from returning.
+CTA_CHIPS = ["FREE", "NO ACCOUNTS", "NO ADS", "MIT", "OPEN DATA API"]
 
 
 def scene_cta(fr, n):
@@ -707,12 +708,13 @@ def check():
         if not (FRAMES / (path + ".png")).exists():
             problems.append("missing capture {}.png".format(path))
 
-    # Claims the website has withdrawn. It runs cookieless Cloudflare Web
-    # Analytics (since 2026-10-05), so it says "no cookies" - never "no
-    # tracking" or "no analytics". Checked here so a future edit to the chips
-    # cannot quietly put the old promise back on screen.
+    # Claims the website has withdrawn. It counts visits with Cloudflare Web
+    # Analytics (since 2026-10-05) and Google Analytics, which sets cookies
+    # (since 2026-10-24), so never "no tracking", "no analytics" or "no
+    # cookies". Checked here so a future edit to the chips cannot quietly put
+    # an old promise back on screen.
     for chip in CTA_CHIPS:
-        if "TRACKING" in chip or "ANALYTICS" in chip:
+        if "TRACKING" in chip or "ANALYTICS" in chip or "COOKIE" in chip:
             problems.append("CTA chip {!r} makes a claim the site no longer makes".format(chip))
 
     for problem in problems:

@@ -19,14 +19,17 @@ four other packages that read it too. The pipeline is the product; everything el
 sentence that used to open this file — _"no server, no database and no account system"_ — was true when
 written and stopped being true when opt-in price alerts shipped. `worker/` is a Cloudflare Worker on D1
 holding a push endpoint or an email address and the models being followed; `api/` is a second, stateless
-Worker serving the catalog to anyone who asks. Rule two of this project is that a claim must be true of
+Worker serving the catalog to anyone who asks; `updates/` is a third, serving the apps' signed updates
+from R2 at `updates.promptspend.dev`, with its request logging switched off. Rule two of this project is that a claim must be true of
 the code, and README.md was corrected at the time. This file and SECURITY.md were missed, which is the
 ordinary way a document goes wrong: nobody re-reads the paragraph they are not editing.
 
 Neither Worker is in the path of the estimator. Close the alerts form and the site is still a static page
 that sends nothing you type anywhere. Its remote requests are the footer's LaunchNest badge image,
-which carries no data, and Cloudflare's Web Analytics beacon, which reports page views to the site's
-own `/cdn-cgi/rum`. There is still no account system.
+which carries no data, Cloudflare's Web Analytics beacon, which reports page views to the site's
+own `/cdn-cgi/rum`, and (since 2026-10-24, promptspend.com only) Google Analytics 4, which sets
+cookies and is sent each page's origin and path, never its query string, fragment or anything typed
+(`src/lib/analytics/`). There is still no account system.
 
 ## The data pipeline (`scripts/`)
 
@@ -292,7 +295,7 @@ runners actually report rather than to what anyone remembers.
 
 **What closed, and what did not.** This section used to name three gaps — no browser suite, no automated
 axe pass, no visual-regression snapshots — and call Playwright plus axe the obvious next investment. Both
-landed: 228 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
+landed: 268 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
 two real defects, each a scrollable region no keyboard could reach.
 
 Screenshot diffing is still absent, and now deliberately rather than pending. A visual suite has a real
@@ -308,9 +311,14 @@ views; each of those would be ceremony. Styling is plain CSS custom properties o
 
 ## Deliberate non-goals
 
-No accounts, no ads, no cookies, no user-level tracking. Those hold, and they are the ones that matter.
-Since 2026-10-05 the website (only) counts visits in aggregate with Cloudflare Web Analytics, a cookieless
-beacon disclosed in the privacy policy; the owner approved it to measure which pages and referrers work.
+No accounts, no ads, and nothing a visitor types or pastes ever leaves the device. Those hold, and they
+are the ones that matter. "No cookies" and "no analytics" used to sit here too and no longer do: since
+2026-10-05 the website (only) counts visits in aggregate with Cloudflare Web Analytics, a cookieless beacon,
+and since 2026-10-24 (owner decision 2026-10-06) it also runs Google Analytics 4, which sets cookies. GA
+loads for every visitor with a dismissible notice, or only after _Accept_ if `ANALYTICS_REQUIRES_CONSENT` in
+`src/lib/analytics/config.ts` is flipped; it receives page origin and path only, with Google signals and ad
+personalisation off. Both are disclosed in the privacy policy. The apps, the VS Code extension, the MCP
+server and the API have no analytics.
 
 Three entries that used to sit in this list have since been built, and recording that is more useful than
 quietly deleting them: the opt-in alerts worker, the hosted API, and static pre-rendering — 159 crawlable

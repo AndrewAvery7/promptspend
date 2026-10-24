@@ -149,8 +149,14 @@ the page code by hand, run `--fix` and commit the file with your change.
    refuses a local copy, and the owner approved the exception on 2026-10-05.
    The same day he approved Cloudflare Web Analytics: Cloudflare injects its
    beacon as it serves each page, so `script-src` also admits
-   `https://static.cloudflareinsights.com`, and `connect-src 'self'` lets the
-   beacon report only to this site's own `/cdn-cgi/rum`.
+   `https://static.cloudflareinsights.com`, and the beacon reports only to
+   this site's own `/cdn-cgi/rum`. Since 2026-10-24 (owner decision
+   2026-10-06) the site header's script also starts Google Analytics 4 on
+   promptspend.com, so `script-src` admits `https://www.googletagmanager.com`
+   and `connect-src` and `img-src` admit Google Analytics' collection hosts,
+   named in `src/lib/analytics/config.ts`. The privacy page's
+   `[[analytics-choice]]` line becomes the on/off control
+   (`renderInformationPage`).
 
 A consequence worth knowing: `style-src 'self'` with no `'unsafe-inline'` means
 **an inline `style=` attribute is silently dropped**. There is a test asserting

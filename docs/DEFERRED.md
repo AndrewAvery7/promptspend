@@ -84,6 +84,16 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 > site's own scripts on every page, planning for accounts, and clearly labelled
 > sponsors kept out of the price data. The promises quoted below have been
 > rewritten. The reasoning is kept as the record of why it was once refused.
+>
+> **Addendum, 2026-10-24.** The analytics decision as recorded in the Phase 1
+> tracker the same day was more specific than "behind a consent banner":
+> Google Analytics 4 loads for every visitor with a visible, dismissible notice,
+> and a one-line switch changes it to "only after Accept". That is what shipped
+> on 2026-10-24, on promptspend.com only, with the default set to the notice
+> (`ANALYTICS_REQUIRES_CONSENT = false` in `src/lib/analytics/config.ts`). The
+> difference between the two records is noted here rather than either being
+> rewritten: if the original "consent banner" wording is what was meant,
+> flipping that switch is the whole code change.
 
 **Analytics on either host, for launch measurement.** Considered because a
 launch is the one moment traffic is worth watching closely, and rejected

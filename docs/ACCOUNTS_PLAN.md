@@ -42,7 +42,8 @@ must answer under the `.com` domain, for example a Cloudflare Worker route at
 
 The session cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, holding a random
 token whose hash is stored server-side, never the token itself. A login cookie
-is "strictly necessary", so it does not need the analytics consent banner.
+is "strictly necessary", so it needs no consent, even if the Google Analytics
+notice is switched to ask for consent (`ANALYTICS_REQUIRES_CONSENT`).
 
 The apps keep a token in the phone's secure storage instead of a cookie.
 

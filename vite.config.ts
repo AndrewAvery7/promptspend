@@ -5,6 +5,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { renderReceiptInstructions, renderReceiptSpecJson } from './src/receipt/receiptSpec';
+import { GA_COLLECT_ORIGINS, GA_SCRIPT_ORIGIN } from './src/lib/analytics/config';
 
 // GitHub Pages serves the site from /<repo>/ unless a custom domain is configured;
 // set BASE_PATH=/ in the workflow when deploying to one. The dev server always
@@ -27,6 +28,13 @@ const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
  * script may post anywhere new, which is the property `connect-src` exists for.
  */
 const WEB_ANALYTICS_SCRIPT_ORIGIN = 'https://static.cloudflareinsights.com';
+
+/*
+ * Google Analytics 4 (owner decision 2026-10-06): `gtag.js` from Google Tag
+ * Manager's host, and its reports to Google Analytics' collection hosts. Both
+ * lists live in `src/lib/analytics/config.ts`, beside the Measurement ID, so
+ * the page cannot load an ID whose reports its own policy blocks.
+ */
 
 const CSP_PLACEHOLDER = '%CSP%';
 const SITE_URL_PLACEHOLDER = '%SITE_URL%';
@@ -225,17 +233,22 @@ function receiptAssets(): Plugin {
  *
  * `connect-src` is the line that matters. It is what stops a compromised
  * dependency posting a pasted prompt somewhere, so it opens for the alerts API
- * and nothing else. When no API is configured the policy stays strictly
- * self-only, which is what the site ships with today. The analytics beacon
- * needs no exception here: it reports to the site's own `/cdn-cgi/rum`.
+ * (and Turnstile with it) and Google Analytics' tag and collection hosts, and
+ * nothing else. The Cloudflare
+ * beacon needs no exception here: it reports to the site's own `/cdn-cgi/rum`.
+ * Google Analytics does (owner decision 2026-10-06), and that is a real cost:
+ * a script that got onto the page could post to an analytics account of its
+ * own. PromptSpend's own code never hands Google anything but the page's
+ * origin and path (`src/lib/analytics/ga.ts`), and `check:csp` holds the list
+ * to exactly these hosts.
  */
 function contentSecurityPolicy(alertsApi: string): Plugin {
   return {
     name: 'promptspend-csp',
     transformIndexHtml(html) {
       const api = alertsApi;
-      const connect = ["'self'", api].filter(Boolean);
-      const script = ["'self'", WEB_ANALYTICS_SCRIPT_ORIGIN];
+      const connect = ["'self'", api, GA_SCRIPT_ORIGIN, ...GA_COLLECT_ORIGINS].filter(Boolean);
+      const script = ["'self'", WEB_ANALYTICS_SCRIPT_ORIGIN, GA_SCRIPT_ORIGIN];
       const frame = ["'none'"];
       // The Receipt uses a stylesheet and no style attributes, so it can carry
       // a stricter policy than the calculator, whose charts use inline geometry.
@@ -256,8 +269,10 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
         `script-src ${script.join(' ')}`,
         `style-src ${style}`,
         // launchnest.io for the footer's LaunchNest badge alone (approved
-        // 2026-10-05; their verifier refuses a self-hosted copy).
-        "img-src 'self' data: https://launchnest.io",
+        // 2026-10-05; their verifier refuses a self-hosted copy), and Google
+        // Analytics' hosts for the image fallback `gtag.js` reports through
+        // when a browser cannot send a beacon.
+        `img-src 'self' data: https://launchnest.io ${[GA_SCRIPT_ORIGIN, ...GA_COLLECT_ORIGINS].join(' ')}`,
         "font-src 'self'",
         `connect-src ${connect.join(' ')}`,
         `frame-src ${frame.join(' ')}`,

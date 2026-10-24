@@ -330,24 +330,36 @@ describe('rendered pages', () => {
     expect(html).toContain('<span class="pill">legacy</span>');
   });
 
-  it('declares a policy with no unsafe-inline and no remote origin but the two approved ones', () => {
+  it('declares a policy with no unsafe-inline and exactly the approved remote origins', () => {
+    // Written out by hand rather than imported from src/lib/analytics/config.ts,
+    // so that adding an origin there fails here until somebody means it.
+    const google = [
+      'https://www.googletagmanager.com',
+      'https://www.google-analytics.com',
+      'https://region1.google-analytics.com',
+      'https://region1.analytics.google.com',
+    ];
+    const approved: Record<string, string[]> = {
+      // LaunchNest's badge (2026-10-05), and Google Analytics' image fallback.
+      'img-src': ['https://launchnest.io', ...google],
+      // Cloudflare's beacon (2026-10-05) and gtag.js (2026-10-06).
+      'script-src': ['https://static.cloudflareinsights.com', 'https://www.googletagmanager.com'],
+      // Google Analytics' reports. The Cloudflare beacon posts to this site.
+      'connect-src': google,
+    };
     for (const { html } of everyPage(SAMPLE)) {
-      const csp = /content="(default-src[^"]*)"/.exec(html)?.[1] ?? '';
-      expect(csp).toContain('default-src &#39;none&#39;');
+      const csp = (/content="(default-src[^"]*)"/.exec(html)?.[1] ?? '').replaceAll('&#39;', "'");
+      expect(csp).toContain("default-src 'none'");
       expect(csp).not.toContain('unsafe-inline');
-      // Approved exceptions (2026-10-05): LaunchNest's badge, images only...
-      const img = 'img-src &#39;self&#39; data: https://launchnest.io;';
-      expect(csp).toContain(img);
-      // ...and Cloudflare Web Analytics' beacon script, which may load but may
-      // post only to this site: connect-src admits nothing remote.
-      const beacon = ' https://static.cloudflareinsights.com;';
-      // Since 2026-10-06 the pages may also load PromptSpend's own scripts:
-      // 'self', still with no unsafe-inline and no other remote origin.
-      expect(csp).toMatch(
-        /script-src &#39;self&#39; &#39;sha256-[^&]*&#39; https:\/\/static\.cloudflareinsights\.com;/,
-      );
-      expect(csp).toContain('connect-src &#39;self&#39;;');
-      expect(csp.replace(img, '').replace(beacon, ';')).not.toContain('http');
+      // Since 2026-10-06 the pages may also load PromptSpend's own scripts.
+      expect(csp).toMatch(/script-src 'self' 'sha256-[^']*' /);
+      expect(csp).toContain("connect-src 'self' ");
+      const directives = csp.split(';').map((part) => part.trim().split(/\s+/));
+      for (const [name, ...sources] of directives) {
+        const remote = sources.filter((source) => source.startsWith('http'));
+        expect(remote, `${name} admits an unapproved origin`).toEqual(approved[name!] ?? []);
+      }
+      expect(csp).not.toMatch(/\*/);
     }
   });
 

@@ -2,15 +2,20 @@
 
 PromptSpend is a static site with no accounts and no login. Nothing a visitor types or
 pastes into the calculator is sent anywhere, which removes most of the usual attack surface. The pages
-load from two remote origins: `https://launchnest.io`, for one badge image
-(`img-src` only), and `https://static.cloudflareinsights.com`, the Cloudflare Web
+load from these remote origins: `https://launchnest.io`, for one badge image
+(`img-src` only); `https://static.cloudflareinsights.com`, the Cloudflare Web
 Analytics beacon (`script-src`), which reports only to the site's own
 `/cdn-cgi/rum`, and reports a page's address without its query string or
-fragment. Where the alerts API is configured, Turnstile's
-`https://challenges.cloudflare.com` is admitted too.
+fragment; and Google Analytics 4 (since 2026-10-24): `gtag.js` from
+`https://www.googletagmanager.com` (`script-src`, and also `connect-src`
+and `img-src`), reporting to
+`https://www.google-analytics.com`, `https://region1.google-analytics.com` and
+`https://region1.analytics.google.com` (`connect-src` and `img-src`). Where the
+alerts API is configured, Turnstile's `https://challenges.cloudflare.com` is
+admitted too.
 
-There are two servers, both Cloudflare Workers, and only one of them holds
-anything:
+There are three servers, all Cloudflare Workers, and only one of them holds
+personal data:
 
 - **The opt-in price-alerts API** in [`worker/`](worker), on a D1 database
   holding email subscribers and push subscriptions. Small and deliberately
@@ -20,6 +25,10 @@ anything:
   stateless, keyless and read-only — it holds no data and has no accounts — but
   it re-serves prices to callers who cannot see the catalog behind it, which
   puts it inside the blast radius of the first item below.
+- **The apps' update server** in [`updates/`](updates), serving
+  `updates.promptspend.dev`: signed app updates for the iPhone and Android
+  apps. It keeps no record of who asks: its request logging is switched off
+  (see the privacy policy, "App updates").
 
 Two more surfaces re-serve those prices without being servers at all: the MCP
 server ([`mcp/`](mcp)) and the VS Code extension ([`vscode/`](vscode)). Neither
@@ -84,17 +93,45 @@ in spare time, so please allow a reasonable window before disclosing publicly.
 
 ## Data handling
 
-There is no cookie. The website (not the apps, extension or API) counts visits
-with Cloudflare Web Analytics: a cookieless beacon, injected by Cloudflare, that
-reports page address, referrer, country and timings to the site's own
-`/cdn-cgi/rum`. The Content Security Policy admits its script origin
-(`static.cloudflareinsights.com`) but keeps `connect-src` closed to it, so no
-script on the page can post to a remote collector. Pasted prompt text stays in the tab: it is
-tokenised locally, is deliberately excluded from the shareable URL, and is held
-in a bounded in-memory cache that is cleared when the scenario is reset and
-discarded when the tab closes. `localStorage` holds only interface choices:
-theme, accent and background, and whether the welcome and apps banners were
-dismissed.
+The website (not the apps, the VS Code extension, the MCP server or the API)
+counts visits two ways.
+
+- **Google Analytics 4** (owner decision 2026-10-06, live 2026-10-24) sets the
+  cookies `_ga` and `_ga_08GFGLY4VD`. It runs on promptspend.com only, loads
+  for every visitor with a dismissible notice (or, with the one-line switch
+  `ANALYTICS_REQUIRES_CONSENT` in `src/lib/analytics/config.ts`, only after
+  _Accept_), and not at all when the visitor turned it off or the browser sends
+  Global Privacy Control. PromptSpend's code sends it `page_location` and
+  `page_referrer` cut down to origin and path (no query string, no fragment),
+  the page title, and fixed settings: GA's automatic page view, Google signals
+  and ad personalisation are off. Nothing a visitor types, pastes or enters in a
+  form is passed to it (`src/lib/analytics/ga.ts`, with tests).
+- **Cloudflare Web Analytics**: a cookieless beacon, injected by Cloudflare,
+  that reports page address, referrer, country and timings to the site's own
+  `/cdn-cgi/rum`. The policy admits its script origin
+  (`static.cloudflareinsights.com`) but keeps `connect-src` closed to it.
+
+Some of what the privacy page says rests on settings in the Google Analytics
+account rather than in this repository, so they are recorded here: event data
+retention **2 months**; Google signals **off**; and under the web stream's
+Enhanced measurement, **"Page changes based on browser history events" off**
+(the calculator rewrites its own address as the scenario changes, and Google's
+automatic page view for that would report the full address, query string
+included), with **Form interactions** and **Site search** off too; no
+User-ID or user-provided data collection, and no Google Ads or BigQuery link.
+"Granular location and device data collection" decides how precise the
+location the privacy page describes ("such as your city or country") is. If
+any of these is changed, change the privacy page in the same breath.
+
+What that costs: `connect-src` now admits Google Analytics' collection hosts,
+so a script that got onto the page could post data to an analytics account of
+its own there. The hosts are named one by one (no wildcard) and
+`npm run check:csp` fails on any origin it does not list. Pasted prompt text
+stays in the tab: it is tokenised locally, is deliberately excluded from the
+shareable URL, and is held in a bounded in-memory cache that is cleared when
+the scenario is reset and discarded when the tab closes. `localStorage` holds
+only interface choices: theme, accent and background, whether the welcome and
+apps banners were dismissed, and the answer to the analytics notice.
 
 If — and only if — you subscribe to price alerts, the alerts database holds:
 

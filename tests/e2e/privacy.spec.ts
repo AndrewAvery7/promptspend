@@ -3,20 +3,23 @@ import { expect, test } from '@playwright/test';
 /**
  * The privacy promises that can be checked in a browser, checked in one.
  *
- * "No cookies" is printed in every page's footer, the README, the social card
- * and the promo video, and until this file nothing tested it. A promise nobody
- * tests is a promise that becomes false the day someone adds a script.
+ * A promise nobody tests is a promise that becomes false the day someone adds
+ * a script. What is asserted is what PromptSpend's own code does: it sets no
+ * cookie, stores only interface choices, and talks only to this site and the
+ * LaunchNest badge. When accounts or a sponsor are added, these tests fail on
+ * purpose, and the fix is to rewrite the promises (README, privacy page,
+ * footer, social card, store listings) in the same release and then change the
+ * assertion — never to loosen the assertion alone.
  *
- * What is asserted is what is true on 2026-10-06, and that is the point of
- * writing it down: when analytics with cookies, accounts or a sponsor are
- * added, these tests fail on purpose, and the fix is to rewrite the promises
- * (README, privacy page, footer, social card, store listings) in the same
- * release and then change the assertion — never to loosen the assertion alone.
+ * Google Analytics (since 2026-10-24) does set cookies and talk to Google, but
+ * only on promptspend.com, so it never starts on this local server. That
+ * absence is itself checked in `analytics.spec.ts`, which also visits the
+ * pages as promptspend.com and holds what Google is told.
  *
- * The built site is served locally, where Cloudflare's Web Analytics beacon is
- * never injected (it is added at the edge), so the visitor counter is not
- * exercised here; its behaviour was checked against the live site: it reports
- * the page's address without the query string or fragment.
+ * Cloudflare's Web Analytics beacon is never injected here either (it is added
+ * at the edge), so the visitor counter is not exercised; its behaviour was
+ * checked against the live site: it reports the page's address without the
+ * query string or fragment.
  *
  * Not covered, on purpose: Cloudflare's Turnstile bot-check, which only loads
  * when the build has an alerts API configured (the test build has none), and
@@ -34,14 +37,18 @@ const INTERFACE_KEYS = new Set([
   'ps.canvas', // the page background
   'ps.welcomeDismissed', // the welcome banner was closed
   'ps.appsLiveBannerDismissed', // the apps banner was closed
+  'ps.analyticsChoice', // the answer to the Google Analytics notice
 ]);
 
 const HOW_TO_FIX =
-  'If this is deliberate (analytics with cookies, accounts, sponsors), rewrite the public promises first ' +
+  'If this is deliberate (accounts, sponsors, a new analytics service), rewrite the public promises first ' +
   '(README, privacy page, footer, social card, store listings) and then update this test in the same release.';
 
 for (const path of PAGES) {
-  test(`${path} sets no cookie and stores nothing until a setting changes`, async ({ page, context }) => {
+  test(`${path}: the site's own code sets no cookie and stores nothing until a setting changes`, async ({
+    page,
+    context,
+  }) => {
     await page.goto(path);
     await page.waitForLoadState('networkidle');
 

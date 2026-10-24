@@ -3,15 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 /**
  * Cloudflare Turnstile, loaded only when it is actually required.
  *
- * This is the one place the site runs third-party code on purpose (the other
- * third-party requests are the footer's LaunchNest badge image and Cloudflare's
- * own Web Analytics script), and it is a
+ * One of the few places the site runs third-party code on purpose (the
+ * others are Cloudflare's Web Analytics script and, on promptspend.com,
+ * Google Analytics; the footer's LaunchNest badge is an image), and it is a
  * deliberate trade: without it, the subscribe endpoint sends a confirmation
  * email for every address posted to it, so a script could burn the sending
  * quota and the domain's reputation in an afternoon. The Content Security
- * Policy opens `challenges.cloudflare.com` and nothing else, and only when the
- * API reports that a site key is configured — a deployment with Turnstile off
- * never loads it and keeps a strictly self-only policy.
+ * Policy opens `challenges.cloudflare.com` for it only when an alerts API is
+ * configured, and a deployment with Turnstile switched off never loads it.
  *
  * No prompt data ever reaches it: the widget sits on the alerts form, which
  * knows an email address and a list of model ids, and nothing about anything a

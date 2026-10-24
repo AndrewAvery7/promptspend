@@ -2,6 +2,7 @@ import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { SiteHeader, type SiteHeaderProps } from '@/components/SiteHeader';
 import { useAppearance } from '@/state/useAppearance';
+import { startAnalytics } from '@/lib/analytics/notice';
 import '@/styles/fonts.css';
 import '@/styles/tokens.css';
 import '@/styles/header.css';
@@ -64,3 +65,7 @@ export function mountSiteHeader(mount: HTMLElement): void {
 
 const mount = document.getElementById('site-header');
 if (mount) mountSiteHeader(mount);
+
+// Every generated page loads this script, so it is also where those pages
+// start Google Analytics and its notice (promptspend.com only; src/lib/analytics).
+startAnalytics();

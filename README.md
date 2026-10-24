@@ -14,15 +14,15 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-109-2456E6.svg" alt="109 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1468-blue.svg" alt="1468 tests">
-  <img src="https://img.shields.io/badge/initial%20payload-102%20KB%20gzip-blue.svg" alt="102 KB gzip initial payload">
+  <img src="https://img.shields.io/badge/tests-1555-blue.svg" alt="1555 tests">
+  <img src="https://img.shields.io/badge/initial%20payload-104%20KB%20gzip-blue.svg" alt="104 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
 </p>
 
 <p align="center">
   <a href="https://promptspend.com"><b>&rarr; Open PromptSpend</b></a>
-  &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no ads, no cookies
+  &nbsp;·&nbsp; free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no accounts, no ads
   &nbsp;·&nbsp; <a href="https://promptspend.com/writing/what-llm-cost-calculators-get-wrong/">Writing: What LLM Cost Calculators Get Wrong</a>
   &nbsp;·&nbsp; <a href="https://promptspend.com/writing/2026-09-price-movement-report/">September 2026 Price Movement Report</a>
 </p>
@@ -408,7 +408,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1468 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1555 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 347 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live                             |
@@ -474,28 +474,48 @@ just a confident guess.
 
 ## Privacy, precisely
 
-**Nothing you type or paste leaves your browser.** No accounts, no ads, no cookies. Fonts are
+**Nothing you type or paste leaves your browser.** No accounts, no ads. Fonts are
 self-hosted. One image is not: the footer's LaunchNest listing badge loads from launchnest.io (their
 directory requires it), with no referrer, so LaunchNest's server sees a visitor's IP address but not
-which page they were on. The website counts visits with Cloudflare Web Analytics, a cookieless beacon
-that reports a page's address (without its query string or fragment), referrer, country and load timings to promptspend.com's own
-`/cdn-cgi/rum` (the Content Security Policy lets it post nowhere else); it never sees pasted text. The
-apps, the VS Code extension and the API carry no analytics. Pasted prompt text is tokenised in your browser, deliberately excluded from the shareable
-URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds only
-interface choices: your theme, accent and background, and whether you dismissed the welcome and apps
-banners.
+which page they were on.
+
+**The website counts visits with Google Analytics, which sets cookies.** Since 2026-10-24 every page of
+promptspend.com loads Google Analytics 4 and shows a small notice saying so, with a link to the
+[privacy policy](https://promptspend.com/privacy/) and a _Turn off_ button. Google Analytics sets two
+cookies (`_ga`, `_ga_08GFGLY4VD`). PromptSpend's code sends it the page's site and path only — never the
+query string or `#fragment`, where the scenario and alert tokens live — plus the page title and referring
+page (cut down the same way); it switches off GA's automatic page view, Google signals and ad
+personalisation, and passes it nothing anyone types, pastes or enters in a form
+([`src/lib/analytics/`](src/lib/analytics/)). It runs only on promptspend.com, never when the browser
+sends Global Privacy Control, and one line in
+[`src/lib/analytics/config.ts`](src/lib/analytics/config.ts) (`ANALYTICS_REQUIRES_CONSENT`) switches it
+to loading only after a visitor clicks _Accept_. Visitors can turn it off on the notice, on the privacy
+page, or with Google's own opt-out add-on.
+
+The website also keeps Cloudflare Web Analytics, a cookieless beacon that reports a page's address
+(without its query string or fragment), referrer, country and load timings to promptspend.com's own
+`/cdn-cgi/rum`; neither service sees pasted text. The apps, the VS Code extension, the MCP server and the
+API carry no analytics. Pasted prompt text is tokenised in your browser, deliberately excluded from the
+shareable URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds
+only interface choices: your theme, accent and background, whether you dismissed the welcome and apps
+banners, and your answer to the analytics notice.
 
 **Price alerts are the one exception, and only if you opt in.** They are a feature you have to switch on,
-and they are the only reason this project has a server at all
-(a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)). Precisely what changes:
+and they are the only reason this project has a server that stores anything
+(a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)); the pricing API stores nothing but Cloudflare's
+request logs (kept up to seven days), and the apps' update server has its logging switched off. Precisely what changes:
 
 - The Content Security Policy opens `connect-src` for that one API origin and, whenever an API is
   configured, `script-src`, `connect-src` and `frame-src` for Turnstile's `challenges.cloudflare.com`
-  (whether Turnstile is actually required is decided at runtime, so the build permits it). Nothing else:
-  the other remote origins are `img-src` for the LaunchNest badge and `script-src` for the analytics
-  beacon, which posts only to this site. That
-  `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is
-  generated from one configured value rather than hand-maintained.
+  (whether Turnstile is actually required is decided at runtime, so the build permits it). Beyond
+  that, the remote origins are `img-src` for the LaunchNest badge, `script-src` for the Cloudflare
+  beacon (which posts only to this site), and Google Analytics: `www.googletagmanager.com` for
+  `gtag.js` (in `script-src`, and in `connect-src` and `img-src` as Google's guidance asks), and its collection hosts (`www.google-analytics.com`, `region1.google-analytics.com`,
+  `region1.analytics.google.com`) in `connect-src` and `img-src`, each named rather than wildcarded.
+  That `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is
+  generated from configured values rather than hand-maintained, and `npm run check:csp` fails on any
+  origin it does not list. Admitting Google's collector is a real cost — a script that got onto the
+  page could post to an analytics account of its own — accepted on 2026-10-06 for visit counts.
 - **Browser push stores nothing personal.** A push subscription is an opaque URL the browser issues. No
   address, no name, nothing that identifies you.
 - **Request logs.** Alert links carry a private token in their address, so the alerts Worker keeps no
@@ -509,9 +529,9 @@ and they are the only reason this project has a server at all
 - The alerts form never sees anything you paste into the estimator. Those are different parts of the page
   and the prompt text never leaves the browser.
 
-A deployment with no API configured — which is what this repository builds by default — keeps a strictly
-self-only policy and says on screen that alerts are not switched on, rather than rendering a form that
-cannot work.
+A deployment with no API configured — which is what this repository builds by default — leaves the alerts
+API and Turnstile out of its policy (the analytics and badge origins above stay) and says on screen that
+alerts are not switched on, rather than rendering a form that cannot work.
 
 ## Security
 
