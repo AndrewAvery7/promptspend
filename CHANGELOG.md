@@ -9,7 +9,7 @@ on their own schedule and are not releases.
 
 ### Added
 
-- **Free-tier pages.** `/free-tiers/` compares whether each of the 12 providers lets a new account start
+- **Free-tier pages.** `/free-tiers/` compares whether each of the 16 providers lets a new account start
   without paying, and `/providers/<slug>/free/` answers it per provider, quoting the vendor's own pages
   with a link and read date on every fact. A daily check re-reads every source and marks a quote that has
   disappeared as under review. See `docs/FREE_TIERS.md`.

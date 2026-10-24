@@ -48,6 +48,30 @@ describe('data/models-allowlist.json', () => {
     expect(familyOf('dashscope/qwen3.8-max')).toBe('alibaba-qwen');
   });
 
+  it('captures the newer labs by their first-party keys only', () => {
+    expect(familyOf('meta/muse-spark-1.3')).toBe('meta-muse');
+    expect(familyOf('meta/muse-wonder-1.0')).toBe('meta-muse');
+    expect(familyOf('xiaomi_mimo/mimo-v2.6-pro')).toBe('xiaomi-mimo');
+    expect(familyOf('xiaomi_mimo/mimo-v2.6-flash')).toBe('xiaomi-mimo');
+    expect(familyOf('inception/mercury-2')).toBe('inception-mercury');
+    expect(familyOf('inception/mercury-2.5')).toBe('inception-mercury');
+    expect(familyOf('azure_ai/MAI-Thinking-1')).toBe('microsoft-mai');
+  });
+
+  it('leaves out what the newer labs sell but a comparison cannot use', () => {
+    const excluded = [
+      'meta/muse-spark-1.2', // billed at the 1.3 rate: one row, like Grok 4.20
+      'meta/muse-spark-1.3-contributor', // discount in exchange for training on your data
+      'meta/muse-image-1.0', // not a chat model
+      'inception/mercury-edit-2', // code-completion endpoint
+      'azure_ai/MAI-Cyber-1-Flash', // restricted access
+      'azure_ai/MAI-Code-1.1-Flash', // retiring
+      'azure_ai/MAI-DS-R1', // a DeepSeek derivative
+      'tencent/hy3', // other labs' models hosted by a cloud are not that lab's price
+    ];
+    for (const key of excluded) expect(familyOf(key), key).toBeUndefined();
+  });
+
   it('does not treat the GPT-4 generation as reasoning models', () => {
     for (const key of ['gpt-4.1', 'gpt-4.1-mini', 'gpt-4o', 'gpt-4o-mini']) {
       const family = matchFamily(key, ALLOWLIST);

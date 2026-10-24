@@ -660,7 +660,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-24",
-      "fingerprint": "0a1be8836feabc"
+      "fingerprint": "04bfd83a5e1778"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -671,6 +671,11 @@
       "published": "2026-08-02",
       "lastmod": "2026-10-03",
       "fingerprint": "0493722d15ed8c"
+    },
+    "/models/azure-ai-mai-thinking-1/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "07423103c028b7"
     },
     "/models/claude-fable-5-1/": {
       "published": "2026-09-02",
@@ -972,6 +977,26 @@
       "lastmod": "2026-10-24",
       "fingerprint": "0f50f3ab8a4829"
     },
+    "/models/inception-mercury-2-5/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1c769157403a81"
+    },
+    "/models/inception-mercury-2/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "18a5bc9fb7af5d"
+    },
+    "/models/meta-muse-spark-1-3/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "14eced3eb43580"
+    },
+    "/models/meta-muse-wonder-1-0/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1abc771e7db001"
+    },
     "/models/minimax-m2-1/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-02",
@@ -1107,6 +1132,16 @@
       "lastmod": "2026-10-24",
       "fingerprint": "0e9113184aae56"
     },
+    "/models/xiaomi-mimo-mimo-v2-6-flash/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "0ecdb52aebdea8"
+    },
+    "/models/xiaomi-mimo-mimo-v2-6-pro/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1ecf85589cf0d6"
+    },
     "/models/zai-glm-4-32b-0414-128k/": {
       "published": "2026-10-24",
       "lastmod": "2026-10-24",
@@ -1175,7 +1210,7 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-24",
-      "fingerprint": "182a9f3f37c87d"
+      "fingerprint": "0b3cd62044796c"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -1207,6 +1242,21 @@
       "lastmod": "2026-10-24",
       "fingerprint": "0de03dea1f3f77"
     },
+    "/providers/inception/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "08d6c272b53363"
+    },
+    "/providers/meta/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "1a8b3b8d9d1062"
+    },
+    "/providers/microsoft/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "18e959ea4c6577"
+    },
     "/providers/minimax/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-20",
@@ -1231,6 +1281,11 @@
       "published": "2026-08-02",
       "lastmod": "2026-10-24",
       "fingerprint": "0e352a18acfde9"
+    },
+    "/providers/xiaomi/": {
+      "published": "2026-10-24",
+      "lastmod": "2026-10-24",
+      "fingerprint": "189a8c055031fb"
     },
     "/providers/zai/": {
       "published": "2026-08-02",

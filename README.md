@@ -12,9 +12,9 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
-  <img src="https://img.shields.io/badge/models-102-2456E6.svg" alt="102 models tracked">
-  <img src="https://img.shields.io/badge/providers-12-2456E6.svg" alt="12 providers">
-  <img src="https://img.shields.io/badge/tests-1439-blue.svg" alt="1439 tests">
+  <img src="https://img.shields.io/badge/models-109-2456E6.svg" alt="109 models tracked">
+  <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
+  <img src="https://img.shields.io/badge/tests-1441-blue.svg" alt="1441 tests">
   <img src="https://img.shields.io/badge/initial%20payload-99%20KB%20gzip-blue.svg" alt="99 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -385,7 +385,7 @@ mcp/                the MCP server — imports the engine above, so it cannot di
 vscode/             the VS Code extension — imports it too, for the same reason
 ```
 
-Beyond the calculator and Receipt, the build writes 210 crawlable pages — one per model, one per provider, and a
+Beyond the calculator and Receipt, the build writes 221 crawlable pages — one per model, one per provider, and a
 curated set of head-to-heads — from the same catalog and the same cost engine. See
 [docs/PAGES.md](docs/PAGES.md).
 
@@ -408,9 +408,9 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1439 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1441 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
-| [docs/PAGES.md](docs/PAGES.md)                         | The 210 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
+| [docs/PAGES.md](docs/PAGES.md)                         | The 221 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live                             |
 | [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                                            |
 | [docs/ALERTS.md](docs/ALERTS.md)                       | The price-alerts Worker — push and email architecture, the cost model, the domain cutover                                           |
