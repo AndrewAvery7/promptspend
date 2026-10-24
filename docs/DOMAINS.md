@@ -28,6 +28,55 @@ reserved documentation address that goes nowhere on purpose — because a Redire
 Rule needs _some_ proxied record before traffic reaches Cloudflare at all; the
 Worker's custom domain replaces it.
 
+### Certificates
+
+**Status: changed 2026-10-24.** Both `promptspend.com` and `www.promptspend.com`
+are proxied through Cloudflare (orange cloud) in front of GitHub Pages, and the
+zone's SSL/TLS mode is pinned to **Custom → Full**. The cutover table further
+down shows grey clouds; that was the original state, not the current one.
+
+| Hop                       | Certificate                                      | Renews                                    |
+| ------------------------- | ------------------------------------------------ | ----------------------------------------- |
+| Visitor → Cloudflare      | Cloudflare Universal SSL (Google Trust Services) | Automatically, from 30 days before expiry |
+| Cloudflare → GitHub Pages | GitHub's Let's Encrypt certificate               | **Never, while the site is proxied**      |
+
+Why it is shaped like this, in the order it was learned:
+
+1. **The proxy is there for the visitor counter.** Since 2026-10-06 the apex has
+   been proxied so Cloudflare Web Analytics can inject its beacon automatically
+   (see `vite.config.ts` and the privacy policy, which names both companies).
+2. **GitHub cannot renew a certificate for a proxied hostname.** Its Pages
+   health check reports the apex as `is_https_eligible: false` because it
+   resolves to Cloudflare, and the certificate it issued on 2026-08-02 is stuck
+   in `bad_authz` and expires on 2026-10-31 16:44 UTC. Nothing watched for this;
+   it was found by accident eight days out.
+3. **So Cloudflare must accept an expired origin certificate.** That is what
+   **Full** does: it encrypts the Cloudflare → GitHub hop but does not validate
+   the certificate there. **Full (strict)** validates it, and would turn the
+   expired certificate into an Error 526 for every visitor — and for the API,
+   the apps, the MCP server and the VS Code extension, which all read
+   `https://promptspend.com/data/pricing.json`. The mode was _Automatic_ (which
+   had chosen Full); it is pinned to Custom so a later automatic scan cannot
+   upgrade it to strict.
+4. **`www` had to be proxied too.** It was DNS-only, pointing straight at
+   GitHub, so after 2026-10-31 a visitor typing `www.` would have been handed
+   the expired certificate directly. Proxied, it gets Cloudflare's certificate
+   and GitHub's 301 to the apex still does the redirect.
+
+The trade-off accepted with Full: Cloudflare does not prove it is talking to the
+real GitHub on the inner hop. Traffic is still encrypted end to end.
+
+**Watched by** the certificate step in `.github/workflows/freshness.yml`, which
+checks the certificate a visitor sees on every public host each morning and
+opens a `Certificate expiry alert` issue inside 14 days. It deliberately does
+not check GitHub's inner certificate, which is expected to stay expired.
+
+**If the proxy is ever removed** (grey cloud on both records, for example to
+drop the counter), GitHub becomes eligible again: re-save the custom domain in
+**Settings → Pages** to restart issuance, wait for the certificate, and only
+then rely on it. Until it is issued, visitors would see GitHub's expired
+certificate.
+
 The naming reads backwards — `api.promptspend.dev` is the private alerts API and
 `promptspend.dev` is the public one. It is not worth fixing: the first is baked
 into the deployed site's configuration, its Content Security Policy and every
@@ -101,6 +150,11 @@ On `promptspend.com`:
 > together, i.e. it is proxied in front of GitHub Pages, which is how Cloudflare
 > Web Analytics' automatic setup injects its beacon (see `vite.config.ts`). The
 > privacy policy therefore names both: GitHub Pages hosts, Cloudflare serves.
+>
+> **Update 2026-10-24:** `www` is proxied as well, and the SSL/TLS mode is
+> pinned to Full. The certificate challenge this callout warns about did break:
+> GitHub's certificate cannot renew while proxied. Why that is now acceptable,
+> and what watches it, is under [Certificates](#certificates).
 
 Verify before continuing:
 
