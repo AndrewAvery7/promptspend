@@ -437,6 +437,8 @@ describe('Compare answers a buying question', () => {
     expect(rowNames(table)).toEqual([...ascending].reverse());
     // DeepSeek is far cheaper than Sonnet at the default workload.
     expect(ascending[0]).toBe('DeepSeek V3.2');
+  });
+});
 
 describe('home page order: calculator first, nothing removed', () => {
   /** True when `a` comes before `b` in the document. */
