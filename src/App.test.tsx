@@ -31,7 +31,7 @@ const CATALOG: PricingCatalog = {
       displayName: 'Claude Sonnet 5',
       status: 'current',
       contextWindow: 1_000_000,
-      pricing: { input: 3, output: 15, cachedInput: 0.3 },
+      pricing: { input: 3, output: 15, cachedInput: 0.3, cacheWrite: 3.75 },
       tokenizer: { kind: 'approx', charsPerToken: 3.6, cjkCharsPerToken: 1.5 },
       capabilities: { reasoning: true, vision: true },
       capabilityIndex: 90,
@@ -276,6 +276,24 @@ describe('App', () => {
     render(<App />);
     expect(await screen.findByText(/Pricing data could not be loaded/)).toBeInTheDocument();
   });
+
+  it('offers a way to try again, and recovers when the second attempt succeeds', async () => {
+    const user = userEvent.setup();
+    let failing = true;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        failing
+          ? new Response('nope', { status: 500 })
+          : new Response(JSON.stringify(CATALOG), { status: 200 }),
+      ),
+    );
+    render(<App />);
+    await screen.findByText(/Pricing data could not be loaded/);
+    failing = false;
+    await user.click(screen.getByRole('button', { name: 'Try again' }));
+    await waitFor(() => expect(screen.getByText(/Know the tab/)).toBeInTheDocument());
+  });
 });
 
 describe('honesty of the default estimate', () => {
@@ -286,6 +304,25 @@ describe('honesty of the default estimate', () => {
     expect(window.location.search).toMatch(/cache=0\.00/);
     // ...and it is on the panel, not hidden inside "Advanced".
     expect(cache.closest('details')).toBeNull();
+  });
+
+  it('draws a bill whose parts add up to its total once cache writes are charged', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByLabelText(/Assume prompt caching/));
+    const card = (await screen.findAllByRole('article')).find((el) =>
+      within(el).queryByText('Claude Sonnet 5'),
+    )!;
+    const money = (text: string) => Number(/\$([\d,]+(?:\.\d+)?)/.exec(text)![1]!.replaceAll(',', ''));
+    const legend = card.querySelector('.cost-card__legend')!.textContent!;
+    const spans = [...card.querySelectorAll('.cost-card__legend span')].map((el) => el.textContent ?? '');
+    const part = (label: string) => money(spans.find((text) => text.startsWith(label))!);
+    const total = money(card.querySelector('.cost-card__total')!.textContent!);
+    expect(legend).toMatch(/WRITE/);
+    // Each figure is rounded to the dollar, so allow a dollar per part.
+    expect(Math.abs(part('IN') + part('WRITE') + part('OUT') - total)).toBeLessThanOrEqual(2);
+    // The saving is a comparison, not a fourth charge, and says so.
+    expect(legend).toMatch(/vs no cache/);
   });
 
   it('lists the cache assumptions only once caching is switched on', async () => {

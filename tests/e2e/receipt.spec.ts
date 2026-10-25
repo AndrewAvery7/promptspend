@@ -97,6 +97,26 @@ test.describe('PromptSpend Receipt', () => {
     );
   });
 
+  test('stamps the built-in sample as an example until a real result is imported', async ({ page }) => {
+    await page.goto('/receipt/');
+    const preview = page.getByLabel('Shareable PromptSpend receipt preview');
+    await expect(preview).toContainText('EXAMPLE RECEIPT');
+    await page.getByLabel('Assistant receipt JSON').fill(
+      JSON.stringify({
+        conversation: '47 visible turns',
+        estimatedTokens: '120,000–136,000 estimated',
+        currentModel: 'Example Model',
+        estimatedCost: '$1.62–$1.88 estimated',
+        alternativeModel: 'Example Mini',
+        alternativeCost: '$0.18–$0.22 estimated',
+      }),
+    );
+    await page.getByRole('button', { name: 'Import assistant result' }).click();
+    await expect(preview).toContainText('YOUR AI RECEIPT');
+    await expect(preview).not.toContainText('EXAMPLE RECEIPT');
+    await expect(preview).toContainText('Not established');
+  });
+
   test('reports invalid share data without replacing the safe preview', async ({ page }) => {
     await page.goto('/receipt/');
     await page.getByLabel('Assistant receipt JSON').fill('{"conversation":"one"}');
@@ -112,7 +132,8 @@ test.describe('PromptSpend Receipt', () => {
     const downloadPromise = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Download PNG' }).click();
     const download = await downloadPromise;
-    expect(download.suggestedFilename()).toMatch(/^promptspend-ai-receipt-\d{4}-\d{2}-\d{2}\.png$/);
+    // The built-in sample is an example, and its file says so.
+    expect(download.suggestedFilename()).toMatch(/^promptspend-ai-example-receipt-\d{4}-\d{2}-\d{2}\.png$/);
     // The footer's LaunchNest badge is the one approved remote request (a fixed
     // image URL that carries no receipt data, which LaunchNest redirects to its
     // static artwork); anything else would be a leak.

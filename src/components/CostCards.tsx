@@ -27,7 +27,14 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth, 
     <div className="card-grid">
       {rows.map((row) => {
         const { breakdown, scaled, model } = row;
-        const inputShare = breakdown.total > 0 ? (breakdown.inputCost / breakdown.total) * 100 : 50;
+        // The bar is drawn from the three charges that make up the total, so its
+        // parts always add up to the headline. Output used to take whatever
+        // input did not, which silently folded cache-write charges into it.
+        const charged = breakdown.inputCost + breakdown.cacheWriteCost + breakdown.outputCost;
+        const share = (part: number, fallback: number) => (charged > 0 ? (part / charged) * 100 : fallback);
+        const inputShare = share(breakdown.inputCost, 50);
+        const writeShare = share(breakdown.cacheWriteCost, 0);
+        const outputShare = share(breakdown.outputCost, 50);
         return (
           <article
             key={model.id}
@@ -68,16 +75,25 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth, 
             <div
               className="split-bar"
               role="img"
-              aria-label={`Input ${Math.round(inputShare)} percent, output ${Math.round(100 - inputShare)} percent of cost`}
+              aria-label={`Input ${Math.round(inputShare)} percent, ${
+                writeShare > 0 ? `cache writes ${Math.round(writeShare)} percent, ` : ''
+              }output ${Math.round(outputShare)} percent of cost`}
             >
               <div className="split-bar__in" style={{ width: `${inputShare}%` }} />
-              <div className="split-bar__out" style={{ width: `${100 - inputShare}%` }} />
+              {writeShare > 0 && <div className="split-bar__write" style={{ width: `${writeShare}%` }} />}
+              <div className="split-bar__out" style={{ width: `${outputShare}%` }} />
             </div>
             <div className="cost-card__legend">
               <span>
                 <i style={{ background: 'var(--c-in)' }} />
                 IN {formatMoney(breakdown.inputCost * conversationsPerMonth)}/mo
               </span>
+              {breakdown.cacheWriteCost > 0 && (
+                <span>
+                  <i style={{ background: 'var(--c-write)' }} />
+                  WRITE {formatMoney(breakdown.cacheWriteCost * conversationsPerMonth)}/mo
+                </span>
+              )}
               <span>
                 <i style={{ background: 'var(--c-out)' }} />
                 OUT {formatMoney(breakdown.outputCost * conversationsPerMonth)}/mo
@@ -85,9 +101,11 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth, 
               {cacheEnabled && breakdown.cacheSavings !== 0 && (
                 <span className={breakdown.cacheSavings > 0 ? 'value--save' : 'value--cost'}>
                   {/* Net of cache writes. Showing the read saving alone would
-                      report a discount the invoice does not contain. */}
+                      report a discount the invoice does not contain. It is a
+                      comparison with an uncached bill, not a line of this one,
+                      so it is labelled as such and left out of the bar. */}
                   CACHE {breakdown.cacheSavings > 0 ? '−' : '+'}
-                  {formatMoney(Math.abs(breakdown.cacheSavings) * conversationsPerMonth)}/mo
+                  {formatMoney(Math.abs(breakdown.cacheSavings) * conversationsPerMonth)}/mo vs no cache
                 </span>
               )}
               {breakdown.longContextTurns > 0 && (

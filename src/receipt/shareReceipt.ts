@@ -15,7 +15,12 @@ function receiptRow(label: string, value: string, y: number): string {
   return `<text x="110" y="${y}" class="label">${escapeXml(label)}</text><text x="1090" y="${y}" class="value" text-anchor="end">${escapeXml(value)}</text>`;
 }
 
-export function renderShareReceiptSvg(data: ShareReceiptData): string {
+/** The line above the headline. A sample is stamped as one, in the file as well as on screen. */
+export function receiptEyebrow(isExample: boolean): string {
+  return isExample ? 'EXAMPLE RECEIPT · NOT YOUR DATA' : 'YOUR AI RECEIPT';
+}
+
+export function renderShareReceiptSvg(data: ShareReceiptData, isExample = false): string {
   const rows = [
     ['CONVERSATION', data.conversation],
     ['ESTIMATED TOKENS', data.estimatedTokens],
@@ -30,7 +35,7 @@ export function renderShareReceiptSvg(data: ShareReceiptData): string {
 <rect width="1200" height="1500" fill="#11151c"/><rect x="54" y="54" width="1092" height="1392" rx="20" fill="#fbfaf7"/>
 <rect x="54" y="54" width="1092" height="22" rx="11" fill="#2456e6"/>
 <style>.brand{font:700 42px Arial,sans-serif;letter-spacing:-1px;fill:#2456e6}.eyebrow{font:700 22px monospace;letter-spacing:5px;fill:#2456e6}.heading{font:700 76px Arial,sans-serif;letter-spacing:-3px;fill:#171a21}.label{font:700 23px monospace;letter-spacing:1px;fill:#666b76}.value{font:700 27px Arial,sans-serif;fill:#171a21}.difference{font:700 82px Arial,sans-serif;letter-spacing:-3px;fill:#2456e6}.note{font:24px Arial,sans-serif;fill:#666b76}.url{font:700 25px monospace;letter-spacing:2px;fill:#171a21}</style>
-<text x="110" y="155" class="brand">PROMPTSPEND</text><text x="110" y="232" class="eyebrow">YOUR AI RECEIPT</text>
+<text x="110" y="155" class="brand">PROMPTSPEND</text><text x="110" y="232" class="eyebrow">${receiptEyebrow(isExample)}</text>
 <text x="110" y="330" class="heading">YOUR PROMPT</text><text x="110" y="410" class="heading">HAS A PRICE TAG.</text>
 <line x1="110" x2="1090" y1="480" y2="480" stroke="#a8a8aa" stroke-width="2" stroke-dasharray="10 10"/>
 ${rows.map(([label, value], index) => receiptRow(label, value, 555 + index * 92)).join('')}
@@ -40,6 +45,6 @@ ${rows.map(([label, value], index) => receiptRow(label, value, 555 + index * 92)
 </svg>`;
 }
 
-export function shareReceiptFilename(): string {
-  return `promptspend-ai-receipt-${new Date().toISOString().slice(0, 10)}.png`;
+export function shareReceiptFilename(isExample = false): string {
+  return `promptspend-ai-${isExample ? 'example-receipt' : 'receipt'}-${new Date().toISOString().slice(0, 10)}.png`;
 }

@@ -1133,6 +1133,9 @@ body.tour-active .main {
   background: var(--c-in);
   border-radius: 4px 0 0 4px;
 }
+.split-bar__write {
+  background: var(--c-write);
+}
 .split-bar__out {
   background: var(--c-out);
   border-radius: 0 4px 4px 0;

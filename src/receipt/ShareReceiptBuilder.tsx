@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   DEFAULT_SHARE_RECEIPT,
   parseShareReceipt,
+  receiptEyebrow,
   renderShareReceiptSvg,
   shareReceiptFilename,
   type ShareReceiptData,
@@ -24,8 +25,20 @@ export function dispatchReceiptEvent(action: string) {
   window.dispatchEvent(new CustomEvent('promptspend:receipt', { detail: { action } }));
 }
 
-async function svgToPngFile(data: ShareReceiptData): Promise<File> {
-  const svg = renderShareReceiptSvg(data);
+/**
+ * The preview is a sample until the person replaces its usage figures. Derived
+ * from the data, not stored, so editing the two sample fields by hand ends it
+ * the same way an import does.
+ */
+export function isSampleReceipt(data: ShareReceiptData): boolean {
+  return (
+    data.conversation === DEFAULT_SHARE_RECEIPT.conversation ||
+    data.estimatedTokens === DEFAULT_SHARE_RECEIPT.estimatedTokens
+  );
+}
+
+async function svgToPngFile(data: ShareReceiptData, isExample: boolean): Promise<File> {
+  const svg = renderShareReceiptSvg(data, isExample);
   const image = new Image();
   image.decoding = 'async';
   image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
@@ -38,7 +51,7 @@ async function svgToPngFile(data: ShareReceiptData): Promise<File> {
   context.drawImage(image, 0, 0);
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
   if (!blob) throw new Error('This browser could not export the image.');
-  return new File([blob], shareReceiptFilename(), { type: 'image/png' });
+  return new File([blob], shareReceiptFilename(isExample), { type: 'image/png' });
 }
 
 function downloadFile(file: File) {
@@ -56,10 +69,15 @@ export function ShareReceiptBuilder() {
   const [status, setStatus] = useState<BuilderStatus>({ kind: 'idle', message: '' });
   const [busyAction, setBusyAction] = useState<'download' | 'share' | null>(null);
   const previewRows = useMemo(() => fields.slice(0, 6), []);
+  // An imported block replaces the whole sample, even when it happens to say
+  // "47 visible turns" too, so it is never stamped as one.
+  const [imported, setImported] = useState(false);
+  const isExample = !imported && isSampleReceipt(data);
 
   const importJson = () => {
     try {
       setData(parseShareReceipt(assistantJson));
+      setImported(true);
       setStatus({ kind: 'success', message: 'Receipt imported. Review every field before sharing.' });
       dispatchReceiptEvent('share_imported');
     } catch (cause) {
@@ -73,7 +91,7 @@ export function ShareReceiptBuilder() {
   const createFile = async (action: 'download' | 'share') => {
     setBusyAction(action);
     try {
-      const file = await svgToPngFile(data);
+      const file = await svgToPngFile(data, isExample);
       if (action === 'share' && navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           files: [file],
@@ -109,7 +127,8 @@ export function ShareReceiptBuilder() {
       </div>
       <p className="share-builder__intro">
         Paste the structured block from your AI audit, review the facts, then download or share a private,
-        locally generated PNG. Nothing is uploaded.
+        locally generated PNG. Nothing is uploaded. Until you import your own result, the preview is an
+        example and its image says so.
       </p>
 
       <div className="share-builder__grid">
@@ -146,7 +165,7 @@ export function ShareReceiptBuilder() {
 
         <article className="share-card" aria-label="Shareable PromptSpend receipt preview">
           <p className="share-card__brand">PROMPTSPEND</p>
-          <p className="share-card__eyebrow">YOUR AI RECEIPT</p>
+          <p className="share-card__eyebrow">{receiptEyebrow(isExample)}</p>
           <h3>
             YOUR PROMPT
             <br />

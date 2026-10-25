@@ -20,6 +20,22 @@ export const DEFAULT_SHARE_RECEIPT: ShareReceiptData = {
   note: 'Estimate, not invoice. Quality equivalence is not assumed.',
 };
 
+/**
+ * What an imported block falls back to for a field it did not carry. Never the
+ * sample's turns or tokens: a partial import that quietly kept "47 visible
+ * turns" would put invented usage on a receipt that looks personal.
+ */
+const OMITTED_SHARE_RECEIPT: ShareReceiptData = {
+  conversation: 'Not provided',
+  estimatedTokens: 'Not provided',
+  currentModel: 'Unknown',
+  estimatedCost: 'Not provided',
+  alternativeModel: 'Not provided',
+  alternativeCost: 'Not provided',
+  priceDifference: 'Not established',
+  note: DEFAULT_SHARE_RECEIPT.note,
+};
+
 export const SHARE_RECEIPT_LIMITS = { field: 90, input: 12_000, note: 180 } as const;
 const KEYS = Object.keys(DEFAULT_SHARE_RECEIPT) as (keyof ShareReceiptData)[];
 
@@ -46,7 +62,7 @@ export function parseShareReceipt(input: string): ShareReceiptData {
     nested && typeof nested === 'object' && !Array.isArray(nested)
       ? (nested as Record<string, unknown>)
       : record;
-  const output = { ...DEFAULT_SHARE_RECEIPT };
+  const output = { ...OMITTED_SHARE_RECEIPT };
   let recognized = 0;
   for (const key of KEYS) {
     const raw = candidate[key];
