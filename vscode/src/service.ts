@@ -38,10 +38,20 @@ export class PricingService {
     now: number = Date.now(),
     cacheKey?: string,
   ): Promise<ScanOutcome> {
-    const key = cacheKey === undefined ? undefined : `${cacheKey}:${JSON.stringify(options)}`;
-    if (key !== undefined && this.lastScan?.key === key) return this.lastScan.outcome;
+    // Ask the source first, every time. It answers from memory while the copy is
+    // fresh, so this costs nothing, and it is what notices that the copy has
+    // passed its 24-hour limit. Returning a remembered scan before asking meant
+    // an unchanged file kept showing yesterday's prices as usable indefinitely.
     const state = await this.source.get(now);
     if (state.status !== 'ready') return { matches: [], state, skipped: false };
+
+    // The catalog generation is part of the key, so a refreshed catalog rescans
+    // an unchanged document instead of keeping its old prices.
+    const key =
+      cacheKey === undefined ? undefined : `${cacheKey}:${JSON.stringify(options)}:${state.generatedAt}`;
+    // The remembered matches are reusable; the state is not (it carries
+    // `ageing`, which moves with the clock), so hand back the current one.
+    if (key !== undefined && this.lastScan?.key === key) return { ...this.lastScan.outcome, state };
 
     if (this.indexBuiltFor !== state.generatedAt) {
       this.index = new ModelIndex(state.catalog);

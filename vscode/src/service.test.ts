@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { PricingCatalog } from '@/lib/pricing/types';
-import { CatalogSource, GRACE_MS } from './catalog';
+import { CatalogSource, FRESH_MS, GRACE_MS } from './catalog';
 import { PricingService, statusBarText } from './service';
 import { DEFAULT_SETTINGS, shouldAnnotate } from './config';
 
@@ -39,6 +39,48 @@ describe('PricingService', () => {
 
     fetcher.mockRejectedValue(new Error('offline'));
     expect((await service.scan('"gpt-5"', {}, GRACE_MS)).matches).toEqual([]);
+  });
+
+  it('withdraws prices from an unchanged document once the catalog is past its limit', async () => {
+    // The document-version cache key is what production passes. A scan that
+    // answered from it before asking the source kept an unchanged file's prices
+    // on screen for as long as nobody edited it.
+    const fetcher = vi.fn(async () => raw);
+    const { service } = serviceWith(fetcher);
+    const key = 'file:///a.ts@1';
+    expect((await service.scan('"gpt-5"', {}, 0, key)).matches).toHaveLength(1);
+
+    fetcher.mockRejectedValue(new Error('offline'));
+    const late = await service.scan('"gpt-5"', {}, GRACE_MS, key);
+    expect(late.state.status).toBe('unavailable');
+    expect(late.matches).toEqual([]);
+  });
+
+  it('reports the current freshness for an unchanged document, not the remembered one', async () => {
+    const fetcher = vi.fn(async () => raw);
+    const { service } = serviceWith(fetcher);
+    const key = 'file:///a.ts@1';
+    const first = await service.scan('"gpt-5"', {}, 0, key);
+    expect(first.state.status === 'ready' && first.state.ageing).toBe(false);
+
+    fetcher.mockRejectedValue(new Error('offline'));
+    const later = await service.scan('"gpt-5"', {}, FRESH_MS + 1, key);
+    expect(later.state.status === 'ready' && later.state.ageing).toBe(true);
+    expect(later.matches).toHaveLength(1);
+  });
+
+  it('rescans an unchanged document when the catalog itself has been replaced', async () => {
+    const fetcher = vi.fn(async () => raw);
+    const { service } = serviceWith(fetcher);
+    const key = 'file:///a.ts@1';
+    const first = await service.scan('"gpt-5"', {}, 0, key);
+
+    fetcher.mockResolvedValue({ ...raw, generatedAt: '2099-01-01T00:00:00.000Z' });
+    const refreshed = await service.scan('"gpt-5"', {}, FRESH_MS + 1, key);
+    expect(refreshed.state.status === 'ready' && refreshed.state.generatedAt).toBe(
+      '2099-01-01T00:00:00.000Z',
+    );
+    expect(refreshed.matches).not.toBe(first.matches);
   });
 
   it('rebuilds the index only when the catalog generation changes', async () => {

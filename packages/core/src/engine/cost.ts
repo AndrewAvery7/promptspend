@@ -284,14 +284,21 @@ export function conversationCost(
     );
   }
 
-  if (tokens.peakRequestTokens + output > model.contextWindow) {
+  // What a response actually generates is the visible answer plus any hidden
+  // reasoning, and that total is what the vendor bills and what has to fit. The
+  // reasoning is not replayed into later turns' history here, so only the
+  // limits use it; input accounting is unchanged.
+  const generated = Math.round(output * reasoningMultiplier);
+  const withReasoning = generated > output ? ` (${formatTokens(output)} visible plus hidden reasoning)` : '';
+
+  if (tokens.peakRequestTokens + generated > model.contextWindow) {
     warnings.push(
-      `The largest turn needs ${formatTokens(tokens.peakRequestTokens + output)} tokens, past ${model.displayName}’s ${formatTokens(model.contextWindow)} context window — this conversation could not actually run.`,
+      `The largest turn needs ${formatTokens(tokens.peakRequestTokens + generated)} tokens${withReasoning}, past ${model.displayName}’s ${formatTokens(model.contextWindow)} context window — this conversation could not actually run.`,
     );
   }
-  if (model.maxOutput !== undefined && output > model.maxOutput) {
+  if (model.maxOutput !== undefined && generated > model.maxOutput) {
     warnings.push(
-      `A ${formatTokens(output)}-token response is past ${model.displayName}’s ${formatTokens(model.maxOutput)} output ceiling.`,
+      `A ${formatTokens(generated)}-token response${withReasoning} is past ${model.displayName}’s ${formatTokens(model.maxOutput)} output ceiling.`,
     );
   }
 
