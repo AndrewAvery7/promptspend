@@ -387,6 +387,59 @@ describe('sharing a pasted prompt', () => {
   });
 });
 
+describe('Compare answers a buying question', () => {
+  const rowNames = (table: HTMLElement) =>
+    within(table)
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) => within(row).queryByText(/^(Claude Sonnet 5|DeepSeek V3\.2)$/)?.textContent)
+      .filter(Boolean);
+
+  it('narrows the table by minimum context and says how to undo it', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByRole('button', { name: 'Compare' }));
+    const table = await screen.findByRole('table');
+    expect(rowNames(table)).toHaveLength(2);
+
+    await user.selectOptions(screen.getByLabelText('Minimum context'), '500000');
+    expect(rowNames(table)).toEqual(['Claude Sonnet 5']);
+    expect(screen.getByText(/1 of 2 models shown/)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Clear search and context filter/ }));
+    expect(rowNames(table)).toHaveLength(2);
+  });
+
+  it('searches by model or provider', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByRole('button', { name: 'Compare' }));
+    const table = await screen.findByRole('table');
+
+    await user.type(screen.getByLabelText(/Search the table/), 'deepseek');
+    expect(rowNames(table)).toEqual(['DeepSeek V3.2']);
+
+    await user.clear(screen.getByLabelText(/Search the table/));
+    await user.type(screen.getByLabelText(/Search the table/), 'zzz-no-such-model');
+    expect(within(table).getByText(/No model matches that search/)).toBeInTheDocument();
+  });
+
+  it('ranks by what the workload on Estimate would cost', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    await user.click(screen.getByRole('button', { name: 'Compare' }));
+    const table = await screen.findByRole('table');
+
+    // Highest first, then lowest first: the same two rows swap places.
+    await user.click(within(table).getByRole('button', { name: /Your cost/ }));
+    const ascending = rowNames(table);
+    await user.click(within(table).getByRole('button', { name: /Your cost/ }));
+    expect(rowNames(table)).toEqual([...ascending].reverse());
+    // DeepSeek is far cheaper than Sonnet at the default workload.
+    expect(ascending[0]).toBe('DeepSeek V3.2');
+  });
+});
+
 describe('keyboard and screen-reader access', () => {
   it('makes every point on the value map focusable and operable', async () => {
     const user = userEvent.setup();

@@ -2307,6 +2307,33 @@ table.catalog tbody tr:hover {
   margin: 0;
 }
 
+.table-filters__search {
+  flex: 1 1 220px;
+  max-width: 360px;
+  width: auto;
+}
+.table-filters__context {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.table-filters__context select {
+  background: var(--surface-2);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  min-height: 40px;
+}
+.table-filters__status {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 4px 0 8px;
+  max-width: 80ch;
+}
 .warning-list {
   border-left: 3px solid var(--cost);
   background: var(--surface-2);

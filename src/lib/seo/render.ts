@@ -536,9 +536,24 @@ ${footerStats(ctx)}        <div class="footer__badge">
 
 // ------------------------------------------------------------- shared blocks
 
-function calculatorLink(ctx: RenderContext, modelIds: string[], label: string): string {
+function calculatorHref(ctx: RenderContext, modelIds: string[]): string {
   const query = encodeScenario({ ...DEFAULT_SCENARIO, modelIds });
-  return `<p><a class="cta" href="${escapeHtml(`${href(ctx, '/')}?${query}`)}">${escapeHtml(label)}</a></p>`;
+  return `${href(ctx, '/')}?${query}`;
+}
+
+function calculatorLink(ctx: RenderContext, modelIds: string[], label: string): string {
+  return `<p><a class="cta" href="${escapeHtml(calculatorHref(ctx, modelIds))}">${escapeHtml(label)}</a></p>`;
+}
+
+/**
+ * The action offered next to the headline, before any explanation. A visitor
+ * who searched for a model's price gets the way to apply that price to their
+ * own workload without scrolling past the rate table and the worked examples.
+ * It adds a second route to the same calculator link the page already ends
+ * with; nothing is removed to make room for it.
+ */
+function leadActions(ctx: RenderContext, modelIds: string[], label: string, extra = ''): string {
+  return `<p class="actions"><a class="cta" href="${escapeHtml(calculatorHref(ctx, modelIds))}">${escapeHtml(label)}</a>${extra}</p>`;
 }
 
 /**
@@ -711,6 +726,14 @@ ${page.alternatives
         ${page.promotional ? `<p class="note">These are promotional rates, in force until ${escapeHtml(model.pricing.intro?.until ?? '')}. The standard rates are ${escapeHtml(rate(model.pricing.input))} in / ${escapeHtml(rate(model.pricing.output))} out per 1M tokens.</p>` : ''}
         ${model.provenance.needsReview ? `<p class="note">This row is flagged for review: ${escapeHtml(model.provenance.reviewNote ?? 'sources disagree')}. Check the vendor&rsquo;s own page before relying on it.</p>` : ''}
 
+        ${leadActions(
+          ctx,
+          [model.id],
+          `Estimate ${model.displayName} for your workload`,
+          ` <a href="#source">Source and check date</a>`,
+        )}
+        <p class="muted small">Rates last checked against ${escapeHtml(sourceLabel(model))} on <strong>${escapeHtml(model.provenance.lastVerified)}</strong>.</p>
+
         <h2>What ${escapeHtml(model.displayName)} costs</h2>
         <div class="card tablewrap" tabindex="0">
           <table>
@@ -749,7 +772,7 @@ ${specRows.map(([label, value]) => `            <tr><th scope="row">${escapeHtml
           </tbody></table>
         </div>
 
-        <h2>Where these numbers come from</h2>
+        <h2 id="source">Where these numbers come from</h2>
         <div class="card">
           <p>
             Last checked against its source on <strong>${escapeHtml(model.provenance.lastVerified)}</strong>${
@@ -1001,6 +1024,7 @@ ${page.differences.map((line) => `          <li>${escapeHtml(line)}</li>`).join(
           <strong>${escapeHtml(page.verdict)}</strong>
         </p>
         ${retiredNotes}
+        ${leadActions(ctx, [page.left.id, page.right.id], 'Run this comparison on your own numbers')}
 
         <h2>Monthly bill, side by side</h2>
         <div class="card tablewrap" tabindex="0">

@@ -99,6 +99,22 @@ describe('rendered pages', () => {
     expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
   });
 
+  it('puts the estimate action and the source ahead of the long explanations, and keeps the old route', () => {
+    const set = buildPages(catalog([model('plain', { displayName: 'Plain Model' })]), { asOf: ASOF });
+    const html = renderModelPage(set.models[0]!, recordingContext());
+
+    const lead = html.indexOf('Estimate Plain Model for your workload');
+    const rates = html.indexOf('What Plain Model costs');
+    const examples = html.indexOf('What that means in practice');
+    expect(lead).toBeGreaterThan(-1);
+    expect(lead).toBeLessThan(rates);
+    expect(rates).toBeLessThan(examples);
+    // The shortcut jumps to a real anchor, and the original link is still there.
+    expect(html).toContain('href="#source"');
+    expect(html).toContain('<h2 id="source">');
+    expect(html).toContain('Change the assumptions in the calculator');
+  });
+
   it('never lets a display name break out of the JSON-LD block', () => {
     const hostile = model('evil', { displayName: 'x</script><script>alert(1)</script>' });
     const set = buildPages(catalog([hostile]), { asOf: ASOF });

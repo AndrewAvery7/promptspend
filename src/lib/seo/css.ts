@@ -129,6 +129,7 @@ caption.cap { text-align: left; padding-bottom: 0.5rem; }
 }
 @media (prefers-color-scheme: dark) { .cta { color: #08122b; } }
 .cta:hover { opacity: 0.92; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem; margin: 1rem 0 0.25rem; }
 ul.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
 ul.plain { margin: 0; padding-left: 1.1rem; }
 article p { margin: 0 0 1.1rem; max-width: 42rem; }

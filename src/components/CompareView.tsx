@@ -25,6 +25,8 @@ interface ComparePageProps extends Omit<CompareViewProps, 'countries'> {
   rows: ComparisonRow[];
   conversationsPerDay: number;
   onOpenEstimate: () => void;
+  /** One model's bill for the workload set on Estimate. */
+  costFor: (model: Model) => ComparisonRow;
 }
 
 export function CompareView({
@@ -34,6 +36,7 @@ export function CompareView({
   conversationsPerDay,
   onOpenEstimate,
   onToggle,
+  costFor,
 }: ComparePageProps) {
   /* One selection for the whole view. The chart and the table are two readings
      of the same list — filtering one and not the other would show a model as a
@@ -142,6 +145,8 @@ export function CompareView({
         countries={countries}
         onCountries={setCountries}
         asOf={asOf}
+        costFor={costFor}
+        conversationsPerDay={conversationsPerDay}
       />
     </section>
   );
@@ -525,17 +530,41 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
   );
 }
 
-type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context';
+type SortKey = 'name' | 'provider' | 'input' | 'output' | 'context' | 'cost';
+
+/** Minimum context choices. Round figures a buyer actually has in mind. */
+const CONTEXT_FLOORS = [
+  { value: 0, label: 'Any' },
+  { value: 128_000, label: '128K' },
+  { value: 200_000, label: '200K' },
+  { value: 500_000, label: '500K' },
+  { value: 1_000_000, label: '1M' },
+] as const;
 
 /** The table also *sets* the country filter, where the chart only reads it. */
 interface CatalogTableProps extends CompareViewProps {
   onCountries: (next: string[]) => void;
   asOf: Date;
+  costFor: (model: Model) => ComparisonRow;
+  conversationsPerDay: number;
 }
 
-function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, asOf }: CatalogTableProps) {
+function CatalogTable({
+  catalog,
+  selectedIds,
+  onToggle,
+  countries,
+  onCountries,
+  asOf,
+  costFor,
+  conversationsPerDay,
+}: CatalogTableProps) {
   const [sort, setSort] = useState<{ key: SortKey; asc: boolean }>({ key: 'input', asc: true });
   const [showRetired, setShowRetired] = useState(false);
+  /* Like the country filter, local and not remembered: a filter that outlives
+     the visit is one somebody has to recall setting to explain a short list. */
+  const [query, setQuery] = useState('');
+  const [minContext, setMinContext] = useState(0);
 
   /* The country filter is the outer of the two, and the "(N hidden)" count
      beside the retired checkbox is counted inside it. Measuring that against
@@ -545,6 +574,17 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
     () => catalog.models.filter((model) => catalog.inCountries(model, countries)),
     [catalog, countries],
   );
+
+  /* The bill for the workload on Estimate, for every model in scope. Priced
+     once per change of workload or scope, not once per sort click. This is the
+     same function the Estimate cards use. A model with no price for the case
+     (it cannot run it) still gets its number; the cost says what the rates
+     imply, and the table does not claim the task is within the model's reach. */
+  const monthly = useMemo(() => {
+    const byId = new Map<string, number>();
+    for (const model of inScope) byId.set(model.id, costFor(model).scaled.perMonth);
+    return byId;
+  }, [inScope, costFor]);
 
   const rows = useMemo(() => {
     // Sorted on the figure the cell prints. Ordering by the standard rate while
@@ -560,14 +600,21 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
           return rateOn(model, 'output', asOf).value ?? model.pricing.output;
         case 'context':
           return model.contextWindow;
+        case 'cost':
+          return monthly.get(model.id) ?? 0;
         default:
           return rateOn(model, 'input', asOf).value ?? model.pricing.input;
       }
     };
     // Retired and unlisted rows are kept but hidden by default: they inflate
     // the count and invite someone to price a model they cannot call.
+    const needle = query.trim().toLowerCase();
     const visible = inScope.filter(
-      (m) => showRetired || (m.status === 'current' && m.provenance.stale !== true),
+      (m) =>
+        (showRetired || (m.status === 'current' && m.provenance.stale !== true)) &&
+        m.contextWindow >= minContext &&
+        (needle === '' ||
+          `${m.displayName} ${m.id} ${catalog.providerName(m)}`.toLowerCase().includes(needle)),
     );
     return visible.sort((a, b) => {
       const va = value(a);
@@ -576,9 +623,14 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
         typeof va === 'string' && typeof vb === 'string' ? va.localeCompare(vb) : Number(va) - Number(vb);
       return comparison * (sort.asc ? 1 : -1);
     });
-  }, [catalog, inScope, sort, showRetired, asOf]);
+  }, [catalog, inScope, sort, showRetired, asOf, monthly, query, minContext]);
 
-  const hidden = inScope.length - rows.length;
+  // Counted against the status filter alone, so the checkbox's "(N hidden)"
+  // keeps meaning "retired and unlisted" and is not inflated by a search.
+  const hidden = inScope.filter((m) => m.status !== 'current' || m.provenance.stale === true).length;
+  const filtered = query.trim() !== '' || minContext > 0;
+  // What the status checkbox leaves in play, before a search or context floor.
+  const eligible = showRetired ? inScope.length : inScope.length - hidden;
 
   const header = (key: SortKey, label: string, alignLeft = false) => (
     <th
@@ -611,6 +663,31 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
           a control you cannot see, to change something you are looking at down
           here, is the kind of small friction that stops people using a filter
           at all. Both instances stay in step because neither owns the state. */}
+      <div className="table-controls table-filters">
+        <input
+          id="catalog-search"
+          className="search-input table-filters__search"
+          type="search"
+          value={query}
+          placeholder="Search models or providers…"
+          aria-label="Search the table by model or provider"
+          onChange={(event) => setQuery(event.target.value)}
+        />
+        <label className="table-filters__context" htmlFor="catalog-min-context">
+          Minimum context
+          <select
+            id="catalog-min-context"
+            value={minContext}
+            onChange={(event) => setMinContext(Number(event.target.value))}
+          >
+            {CONTEXT_FLOORS.map((floor) => (
+              <option key={floor.value} value={floor.value}>
+                {floor.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <div className="table-controls">
         <CountryFilter
           countries={catalog.countries()}
@@ -628,6 +705,31 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
           {hidden > 0 && !showRetired ? ` (${hidden} hidden)` : ''}
         </label>
       </div>
+      {/* Says what is on screen and why, and how to get the rest back. A
+          context floor or a search that quietly shortens the list is the same
+          failure as a country filter nobody remembers setting. */}
+      <p className="table-filters__status" role="status">
+        {rows.length} of {eligible} models shown
+        {filtered && (
+          <>
+            {' · '}
+            <button
+              type="button"
+              className="linklike"
+              onClick={() => {
+                setQuery('');
+                setMinContext(0);
+              }}
+            >
+              Clear search and context filter
+            </button>
+          </>
+        )}
+        {' · '}
+        <b>Your cost</b> is the bill for the workload on Estimate ({formatCount(conversationsPerDay)}{' '}
+        conversations a day). Cheapest per month is not the same as best for the job: a low price does not
+        show that a model can do your task.
+      </p>
       <div className="table-wrap">
         <table className="catalog">
           <caption className="visually-hidden">
@@ -648,6 +750,7 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
               {header('input', 'Input $/1M')}
               {header('output', 'Output $/1M')}
               {header('context', 'Context')}
+              {header('cost', 'Your cost /mo')}
               <th className="align-left">Source</th>
             </tr>
           </thead>
@@ -698,6 +801,7 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
                     <Rate model={model} field="output" asOf={asOf} />
                   </td>
                   <td className="mono">{formatContext(model.contextWindow)}</td>
+                  <td className="mono">{formatMoney(monthly.get(model.id) ?? 0)}</td>
                   <td className="align-left source-cell">
                     {/* "Every number shows its work" is only true if the work is
                         a link somebody can follow. */}
@@ -718,10 +822,12 @@ function CatalogTable({ catalog, selectedIds, onToggle, countries, onCountries, 
             })}
             {rows.length === 0 && (
               <tr>
-                <td className="align-left" colSpan={7}>
-                  {countries.length > 0
-                    ? `No models from ${countries.map(countryName).join(' or ')} are listed.`
-                    : 'No models to list.'}
+                <td className="align-left" colSpan={8}>
+                  {filtered
+                    ? 'No model matches that search and minimum context. Clear the filter to see the whole list.'
+                    : countries.length > 0
+                      ? `No models from ${countries.map(countryName).join(' or ')} are listed.`
+                      : 'No models to list.'}
                 </td>
               </tr>
             )}
