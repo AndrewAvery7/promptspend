@@ -437,6 +437,70 @@ describe('Compare answers a buying question', () => {
     expect(rowNames(table)).toEqual([...ascending].reverse());
     // DeepSeek is far cheaper than Sonnet at the default workload.
     expect(ascending[0]).toBe('DeepSeek V3.2');
+
+describe('home page order: calculator first, nothing removed', () => {
+  /** True when `a` comes before `b` in the document. */
+  const before = (a: Element, b: Element) =>
+    Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+  it('shows the models and the workload before the evidence, the apps and the aside', async () => {
+    await renderApp();
+    const models = document.getElementById('panel-models')!;
+    const workload = document.getElementById('panel-workload')!;
+    const results = document.getElementById('panel-results')!;
+    const evidence = screen.getByText('Where each price was read');
+    const banner = screen.getByText(/now on iPhone and Android/);
+    const aside = screen.getByRole('heading', { name: 'The same numbers, where you work' });
+
+    for (const lower of [evidence, banner, aside]) {
+      expect(before(models, lower)).toBe(true);
+      expect(before(workload, lower)).toBe(true);
+      expect(before(results, lower)).toBe(true);
+    }
+    // The headline is still first, ahead of the tool.
+    expect(before(screen.getByRole('heading', { level: 1 }), models)).toBe(true);
+  });
+
+  it('keeps every block that was on the page', async () => {
+    await renderApp();
+    expect(screen.getByRole('heading', { level: 1, name: /Know the tab/ })).toBeInTheDocument();
+    expect(screen.getByText(/pick up to four models/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /which providers have a free tier/ })).toBeInTheDocument();
+    expect(screen.getByText('Where each price was read')).toBeInTheDocument();
+    expect(screen.getByText(/models tracked/)).toBeInTheDocument();
+    expect(screen.getByText(/First time here\?/)).toBeInTheDocument();
+    expect(screen.getByText(/now on iPhone and Android/)).toBeInTheDocument();
+    const banner = document.querySelector('.launch') as HTMLElement;
+    const aside = document.querySelector('.hero__aside') as HTMLElement;
+    expect(
+      within(banner).getByRole('img', { name: /QR code: PromptSpend on the App Store/ }),
+    ).toBeInTheDocument();
+    for (const item of [
+      /iPhone & Android apps/,
+      /AI Cost Receipt/,
+      /MCP server/,
+      /VS.Code extension/,
+      /Open VSX/,
+      /Pricing API/,
+    ]) {
+      expect(within(aside).getByText(item)).toBeInTheDocument();
+    }
+    expect(within(aside).getByRole('link', { name: 'PromptSpend this conversation' })).toBeInTheDocument();
+    expect(within(aside).getByRole('button', { name: /How to install each/ })).toBeInTheDocument();
+  });
+
+  it('shows the app banner once, above the other views, and one dismissal covers both places', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    expect(screen.getAllByText(/now on iPhone and Android/)).toHaveLength(1);
+
+    await user.click(screen.getByRole('button', { name: 'Compare' }));
+    expect(screen.getAllByText(/now on iPhone and Android/)).toHaveLength(1);
+    await user.click(screen.getByRole('button', { name: /Dismiss the app announcement/ }));
+    expect(screen.queryByText(/now on iPhone and Android/)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Estimate' }));
+    expect(screen.queryByText(/now on iPhone and Android/)).not.toBeInTheDocument();
   });
 });
 

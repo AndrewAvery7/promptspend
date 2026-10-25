@@ -51,7 +51,12 @@ function PlayGlyph() {
   );
 }
 
-export function LaunchBanner() {
+/**
+ * `inline` is for a place that is already inside the page's own column (the
+ * Estimate view, below the calculator); the default is the full-width band the
+ * other views show above their content.
+ */
+export function LaunchBanner({ inline = false }: { inline?: boolean } = {}) {
   const [dismissed, setDismissed] = useState(() => {
     try {
       return localStorage.getItem(DISMISSED_KEY) === '1';
@@ -72,7 +77,7 @@ export function LaunchBanner() {
   };
 
   return (
-    <div className="launch-wrap">
+    <div className={inline ? 'launch-wrap launch-wrap--inline' : 'launch-wrap'}>
       <section className="launch" aria-labelledby="launch-title">
         <div className="launch__glyphs" aria-hidden="true">
           <span className="launch__glyph">

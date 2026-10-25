@@ -117,6 +117,33 @@ body.tour-active .main {
 .hero > * {
   min-width: 0;
 }
+/* The headline alone, now that the evidence and the aside sit below the
+ * calculator: one column at every width. */
+.hero--lead {
+  grid-template-columns: minmax(0, 1fr);
+}
+/* The evidence card used to be pushed to the foot of a tall headline column so
+ * that it ended where the aside ended. With no headline above it, that would
+ * strand it at the bottom of a blank column, so it starts at the top instead. */
+.hero--evidence {
+  align-items: start;
+}
+.hero--evidence .prov {
+  margin-top: 0;
+}
+.beyond {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-top: 36px;
+}
+/* The banner's own wrapper carries the page's side padding for the other
+ * views; inside the Estimate column the padding is already there. */
+.launch-wrap--inline {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
 @media (max-width: 1080px) {
   .hero {
     grid-template-columns: 1fr;

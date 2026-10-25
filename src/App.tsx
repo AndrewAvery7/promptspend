@@ -308,10 +308,12 @@ function Workspace({ catalog }: { catalog: Catalog }) {
         onCanvas={appearance.setCanvas}
       />
 
-      {/* Above the view rather than inside one: the apps are not a feature of
-          the estimator, and a visitor who lands on Compare or Data should see
-          the announcement too. Dismissing it is remembered. */}
-      <LaunchBanner />
+      {/* Above every view but Estimate: the apps are not a feature of the
+          estimator, and a visitor who lands on Compare or Data should see the
+          announcement too. Estimate shows the same banner below the calculator
+          so the tool is on the first screen. Dismissing it is remembered, and
+          dismissing it in one place dismisses it in both. */}
+      {view !== 'estimate' && <LaunchBanner />}
 
       <main className="main">
         {view === 'estimate' && (
