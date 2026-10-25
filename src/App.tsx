@@ -336,6 +336,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
             selectedIds={estimator.scenario.modelIds}
             rows={estimator.rows}
             conversationsPerDay={estimator.scenario.conversationsPerDay}
+            costFor={estimator.costFor}
             onOpenEstimate={() => setView('estimate')}
             onToggle={(id) => {
               const result = estimator.toggleModel(id);

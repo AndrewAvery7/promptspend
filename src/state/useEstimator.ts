@@ -239,11 +239,14 @@ export function useEstimator(catalog: Catalog) {
     });
   }, [fields, models, tokensForModel]);
 
-  const rows: ComparisonRow[] = useMemo(() => {
-    if (models.length === 0) return [];
-    // Each model is costed against its *own* tokenizer's view of the text —
-    // the same prompt really is a different number of tokens per family.
-    const perModel = models.map((model) => {
+  /**
+   * One model's bill for the current scenario. Each model is costed against its
+   * *own* tokenizer's view of the text — the same prompt really is a different
+   * number of tokens per family. Shared by the cards and by Compare's "cost for
+   * my workload" column, so the two cannot disagree.
+   */
+  const costFor = useCallback(
+    (model: Model): ComparisonRow => {
       const tokens = tokensForModel(model);
       const workload: Workload = {
         systemTokens: tokens.system,
@@ -256,7 +259,13 @@ export function useEstimator(catalog: Catalog) {
         reasoningMultiplier: scenario.reasoningMultiplier,
         useBatchApi: scenario.useBatchApi,
       })[0]!;
-    });
+    },
+    [scenario, tokensForModel],
+  );
+
+  const rows: ComparisonRow[] = useMemo(() => {
+    if (models.length === 0) return [];
+    const perModel = models.map(costFor);
 
     perModel.sort((a, b) => a.scaled.perMonth - b.scaled.perMonth);
     const cheapest = perModel[0]!;
@@ -271,7 +280,7 @@ export function useEstimator(catalog: Catalog) {
             : null,
       isCheapest: row.scaled.perMonth === cheapest.scaled.perMonth,
     }));
-  }, [models, scenario, tokensForModel]);
+  }, [models, costFor]);
 
   const insights = useMemo(
     () =>
@@ -397,6 +406,7 @@ export function useEstimator(catalog: Catalog) {
     setFieldMode,
     setFieldText,
     tokensForModel,
+    costFor,
     reset,
   };
 }
