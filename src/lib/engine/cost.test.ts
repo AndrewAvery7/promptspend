@@ -291,6 +291,37 @@ describe('scenarios that could not actually run', () => {
     expect(cost.warnings.join(' ')).toMatch(/output ceiling/);
   });
 
+  it('counts hidden reasoning tokens against the output ceiling', () => {
+    const capped = model({
+      id: 'capped',
+      contextWindow: 1_000_000,
+      maxOutput: 128_000,
+      pricing: { input: 1, output: 2 },
+    });
+    const w: Workload = { systemTokens: 1_000, userTokens: 1_000, outputTokens: 20_000, turns: 1 };
+    // 20K visible fits the 128K ceiling; 20K x 8 = 160K generated does not.
+    expect(conversationCost(capped, w, NO_CACHE).warnings).toEqual([]);
+    const warned = conversationCost(capped, w, { ...NO_CACHE, reasoningMultiplier: 8 });
+    expect(warned.warnings.join(' ')).toMatch(/160K-token response.*hidden reasoning.*output ceiling/);
+  });
+
+  it('warns when the context window is exceeded only through reasoning', () => {
+    const tight = model({ id: 'tight', contextWindow: 50_000, pricing: { input: 1, output: 2 } });
+    const w: Workload = { systemTokens: 5_000, userTokens: 5_000, outputTokens: 10_000, turns: 1 };
+    expect(conversationCost(tight, w, NO_CACHE).warnings).toEqual([]);
+    const warned = conversationCost(tight, w, { ...NO_CACHE, reasoningMultiplier: 5 });
+    expect(warned.warnings.join(' ')).toMatch(/context window/);
+    expect(warned.warnings.join(' ')).toMatch(/hidden reasoning/);
+  });
+
+  it('does not replay hidden reasoning into later turns when pricing input', () => {
+    const w: Workload = { systemTokens: 1_000, userTokens: 1_000, outputTokens: 5_000, turns: 3 };
+    const plain = conversationCost(SONNET, w, NO_CACHE);
+    const reasoning = conversationCost(SONNET, w, { ...NO_CACHE, reasoningMultiplier: 4 });
+    expect(reasoning.inputCost).toBe(plain.inputCost);
+    expect(reasoning.billedOutputTokens).toBe(plain.billedOutputTokens * 4);
+  });
+
   it('stays silent for an ordinary scenario', () => {
     expect(conversationCost(SONNET, WORKLOAD, NO_CACHE).warnings).toEqual([]);
   });

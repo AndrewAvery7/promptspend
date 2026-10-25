@@ -404,7 +404,16 @@ export default defineConfig(({ mode }) => {
         // carefully tested. Thresholds are set at roughly today's level so the
         // number can only go up; the engine and pipeline are held much higher
         // because that is where a silent error costs the most.
-        include: ['src/lib/**/*.ts', 'src/state/**/*.ts', 'src/components/**/*.tsx', 'scripts/lib/**/*.ts'],
+        // `src/lib/engine` is only a re-export of packages/core, so the cost
+        // engine's real implementation has to be measured where it lives or the
+        // 90% gate below is checking a one-line file.
+        include: [
+          'src/lib/**/*.ts',
+          'src/state/**/*.ts',
+          'src/components/**/*.tsx',
+          'scripts/lib/**/*.ts',
+          'packages/core/src/**/*.ts',
+        ],
         exclude: ['**/*.test.ts', '**/*.test.tsx'],
         thresholds: {
           lines: 70,
@@ -412,6 +421,7 @@ export default defineConfig(({ mode }) => {
           functions: 75,
           branches: 70,
           'src/lib/engine/**': { lines: 90, statements: 90, functions: 90, branches: 80 },
+          'packages/core/src/engine/**': { lines: 90, statements: 90, functions: 90, branches: 80 },
           'scripts/lib/**': { lines: 90, statements: 90, functions: 90, branches: 80 },
         },
       },
