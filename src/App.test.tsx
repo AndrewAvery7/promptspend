@@ -440,27 +440,22 @@ describe('Compare answers a buying question', () => {
   });
 });
 
-describe('home page order: calculator first, nothing removed', () => {
+describe('home page order', () => {
   /** True when `a` comes before `b` in the document. */
   const before = (a: Element, b: Element) =>
     Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
 
-  it('shows the models and the workload before the evidence, the apps and the aside', async () => {
+  it('keeps the evidence card and the aside at the top, ahead of the tool', async () => {
     await renderApp();
     const models = document.getElementById('panel-models')!;
-    const workload = document.getElementById('panel-workload')!;
-    const results = document.getElementById('panel-results')!;
     const evidence = screen.getByText('Where each price was read');
-    const banner = screen.getByText(/now on iPhone and Android/);
     const aside = screen.getByRole('heading', { name: 'The same numbers, where you work' });
+    const headline = screen.getByRole('heading', { level: 1 });
 
-    for (const lower of [evidence, banner, aside]) {
-      expect(before(models, lower)).toBe(true);
-      expect(before(workload, lower)).toBe(true);
-      expect(before(results, lower)).toBe(true);
+    for (const upper of [evidence, aside]) {
+      expect(before(headline, upper)).toBe(true);
+      expect(before(upper, models)).toBe(true);
     }
-    // The headline is still first, ahead of the tool.
-    expect(before(screen.getByRole('heading', { level: 1 }), models)).toBe(true);
   });
 
   it('keeps every block that was on the page', async () => {
@@ -471,12 +466,7 @@ describe('home page order: calculator first, nothing removed', () => {
     expect(screen.getByText('Where each price was read')).toBeInTheDocument();
     expect(screen.getByText(/models tracked/)).toBeInTheDocument();
     expect(screen.getByText(/First time here\?/)).toBeInTheDocument();
-    expect(screen.getByText(/now on iPhone and Android/)).toBeInTheDocument();
-    const banner = document.querySelector('.launch') as HTMLElement;
     const aside = document.querySelector('.hero__aside') as HTMLElement;
-    expect(
-      within(banner).getByRole('img', { name: /QR code: PromptSpend on the App Store/ }),
-    ).toBeInTheDocument();
     for (const item of [
       /iPhone & Android apps/,
       /AI Cost Receipt/,
@@ -491,18 +481,25 @@ describe('home page order: calculator first, nothing removed', () => {
     expect(within(aside).getByRole('button', { name: /How to install each/ })).toBeInTheDocument();
   });
 
-  it('shows the app banner once, above the other views, and one dismissal covers both places', async () => {
+  it('has no app announcement box at the top of any view, and keeps the QR codes in the footer', async () => {
     const user = userEvent.setup();
     await renderApp();
-    expect(screen.getAllByText(/now on iPhone and Android/)).toHaveLength(1);
-
-    await user.click(screen.getByRole('button', { name: 'Compare' }));
-    expect(screen.getAllByText(/now on iPhone and Android/)).toHaveLength(1);
-    await user.click(screen.getByRole('button', { name: /Dismiss the app announcement/ }));
-    expect(screen.queryByText(/now on iPhone and Android/)).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Estimate' }));
-    expect(screen.queryByText(/now on iPhone and Android/)).not.toBeInTheDocument();
+    const checkViews = async () => {
+      expect(screen.queryByText(/now on iPhone and Android/)).not.toBeInTheDocument();
+      expect(document.querySelector('.launch')).toBeNull();
+      const footer = document.querySelector('footer') as HTMLElement;
+      expect(
+        within(footer).getByRole('img', { name: /QR code: PromptSpend on the App Store/ }),
+      ).toBeInTheDocument();
+      expect(
+        within(footer).getByRole('img', { name: /QR code: PromptSpend on Google Play/ }),
+      ).toBeInTheDocument();
+    };
+    await checkViews();
+    for (const view of ['Compare', 'Learn', 'Data & Alerts']) {
+      await user.click(screen.getByRole('button', { name: view }));
+      await checkViews();
+    }
   });
 });
 
