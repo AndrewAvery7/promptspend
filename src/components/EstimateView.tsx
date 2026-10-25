@@ -6,7 +6,6 @@ import { formatCount, formatMoney, formatTokens } from '@/lib/engine/format';
 import { SUGGESTED_CACHE_SHARE } from '@/lib/engine/cost';
 import { MAX_MODELS } from '@/lib/url/scenario';
 import { MAX_PASTE_CHARS, type FieldKey, type useEstimator } from '@/state/useEstimator';
-import { LaunchBanner } from '@/components/LaunchBanner';
 import { Provenance } from '@/components/Provenance';
 import { AssumptionList, CostCards, InsightList, WarningList } from './CostCards';
 import { HelpTip, ReviewBadge } from './Disclosure';
@@ -92,11 +91,11 @@ export function EstimateView({
 
   return (
     <section aria-labelledby="estimate-heading">
-      {/* The headline and the two lines under it, then straight to the tool. The
-          "Beyond the browser" list, which exists so that somebody who never
-          leaves this page learns the catalog answers anywhere else, is further
-          down, after the calculator. */}
-      <div className="hero hero--lead">
+      {/* The hero copy is capped at a readable measure, which left the right of
+          the row empty on a wide screen. The MCP server was only mentioned in
+          Data & Alerts, so anyone who never opened that tab never learned the
+          catalog answers anywhere but here. */}
+      <div className="hero">
         <div className="hero__copy">
           <p className="eyebrow">Estimate</p>
           <h1 className="headline" id="estimate-heading">
@@ -109,7 +108,58 @@ export function EstimateView({
           <p className="subhead">
             Want to try before you pay? <a href={FREE_TIERS_URL}>See which providers have a free tier</a>.
           </p>
+          <Provenance catalog={catalog} onOpenData={onOpenData} />
         </div>
+        <aside className="hero__aside" aria-labelledby="hero-aside-title">
+          <p className="hero__aside-eyebrow">Beyond the browser</p>
+          <h2 className="hero__aside-title" id="hero-aside-title">
+            The same numbers, where you work
+          </h2>
+          <p>The same prices, carrying the same source and confirmation date, are also here:</p>
+          {/* A list of what exists, not a menu of commands.
+
+              This box used to hold one install command — the MCP server's — which
+              made it an advert for one of four things and a place to copy from
+              for none of the others. Every install route now lives together on
+              Data & Alerts, where there is room to give each a command, a link
+              and the reason to pick it. The job here is to tell somebody who
+              never leaves this page that the others exist at all.
+
+              `role="list"` because `list-style: none` strips list semantics in
+              Safari, and a list is worth announcing as one. */}
+          <ul className="hero__aside-list" role="list">
+            {/* First because it is the one route here that needs no editor,
+                terminal or AI assistant — and it is the permanent way back to
+                the apps once the launch banner has been dismissed. */}
+            <li>
+              <b>iPhone &amp; Android apps</b> — the estimator in your pocket,{' '}
+              <a href={APP_PAGE_URL}>free on both stores</a>
+            </li>
+            <li>
+              <b>AI Cost Receipt</b> — bring current PromptSpend pricing into an existing AI conversation
+            </li>
+            <li>
+              <b>MCP server</b> — for Claude Code, Cursor and Windsurf
+            </li>
+            <li>
+              <b>VS&nbsp;Code extension</b> — the rate on the line of code that names the model
+            </li>
+            <li>
+              <b>Open VSX</b> — the same extension, for Cursor, Windsurf and VSCodium
+            </li>
+            <li>
+              <b>Pricing API</b> — keyless and CORS-open, as JSON or CSV
+            </li>
+          </ul>
+          <a className="button button--primary hero__receipt-cta" href={RECEIPT_URL}>
+            PromptSpend this conversation
+          </a>
+          <p className="hero__aside-note">
+            <button type="button" className="linklike" onClick={onOpenData}>
+              How to install each &rarr;
+            </button>
+          </p>
+        </aside>
       </div>
 
       {showWelcome && (
@@ -570,71 +620,6 @@ export function EstimateView({
               Reset
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Everything that used to sit between the headline and the calculator,
-          kept whole and placed after it. The calculator is what a visitor came
-          to use, so it now starts on the first screen; the evidence for the
-          prices, the apps announcement and the other ways to get the same
-          numbers follow it, in the order they always had. Nothing here was
-          removed or reworded. */}
-      <div className="beyond">
-        <LaunchBanner inline />
-        <div className="hero hero--evidence">
-          <div className="hero__copy">
-            <Provenance catalog={catalog} onOpenData={onOpenData} />
-          </div>
-          <aside className="hero__aside" aria-labelledby="hero-aside-title">
-            <p className="hero__aside-eyebrow">Beyond the browser</p>
-            <h2 className="hero__aside-title" id="hero-aside-title">
-              The same numbers, where you work
-            </h2>
-            <p>The same prices, carrying the same source and confirmation date, are also here:</p>
-            {/* A list of what exists, not a menu of commands.
-
-                This box used to hold one install command — the MCP server's — which
-                made it an advert for one of four things and a place to copy from
-                for none of the others. Every install route now lives together on
-                Data & Alerts, where there is room to give each a command, a link
-                and the reason to pick it. The job here is to tell somebody who
-                never leaves this page that the others exist at all.
-
-                `role="list"` because `list-style: none` strips list semantics in
-                Safari, and a list is worth announcing as one. */}
-            <ul className="hero__aside-list" role="list">
-              {/* First because it is the one route here that needs no editor,
-                  terminal or AI assistant — and it is the permanent way back to
-                  the apps once the launch banner has been dismissed. */}
-              <li>
-                <b>iPhone &amp; Android apps</b> — the estimator in your pocket,{' '}
-                <a href={APP_PAGE_URL}>free on both stores</a>
-              </li>
-              <li>
-                <b>AI Cost Receipt</b> — bring current PromptSpend pricing into an existing AI conversation
-              </li>
-              <li>
-                <b>MCP server</b> — for Claude Code, Cursor and Windsurf
-              </li>
-              <li>
-                <b>VS&nbsp;Code extension</b> — the rate on the line of code that names the model
-              </li>
-              <li>
-                <b>Open VSX</b> — the same extension, for Cursor, Windsurf and VSCodium
-              </li>
-              <li>
-                <b>Pricing API</b> — keyless and CORS-open, as JSON or CSV
-              </li>
-            </ul>
-            <a className="button button--primary hero__receipt-cta" href={RECEIPT_URL}>
-              PromptSpend this conversation
-            </a>
-            <p className="hero__aside-note">
-              <button type="button" className="linklike" onClick={onOpenData}>
-                How to install each &rarr;
-              </button>
-            </p>
-          </aside>
         </div>
       </div>
     </section>

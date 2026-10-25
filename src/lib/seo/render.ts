@@ -1450,10 +1450,9 @@ const ANDROID_ROBOT_CREDIT =
 /**
  * The permanent home of the two native apps.
  *
- * The calculator's launch banner can be dismissed, and a dismissal is
- * remembered; this page cannot, and every surface that mentions the apps links
- * here. It is generated rather than drawn by the calculator so it renders
- * without JavaScript — which is also what a store reviewer, a crawler, or
+ * Every surface that mentions the apps links here (the footer's apps band, the
+ * calculator's side list and the store listings). It is generated rather than
+ * drawn by the calculator so it renders without JavaScript — which is also what a store reviewer, a crawler, or
  * anyone following a printed link gets.
  *
  * The feature list is taken from the store listings, not written fresh, so the
