@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-109-2456E6.svg" alt="109 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1555-blue.svg" alt="1555 tests">
+  <img src="https://img.shields.io/badge/tests-1564-blue.svg" alt="1564 tests">
   <img src="https://img.shields.io/badge/initial%20payload-104%20KB%20gzip-blue.svg" alt="104 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -125,12 +125,14 @@ written out against RFC 8291 and checked byte for byte against the RFC's own wor
 3. **The OpenRouter API** — an independent cross-check, never a source of record. Reseller pricing differs
    from first-party list pricing, so a disagreement of more than 20% _flags_ the model rather than
    changing it.
-4. **Sanity rules** — schema validation, non-negative rates, implausibility checks, a hold on any price
-   that moved more than 50% in a single day, a floor on how many rows a source may return, and a cap on
-   how much the catalog may shrink in one run.
+4. **Sanity rules** — schema validation, non-negative rates, implausibility checks, a review flag on any
+   price that moved more than 50% in a single day, a floor on how many rows a source may return, and a cap
+   on how much the catalog may shrink in one run.
 
-A clean diff is committed and deployed automatically. A **newly** raised flag becomes a pull request — a
-long-standing disagreement does not re-open one every morning. A run that loses a source or trips a size
+A diff is committed and deployed automatically, flags included: there is no human gate on publication,
+on purpose, because a flag that held the whole catalog once left the site's dates two days behind. A
+**newly** raised flag publishes with everything else, marks that row disputed on the site, and opens an
+issue for review — a long-standing disagreement does not re-open one every morning. A run that loses a source or trips a size
 guard is **degraded**: it publishes nothing, records why in `public/data/sync-status.json`, and fails
 loudly. Either way the change lands in [`docs/pricing-changelog.md`](docs/pricing-changelog.md).
 
@@ -149,11 +151,10 @@ so the site shows you the source per row instead of an average you cannot inspec
 
 A daily job reads **the live site** — not the copy in this repository — and raises an issue if the
 published catalog is more than two days old. That distinction is the whole point. Between a price moving
-upstream and you seeing it, four things can fail: the sync errors, the sync opens a review pull request
-nobody merges, the deploy fails after a green sync, or the CDN serves a stale artifact. Checking the file
+upstream and you seeing it, four things can fail: the sync errors, the sync cannot commit its result, the deploy fails after a green sync, or the CDN serves a stale artifact. Checking the file
 in git catches the first of those. Fetching what the site actually serves catches all four.
 
-It exists because the sync once failed at the pull-request step and nothing said so; the site quietly
+It exists because the sync once failed at its publishing step and nothing said so; the site quietly
 served a day-old catalog until someone happened to look. A project that claims its numbers are never a
 year out of date should be the first to know when they are.
 
@@ -333,12 +334,11 @@ Optional fields worth knowing: `aliasOf` marks an id that routes to another mode
 twice), `provenance.stale` marks a row upstream has stopped listing, and `provenance.needsReview` plus
 `reviewNote` carry an unresolved disagreement and both numbers involved.
 
-`provenance.lastChanged` is optional too, and **absent on every model today** — this catalog's recorded
-history starts on 2026-08-01 and no vendor has moved a price since, so there is no date to report. Read
-its absence as "no change on record", never as "unknown freshness": `lastVerified` answers that, and it
-is always there. A field that reported the last sync instead would read "changed today" every morning,
-which is the one failure a provenance catalog cannot afford — so it stays empty until a rate actually
-moves.
+`provenance.lastChanged` is optional too: it is present only on a model whose rate has actually moved since
+this catalog's recorded history began on 2026-08-01, and absent otherwise. Read its absence as "no change
+on record", never as "unknown freshness": `lastVerified` answers that, and it is always there. A field that
+reported the last sync instead would read "changed today" every morning, which is the one failure a
+provenance catalog cannot afford — so it stays empty until a rate actually moves.
 
 ## Running it locally
 
@@ -408,7 +408,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1555 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1564 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 347 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live                             |

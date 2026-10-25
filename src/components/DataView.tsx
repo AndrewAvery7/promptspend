@@ -25,8 +25,12 @@ interface DataViewProps {
 
 export function DataView({ catalog, theme, onToast }: DataViewProps) {
   const flagged = catalog.models.filter((model) => model.provenance.needsReview);
-  const vendorVerified = catalog.models.filter((model) => model.provenance.source === 'vendor');
-  const vendorLinked = catalog.models.filter((model) => model.provenance.verifiedUrl);
+  // One denominator and one definition everywhere on the site: primary models
+  // (aliases are the same price under another name), and a price counts as
+  // vendor-read when it carries the vendor mark. The home page's evidence panel
+  // counts the same way, so the two can no longer disagree by one.
+  const primaryCount = catalog.primaryModels.length;
+  const vendorCount = catalog.vendorVerifiedCount();
   const health = catalog.health;
 
   return (
@@ -37,8 +41,8 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
       </h1>
       <p className="subhead">
         A price you cannot trace is a price you cannot trust. Every model records where its price came from
-        and the date it was last confirmed. {vendorLinked.length} of {catalog.models.length} link straight to
-        the vendor&apos;s own pricing page; the rest come from the LiteLLM community catalog and say so. Every
+        and the date it was last confirmed. {vendorCount} of {primaryCount} were read against the
+        vendor&apos;s own pricing page; the rest come from the LiteLLM community catalog and say so. Every
         change lands in a public changelog.
       </p>
 
@@ -314,8 +318,8 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
               <li>
                 <div>
                   <b>Vendor list prices</b> — hand-verified and stored in <code>pricing-overrides.json</code>.
-                  They win every conflict. {vendorVerified.length} model
-                  {vendorVerified.length === 1 ? '' : 's'} currently carry this mark.
+                  They win every conflict. {vendorCount} model
+                  {vendorCount === 1 ? '' : 's'} currently carry this mark.
                 </div>
               </li>
               <li>
@@ -362,11 +366,12 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                 the primary feed's number stands unless a human overrides it.
                 Describing the actual rule is worth more than a comforting one. */}
             <p style={{ marginTop: 10 }}>
-              A flagged row is still shown at <b>the primary feed&apos;s number</b> — the cross-check raises a
+              A flagged row is still shown at one number, never a blend: the vendor&apos;s hand-checked figure
+              where there is one, otherwise <b>the primary feed&apos;s number</b>: the cross-check raises a
               hand, it never overwrites. Both figures are in the note above, so you can see the range you are
               choosing inside, and the CHECK badge follows the model everywhere it appears. Rows we have
-              confirmed against the vendor&apos;s own page are marked <code>vendor ✓</code> and are never
-              flagged by the cross-check.
+              confirmed against the vendor&apos;s own page are marked <code>vendor ✓</code>; one of those can
+              carry a CHECK badge too, when the automated feed disagrees with the figure we confirmed.
             </p>
             <p>
               Missing a model?{' '}

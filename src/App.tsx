@@ -26,6 +26,9 @@ const WELCOME_KEY = 'ps.welcomeDismissed';
 export default function App() {
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Bumped by "Try again". The scenario lives in the address bar, so nothing a
+  // visitor typed is lost by loading the catalog a second time.
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,17 +42,29 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [attempt]);
 
   if (error) {
     return (
       <main className="state-message">
         <h1>Pricing data could not be loaded</h1>
-        <p>{error}</p>
         <p>
-          The catalog is a static file in the repository — if this persists, please{' '}
-          <a href={`${REPO_URL}/issues/new`}>open an issue</a>.
+          This is usually a dropped connection or a slow moment, and your inputs are kept. Try again; if it
+          keeps failing, please <a href={`${REPO_URL}/issues/new`}>open an issue</a>.
         </p>
+        <p>
+          <button
+            type="button"
+            className="button button--primary"
+            onClick={() => {
+              setError(null);
+              setAttempt((n) => n + 1);
+            }}
+          >
+            Try again
+          </button>
+        </p>
+        <p className="state-message__detail">Technical detail: {error}</p>
       </main>
     );
   }

@@ -140,13 +140,13 @@ ${rows}
           hidden.
         </p>
         <p>
-          <code>lastChanged</code> is <strong>absent</strong> until a rate is observed to move, and it is
-          absent on every model today. That is deliberate. This catalog's recorded history begins on
-          2026-08-01 and no vendor has moved a price since, so there is no date to report — and a field
-          that quietly reported the last sync instead would say "changed today" every morning, which is
-          the one failure a provenance API cannot afford. Treat its absence as "no change on record",
-          never as "unknown freshness": <code>lastVerified</code> answers that question, and it is always
-          present.
+          <code>lastChanged</code> is <strong>absent</strong> until a rate is observed to move. This
+          catalog's recorded history begins on 2026-08-01, and only models whose rate has actually changed
+          since then carry the field; a field that quietly reported the last sync instead would say
+          "changed today" every morning, which is the one failure a provenance API cannot afford. Treat its
+          absence as "no change on record", never as "unknown freshness": <code>lastVerified</code>
+          answers that question, and it is always present. For which models have moved lately, read the
+          field from <code>/v1/prices</code>; it is current, where a sentence here would not be.
         </p>
         <p>
           "Moved" is narrower than "differs", and the difference is the point. A rate going from absent to
