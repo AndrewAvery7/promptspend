@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-25T11:05:04.681Z",
+  "checkedAt": "2026-10-26T11:06:27.759Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -75,7 +75,7 @@
     {
       "url": "https://api-docs.deepseek.com/quick_start/pricing",
       "ok": true,
-      "note": "4655 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "4648 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "deepseek-deepseek-v4-pro",
         "deepseek-deepseek-v4-flash"
@@ -518,7 +518,7 @@
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table on the page is empty; no price is printed for kimi-k3)"
+      "detail": "not priced on the page (the K3 Series Models pricing table on the page is empty; no price for kimi-k3 is printed)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -602,7 +602,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the LLM pricing tables list MiniMax-M3.1-Flash and MiniMax-M3 only; no minimax-m2.5 row is present)"
+      "detail": "not priced on the page (the LLM pricing tables list MiniMax-M3.1-Flash and MiniMax-M3 only; no MiniMax-M2.5 row is present)"
     },
     {
       "id": "xai-grok-4.6",

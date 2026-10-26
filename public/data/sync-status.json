@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "attemptedAt": "2026-10-25T11:07:09.182Z",
-  "succeededAt": "2026-10-25T11:07:09.182Z",
+  "attemptedAt": "2026-10-26T11:08:40.067Z",
+  "succeededAt": "2026-10-26T11:08:40.067Z",
   "outcome": "ok",
   "problems": [],
   "sources": [
@@ -23,7 +23,7 @@
   "catalogHash": "6461ef2b715adab3",
   "pricesLastChanged": "2026-10-21",
   "vendorCheck": {
-    "checkedAt": "2026-10-25T11:05:04.681Z",
+    "checkedAt": "2026-10-26T11:06:27.759Z",
     "confirmed": 78,
     "mismatched": 0,
     "unconfirmed": 6
