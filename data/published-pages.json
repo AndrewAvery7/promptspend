@@ -1542,7 +1542,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-27",
-      "fingerprint": "0bdd5b8a6dff3d"
+      "fingerprint": "1da099eb1f67ad"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1847,7 +1847,7 @@
     "/models/gpt-6-1-terra/": {
       "published": "2026-10-27",
       "lastmod": "2026-10-27",
-      "fingerprint": "0f9e9a4b318e34"
+      "fingerprint": "14679dc33a2805"
     },
     "/models/gpt-6-astra/": {
       "published": "2026-10-24",
@@ -2097,7 +2097,7 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-27",
-      "fingerprint": "16165ceb60b06b"
+      "fingerprint": "0449bf980cc5b0"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2162,7 +2162,7 @@
     "/providers/openai/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-27",
-      "fingerprint": "04e30596efe589"
+      "fingerprint": "1ad770fa25a60b"
     },
     "/providers/xai/": {
       "published": "2026-08-02",

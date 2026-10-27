@@ -1316,3 +1316,18 @@ value that moves in the same run as its source URL is a correction.
 - **Added** `gpt-6.1-terra` — GPT 6.1 Terra ($1 in / $5 out per 1M)
 - **Metadata** `mistral-mistral-large-4` — maxOutput: — → 1048576
 - **Metadata** `mistral-mistral-large-4-0` — maxOutput: — → 1048576
+
+## 2026-10-27
+
+- **Coverage** `gpt-6.1-terra` — cacheWrite now tracked: — → 1.25
+- **Coverage** `gpt-6.1-terra` — batchDiscount now tracked: — → 0.5
+- **Coverage** `gpt-6.1-terra` — longContext.thresholdTokens now tracked: — → 272000
+- **Coverage** `gpt-6.1-terra` — longContext.input now tracked: — → 2
+- **Coverage** `gpt-6.1-terra` — longContext.output now tracked: — → 7.5
+- **Coverage** `gpt-6.1-terra` — longContext.cachedInput now tracked: — → 0.1
+- **Coverage** `gpt-6.1-terra` — longContext.cacheWrite now tracked: — → 2.5
+- **Metadata** `gpt-6.1-terra` — displayName: GPT 6.1 Terra → GPT-6.1 Terra
+- **Review** `gpt-6.1-terra` — provenance.source: litellm → vendor
+- **Review** `gpt-6.1-terra` — provenance.needsReview: true → —
+- **Review** `gpt-6.1-terra` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gpt-6.1-terra` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing

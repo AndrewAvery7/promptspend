@@ -1074,6 +1074,29 @@
       }
     },
     {
+      "$note": "Arrived from the feed on 2026-10-27 as GPT 6.1 Terra with a new-model flag; read the same day against OpenAI's pricing page, Flagship models. Short context (<=272K input tokens), Standard: $1.00 input, $5.00 output, $0.05 cached input, $1.25 '30m write' - the feed's three figures match exactly. Long context (the page's 'Long: >272K input tokens' switch): $2.00 / $7.50 / $0.10 / $2.50, which the feed does not carry, so without this block an estimate above 272K would be understated. Batch prints exactly half of both. The same reading of the long switch reproduces GPT-6.1 Sol's recorded $4/$15/$0.20/$5, so the column mapping is proved, not assumed. No capabilityIndex yet: no score has been read for Terra, so it stays off the value map rather than guessed.",
+      "id": "gpt-6.1-terra",
+      "providerId": "openai",
+      "displayName": "GPT-6.1 Terra",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-27",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 1,
+        "output": 5,
+        "cachedInput": 0.05,
+        "cacheWrite": 1.25,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 2,
+          "output": 7.5,
+          "cachedInput": 0.1,
+          "cacheWrite": 2.5
+        }
+      }
+    },
+    {
       "$note": "Capability score 89 is an ESTIMATE, not a measurement: the index lists no standard GPT-6 Sol, so it sits one point under GPT-6.1 Sol (90), at the same price.",
       "id": "gpt-6-sol",
       "providerId": "openai",
