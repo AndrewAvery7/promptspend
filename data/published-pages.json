@@ -638,8 +638,8 @@
     },
     "/compare/claude-sonnet-5-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "1d5c237e672cbd",
+      "lastmod": "2026-10-27",
+      "fingerprint": "02fcbe5c71d017",
       "left": "claude-sonnet-5",
       "right": "mistral-large-4"
     },
@@ -890,8 +890,8 @@
     },
     "/compare/deepseek-v4-pro-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "16e65b3e273d1e",
+      "lastmod": "2026-10-27",
+      "fingerprint": "0adab3b8137fb2",
       "left": "deepseek-v4-pro",
       "right": "mistral-large-4"
     },
@@ -1030,8 +1030,8 @@
     },
     "/compare/gemini-3-6-flash-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "00dba4dcd6e92c",
+      "lastmod": "2026-10-27",
+      "fingerprint": "0446803397a4cc",
       "left": "gemini-3-6-flash",
       "right": "mistral-large-4"
     },
@@ -1058,8 +1058,8 @@
     },
     "/compare/gemini-3-7-flash-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "1cfc6815eea814",
+      "lastmod": "2026-10-27",
+      "fingerprint": "18a197768ee7a8",
       "left": "gemini-3-7-flash",
       "right": "mistral-large-4"
     },
@@ -1177,8 +1177,8 @@
     },
     "/compare/gpt-5-2-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "070dd7273d935d",
+      "lastmod": "2026-10-27",
+      "fingerprint": "02e84e7b3e763f",
       "left": "gpt-5-2",
       "right": "mistral-large-4"
     },
@@ -1233,8 +1233,8 @@
     },
     "/compare/gpt-5-4-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "16dad3e6636101",
+      "lastmod": "2026-10-27",
+      "fingerprint": "056c9ca8a710ad",
       "left": "gpt-5-4",
       "right": "mistral-large-4"
     },
@@ -1380,36 +1380,36 @@
     },
     "/compare/mistral-large-4-vs-moonshot-kimi-k2-6/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "1b09c2712f4569",
+      "lastmod": "2026-10-27",
+      "fingerprint": "0da5682475a576",
       "left": "mistral-large-4",
       "right": "moonshot-kimi-k2-6"
     },
     "/compare/mistral-large-4-vs-xai-grok-4-3/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "16a7e36915ab42",
+      "lastmod": "2026-10-27",
+      "fingerprint": "030874482dd899",
       "left": "mistral-large-4",
       "right": "xai-grok-4-3"
     },
     "/compare/mistral-large-4-vs-xai-grok-4-5/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0d1eb697bf93eb",
+      "lastmod": "2026-10-27",
+      "fingerprint": "0270bae0b9ab18",
       "left": "mistral-large-4",
       "right": "xai-grok-4-5"
     },
     "/compare/mistral-large-4-vs-zai-glm-5-1/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "031e069a569f1e",
+      "lastmod": "2026-10-27",
+      "fingerprint": "0a8c7373621ed1",
       "left": "mistral-large-4",
       "right": "zai-glm-5-1"
     },
     "/compare/mistral-large-4-vs-zai-glm-5-2/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "18775fd21b3cb5",
+      "lastmod": "2026-10-27",
+      "fingerprint": "0a97fe70bd7a38",
       "left": "mistral-large-4",
       "right": "zai-glm-5-2"
     },
@@ -1541,8 +1541,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0974f79d39dcfd"
+      "lastmod": "2026-10-27",
+      "fingerprint": "0bdd5b8a6dff3d"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1844,6 +1844,11 @@
       "lastmod": "2026-10-24",
       "fingerprint": "026d905bbb32dc"
     },
+    "/models/gpt-6-1-terra/": {
+      "published": "2026-10-27",
+      "lastmod": "2026-10-27",
+      "fingerprint": "0f9e9a4b318e34"
+    },
     "/models/gpt-6-astra/": {
       "published": "2026-10-24",
       "lastmod": "2026-10-24",
@@ -1906,13 +1911,13 @@
     },
     "/models/mistral-large-4-0/": {
       "published": "2026-10-07",
-      "lastmod": "2026-10-21",
-      "fingerprint": "09319907afff12"
+      "lastmod": "2026-10-27",
+      "fingerprint": "0a0405eb2b6db0"
     },
     "/models/mistral-large-4/": {
       "published": "2026-10-07",
-      "lastmod": "2026-10-21",
-      "fingerprint": "0a73b894dc6dbb"
+      "lastmod": "2026-10-27",
+      "fingerprint": "0e1db6396073e8"
     },
     "/models/mistral-medium-3-5/": {
       "published": "2026-08-02",
@@ -2091,8 +2096,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-24",
-      "fingerprint": "1561a217b9d277"
+      "lastmod": "2026-10-27",
+      "fingerprint": "16165ceb60b06b"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2146,8 +2151,8 @@
     },
     "/providers/mistral/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-21",
-      "fingerprint": "1a0084483e47d0"
+      "lastmod": "2026-10-27",
+      "fingerprint": "058b06fce789b0"
     },
     "/providers/moonshot/": {
       "published": "2026-08-02",
@@ -2156,8 +2161,8 @@
     },
     "/providers/openai/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-24",
-      "fingerprint": "15a11733718957"
+      "lastmod": "2026-10-27",
+      "fingerprint": "04e30596efe589"
     },
     "/providers/xai/": {
       "published": "2026-08-02",

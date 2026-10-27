@@ -1310,3 +1310,9 @@ value that moves in the same run as its source URL is a correction.
 - **Metadata** `zai-glm-5-code` — capabilityIndex: 78 → 71
 - **Metadata** `zai-glm-5.1` — capabilityIndex: 80 → 71
 - **Metadata** `zai-glm-5.2` — capabilityIndex: 83 → 79
+
+## 2026-10-27
+
+- **Added** `gpt-6.1-terra` — GPT 6.1 Terra ($1 in / $5 out per 1M)
+- **Metadata** `mistral-mistral-large-4` — maxOutput: — → 1048576
+- **Metadata** `mistral-mistral-large-4-0` — maxOutput: — → 1048576

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-26T11:06:27.759Z",
+  "checkedAt": "2026-10-27T11:06:26.033Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "22443 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22818 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -57,7 +57,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "93728 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "93738 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -100,7 +100,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "592980 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "593544 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max"
       ]
@@ -602,7 +602,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the LLM pricing tables list MiniMax-M3.1-Flash and MiniMax-M3 only; no MiniMax-M2.5 row is present)"
+      "detail": "not priced on the page (the LLM pricing tables list MiniMax-M3.1-Flash and MiniMax-M3 only; no minimax-m2.5 row is present)"
     },
     {
       "id": "xai-grok-4.6",
