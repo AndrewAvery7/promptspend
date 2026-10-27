@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T11:08:54.054Z",
+  "generatedAt": "2026-10-27T15:37:05.931Z",
   "providers": [
     {
       "id": "anthropic",
@@ -2031,13 +2031,22 @@
     {
       "id": "gpt-6.1-terra",
       "providerId": "openai",
-      "displayName": "GPT 6.1 Terra",
+      "displayName": "GPT-6.1 Terra",
       "status": "current",
       "contextWindow": 922000,
       "pricing": {
         "input": 1,
         "output": 5,
-        "cachedInput": 0.05
+        "cachedInput": 0.05,
+        "cacheWrite": 1.25,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 2,
+          "output": 7.5,
+          "cachedInput": 0.1,
+          "cacheWrite": 2.5
+        }
       },
       "tokenizer": {
         "kind": "tiktoken",
@@ -2048,13 +2057,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-10-27",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
     },
