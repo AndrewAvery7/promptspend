@@ -1074,10 +1074,11 @@
       }
     },
     {
-      "$note": "Arrived from the feed on 2026-10-27 as GPT 6.1 Terra with a new-model flag; read the same day against OpenAI's pricing page, Flagship models. Short context (<=272K input tokens), Standard: $1.00 input, $5.00 output, $0.05 cached input, $1.25 '30m write' - the feed's three figures match exactly. Long context (the page's 'Long: >272K input tokens' switch): $2.00 / $7.50 / $0.10 / $2.50, which the feed does not carry, so without this block an estimate above 272K would be understated. Batch prints exactly half of both. The same reading of the long switch reproduces GPT-6.1 Sol's recorded $4/$15/$0.20/$5, so the column mapping is proved, not assumed. No capabilityIndex yet: no score has been read for Terra, so it stays off the value map rather than guessed.",
+      "$note": "Arrived from the feed on 2026-10-27 as GPT 6.1 Terra with a new-model flag; read the same day against OpenAI's pricing page, Flagship models. Short context (<=272K input tokens), Standard: $1.00 input, $5.00 output, $0.05 cached input, $1.25 '30m write' - the feed's three figures match exactly. Long context (the page's 'Long: >272K input tokens' switch): $2.00 / $7.50 / $0.10 / $2.50, which the feed does not carry, so without this block an estimate above 272K would be understated. Batch prints exactly half of both. The same reading of the long switch reproduces GPT-6.1 Sol's recorded $4/$15/$0.20/$5, so the column mapping is proved, not assumed. Capability score 88: Artificial Analysis Intelligence Index 48 for GPT-6.1 Terra (Max) (read 2026-10-27), mapped onto this scale through four existing rows that also appear there - between GPT-5.6 Terra (42 = 86) and Claude Sonnet 5.5 (56 = 91), 86 + 6/14 x 5 = 88.1. Same reasoning setting as the anchors and GPT-6.1 Sol (all read as Max the same day: 36, 42, 52).",
       "id": "gpt-6.1-terra",
       "providerId": "openai",
       "displayName": "GPT-6.1 Terra",
+      "capabilityIndex": 88,
       "vendorVerified": true,
       "lastVerified": "2026-10-27",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",

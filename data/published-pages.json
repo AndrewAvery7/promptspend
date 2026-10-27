@@ -3,8 +3,8 @@
   "pages": {
     "/compare/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0e537648ae9520"
+      "lastmod": "2026-10-27",
+      "fingerprint": "17eb6afde3e862"
     },
     "/compare/amazon-nova-2-lite-v1-0-vs-dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
@@ -741,6 +741,13 @@
       "left": "dashscope-qwen3-8-max",
       "right": "gpt-5-6-terra"
     },
+    "/compare/dashscope-qwen3-8-max-vs-gpt-6-1-terra/": {
+      "published": "2026-10-27",
+      "lastmod": "2026-10-27",
+      "fingerprint": "1257b183644025",
+      "left": "dashscope-qwen3-8-max",
+      "right": "gpt-6-1-terra"
+    },
     "/compare/dashscope-qwen3-8-max-vs-xai-grok-4-7/": {
       "published": "2026-10-24",
       "lastmod": "2026-10-24",
@@ -1314,6 +1321,20 @@
       "fingerprint": "0de3a8593852ab",
       "left": "gpt-6-1-sol",
       "right": "meta-muse-wonder-1-0"
+    },
+    "/compare/gpt-6-1-terra-vs-xai-grok-4-7/": {
+      "published": "2026-10-27",
+      "lastmod": "2026-10-27",
+      "fingerprint": "0552f3741daacc",
+      "left": "gpt-6-1-terra",
+      "right": "xai-grok-4-7"
+    },
+    "/compare/gpt-6-1-terra-vs-zai-glm-5-3/": {
+      "published": "2026-10-27",
+      "lastmod": "2026-10-27",
+      "fingerprint": "087d9b3ef35c74",
+      "left": "gpt-6-1-terra",
+      "right": "zai-glm-5-3"
     },
     "/compare/gpt-6-astra-vs-meta-muse-wonder-1-0/": {
       "published": "2026-10-24",

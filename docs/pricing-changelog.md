@@ -1331,3 +1331,7 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `gpt-6.1-terra` — provenance.needsReview: true → —
 - **Review** `gpt-6.1-terra` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
 - **Review** `gpt-6.1-terra` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+
+## 2026-10-27
+
+- **Metadata** `gpt-6.1-terra` — capabilityIndex: — → 88
