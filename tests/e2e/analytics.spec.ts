@@ -74,6 +74,15 @@ function queued(page: Page): Promise<unknown[][]> {
 
 const notice = (page: Page) => page.getByRole('region', { name: 'Analytics notice' });
 
+// A test can finish while the page is still fetching through the stand-in
+// routes above (the app's store QR codes load after the page does). Unroute
+// before the page closes, and drop whatever is still in flight: otherwise that
+// late fetch throws "Test ended" outside any test, and Playwright fails the
+// whole run over it even though every assertion passed.
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: 'ignoreErrors' });
+});
+
 test.describe('on promptspend.com', () => {
   for (const path of ['/', '/models/claude-opus-5/', '/receipt/']) {
     test(`${path} loads gtag.js with the right ID, allowed by its policy, and shows the notice`, async ({
