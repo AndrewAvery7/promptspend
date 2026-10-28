@@ -22,6 +22,14 @@ const SITE_SRC = decodeURIComponent(new URL('../src', import.meta.url).pathname)
   '',
 );
 
+// The Worker's types declare no `import.meta.url`; locally an ancestor's Node
+// types supply it, in CI nothing does. Same shape as theirs, so the two merge.
+declare global {
+  interface ImportMeta {
+    url: string;
+  }
+}
+
 export default defineConfig({
   resolve: {
     // `/mcp` imports the MCP package's tool code, which reaches the site's engine
