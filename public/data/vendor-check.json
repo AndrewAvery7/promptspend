@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-27T11:06:26.033Z",
+  "checkedAt": "2026-10-28T11:04:36.737Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -46,6 +46,7 @@
         "o1",
         "gpt-6-astra",
         "gpt-6.1-sol",
+        "gpt-6.1-terra",
         "gpt-6-sol",
         "gpt-6-luna",
         "gpt-4.1",
@@ -84,7 +85,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "ok": true,
-      "note": "3561 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3305 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k2.6"
       ]
@@ -92,7 +93,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "ok": true,
-      "note": "3561 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3305 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k3"
       ]
@@ -100,7 +101,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "593544 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "205750 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max"
       ]
@@ -127,7 +128,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "22341 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "21941 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -166,7 +167,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
       "ok": true,
-      "note": "35682 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "53904 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-max"
       ]
@@ -201,7 +202,7 @@
     {
       "url": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
       "ok": true,
-      "note": "11391 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "11266 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "azure-ai-mai-thinking-1"
       ]
@@ -395,6 +396,12 @@
       "detail": "page lists $2/$10 (cached $0.1)"
     },
     {
+      "id": "gpt-6.1-terra",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $1/$5 (cached $0.05)"
+    },
+    {
       "id": "gpt-6-sol",
       "url": "https://developers.openai.com/api/docs/pricing",
       "status": "confirmed",
@@ -446,7 +453,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only Gemini 3.8 Flash and 3.6 Flash are listed)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only 3.8 Flash and 3.6 Flash are listed)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -482,7 +489,7 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite is listed)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only 3.5 Flash-Lite is listed)"
     },
     {
       "id": "gemini-gemini-4-argon",
@@ -512,13 +519,13 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price is printed for kimi-k2.6)"
+      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page; no price is printed for kimi-k2.6)"
     },
     {
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table on the page is empty; no price for kimi-k3 is printed)"
+      "detail": "not priced on the page (the K3 Series Models pricing table on the page is empty; no price is printed for kimi-k3)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -602,7 +609,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the LLM pricing tables list MiniMax-M3.1-Flash and MiniMax-M3 only; no minimax-m2.5 row is present)"
+      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -713,7 +720,7 @@
       "detail": "page lists $2/$8 (cached $0.2)"
     }
   ],
-  "confirmed": 78,
+  "confirmed": 79,
   "mismatched": 0,
   "unconfirmed": 6
 }
