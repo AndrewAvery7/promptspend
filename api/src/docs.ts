@@ -212,7 +212,7 @@ ${rows}
           <a href="${siteOrigin}/">the calculator</a>, because it is the same code.
         </p>
         <p>
-          <strong>It adds about 700 tokens to your context per turn.</strong> Tool definitions load
+          <strong>It adds about 823 tokens to your context per turn.</strong> Tool definitions load
           into every message for as long as a server is connected, so that figure is budgeted,
           checked in CI, and published here rather than left for you to discover.
           <a href="https://github.com/AndrewAvery7/promptspend/tree/main/mcp">Source and the measurement.</a>
@@ -298,7 +298,7 @@ excluded by default so one purchasable model is not counted twice.
 Windsurf. Three tools; every price carries its source and confirmation date, and
 disputed prices are marked. \`estimate_cost\` runs the calculator's own engine, so
 it accounts for compounding conversation history, cache writes and long-context
-tiers rather than returning a rate to multiply by hand. Adds ~700 tokens of
+tiers rather than returning a rate to multiply by hand. Adds ~823 tokens of
 context per turn, measured and budgeted.
 
 ## Related

@@ -247,7 +247,7 @@ conversation history, cache writes, long-context tiers and reasoning tokens — 
 figure that disagrees with the calculator, because it is the same code. A test asserts that.
 
 And because MCP tool definitions load into your context on _every_ turn, the server's own overhead is
-measured, budgeted at 900, checked in CI and published: **~700 tokens**. Nothing else in the
+measured, budgeted at 900, checked in CI and published: **~823 tokens**. Nothing else in the
 ecosystem appears to publish its own footprint. See [mcp/README.md](mcp/README.md).
 
 ### Or in your editor
