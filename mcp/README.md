@@ -91,7 +91,7 @@ data.
 A pricing server that quietly taxes every turn, to tell you about token costs,
 would be an easy and deserved joke. So:
 
-> **This server adds ~700 tokens per turn.** Three tools, short descriptions,
+> **This server adds ~823 tokens per turn.** Three tools, short descriptions,
 > budgeted at 900 and checked in CI by `npm run check:footprint`.
 
 If that number ever stops being true, the build fails — the README figure is

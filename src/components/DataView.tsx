@@ -216,7 +216,7 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   <CopyButton value={MCP_INSTALL_COMMAND} label="install command" onToast={onToast} />
                 </div>
                 <p className="privacy-note">
-                  Adds ~700 tokens of context per turn — measured, budgeted and published, because a pricing
+                  Adds ~823 tokens of context per turn — measured, budgeted and published, because a pricing
                   tool that quietly taxes every message would be a poor joke.
                 </p>
                 {/* Every card ends with somewhere to go. The command suits

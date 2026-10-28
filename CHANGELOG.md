@@ -36,6 +36,12 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **Clearer MCP tool descriptions** (`@promptspend/mcp` 0.1.8). `find_cheaper`'s five workload settings
+  now state their defaults, `get_price` says its unit (USD per million tokens) and that it suggests close
+  matches for an unknown model, and all three tools carry read-only annotations. Prompted by Glama's
+  tool-quality review (find_cheaper 3.3/5, get_price 3.7/5). The cost is honest and published: the
+  per-turn footprint rises from ~700 to ~823 tokens, still inside the 900 budget.
+
 - **"No cookies" is withdrawn.** The footer, the README, the social card (redrawn, cache key `b75d1de1`),
   the Provenance panel and the promo video's chips now say "no accounts, no ads"; the privacy policy,
   `SECURITY.md` and the architecture docs describe Google Analytics, its cookies and how to turn it off.

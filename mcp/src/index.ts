@@ -70,7 +70,7 @@ function handleFlags(argv: string[]): boolean {
         `  { "mcpServers": { "promptspend": {\n` +
         `      "command": "npx", "args": ["-y", "@promptspend/mcp"] } } }\n\n` +
         `Tools: ${TOOLS.map((t) => t.name).join(', ')}\n` +
-        `Context cost: ~700 tokens per turn, measured and budgeted.\n` +
+        `Context cost: ~823 tokens per turn, measured and budgeted.\n` +
         `Docs: https://github.com/AndrewAvery7/promptspend/tree/main/mcp`,
     );
     return true;

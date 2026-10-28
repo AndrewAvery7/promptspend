@@ -10,11 +10,17 @@
  * ships without booting a server or reaching the network.
  */
 
+/**
+ * All three tools only read the public catalog: nothing is written, and the
+ * catalog is fetched from promptspend.com, hence open-world.
+ */
+const READ_ONLY = { readOnlyHint: true, openWorldHint: true } as const;
+
 export const TOOLS = [
   {
     name: 'get_price',
     description:
-      'Current list price for one LLM, with the source and the date it was last confirmed. Returns disputed=true when two sources disagree.',
+      'List price for one LLM in USD per million tokens, with its source and last-confirmed date. Returns disputed=true when two sources disagree, and close matches when the model is unknown. To cost a workload, use estimate_cost.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -22,6 +28,7 @@ export const TOOLS = [
       },
       required: ['model_name'],
     },
+    annotations: READ_ONLY,
   },
   {
     name: 'estimate_cost',
@@ -46,6 +53,7 @@ export const TOOLS = [
       },
       required: ['models'],
     },
+    annotations: READ_ONLY,
   },
   {
     name: 'find_cheaper',
@@ -56,14 +64,15 @@ export const TOOLS = [
       properties: {
         model: { type: 'string', description: 'The model currently in use.' },
         min_capability: { type: 'number', description: '0-100. Defaults to the given model’s score.' },
-        system_tokens: { type: 'number' },
-        user_tokens: { type: 'number' },
-        output_tokens: { type: 'number' },
-        turns: { type: 'number' },
-        conversations_per_day: { type: 'number' },
+        system_tokens: { type: 'number', description: 'Default 800.' },
+        user_tokens: { type: 'number', description: 'Default 150.' },
+        output_tokens: { type: 'number', description: 'Default 350.' },
+        turns: { type: 'number', description: 'Default 4.' },
+        conversations_per_day: { type: 'number', description: 'Default 1000.' },
       },
       required: ['model'],
     },
+    annotations: READ_ONLY,
   },
 ] as const;
 
@@ -74,7 +83,7 @@ export const SERVER_INFO = {
   // the package version was bumped and this literal was not, and every gate
   // passed because none of them compared the two. A server that misreports its
   // own version is the same defect this project exists to catch, one level up.
-  version: '0.1.7',
+  version: '0.1.8',
 } as const;
 
 export const INSTRUCTIONS =
