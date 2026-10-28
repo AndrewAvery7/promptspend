@@ -73,6 +73,14 @@ on their own schedule and are not releases.
   double-counting accumulated history, while keeping cache reads, cache writes, hidden reasoning,
   promotional windows, and long-context tiers explicit.
 
+### Fixed
+
+- **The MCP server now starts on macOS and Linux** (`@promptspend/mcp` 0.1.7). Since 0.1.0 it exited
+  silently whenever it was launched through the installed `promptspend-mcp` command, which npm makes a
+  symlink everywhere but Windows: the entry-point guard compared file names, and the link's name is not
+  the file's. Found by Glama's container test. The startup check now also launches the build through a
+  symlink, and CI (Linux) fails without the fix.
+
 ## [0.7.0] — 2026-08-30
 
 Everything below landed after `v0.6.0` was tagged at `fd54a49`. A minor rather

@@ -8,6 +8,8 @@
  * that disagrees with its own website is worse than no pricing tool, and a
  * reimplementation is how that happens.
  */
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
@@ -105,8 +107,25 @@ async function main(): Promise<void> {
   await server.connect(new StdioServerTransport());
 }
 
-// Only run when executed directly, so the module can be imported by tests.
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/').split('/').pop()!)) {
+/**
+ * Only run when executed directly, so the module can be imported by tests.
+ *
+ * Compared by real path, not by file name. On macOS and Linux the installed
+ * `promptspend-mcp` command is a symlink to dist/index.js, so argv[1] names the
+ * link while import.meta.url names the file. A name comparison failed there and
+ * the server exited without a word — invisible on Windows, where npm's shim
+ * passes the real path.
+ */
+function isEntryPoint(): boolean {
+  if (!process.argv[1]) return false;
+  try {
+    return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
+}
+
+if (isEntryPoint()) {
   main().catch((error: unknown) => {
     console.error(error);
     process.exit(1);
