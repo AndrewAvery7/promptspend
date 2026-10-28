@@ -682,3 +682,119 @@ describe('a promotional rate is the rate', () => {
     expect(row.promotionalUntil).toBeNull();
   });
 });
+
+describe('the hosted MCP server', () => {
+  beforeEach(() => serveCatalog());
+
+  const rpc = (body: unknown) =>
+    SELF.fetch(`${API}/mcp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' },
+      body: JSON.stringify(body),
+    });
+
+  it('completes the handshake and agrees on a protocol version', async () => {
+    const response = await rpc({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'initialize',
+      params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 't', version: '1' } },
+    });
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toBe('application/json; charset=utf-8');
+    const body = (await response.json()) as {
+      result: { protocolVersion: string; serverInfo: { name: string } };
+    };
+    expect(body.result.protocolVersion).toBe('2025-06-18');
+    expect(body.result.serverInfo.name).toBe('promptspend');
+  });
+
+  it('offers its newest protocol version to a client asking for one it does not know', async () => {
+    const body = (await (
+      await rpc({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '1999-01-01' } })
+    ).json()) as { result: { protocolVersion: string } };
+    expect(body.result.protocolVersion).toBe('2025-11-25');
+  });
+
+  it('acknowledges a notification with 202 and no body', async () => {
+    const response = await rpc({ jsonrpc: '2.0', method: 'notifications/initialized' });
+    expect(response.status).toBe(202);
+    expect(await response.text()).toBe('');
+  });
+
+  it('lists the same three tools as the npm package, without reading the catalog', async () => {
+    const body = (await (await rpc({ jsonrpc: '2.0', id: 2, method: 'tools/list' })).json()) as {
+      result: { tools: { name: string; annotations?: { readOnlyHint?: boolean } }[] };
+    };
+    expect(body.result.tools.map((t) => t.name)).toEqual(['get_price', 'estimate_cost', 'find_cheaper']);
+    expect(body.result.tools.every((t) => t.annotations?.readOnlyHint === true)).toBe(true);
+    expect(originHits).toBe(0);
+  });
+
+  it('prices a model with its provenance', async () => {
+    const body = (await (
+      await rpc({
+        jsonrpc: '2.0',
+        id: 3,
+        method: 'tools/call',
+        params: { name: 'get_price', arguments: { model_name: 'gpt-5' } },
+      })
+    ).json()) as { result: { content: { text: string }[]; isError?: boolean } };
+    expect(body.result.isError).toBeUndefined();
+    const price = JSON.parse(body.result.content[0]!.text) as {
+      input_per_million_usd: number;
+      provenance: { last_verified: string };
+    };
+    expect(price.input_per_million_usd).toBe(1.25);
+    expect(price.provenance.last_verified).toBe('2026-08-01');
+  });
+
+  it('reports an unknown tool as a JSON-RPC error and an unknown method as not found', async () => {
+    const tool = (await (
+      await rpc({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'nope', arguments: {} } })
+    ).json()) as { error: { code: number } };
+    expect(tool.error.code).toBe(-32602);
+    const method = (await (await rpc({ jsonrpc: '2.0', id: 5, method: 'resources/list' })).json()) as {
+      error: { code: number };
+    };
+    expect(method.error.code).toBe(-32601);
+  });
+
+  it('turns an unreachable catalog into a tool error the agent can relay, not a protocol failure', async () => {
+    originUnreachable();
+    const body = (await (
+      await rpc({
+        jsonrpc: '2.0',
+        id: 6,
+        method: 'tools/call',
+        params: { name: 'get_price', arguments: { model_name: 'gpt-5' } },
+      })
+    ).json()) as { result: { isError: boolean; content: { text: string }[] } };
+    expect(body.result.isError).toBe(true);
+    expect(body.result.content[0]!.text).toContain('could not be read');
+  });
+
+  it('answers a batch, rejects malformed JSON, and declines GET', async () => {
+    const batch = (await (
+      await rpc([
+        { jsonrpc: '2.0', id: 1, method: 'ping' },
+        { jsonrpc: '2.0', method: 'notifications/initialized' },
+      ])
+    ).json()) as unknown[];
+    expect(batch).toHaveLength(1);
+
+    const bad = await SELF.fetch(`${API}/mcp`, { method: 'POST', body: '{not json' });
+    expect(bad.status).toBe(400);
+    expect(((await bad.json()) as { error: { code: number } }).error.code).toBe(-32700);
+
+    const getResponse = await get('/mcp');
+    expect(getResponse.status).toBe(405);
+  });
+
+  it('lets a browser-based client call it cross-origin', async () => {
+    const preflight = await SELF.fetch(`${API}/mcp`, { method: 'OPTIONS' });
+    expect(preflight.status).toBe(204);
+    expect(preflight.headers.get('Access-Control-Allow-Methods')).toContain('POST');
+    expect(preflight.headers.get('Access-Control-Allow-Headers')).toContain('Mcp-Protocol-Version');
+  });
+});

@@ -9,16 +9,22 @@
     "source": "github",
     "subfolder": "mcp"
   },
-  "version": "0.1.8",
+  "version": "0.1.9",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@promptspend/mcp",
-      "version": "0.1.8",
+      "version": "0.1.9",
       "transport": {
         "type": "stdio"
       }
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://promptspend.dev/mcp"
     }
   ]
 }

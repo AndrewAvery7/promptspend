@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { defineConfig } from 'vitest/config';
 import { cloudflareTest } from '@cloudflare/vitest-pool-workers';
 
@@ -13,6 +14,12 @@ import { cloudflareTest } from '@cloudflare/vitest-pool-workers';
  * being up, and must never quietly pass because it did.
  */
 export default defineConfig({
+  resolve: {
+    // `/mcp` imports the MCP package's tool code, which reaches the site's engine
+    // through this alias. The Worker bundle resolves it from tsconfig `paths`;
+    // vitest needs it spelled out, as `mcp/vitest.config.ts` does.
+    alias: { '@': resolve(import.meta.dirname, '../src') },
+  },
   plugins: [
     cloudflareTest({
       wrangler: { configPath: './wrangler.jsonc' },

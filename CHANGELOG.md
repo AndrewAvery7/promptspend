@@ -9,6 +9,16 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **A hosted MCP server at `https://promptspend.dev/mcp`** (`@promptspend/mcp` 0.1.9 in the MCP Registry).
+  The same three tools with nothing to install: add the URL as a custom connector in Claude.ai or
+  ChatGPT, or `claude mcp add --transport http`. Streamable HTTP, stateless, no key; the manifest and
+  tool code are imported from `mcp/src`, so the hosted and npm servers cannot give different answers.
+  The registry entry now lists it under `remotes`, which is what directories such as Glama index as a
+  connector.
+- **A price-change feed at `/feed.xml`** (Atom). New models, price changes, corrections and provider
+  changes, one entry per day, filtered from the changelog the daily sync writes; provenance and
+  metadata bookkeeping are left out. Every generated page and the calculator advertise it.
+
 - **Google Analytics 4 on the website, with cookies** (owner decision 2026-10-06). Every page of
   promptspend.com loads it and shows a small notice that says so, links to the privacy policy and offers
   _Turn off_; the privacy page has an on/off control. It is sent the page's origin and path only, never the

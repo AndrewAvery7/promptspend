@@ -329,6 +329,7 @@ export function layout(ctx: RenderContext, input: LayoutInput): string {
     <meta name="description" content="${escapeHtml(input.description)}" />
     <meta name="color-scheme" content="light dark" />
     <link rel="canonical" href="${escapeHtml(canonical)}" />
+    <link rel="alternate" type="application/atom+xml" title="PromptSpend price changes" href="${escapeHtml(absolute(ctx, '/feed.xml'))}" />
 ${input.robots ? `    <meta name="robots" content="${escapeHtml(input.robots)}" />\n` : ''}    <meta http-equiv="Content-Security-Policy" content="${escapeHtml(csp)}" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 ${input.extraHead ?? ''}    <meta property="og:type" content="article" />

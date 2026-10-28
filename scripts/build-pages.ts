@@ -59,6 +59,7 @@ import {
 } from '@/lib/seo/render';
 import { INDEXNOW_KEY, INDEXNOW_KEY_FILE } from './lib/indexnow';
 import { readLedger } from './lib/page-ledger';
+import { renderFeed } from '../src/lib/seo/feed';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
@@ -68,6 +69,7 @@ const INFORMATION_DIR = resolve(ROOT, 'src/content/information');
 const FREE_TIERS = resolve(ROOT, 'data/free-tiers.json');
 const FREE_TIER_CHECK = resolve(ROOT, 'public/data/free-tier-check.json');
 const SYNC_STATUS = resolve(ROOT, 'public/data/sync-status.json');
+const CHANGELOG = resolve(ROOT, 'docs/pricing-changelog.md');
 
 /** Same defaults as `vite.config.ts`, and for the same reasons: an unset
  *  GitHub Actions variable arrives as `""`, so `??` would not catch it. */
@@ -404,6 +406,9 @@ async function main(): Promise<void> {
       })),
     ]),
   );
+
+  // Price news as Atom, filtered from the changelog the daily sync writes. See src/lib/seo/feed.ts.
+  await writeFileAt('feed.xml', renderFeed(await readFile(CHANGELOG, 'utf8'), siteUrl));
 
   // An index written for the thing that reads it. Points at the pages and the
   // API rather than inlining rates, which would be stale by morning.

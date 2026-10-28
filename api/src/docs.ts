@@ -205,6 +205,12 @@ ${rows}
         </p>
         <pre><code>$ claude mcp add promptspend -- npx -y @promptspend/mcp</code></pre>
         <p>
+          Or with nothing to install: the same server is hosted at
+          <code>${origin}/mcp</code>. Add that URL as a custom connector in Claude.ai or ChatGPT,
+          or in Claude Code:
+        </p>
+        <pre><code>$ claude mcp add --transport http promptspend ${origin}/mcp</code></pre>
+        <p>
           Three tools, deliberately. <code>estimate_cost</code> is the one a price lookup cannot
           provide: it runs this site's own cost engine, so it accounts for conversation history
           compounding, cache writes costing more than input, long-context tiers and reasoning
@@ -300,6 +306,9 @@ disputed prices are marked. \`estimate_cost\` runs the calculator's own engine, 
 it accounts for compounding conversation history, cache writes and long-context
 tiers rather than returning a rate to multiply by hand. Adds ~823 tokens of
 context per turn, measured and budgeted.
+
+Hosted, no install: \`${origin}/mcp\` (MCP Streamable HTTP, stateless, no key).
+Add it as a custom connector in Claude.ai or ChatGPT.
 
 ## Related
 

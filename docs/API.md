@@ -47,6 +47,7 @@ themselves, cross-links between them.
 | `GET /robots.txt`     | Allow fetching; `/v1/` stays out of search via `X-Robots-Tag`            |
 | `GET /sitemap.xml`    | The single indexable developer-hub URL                                   |
 | `GET /style.css`      | The developer-hub stylesheet                                             |
+| `POST /mcp`           | The hosted MCP server (Streamable HTTP, stateless, JSON-RPC)             |
 
 `/v1/models`, `/v1/prices` and `/v1/prices.csv` accept `?provider=`, `?status=`
 and `?aliases=include`. Routing aliases are excluded by default so one
@@ -64,7 +65,9 @@ prior status.
 - **`Access-Control-Allow-Origin: *`**, where the alerts API allowlists origins.
   The difference is what is at stake: that API accepts an email address, so a
   page anywhere on the web must not be able to submit one on a visitor's behalf.
-  This one is read-only and serves data that is already public. Being callable
+  Every endpoint here is a read of data that is already public; `/mcp` accepts
+  a POST body but stores nothing and keeps no state, so a cross-origin caller
+  can do nothing a direct caller cannot. Being callable
   from any page is not a weakness of the design, it _is_ the design.
 - **No key.** A key would create an account system, a support burden and a
   database, to gate data that is published at a URL anybody can read.
@@ -213,7 +216,7 @@ Reversible without data loss, because there is no data.
 `api.promptspend.dev` is the **alerts** API — push subscriptions, email
 preferences, the notify webhook. It is origin-restricted and holds a database.
 
-`promptspend.dev` is this one — public, keyless, read-only, no database.
+`promptspend.dev` is this one — public, keyless, no database; every endpoint a read.
 
 The naming reads backwards, and it is not worth fixing: `api.promptspend.dev` is
 baked into the deployed site's configuration, its Content Security Policy and

@@ -3,7 +3,7 @@ slug: privacy
 title: Privacy Policy | PromptSpend
 description: How PromptSpend handles pasted text, local app data, website analytics and cookies, pricing requests, app updates, sharing, alerts, and support messages.
 heading: Privacy Policy
-updated: 2026-10-24
+updated: 2026-10-28
 ---
 
 PromptSpend is designed to estimate AI costs without turning your prompts into our data. This policy covers the PromptSpend native apps, website, pricing API, and optional alert and support services.
@@ -88,7 +88,7 @@ PromptSpend is a technical cost-planning tool and is not directed to children un
 
 PromptSpend minimizes collection, uses HTTPS for network traffic, and keeps private prompt processing on-device. No system is perfectly secure. Local app data remains until you remove it or uninstall the app. Alert records follow the time limits described above. Google Analytics keeps visit-level data for two months.
 
-The public pricing API, at promptspend.dev, has Cloudflare's request logging switched on so we can diagnose faults. A request log can include the address requested, the time, and connection details such as an IP address, and Cloudflare keeps these logs for up to seven days. The pricing API needs no account or key and its addresses carry no secrets. PromptSpend keeps no request logs for the website's pages, and the update server's logging is switched off; their hosts process ordinary connection information as described under Network requests.
+The public pricing API, at promptspend.dev, has Cloudflare's request logging switched on so we can diagnose faults. It includes a hosted MCP server at promptspend.dev/mcp, which receives the model names and workload numbers an AI assistant sends it, uses them to answer, and does not store them; our code does not log them. A request log can include the address requested, the time, and connection details such as an IP address, and Cloudflare keeps these logs for up to seven days. The pricing API needs no account or key and its addresses carry no secrets. PromptSpend keeps no request logs for the website's pages, and the update server's logging is switched off; their hosts process ordinary connection information as described under Network requests.
 
 ## Changes and contact
 
