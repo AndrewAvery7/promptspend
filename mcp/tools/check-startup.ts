@@ -20,8 +20,9 @@
  *   npm run check:startup
  */
 import { spawn } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { existsSync, mkdtempSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -59,88 +60,119 @@ const REQUESTS = [
   },
 ] as const;
 
-const child = spawn(process.execPath, [ENTRY], { stdio: ['pipe', 'pipe', 'pipe'] });
-const responses = new Map<number, Rpc>();
-let stderr = '';
-let buffer = '';
+async function exercise(entry: string, label: string): Promise<void> {
+  console.log(`${label}:`);
+  const child = spawn(process.execPath, [entry], { stdio: ['pipe', 'pipe', 'pipe'] });
+  const responses = new Map<number, Rpc>();
+  let stderr = '';
+  let buffer = '';
 
-child.stderr.on('data', (chunk: Buffer) => (stderr += chunk.toString()));
-child.stdout.on('data', (chunk: Buffer) => {
-  buffer += chunk.toString();
-  const lines = buffer.split('\n');
-  buffer = lines.pop() ?? '';
-  for (const line of lines) {
-    if (!line.trim()) continue;
+  child.stderr.on('data', (chunk: Buffer) => (stderr += chunk.toString()));
+  child.stdout.on('data', (chunk: Buffer) => {
+    buffer += chunk.toString();
+    const lines = buffer.split('\n');
+    buffer = lines.pop() ?? '';
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      try {
+        const message = JSON.parse(line) as Rpc;
+        if (typeof message.id === 'number') responses.set(message.id, message);
+      } catch {
+        /* not a complete JSON line yet */
+      }
+    }
+  });
+
+  for (const request of REQUESTS) child.stdin.write(JSON.stringify(request) + '\n');
+
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline && responses.size < 3 && child.exitCode === null) {
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  child.kill();
+
+  const problems: string[] = [];
+
+  if (child.exitCode !== null && child.exitCode !== 0 && responses.size === 0) {
+    problems.push(`the server exited with code ${child.exitCode} before answering`);
+  }
+
+  const init = responses.get(1);
+  if (!init?.result) problems.push('no initialize response');
+  else {
+    const info = init.result.serverInfo as { name?: string } | undefined;
+    if (info?.name !== 'promptspend') problems.push(`serverInfo.name was ${String(info?.name)}`);
+    console.log(`  initialize      ok — ${info?.name} v${String((info as { version?: string })?.version)}`);
+  }
+
+  const list = responses.get(2);
+  const tools = (list?.result?.tools ?? []) as { name: string }[];
+  if (tools.length !== 3) problems.push(`expected 3 tools, got ${tools.length}`);
+  else console.log(`  tools/list      ok — ${tools.map((t) => t.name).join(', ')}`);
+
+  const call = responses.get(3);
+  const content = (call?.result?.content ?? []) as { text?: string }[];
+  const text = content[0]?.text ?? '';
+  if (call?.result?.isError) {
+    problems.push(`get_price returned an error: ${text.slice(0, 200)}`);
+  } else {
     try {
-      const message = JSON.parse(line) as Rpc;
-      if (typeof message.id === 'number') responses.set(message.id, message);
+      const parsed = JSON.parse(text) as Record<string, unknown>;
+      // The whole point of the product: a price without provenance is a failure,
+      // even when the call "succeeded".
+      if (typeof parsed.input_per_million_usd !== 'number') problems.push('no price in the response');
+      const p = parsed.provenance as Record<string, unknown> | undefined;
+      if (!p) problems.push('a live call returned a price with NO provenance');
+      else
+        console.log(
+          `  tools/call      ok — gpt-5 priced, source=${String(p.source)}, verified ${String(p.last_verified)}`,
+        );
     } catch {
-      /* not a complete JSON line yet */
+      problems.push(`get_price did not return JSON: ${text.slice(0, 200)}`);
     }
   }
-});
 
-for (const request of REQUESTS) child.stdin.write(JSON.stringify(request) + '\n');
-
-const deadline = Date.now() + 30_000;
-while (Date.now() < deadline && responses.size < 3 && child.exitCode === null) {
-  await new Promise((r) => setTimeout(r, 100));
-}
-child.kill();
-
-const problems: string[] = [];
-
-if (child.exitCode !== null && child.exitCode !== 0 && responses.size === 0) {
-  problems.push(`the server exited with code ${child.exitCode} before answering`);
-}
-
-const init = responses.get(1);
-if (!init?.result) problems.push('no initialize response');
-else {
-  const info = init.result.serverInfo as { name?: string } | undefined;
-  if (info?.name !== 'promptspend') problems.push(`serverInfo.name was ${String(info?.name)}`);
-  console.log(`  initialize      ok — ${info?.name} v${String((info as { version?: string })?.version)}`);
-}
-
-const list = responses.get(2);
-const tools = (list?.result?.tools ?? []) as { name: string }[];
-if (tools.length !== 3) problems.push(`expected 3 tools, got ${tools.length}`);
-else console.log(`  tools/list      ok — ${tools.map((t) => t.name).join(', ')}`);
-
-const call = responses.get(3);
-const content = (call?.result?.content ?? []) as { text?: string }[];
-const text = content[0]?.text ?? '';
-if (call?.result?.isError) {
-  problems.push(`get_price returned an error: ${text.slice(0, 200)}`);
-} else {
-  try {
-    const parsed = JSON.parse(text) as Record<string, unknown>;
-    // The whole point of the product: a price without provenance is a failure,
-    // even when the call "succeeded".
-    if (typeof parsed.input_per_million_usd !== 'number') problems.push('no price in the response');
-    const p = parsed.provenance as Record<string, unknown> | undefined;
-    if (!p) problems.push('a live call returned a price with NO provenance');
-    else
-      console.log(
-        `  tools/call      ok — gpt-5 priced, source=${String(p.source)}, verified ${String(p.last_verified)}`,
+  if (problems.length > 0) {
+    console.error(`\n✗ the built server does not work (${label}):`);
+    for (const problem of problems) console.error(`  - ${problem}`);
+    if (stderr.trim())
+      console.error(
+        `\n  stderr:\n${stderr
+          .split('\n')
+          .slice(0, 12)
+          .map((l) => '    ' + l)
+          .join('\n')}`,
       );
-  } catch {
-    problems.push(`get_price did not return JSON: ${text.slice(0, 200)}`);
+    process.exit(1);
   }
 }
 
-if (problems.length > 0) {
-  console.error('\n✗ the built server does not work:');
-  for (const problem of problems) console.error(`  - ${problem}`);
-  if (stderr.trim())
-    console.error(
-      `\n  stderr:\n${stderr
-        .split('\n')
-        .slice(0, 12)
-        .map((l) => '    ' + l)
-        .join('\n')}`,
-    );
-  process.exit(1);
+await exercise(ENTRY, 'run directly');
+
+/*
+ * Then again through a symlink, which is how npm installs the command on macOS
+ * and Linux (`npx`, a global install, Glama's container). Until 0.1.7 the
+ * entry-point guard compared file names, and through the link they differ: the
+ * server exited silently for every non-Windows user while this check, which
+ * only ever ran the file directly, stayed green.
+ *
+ * Windows refuses to create a symlink without Developer Mode, so there it is
+ * skipped with a note; CI runs on Linux and always exercises it.
+ */
+const linkDir = mkdtempSync(join(tmpdir(), 'promptspend-mcp-'));
+const link = join(linkDir, 'promptspend-mcp');
+let linked = false;
+try {
+  symlinkSync(ENTRY, link);
+  linked = true;
+} catch (error) {
+  if (process.platform !== 'win32') throw error;
+  console.log('via a symlink: skipped — Windows cannot create one without Developer Mode');
+}
+try {
+  if (linked) await exercise(link, 'via a symlink, as npm installs it');
+} finally {
+  rmSync(linkDir, { recursive: true, force: true });
 }
 
 console.log('✓ the built server starts, lists 3 tools, and returns a priced response with provenance');
