@@ -18,6 +18,7 @@
   <img src="https://img.shields.io/badge/initial%20payload-104%20KB%20gzip-blue.svg" alt="104 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
+  <a href="https://mcprush.com/to/promptspend-mcp?ref=badge"><img src="https://mcprush.com/badge/promptspend-mcp/score.svg" alt="PromptSpend MCP on mcprush"></a>
 </p>
 
 <p align="center">

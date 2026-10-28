@@ -1,5 +1,7 @@
 # @promptspend/mcp
 
+[![PromptSpend MCP on mcprush](https://mcprush.com/badge/promptspend-mcp/score.svg)](https://mcprush.com/to/promptspend-mcp?ref=badge)
+
 **LLM pricing for coding agents — every price carries its source and the date it
 was last confirmed.**
 
