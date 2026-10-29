@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-29T15:25:04.129Z",
+  "generatedAt": "2026-10-29T15:27:58.170Z",
   "providers": [
     {
       "id": "anthropic",
@@ -2945,7 +2945,7 @@
       "id": "o1",
       "providerId": "openai",
       "displayName": "o1",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 200000,
       "pricing": {
         "input": 15,
@@ -3021,7 +3021,7 @@
       "id": "o3-mini",
       "providerId": "openai",
       "displayName": "o3-mini",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 200000,
       "pricing": {
         "input": 1.1,
@@ -3073,7 +3073,7 @@
       "id": "o4-mini",
       "providerId": "openai",
       "displayName": "o4-mini",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 200000,
       "pricing": {
         "input": 1.1,

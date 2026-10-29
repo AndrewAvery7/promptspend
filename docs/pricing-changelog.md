@@ -1467,3 +1467,9 @@ value that moves in the same run as its source URL is a correction.
 - **Coverage** `claude-sonnet-5-5` — cacheWrite1h now tracked: — → 4
 - **Coverage** `moonshot-kimi-k3` — cacheWrite1h now tracked: — → 6
 - **Coverage** `moonshot-kimi-k3.1-pro` — cacheWrite1h now tracked: — → 4
+
+## 2026-10-29
+
+- **Metadata** `o1` — status: current → deprecated
+- **Metadata** `o3-mini` — status: current → deprecated
+- **Metadata** `o4-mini` — status: current → deprecated

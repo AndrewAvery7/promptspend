@@ -3,8 +3,15 @@
   "pages": {
     "/compare/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-27",
-      "fingerprint": "17eb6afde3e862"
+      "lastmod": "2026-10-29",
+      "fingerprint": "09bb4181e55518"
+    },
+    "/compare/amazon-nova-2-lite-v1-0-vs-claude-haiku-4-5/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "0747273e4fdbc6",
+      "left": "amazon-nova-2-lite-v1-0",
+      "right": "claude-haiku-4-5"
     },
     "/compare/amazon-nova-2-lite-v1-0-vs-dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
@@ -43,8 +50,8 @@
     },
     "/compare/amazon-nova-2-lite-v1-0-vs-o4-mini/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0f50f8d209e3bc",
+      "lastmod": "2026-10-29",
+      "fingerprint": "15ac5beee2daea",
       "left": "amazon-nova-2-lite-v1-0",
       "right": "o4-mini"
     },
@@ -85,8 +92,8 @@
     },
     "/compare/amazon-nova-2-pro-preview-20251202-v1-0-vs-o4-mini/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0758e3acda6fe7",
+      "lastmod": "2026-10-29",
+      "fingerprint": "12ae96aa138c43",
       "left": "amazon-nova-2-pro-preview-20251202-v1-0",
       "right": "o4-mini"
     },
@@ -181,6 +188,13 @@
       "left": "claude-haiku-4-5",
       "right": "gpt-5-4-mini"
     },
+    "/compare/claude-haiku-4-5-vs-mistral-large-3/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "1926456693f9f5",
+      "left": "claude-haiku-4-5",
+      "right": "mistral-large-3"
+    },
     "/compare/claude-haiku-4-5-vs-mistral-medium-3-5/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
@@ -191,9 +205,16 @@
     "/compare/claude-haiku-4-5-vs-o4-mini/": {
       "published": "2026-10-24",
       "lastmod": "2026-10-29",
-      "fingerprint": "0fdbd2cf9b0471",
+      "fingerprint": "1890dcb8bef0c5",
       "left": "claude-haiku-4-5",
       "right": "o4-mini"
+    },
+    "/compare/claude-haiku-4-5-vs-xai-grok-4-3/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "16cfc445f1922d",
+      "left": "claude-haiku-4-5",
+      "right": "xai-grok-4-3"
     },
     "/compare/claude-haiku-4-5-vs-zai-glm-5/": {
       "published": "2026-08-02",
@@ -659,8 +680,8 @@
     },
     "/compare/command-a-03-2025-vs-o4-mini/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "1a3dd3a2a6ea93",
+      "lastmod": "2026-10-29",
+      "fingerprint": "1ff9afe044bf38",
       "left": "command-a-03-2025",
       "right": "o4-mini"
     },
@@ -862,8 +883,8 @@
     },
     "/compare/deepseek-v4-flash-vs-o4-mini/": {
       "published": "2026-08-16",
-      "lastmod": "2026-10-02",
-      "fingerprint": "1dd1d7b55f2fbc",
+      "lastmod": "2026-10-29",
+      "fingerprint": "167c9cdf191797",
       "left": "deepseek-v4-flash",
       "right": "o4-mini"
     },
@@ -1016,8 +1037,8 @@
     },
     "/compare/gemini-3-5-flash-lite-vs-o4-mini/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-16",
-      "fingerprint": "00fd786946cc79",
+      "lastmod": "2026-10-29",
+      "fingerprint": "0178c15d5b0e55",
       "left": "gemini-3-5-flash-lite",
       "right": "o4-mini"
     },
@@ -1394,8 +1415,8 @@
     },
     "/compare/mistral-large-3-vs-o4-mini/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-30",
-      "fingerprint": "0615331ba686f5",
+      "lastmod": "2026-10-29",
+      "fingerprint": "0abd85a68107a1",
       "left": "mistral-large-3",
       "right": "o4-mini"
     },
@@ -1436,8 +1457,8 @@
     },
     "/compare/mistral-medium-3-5-vs-o4-mini/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-30",
-      "fingerprint": "04c7dd329e6227",
+      "lastmod": "2026-10-29",
+      "fingerprint": "1cc154b09fd4ba",
       "left": "mistral-medium-3-5",
       "right": "o4-mini"
     },
@@ -1563,7 +1584,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "02baaa545a72bc"
+      "fingerprint": "138dcace7aa162"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -2047,13 +2068,13 @@
     },
     "/models/o1/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-03",
-      "fingerprint": "1eab263f2c92bf"
+      "lastmod": "2026-10-29",
+      "fingerprint": "0d4bef034cda73"
     },
     "/models/o3-mini/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-03",
-      "fingerprint": "1553b07a14ed38"
+      "lastmod": "2026-10-29",
+      "fingerprint": "1db1e2c9861e40"
     },
     "/models/o3-pro/": {
       "published": "2026-10-29",
@@ -2067,8 +2088,8 @@
     },
     "/models/o4-mini/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-03",
-      "fingerprint": "00aa49bfb5bde2"
+      "lastmod": "2026-10-29",
+      "fingerprint": "035efb01230c23"
     },
     "/models/xai-grok-2/": {
       "published": "2026-08-02",
@@ -2198,7 +2219,7 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "1cf096adaa2026"
+      "fingerprint": "105d317fad06f0"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2263,7 +2284,7 @@
     "/providers/openai/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "0cee2b1303e5d4"
+      "fingerprint": "12ae7987e9215b"
     },
     "/providers/xai/": {
       "published": "2026-08-02",
