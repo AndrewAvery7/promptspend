@@ -66,6 +66,19 @@
     "realVisitorsPerDay": {
       "value": 11,
       "status": "belief carried from the 2026-10-24 report, not re-measured"
+    },
+    "realVisitorsLast24Hours": {
+      "visits": 22,
+      "pageViews": 29,
+      "source": "Cloudflare Web Analytics, bots excluded, 24 hours to 2026-10-29"
+    },
+    "realVisitorPageSpeed": {
+      "source": "Cloudflare Web Analytics, 24 hours to 2026-10-29, bots excluded, about 22 visits (indicative only)",
+      "largestContentfulPaintP75Ms": 1341,
+      "timeToFirstByteMs": 57,
+      "elementRenderDelayMs": 1284,
+      "interactionToNextPaint": "all samples in the good range, very few samples",
+      "cumulativeLayoutShift": "not read"
     }
   }
 }
