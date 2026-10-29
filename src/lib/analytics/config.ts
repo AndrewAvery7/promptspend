@@ -13,6 +13,25 @@
  * file, so the ID and the origins the policy admits cannot drift apart.
  */
 
+/**
+ * THE PAUSE (owner decision, 2026-10-29).
+ *
+ * `false`: Google Analytics is off. Nothing from Google loads, no notice
+ * shows, the privacy page says the website does not use it, the page policies
+ * stop naming Google's hosts, and a visitor who still holds its cookies from
+ * before has them cleared the next time they open the site. `true`: it runs as
+ * described under the switch below.
+ *
+ * Why it is off: no Google Analytics account exists for the website to report
+ * to, so visitors were being told their visits were counted when nobody could
+ * read the count. Turning it back on is more than this word: create a new
+ * property, replace `GA_MEASUREMENT_ID`, and rewrite the privacy page, README,
+ * SECURITY.md and ARCHITECTURE.md from "paused" back to "running" BEFORE the
+ * deploy. `scripts/lib/privacy-config.test.ts` fails until the privacy page
+ * matches, and `npm run check:csp` fails until the policies match.
+ */
+export const GOOGLE_ANALYTICS_ENABLED: boolean = false;
+
 /** The GA4 web stream's Measurement ID. */
 export const GA_MEASUREMENT_ID = 'G-08GFGLY4VD';
 
@@ -57,6 +76,16 @@ export const GA_COLLECT_ORIGINS: readonly string[] = [
 
 /** Every Google origin any page's policy admits, for the checks that pin them. */
 export const GA_ORIGINS: readonly string[] = [GA_SCRIPT_ORIGIN, ...GA_COLLECT_ORIGINS];
+
+/**
+ * The Google origins a page's Content Security Policy actually admits: none
+ * while the pause is on. A policy that names hosts nothing loads from is only
+ * an open door for a script that got onto the page.
+ */
+export const GA_POLICY_SCRIPT_ORIGINS: readonly string[] = GOOGLE_ANALYTICS_ENABLED ? [GA_SCRIPT_ORIGIN] : [];
+export const GA_POLICY_COLLECT_ORIGINS: readonly string[] = GOOGLE_ANALYTICS_ENABLED
+  ? GA_COLLECT_ORIGINS
+  : [];
 
 /** The browser-storage key that remembers the visitor's choice about the notice. */
 export const ANALYTICS_CHOICE_KEY = 'ps.analyticsChoice';

@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Request } from '@playwright/test';
+import { GOOGLE_ANALYTICS_ENABLED } from '../../src/lib/analytics/config';
 
 /**
  * Google Analytics on the website, checked in a real browser.
@@ -83,7 +84,48 @@ test.afterEach(async ({ page }) => {
   await page.unrouteAll({ behavior: 'ignoreErrors' });
 });
 
+// Google Analytics has been paused since 2026-10-29 (`GOOGLE_ANALYTICS_ENABLED`
+// in src/lib/analytics/config.ts). While it is, the running-state tests below
+// are skipped and the paused-state tests run instead; flip the switch and they
+// swap places.
+test.describe('while Google Analytics is paused', () => {
+  test.skip(GOOGLE_ANALYTICS_ENABLED, 'Google Analytics is running');
+
+  for (const path of ['/', '/models/claude-opus-5/', '/receipt/', '/privacy/']) {
+    test(`${path} loads nothing from Google, shows no notice, and its policy names no Google host`, async ({
+      page,
+      baseURL,
+      context,
+    }) => {
+      const recorder = await onLiveHost(page, baseURL!);
+      await page.goto(`${LIVE}${path}`);
+      await page.waitForLoadState('networkidle');
+      await expect(notice(page)).toHaveCount(0);
+      expect(recorder.google).toEqual([]);
+      expect(await recorder.violations()).toEqual([]);
+      expect(await context.cookies()).toEqual([]);
+      const policy = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
+      expect(policy).not.toMatch(/googletagmanager|google-analytics|analytics\.google/);
+      await expect(page.locator('#analytics-choice')).toHaveCount(0);
+    });
+  }
+
+  test('clears a Google Analytics cookie an earlier visit left behind', async ({
+    page,
+    baseURL,
+    context,
+  }) => {
+    await onLiveHost(page, baseURL!);
+    await context.addCookies([{ name: '_ga', value: 'GA1.1.1.1', url: LIVE }]);
+    await page.goto(`${LIVE}/`);
+    await page.waitForLoadState('networkidle');
+    expect((await context.cookies()).map((cookie) => cookie.name)).not.toContain('_ga');
+  });
+});
+
 test.describe('on promptspend.com', () => {
+  test.skip(!GOOGLE_ANALYTICS_ENABLED, 'Google Analytics is paused');
+
   for (const path of ['/', '/models/claude-opus-5/', '/receipt/']) {
     test(`${path} loads gtag.js with the right ID, allowed by its policy, and shows the notice`, async ({
       page,
@@ -212,6 +254,10 @@ test('anywhere but promptspend.com, nothing from Google loads and no notice show
     await page.goto(path, { waitUntil: 'networkidle' });
     await expect(notice(page)).toHaveCount(0);
   }
-  await expect(page.locator('#analytics-choice')).toContainText('runs only on promptspend.com');
+  if (GOOGLE_ANALYTICS_ENABLED) {
+    await expect(page.locator('#analytics-choice')).toContainText('runs only on promptspend.com');
+  } else {
+    await expect(page.locator('#analytics-choice')).toHaveCount(0);
+  }
   expect(google).toEqual([]);
 });

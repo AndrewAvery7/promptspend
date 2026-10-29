@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
+import { GOOGLE_ANALYTICS_ENABLED } from '@/lib/analytics/config';
 import { buildPages } from './pages';
 import {
   layout,
@@ -362,17 +363,24 @@ describe('rendered pages', () => {
   it('declares a policy with no unsafe-inline and exactly the approved remote origins', () => {
     // Written out by hand rather than imported from src/lib/analytics/config.ts,
     // so that adding an origin there fails here until somebody means it.
-    const google = [
-      'https://www.googletagmanager.com',
-      'https://www.google-analytics.com',
-      'https://region1.google-analytics.com',
-      'https://region1.analytics.google.com',
-    ];
+    // While Google Analytics is paused (2026-10-29) the policy names none of
+    // Google's hosts; while it runs, exactly these.
+    const google = GOOGLE_ANALYTICS_ENABLED
+      ? [
+          'https://www.googletagmanager.com',
+          'https://www.google-analytics.com',
+          'https://region1.google-analytics.com',
+          'https://region1.analytics.google.com',
+        ]
+      : [];
     const approved: Record<string, string[]> = {
       // LaunchNest's badge (2026-10-05), and Google Analytics' image fallback.
       'img-src': ['https://launchnest.io', ...google],
       // Cloudflare's beacon (2026-10-05) and gtag.js (2026-10-06).
-      'script-src': ['https://static.cloudflareinsights.com', 'https://www.googletagmanager.com'],
+      'script-src': [
+        'https://static.cloudflareinsights.com',
+        ...(GOOGLE_ANALYTICS_ENABLED ? ['https://www.googletagmanager.com'] : []),
+      ],
       // Google Analytics' reports. The Cloudflare beacon posts to this site.
       'connect-src': google,
     };
@@ -382,7 +390,7 @@ describe('rendered pages', () => {
       expect(csp).not.toContain('unsafe-inline');
       // Since 2026-10-06 the pages may also load PromptSpend's own scripts.
       expect(csp).toMatch(/script-src 'self' 'sha256-[^']*' /);
-      expect(csp).toContain("connect-src 'self' ");
+      expect(csp).toMatch(/connect-src 'self'(;| )/);
       const directives = csp.split(';').map((part) => part.trim().split(/\s+/));
       for (const [name, ...sources] of directives) {
         const remote = sources.filter((source) => source.startsWith('http'));

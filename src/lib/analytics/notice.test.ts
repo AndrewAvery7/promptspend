@@ -6,7 +6,7 @@ import { PRIVACY_CONTROL_ID, startAnalytics, type AnalyticsEnvironment } from '.
 /** A page on the given host. jsdom's own window is always localhost, so the
  *  host and the browser's privacy signal are supplied rather than real. */
 function environment(
-  options: { hostname?: string; requiresConsent?: boolean; gpc?: boolean } = {},
+  options: { hostname?: string; requiresConsent?: boolean; gpc?: boolean; enabled?: boolean } = {},
 ): AnalyticsEnvironment & { window: Window & { dataLayer?: unknown[] } } {
   const fakeWindow = {
     location: { hostname: options.hostname ?? 'promptspend.com' },
@@ -16,6 +16,8 @@ function environment(
     window: fakeWindow,
     document,
     storage: localStorage,
+    // The behaviour under test is the running one; the pause has its own tests below.
+    enabled: options.enabled ?? true,
     requiresConsent: options.requiresConsent ?? false,
     privacyHref: '/privacy/',
   };
@@ -30,6 +32,34 @@ afterEach(() => {
   document.body.innerHTML = '';
   document.head.querySelectorAll('script').forEach((script) => script.remove());
   localStorage.clear();
+});
+
+describe('the pause: Google Analytics switched off', () => {
+  it('loads nothing and shows no notice, on promptspend.com and anywhere else', () => {
+    for (const hostname of ['promptspend.com', 'www.promptspend.com', 'localhost']) {
+      startAnalytics(environment({ enabled: false, hostname }));
+      expect(gtagLoaded()).toBe(false);
+      expect(notice()).toBeNull();
+    }
+  });
+
+  it('draws no privacy-page control, even where the page asks for one', () => {
+    document.body.innerHTML = `<div id="${PRIVACY_CONTROL_ID}"></div>`;
+    startAnalytics(environment({ enabled: false }));
+    expect(document.getElementById(PRIVACY_CONTROL_ID)!.childElementCount).toBe(0);
+  });
+
+  it('tells Google Analytics to stay off on promptspend.com, so an old tab cannot report', () => {
+    const env = environment({ enabled: false });
+    startAnalytics(env);
+    expect((env.window as unknown as Record<string, unknown>)['ga-disable-G-08GFGLY4VD']).toBe(true);
+  });
+
+  it("does not touch the visitor's saved answer to the old notice", () => {
+    localStorage.setItem(ANALYTICS_CHOICE_KEY, 'dismissed');
+    startAnalytics(environment({ enabled: false }));
+    expect(localStorage.getItem(ANALYTICS_CHOICE_KEY)).toBe('dismissed');
+  });
 });
 
 describe('the default: Google Analytics for everyone, with a notice', () => {
