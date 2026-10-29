@@ -93,8 +93,8 @@ export function showNotice(env: AnalyticsEnvironment): HTMLElement {
     'p',
     'ga-notice__text',
     env.requiresConsent
-      ? 'PromptSpend would like to use Google Analytics cookies to count visits. Nothing from Google loads unless you accept. Google would get the page you are on, never what you type or paste. '
-      : 'PromptSpend uses Google Analytics cookies to count visits. Google gets the page you are on, never what you type or paste. ',
+      ? 'PromptSpend would like to use Google Analytics cookies to count visits. Nothing from Google loads unless you accept. Google would get the page you are on, never text you paste, and could use the visit for its advertising features. '
+      : 'PromptSpend uses Google Analytics cookies to count visits and for Google advertising features. Google gets the page you are on, never text you paste. ',
   );
   const link = element(doc, 'a', 'ga-notice__link', 'Privacy policy');
   link.href = env.privacyHref;

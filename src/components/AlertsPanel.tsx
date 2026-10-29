@@ -26,12 +26,10 @@ import {
 import { Turnstile } from '@/components/Turnstile';
 import { CountryFilter, emptyReason } from '@/components/CountryFilter';
 import { Flag } from '@/components/Flag';
+import { alertsLinkToken, forgetAlertsLinkToken } from '@/lib/alerts/link-token';
 
 type Scope = 'all' | 'followed';
 type Cadence = 'instant' | 'weekly';
-
-/** Where a preferences link drops the visitor back into the app. */
-const PREFERENCES_PARAM = 'alerts';
 
 interface AlertsPanelProps {
   catalog: Catalog;
@@ -46,26 +44,14 @@ export function AlertsPanel({ catalog, theme, onToast, children }: AlertsPanelPr
   const [configError, setConfigError] = useState<string | null>(null);
   const [manageToken, setManageToken] = useState<string | null>(null);
 
-  /**
-   * Take the token out of the address bar the moment it is read.
-   *
-   * It is a bearer credential. Left in the URL it goes into browser history,
-   * into whatever the visitor copies to share their estimate, and into any
-   * referrer a future link might carry. Held in component state it does none of
-   * those things and works exactly as well.
-   */
+  // An emailed preferences link's key, already taken out of the address bar by
+  // src/main.tsx before anything else ran (src/lib/alerts/link-token.ts).
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get(PREFERENCES_PARAM);
+    const token = alertsLinkToken();
     if (!token) return;
-    // Reading the URL and rewriting history is a side effect on an external
-    // system, which is exactly what an effect is for. The token cannot be
-    // derived during render, because the same pass has to strip it from the
-    // address bar — and it runs once, on mount, so nothing cascades.
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- see above
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- read once, on mount, from outside React
     setManageToken(token);
-    const url = new URL(window.location.href);
-    url.searchParams.delete(PREFERENCES_PARAM);
-    window.history.replaceState({}, '', url);
+    forgetAlertsLinkToken();
   }, []);
 
   useEffect(() => {
@@ -405,7 +391,8 @@ function EmailCard({
       </h4>
       <p>
         A weekly “what changed in LLM pricing”, or an email the moment something moves. Double opt-in,
-        one-click out, and no tracking pixels.
+        one-click out, and no tracking pixels. On this site, Google Analytics receives a hashed copy of the
+        address you enter; see the privacy policy.
       </p>
 
       <form onSubmit={submit}>

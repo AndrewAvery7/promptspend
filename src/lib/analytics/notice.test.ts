@@ -81,7 +81,7 @@ describe('the default: Google Analytics for everyone, with a notice', () => {
     expect(shown).not.toBeNull();
     expect(shown!.getAttribute('aria-label')).toBe('Analytics notice');
     expect(shown!.textContent).toContain('uses Google Analytics cookies');
-    expect(shown!.textContent).toContain('never what you type or paste');
+    expect(shown!.textContent).toContain('never text you paste');
     expect(shown!.querySelector('a')!.getAttribute('href')).toBe('/privacy/');
     expect(button('OK')).toBeDefined();
     expect(button('Turn off')).toBeDefined();

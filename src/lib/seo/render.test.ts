@@ -375,6 +375,9 @@ describe('rendered pages', () => {
           'https://www.google-analytics.com',
           'https://region1.google-analytics.com',
           'https://region1.analytics.google.com',
+          'https://stats.g.doubleclick.net',
+          'https://googleads.g.doubleclick.net',
+          'https://www.google.com',
         ]
       : [];
     const approved: Record<string, string[]> = {

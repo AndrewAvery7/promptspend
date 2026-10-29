@@ -15,8 +15,8 @@ import { GOOGLE_ANALYTICS_ENABLED } from '../../src/lib/analytics/config';
  * What is held here: gtag.js loads with the right ID on all three kinds of page
  * and the Content Security Policy lets it; the notice shows, links to the
  * privacy page, and dismisses for good; "Turn off" and the privacy page's
- * control stop it; the address Google is told is cut to origin and path; text
- * typed or pasted never reaches it; and none of this happens anywhere but
+ * control stop it; the address Google is told keeps everything but the alert
+ * links' private key; text pasted never reaches it; and none of this happens anywhere but
  * promptspend.com. What the real `gtag.js` then sends is Google's code; it is
  * told only what `src/lib/analytics/ga.ts` queues, which is what is asserted.
  */
@@ -24,7 +24,7 @@ import { GOOGLE_ANALYTICS_ENABLED } from '../../src/lib/analytics/config';
 const LIVE = 'http://promptspend.com';
 const GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-P27XJ53BH9';
 const GOOGLE =
-  /^https:\/\/([a-z0-9-]+\.)*(googletagmanager\.com|google-analytics\.com|analytics\.google\.com)\//;
+  /^https:\/\/([a-z0-9-]+\.)*(googletagmanager\.com|google-analytics\.com|analytics\.google\.com|doubleclick\.net|www\.google\.com)\//;
 
 interface Recorder {
   google: Request[];
@@ -153,31 +153,34 @@ test.describe('on promptspend.com', () => {
     });
   }
 
-  test('tells Google the page without its query string or fragment, and sends one page view', async ({
+  test('tells Google the whole address except the private key, and sends one page view', async ({
     page,
     baseURL,
   }) => {
     await onLiveHost(page, baseURL!);
-    await page.goto(`${LIVE}/?alerts=TEST-TOKEN-NOT-REAL&in=4321#data`);
+    await page.goto(`${LIVE}/?alerts=TEST-TOKEN-NOT-REAL&in=4321&utm_source=test#data`);
     await expect(notice(page)).toBeVisible();
     const commands = await queued(page);
     const pageViews = commands.filter((c) => c[0] === 'event' && c[1] === 'page_view');
     expect(pageViews).toHaveLength(1);
-    expect(pageViews[0]![2]).toMatchObject({ page_location: `${LIVE}/`, page_referrer: '' });
+    expect(pageViews[0]![2]).toMatchObject({
+      page_location: `${LIVE}/?in=4321&utm_source=test#data`,
+      page_referrer: '',
+    });
     const config = commands.find((c) => c[0] === 'config');
     expect(config?.[1]).toBe('G-P27XJ53BH9');
     expect(config?.[2]).toMatchObject({
       send_page_view: false,
-      allow_google_signals: false,
-      allow_ad_personalization_signals: false,
+      allow_google_signals: true,
+      allow_ad_personalization_signals: true,
     });
-    const everything = JSON.stringify(commands);
-    expect(everything).not.toContain('TEST-TOKEN-NOT-REAL');
-    expect(everything).not.toContain('4321');
-    expect(everything).not.toContain('#data');
+    expect(JSON.stringify(commands)).not.toContain('TEST-TOKEN-NOT-REAL');
+    // ...and the alerts panel has taken the key out of the address itself, so
+    // Google's own later page views cannot read it either.
+    await expect.poll(() => page.url()).not.toContain('TEST-TOKEN-NOT-REAL');
   });
 
-  test('never hands Google text that was typed or pasted', async ({ page, baseURL }) => {
+  test('never hands Google text that was pasted', async ({ page, baseURL }) => {
     const recorder = await onLiveHost(page, baseURL!);
     await page.goto(`${LIVE}/`);
     await notice(page).getByRole('button', { name: 'OK' }).click();
@@ -192,8 +195,6 @@ test.describe('on promptspend.com', () => {
       expect(request.url()).not.toContain('7f3a');
       expect(request.postData() ?? '').not.toContain('7f3a');
     }
-    // ...and that scenario stays out of what Google is told, too.
-    expect(everything).not.toContain(new URL(page.url()).search);
   });
 
   test('OK dismisses the notice for good, and Google Analytics keeps counting', async ({ page, baseURL }) => {
