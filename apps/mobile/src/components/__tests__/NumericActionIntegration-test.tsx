@@ -128,7 +128,7 @@ describe('numeric edits through real pricing and action components', () => {
     jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
     // Native share-sheet anchor resolution is platform plumbing, not this test's subject.
     jest.spyOn(ReactNative, 'findNodeHandle').mockReturnValue(1);
-    jest.spyOn(Share, 'share').mockResolvedValue({ action: Share.sharedAction });
+    jest.spyOn(Share, 'share').mockResolvedValue({ action: Share.sharedAction, activityType: undefined });
   });
   afterEach(() => {
     jest.restoreAllMocks();

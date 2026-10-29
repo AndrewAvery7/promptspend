@@ -32,8 +32,8 @@ own code, but that is a recovery, not a plan.
 ## Runtime versions: which phones get an update
 
 `runtimeVersion` uses the `appVersion` policy, so the runtime version **is** the
-`version` in `app.json`. An update published from a checkout at version 0.1.2
-reaches only store builds of 0.1.2.
+`version` in `app.json`. An update published from a checkout at version 0.2.0
+reaches only store builds of 0.2.0.
 
 That makes one rule non-negotiable: **every store release bumps `version`**.
 It already does, because the stores require it. If native code changed without
@@ -41,6 +41,26 @@ a version bump, an update could land on a build it does not fit.
 
 The first release that contains expo-updates is the first that can receive
 updates. Builds made before it (0.1.0, 0.1.1) never ask.
+
+### The Expo SDK 58 jump (0.2.0)
+
+`main` moved from Expo SDK 57 (React Native 0.86) to SDK 58 (React Native 0.88)
+at app version **0.2.0**, so it can only reach store builds of 0.2.0. Phones
+running 0.1.x carry SDK 57 native code and a different runtime version: they
+never receive 0.2.0 code, and must never be sent it. Two consequences:
+
+- Until the 0.2.0 store builds are live and installed, an update published from
+  `main` reaches nobody. Do not treat it as a way to ship the SDK 58 work.
+- A JavaScript fix that 0.1.2 phones still need is published from a checkout of
+  the last SDK 57 commit (`a692ee9`, the tip of `main` before the upgrade) with
+  the fix applied there, never from `main`. `app.json` there says 0.1.2, so the
+  script targets the right runtime. Stop doing this once 0.1.2 is no longer in
+  use.
+
+Because the SDK changed, the first update published after the 0.2.0 store
+builds ship doubles as the check that code signing still works on SDK 58:
+run `node scripts/publish-update.mjs --verify` and confirm a phone running the
+0.2.0 build accepts it.
 
 ## Publish an update
 

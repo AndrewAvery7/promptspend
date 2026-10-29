@@ -2,7 +2,7 @@ import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import { type RefObject, useMemo, useState } from 'react';
-import { Pressable, type ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, type ScrollViewInstance } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { EmailAlertCenter } from '@/components/EmailAlertCenter';
@@ -35,7 +35,7 @@ export function DataSection({
   catalog?: Catalog | null;
   onOpenHelp: () => void;
   preferencesToken?: string;
-  tourScrollRef?: RefObject<ScrollView | null>;
+  tourScrollRef?: RefObject<ScrollViewInstance | null>;
 }) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);

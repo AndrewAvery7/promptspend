@@ -9,10 +9,12 @@ import {
   Modal,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   TextInput,
   View,
+  type HostInstance,
+  type ScrollViewInstance,
+  type TextInputInstance,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
@@ -57,7 +59,7 @@ export function EmailAlertCenter({
 }: {
   catalog: Catalog;
   preferencesToken?: string;
-  tourScrollRef?: RefObject<ScrollView | null>;
+  tourScrollRef?: RefObject<ScrollViewInstance | null>;
 }) {
   const { isDark, theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -80,10 +82,10 @@ export function EmailAlertCenter({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [verification, setVerification] = useState<PendingVerification | null>(null);
   const [emailTouched, setEmailTouched] = useState(false);
-  const emailInput = useRef<TextInput>(null);
+  const emailInput = useRef<TextInputInstance>(null);
   const emailError = emailTouched ? emailValidationMessage(draft.email) : null;
-  const codeInput = useRef<TextInput>(null);
-  const verifiedPanel = useRef<View>(null);
+  const codeInput = useRef<TextInputInstance>(null);
+  const verifiedPanel = useRef<HostInstance>(null);
 
   useEffect(() => {
     if (!codeSent) return;
@@ -654,7 +656,7 @@ function EmailField({
 }: {
   editable: boolean;
   error: string | null;
-  inputRef: RefObject<TextInput | null>;
+  inputRef: RefObject<TextInputInstance | null>;
   onBlur: () => void;
   onChange: (value: string) => void;
   styles: Styles;

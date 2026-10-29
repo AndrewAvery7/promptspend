@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View, type TextInputInstance } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { useNumericDraftScopeActive } from '@/components/NumericDraftScope';
@@ -34,7 +34,7 @@ export function NumericField({
   const [editing, setEditing] = useState(false);
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
   const active = useNumericDraftScopeActive();
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const draftRef = useRef(String(value));
   const hasDraft = useRef(false);
   const lastEmittedValue = useRef<number | null>(null);

@@ -4,7 +4,18 @@ import { useIsFocused, useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import * as WebBrowser from 'expo-web-browser';
 import { useMemo, useRef, useState } from 'react';
-import { Alert, Platform, Pressable, ScrollView, Share, StyleSheet, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  Share,
+  StyleSheet,
+  TextInput,
+  View,
+  type HostInstance,
+  type ScrollViewInstance,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 
@@ -50,9 +61,9 @@ function ReceiptContent() {
   const { startTour } = useGuidedTour();
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const launch = useLaunchState();
-  const receiptRef = useRef<View>(null);
+  const receiptRef = useRef<HostInstance>(null);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [assistantResult, setAssistantResult] = useState('');

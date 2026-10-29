@@ -83,7 +83,7 @@ for (const file of [
 }
 
 if (APP.name !== 'PromptSpend') fail('app name must remain PromptSpend');
-if (APP.version !== '0.1.2') fail(`unexpected release version ${APP.version}`);
+if (APP.version !== '0.2.0') fail(`unexpected release version ${APP.version}`);
 if (APP.ios?.bundleIdentifier !== 'com.promptspend.app') fail('iOS bundle identifier drifted');
 if (APP.android?.package !== 'com.promptspend.app') fail('Android package name drifted');
 if (APP.ios?.supportsTablet !== true) fail('iPad support must remain enabled');
@@ -114,8 +114,8 @@ if (!APP.plugins?.includes('./plugins/with-android-data-protection')) {
   fail('Android cloud-backup and device-transfer protection plugin is missing');
 }
 if (APP.android?.usesCleartextTraffic === true) fail('Android cleartext network traffic must not be enabled');
-if (PACKAGE.dependencies?.['react-native-webview'] !== '13.16.1') {
-  fail('react-native-webview must stay on the Expo SDK 57 supported version');
+if (PACKAGE.dependencies?.['react-native-webview'] !== '14.0.1') {
+  fail('react-native-webview must stay on the Expo SDK 58 supported version');
 }
 if (Array.isArray(APP.android?.permissions) && APP.android.permissions.length > 0) {
   fail('launch build must not request explicit Android runtime permissions');

@@ -10,6 +10,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  type ScrollViewInstance,
 } from 'react-native';
 
 import { AppText as Text, TYPE_ROLES } from '@/components/AppText';
@@ -49,7 +50,7 @@ export default function HomeScreen() {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { startTour } = useGuidedTour();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const launch = useLaunchState();
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);

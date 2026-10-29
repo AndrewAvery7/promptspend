@@ -1,6 +1,6 @@
 # PromptSpend Mobile
 
-Native iOS and Android applications for PromptSpend, built with Expo SDK 57, React Native, TypeScript, and Expo Router.
+Native iOS and Android applications for PromptSpend, built with Expo SDK 58, React Native, TypeScript, and Expo Router.
 
 Status: native parity beta. The app loads validated live pricing, enforces the 24-hour stale-price ceiling, and executes the same extracted cost engine as the website. Estimate, four-model workload comparison, full catalog exploration, Learn, Data & Alerts, private on-device pasted-text estimation, Search, Guided Tour, ticker, CSV/scenario sharing, and persisted appearance choices are implemented in source. Store release remains blocked on the physical-device and accessibility gates in [`../../docs/MOBILE_PARITY.md`](../../docs/MOBILE_PARITY.md).
 
