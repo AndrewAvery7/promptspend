@@ -24,6 +24,7 @@ import { modelSlug } from '../../src/lib/seo/slug';
 import { effectivePricing } from '../../packages/core/src/engine/cost';
 import { pricingChanged } from './diff';
 import type { VendorCheckReport } from './vendor-check';
+import type { ShutdownItem } from './shutdowns';
 import {
   comparisonKey,
   matchFamily,
@@ -50,6 +51,8 @@ export interface MergeInput {
   generatedAt: Date;
   /** This morning's reading of the vendors' own pages, when there was one. */
   vendorCheck?: VendorCheckReport | undefined;
+  /** This morning's reading of the vendors' deprecation pages (scripts/check-shutdowns.ts). */
+  shutdowns?: readonly ShutdownItem[] | undefined;
 }
 
 /** A stable identifier for *why* review was raised.
@@ -64,6 +67,7 @@ export type ReviewCode =
   | 'override-drift'
   | 'vendor-verification-stale'
   | 'vendor-page-mismatch'
+  | 'vendor-shutdown'
   | 'day-move'
   | 'new-model';
 
@@ -100,7 +104,10 @@ export interface MergeResult {
 }
 
 export function mergeCatalog(input: MergeInput): MergeResult {
-  const { litellm, openrouter, allowlist, overrides, previous, generatedAt, vendorCheck } = input;
+  const { litellm, openrouter, allowlist, overrides, previous, generatedAt, vendorCheck, shutdowns } = input;
+  const shutdownById = new Map(
+    (shutdowns ?? []).filter((item) => item.shutDown).map((item) => [item.id, item]),
+  );
   const vendorMismatchById = new Map(
     (vendorCheck?.items ?? []).filter((item) => item.status === 'mismatch').map((item) => [item.id, item]),
   );
@@ -266,6 +273,21 @@ export function mergeCatalog(input: MergeInput): MergeResult {
           text: `the vendor's own page disagrees with the record — ${mismatch.detail}`,
         });
       }
+    }
+
+    // The vendor says the model is gone. A price check cannot see this — the
+    // pricing table can keep printing a rate long after the shutdown — so it
+    // comes from the deprecation pages. It never archives the row itself:
+    // that stays a deliberate edit quoting the vendor, and once made, the
+    // `status: "deprecated"` branch above stops this from firing.
+    const shutdown = shutdownById.get(id);
+    if (shutdown) {
+      reasons.push({
+        code: 'vendor-shutdown',
+        text:
+          `${shutdown.source} lists \`${shutdown.vendorName}\` as shut down on ${shutdown.date} — ` +
+          'archive it (status "deprecated" with a $note quoting the page)',
+      });
     }
 
     // Rung 3: independent cross-check. Never overwrites, only raises a hand.

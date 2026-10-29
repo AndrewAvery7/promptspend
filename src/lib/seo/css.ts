@@ -131,6 +131,21 @@ caption.cap { text-align: left; padding-bottom: 0.5rem; }
 .cta:hover { opacity: 0.92; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem; margin: 1rem 0 0.25rem; }
 ul.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
+/* The price-history chart: plain SVG, coloured from the page's tokens. The
+ * output line is dashed as well as a different colour, so the two lines are
+ * told apart without relying on colour alone. */
+td.when { white-space: nowrap; }
+.chart-card { margin: 0 0 1rem; }
+.chart { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto; overflow: visible; }
+.chart-grid { stroke: var(--border); stroke-width: 1; }
+.chart-axis { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart-label { fill: var(--ink); font-size: 12px; font-weight: 600; }
+.chart-line { fill: none; stroke-width: 2.5; stroke-linejoin: round; }
+.chart-line.chart-input, .chart-dot.chart-input { stroke: var(--accent); }
+.chart-line.chart-output, .chart-dot.chart-output { stroke: var(--ink); }
+.chart-line.chart-output { stroke-dasharray: 7 4; }
+.chart-dot { fill: var(--surface); stroke-width: 2.5; }
+figure.card figcaption { margin-top: 0.5rem; text-align: center; }
 ul.plain { margin: 0; padding-left: 1.1rem; }
 article p { margin: 0 0 1.1rem; max-width: 42rem; }
 /* The app page is a few short paragraphs among a full-width list and badges, so

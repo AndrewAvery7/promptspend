@@ -39,7 +39,16 @@ import { Header } from '../../components/Header';
 import { DEFAULT_SCENARIO, encodeScenario } from '../url/scenario';
 import { GA_POLICY_COLLECT_ORIGINS, GA_POLICY_SCRIPT_ORIGINS } from '../analytics/config';
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
+import type { PriceHistory } from '../pricing/history';
 import type { Model, Pricing } from '../pricing/types';
+import { priceChartSvg } from './price-chart';
+import {
+  correctionCount,
+  hasChartableMove,
+  modelHistory,
+  recentRepricings,
+  type RateChange,
+} from './price-history-view';
 import { promoFor, promoTitle, type RateField } from '../pricing/promo';
 import {
   APP_PAGE_PATH,
@@ -125,6 +134,13 @@ export interface RenderContext {
    * holds the catalog; left out of a test context.
    */
   ticker?: string;
+  /**
+   * The published price history, for the "Price history" section of a model page
+   * and the recent-changes list on the models index. Optional so a test context
+   * need not build one; without it those sections are left out rather than
+   * claiming "no changes" about data nobody loaded.
+   */
+  history?: PriceHistory;
   chrome?: {
     /** The live header: a deferred module. */
     script: string;
@@ -647,6 +663,154 @@ function rateRows(model: Model, pricing: Pricing): string {
   }
 }
 
+// ------------------------------------------------------- price history
+
+const FIELD_LABEL: Record<string, string> = {
+  input: 'Input',
+  output: 'Output',
+  cachedInput: 'Cached input',
+  cacheWrite: 'Cache write',
+  cacheWrite1h: 'Cache write (1 hour)',
+  cacheStoragePerMillionTokenHour: 'Cache storage / hour',
+  batchDiscount: 'Batch discount',
+  'longContext.thresholdTokens': 'Long-context threshold',
+  'longContext.input': 'Long-context input',
+  'longContext.output': 'Long-context output',
+  'intro.input': 'Intro input',
+  'intro.output': 'Intro output',
+  'intro.until': 'Intro rate ends',
+};
+
+function historyValue(raw: string, unit: string): string {
+  if (raw === '') return 'not recorded';
+  if (unit === 'multiplier') return `×${raw}`;
+  if (unit === 'tokens') return `${Number(raw).toLocaleString('en-US')} tokens`;
+  if (unit === 'date') return raw;
+  return rate(Number(raw));
+}
+
+function historyRow(change: RateChange): string {
+  const what =
+    change.kind === 'price'
+      ? 'The vendor changed the rate'
+      : 'PromptSpend corrected a misreading; the vendor&rsquo;s rate did not move';
+  return `            <tr>
+              <td class="when">${escapeHtml(change.date)}</td>
+              <th scope="row">${escapeHtml(FIELD_LABEL[change.field] ?? change.field)}</th>
+              <td class="num">${escapeHtml(historyValue(change.from, change.unit))}</td>
+              <td class="num">${escapeHtml(historyValue(change.to, change.unit))}</td>
+              <td class="muted">${what}</td>
+            </tr>`;
+}
+
+/**
+ * The model page's price history: a staircase chart when an input or output
+ * rate has ever moved, the table of every change, and a plain sentence when
+ * nothing has. Complete without scripts. Left out entirely when the context
+ * carries no history, so a page is never made to say "unchanged" on no data.
+ */
+function priceHistorySection(page: ModelPage, ctx: RenderContext): string {
+  if (!ctx.history) return '';
+  const view = modelHistory(ctx.history, page.model.id);
+  if (view.listedOn === null) return '';
+  const name = page.model.displayName;
+  const csv = `${ctx.siteUrl}/data/price-history.csv`;
+
+  const began = `Tracking began on ${escapeHtml(ctx.history.firstDate)}, so anything the vendor did before then is not on record here.`;
+  const lead =
+    view.changes.length === 0
+      ? `<p>PromptSpend has recorded ${escapeHtml(name)} since <strong>${escapeHtml(view.listedOn)}</strong>, and none of its rates has changed in that time. ${began}</p>`
+      : `<p>PromptSpend has recorded ${escapeHtml(name)} since <strong>${escapeHtml(view.listedOn)}</strong>. ${began}</p>`;
+
+  const chart = hasChartableMove(view)
+    ? `        <figure class="card chart-card">
+          ${priceChartSvg({
+            modelName: name,
+            from: view.listedOn,
+            to: ctx.history.lastDate,
+            series: view.series,
+          })}
+          <figcaption class="unit">USD per 1M tokens. Each line holds its value until the next published change.</figcaption>
+        </figure>`
+    : '';
+
+  const table =
+    view.changes.length === 0
+      ? ''
+      : `        <div class="card tablewrap" tabindex="0">
+          <table>
+            <caption class="unit cap">Every recorded change, oldest first. USD per 1M tokens unless stated.</caption>
+            <thead><tr><th>Date</th><th>Rate</th><th class="num">Was</th><th class="num">Now</th><th>What happened</th></tr></thead>
+            <tbody>
+${view.changes.map(historyRow).join('\n')}
+            </tbody>
+          </table>
+        </div>`;
+
+  const delisted =
+    view.delistedOn === null
+      ? ''
+      : `<p class="note">${escapeHtml(name)} left the catalog on ${escapeHtml(view.delistedOn)}.</p>`;
+
+  return `
+        <h2 id="price-history">Price history</h2>
+        ${lead}
+${chart}
+${table}
+        ${delisted}
+        <p class="muted small">Every row, with the commit that published it, is in the <a href="${escapeHtml(csv)}">price-history dataset</a>; price news is also available as an <a href="${escapeHtml(href(ctx, '/feed.xml'))}">Atom feed</a>.</p>
+`;
+}
+
+/** The latest vendor repricings across the catalog, linked to the models they concern. */
+function recentChangesSection(set: PageSet, ctx: RenderContext): string {
+  if (!ctx.history) return '';
+  const byId = new Map(set.models.map((entry) => [entry.id, entry]));
+  const moves = recentRepricings(ctx.history, 60)
+    .filter((move) => byId.has(move.modelId))
+    .slice(0, 10);
+  const corrections = correctionCount(ctx.history);
+
+  const rows = moves
+    .map((move) => {
+      const entry = byId.get(move.modelId)!;
+      const change = (move.to - move.from) / move.from;
+      const direction = change < 0 ? 'cut' : 'rise';
+      return `            <tr>
+              <td class="when">${escapeHtml(move.date)}</td>
+              <td><a href="${escapeHtml(href(ctx, entry.path))}">${escapeHtml(entry.model.displayName)}</a></td>
+              <th scope="row">${escapeHtml(FIELD_LABEL[move.field] ?? move.field)}</th>
+              <td class="num">${escapeHtml(rate(move.from))}</td>
+              <td class="num">${escapeHtml(rate(move.to))}</td>
+              <td class="num ${change < 0 ? 'save' : 'cost'}">${escapeHtml(`${change < 0 ? '−' : '+'}${formatPercent(Math.abs(change))}`)} <span class="unit">${direction}</span></td>
+            </tr>`;
+    })
+    .join('\n');
+
+  const table =
+    moves.length === 0
+      ? `<p class="muted">No vendor has changed a published rate since tracking began on ${escapeHtml(ctx.history.firstDate)}.</p>`
+      : `<div class="card tablewrap" tabindex="0">
+          <table>
+            <caption class="unit cap">Vendor rate changes, newest first. USD per 1M tokens.</caption>
+            <thead><tr><th>Date</th><th>Model</th><th>Rate</th><th class="num">Was</th><th class="num">Now</th><th class="num">Change</th></tr></thead>
+            <tbody>
+${rows}
+            </tbody>
+          </table>
+        </div>`;
+
+  const fixes =
+    corrections > 0
+      ? ` ${corrections} further ${corrections === 1 ? 'entry was' : 'entries were'} PromptSpend correcting its own reading of a page, which the <a href="${escapeHtml(href(ctx, '/feed.xml'))}">feed</a> labels separately.`
+      : '';
+  return `
+        <h2 id="recent-changes">Recent price changes</h2>
+        <p class="muted">Only moves the vendor made are listed.${fixes} Tracking began on ${escapeHtml(ctx.history.firstDate)}.</p>
+        ${table}
+`;
+}
+
 // -------------------------------------------------------------- model page
 
 export function renderModelPage(page: ModelPage, ctx: RenderContext): string {
@@ -799,6 +963,7 @@ ${specRows.map(([label, value]) => `            <tr><th scope="row">${escapeHtml
           </tbody></table>
         </div>
 
+        ${priceHistorySection(page, ctx)}
         <h2 id="source">Where these numbers come from</h2>
         <div class="card">
           <p>
@@ -1232,6 +1397,7 @@ ${rows}
             </tbody>
           </table>
         </div>
+        ${recentChangesSection(set, ctx)}
         ${calculatorLink(ctx, [], 'Price your own workload')}
       </main>`;
 

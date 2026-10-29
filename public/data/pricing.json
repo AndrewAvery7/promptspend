@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-29T15:27:58.170Z",
+  "generatedAt": "2026-10-29T16:16:00.407Z",
   "providers": [
     {
       "id": "anthropic",
@@ -1327,7 +1327,7 @@
       "id": "gemini-gemini-3.1-flash-lite-preview",
       "providerId": "google",
       "displayName": "Gemini 3.1 Flash Lite Preview",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 1048576,
       "pricing": {
         "input": 0.25,

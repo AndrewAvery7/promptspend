@@ -91,6 +91,15 @@ jobs:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: npm run check:free-tiers
 
+      # A pricing table can keep printing a rate for weeks after the model is
+      # gone, so the check above cannot see a shutdown. This reads the vendors'
+      # deprecation pages (OpenAI, Anthropic, Google) and the sync below raises
+      # a review flag on any live model past its shutdown date. No keys; never
+      # fails the morning.
+      - name: Read the vendors' deprecation pages
+        continue-on-error: true
+        run: npm run check:shutdowns
+
       - name: Fetch, merge and validate pricing
         id: sync
         run: npm run sync:pricing
@@ -138,7 +147,7 @@ jobs:
           echo "Sources stable — recording the verification."
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json public/data/free-tier-check.json data/pricing-overrides.json data/published-pages.json README.md docs/PAGES.md src/lib/seo/pages.ts
+          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json public/data/shutdown-check.json public/data/free-tier-check.json data/pricing-overrides.json data/published-pages.json README.md docs/PAGES.md src/lib/seo/pages.ts
           if git diff --staged --quiet; then
             echo "Nothing staged — nothing to record."
           else
@@ -155,7 +164,7 @@ jobs:
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/sync-status.json public/data/vendor-check.json public/data/free-tier-check.json data/pricing-overrides.json
+          git add public/data/sync-status.json public/data/vendor-check.json public/data/shutdown-check.json public/data/free-tier-check.json data/pricing-overrides.json
           if git diff --staged --quiet; then
             echo "Nothing staged — the manifest is unchanged."
           else
@@ -179,7 +188,7 @@ jobs:
         run: |
           git config user.name "promptspend-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json public/data/free-tier-check.json data/pricing-overrides.json data/published-pages.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
+          git add public/data/pricing.json public/data/sync-status.json public/data/vendor-check.json public/data/shutdown-check.json public/data/free-tier-check.json data/pricing-overrides.json data/published-pages.json docs/pricing-changelog.md README.md docs/PAGES.md src/lib/seo/pages.ts
           note=""
           if [ "$NEEDS_REVIEW" = "true" ]; then note=" (flagged)"; fi
           git commit -m "data: $SYNC_SUMMARY$note"

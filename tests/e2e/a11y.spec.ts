@@ -27,6 +27,7 @@ const GENERATED = [
   { path: '/receipt/', name: 'the Receipt page' },
   { path: '/models/', name: 'model index' },
   { path: '/models/claude-opus-5/', name: 'a model page' },
+  { path: '/models/claude-sonnet-5/', name: 'a model page with a price-history chart' },
   { path: '/providers/anthropic/', name: 'a provider page' },
   { path: '/compare/claude-opus-5-vs-gpt-5-5/', name: 'a comparison page' },
   { path: '/app/', name: 'the apps page' },

@@ -299,6 +299,20 @@ async function main(): Promise<void> {
   // cannot write is the theme script, which has to be a plain blocking file.
   const chrome = await headerAssets();
 
+  // The price history, replayed from every committed catalog up to the commit
+  // being built: the same table as the archived CSV dataset. It feeds the
+  // model pages' history charts, the `as_of` lookups in the MCP server and the
+  // API, and the Atom feed. A shallow checkout throws rather than publish a
+  // one-day "history".
+  const versions = loadCatalogVersions(ROOT, 'HEAD');
+  const rows = buildHistory(versions);
+  const history: PriceHistory = {
+    schemaVersion: 1,
+    firstDate: rows[0]?.date ?? catalog.generatedAt.slice(0, 10),
+    lastDate: new Date(versions.at(-1)?.committedAt ?? catalog.generatedAt).toISOString().slice(0, 10),
+    rows,
+  };
+
   const ctx: RenderContext = {
     siteUrl,
     basePath,
@@ -306,6 +320,7 @@ async function main(): Promise<void> {
     hashInline: sha256Base64,
     generatedAt: catalog.generatedAt,
     apiUrl,
+    history,
     chrome,
     // The tape above the header, drawn from the same component the calculator
     // runs and dated by the catalog, so a rebuild of one commit is identical.
@@ -353,18 +368,6 @@ async function main(): Promise<void> {
   // so it sits beside the prose pages rather than in the catalog's page set.
   await writeFileAt(fileFor(APP_PAGE_PATH), renderAppPage(ctx));
 
-  // The price history, replayed from every committed catalog up to the commit
-  // being built: the same table as the archived CSV dataset. It feeds the
-  // `as_of` lookups in the MCP server and the API, and the Atom feed below.
-  // A shallow checkout throws rather than publish a one-day "history".
-  const versions = loadCatalogVersions(ROOT, 'HEAD');
-  const rows = buildHistory(versions);
-  const history: PriceHistory = {
-    schemaVersion: 1,
-    firstDate: rows[0]?.date ?? catalog.generatedAt.slice(0, 10),
-    lastDate: new Date(versions.at(-1)?.committedAt ?? catalog.generatedAt).toISOString().slice(0, 10),
-    rows,
-  };
   await writeFileAt(
     'data/price-history.json',
     `${JSON.stringify(history)}

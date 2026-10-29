@@ -1473,3 +1473,7 @@ value that moves in the same run as its source URL is a correction.
 - **Metadata** `o1` — status: current → deprecated
 - **Metadata** `o3-mini` — status: current → deprecated
 - **Metadata** `o4-mini` — status: current → deprecated
+
+## 2026-10-29
+
+- **Metadata** `gemini-gemini-3.1-flash-lite-preview` — status: current → deprecated

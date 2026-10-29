@@ -615,6 +615,35 @@ describe('mergeCatalog — the trust ladder', () => {
     ).toBeUndefined();
   });
 
+  it('flags a live model its vendor has shut down, and leaves a scheduled one alone', () => {
+    const item = (id: string, shutDown: boolean) => ({
+      id,
+      providerId: 'anthropic',
+      vendorName: `${id}-20250101`,
+      date: shutDown ? '2026-07-01' : '2027-01-01',
+      shutDown,
+      source: "Anthropic's model deprecations page",
+      url: 'https://example.test/deprecations',
+    });
+    const { catalog, review } = mergeCatalog({
+      litellm,
+      openrouter: new Map(),
+      allowlist: ALLOWLIST,
+      overrides: [],
+      generatedAt,
+      shutdowns: [item('claude-sonnet-5', true), item('moonshot-kimi-k2.6', false)],
+    });
+    const sonnet = catalog.models.find((model) => model.id === 'claude-sonnet-5')!;
+    expect(sonnet.status).toBe('current'); // flagged, never archived by the merge
+    expect(sonnet.provenance.reviewCodes).toContain('vendor-shutdown');
+    expect(review.find((r) => r.code === 'vendor-shutdown')?.reason).toContain(
+      'lists `claude-sonnet-5-20250101` as shut down on 2026-07-01',
+    );
+    expect(
+      catalog.models.find((model) => model.id === 'moonshot-kimi-k2.6')!.provenance.reviewCodes ?? [],
+    ).not.toContain('vendor-shutdown');
+  });
+
   it('flags old vendor verification and rejects invented provenance', () => {
     const stale = mergeCatalog({
       litellm,

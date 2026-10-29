@@ -29,6 +29,7 @@ import { mergeCatalog } from './lib/merge';
 import { catalogHash, diffCatalogs, renderChangelogEntry, summarizeDiff } from './lib/diff';
 import { updateCatalogBadges } from './lib/readme-badges';
 import { isFreshReport, type VendorCheckReport } from './lib/vendor-check';
+import { isFreshShutdownReport, type ShutdownReport } from './lib/shutdowns';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG_PATH = resolve(ROOT, 'public/data/pricing.json');
@@ -38,6 +39,7 @@ const README_PATH = resolve(ROOT, 'README.md');
 const ALLOWLIST_PATH = resolve(ROOT, 'data/models-allowlist.json');
 const OVERRIDES_PATH = resolve(ROOT, 'data/pricing-overrides.json');
 const VENDOR_CHECK_PATH = resolve(ROOT, 'public/data/vendor-check.json');
+const SHUTDOWN_CHECK_PATH = resolve(ROOT, 'public/data/shutdown-check.json');
 
 const LITELLM_URL =
   'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
@@ -166,6 +168,19 @@ async function main(): Promise<void> {
     console.log('→ no vendor-page reading from this morning — hand-verified rows keep their dates');
   }
 
+  // The deprecation pages, read just before this (scripts/check-shutdowns.ts).
+  // Same rule as above: only this morning's reading raises anything.
+  const shutdownFile = await readJson<ShutdownReport>(SHUTDOWN_CHECK_PATH);
+  const shutdowns = isFreshShutdownReport(shutdownFile, generatedAt) ? shutdownFile.items : undefined;
+  if (shutdowns) {
+    const overdue = shutdowns.filter((item) => item.shutDown).length;
+    console.log(
+      `→ deprecation pages read ${shutdownFile!.checkedAt}: ${overdue} live model(s) past shutdown`,
+    );
+  } else {
+    console.log('→ no deprecation-page reading from this morning — no shutdown flags raised');
+  }
+
   console.log('→ fetching sources');
   let litellmRaw: Record<string, unknown> = {};
   if (args.litellmFile) {
@@ -233,6 +248,7 @@ async function main(): Promise<void> {
     previous,
     generatedAt,
     vendorCheck,
+    shutdowns,
   });
 
   // A model can only leave the catalog through the allowlist's `retired` list,
