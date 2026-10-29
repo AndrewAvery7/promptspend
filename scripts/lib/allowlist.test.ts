@@ -108,6 +108,7 @@ describe('data/models-allowlist.json', () => {
     expect(familyOf('moonshot/kimi-k3.1-pro')).toBe('moonshot-kimi');
     expect(familyOf('moonshot/kimi-k2.7-code')).toBe('moonshot-kimi');
     expect(familyOf('dashscope/qwen3.8-flash')).toBe('alibaba-qwen');
+    expect(familyOf('dashscope/qwen3.8-omni-flash')).toBe('alibaba-qwen');
     expect(familyOf('command-r-plus-08-2024')).toBe('cohere-command');
     expect(familyOf('amazon.nova-micro-v1:0')).toBe('amazon-nova');
     // Still out: the codex variants, a floating alias, and a dated snapshot.
