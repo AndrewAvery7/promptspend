@@ -9,6 +9,14 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Common questions on model, provider, comparison and free-tier pages.** Each page answers the
+  questions people arrive with (what it costs, what it costs to run for a month, whether anything is
+  cheaper, how large the context window is, whether the price has changed, where the numbers come from,
+  and for a free tier whether a card is needed and whether free use trains the vendor's models). The
+  answers are assembled from the page's own data, so they cannot disagree with its figures, and the same
+  sentences are carried in FAQPage markup. `npm run check:seo` now fails if any question or answer in the
+  markup is not visible on the page. Google shows FAQ rich results only for a few authoritative sites, so
+  none is promised; the markup is accurate either way.
 - **Crawl and site-structure fixes for search engines.** `sitemap.xml` is now an index over six smaller files,
   one per kind of page, so Search Console shows how each kind is being indexed. Every comparison links to
   up to six related comparisons (three per side); a `/writing/` page lists every article (the three

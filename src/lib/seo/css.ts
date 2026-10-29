@@ -135,6 +135,10 @@ ul.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem;
  * output line is dashed as well as a different colour, so the two lines are
  * told apart without relying on colour alone. */
 td.when { white-space: nowrap; }
+/* Question-and-answer sections: plain headings and paragraphs, nothing to expand. */
+.faq h3 { margin: 1.1rem 0 0.2rem; font-size: 1rem; }
+.faq h3:first-child { margin-top: 0; }
+.faq p { margin: 0; max-width: 46rem; overflow-wrap: anywhere; }
 .chart-card { margin: 0 0 1rem; }
 .chart { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto; overflow: visible; }
 .chart-grid { stroke: var(--border); stroke-width: 1; }
