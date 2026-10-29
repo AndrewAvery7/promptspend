@@ -576,6 +576,9 @@ describe('the price history sections', () => {
     const set = buildPages(catalog(SAMPLE), { asOf: ASOF });
     const html = renderModelsIndex(set, recordingContext({ history: MOVED }));
     expect(html).toContain('id="recent-changes"');
+    // Hidden text is positioned absolutely, and inside a wide table that scrolls it
+    // escapes the scroll box and widens the whole page on a phone.
+    expect(html.slice(html.indexOf('id="recent-changes"'))).not.toContain('visually-hidden');
     expect(html).toContain('<a href="/models/gpt-5/">gpt-5</a>');
     expect(html).toContain('&minus;50%'.replace('&minus;', '\u2212'));
     expect(html).toContain('1 further entry was PromptSpend correcting');

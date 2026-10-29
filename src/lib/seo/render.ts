@@ -770,14 +770,14 @@ function recentChangesSection(set: PageSet, ctx: RenderContext): string {
     .map((move) => {
       const entry = byId.get(move.modelId)!;
       const change = (move.to - move.from) / move.from;
-      const direction = change < 0 ? 'a cut' : 'a rise';
+      const direction = change < 0 ? 'cut' : 'rise';
       return `            <tr>
               <td class="when">${escapeHtml(move.date)}</td>
               <td><a href="${escapeHtml(href(ctx, entry.path))}">${escapeHtml(entry.model.displayName)}</a></td>
               <th scope="row">${escapeHtml(FIELD_LABEL[move.field] ?? move.field)}</th>
               <td class="num">${escapeHtml(rate(move.from))}</td>
               <td class="num">${escapeHtml(rate(move.to))}</td>
-              <td class="num ${change < 0 ? 'save' : 'cost'}">${escapeHtml(`${change < 0 ? '−' : '+'}${formatPercent(Math.abs(change))}`)} <span class="visually-hidden">(${direction})</span></td>
+              <td class="num ${change < 0 ? 'save' : 'cost'}">${escapeHtml(`${change < 0 ? '−' : '+'}${formatPercent(Math.abs(change))}`)} <span class="unit">${direction}</span></td>
             </tr>`;
     })
     .join('\n');
