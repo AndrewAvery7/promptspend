@@ -67,5 +67,5 @@ const mount = document.getElementById('site-header');
 if (mount) mountSiteHeader(mount);
 
 // Every generated page loads this script, so it is also where those pages
-// start Google Analytics and its notice (promptspend.com only; src/lib/analytics).
+// start Google Analytics and its notice (promptspend.com only, and nothing while it is paused; src/lib/analytics).
 startAnalytics();

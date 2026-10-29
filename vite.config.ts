@@ -30,7 +30,7 @@ const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
 const WEB_ANALYTICS_SCRIPT_ORIGIN = 'https://static.cloudflareinsights.com';
 
 /*
- * Google Analytics 4 (owner decision 2026-10-06): `gtag.js` from Google Tag
+ * Google Analytics 4 (owner decision 2026-10-06; paused since 2026-10-29, so the policy admits none of this): `gtag.js` from Google Tag
  * Manager's host, and its reports to Google Analytics' collection hosts. Both
  * lists live in `src/lib/analytics/config.ts`, beside the Measurement ID, so
  * the page cannot load an ID whose reports its own policy blocks.

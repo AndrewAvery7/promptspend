@@ -507,7 +507,7 @@ The website counts visits with Cloudflare Web Analytics, a cookieless beacon tha
 API carry no analytics. Pasted prompt text is tokenised in your browser, deliberately excluded from the
 shareable URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds
 only interface choices: your theme, accent and background, whether you dismissed the welcome and apps
-banners.
+banners (an earlier answer to the analytics notice may remain; it does nothing now).
 
 **Price alerts are the one exception, and only if you opt in.** They are a feature you have to switch on,
 and they are the only reason this project has a server that stores anything

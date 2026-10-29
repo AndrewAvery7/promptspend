@@ -162,6 +162,14 @@ describe('the privacy page describes the analytics switch as it is set', () => {
     },
   );
 
+  // The other half of the pause test above: when the switch goes back to true, the
+  // documents that say "paused" must be rewritten, not left behind.
+  it.runIf(GOOGLE_ANALYTICS_ENABLED)('no longer says Google Analytics is paused anywhere', () => {
+    for (const file of ['README.md', 'SECURITY.md', 'docs/ARCHITECTURE.md', 'docs/PAGES.md']) {
+      expect(read(file), file).not.toMatch(/Google Analytics (4 )?is paused/i);
+    }
+  });
+
   it('no longer promises what the website stopped doing', () => {
     for (const file of [
       'README.md',
