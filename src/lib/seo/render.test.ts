@@ -12,6 +12,9 @@ import {
   renderComparisonsIndex,
   renderModelPage,
   renderModelsIndex,
+  renderDataPage,
+  renderNotFoundPage,
+  renderWritingIndex,
   renderProviderPage,
   renderProvidersIndex,
   renderRetiredComparisonPage,
@@ -509,6 +512,105 @@ describe('the app page', () => {
     for (const { html } of everyPage(SAMPLE)) {
       expect(html).toContain('<a href="/app/">iPhone &amp; Android apps</a>');
     }
+  });
+});
+
+describe('the writing index', () => {
+  const articles = [
+    {
+      path: '/writing/older/',
+      title: 'Older | PromptSpend',
+      description: 'The older one.',
+      heading: 'Older report',
+      publishedDate: '2026-08-01',
+      bodyHtml: '',
+    },
+    {
+      path: '/writing/newer/',
+      title: 'Newer | PromptSpend',
+      description: 'The newer one.',
+      heading: 'Newer report',
+      publishedDate: '2026-09-01',
+      bodyHtml: '',
+    },
+  ];
+
+  it('links every article, newest first', () => {
+    const html = renderWritingIndex(articles, recordingContext());
+    expect(html).toContain('href="/writing/older/"');
+    expect(html).toContain('href="/writing/newer/"');
+    expect(html.indexOf('/writing/newer/')).toBeLessThan(html.indexOf('/writing/older/'));
+  });
+
+  it('is canonical at /writing/ and describes itself as a collection', () => {
+    const html = renderWritingIndex(articles, recordingContext());
+    expect(html).toContain('<link rel="canonical" href="https://promptspend.com/writing/" />');
+    expect(html).toContain('"CollectionPage"');
+    expect(html).toContain('"ItemList"');
+  });
+});
+
+describe('the not-found page', () => {
+  it('asks not to be indexed but lets crawlers follow its links', () => {
+    const html = renderNotFoundPage(recordingContext());
+    expect(html).toContain('<meta name="robots" content="noindex, follow" />');
+  });
+
+  it('offers the main places to go, with absolute paths so it works at any depth', () => {
+    const html = renderNotFoundPage(recordingContext({ basePath: '/promptspend/' }));
+    for (const path of ['/models/', '/providers/', '/compare/', '/free-tiers/', '/writing/']) {
+      expect(html).toContain(`href="/promptspend${path}"`);
+    }
+  });
+});
+
+describe('the open-data page', () => {
+  const input = {
+    models: 126,
+    providers: 16,
+    history: { firstDate: '2026-07-01', rows: 240, lastChangeDate: '2026-10-28' },
+  };
+
+  it('describes three datasets with their licences', () => {
+    const html = renderDataPage(input, recordingContext());
+    expect(html.match(/"@type":\s*"Dataset"/g)).toHaveLength(3);
+    expect(html).toContain('MIT');
+    expect(html).toContain('CC0');
+    expect(html).toContain('10.5281/zenodo.23170741');
+  });
+
+  it('prints only figures that change when the data does, not on every build', () => {
+    const html = renderDataPage(input, recordingContext());
+    expect(html).toContain('2026-10-28');
+    expect(html).not.toContain('2026-08-02T02:00:00.000Z');
+  });
+
+  it('is canonical at /data/', () => {
+    expect(renderDataPage(input, recordingContext())).toContain(
+      '<link rel="canonical" href="https://promptspend.com/data/" />',
+    );
+  });
+});
+
+describe('the shared footer and comparison links', () => {
+  it('links Writing and Open data from every generated page', () => {
+    for (const { html } of everyPage(SAMPLE)) {
+      expect(html).toContain('<a href="/writing/">Writing</a>');
+      expect(html).toContain('<a href="/data/">Open data</a>');
+    }
+  });
+
+  it('shows related comparisons under a comparison when it has siblings', () => {
+    const models = [
+      model('a', { providerId: 'openai' }),
+      model('b', { providerId: 'anthropic' }),
+      model('c', { providerId: 'google' }),
+    ];
+    const set = buildPages(catalog(models), { asOf: ASOF });
+    const page = set.comparisons.find((candidate) => candidate.related.length > 0)!;
+    const html = renderComparisonPage(page, recordingContext());
+    expect(html).toContain('More comparisons');
+    expect(html).toContain(`href="${page.related[0]!.path}"`);
   });
 });
 

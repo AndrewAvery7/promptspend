@@ -359,7 +359,8 @@ ${input.extraHead ?? ''}    <meta property="og:type" content="article" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=b75d1de1'))}" />
 ${fontLinks}    <link rel="stylesheet" href="${escapeHtml(href(ctx, ctx.cssPath))}" />
-${chromeLinks}    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1.5' y='1.5' width='23' height='23' rx='6' fill='none' stroke='%232456E6' stroke-width='2'/%3E%3Cpath d='M7 9.5h12M7 13.5h8M7 17.5h10' stroke='%232456E6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
+${chromeLinks}    <link rel="icon" href="${escapeHtml(href(ctx, '/favicon.ico'))}" sizes="any" />
+    <link rel="icon" href="${escapeHtml(href(ctx, '/favicon.svg'))}" type="image/svg+xml" />
     <script type="application/ld+json">${ld}</script>
 ${[...(ctx.chrome ? [ctx.chrome.script] : []), ...scripts]
   .map(
@@ -500,6 +501,8 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div>
           <a href="${escapeHtml(href(ctx, '/providers/'))}">By provider</a> &middot;
           <a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">${escapeHtml(NAV_LABELS.freeTiers)}</a> &middot;
           <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
+          <a href="${escapeHtml(href(ctx, WRITING_INDEX_PATH))}">Writing</a> &middot;
+          <a href="${escapeHtml(href(ctx, DATA_PAGE_PATH))}">Open data</a> &middot;
           <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a>
         </div>
         <div>
@@ -1205,6 +1208,23 @@ ${page.differences.map((line) => `          <li>${escapeHtml(line)}</li>`).join(
         </ul>`
       : `<p>Beyond price there is little to choose: the two match on context window, output ceiling, reasoning, vision, caching and batch pricing.</p>`;
 
+  // Other comparisons that include either model: how a comparison is reached
+  // from its siblings and not only from the index. Nothing is drawn when there
+  // are none, rather than an empty heading.
+  const moreComparisons =
+    page.related.length === 0
+      ? ''
+      : `        <h2>More comparisons</h2>
+        <p class="muted">Other head-to-heads that include ${escapeHtml(page.left.displayName)} or ${escapeHtml(page.right.displayName)}.</p>
+        <ul class="links">
+${page.related
+  .map(
+    (link) =>
+      `          <li><a href="${escapeHtml(href(ctx, link.path))}">${escapeHtml(link.label)}</a></li>`,
+  )
+  .join('\n')}
+        </ul>`;
+
   const body = `      ${breadcrumbHtml(ctx, crumbs)}
       <main id="main">
         <h1>${escapeHtml(page.heading)}</h1>
@@ -1251,6 +1271,7 @@ ${spec('Vision', page.left.capabilities.vision ? 'yes' : 'no', page.right.capabi
           Full detail: <a href="${escapeHtml(href(ctx, `/models/${page.leftSlug}/`))}">${escapeHtml(page.left.displayName)} pricing</a>
           &middot; <a href="${escapeHtml(href(ctx, `/models/${page.rightSlug}/`))}">${escapeHtml(page.right.displayName)} pricing</a>
         </p>
+${moreComparisons}
       </main>`;
 
   return layout(ctx, {
@@ -1563,6 +1584,277 @@ ${analyticsChoice(page.bodyHtml)}
         datePublished: page.publishedDate,
         author: { '@type': 'Organization', name: 'PromptSpend' },
       },
+    ],
+    body,
+  });
+}
+
+// ------------------------------------------------------------ writing index
+
+/** Where the articles are listed. */
+export const WRITING_INDEX_PATH = '/writing/';
+
+/**
+ * The page that lists every article and report, newest first.
+ *
+ * Until it existed the articles had no inbound link at all and this address
+ * answered "not found". A page nobody links to is a page a crawler is given no
+ * reason to value, and the monthly price reports are among the best things on
+ * the site.
+ */
+export function renderWritingIndex(pages: readonly WritingPage[], ctx: RenderContext): string {
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: 'Writing', path: null },
+  ];
+  const newestFirst = [...pages].sort(
+    (a, b) => b.publishedDate.localeCompare(a.publishedDate) || a.path.localeCompare(b.path),
+  );
+  const items = newestFirst
+    .map(
+      (page) =>
+        `          <li><a href="${escapeHtml(href(ctx, page.path))}">${escapeHtml(page.heading)}</a> <span class="unit">${escapeHtml(page.publishedDate)}</span><br /><span class="muted">${escapeHtml(page.description)}</span></li>`,
+    )
+    .join('\n');
+
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <h1>Writing</h1>
+        <p class="lede">
+          The monthly price-movement reports and notes on how LLM API costs are really counted. Every figure
+          names the vendor page it came from and the date it was checked.
+        </p>
+        <ul class="links">
+${items}
+        </ul>
+        <p>The same price changes as they happen: <a href="${escapeHtml(href(ctx, '/feed.xml'))}">the Atom feed</a>.</p>
+      </main>`;
+
+  const description =
+    'Monthly LLM price-movement reports and notes on how AI API costs are really counted, each figure with its source and the date it was checked.';
+  return layout(ctx, {
+    path: WRITING_INDEX_PATH,
+    title: 'Writing: LLM price reports and notes on what AI really costs',
+    description,
+    graph: [
+      breadcrumbLd(ctx, crumbs, WRITING_INDEX_PATH),
+      {
+        '@type': 'CollectionPage',
+        name: 'Writing',
+        url: absolute(ctx, WRITING_INDEX_PATH),
+        description,
+      },
+      {
+        '@type': 'ItemList',
+        itemListElement: newestFirst.map((page, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: page.heading,
+          url: absolute(ctx, page.path),
+        })),
+      },
+    ],
+    body,
+  });
+}
+
+// ---------------------------------------------------------------- not found
+
+/**
+ * The page GitHub Pages serves for any address that does not exist.
+ *
+ * Until now that was GitHub's own "page not found", which says nothing about
+ * this site and offers nobody a next step. This one is `noindex`, links to the
+ * places people are usually looking for, and is built from the same layout as
+ * every other page, so it keeps the header and footer.
+ */
+export function renderNotFoundPage(ctx: RenderContext): string {
+  const link = (path: string, label: string): string =>
+    `          <li><a href="${escapeHtml(href(ctx, path))}">${escapeHtml(label)}</a></li>`;
+  const body = `      <main id="main">
+        <h1>That page is not here</h1>
+        <p class="lede">The address may be old or mistyped. These are the places most people are looking for.</p>
+        <ul class="links">
+${[
+  link('/', 'The cost calculator'),
+  link('/models/', 'Every model, by price'),
+  link('/providers/', 'Prices by provider'),
+  link('/compare/', 'Head-to-head comparisons'),
+  link(FREE_TIERS_PATH, 'Free API tiers, compared'),
+  link(WRITING_INDEX_PATH, 'Writing and the monthly price reports'),
+].join('\n')}
+        </ul>
+        <p>If a link on this site brought you here, please tell <a href="mailto:info@promptspend.com">info@promptspend.com</a>.</p>
+      </main>`;
+
+  return layout(ctx, {
+    path: NOT_FOUND_PATH,
+    title: 'Page not found | PromptSpend',
+    description:
+      'That address is not on PromptSpend. Start from the model prices, the providers, the comparisons or the writing.',
+    graph: [{ '@type': 'WebPage', name: 'Page not found', url: absolute(ctx, NOT_FOUND_PATH) }],
+    robots: 'noindex, follow',
+    body,
+  });
+}
+
+/** The file GitHub Pages serves for a missing address, at the site root. */
+export const NOT_FOUND_PATH = '/404.html';
+
+// ---------------------------------------------------------------- open data
+
+export const DATA_PAGE_PATH = '/data/';
+
+/** The archived copy of the price history on Zenodo (the 2026-10-05 version). */
+export const PRICE_HISTORY_DOI = '10.5281/zenodo.23170741';
+
+export interface DataPageInput {
+  /** Models and providers in the catalog this build was made from. */
+  models: number;
+  providers: number;
+  history: {
+    firstDate: string;
+    /** Rows in the published table. */
+    rows: number;
+    /** The date of the newest row, which moves only when a price does. */
+    lastChangeDate: string;
+  };
+}
+
+/**
+ * The page that describes the files the site already publishes as data.
+ *
+ * The facts here are the ones the repository already states (docs/PRICE_HISTORY.md
+ * and llms.txt): the catalog is MIT, the price history is CC0, and the history
+ * has an archived copy with a DOI. Nothing is printed that changes every day,
+ * so the page's date in the sitemap moves only when a price does.
+ */
+export function renderDataPage(input: DataPageInput, ctx: RenderContext): string {
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: 'Open data', path: null },
+  ];
+  const file = (path: string, label: string): string =>
+    `<a href="${escapeHtml(href(ctx, path))}">${escapeHtml(label)}</a>`;
+  const { history } = input;
+
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <h1>Open data</h1>
+        <p class="lede">
+          Everything PromptSpend publishes about LLM API prices is a plain file you can download, with no key
+          and no sign-up. The pages on this site are built from the same files.
+        </p>
+
+        <h2>The price catalog</h2>
+        <p>
+          ${file('/data/pricing.json', 'pricing.json')} holds ${input.models} models from ${input.providers} providers.
+          Every price carries the vendor page it came from and the date it was last confirmed, and the file is
+          rebuilt every morning. Licence: MIT. Use it in anything, including commercially; a link back is
+          appreciated and not required. Notes on reading a price correctly are in ${file('/llms.txt', 'llms.txt')}.
+        </p>
+
+        <h2>Price history</h2>
+        <p>
+          ${file('/data/price-history.csv', 'price-history.csv')} and ${file('/data/price-history.json', 'price-history.json')}
+          list every rate PromptSpend has published: one row for each rate that appeared, moved, was restated or went
+          away, from ${escapeHtml(history.firstDate)} onward (${history.rows} rows so far). Every row names the commit that published it.
+          Licence: public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>).
+          An archived copy is on Zenodo, <a href="https://doi.org/${PRICE_HISTORY_DOI}">doi:${PRICE_HISTORY_DOI}</a>.
+        </p>
+
+        <h2>Free-tier facts</h2>
+        <p>
+          ${file('/data/free-tiers.json', 'free-tiers.json')} records what each tracked provider says about free use,
+          with a link and the date it was read on every fact. Licence: MIT, like the rest of the repository.
+        </p>
+
+        <h2>Price changes as a feed</h2>
+        <p>
+          New models, price changes and corrections, one entry a day, in ${file('/feed.xml', 'the Atom feed')}.
+          Corrections (PromptSpend misread a page) are labelled apart from repricing (the vendor changed a rate).
+        </p>
+
+        <h2>The pricing API</h2>
+        <p>
+          The same prices as JSON or CSV, keyless and open to browsers, at
+          <a href="${escapeHtml(ctx.apiUrl)}">${escapeHtml(ctx.apiUrl.replace(/^https?:\/\//, ''))}</a>.
+        </p>
+
+        <h2>Citing it</h2>
+        <p>
+          Cite the archived price history by its DOI. For the catalog, a link to PromptSpend is enough. The code
+          that builds all of it is open source on <a href="https://github.com/AndrewAvery7/promptspend">GitHub</a>.
+        </p>
+      </main>`;
+
+  const creator = { '@type': 'Organization', name: 'PromptSpend', url: absolute(ctx, '/') };
+  const dataset = (
+    name: string,
+    description: string,
+    anchor: string,
+    license: string,
+    downloads: { path: string; type: string }[],
+    extra: Record<string, unknown> = {},
+  ): Record<string, unknown> => ({
+    '@type': 'Dataset',
+    name,
+    description,
+    url: `${absolute(ctx, DATA_PAGE_PATH)}#${anchor}`,
+    creator,
+    license,
+    isAccessibleForFree: true,
+    dateModified: history.lastChangeDate,
+    distribution: downloads.map((download) => ({
+      '@type': 'DataDownload',
+      encodingFormat: download.type,
+      contentUrl: absolute(ctx, download.path),
+    })),
+    ...extra,
+  });
+
+  const description =
+    'Download PromptSpend’s LLM price catalog, its price history and its free-tier facts as plain files, with the licence for each and no key or sign-up.';
+  return layout(ctx, {
+    path: DATA_PAGE_PATH,
+    title: 'Open data: LLM API prices, price history and free tiers',
+    description,
+    graph: [
+      breadcrumbLd(ctx, crumbs, DATA_PAGE_PATH),
+      {
+        '@type': 'WebPage',
+        name: 'Open data',
+        url: absolute(ctx, DATA_PAGE_PATH),
+        description,
+      },
+      dataset(
+        'PromptSpend LLM API price catalog',
+        `Current API prices for ${input.models} language models from ${input.providers} providers, each with the vendor page it came from and the date it was last confirmed. Rebuilt every morning.`,
+        'catalog',
+        'https://opensource.org/licenses/MIT',
+        [{ path: '/data/pricing.json', type: 'application/json' }],
+      ),
+      dataset(
+        'PromptSpend LLM API price history',
+        'Every rate PromptSpend has published for an LLM API: one row for each rate that appeared, moved, was restated or went away, each naming the commit that published it.',
+        'history',
+        'https://creativecommons.org/publicdomain/zero/1.0/',
+        [
+          { path: '/data/price-history.csv', type: 'text/csv' },
+          { path: '/data/price-history.json', type: 'application/json' },
+        ],
+        {
+          identifier: `https://doi.org/${PRICE_HISTORY_DOI}`,
+          temporalCoverage: `${history.firstDate}/..`,
+        },
+      ),
+      dataset(
+        'PromptSpend free-tier facts',
+        'What each tracked LLM provider says about free use of its API, with a link and the date it was read on every fact.',
+        'free-tiers',
+        'https://opensource.org/licenses/MIT',
+        [{ path: '/data/free-tiers.json', type: 'application/json' }],
+      ),
     ],
     body,
   });

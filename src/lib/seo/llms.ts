@@ -38,6 +38,8 @@ export interface LlmsTxtInput {
   generatedAt: string;
   /** The free-tier pages, when this build has them. */
   freeTiers?: FreeTierPageSet;
+  /** The articles and reports, newest first, when this build has them. */
+  writing?: readonly { path: string; heading: string; description: string }[];
 }
 
 /** Models worth naming individually, so an agent can jump straight to one. */
@@ -48,7 +50,22 @@ function markdownLabel(value: string): string {
 }
 
 export function renderLlmsTxt(set: PageSet, input: LlmsTxtInput): string {
-  const { siteUrl, apiUrl, generatedAt, freeTiers } = input;
+  const { siteUrl, apiUrl, generatedAt, freeTiers, writing } = input;
+  const writingSection =
+    writing && writing.length > 0
+      ? `
+## Writing
+
+The monthly price-movement reports and notes on how LLM API costs are really counted. Every figure names its source and the date it was checked.
+
+- [All writing](${siteUrl}/writing/)
+${writing
+  .map((page) => `- [${markdownLabel(page.heading)}](${siteUrl}${page.path}): ${page.description}`)
+  .join('\n')}
+- [Price changes as an Atom feed](${siteUrl}/feed.xml): new models, price changes and corrections, one entry a day
+- [Open data](${siteUrl}/data/): the catalog (MIT), the price history (CC0) and the free-tier facts, with licences and an archived DOI
+`
+      : '';
   const freeTierSection = freeTiers
     ? `
 ## Free tiers
@@ -149,7 +166,7 @@ ${highlights}
 
 ${providers}
 
-${freeTierSection}
+${freeTierSection}${writingSection}
 ## Reading a price correctly
 
 - \`cachedInput\` is the rate for input served from the provider's prompt cache;

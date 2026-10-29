@@ -37,6 +37,7 @@ import { PAGE_CSS } from '@/lib/seo/css';
 import { renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import { receiptSpec } from '@/receipt/receiptSpec';
+import { sitemapIndex, urlset, type SitemapEntry, type SitemapFile } from '@/lib/seo/sitemap';
 import { APP_PAGE_PATH } from '@/lib/links';
 import {
   APP_PAGE_UPDATED,
@@ -51,7 +52,13 @@ import {
   renderProviderPage,
   renderProvidersIndex,
   renderRetiredComparisonPage,
+  renderDataPage,
+  renderNotFoundPage,
+  renderWritingIndex,
   renderWritingPage,
+  DATA_PAGE_PATH,
+  WRITING_INDEX_PATH,
+  type DataPageInput,
   type FreeTierLink,
   type InformationPage,
   type RenderContext,
@@ -172,30 +179,6 @@ async function headerAssets(): Promise<NonNullable<RenderContext['chrome']>> {
 /** `/models/gpt-5/` becomes `models/gpt-5/index.html`. */
 function fileFor(path: string): string {
   return `${path.replace(/^\//, '').replace(/\/$/, '')}/index.html`;
-}
-
-function sitemap(entries: { loc: string; lastmod: string; priority: string }[]): string {
-  const escapeXml = (value: string): string =>
-    value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&apos;');
-  const urls = entries
-    .map(
-      (entry) => `  <url>
-    <loc>${escapeXml(entry.loc)}</loc>
-    <lastmod>${escapeXml(entry.lastmod)}</lastmod>
-    <priority>${escapeXml(entry.priority)}</priority>
-  </url>`,
-    )
-    .join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls}
-</urlset>
-`;
 }
 
 /**
@@ -385,45 +368,6 @@ async function main(): Promise<void> {
   // so it sits beside the prose pages rather than in the catalog's page set.
   await writeFileAt(fileFor(APP_PAGE_PATH), renderAppPage(ctx));
 
-  // The sitemap lives here rather than in `vite.config.ts` because it has to
-  // list these pages, and the config has no idea they exist.
-  //
-  // Every `lastmod` is the date that page's content last changed, never the
-  // build date. The calculator shows the same prices as the model table, so it
-  // carries that table's date. Stamping every URL with today, as this used to,
-  // told Google 170 pages changed every morning — and a crawler that is always
-  // told everything changed stops believing `lastmod` at all.
-  const lastmod = set.modelsIndex.lastmod;
-  await writeFileAt(
-    'sitemap.xml',
-    sitemap([
-      { loc: `${siteUrl}/`, lastmod, priority: '1.0' },
-      { loc: `${siteUrl}/receipt/`, lastmod: receiptSpec.updated, priority: '0.9' },
-      { loc: `${siteUrl}${APP_PAGE_PATH}`, lastmod: APP_PAGE_UPDATED, priority: '0.8' },
-      ...set.all.map((page) => ({
-        loc: `${siteUrl}${page.path}`,
-        lastmod: page.lastmod,
-        priority: page.kind === 'index' ? '0.8' : page.kind === 'model' ? '0.7' : '0.5',
-      })),
-      ...writingPages.map((page) => ({
-        loc: `${siteUrl}${page.path}`,
-        lastmod: page.publishedDate,
-        priority: '0.6',
-      })),
-      ...informationPages.map((page) => ({
-        loc: `${siteUrl}${page.path}`,
-        lastmod: page.updatedDate,
-        priority: '0.4',
-      })),
-      { loc: `${siteUrl}${freeTiers.index.path}`, lastmod: freeTiers.index.lastmod, priority: '0.8' },
-      ...freeTiers.pages.map((page) => ({
-        loc: `${siteUrl}${page.path}`,
-        lastmod: page.lastmod,
-        priority: '0.6',
-      })),
-    ]),
-  );
-
   await writeFileAt(
     'data/price-history.json',
     `${JSON.stringify(history)}
@@ -434,6 +378,73 @@ async function main(): Promise<void> {
   // Price news as Atom, with corrections labelled apart from repricing. See src/lib/seo/feed.ts.
   await writeFileAt('feed.xml', renderFeed(history, siteUrl));
 
+  // The pages that are neither catalog-driven nor prose from a file: the list
+  // of articles, the open-data page, and the page GitHub Pages serves for an
+  // address that does not exist.
+  const newestFirstWriting = [...writingPages].sort(
+    (a, b) => b.publishedDate.localeCompare(a.publishedDate) || a.path.localeCompare(b.path),
+  );
+  if (writingPages.length > 0) {
+    await writeFileAt(fileFor(WRITING_INDEX_PATH), renderWritingIndex(writingPages, ctx));
+  }
+  // The newest row's date moves only when a price does, so the open-data
+  // page's date in the sitemap means something.
+  const lastChangeDate =
+    rows.reduce((newest, row) => (row.date > newest ? row.date : newest), '') || history.firstDate;
+  const dataPage: DataPageInput = {
+    models: set.models.length,
+    providers: set.providers.length,
+    history: { firstDate: history.firstDate, rows: rows.length, lastChangeDate },
+  };
+  await writeFileAt(fileFor(DATA_PAGE_PATH), renderDataPage(dataPage, ctx));
+  await writeFileAt('404.html', renderNotFoundPage(ctx));
+
+  // The sitemap lives here rather than in `vite.config.ts` because it has to
+  // list these pages, and the config has no idea they exist.
+  //
+  // One file per kind of page, with `sitemap.xml` as the index over them, so
+  // Search Console can say which kind is being indexed and which is being
+  // left out. See src/lib/seo/sitemap.ts.
+  //
+  // Every `lastmod` is the date that page's content last changed, never the
+  // build date. The calculator shows the same prices as the model table, so it
+  // carries that table's date. Stamping every URL with today, as this used to,
+  // told Google 170 pages changed every morning - and a crawler that is always
+  // told everything changed stops believing `lastmod` at all.
+  const entry = (path: string, lastmod: string): SitemapEntry => ({ loc: `${siteUrl}${path}`, lastmod });
+  const newestArticle = newestFirstWriting[0]?.publishedDate;
+  const files: SitemapFile[] = [
+    {
+      name: 'sitemap-site.xml',
+      entries: [
+        entry('/', set.modelsIndex.lastmod),
+        entry('/receipt/', receiptSpec.updated),
+        entry(APP_PAGE_PATH, APP_PAGE_UPDATED),
+        ...set.all.filter((page) => page.kind === 'index').map((page) => entry(page.path, page.lastmod)),
+        entry(freeTiers.index.path, freeTiers.index.lastmod),
+        ...(newestArticle ? [entry(WRITING_INDEX_PATH, newestArticle)] : []),
+        entry(DATA_PAGE_PATH, lastChangeDate),
+        ...informationPages.map((page) => entry(page.path, page.updatedDate)),
+      ],
+    },
+    { name: 'sitemap-models.xml', entries: set.models.map((page) => entry(page.path, page.lastmod)) },
+    { name: 'sitemap-providers.xml', entries: set.providers.map((page) => entry(page.path, page.lastmod)) },
+    { name: 'sitemap-compare.xml', entries: set.comparisons.map((page) => entry(page.path, page.lastmod)) },
+    {
+      name: 'sitemap-free-tiers.xml',
+      entries: freeTiers.pages.map((page) => entry(page.path, page.lastmod)),
+    },
+    {
+      name: 'sitemap-writing.xml',
+      entries: writingPages.map((page) => entry(page.path, page.publishedDate)),
+    },
+  ];
+  for (const file of files) {
+    if (file.entries.length > 0) await writeFileAt(file.name, urlset(file.entries));
+  }
+  await writeFileAt('sitemap.xml', sitemapIndex(siteUrl, files));
+  const sitemapUrls = files.reduce((sum, file) => sum + file.entries.length, 0);
+
   // An index written for the thing that reads it. Points at the pages and the
   // API rather than inlining rates, which would be stale by morning.
   await writeFileAt(
@@ -443,6 +454,7 @@ async function main(): Promise<void> {
       apiUrl,
       generatedAt: catalog.generatedAt,
       freeTiers,
+      writing: newestFirstWriting,
     }),
   );
 
@@ -455,10 +467,10 @@ async function main(): Promise<void> {
 
   const freeTierCount = freeTiers.pages.length + 1;
   console.log(
-    `✓ ${set.all.length + writingPages.length + informationPages.length + freeTierCount + 1} pages written under ${DIST}`,
+    `✓ ${set.all.length + writingPages.length + informationPages.length + freeTierCount + 3} pages written under ${DIST}`,
   );
   console.log(
-    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing, ${informationPages.length} information, ${freeTierCount} free tier, 1 app`,
+    `  ${set.models.length} models, ${set.providers.length} providers, ${set.comparisons.length} comparisons, 3 indexes, ${writingPages.length} writing, ${informationPages.length} information, ${freeTierCount} free tier, 1 app, writing index, open-data page, 404`,
   );
   const kept = set.comparisons.filter((page) => page.kept).length;
   if (kept > 0) console.log(`  ${kept} comparison(s) kept because they were published before`);
@@ -469,7 +481,7 @@ async function main(): Promise<void> {
   }
   console.log(`  stylesheet ${cssName}`);
   console.log(
-    `  sitemap    ${set.all.length + writingPages.length + informationPages.length + freeTierCount + 3} URLs at ${siteUrl}/sitemap.xml`,
+    `  sitemap    ${sitemapUrls} URLs in ${files.filter((file) => file.entries.length > 0).length} files, indexed at ${siteUrl}/sitemap.xml`,
   );
   console.log(`  llms.txt   ${siteUrl}/llms.txt`);
   if (set.droppedComparisons > 0) {

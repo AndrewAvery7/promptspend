@@ -9,6 +9,16 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Crawl and site-structure fixes for search engines.** `sitemap.xml` is now an index over six smaller files,
+  one per kind of page, so Search Console shows how each kind is being indexed. Every comparison links to
+  up to six related comparisons (three per side); a `/writing/` page lists every article (the three
+  articles had no link from anywhere); a `/data/` page describes the free data files with their licences and
+  the archived DOI, with schema.org Dataset markup; a branded `404.html` replaces GitHub's bare page; the
+  footer links Writing and Open data on every page. `robots.txt` asks crawlers to skip the calculator's
+  `?m=` scenario links. The home page gains Organization and WebSite structured data, and a real
+  `favicon.ico` and `favicon.svg` replace an inline icon. `check:seo` now fails on an orphaned page, a
+  sitemap that lists a query-string address, a missing 404 or favicon, and a `robots.txt` without the
+  scenario rule.
 - **Price history on every model page, and the latest price changes on the models index.** A model whose
   input or output rate has ever moved gets a staircase chart (each line holds its value until the next
   change, and the axis starts at zero) with a table of every recorded change; a model that has not moved
