@@ -101,6 +101,23 @@ describe('validateCatalog', () => {
     expect(validateCatalog(broken)).toContainEqual(expect.stringContaining('cheaper than input'));
   });
 
+  it('rejects a one-hour cache write cheaper than the five-minute one', () => {
+    const broken = {
+      ...CATALOG,
+      models: [
+        { ...CATALOG.models[0]!, pricing: { input: 3, output: 15, cacheWrite: 3.75, cacheWrite1h: 3.5 } },
+      ],
+    };
+    expect(validateCatalog(broken)).toContainEqual(expect.stringContaining('cacheWrite1h'));
+    const fine = {
+      ...CATALOG,
+      models: [
+        { ...CATALOG.models[0]!, pricing: { input: 3, output: 15, cacheWrite: 3.75, cacheWrite1h: 6 } },
+      ],
+    };
+    expect(validateCatalog(fine)).toEqual([]);
+  });
+
   it('validates promotional cache rates as strictly as standard rates', () => {
     const broken = {
       ...CATALOG,

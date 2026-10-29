@@ -68,6 +68,7 @@ export const PRICING_FIELDS = [
   'output',
   'cachedInput',
   'cacheWrite',
+  'cacheWrite1h',
   'cacheStoragePerMillionTokenHour',
   'batchDiscount',
   'intro.input',
@@ -297,7 +298,7 @@ export function catalogHash(catalog: PricingCatalog): string {
   // data on the first run that publishes it.
   const hashPricingFields = PRICING_FIELDS.filter(
     (field) =>
-      field !== 'cacheStoragePerMillionTokenHour' ||
+      (field !== 'cacheStoragePerMillionTokenHour' && field !== 'cacheWrite1h') ||
       catalog.models.some((model) => !missing(at(model.pricing, field))),
   );
   const hashReviewFields = REVIEW_FIELDS.filter(

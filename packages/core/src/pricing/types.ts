@@ -49,6 +49,11 @@ export interface Pricing {
   /** USD per 1M tokens to *write* the cache. Both OpenAI and Anthropic charge
    *  1.25× base input; it is billed once per cached prefix, not per read. */
   cacheWrite?: number;
+  /** USD per 1M tokens to write the cache with a one-hour lifetime, where the
+   *  vendor sells one beside the default (Anthropic: 2× input against 1.25×
+   *  for five minutes). `cacheWrite` stays the default, shorter lifetime, and
+   *  estimates use it; this rate is published so the longer option is visible. */
+  cacheWrite1h?: number;
   /** Separate cache-residency charge in USD per 1M cached tokens per hour.
    * The estimator cannot include it without a retention duration, so the
    * engine surfaces it as an explicit bill-exclusion warning. */
@@ -333,6 +338,13 @@ function validatePricing(label: string, pricing: unknown): string[] {
     if (input !== undefined && input > 0 && p.cacheWrite < input) {
       errors.push(
         `${label}: cacheWrite ($${p.cacheWrite}) is cheaper than input — every vendor charges more`,
+      );
+    }
+  }
+  if (p.cacheWrite1h !== undefined && validateRate(label, 'pricing.cacheWrite1h', p.cacheWrite1h, errors)) {
+    if (p.cacheWrite !== undefined && p.cacheWrite1h < p.cacheWrite) {
+      errors.push(
+        `${label}: cacheWrite1h ($${p.cacheWrite1h}) is cheaper than the shorter cacheWrite ($${p.cacheWrite})`,
       );
     }
   }

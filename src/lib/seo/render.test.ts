@@ -193,6 +193,19 @@ describe('rendered pages', () => {
     expect(html).toContain('href="/?m=gpt-5&amp;sys=800&amp;usr=400&amp;out=900&amp;t=6&amp;cpd=2500');
   });
 
+  it('names both cache lifetimes when a model sells a one-hour write', () => {
+    const base = model('gpt-5');
+    const withHour = { ...base, pricing: { ...base.pricing, cacheWrite: 1.5625, cacheWrite1h: 2.5 } };
+    const set = buildPages(catalog([withHour]), { asOf: ASOF });
+    const html = renderModelPage(
+      set.models.find((page) => page.id === 'gpt-5')!,
+      recordingContext(),
+    );
+    expect(html).toContain('Cache write (5 minutes)');
+    expect(html).toContain('Cache write (1 hour)');
+    expect(html).toContain('$2.5<');
+  });
+
   it('states the promotional window rather than quietly showing the promoted rate', () => {
     const set = buildPages(
       catalog([

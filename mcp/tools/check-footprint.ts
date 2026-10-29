@@ -28,11 +28,16 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 /**
  * Tokens. Raise only with a note explaining what the extra surface buys.
  *
- * 900 is roughly a fifth of a page of text — small enough that a user who
- * connects this alongside four other servers will not notice it, which is the
- * whole point.
+ * 1,200 is still about a quarter of a page of text — small enough that a user
+ * who connects this alongside four other servers will not notice it, which is
+ * the whole point.
+ *
+ * Raised from 900 on 2026-10-29, owner's decision. `as_of` and `usage` had
+ * taken the manifest to ~897, three tokens under, so any further option would
+ * have meant trimming wording that keeps agents from misusing the tools. The
+ * measured figure is what is published, not the budget, and it did not move.
  */
-const BUDGET = 900;
+const BUDGET = 1200;
 
 /** Conservative characters-per-token for dense JSON with many short keys. */
 const CHARS_PER_TOKEN = 3.3;
