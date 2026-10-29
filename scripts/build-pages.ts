@@ -375,7 +375,7 @@ async function main(): Promise<void> {
   );
   await writeFileAt('data/price-history.csv', toCsv(rows));
 
-  // Price news as Atom, with corrections labelled apart from repricing. See src/lib/seo/feed.ts.
+  // Price news as Atom, with corrections labeled apart from repricing. See src/lib/seo/feed.ts.
   await writeFileAt('feed.xml', renderFeed(history, siteUrl));
 
   // The pages that are neither catalog-driven nor prose from a file: the list

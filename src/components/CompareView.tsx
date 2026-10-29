@@ -157,7 +157,7 @@ const HEIGHT = 430;
 const PAD = { left: 64, right: 24, top: 20, bottom: 48 };
 
 /** Rough advance width per character at 13px / 600 weight in the display face.
- *  Estimated, not measured — see `labelled` for why. Erring high is the safe
+ *  Estimated, not measured — see `labeled` for why. Erring high is the safe
  *  direction: it drops a borderline label rather than printing an overlap. */
 const LABEL_CHAR_W = 7.1;
 /** Height above the baseline. Measured, not guessed: a 13px label's box spans
@@ -193,7 +193,7 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
     // Only models with a capability estimate are plotted.
     //
     // Substituting a default for the rest drew 26 models along one flat line at
-    // exactly 70, which reads as a finding and is an artefact. A model without
+    // exactly 70, which reads as a finding and is an artifact. A model without
     // a score is not in the middle of the axis; it is not on the axis.
     //
     // The country filter narrows the pool *before* the axes are scaled, which
@@ -249,13 +249,13 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
    * first that hits nothing already placed. A label that fits nowhere is
    * dropped rather than overlapped — it is still in the tooltip on hover and
    * in the table below, which is where the precise reading happens anyway. An
-   * unreadable label is worse than no label: it damages its neighbour too.
+   * unreadable label is worse than no label: it damages its neighbor too.
    *
    * Widths are estimated from character count rather than measured. Measuring
    * needs a laid-out DOM, which would move this into an effect and a second
    * render pass for a chart that is decoration around a table.
    */
-  const labelled = useMemo(() => {
+  const labeled = useMemo(() => {
     const placements = new Map<string, { x: number; y: number; anchor: 'middle' | 'start' | 'end' }>();
     if (!points) return placements;
 
@@ -266,7 +266,7 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
       (a, b) => (b.model.capabilityIndex ?? 0) - (a.model.capabilityIndex ?? 0),
     );
 
-    // Selected models are labelled first, so a crowded corner drops a
+    // Selected models are labeled first, so a crowded corner drops a
     // background model rather than the one the reader just picked.
     const wanted = [
       ...selectedIds,
@@ -426,7 +426,7 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
               invisible hit area is much larger than the dot, and a later dot's
               is drawn over an earlier dot's visible mark, so two models close
               together left the earlier one unclickable: a mouse click on it
-              landed on its neighbour. That is worst for a dot already in the
+              landed on its neighbor. That is worst for a dot already in the
               estimate, the one you click to take back out. DeepSeek V4 Flash
               was buried this way under MiMo V2.6 Pro once a rescore put the two
               four pixels apart. Keyboard users are unaffected, but a node moved
@@ -489,11 +489,11 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
                     strokeWidth="2"
                   />
                 </g>
-                {labelled.get(model.id) && (
+                {labeled.get(model.id) && (
                   <text
-                    x={labelled.get(model.id)!.x}
-                    y={labelled.get(model.id)!.y}
-                    textAnchor={labelled.get(model.id)!.anchor}
+                    x={labeled.get(model.id)!.x}
+                    y={labeled.get(model.id)!.y}
+                    textAnchor={labeled.get(model.id)!.anchor}
                     fontSize="13"
                     fontWeight="600"
                     fill="var(--ink)"
@@ -508,7 +508,7 @@ function ValueMap({ catalog, selectedIds, onToggle, countries, asOf }: CompareVi
         </svg>
       </div>
       <p className="value-map__caption">
-        <b>Hover or tab to any dot</b> for its name, price and provider — only the extremes are labelled, to
+        <b>Hover or tab to any dot</b> for its name, price and provider — only the extremes are labeled, to
         keep the chart readable. Filled dots are in your estimate; choose any dot to add or remove it. Blended
         price weights input 75% / output 25%.{' '}
         {points.unscored > 0 && (
@@ -657,7 +657,7 @@ function CatalogTable({
   return (
     <>
       {/* The same control as the one above the chart, driving the same state.
-          Repeated rather than moved: this table is the full catalogue, so by
+          Repeated rather than moved: this table is the full catalog, so by
           the time you have scrolled far enough to want a different country the
           chips at the top of the page are long gone — and scrolling back up to
           a control you cannot see, to change something you are looking at down

@@ -2,13 +2,13 @@ name: Watch coverage gaps
 # The capture rules in data/models-allowlist.json are patterns, and a pattern
 # that is too narrow fails silently: on 2026-10-29 a comparison found OpenAI's
 # GPT-5.x Pro tiers, Codestral and Kimi K3.1 Pro missing for that reason alone.
-# This compares the catalogue with another tracker's public model list once a
+# This compares the catalog with another tracker's public model list once a
 # week and opens one issue naming any model the price feed already carries under
 # its maker's own key that no rule captures.
 #
 # The other list supplies names only; prices come from the feed, and anything
 # captured still arrives through the daily sync, flagged for review. Read-only on
-# the catalogue: the issue is the whole output, and it closes itself once nothing
+# the catalog: the issue is the whole output, and it closes itself once nothing
 # is left. A model left out on purpose goes in data/coverage-ignore.json.
 #
 # Actions are pinned to commit SHAs, not tags, like every other workflow here.
@@ -38,7 +38,7 @@ jobs:
           npm ci --ignore-scripts
           npm rebuild esbuild
 
-      - name: Compare the catalogue with the other list and the feed
+      - name: Compare the catalog with the other list and the feed
         id: watch
         run: npx tsx scripts/watch-coverage-gaps.ts
 

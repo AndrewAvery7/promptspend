@@ -1,19 +1,19 @@
 name: Watch later additions
 
-# The catalogue's rule is to wait for the automated price feed rather than
+# The catalog's rule is to wait for the automated price feed rather than
 # hand-add a price that nothing can correct. A rule like that is only a policy
 # if something notices the day the wait is over, and until this existed that was
 # somebody remembering. data/later-additions.json lists what is waiting; this
 # reads the feed once a week and opens one issue the week any of it appears.
 #
-# Read-only on the catalogue: it adds nothing and publishes nothing. The issue
+# Read-only on the catalog: it adds nothing and publishes nothing. The issue
 # is the whole output, and it closes itself once every listed item has been
 # added, so a stale list never sits there asking to be ignored.
 #
 # Actions are pinned to commit SHAs, not tags, like every other workflow here.
 on:
   schedule:
-    # Mondays 12:30 UTC, after the weekend's syncs and the morning's catalogue.
+    # Mondays 12:30 UTC, after the weekend's syncs and the morning's catalog.
     - cron: '30 12 * * 1'
   workflow_dispatch:
 
@@ -60,7 +60,7 @@ jobs:
               echo "  opened a new issue"
             fi
           elif [ -n "$existing" ]; then
-            gh issue close "$existing" --comment "Everything on the list has since been added to the catalogue or has left the feed."
+            gh issue close "$existing" --comment "Everything on the list has since been added to the catalog or has left the feed."
             echo "  closed issue #$existing"
           else
             echo "  nothing waiting is in the feed yet"

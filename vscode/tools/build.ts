@@ -56,7 +56,7 @@ const VERSION: string = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), '
  * than the 22 MB the full install weighs.
  *
  * If a rank file is ever missing at runtime, `loadEncoder` catches the failure and
- * falls back to a clearly labelled estimate. That is a degraded answer, not a
+ * falls back to a clearly labeled estimate. That is a degraded answer, not a
  * wrong one.
  */
 const TOKENIZER_EXTERNALS = [

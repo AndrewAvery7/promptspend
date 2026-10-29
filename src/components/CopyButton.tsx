@@ -3,7 +3,7 @@ interface CopyButtonProps {
   value: string;
   /**
    * What was copied, in words, lower case — it is read mid-sentence in the
-   * accessible name ("Copy install command") and capitalised for the toast.
+   * accessible name ("Copy install command") and capitalized for the toast.
    */
   label: string;
   onToast: (message: string) => void;

@@ -233,7 +233,7 @@ describe('email lifecycle', () => {
   });
 
   /** RFC 8058: the mail client POSTs with the token in the query string. */
-  it('honours a one-click unsubscribe from a mail client', async () => {
+  it('honors a one-click unsubscribe from a mail client', async () => {
     await post('/v1/email/subscribe', { email: 'reader@example.com', cadence: 'weekly', scope: 'all' });
     const id = await subscriberId('reader@example.com');
 

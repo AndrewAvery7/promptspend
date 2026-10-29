@@ -18,7 +18,7 @@ import { expect, test } from '@playwright/test';
  * holds what Google is told (nothing, while it is paused).
  *
  * Cloudflare's Web Analytics beacon is never injected here either (it is added
- * at the edge), so the visitor counter is not exercised; its behaviour was
+ * at the edge), so the visitor counter is not exercised; its behavior was
  * checked against the live site: it reports the page's address without the
  * query string or fragment.
  *
@@ -34,7 +34,7 @@ const PAGES = ['/', '/models/claude-opus-5/', '/free-tiers/', '/receipt/', '/app
 /** Every localStorage key the site may write, and why. Anything else is new. */
 const INTERFACE_KEYS = new Set([
   'ps.theme', // light or dark
-  'ps.accent', // the accent colour
+  'ps.accent', // the accent color
   'ps.canvas', // the page background
   'ps.welcomeDismissed', // the welcome banner was closed
   'ps.appsLiveBannerDismissed', // the apps banner was closed

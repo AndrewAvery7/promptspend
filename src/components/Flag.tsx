@@ -14,10 +14,10 @@
  *
  * The catalog has four countries. Four small SVGs cost about a kilobyte, render
  * identically everywhere, stay crisp at any zoom, and inherit the page's own
- * border colour so they sit correctly in both themes.
+ * border color so they sit correctly in both themes.
  *
  * They are decorative: the two-letter code stays next to them as the accessible
- * name, so nothing depends on recognising a flag.
+ * name, so nothing depends on recognizing a flag.
  */
 
 const RATIO = { width: 16, height: 12 };
@@ -101,7 +101,7 @@ export function countryName(code: string): string {
 }
 
 interface FlagProps {
-  /** ISO-3166 alpha-2 code. Anything unrecognised renders nothing. */
+  /** ISO-3166 alpha-2 code. Anything unrecognized renders nothing. */
   country: string | undefined;
 }
 
@@ -119,7 +119,7 @@ export function Flag({ country }: FlagProps) {
       focusable="false"
     >
       <Shape />
-      {/* A hairline in the theme's own border colour, so the white flags do not
+      {/* A hairline in the theme's own border color, so the white flags do not
           dissolve into a light panel or glare on a dark one. */}
       <rect
         x="0.25"

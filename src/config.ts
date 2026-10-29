@@ -47,7 +47,7 @@ export const FREE_TIERS_URL = `${import.meta.env.BASE_URL}free-tiers/`;
 /** The articles and the monthly price reports, listed on one page so none of
  *  them is reachable only by its own address. */
 export const WRITING_INDEX_URL = `${import.meta.env.BASE_URL}writing/`;
-/** The files the site publishes as data, with the licence for each. */
+/** The files the site publishes as data, with the license for each. */
 export const DATA_PAGE_URL = `${import.meta.env.BASE_URL}data/`;
 
 /** The help and policy pages, which the generated pages' footers already linked. */
@@ -75,7 +75,7 @@ export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
  *
  * One edit to their artwork: the opaque plate and its border are removed, so
  * the badge sits on the footer rather than on a white card floating in it. The
- * mark, the wordmark and their colours are untouched.
+ * mark, the wordmark and their colors are untouched.
  */
 export const SWB_URL = 'https://sellwithboost.com';
 export const SWB_BADGE_LIGHT = `${import.meta.env.BASE_URL}sellwithboost-light.svg`;

@@ -14,7 +14,7 @@ describe('signed link tokens', () => {
 
   /**
    * The property that matters most. An unsubscribe link travels through mail
-   * scanners, forwards and archives; if it also authorised preference changes,
+   * scanners, forwards and archives; if it also authorized preference changes,
    * every one of those copies would be a credential for someone's settings.
    */
   it('refuses a token issued for a different purpose', async () => {

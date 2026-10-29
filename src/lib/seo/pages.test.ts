@@ -202,7 +202,7 @@ describe('buildPages', () => {
 
   it('says plainly when neither model wins on every workload', () => {
     // Cheap input and dear output against the reverse. The chatbot writes
-    // enough to favour `writer`; the input-heavy summariser flips to `reader`.
+    // enough to favor `writer`; the input-heavy summarizer flips to `reader`.
     const set = buildPages(
       catalog([
         model('reader', { providerId: 'openai', pricing: { input: 0.1, output: 30 } }),
@@ -419,7 +419,7 @@ describe('published comparisons', () => {
 });
 
 describe('pairDifferences', () => {
-  it('states each real difference once, naming the model it favours', () => {
+  it('states each real difference once, naming the model it favors', () => {
     const left = model('a', {
       displayName: 'Alpha',
       contextWindow: 1_000_000,

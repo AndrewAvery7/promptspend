@@ -106,7 +106,7 @@ export function ReceiptPage() {
       {/* The calculator's own header, whole: the same six links, search, Apps,
           Guided tour, appearance controls and freshness line (Andrew,
           2026-10-24; first the nav, 2026-09-05). Its views are links into the
-          calculator, which honours `/#compare` and the others. */}
+          calculator, which honors `/#compare` and the others. */}
       <SiteHeader
         base={import.meta.env.BASE_URL}
         current="receipt"

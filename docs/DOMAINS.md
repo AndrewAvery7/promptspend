@@ -175,7 +175,7 @@ Then **Settings → Pages → Custom domain** → `promptspend.com` → wait for
 certificate check → tick **Enforce HTTPS**.
 
 > **With Actions-based deploys, GitHub ignores the `CNAME` file in the
-> artifact.** That is only honoured for branch-based Pages. The custom domain
+> artifact.** That is only honored for branch-based Pages. The custom domain
 > has to be set in Settings (or via `PUT /repos/{owner}/{repo}/pages`), and
 > **then the deploy must be re-run** — the domain does not start serving from
 > the deployment that was already live. Skipping that second deploy leaves the
@@ -229,7 +229,7 @@ Email Sending requires the domain to use Cloudflare DNS, which step 1 arranged.
 4. In `wrangler.jsonc`: `"EMAIL_TRANSPORT": "cloudflare"` and
    `"EMAIL_FROM": "alerts@promptspend.com"`, then deploy.
 
-Send from `.com`, not `.dev`. Recipients recognise it, and the sending
+Send from `.com`, not `.dev`. Recipients recognize it, and the sending
 reputation you build belongs to the domain people actually see.
 
 ### 7. Turnstile

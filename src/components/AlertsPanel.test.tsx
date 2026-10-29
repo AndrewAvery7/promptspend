@@ -502,7 +502,7 @@ describe('managing an existing subscription', () => {
   it('explains an expired link instead of failing silently', async () => {
     window.history.replaceState(null, '', '/?alerts=stale-token');
     handlers.push((url) =>
-      url.includes('/v1/preferences') ? { status: 401, body: { error: 'Not authorised.' } } : undefined,
+      url.includes('/v1/preferences') ? { status: 401, body: { error: 'Not authorized.' } } : undefined,
     );
     renderPanel();
 

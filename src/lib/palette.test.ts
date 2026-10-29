@@ -79,7 +79,7 @@ describe.each(['light', 'dark'] as const)('chart palette in %s mode', (mode) => 
   const output = hexToLinear(PALETTE[mode].output);
   const surface = hexToLinear(PALETTE[mode].surface);
 
-  it('separates input from output for normal colour vision', () => {
+  it('separates input from output for normal color vision', () => {
     expect(deltaE(input, output)).toBeGreaterThanOrEqual(NORMAL_FLOOR);
   });
 
@@ -94,11 +94,11 @@ describe.each(['light', 'dark'] as const)('chart palette in %s mode', (mode) => 
 
   /**
    * Tritanopia confuses blue with green, so this pair is close under it. That is
-   * acceptable here only because colour is never the sole channel: the two
+   * acceptable here only because color is never the sole channel: the two
    * segments are adjacent in a fixed order and both are named in the legend
    * beside their value. This test documents the trade-off rather than hiding it.
    */
-  it('relies on labels, not colour alone, for tritan vision', () => {
+  it('relies on labels, not color alone, for tritan vision', () => {
     const separation = deltaE(simulate(input, 'tritan'), simulate(output, 'tritan'));
     expect(separation).toBeLessThan(CVD_FLOOR);
   });

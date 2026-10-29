@@ -36,7 +36,7 @@ own `/cdn-cgi/rum`, and no others. (Google Analytics 4 ran on promptspend.com fr
 | Stage     | Module                     | What it guarantees                                                                                                                                                       |
 | --------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Fetch     | `sync-pricing.ts`          | Bounded in time and size, shape-checked, retried. Losing a source, or getting a suspiciously small one, marks the run _degraded_ — and a degraded run publishes nothing. |
-| Normalise | `lib/normalize.ts`         | Upstream keys become stable ids (`slugify`), per-token costs become per-million rates, and only families named in the allowlist are captured.                            |
+| Normalize | `lib/normalize.ts`         | Upstream keys become stable ids (`slugify`), per-token costs become per-million rates, and only families named in the allowlist are captured.                            |
 | Merge     | `lib/merge.ts`             | The trust ladder: overrides beat the feed; the cross-check can only _flag_. Nothing published yesterday is deleted today.                                                |
 | Validate  | `src/lib/pricing/types.ts` | The merged catalog satisfies the same schema the app enforces at load, down to enum values and cross-field sanity. Failure aborts the write.                             |
 | Diff      | `lib/diff.ts`              | _Every_ field compared, split into price / metadata / review-state, plus a content hash. What the workflow commits is what the run produced.                             |
@@ -215,7 +215,7 @@ keyed by a hash rather than by the text: keying by the text left a full copy of 
 alive for the rest of the session.
 
 Each model is costed against **its own** tokenizer's view of the pasted text, which is why two cards can
-disagree about how many tokens the same prompt is. That is a real effect, not a rounding artefact.
+disagree about how many tokens the same prompt is. That is a real effect, not a rounding artifact.
 
 ## Rendering
 
@@ -261,7 +261,7 @@ scenario. That test is why the paragraph above is a guarantee rather than an int
 **The no-bundled-prices rule is repeated in all four**, because the temptation is different in each and
 the failure is identical. An extension sitting in the Marketplace for three months with rates baked into
 it, or an npm package doing the same, is the purest possible version of the problem this project exists to
-prevent. Each fetches the published catalog, holds it briefly, serves a labelled stale copy for a bounded
+prevent. Each fetches the published catalog, holds it briefly, serves a labeled stale copy for a bounded
 grace period, and then shows nothing rather than showing a number it cannot stand behind.
 
 The one thing `vscode/` cannot borrow is the catalog's own ids. Roughly half of them carry the upstream
@@ -276,7 +276,7 @@ Anthropic, missing every other provider, and looking exactly like working.
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `engine/*.test.ts` | The maths, including compounding history, cache handling, promotional windows and negative margins.                                                                                                                                                                                                       |
 | `tokenize.test.ts` | That the real tokenizer runs, that estimates stay within a sane margin of it, and that CJK costs more.                                                                                                                                                                                                    |
-| `pipeline.test.ts` | The trust ladder, both sanity thresholds, cold-start behaviour, stale retention, flag-once semantics, full-field diffing and changelog rendering.                                                                                                                                                         |
+| `pipeline.test.ts` | The trust ladder, both sanity thresholds, cold-start behavior, stale retention, flag-once semantics, full-field diffing and changelog rendering.                                                                                                                                                          |
 | `palette.test.ts`  | Colour-vision separation, simulated rather than assumed.                                                                                                                                                                                                                                                  |
 | `catalog.test.ts`  | Schema validation, including the malformed cases the pipeline could produce.                                                                                                                                                                                                                              |
 | `App.test.tsx`     | The views render, the URL round-trips, the tour and palette work, and every defect the pre-publication audit found stays fixed: caching off by default, paste-then-share fidelity, an extreme URL rendering rather than blanking, keyboard access to the chart, and no enabled control that does nothing. |

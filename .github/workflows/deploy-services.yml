@@ -15,7 +15,7 @@ name: Deploy the API and alerts Workers
 #   CLOUDFLARE_ACCOUNT_ID   the account the Workers live in
 #
 # Without them it does NOT fail: it prints a warning naming the manual command
-# and exits green, so a missing secret degrades to the old behaviour rather than
+# and exits green, so a missing secret degrades to the old behavior rather than
 # turning every merge red. Database migrations are never run from here: if a
 # push touches `worker/migrations/`, the alerts job fails on purpose and says to
 # run `npm run release`, because new code that expects a table the database does

@@ -30,7 +30,7 @@ body:
     id: pricing-url
     attributes:
       label: Link to the provider's pricing page
-      description: The source of record. Community catalogues are cross-checked against this.
+      description: The source of record. Community catalogs are cross-checked against this.
       placeholder: https://…
     validations:
       required: true

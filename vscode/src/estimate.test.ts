@@ -19,13 +19,13 @@ beforeAll(() => {
   catalog = new Catalog(raw);
 });
 
-const PROMPT = 'Summarise the following support ticket in three bullet points, then suggest a next action.';
+const PROMPT = 'Summarize the following support ticket in three bullet points, then suggest a next action.';
 
 describe('estimateSelection', () => {
   it('counts exactly for an OpenAI-family model', async () => {
     // gpt-5 declares a tiktoken tokenizer, so this is a measured count and not a
     // ratio. If js-tiktoken ever stops resolving, the site's loader falls back
-    // to a labelled estimate and this assertion is what notices.
+    // to a labeled estimate and this assertion is what notices.
     const [row] = await estimateSelection(PROMPT, [modelById('gpt-5')]);
     expect(row?.method).toBe('exact');
     expect(row?.tokens).toBeGreaterThan(0);

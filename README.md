@@ -98,7 +98,7 @@ written out against RFC 8291 and checked byte for byte against the RFC's own wor
 | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Output is priced separately**    | Output typically costs 3–5× input. Averaging the two, as many calculators do, understates most real workloads.                                                                                 |
 | **Chat history compounds**         | Turn _N_ re-sends turns 1…*N*−1 as input, so conversation cost grows with the square of the turn count.                                                                                        |
-| **Tokenizers differ per family**   | The same pasted text is counted with each model's own tokenizer — exactly (js-tiktoken, run in your browser) for OpenAI-family models and with a clearly labelled calibrated ratio elsewhere.  |
+| **Tokenizers differ per family**   | The same pasted text is counted with each model's own tokenizer — exactly (js-tiktoken, run in your browser) for OpenAI-family models and with a clearly labeled calibrated ratio elsewhere.   |
 | **Caching is not free**            | Cache _writes_ cost 1.25× input at both OpenAI and Anthropic. Counting only the cheaper reads reports a saving your invoice will not have, so writes are billed and caching is off by default. |
 | **Long context costs more**        | Above 272K input tokens OpenAI bills the whole request at 2× input and 1.5× output. Tiers apply per request, so a conversation can cross over partway through.                                 |
 | **Reasoning tokens are billable**  | A multiplier for hidden thinking tokens, because the visible answer is not what you pay for.                                                                                                   |
@@ -143,7 +143,7 @@ deleted; retiring one for good is a deliberate edit to `data/models-allowlist.js
 **Rung 1 is worked by hand, and the split is published rather than blurred.** Every row says which rung it
 came from, and rows read against a vendor's own page carry the URL that was read and the date it was read.
 Most of the catalog is now vendor-sourced — but not all of it, because some vendors do not publish a
-pricing page that lists their own models, and the honest answer there is to leave the row labelled
+pricing page that lists their own models, and the honest answer there is to leave the row labeled
 `litellm` rather than launder an aggregator's number into a first-party claim. The models this currently
 affects are named in [docs/DEFERRED.md](docs/DEFERRED.md). A number is only worth what its worst source is,
 so the site shows you the source per row instead of an average you cannot inspect.
@@ -288,7 +288,7 @@ Problems panel, and an Explorer view lists every model the repository calls, dea
 
 Everything it says is _Information_ severity, never a warning. None of these are mistakes and the
 extension has no idea what the code needs. The cheaper-model suggestion is off by default for the
-same reason the value map's capability axis is labelled illustrative: it is an opinion, where the
+same reason the value map's capability axis is labeled illustrative: it is an opinion, where the
 rest are facts.
 
 ```bash
@@ -363,7 +363,7 @@ provenance catalog cannot afford — so it stays empty until a rate actually mov
 ## Running it locally
 
 ```bash
-npm ci                 # `ci`, not `install` — this repo has a lockfile and CI honours it
+npm ci                 # `ci`, not `install` — this repo has a lockfile and CI honors it
 npm run dev            # http://localhost:5173
 ```
 
@@ -411,9 +411,9 @@ curated set of head-to-heads — from the same catalog and the same cost engine.
 
 ## Design and accessibility
 
-Cobalt on a cool-paper canvas, with a distinct set of _money_ colours that never change with branding:
+Cobalt on a cool-paper canvas, with a distinct set of _money_ colors that never change with branding:
 green means savings, red means this option costs more. The input/output chart pair is validated for
-colour-vision deficiency **in CI** — `src/lib/palette.test.ts` simulates protanopia and deuteranopia and
+color-vision deficiency **in CI** — `src/lib/palette.test.ts` simulates protanopia and deuteranopia and
 fails the build if the two marks stop being distinguishable.
 
 `src/lib/contrast.test.ts` reads `tokens.css` directly and fails the build if any accent, on any theme and
@@ -440,7 +440,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                                                |
 | [docs/FREE_TIERS.md](docs/FREE_TIERS.md)               | The free-tier pages: where the facts live, the daily quote check, and how to update a record                                        |
 | [docs/ACCOUNTS_PLAN.md](docs/ACCOUNTS_PLAN.md)         | The plan for user accounts: sign-in, where it must live, data, duties, phases. Not built yet                                        |
-| [docs/SPONSORS.md](docs/SPONSORS.md)                   | The sponsor policy: never in the data, always labelled, one slot per page. No sponsor yet                                           |
+| [docs/SPONSORS.md](docs/SPONSORS.md)                   | The sponsor policy: never in the data, always labeled, one slot per page. No sponsor yet                                            |
 | [docs/AUTOMATION.md](docs/AUTOMATION.md)               | What runs by itself while working on the project: the hooks, `/ship`, the reviewers, the test-count self-fix, and the Worker deploy |
 | [docs/PROMO.md](docs/PROMO.md)                         | How the promo video is built from real screenshots, and how to rebuild it                                                           |
 | [mcp/README.md](mcp/README.md)                         | The MCP server — pricing for coding agents, with the source and date on every number                                                |
@@ -460,7 +460,7 @@ The three rules that are not up for negotiation, because breaking any of them tu
 guess with good typography:
 
 1. **Never invent a rate.** If a provider does not publish a number, charge full price and say so.
-2. **A claim on screen must be true of the code.** When behaviour and copy disagree, fixing the copy is a
+2. **A claim on screen must be true of the code.** When behavior and copy disagree, fixing the copy is a
    legitimate fix; leaving both is not.
 3. **No enabled control that does nothing.** Describe a planned feature — do not simulate it.
 
@@ -476,12 +476,12 @@ just a confident guess.
 - **"Exact" means exact raw text.** The tokenizer counts the string you give it. A real request also bills
   message framing, tool definitions and any images. Treat an exact count as a floor.
 - **Token counts for non-OpenAI families are estimates** from calibrated characters-per-token ratios,
-  labelled as such everywhere they appear. Those providers do not ship a browser-runnable tokenizer.
+  labeled as such everywhere they appear. Those providers do not ship a browser-runnable tokenizer.
 - **The capability axis on the value map is illustrative**, not a benchmark. Models without an estimate
   are not plotted at all rather than being given a default, and the chart says how many that is.
 - **Caching is off by default** and the estimate charges cache writes where a provider publishes a rate.
   Where one does not, cached tokens are billed at the full input rate rather than at an invented discount.
-  Providers that bill cache residency separately are labelled with that per-hour rate; it is excluded from
+  Providers that bill cache residency separately are labeled with that per-hour rate; it is excluded from
   the estimate until a retention duration is known, and enabling caching raises an explicit warning.
 - **Long-context tiers are modelled where they are published** (per request, not per conversation). Where
   a provider has a tier we have not recorded, the estimate says so instead of quietly using the flat rate.
@@ -541,7 +541,7 @@ alerts are not switched on, rather than rendering a form that cannot work.
 See [SECURITY.md](SECURITY.md). Wrong prices are treated as the most serious class of bug this project
 can have, and are explicitly in scope for a report.
 
-## Licence
+## License
 
 MIT — see [LICENSE](LICENSE). The self-hosted typefaces (Space Grotesk, IBM Plex Sans, JetBrains Mono)
 are SIL Open Font License 1.1.

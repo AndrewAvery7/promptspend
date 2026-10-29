@@ -1,5 +1,5 @@
 /**
- * The daily shut-down check: is any model the catalogue shows as live one its
+ * The daily shut-down check: is any model the catalog shows as live one its
  * vendor has already shut down?
  *
  * The vendor-page check (vendor-check.ts) confirms a model's PRICE, and a
@@ -14,7 +14,7 @@
  * Deprecation pages are tables, so they are read by code rather than by a
  * model: a column named like "Shutdown date" and a column of model names. Only
  * an exact calendar date counts — "Not sooner than…", "To be announced" and
- * "N/A" never do — and the check never edits the catalogue. It reports, and
+ * "N/A" never do — and the check never edits the catalog. It reports, and
  * the merge raises a review flag on a still-live row whose shutdown date has
  * passed. Archiving stays a deliberate edit (`status: "deprecated"` with a
  * `$note` quoting the vendor), as it always has.
@@ -36,7 +36,7 @@ export interface ShutdownSource {
   /** Where the page also states a lifecycle state, a row it still calls active never counts as shut down. */
   state?: { column: RegExp; active: RegExp };
   /**
-   * Match a dated snapshot to its undated catalogue id (`claude-opus-4-1-20250805`
+   * Match a dated snapshot to its undated catalog id (`claude-opus-4-1-20250805`
    * is `claude-opus-4-1`). Right where a model has one snapshot; wrong for
    * OpenAI, whose `gpt-4o-2024-05-13` can be shut down while `gpt-4o` lives on.
    */
@@ -80,7 +80,7 @@ export interface Notice {
   stateAllows: boolean;
 }
 
-/** A catalogue model a deprecation page names. */
+/** A catalog model a deprecation page names. */
 export interface ShutdownItem {
   id: string;
   providerId: string;
@@ -214,8 +214,8 @@ export function readNotices(source: ShutdownSource, text: string): Notice[] {
 }
 
 /**
- * The names a catalogue id may appear under on its vendor's page: the id itself
- * (`o1`, `claude-opus-4-1`), and for Gemini the key without the catalogue's own
+ * The names a catalog id may appear under on its vendor's page: the id itself
+ * (`o1`, `claude-opus-4-1`), and for Gemini the key without the catalog's own
  * `gemini-` prefix (`gemini-gemini-3.1-pro-preview`).
  */
 function catalogNames(id: string, providerId: string): string[] {

@@ -77,7 +77,7 @@ export function requirePushEndpoint(value: unknown): string {
 
   const host = url.hostname.toLowerCase();
   const known = PUSH_HOSTS.some((entry) => (entry.startsWith('.') ? host.endsWith(entry) : host === entry));
-  if (!known) throw badRequest('That push endpoint is not from a recognised push service.');
+  if (!known) throw badRequest('That push endpoint is not from a recognized push service.');
 
   return url.toString();
 }

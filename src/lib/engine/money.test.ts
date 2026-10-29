@@ -30,7 +30,7 @@ describe('costPico', () => {
     expect(picoToDollars(costPico(5_400, 15))).toBe(0.081);
   });
 
-  it('rounds fractional token counts, which are always estimation artefacts', () => {
+  it('rounds fractional token counts, which are always estimation artifacts', () => {
     expect(costPico(10.4, 1)).toBe(costPico(10, 1));
     expect(costPico(10.6, 1)).toBe(costPico(11, 1));
   });

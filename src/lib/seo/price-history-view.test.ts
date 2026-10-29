@@ -110,7 +110,7 @@ describe('recentRepricings', () => {
     ]);
   });
 
-  it('honours the limit and counts corrections separately', () => {
+  it('honors the limit and counts corrections separately', () => {
     expect(recentRepricings(rows, 1)).toHaveLength(1);
     expect(correctionCount(rows)).toBe(1);
   });
@@ -124,7 +124,7 @@ describe('priceChartSvg', () => {
     series: modelHistory(REPRICED, 'm1').series,
   });
 
-  it('is a labelled image with a title and description, and escapes the model name', () => {
+  it('is a labeled image with a title and description, and escapes the model name', () => {
     expect(svg).toContain('role="img"');
     expect(svg).toContain('<title id="chart-title">Model &#60;One&#62; price history</title>');
     expect(svg).not.toContain('Model <One>');

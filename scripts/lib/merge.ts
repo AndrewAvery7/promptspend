@@ -1,7 +1,7 @@
 /**
  * The trust ladder (see docs/ARCHITECTURE.md):
  *   1. hand-verified vendor overrides   — always win
- *   2. the LiteLLM community catalogue  — the automated feed
+ *   2. the LiteLLM community catalog  — the automated feed
  *   3. OpenRouter                       — cross-check only, never a source
  *   4. sanity rules                     — anything suspicious needs a human
  *
@@ -353,8 +353,8 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       // A promotion is published through its last day and not after. The engine
       // already stops applying it on the morning after (`effectivePricing`), so
       // the price a visitor is billed is right either way; what an expired block
-      // used to do was fail catalogue validation, which held the whole morning's
-      // catalogue back until somebody deleted a block of data by hand. The
+      // used to do was fail catalog validation, which held the whole morning's
+      // catalog back until somebody deleted a block of data by hand. The
       // override keeps the block (it is the record of what the vendor offered)
       // and the vendor-page check still compares the base price it falls back to.
       ...(override?.pricing?.intro && override.pricing.intro.until >= isoDate

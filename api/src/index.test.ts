@@ -223,7 +223,7 @@ describe('documents that do not need the catalog', () => {
   });
 
   it('names its own sitemap, not the other host’s', async () => {
-    // A cross-host sitemap reference is only honoured when both hosts are
+    // A cross-host sitemap reference is only honored when both hosts are
     // verified in the same search-console account, and it tells a crawler of
     // .dev about pages that are not on .dev.
     const robots = await (await get('/robots.txt')).text();
@@ -492,7 +492,7 @@ describe('when the catalog cannot be trusted', () => {
     }
   });
 
-  it('serves a retained copy, labelled, rather than nothing at all', async () => {
+  it('serves a retained copy, labeled, rather than nothing at all', async () => {
     // Zero seconds of freshness means every request revalidates, which is the
     // same code path a cached copy takes once its window has passed — and it is
     // reachable from a test, where reaching into `caches.default` is not: the

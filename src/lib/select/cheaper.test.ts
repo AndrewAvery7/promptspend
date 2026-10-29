@@ -104,7 +104,7 @@ describe('defaults', () => {
     expect(DEFAULT_SCALE.conversationsPerDay).toBeGreaterThan(0);
   });
 
-  it('honours a caller-supplied workload', () => {
+  it('honors a caller-supplied workload', () => {
     const target = model('gpt-5');
     const heavy = findCheaperModels(catalog, target, {
       workload: { ...DEFAULT_WORKLOAD, outputTokens: DEFAULT_WORKLOAD.outputTokens * 100 },

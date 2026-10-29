@@ -80,7 +80,7 @@ export function LearnSection({
               Try it: the same text is a different token count on every model
             </Text>
             <Text style={styles.body}>
-              Paste any sample below. Counts are private, calculated on this device, and deliberately labelled
+              Paste any sample below. Counts are private, calculated on this device, and deliberately labeled
               as estimates until exact tokenizers pass physical-device parity tests.
             </Text>
           </TourTarget>

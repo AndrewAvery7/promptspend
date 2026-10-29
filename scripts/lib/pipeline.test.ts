@@ -118,7 +118,7 @@ describe('fromLiteLLM', () => {
 });
 
 describe('fromOpenRouter and comparisonKey', () => {
-  it('matches the same model across differently-named catalogues', () => {
+  it('matches the same model across differently-named catalogs', () => {
     expect(comparisonKey('moonshot/kimi-k2.6')).toBe(comparisonKey('moonshotai/kimi-k2.6'));
     expect(comparisonKey('anthropic/claude-sonnet-5')).toBe(comparisonKey('claude-sonnet-5'));
   });
@@ -212,8 +212,8 @@ describe('mergeCatalog — the trust ladder', () => {
     expect(validateCatalog(lastDay)).toEqual([]);
 
     // The morning after: the block falls out and the base price stands, so the
-    // catalogue still validates. Before this, an expired block failed validation
-    // and held back the whole morning's catalogue until somebody edited the file.
+    // catalog still validates. Before this, an expired block failed validation
+    // and held back the whole morning's catalog until somebody edited the file.
     const nextDay = merge('2026-09-01T11:00:00.000Z');
     const sonnet = nextDay.models.find((m) => m.id === 'claude-sonnet-5')!;
     expect(sonnet.pricing.intro).toBeUndefined();

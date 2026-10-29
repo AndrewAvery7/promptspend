@@ -40,7 +40,7 @@ export default defineConfig({
           // Cloudflare; a test run must never attempt a real delivery. Leaving
           // this to the deployed value meant flipping the live transport turned
           // eight passing tests into 503s — the suite was describing production
-          // configuration rather than behaviour.
+          // configuration rather than behavior.
           EMAIL_TRANSPORT: 'console',
         },
       },

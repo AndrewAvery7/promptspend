@@ -52,7 +52,7 @@ A second, deliberately separate list that existed to send exactly one message:
 an email when the iPhone and Android apps were downloadable. It had its own
 table (`launch_subscribers`, migration `0003`), its own token purposes
 (`launch-confirm`, `launch-unsubscribe`), its own Turnstile action and its own
-confirmation copy, so neither opt-in could silently authorise the other.
+confirmation copy, so neither opt-in could silently authorize the other.
 
 **Closed on 2026-09-23, when both apps went live.** The website banner that
 collected addresses now links to the stores, and `/v1/launch/subscribe` answers

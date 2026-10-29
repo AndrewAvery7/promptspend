@@ -8,7 +8,7 @@
  * assumption belongs, which is why every row here links into it.
  *
  * Token counts come from the site's own tokenizer dispatch: exact via
- * js-tiktoken for OpenAI-family models, a labelled calibrated ratio elsewhere.
+ * js-tiktoken for OpenAI-family models, a labeled calibrated ratio elsewhere.
  * `method` and `note` are carried through untouched so the caller can show which
  * of the two it got.
  */

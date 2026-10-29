@@ -90,7 +90,7 @@ whose first rule is that a claim on screen must be true of the code.
 
 `npm run check:social-card` recomputes all three through the real engine, with
 the real default selection, the real default scenario and promotional rates
-honoured, and fails when the artwork or the alt text has drifted:
+honored, and fails when the artwork or the alt text has drifted:
 
 ```bash
 npm run check:social-card

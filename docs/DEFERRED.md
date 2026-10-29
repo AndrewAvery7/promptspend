@@ -81,7 +81,7 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 > **Superseded 2026-10-05 and 2026-10-06.** The owner approved cookieless
 > Cloudflare Web Analytics for the website on 2026-10-05, and on 2026-10-06
 > decided to allow full analytics with cookies (behind a consent banner), the
-> site's own scripts on every page, planning for accounts, and clearly labelled
+> site's own scripts on every page, planning for accounts, and clearly labeled
 > sponsors kept out of the price data. The promises quoted below have been
 > rewritten. The reasoning is kept as the record of why it was once refused.
 >
@@ -203,7 +203,7 @@ whole of it rather than a sample:
   row anyone has to verify separately.
 
 Aggregator sites have numbers for all of them, and that is precisely the source
-this catalog refuses. These rows stay honestly labelled `litellm` until a
+this catalog refuses. These rows stay honestly labeled `litellm` until a
 first-party page carries them.
 
 A second attempt on 2026-08-03 went past the pricing pages to each vendor's

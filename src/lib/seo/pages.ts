@@ -15,7 +15,7 @@
  *
  * The rule these pages live or die by: **every page must contain something no
  * other page contains**. Mass-produced pages that differ only in a name are
- * doorway pages, they are recognised as such, and they drag down the pages
+ * doorway pages, they are recognized as such, and they drag down the pages
  * around them. So each one carries its own rates, its own three monthly bills,
  * its own position in the catalog, and its own honest warnings.
  */

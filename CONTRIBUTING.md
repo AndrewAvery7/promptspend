@@ -87,7 +87,7 @@ formatting it never looked at.
   first. Add the case, watch it fail, then make it pass.
 - `scripts/lib/pipeline.test.ts` — the trust ladder and the sanity rules, against fixtures rather than the
   network.
-- `src/lib/palette.test.ts` — the colour-vision guarantee. If you re-theme the charts, this tells you
+- `src/lib/palette.test.ts` — the color-vision guarantee. If you re-theme the charts, this tells you
   whether the result is still readable.
 - `src/App.test.tsx` — that the views render, the scenario round-trips through the URL, and the tour and
   command palette work.
@@ -100,7 +100,7 @@ formatting it never looked at.
 - **Never invent a rate.** If a provider does not publish a number, charge the full price and say so. An
   assumed discount is flattering, and flattering is the failure mode of every calculator on the web.
 - **A claim on screen must be true of the code.** If the copy says two sources are compared, two sources
-  are compared; if it says a link restores the estimate, it restores the estimate. When behaviour and copy
+  are compared; if it says a link restores the estimate, it restores the estimate. When behavior and copy
   disagree, changing the copy is a legitimate fix — quietly leaving both is not.
 - **No enabled control that does nothing.** Describe a planned feature; do not simulate it, and never
   accept an email address into a form that cannot subscribe it.

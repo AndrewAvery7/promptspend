@@ -3,7 +3,7 @@
  *
  * Inline and static on purpose. The generated pages carry no script of their
  * own and the policy forbids inline styles, so the chart is plain SVG whose
- * colours come from classes in the page stylesheet, and the table beside it
+ * colors come from classes in the page stylesheet, and the table beside it
  * carries every figure for anyone who cannot see a picture.
  *
  * A rate holds its value until the next change, so each line is a staircase

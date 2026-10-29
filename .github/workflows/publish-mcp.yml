@@ -3,7 +3,7 @@ name: Publish to the MCP Registry
 # Listing the server where agents actually look for it.
 #
 # The registry is the discovery surface `modelcontextprotocol/servers` retired
-# its hand-maintained list in favour of, and the aggregators (Glama, PulseMCP)
+# its hand-maintained list in favor of, and the aggregators (Glama, PulseMCP)
 # read it rather than the repository — so an unlisted server is invisible to
 # them no matter how well the npm package is published.
 #

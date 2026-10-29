@@ -8,7 +8,7 @@ import { matchFamily, type Allowlist } from './normalize';
  * The real filter file, not a fixture. `pipeline.test.ts` carries its own
  * small allowlist, so a typo in `data/models-allowlist.json` was only ever
  * caught by the next morning's sync. The patterns here are the ones that
- * decide what reaches the public catalogue.
+ * decide what reaches the public catalog.
  */
 const ALLOWLIST = JSON.parse(
   readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../../data/models-allowlist.json'), 'utf8'),

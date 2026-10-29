@@ -37,8 +37,8 @@ export const WORKLOAD_PROFILES: readonly WorkloadProfile[] = [
     scale: { conversationsPerDay: 2_500, monthlyActiveUsers: 1_500, revenuePerUserPerMonth: 0 },
   },
   {
-    id: 'summariser',
-    label: 'Document summariser',
+    id: 'summarizer',
+    label: 'Document summarizer',
     summary: '1,000 single-shot summaries a day',
     detail:
       'One 12,000-token document in, an 800-token summary out, no conversation history. The case where input dominates the bill.',

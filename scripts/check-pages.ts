@@ -11,17 +11,17 @@
  * `docs/PAGES.md`, six rows of a table in the same file, an illustration of the
  * combinatorial alternative (`69 × 68 ÷ 2 = 2,346`) that quietly depends on the
  * model count, the same illustration again in a doc comment in
- * `src/lib/seo/pages.ts`, and two mentions in `README.md`. A catalogue change
+ * `src/lib/seo/pages.ts`, and two mentions in `README.md`. A catalog change
  * moves all of them at once.
  *
  * **`--fix` writes them.** They used to move only by hand, which meant the one
  * event that changes them — a model arriving or leaving — was also the event
  * that blocked its own publication: on 2026-08-22 the sync discovered
- * `moonshot-kimi-k3`, published a correct catalogue, and then failed its deploy
+ * `moonshot-kimi-k3`, published a correct catalog, and then failed its deploy
  * here. The daily sync now runs this with `--fix`, the way it already rewrites
  * the README's model and provider badges. See the note above `FIX` below.
  *
- * **Derived, not executed.** `buildPages` is pure — it takes the catalogue and
+ * **Derived, not executed.** `buildPages` is pure — it takes the catalog and
  * returns the page set — so the counts come from calling it, not from building
  * to disk and counting files. That keeps this fast enough to sit in `verify`
  * ahead of the build rather than after it, and means a wrong number fails
@@ -92,8 +92,8 @@ let ledger = await readLedger();
 /* ── The page ledger ──
    `data/published-pages.json` remembers every page ever published, the date its
    content last changed, and every comparison pair — see src/lib/seo/ledger.ts.
-   `--fix` records this catalogue's pages in it (dated by the catalogue, not the
-   clock, so the same catalogue always writes the same file). Without `--fix` a
+   `--fix` records this catalog's pages in it (dated by the catalog, not the
+   clock, so the same catalog always writes the same file). Without `--fix` a
    page the ledger has not recorded is a failure: it would publish dated today
    on every build until somebody noticed, which is the bug the ledger exists to
    end. Fixed first and then counted, because recording a comparison is what
@@ -140,11 +140,11 @@ let pagesSrc = await readFile(PAGES_SRC, 'utf8');
  * `--fix`: write the figures instead of only complaining about them.
  *
  * Adding a model moves all nine of these at once, so before this existed a
- * sync that discovered one published a correct catalogue and then failed its
+ * sync that discovered one published a correct catalog and then failed its
  * own deploy on the documentation describing it. That happened on 2026-08-22
  * with `moonshot-kimi-k3`: the prices were right, current and unpublishable.
  * `sync-pricing.ts` already rewrites the README's model and provider badges
- * from the catalogue it just built; these are the same kind of derived figure
+ * from the catalog it just built; these are the same kind of derived figure
  * and had simply never been given the same treatment.
  *
  * It lives here rather than in a writer of its own so that the patterns have
@@ -367,7 +367,7 @@ for (const [label, text] of [
     const n = capture(m, 1);
     const nMinus = capture(m, 2);
     const product = capture(m, 3);
-    if (n !== models) fail(`${label}: illustration opens with ${n}, the catalogue has ${models} models`);
+    if (n !== models) fail(`${label}: illustration opens with ${n}, the catalog has ${models} models`);
     if (nMinus !== n - 1)
       fail(`${label}: illustration says ${n} × ${nMinus}; the second term must be ${n - 1}`);
     if (product !== expectedPairs) {
@@ -397,7 +397,7 @@ if (problems.length > 0) {
   console.log(
     '✓ docs/PAGES.md, README.md and the pages.ts doc comment all agree, and the total is the sum of its parts',
   );
-  console.log(`✓ ${LEDGER_FILE} records every page this catalogue builds`);
+  console.log(`✓ ${LEDGER_FILE} records every page this catalog builds`);
   if (set.droppedComparisons > 0) {
     console.log(`  note: ${set.droppedComparisons} qualifying comparison(s) dropped by the page ceiling`);
   }

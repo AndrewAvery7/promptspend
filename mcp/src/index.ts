@@ -106,7 +106,7 @@ async function main(): Promise<void> {
       const result = await dispatch(name, (args ?? {}) as Record<string, unknown>);
       return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
     } catch (error) {
-      // A bounded fallback is explicitly labelled by dispatch. Past that grace
+      // A bounded fallback is explicitly labeled by dispatch. Past that grace
       // period, an unreachable catalog is reported as a failure.
       const message =
         error instanceof CatalogUnavailableError

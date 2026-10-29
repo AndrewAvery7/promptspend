@@ -52,7 +52,7 @@ async function loadEncoder(encoding: 'o200k_base' | 'cl100k_base'): Promise<Tikt
  * The tokenizer is exact over *the string it is given*. A real API request
  * carries more than that string: role and message framing, tool definitions,
  * structured-output schemas, images. Those are billed too. Calling the result
- * "exact" without saying so would overstate it, so the number is labelled
+ * "exact" without saying so would overstate it, so the number is labeled
  * exact **raw-text** tokens everywhere it appears.
  */
 export const FRAMING_CAVEAT =
@@ -60,7 +60,7 @@ export const FRAMING_CAVEAT =
 
 /**
  * Count tokens for a specific model, using the model's real tokenizer where we
- * have one and a clearly labelled estimate everywhere else.
+ * have one and a clearly labeled estimate everywhere else.
  */
 export async function countTokens(text: string, model: Model): Promise<TokenCount> {
   if (text.length === 0) return { tokens: 0, method: 'exact', note: 'Empty' };

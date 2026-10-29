@@ -62,7 +62,7 @@ const catalog: PricingCatalog = {
 
 const SET = buildPages(catalog, { asOf: new Date('2026-08-02T00:00:00Z') });
 
-// One record per verdict, so every badge colour and the conflict and
+// One record per verdict, so every badge color and the conflict and
 // "unpublished" blocks are all emitted at least once.
 const freeFact = (id: string, extra: Record<string, unknown> = {}) => ({
   id,
@@ -144,7 +144,7 @@ describe('the generated pages stylesheet', () => {
     expect(missing).toEqual([]);
   });
 
-  it('styles both colour schemes, since the pages carry no theme toggle', () => {
+  it('styles both color schemes, since the pages carry no theme toggle', () => {
     // No JavaScript on these pages means no toggle, so `prefers-color-scheme`
     // is the only signal there is. Shipping light-only would leave every dark
     // reader on a white page.

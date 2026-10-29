@@ -127,7 +127,7 @@ function controls(root: ParentNode): string[] {
 }
 
 describe('the header', () => {
-  it('has the same six links, with Tiers capitalised, on the calculator', () => {
+  it('has the same six links, with Tiers capitalized, on the calculator', () => {
     calculatorHeader();
     const nav = screen.getByRole('navigation', { name: 'Main' });
     expect(words(nav, 'button, a')).toEqual(SIX);

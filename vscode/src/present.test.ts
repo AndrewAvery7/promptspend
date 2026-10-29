@@ -34,7 +34,7 @@ describe('inlineText', () => {
   // flagged. The moment its vendor override was restored and the row went
   // disputed, a test named "is terse" failed because a price carried the
   // warning this project exists to show. Pinning the end of the string to the
-  // rate asserted the catalog's review state, not the renderer's behaviour.
+  // rate asserted the catalog's review state, not the renderer's behavior.
   it('is terse in compact mode', () => {
     expect(inlineText(matchIn('"claude-sonnet-5"'), 'compact')).toMatch(
       /^\$[\d.]+ \/ \$[\d.]+ per M(?: {2}⚠ disputed)?$/,

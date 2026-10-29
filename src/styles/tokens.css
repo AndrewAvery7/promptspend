@@ -3,16 +3,16 @@
  *
  * Two independent axes:
  *   data-theme  = light | dark      (viewer preference)
- *   data-accent = cobalt | emerald | teal | violet   (brand colour)
+ *   data-accent = cobalt | emerald | teal | violet   (brand color)
  *
  * Money semantics are deliberately NOT part of the accent system. Green always
  * means "you save", red always means "this costs more", and the chart pair is a
- * fixed blue/green validated for colour-vision deficiency in both themes
+ * fixed blue/green validated for color-vision deficiency in both themes
  * (see src/lib/palette.test.ts). Re-branding must never repaint them.
  *
  * Every accent here is checked against every surface it can appear on by
  * src/lib/contrast.test.ts, which reads this file. Adding an accent without
- * meeting 4.5:1 fails the build rather than shipping a colour that only some
+ * meeting 4.5:1 fails the build rather than shipping a color that only some
  * people can read.
  */
 
@@ -41,7 +41,7 @@
   --warn: #9a5b08;
   --warn-soft: #f6ebd8;
 
-  /* chart marks — validated colour-blind-safe against --surface */
+  /* chart marks — validated color-blind-safe against --surface */
   --c-in: #2166a5;
   --c-out: #0e7b43;
   --c-write: #b8690c;
@@ -68,7 +68,7 @@
   /* Nudged up from #4b8fc9, which cleared every opaque surface but not its own
    * soft fill: `.note` and the status chip both put --info text on --info-soft,
    * and 14% of the old blue over --surface landed at 4.32:1. The accent matrix
-   * never covered this pairing because the status colours sit outside the
+   * never covered this pairing because the status colors sit outside the
    * accent system deliberately. See the chip cases in src/lib/contrast.test.ts. */
   --info: #4d93ce;
   --info-soft: rgb(77 147 206 / 14%);

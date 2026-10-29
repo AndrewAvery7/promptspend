@@ -46,7 +46,7 @@ describe('findAvailable', () => {
     expect(findAvailable(feed, [STEPFUN, FLASHX], new Set())).toEqual([]);
   });
 
-  it('stops listing anything already in the catalogue', () => {
+  it('stops listing anything already in the catalog', () => {
     const feed = { 'zai/glm-5.3-flashx': row(0.37, 1.25), 'stepfun/step-5-preview': row(1, 2.7) };
     const found = findAvailable(feed, [STEPFUN, FLASHX], new Set(['zai-glm-5.3-flashx']));
     expect(found.map((entry) => entry.item.id)).toEqual(['stepfun']);
@@ -76,7 +76,7 @@ describe('renderReport', () => {
   it('names what appeared, the feed price, the vendor page and what else it needs', () => {
     const found = findAvailable({ 'stepfun/step-5-preview': row(1, 2.7) }, [STEPFUN], new Set());
     const report = renderReport(found, '2026-10-26');
-    expect(report).toContain('something the catalogue has been waiting for (checked 2026-10-26)');
+    expect(report).toContain('something the catalog has been waiting for (checked 2026-10-26)');
     expect(report).toContain('`stepfun/step-5-preview`: feed says $1 in / $2.7 out');
     expect(report).toContain('https://platform.stepfun.ai/docs/en/guides/pricing/details');
     expect(report).toContain('Needs a new provider.');

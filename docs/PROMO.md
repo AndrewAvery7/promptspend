@@ -254,7 +254,7 @@ Endpoint `fal-ai/veo3.1`, `aspect_ratio: "16:9"`, `resolution: "1080p"`.
 **Hero** — `duration: "8s"`, `generate_audio: true`, `seed: 73501`:
 
 > Abstract macro shot of a dense field of luminous blue and cyan light particles
-> bursting outward from a brilliant white core at the centre of frame, radiating
+> bursting outward from a brilliant white core at the center of frame, radiating
 > in long motion-blurred streaks toward the camera through dark haze. Deep
 > near-black background, shallow depth of field, soft bokeh orbs, faint teal and
 > green highlights in the corners. Slow continuous camera push forward.
@@ -265,7 +265,7 @@ Endpoint `fal-ai/veo3.1`, `aspect_ratio: "16:9"`, `resolution: "1080p"`.
 **End card** — `duration: "4s"`, `generate_audio: false`, `seed: 73502`:
 
 > A still, calm, deep navy-blue field with a soft glowing cobalt-blue radial
-> light in the centre of frame, tiny distant white star specks scattered across
+> light in the center of frame, tiny distant white star specks scattered across
 > the picture, very gentle drifting haze. Almost no motion - the central light
 > breathes slowly and settles. Minimal and airy, with clean empty space through
 > the middle of the frame. Fills the whole widescreen frame edge to edge. Pure
@@ -298,7 +298,7 @@ music prompt, and `stitch-promo.sh` re-derives the loop from it.
   `stitch-promo.sh` now runs `cropdetect` itself from one second in (past the
   fade from black, which otherwise reports a nearly empty frame), takes the modal
   result, and crops only when the height is genuinely short. When it does crop,
-  it derives the width at 16:9 and centres it, because removing the bars alone
+  it derives the width at 16:9 and centers it, because removing the bars alone
   leaves a frame that then has to be squashed.
 
 - **Capture by selector, never by pixel rectangle.** A hard-coded crop silently
@@ -319,10 +319,10 @@ music prompt, and `stitch-promo.sh` re-derives the loop from it.
   `volumedetect`'s output, so the scan silently found every window equally loud
   and failed _open_; and fixing only the tail still crossfaded into the intro.
 - **A fixed canvas is a guess about text metrics.** `assets/logo.png` had 9px of
-  padding on the left and 167 on the right, so `align="center"` centred the
+  padding on the left and 167 on the right, so `align="center"` centered the
   canvas and left the logo visibly off to one side. Both the README logo and the
   end-card logo are now cropped to what was actually drawn and padded evenly, so
-  they centre wherever they are placed and on whichever font a machine falls
+  they center wherever they are placed and on whichever font a machine falls
   back to.
 - **The spread must be computed the site's way.** `Catalog.rateSpread` uses
   primary, non-stale, priced models — _not_ `status === 'current'`. Filtering on

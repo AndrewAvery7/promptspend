@@ -571,7 +571,7 @@ describe('the open-data page', () => {
     history: { firstDate: '2026-07-01', rows: 240, lastChangeDate: '2026-10-28' },
   };
 
-  it('describes three datasets with their licences', () => {
+  it('describes three datasets with their licenses', () => {
     const html = renderDataPage(input, recordingContext());
     expect(html.match(/"@type":\s*"Dataset"/g)).toHaveLength(3);
     expect(html).toContain('MIT');

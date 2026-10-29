@@ -48,7 +48,7 @@ describe('estimateTokens', () => {
     expect(chinese).toBeGreaterThan(english * 2);
   });
 
-  it('honours a family-specific ratio', () => {
+  it('honors a family-specific ratio', () => {
     const dense = estimateTokens('a'.repeat(100), {
       kind: 'approx',
       charsPerToken: 2,

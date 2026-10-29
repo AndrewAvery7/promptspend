@@ -140,7 +140,7 @@ export function commentRanges(text: string, syntax: CommentSyntax): Range[] {
   return ranges;
 }
 
-/** Index past the closing quote, honouring backslash escapes. */
+/** Index past the closing quote, honoring backslash escapes. */
 function skipString(text: string, openIndex: number, quote: string): number {
   let i = openIndex + 1;
   while (i < text.length) {

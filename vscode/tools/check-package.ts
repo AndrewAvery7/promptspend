@@ -15,7 +15,7 @@
  *     `createRequire().resolve` — CJS resolution — so it found the .cjs trio
  *     and passed.
  *   - `loadEncoder` catches a failed import and falls back to a calibrated
- *     ratio, correctly labelled "estimate". Nothing threw. Nothing logged.
+ *     ratio, correctly labeled "estimate". Nothing threw. Nothing logged.
  *
  * The result installed, activated and annotated correctly, and reported every
  * token count as an estimate — including for OpenAI models, where running the
@@ -105,7 +105,7 @@ function stageAndProbe(): { ok: true; tokens: number } | { ok: false; detail: st
         "const { Tiktoken } = await import('js-tiktoken/lite');",
         "const ranks = (await import('js-tiktoken/ranks/o200k_base')).default;",
         "await import('js-tiktoken/ranks/cl100k_base');",
-        "const text = 'Summarise the following support ticket in three bullet points.';",
+        "const text = 'Summarize the following support ticket in three bullet points.';",
         'process.stdout.write(String(new Tiktoken(ranks).encode(text).length));',
       ].join('\n'),
     );

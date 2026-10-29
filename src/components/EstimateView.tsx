@@ -186,7 +186,7 @@ export function EstimateView({
         <p className="note note--info" role="status">
           <span>
             <b>Restored from a shared link.</b> Some of these token counts were measured from a pasted prompt.
-            The counts travelled; the prompt text did not — it is never put in a URL.
+            The counts traveled; the prompt text did not — it is never put in a URL.
           </span>
         </p>
       )}

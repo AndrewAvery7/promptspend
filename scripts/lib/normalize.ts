@@ -1,5 +1,5 @@
 /**
- * Turning third-party catalogues into our schema.
+ * Turning third-party catalogs into our schema.
  *
  * Everything here is pure so the merge rules can be unit-tested against
  * fixtures without touching the network.
@@ -52,7 +52,7 @@ export function slugify(key: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-/** Title-case a model key into something a human would recognise. */
+/** Title-case a model key into something a human would recognize. */
 export function prettyName(key: string, stripPrefix?: string): string {
   let name = key;
   if (stripPrefix && name.startsWith(stripPrefix)) name = name.slice(stripPrefix.length);
@@ -81,7 +81,7 @@ export function matchFamily(key: string, allowlist: Allowlist): FamilyRule | nul
   return null;
 }
 
-/** LiteLLM's community catalogue: `{ "<key>": { input_cost_per_token, ... } }`. */
+/** LiteLLM's community catalog: `{ "<key>": { input_cost_per_token, ... } }`. */
 export function fromLiteLLM(catalog: Record<string, unknown>, allowlist: Allowlist): RawRate[] {
   const rates: RawRate[] = [];
 
@@ -157,7 +157,7 @@ export function fromOpenRouter(payload: unknown): Map<string, RawRate> {
 }
 
 /**
- * A loose key for matching the same model across catalogues whose naming
+ * A loose key for matching the same model across catalogs whose naming
  * conventions differ (`moonshot/kimi-k2.6` vs `moonshotai/kimi-k2.6`).
  * Only the leaf name survives, stripped to alphanumerics.
  */

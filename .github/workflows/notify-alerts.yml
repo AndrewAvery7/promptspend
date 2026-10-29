@@ -57,7 +57,7 @@ jobs:
       # Same trigger, different audience: subscribers hear about the change,
       # and so do the search engines whose model pages just went out of date.
       #
-      # `continue-on-error` because this is an optimisation on top of ordinary
+      # `continue-on-error` because this is an optimization on top of ordinary
       # crawling. A refused submission must not turn a perfectly good pricing
       # update into a red build — the script already downgrades its own failures
       # to warnings, and this is the belt to that pair of braces.

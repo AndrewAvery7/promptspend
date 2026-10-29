@@ -36,7 +36,7 @@ Legend:
 | Pricing ticker                                     | `src/components/Ticker.tsx`                           | **Partial** — live-catalog ribbon, pause, swipe, and Reduce Motion behavior are implemented                                                                      | Complete physical-device motion and screen-reader checks                                       |
 | Prices-changed and sources-checked evidence        | `src/components/Header.tsx`                           | **Partial** — a compact freshness chip exists                                                                                                                    | Preserve both distinct dates and degraded-pipeline state throughout the app                    |
 | Light and dark interface                           | `src/state/useAppearance.ts`                          | **Partial** — persisted System, Light, and Dark choices are implemented; automated semantic-token contrast gates pass                                            | Complete physical-device dark-interface QA                                                     |
-| Four accent colours                                | `src/state/useAppearance.ts`, `src/styles/tokens.css` | **Partial** — cobalt, emerald, teal, and violet share the website token pairs; all appearance combinations have automated contrast coverage                      | Complete device QA for every combination                                                       |
+| Four accent colors                                 | `src/state/useAppearance.ts`, `src/styles/tokens.css` | **Partial** — cobalt, emerald, teal, and violet share the website token pairs; all appearance combinations have automated contrast coverage                      | Complete device QA for every combination                                                       |
 | Cool and warm canvas                               | `src/state/useAppearance.ts`, `src/styles/tokens.css` | **Partial** — persisted cool-paper and warm-cream canvases are implemented                                                                                       | Complete device QA                                                                             |
 | Footer resources                                   | `src/App.tsx`                                         | **Adapted** — repository, API, MCP, extension, alert, evidence, and model-request resources live in Data & Alerts                                                | Native apps use a destination rather than a repeated web footer                                |
 
@@ -116,7 +116,7 @@ The website and native apps now share the exact lesson content through
 7. How PromptSpend avoids stale pricing.
 
 The interactive token lab is implemented. Native initially uses
-the same clearly labelled calibrated estimates used by pasted prompt entry.
+the same clearly labeled calibrated estimates used by pasted prompt entry.
 Exact tokenizer claims remain blocked until the shared golden fixtures pass on
 Hermes on physical iOS and Android hardware.
 

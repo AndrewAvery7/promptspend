@@ -10,7 +10,7 @@ interface State {
 }
 
 /**
- * The last line of defence.
+ * The last line of defense.
  *
  * A calculator does arithmetic during render, and arithmetic on adversarial
  * input can throw. Without a boundary React unmounts the whole tree and the

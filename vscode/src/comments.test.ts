@@ -76,7 +76,7 @@ describe('string state', () => {
     expect(inTypeScript('const u = "https://x.dev"; const m = "gpt-5";')).toEqual(['gpt-5']);
   });
 
-  it('honours backslash escapes inside strings', () => {
+  it('honors backslash escapes inside strings', () => {
     expect(inPython('A = "a\\"# not a comment"\nM = "gpt-5"\n')).toEqual(['gpt-5']);
   });
 });
@@ -114,7 +114,7 @@ describe('docstrings', () => {
   });
 
   it('accepts the cost: a model id inside triple quotes is now skipped', () => {
-    // The case the old behaviour protected. Recorded so the trade stays visible
+    // The case the old behavior protected. Recorded so the trade stays visible
     // rather than being rediscovered as a bug.
     expect(inPython('MODEL = """gpt-5"""')).toEqual([]);
   });

@@ -16,7 +16,7 @@ function environment(
     window: fakeWindow,
     document,
     storage: localStorage,
-    // The behaviour under test is the running one; the pause has its own tests below.
+    // The behavior under test is the running one; the pause has its own tests below.
     enabled: options.enabled ?? true,
     requiresConsent: options.requiresConsent ?? false,
     privacyHref: '/privacy/',

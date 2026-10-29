@@ -90,7 +90,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
   // reads it lives in Data & Alerts. Landing on Estimate meant the link
   // appeared to do nothing at all.
   // Other pages of the site (the Receipt page's header, for one) link to a view
-  // as `/#compare`, `/#learn`, `/#data`, so the hash is honoured too.
+  // as `/#compare`, `/#learn`, `/#data`, so the hash is honored too.
   const [view, setView] = useState<ViewId>(() =>
     new URLSearchParams(window.location.search).has('alerts') ? 'data' : (viewFromHash() ?? 'estimate'),
   );
@@ -133,7 +133,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
     target.focus({ preventScroll: true });
 
     // The same rule the guided tour follows: `prefers-reduced-motion` has to be
-    // honoured in JavaScript too, since no CSS rule reaches `scrollIntoView`.
+    // honored in JavaScript too, since no CSS rule reaches `scrollIntoView`.
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   }, [view]);
@@ -248,13 +248,13 @@ function Workspace({ catalog }: { catalog: Catalog }) {
       {
         id: 'canvas-cool',
         label: 'Canvas: cool paper',
-        kind: 'colour',
+        kind: 'color',
         run: () => appearance.setCanvas('cool'),
       },
       {
         id: 'canvas-warm',
         label: 'Canvas: warm cream',
-        kind: 'colour',
+        kind: 'color',
         run: () => appearance.setCanvas('warm'),
       },
     );
@@ -263,7 +263,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
       list.push({
         id: `accent-${accent.id}`,
         label: `Accent: ${accent.label}`,
-        kind: 'colour',
+        kind: 'color',
         run: () => appearance.setAccent(accent.id),
       });
     }

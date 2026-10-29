@@ -61,7 +61,7 @@ export interface PriceBlock {
 
 function priceBlock(catalog: Catalog, model: Model, asOf: Date): PriceBlock {
   // Quote the rate actually in force, not the standard one. `estimate_cost`
-  // has always billed through the engine, which honours promotional windows —
+  // has always billed through the engine, which honors promotional windows —
   // so reading `pricing.input` here made the two tools disagree about the same
   // model on the same day. Claude Sonnet 5 is the live case: $2/$10 through
   // 2026-08-31, $3/$15 after, and `get_price` was quoting next month's rate as

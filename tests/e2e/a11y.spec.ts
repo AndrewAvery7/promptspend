@@ -13,7 +13,7 @@ import { expect, test } from '@playwright/test';
  * It runs against the built site at every viewport in `playwright.config.ts`,
  * because some of these faults only appear at one width — a nav that collapses
  * into a menu button on a phone is a different tree from the one on a desktop,
- * and only the phone version can have an unlabelled toggle.
+ * and only the phone version can have an unlabeled toggle.
  */
 
 /** WCAG 2.1 A and AA. The level the rest of the project already claims. */

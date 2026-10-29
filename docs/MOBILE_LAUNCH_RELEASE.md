@@ -61,7 +61,7 @@ in a polished native workflow.
 - Launch watchlists provide in-app intelligence. Native APNs/FCM push is a
   post-launch feature because the existing browser VAPID service cannot accept
   native notification tokens.
-- Pasted-text token counts remain labelled approximate until exact tokenizer
+- Pasted-text token counts remain labeled approximate until exact tokenizer
   parity, memory, and performance pass on physical iOS and Android hardware.
 - Long-term price-history charts, provider billing connections, actual-usage
   imports, routing simulation, teams, enterprise reporting, and benchmark-based
@@ -81,7 +81,7 @@ in a polished native workflow.
 
 ## Information architecture
 
-Phone navigation uses five labelled, icon-supported top-level destinations:
+Phone navigation uses five labeled, icon-supported top-level destinations:
 
 1. **Home** - Cost Brief, recent scenarios, watchlist, price pulse, and quick
    actions.

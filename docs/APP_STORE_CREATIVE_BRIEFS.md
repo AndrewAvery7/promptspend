@@ -29,7 +29,7 @@ were checked: nothing important is cut.
 
 **PromptSpend art is a faithful rebuild, not a device capture.** No native captures
 exist yet, and the Expo web render uses the wrong typeface (serif fallback), so it
-would misrepresent the app. The panels reuse the app's real labels, layout and colour
+would misrepresent the app. The panels reuse the app's real labels, layout and color
 tokens, with generic "Model A to D" names and no prices so they stay accurate over
 time. If you want strict real-capture art, swap the panels for TestFlight captures.
 The Vialmetry art uses real iPhone captures from the shipped build, cropped to avoid
@@ -77,7 +77,7 @@ both slots.
   Apple crops for each slot. Confirm in App Store Connect before building.
 - **Not yet obtained:** Apple's Figma/Photoshop templates (they show the safe
   area each slot crops to). Download the Figma "Universal" template before any
-  layout work; until then, keep everything important in the centre.
+  layout work; until then, keep everything important in the center.
 
 ## 3. Rules that apply to both apps (Apple's best-practice page)
 
@@ -92,7 +92,7 @@ both slots.
 - Use the same look across the icon, header, search image and screenshots.
 
 **Production approach for both apps:** one 16:9 universal PNG per app as the
-primary file, built centre-weighted so both crops work. Add dedicated 21:9 and
+primary file, built center-weighted so both crops work. Add dedicated 21:9 and
 3:2 versions only if Apple's preview crops the universal one badly.
 
 ---
@@ -163,7 +163,7 @@ requires 4+-suitable imagery.
 
 - **One idea:** a private vial log that stays on your device.
 - **Composition:** a vial card (strength, remaining-amount bar, mixed date, using
-  the neutral name "Compound A") in the centre, with the front-view body map
+  the neutral name "Compound A") in the center, with the front-view body map
   showing rested versus recent sites beside it. Headline on the left third.
 - **Look:** the app's deep green (`#0C211F`) with the teal (`#006A67`) and mint
   highlight used in the Play graphic, so the brand carries across stores.
@@ -175,7 +175,7 @@ requires 4+-suitable imagery.
   of the edges.
 - **Avoid:** "dose", "dosage", "calculator", any compound or brand name, anything
   that implies results, the "Estimated levels" chart, the plan-check card, the
-  syringe-with-number, and outcome words such as "optimise" or "results".
+  syringe-with-number, and outcome words such as "optimize" or "results".
 
 ### 5b. Search results
 

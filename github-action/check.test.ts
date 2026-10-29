@@ -89,7 +89,7 @@ describe('the price check', () => {
     expect(parseList('a, b\nb,,c')).toEqual(['a', 'b', 'c']);
   });
 
-  it('summarises the run as a table', () => {
+  it('summarizes the run as a table', () => {
     const r = evaluate({
       lock: null,
       models: [model('gpt-5')],

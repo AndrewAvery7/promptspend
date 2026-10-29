@@ -37,8 +37,8 @@ export function bytesToB64url(input: Uint8Array | ArrayBuffer): string {
 }
 
 export function b64urlToBytes(value: string): Uint8Array {
-  const normalised = value.replace(/-/g, '+').replace(/_/g, '/');
-  const padded = normalised + '='.repeat((4 - (normalised.length % 4)) % 4);
+  const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
   const binary = atob(padded);
   const out = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i += 1) out[i] = binary.charCodeAt(i);

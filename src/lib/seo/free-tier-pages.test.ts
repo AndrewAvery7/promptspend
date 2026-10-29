@@ -244,7 +244,7 @@ describe('the pages that link to the free-tier pages', () => {
     expect(renderProvidersIndex(SET, CTX)).not.toContain('<th>Free tier</th>');
   });
 
-  it('summarises the verdicts on the index and escapes provider names', () => {
+  it('summarizes the verdicts on the index and escapes provider names', () => {
     const html = renderFreeTierIndex(free, CTX);
     expect(html).toContain(
       'Of 2 providers, 1 has an ongoing free tier, 0 give one-time credit, 1 has none, and 0 are unclear',
