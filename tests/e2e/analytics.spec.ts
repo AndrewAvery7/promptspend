@@ -22,7 +22,7 @@ import { GOOGLE_ANALYTICS_ENABLED } from '../../src/lib/analytics/config';
  */
 
 const LIVE = 'http://promptspend.com';
-const GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-08GFGLY4VD';
+const GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-P27XJ53BH9';
 const GOOGLE =
   /^https:\/\/([a-z0-9-]+\.)*(googletagmanager\.com|google-analytics\.com|analytics\.google\.com)\//;
 
@@ -84,10 +84,10 @@ test.afterEach(async ({ page }) => {
   await page.unrouteAll({ behavior: 'ignoreErrors' });
 });
 
-// Google Analytics has been paused since 2026-10-29 (`GOOGLE_ANALYTICS_ENABLED`
-// in src/lib/analytics/config.ts). While it is, the running-state tests below
-// are skipped and the paused-state tests run instead; flip the switch and they
-// swap places.
+// Google Analytics can be paused (`GOOGLE_ANALYTICS_ENABLED` in
+// src/lib/analytics/config.ts; it was, for part of 2026-10-29). While it is, the
+// running-state tests below are skipped and the paused-state tests run instead;
+// flip the switch and they swap places.
 test.describe('while Google Analytics is paused', () => {
   test.skip(GOOGLE_ANALYTICS_ENABLED, 'Google Analytics is running');
 
@@ -165,7 +165,7 @@ test.describe('on promptspend.com', () => {
     expect(pageViews).toHaveLength(1);
     expect(pageViews[0]![2]).toMatchObject({ page_location: `${LIVE}/`, page_referrer: '' });
     const config = commands.find((c) => c[0] === 'config');
-    expect(config?.[1]).toBe('G-08GFGLY4VD');
+    expect(config?.[1]).toBe('G-P27XJ53BH9');
     expect(config?.[2]).toMatchObject({
       send_page_view: false,
       allow_google_signals: false,

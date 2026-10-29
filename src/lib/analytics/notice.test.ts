@@ -52,7 +52,7 @@ describe('the pause: Google Analytics switched off', () => {
   it('tells Google Analytics to stay off on promptspend.com, so an old tab cannot report', () => {
     const env = environment({ enabled: false });
     startAnalytics(env);
-    expect((env.window as unknown as Record<string, unknown>)['ga-disable-G-08GFGLY4VD']).toBe(true);
+    expect((env.window as unknown as Record<string, unknown>)['ga-disable-G-P27XJ53BH9']).toBe(true);
   });
 
   it("does not touch the visitor's saved answer to the old notice", () => {
@@ -63,6 +63,17 @@ describe('the pause: Google Analytics switched off', () => {
 });
 
 describe('the default: Google Analytics for everyone, with a notice', () => {
+  it("clears the first property's leftover cookie and keeps the current ones", () => {
+    document.cookie = '_ga_08GFGLY4VD=GS1.1.old; path=/';
+    document.cookie = '_ga_P27XJ53BH9=GS1.1.new; path=/';
+    startAnalytics(environment({ hostname: 'localhost' }));
+    expect(document.cookie).toContain('_ga_08GFGLY4VD');
+    startAnalytics(environment());
+    expect(document.cookie).not.toContain('_ga_08GFGLY4VD');
+    expect(document.cookie).toContain('_ga_P27XJ53BH9');
+    document.cookie = '_ga_P27XJ53BH9=; Max-Age=0; path=/';
+  });
+
   it('loads gtag.js and shows a notice that names Google Analytics cookies and links to the privacy page', () => {
     startAnalytics(environment());
     expect(gtagLoaded()).toBe(true);
@@ -95,7 +106,7 @@ describe('the default: Google Analytics for everyone, with a notice', () => {
     button('Turn off')!.click();
     expect(notice()).toBeNull();
     expect(localStorage.getItem(ANALYTICS_CHOICE_KEY)).toBe('declined');
-    expect((env.window as unknown as Record<string, unknown>)['ga-disable-G-08GFGLY4VD']).toBe(true);
+    expect((env.window as unknown as Record<string, unknown>)['ga-disable-G-P27XJ53BH9']).toBe(true);
 
     document.head.querySelectorAll('script').forEach((script) => script.remove());
     startAnalytics(environment());

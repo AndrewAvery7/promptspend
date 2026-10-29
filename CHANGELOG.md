@@ -7,6 +7,14 @@ on their own schedule and are not releases.
 
 ## Unreleased
 
+### Changed
+
+- **Google Analytics is back on promptspend.com**, reporting to a new property owned by Crestwood Holdings
+  (Measurement ID `G-P27XJ53BH9`; its cookie is now `_ga_P27XJ53BH9`). It works exactly as it did before the
+  pause: a notice with a _Turn off_ button, nothing after `?` or `#` sent, nothing typed or pasted sent, off
+  under Global Privacy Control. The new account keeps visit data for two months, shares nothing with other
+  Google products, and has Google signals and ad personalization off. The privacy page says so again.
+
 ### Added
 
 - **A tally script for the monthly Price Movement Report** (`npx tsx scripts/monthly-report-tally.ts 2026-10`).
@@ -146,7 +154,7 @@ on their own schedule and are not releases.
   change cannot travel over the air, so this ships only as a new store release, and the version bump keeps
   the update server from ever sending it to 0.1.x phones. Dependabot now also ignores `jest` and
   `@types/jest`, which the SDK pins. See `docs/MOBILE_OTA_UPDATES.md` and `apps/mobile/SECURITY.md`.
-- **Google Analytics is paused** (owner decision 2026-10-29). It had run on promptspend.com since 2026-10-24, but no Google Analytics account existed to receive the data, so visitors were told about a count nobody could read. One switch, `GOOGLE_ANALYTICS_ENABLED` in `src/lib/analytics/config.ts`, is now `false`: nothing from Google loads, no notice shows, the privacy page, README, SECURITY.md and ARCHITECTURE.md say the website does not use it, the page policies on the calculator, the Receipt page and the generated pages name none of Google's hosts, and a visitor's old `_ga` cookies are cleared on their next visit. The code and its tests stay (the running-state tests are skipped and paused-state tests run instead), so turning it back on is a new property, a new Measurement ID, the switch, and the wording rewritten first. The Cloudflare counter is unchanged.
+- **Google Analytics is paused** (owner decision 2026-10-29; superseded the same day, see "Google Analytics is back on" above). It had run on promptspend.com since 2026-10-24, but no Google Analytics account existed to receive the data, so visitors were told about a count nobody could read. One switch, `GOOGLE_ANALYTICS_ENABLED` in `src/lib/analytics/config.ts`, is now `false`: nothing from Google loads, no notice shows, the privacy page, README, SECURITY.md and ARCHITECTURE.md say the website does not use it, the page policies on the calculator, the Receipt page and the generated pages name none of Google's hosts, and a visitor's old `_ga` cookies are cleared on their next visit. The code and its tests stay (the running-state tests are skipped and paused-state tests run instead), so turning it back on is a new property, a new Measurement ID, the switch, and the wording rewritten first. The Cloudflare counter is unchanged.
 - **Clearer MCP tool descriptions** (`@promptspend/mcp` 0.1.8). `find_cheaper`'s five workload settings
   now state their defaults, `get_price` says its unit (USD per million tokens) and that it suggests close
   matches for an unknown model, and all three tools carry read-only annotations. Prompted by Glama's

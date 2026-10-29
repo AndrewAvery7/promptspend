@@ -158,7 +158,13 @@ the page code by hand, run `--fix` and commit the file with your change.
    The same day he approved Cloudflare Web Analytics: Cloudflare injects its
    beacon as it serves each page, so `script-src` also admits
    `https://static.cloudflareinsights.com`, and the beacon reports only to
-   this site's own `/cdn-cgi/rum`. From 2026-10-24 to 2026-10-29 (owner decision 2026-10-06) the site header's script also started Google Analytics 4 on promptspend.com, and the policy admitted `https://www.googletagmanager.com` and Google Analytics' collection hosts, named in `src/lib/analytics/config.ts`. It is paused (`GOOGLE_ANALYTICS_ENABLED`), so the policy names none of them and the privacy page has no on/off control; if it runs again, the privacy page's `[[analytics-choice]]` line becomes that control (`renderInformationPage`).
+   this site's own `/cdn-cgi/rum`. Since 2026-10-29 (owner decision
+   2026-10-06) the site header's script also starts Google Analytics 4 on
+   promptspend.com, so `script-src` admits `https://www.googletagmanager.com`
+   and `connect-src` and `img-src` admit Google Analytics' collection hosts,
+   named in `src/lib/analytics/config.ts`. The privacy page's
+   `[[analytics-choice]]` line becomes the on/off control
+   (`renderInformationPage`).
 
 A consequence worth knowing: `style-src 'self'` with no `'unsafe-inline'` means
 **an inline `style=` attribute is silently dropped**. There is a test asserting

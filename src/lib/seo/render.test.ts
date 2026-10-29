@@ -367,7 +367,7 @@ describe('rendered pages', () => {
   it('declares a policy with no unsafe-inline and exactly the approved remote origins', () => {
     // Written out by hand rather than imported from src/lib/analytics/config.ts,
     // so that adding an origin there fails here until somebody means it.
-    // While Google Analytics is paused (2026-10-29) the policy names none of
+    // While Google Analytics is paused the policy names none of
     // Google's hosts; while it runs, exactly these.
     const google = GOOGLE_ANALYTICS_ENABLED
       ? [

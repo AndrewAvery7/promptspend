@@ -100,6 +100,10 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 > count nobody could read. The privacy page, README and SECURITY.md say so, and the page policies
 > name no Google host. Turning it back on needs a new property, a new Measurement ID and those
 > documents rewritten first.
+>
+> **Addendum, later 2026-10-29.** Back on: a new property owned by info@crestwood.holdings,
+> Measurement ID `G-P27XJ53BH9`, with the account settings SECURITY.md records. The privacy page,
+> README, SECURITY.md and ARCHITECTURE.md were rewritten in the same change.
 
 **Analytics on either host, for launch measurement.** Considered because a
 launch is the one moment traffic is worth watching closely, and rejected

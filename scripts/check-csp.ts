@@ -68,7 +68,7 @@ const GOOGLE_COLLECT = [
  */
 /**
  * Google's hosts are on the list only while Google Analytics is running
- * (`GOOGLE_ANALYTICS_ENABLED`). While it is paused (2026-10-29) any page that
+ * (`GOOGLE_ANALYTICS_ENABLED`). While it is paused (as it was for part of 2026-10-29) any page that
  * still names one fails as "unapproved", so the pause cannot quietly leave the
  * door open.
  */

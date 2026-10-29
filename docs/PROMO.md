@@ -39,12 +39,12 @@ changed and why:
   `--check` rejects a chip claiming no tracking or no analytics.
 - **"No cookies" is gone too (2026-10-24).** The website then ran Google
   Analytics, which sets cookies, and said _no accounts, no ads_. Analytics was paused
-  on 2026-10-29, so the site sets no cookie today, but `CTA_CHIPS` still carries no
-  cookie claim and `--check` still rejects any chip that mentions cookies, because
-  Analytics may return. **The published cut (the release asset and YouTube) was
-  rendered before this and still shows a NO COOKIES chip. That chip is true again
-  while Analytics is paused and would be false the day it returns, so re-render with
-  `python tools/make-promo.py` and re-upload before then.**
+  for part of 2026-10-29 and switched back on the same day with a new property, so
+  the site sets cookies again. `CTA_CHIPS` carries no cookie claim and `--check`
+  rejects any chip that mentions cookies. **The published cut (the release asset and
+  YouTube) was rendered before this and still shows a NO COOKIES chip, which is false
+  again. Re-render with `python tools/make-promo.py` and re-upload it (Andrew's
+  step: the uploads are public).**
 - **The capture clears the sticky header.** The new panel came back with the
   nav bar painted over its title, because `scrollIntoViewIfNeeded` only
   promises the element is inside the viewport, not uncovered.

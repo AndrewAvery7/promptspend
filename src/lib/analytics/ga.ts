@@ -13,7 +13,7 @@
  *    `gtag` are the three page fields below and fixed settings. No form value,
  *    no scenario, no prompt text: pasted text never leaves the device, which is
  *    the one promise every privacy decision here has kept.
- * 3. **No advertising features.** Google signals and ad personalisation are
+ * 3. **No advertising features.** Google signals and ad personalization are
  *    off, and the ad-related consent types are denied, so Google may count the
  *    visit but not link it to an advertising profile.
  *
@@ -167,15 +167,34 @@ export function loadGoogleAnalytics(win: GtagWindow, doc: Document): void {
  * Stop Google Analytics on this page and remove its cookies.
  *
  * `ga-disable-<id>` is Google's documented off switch: `gtag.js` checks it
- * before sending anything. The cookies (`_ga`, `_ga_<stream>`) are set on the
- * site's registrable domain, so they are expired there and on the host itself.
+ * before sending anything. It also removes the cookies (`_ga`, `_ga_<stream>`).
  */
 export function disableGoogleAnalytics(win: GtagWindow, doc: Document, hostname: string): void {
   win[DISABLE_FLAG] = true;
+  expireCookies(doc, hostname, (name) => name === '_ga' || name.startsWith('_ga_'));
+}
+
+/**
+ * The stream cookies of Measurement IDs the site no longer reports to. The
+ * first property (G-08GFGLY4VD) ran from 2026-10-24 until its account was
+ * deleted on 2026-10-29; a visitor from those days still holds its cookie.
+ */
+const RETIRED_STREAM_COOKIES: readonly string[] = ['_ga_08GFGLY4VD'];
+
+/** Remove the cookies of retired Measurement IDs, and nothing else. */
+export function clearRetiredStreamCookies(doc: Document, hostname: string): void {
+  expireCookies(doc, hostname, (name) => RETIRED_STREAM_COOKIES.includes(name));
+}
+
+/**
+ * Expire the matching cookies. They are set on the site's registrable domain,
+ * so they are expired there and on the host itself.
+ */
+function expireCookies(doc: Document, hostname: string, matches: (name: string) => boolean): void {
   const names = doc.cookie
     .split(';')
     .map((pair) => pair.split('=')[0]!.trim())
-    .filter((name) => name === '_ga' || name.startsWith('_ga_'));
+    .filter(matches);
   const domains = new Set(['', hostname, `.${hostname}`, `.${hostname.replace(/^www\./, '')}`]);
   for (const name of names) {
     for (const domain of domains) {

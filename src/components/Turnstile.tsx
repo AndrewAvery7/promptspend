@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
  *
  * One of the few places the site runs third-party code on purpose (the
  * others are Cloudflare's Web Analytics script and, on promptspend.com,
- * Google Analytics while it runs (paused since 2026-10-29); the footer's LaunchNest badge is an image), and it is a
+ * Google Analytics while it runs; the footer's LaunchNest badge is an image), and it is a
  * deliberate trade: without it, the subscribe endpoint sends a confirmation
  * email for every address posted to it, so a script could burn the sending
  * quota and the domain's reputation in an afternoon. The Content Security
