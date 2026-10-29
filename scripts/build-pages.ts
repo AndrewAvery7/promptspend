@@ -38,6 +38,7 @@ import { renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import { receiptSpec } from '@/receipt/receiptSpec';
 import { changesPageInput } from '@/lib/seo/changes-page';
+import { tokenCounterInput } from '@/lib/seo/token-counter-page';
 import { sitemapIndex, urlset, type SitemapEntry, type SitemapFile } from '@/lib/seo/sitemap';
 import { APP_PAGE_PATH } from '@/lib/links';
 import {
@@ -54,11 +55,13 @@ import {
   renderProvidersIndex,
   renderRetiredComparisonPage,
   renderChangesPage,
+  renderTokenCounterPage,
   renderDataPage,
   renderNotFoundPage,
   renderWritingIndex,
   renderWritingPage,
   CHANGES_PATH,
+  TOKEN_COUNTER_PATH,
   DATA_PAGE_PATH,
   WRITING_INDEX_PATH,
   type DataPageInput,
@@ -177,6 +180,17 @@ async function headerAssets(): Promise<NonNullable<RenderContext['chrome']>> {
     .slice(0, 8)}.js`;
   await writeFileAt(themeInit, THEME_INIT);
   return { script: `/${manifest[entryKey].file}`, themeInit: `/${themeInit}`, styles, fonts };
+}
+
+/** Where Vite put one of the standalone scripts the generated pages load, as a site path. */
+async function entryFile(key: string): Promise<string> {
+  const manifest = JSON.parse(await readFile(resolve(DIST, '.vite/manifest.json'), 'utf8')) as Record<
+    string,
+    ManifestEntry
+  >;
+  const entry = manifest[key];
+  if (!entry) throw new Error(`${key} is not in the Vite manifest.`);
+  return `/${entry.file}`;
 }
 
 /** `/models/gpt-5/` becomes `models/gpt-5/index.html`. */
@@ -301,6 +315,7 @@ async function main(): Promise<void> {
   // it, under hashed names, and said where in the manifest; the one thing it
   // cannot write is the theme script, which has to be a plain blocking file.
   const chrome = await headerAssets();
+  const tokenCounterScript = await entryFile('src/chrome/token-counter.ts');
 
   // The price history, replayed from every committed catalog up to the commit
   // being built: the same table as the archived CSV dataset. It feeds the
@@ -324,6 +339,7 @@ async function main(): Promise<void> {
     generatedAt: catalog.generatedAt,
     apiUrl,
     history,
+    tokenCounterScript,
     chrome,
     // The tape above the header, drawn from the same component the calculator
     // runs and dated by the catalog, so a rebuild of one commit is identical.
@@ -405,6 +421,7 @@ async function main(): Promise<void> {
     Object.fromEntries(set.models.map((page) => [page.id, page.path])),
   );
   await writeFileAt(fileFor(CHANGES_PATH), renderChangesPage(changes, ctx));
+  await writeFileAt(fileFor(TOKEN_COUNTER_PATH), renderTokenCounterPage(tokenCounterInput(set), ctx));
   await writeFileAt('404.html', renderNotFoundPage(ctx));
 
   // The sitemap lives here rather than in `vite.config.ts` because it has to
@@ -433,6 +450,7 @@ async function main(): Promise<void> {
         ...(newestArticle ? [entry(WRITING_INDEX_PATH, newestArticle)] : []),
         entry(DATA_PAGE_PATH, lastChangeDate),
         entry(CHANGES_PATH, changes.lastChangeDate),
+        entry(TOKEN_COUNTER_PATH, set.modelsIndex.lastmod),
         ...informationPages.map((page) => entry(page.path, page.updatedDate)),
       ],
     },

@@ -257,3 +257,28 @@ export function changesFaq(input: ChangesPageInput): Faq[] {
     },
   ];
 }
+
+export function tokenCounterFaq(): Faq[] {
+  return [
+    {
+      question: 'How many tokens is my text?',
+      answer:
+        'Paste it into the counter above. It shows the token count for the model you pick, and the same text on every model in the catalog, because each family has its own tokenizer.',
+    },
+    {
+      question: 'Does my text leave my device?',
+      answer:
+        'No. The counting runs in your browser. The page sends your text nowhere, keeps it in no storage and puts none of it in the address. The only file it fetches is the tokenizer itself, from this site, the first time an OpenAI-family model needs it.',
+    },
+    {
+      question: 'Are the token counts exact?',
+      answer:
+        "For OpenAI-family models the real tokenizer runs in your browser, so the count is exact for the text you pasted. For other families the vendor's tokenizer is not available in a browser, so the count is an estimate from a calibrated characters-per-token ratio and is labeled as one. Neither includes the message framing, tool definitions or images a real request also bills.",
+    },
+    {
+      question: 'How much will this text cost?',
+      answer:
+        "The counter shows the cost of sending the text as input at the model's current rate. The reply is billed separately as output tokens, usually at a higher rate, and cached input, batch discounts, long-context tiers and tool fees are not included. The calculator on the home page includes them.",
+    },
+  ];
+}

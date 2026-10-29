@@ -9,6 +9,12 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **A token counter at `/token-counter/`.** Paste text and see its token count for any model in the
+  catalog, what it would cost as input, how much of the context window it fills, and the same text on every
+  model in a table. OpenAI-family models use the real tokenizer, so those counts are exact for the text;
+  every other family is a labeled estimate. It counts in the browser: a browser test fails if the text is
+  ever sent anywhere, stored, or put in the address. The page, with its explanation and Q&A, is complete
+  without scripts; the counting is the script. Linked from every footer, `llms.txt` and the sitemap.
 - **A price changes page at `/changes/`.** Every recorded change in one place, newest first: what vendors
   changed (with the size of each move), what PromptSpend corrected (labeled apart, so repricing is never
   overstated), and which models were added or removed, each day linked to the model pages. It is the page

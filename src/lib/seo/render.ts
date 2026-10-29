@@ -41,7 +41,17 @@ import { GA_POLICY_COLLECT_ORIGINS, GA_POLICY_SCRIPT_ORIGINS } from '../analytic
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { PriceHistory } from '../pricing/history';
 import type { Model, Pricing } from '../pricing/types';
-import { changesFaq, comparisonFaq, freeTierFaq, modelFaq, providerFaq, type Faq } from './faq';
+import {
+  changesFaq,
+  comparisonFaq,
+  freeTierFaq,
+  modelFaq,
+  providerFaq,
+  tokenCounterFaq,
+  type Faq,
+} from './faq';
+import { tokenizerAttributes, type TokenCounterInput } from './token-counter-page';
+import { FRAMING_CAVEAT } from '../tokenize';
 import type { ChangeRow, ChangesPageInput } from './changes-page';
 import { priceChartSvg } from './price-chart';
 import {
@@ -143,6 +153,8 @@ export interface RenderContext {
    * claiming "no changes" about data nobody loaded.
    */
   history?: PriceHistory;
+  /** The token counter's own script, as a site path; the page has no counting without it. */
+  tokenCounterScript?: string;
   chrome?: {
     /** The live header: a deferred module. */
     script: string;
@@ -504,6 +516,7 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div>
           <a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">${escapeHtml(NAV_LABELS.freeTiers)}</a> &middot;
           <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
           <a href="${escapeHtml(href(ctx, CHANGES_PATH))}">Price changes</a> &middot;
+          <a href="${escapeHtml(href(ctx, TOKEN_COUNTER_PATH))}">Token counter</a> &middot;
           <a href="${escapeHtml(href(ctx, WRITING_INDEX_PATH))}">Writing</a> &middot;
           <a href="${escapeHtml(href(ctx, DATA_PAGE_PATH))}">Open data</a> &middot;
           <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a>
@@ -1905,6 +1918,145 @@ ${faqSection(faqs)}      </main>`;
       },
       ...faqLd(faqs),
     ],
+    body,
+  });
+}
+
+// ------------------------------------------------------------ token counter
+
+export const TOKEN_COUNTER_PATH = '/token-counter/';
+
+function attributeString(attributes: Record<string, string>): string {
+  return Object.entries(attributes)
+    .map(([name, value]) => `${name}="${escapeHtml(value)}"`)
+    .join(' ');
+}
+
+/**
+ * `/token-counter/`: paste text, see tokens and input cost for any model.
+ *
+ * Drawn complete at build time (the explanation, every model and its rate), with
+ * the counting added by `src/chrome/token-counter.ts` when scripts run. The text
+ * a visitor pastes is counted in their browser and goes nowhere.
+ */
+export function renderTokenCounterPage(input: TokenCounterInput, ctx: RenderContext): string {
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: 'Token counter', path: null },
+  ];
+  const first = input.models.find((m) => m.id === 'gpt-5') ?? input.models[0];
+
+  const options = input.models
+    .map(
+      (m) =>
+        `              <option value="${escapeHtml(m.id)}" data-input="${m.input}" data-context="${m.contextWindow}" ${attributeString(tokenizerAttributes(m.tokenizer))}${m.id === first?.id ? ' selected' : ''}>${escapeHtml(m.providerName)}: ${escapeHtml(m.name)}</option>`,
+    )
+    .join('\n');
+
+  const rows = input.models
+    .map(
+      (m) => `              <tr data-input="${m.input}" ${attributeString(tokenizerAttributes(m.tokenizer))}>
+                <td><a href="${escapeHtml(href(ctx, m.path))}">${escapeHtml(m.name)}</a></td>
+                <td>${escapeHtml(m.providerName)}</td>
+                <td class="num tc-row-tokens">&mdash;</td>
+                <td class="tc-row-method">&mdash;</td>
+                <td class="num tc-row-cost">&mdash;</td>
+              </tr>`,
+    )
+    .join('\n');
+
+  const faqs = tokenCounterFaq();
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <h1>Token counter</h1>
+        <p class="lede">
+          Paste text to see how many tokens it is for any model in the catalog, and what it would cost as
+          input. Counting runs in your browser: your text is never sent anywhere.
+        </p>
+
+        <div class="card tc">
+          <label for="tc-text" class="tc-label">Your text</label>
+          <textarea id="tc-text" class="tc-text" rows="10" spellcheck="false" placeholder="Paste or type text here"></textarea>
+          <p id="tc-needs-js" class="note">The counter needs JavaScript. The explanation and the model list below do not.</p>
+
+          <label for="tc-model" class="tc-label">Count for this model</label>
+          <select id="tc-model" class="tc-select">
+${options}
+          </select>
+
+          <dl class="tc-stats" aria-live="polite">
+            <div><dt>Tokens</dt><dd id="tc-tokens">0</dd></div>
+            <div><dt>Count</dt><dd id="tc-method">&mdash;</dd></div>
+            <div><dt>As input</dt><dd id="tc-cost">$0</dd></div>
+            <div><dt>Context window used</dt><dd id="tc-context">0%</dd></div>
+            <div><dt>Characters</dt><dd id="tc-chars">0</dd></div>
+            <div><dt>Words</dt><dd id="tc-words">0</dd></div>
+            <div><dt>Lines</dt><dd id="tc-lines">0</dd></div>
+          </dl>
+          <p id="tc-note" class="muted small"></p>
+        </div>
+
+        <h2>The same text on every model</h2>
+        <p class="muted">
+          Each family has its own tokenizer, so one text is a different number of tokens on different
+          models. The cost is for sending this text as input at each model&rsquo;s current rate, per
+          <a href="${escapeHtml(href(ctx, '/models/'))}">its page</a>.
+        </p>
+        <div class="card tablewrap" tabindex="0">
+          <table>
+            <caption class="unit cap">USD for this text as input. Rates in force when the page was built.</caption>
+            <thead><tr><th>Model</th><th>Provider</th><th class="num">Tokens</th><th>Count</th><th class="num">As input</th></tr></thead>
+            <tbody>
+${rows}
+            </tbody>
+          </table>
+        </div>
+
+        <h2>What a token is</h2>
+        <p>
+          Language models read and bill in tokens: pieces of words rather than whole words. A short common
+          word is usually one token; a long or rare word, a number or a line of code is several. As a rough
+          guide, English text averages somewhere around four characters per token, and code and
+          non-Latin scripts use more tokens for the same number of characters.
+        </p>
+
+        <h2>Exact and estimated counts</h2>
+        <p>
+          For OpenAI-family models this page runs the real tokenizer in your browser, so the count is exact
+          for the text. For other families the vendor&rsquo;s tokenizer is not available in a browser, so
+          the count is an estimate from a calibrated characters-per-token ratio, and it is labeled as one.
+        </p>
+
+        <h2>What the count leaves out</h2>
+        <p>
+          ${escapeHtml(FRAMING_CAVEAT)} The cost shown is for sending the text as input; the reply is billed
+          separately as output tokens, usually at a higher rate. Cached input, batch discounts, long-context
+          tiers and tool fees are not included. For a full estimate use
+          <a href="${escapeHtml(href(ctx, '/'))}">the calculator</a>.
+        </p>
+${faqSection(faqs)}      </main>`;
+
+  const description =
+    'Paste text to count its tokens and see its input cost on any LLM. Runs in your browser, so your text is never sent anywhere; exact counts for OpenAI-family models.';
+  return layout(ctx, {
+    path: TOKEN_COUNTER_PATH,
+    title: 'Token counter: tokens and input cost for any LLM',
+    description,
+    graph: [
+      breadcrumbLd(ctx, crumbs, TOKEN_COUNTER_PATH),
+      {
+        '@type': 'WebApplication',
+        name: 'PromptSpend token counter',
+        url: absolute(ctx, TOKEN_COUNTER_PATH),
+        description,
+        applicationCategory: 'UtilitiesApplication',
+        operatingSystem: 'Any',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      },
+      ...faqLd(faqs),
+    ],
+    scripts: ctx.tokenCounterScript ? [ctx.tokenCounterScript] : [],
     body,
   });
 }
