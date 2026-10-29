@@ -6,6 +6,18 @@ first catalog (2026-08-02 UTC) onwards. It is the table form of
 [`pricing-changelog.md`](pricing-changelog.md), and it reproduces that
 changelog's model additions and rate changes exactly.
 
+**Live copy:** every site build publishes the same table, up to the commit
+being built, at
+[`promptspend.com/data/price-history.csv`](https://promptspend.com/data/price-history.csv)
+and as JSON at
+[`/data/price-history.json`](https://promptspend.com/data/price-history.json)
+(`{ schemaVersion, firstDate, lastDate, rows }`, the rows in the columns below).
+It is what `get_price` with `as_of` reads, and what the
+[Atom feed](https://promptspend.com/feed.xml) is built from, which is why the
+feed labels a `correction` apart from a `price` change. The build refuses a
+shallow git checkout rather than publish a history that starts on the day it
+was cloned.
+
 **Archived on Zenodo:** version 2026-10-05 is
 [doi:10.5281/zenodo.23170741](https://doi.org/10.5281/zenodo.23170741) (380
 rows, 82 models, 12 providers, 2026-08-02 to 2026-10-03).

@@ -25,6 +25,7 @@ export const TOOLS = [
       type: 'object',
       properties: {
         model_name: { type: 'string', description: 'Model id or name, e.g. gpt-5 or "Claude Opus 5".' },
+        as_of: { type: 'string', description: 'Past date YYYY-MM-DD: the rate published then.' },
       },
       required: ['model_name'],
     },
@@ -33,14 +34,14 @@ export const TOOLS = [
   {
     name: 'estimate_cost',
     description:
-      'What a described workload actually costs per month on each model. Accounts for conversation history compounding, cache writes, long-context tiers and reasoning tokens. Use this instead of multiplying prices by hand.',
+      'Monthly cost of a described workload, or of measured usage, on each model. Accounts for history compounding, cache writes, long-context tiers and reasoning tokens. Use this instead of multiplying prices by hand.',
     inputSchema: {
       type: 'object',
       properties: {
         models: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Models to compare, up to about 8.',
+          description: 'Up to about 8.',
         },
         system_tokens: { type: 'number', description: 'System prompt size. Default 800.' },
         user_tokens: { type: 'number', description: 'Typical user message. Default 150.' },
@@ -49,7 +50,13 @@ export const TOOLS = [
         conversations_per_day: { type: 'number', description: 'Default 1000.' },
         cached_input_share: { type: 'number', description: '0-1. Default 0.' },
         reasoning_multiplier: { type: 'number', description: 'Bill output at this multiple. Default 1.' },
-        use_batch_api: { type: 'boolean', description: 'Apply batch discounts. Default false.' },
+        use_batch_api: { type: 'boolean', description: 'Apply batch discounts.' },
+        usage: {
+          type: 'object',
+          description:
+            'Measured totals to price instead: input, output, cache_read, cache_write tokens (input excludes cache reads).',
+          additionalProperties: { type: 'number' },
+        },
       },
       required: ['models'],
     },
@@ -83,7 +90,7 @@ export const SERVER_INFO = {
   // the package version was bumped and this literal was not, and every gate
   // passed because none of them compared the two. A server that misreports its
   // own version is the same defect this project exists to catch, one level up.
-  version: '0.1.9',
+  version: '0.1.10',
 } as const;
 
 export const INSTRUCTIONS =

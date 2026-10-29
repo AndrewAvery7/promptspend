@@ -22,6 +22,7 @@
 import { validateCatalog, type Model, type PricingCatalog } from '../../src/lib/pricing/types';
 import { effectivePricing } from '../../src/lib/engine/cost';
 import type { Env } from './env';
+import { isPriceHistory, type PriceHistory } from '../../src/lib/pricing/history';
 import { isSyncStatus, type SyncStatus } from '../../packages/core/src/pricing/health';
 
 /** How long a cached copy is retained, as opposed to how long it stays fresh. */
@@ -342,4 +343,56 @@ export function filterModels(catalog: PricingCatalog, filter: ModelFilter): Mode
     if (filter.status && model.status !== filter.status) return false;
     return true;
   });
+}
+
+export const HISTORY_CACHE_KEY = 'https://catalog.promptspend.dev/__cache/price-history/v1';
+
+/** The history file sits beside the catalog on the site. */
+export function historyUrl(env: Env): string {
+  return env.CATALOG_URL.replace(/pricing\.json$/, 'price-history.json');
+}
+
+/**
+ * The published price history, for `get_price` with `as_of`. Same bounded cache
+ * as the catalog, under its own synthetic key. A past date's answer does not
+ * age, so a retained copy is served when the origin cannot be reached.
+ */
+export async function readHistory(env: Env, ctx?: ExecutionContext): Promise<PriceHistory> {
+  const key = new Request(HISTORY_CACHE_KEY, { method: 'GET' });
+  const cache = caches.default;
+  const cached = await cache.match(key);
+  if (cached) {
+    const fetchedAt = new Date(cached.headers.get(FETCHED_AT) ?? 0);
+    if ((Date.now() - fetchedAt.getTime()) / 1000 < freshSeconds(env)) {
+      const value: unknown = await cached.json();
+      if (isPriceHistory(value)) return value;
+    }
+  }
+  try {
+    const url = historyUrl(env);
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`price history origin returned HTTP ${response.status}`);
+    if (!(response.headers.get('content-type') ?? '').includes('json'))
+      throw new Error(`Expected JSON from ${url}`);
+    const body = await response.text();
+    const value: unknown = JSON.parse(body);
+    if (!isPriceHistory(value)) throw new Error(`${url} is not a price history`);
+    const store = new Response(body, {
+      headers: {
+        'Cache-Control': `public, max-age=${CACHE_SECONDS}`,
+        'Content-Type': 'application/json; charset=utf-8',
+        [FETCHED_AT]: new Date().toISOString(),
+      },
+    });
+    const put = cache.put(key, store);
+    if (ctx) ctx.waitUntil(put);
+    else await put;
+    return value;
+  } catch (cause) {
+    if (cached) {
+      const value: unknown = await cached.json();
+      if (isPriceHistory(value)) return value;
+    }
+    throw cause;
+  }
 }

@@ -1,7 +1,7 @@
 import { SELF, env } from 'cloudflare:test';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PricingCatalog } from '../../src/lib/pricing/types';
-import { CACHE_KEY, SYNC_CACHE_KEY, priceRows } from './catalog';
+import { CACHE_KEY, HISTORY_CACHE_KEY, SYNC_CACHE_KEY, priceRows } from './catalog';
 
 const API = 'https://promptspend.dev';
 
@@ -97,6 +97,7 @@ beforeEach(async () => {
   // this Worker does. Clearing it makes every test start from the same place.
   await caches.default.delete(new Request(CACHE_KEY));
   await caches.default.delete(new Request(SYNC_CACHE_KEY));
+  await caches.default.delete(new Request(HISTORY_CACHE_KEY));
 
   // The Worker runs in this isolate, so replacing the global reaches it.
   // Nothing here may touch the real network: a test that quietly passed
@@ -118,6 +119,39 @@ beforeEach(async () => {
             staleCount: 0,
             catalogHash: 'test',
             pricesLastChanged: null,
+          }),
+          { headers: { 'Content-Type': 'application/json' } },
+        ),
+      );
+    }
+    if (url === env.CATALOG_URL.replace('pricing.json', 'price-history.json')) {
+      const row = (date: string, change: string, field: string, from: string, to: string) => ({
+        date,
+        commit: 'c0ffee',
+        model_id: 'gpt-5',
+        model_name: 'GPT-5',
+        provider_id: 'openai',
+        provider_name: 'OpenAI',
+        change,
+        field,
+        old_value: from,
+        new_value: to,
+        unit: 'USD per 1M tokens',
+        source: 'vendor',
+        source_url: '',
+        provider_pricing_url: '',
+      });
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            schemaVersion: 1,
+            firstDate: '2026-08-02',
+            lastDate: '2026-10-29',
+            rows: [
+              row('2026-08-02', 'listed', 'input', '', '1.5'),
+              row('2026-08-02', 'listed', 'output', '', '10'),
+              row('2026-09-01', 'price', 'input', '1.5', '1.25'),
+            ],
           }),
           { headers: { 'Content-Type': 'application/json' } },
         ),
@@ -729,6 +763,24 @@ describe('the hosted MCP server', () => {
     expect(body.result.tools.map((t) => t.name)).toEqual(['get_price', 'estimate_cost', 'find_cheaper']);
     expect(body.result.tools.every((t) => t.annotations?.readOnlyHint === true)).toBe(true);
     expect(originHits).toBe(0);
+  });
+
+  it('answers a past date from the published history', async () => {
+    const body = (await (
+      await rpc({
+        jsonrpc: '2.0',
+        id: 9,
+        method: 'tools/call',
+        params: { name: 'get_price', arguments: { model_name: 'gpt-5', as_of: '2026-08-20' } },
+      })
+    ).json()) as { result: { content: { text: string }[]; isError?: boolean } };
+    expect(body.result.isError).toBeUndefined();
+    const price = JSON.parse(body.result.content[0]!.text) as {
+      input_per_million_usd: number;
+      changes_since: { date: string; kind: string }[];
+    };
+    expect(price.input_per_million_usd).toBe(1.5);
+    expect(price.changes_since).toEqual([expect.objectContaining({ date: '2026-09-01', kind: 'price' })]);
   });
 
   it('prices a model with its provenance', async () => {

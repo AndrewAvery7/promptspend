@@ -4,7 +4,8 @@ import { Catalog } from '@/lib/pricing/catalog';
 import { SERVER_INFO } from './schema';
 import { compareModels } from '@/lib/engine/cost';
 import type { PricingCatalog } from '@/lib/pricing/types';
-import { estimateCost, findCheaper, getPrice, resolveModel } from './tools';
+import { estimateCost, findCheaper, getPrice, getPriceOn, resolveModel } from './tools';
+import type { HistoryRow, PriceHistory } from '@/lib/pricing/history';
 import { provenanceOf } from './provenance';
 
 /**
@@ -417,5 +418,80 @@ describe('a promotional rate is the rate', () => {
     expect(row.cost_per_conversation_usd).toBe(
       Number((Number(quoted.input_per_million_usd) * 0.2).toFixed(6)),
     );
+  });
+});
+
+describe('estimate_cost with measured usage', () => {
+  const usage = { input: 1_000_000, output: 500_000, cache_read: 2_000_000, cache_write: 100_000 };
+
+  it('bills each kind of token at its own rate', () => {
+    const r = estimateCost(catalog, AT, { models: ['gpt-test-pro'], usage }) as {
+      results: { model: string; cost_usd: number }[];
+    };
+    // 1M × $10 + 2M × $1 + 0.1M × $12.50 + 0.5M × $40
+    expect(r.results[0]!.cost_usd).toBe(10 + 2 + 1.25 + 20);
+  });
+
+  it('bills a missing cache rate at the full input rate, and says so', () => {
+    const r = estimateCost(catalog, AT, { models: ['gpt-test-mini'], usage }) as {
+      results: { cost_usd: number; note?: string }[];
+    };
+    expect(r.results[0]!.cost_usd).toBeCloseTo(3.1 * 0.5 + 0.5 * 2, 6);
+    expect(r.results[0]!.note).toContain('cache reads billed at the input rate');
+  });
+
+  it('ranks cheapest first and rejects malformed totals', () => {
+    const r = estimateCost(catalog, AT, { models: ['gpt-test-pro', 'gpt-test-mini'], usage }) as {
+      results: { model: string; is_cheapest: boolean }[];
+    };
+    expect(r.results.map((x) => x.model)).toEqual(['gpt-test-mini', 'gpt-test-pro']);
+    expect(r.results[0]!.is_cheapest).toBe(true);
+    expect(estimateCost(catalog, AT, { models: ['gpt-test-pro'], usage: { tokens: 5 } as never })).toEqual({
+      error: 'usage has an unknown field "tokens"; use input, output, cache_read and cache_write.',
+    });
+    expect(estimateCost(catalog, AT, { models: ['gpt-test-pro'], usage: { input: -1 } })).toHaveProperty(
+      'error',
+    );
+    expect(estimateCost(catalog, AT, { models: ['gpt-test-pro'], usage: {} })).toHaveProperty('error');
+  });
+});
+
+describe('get_price on a past date', () => {
+  const base: Omit<HistoryRow, 'date' | 'change' | 'field' | 'old_value' | 'new_value'> = {
+    commit: 'c0ffee',
+    model_id: 'gpt-test-pro',
+    model_name: 'GPT Test Pro',
+    provider_id: 'openai',
+    provider_name: 'OpenAI',
+    unit: 'USD per 1M tokens',
+    source: 'vendor',
+    source_url: 'https://openai.example/pricing',
+    provider_pricing_url: '',
+  };
+  const history: PriceHistory = {
+    schemaVersion: 1,
+    firstDate: '2026-08-02',
+    lastDate: '2026-10-29',
+    rows: [
+      { ...base, date: '2026-08-02', change: 'listed', field: 'input', old_value: '', new_value: '12' },
+      { ...base, date: '2026-08-02', change: 'listed', field: 'output', old_value: '', new_value: '40' },
+      { ...base, date: '2026-09-01', change: 'correction', field: 'input', old_value: '12', new_value: '10' },
+    ],
+  };
+
+  it('returns the rate published that day, with the correction that followed it', () => {
+    const r = getPriceOn(catalog, history, 'GPT Test Pro', '2026-08-20') as Record<string, unknown>;
+    expect(r.input_per_million_usd).toBe(12);
+    expect(r.tracked_since).toBe('2026-08-02');
+    expect(String(r.warning)).toContain('misreading');
+    expect((r.changes_since as { kind: string }[])[0]!.kind).toMatch(/^correction/);
+  });
+
+  it('refuses a date before the record or a malformed one rather than guessing', () => {
+    expect(getPriceOn(catalog, history, 'gpt-test-pro', '2026-07-01')).toHaveProperty('error');
+    expect(getPriceOn(catalog, history, 'gpt-test-pro', '20 August')).toEqual({
+      error: 'as_of must be a real date written YYYY-MM-DD.',
+    });
+    expect(getPriceOn(catalog, history, 'gpt-test-mini', '2026-08-20')).toHaveProperty('error');
   });
 });

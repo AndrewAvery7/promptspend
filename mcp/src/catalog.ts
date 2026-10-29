@@ -14,6 +14,7 @@
  */
 import { Catalog } from '@/lib/pricing/catalog';
 import { assertCatalog, type PricingCatalog } from '@/lib/pricing/types';
+import { isPriceHistory, type PriceHistory } from '@/lib/pricing/history';
 
 export const CATALOG_URL = 'https://promptspend.com/data/pricing.json';
 
@@ -157,5 +158,55 @@ export async function getCatalog(
       };
     }
     throw new CatalogUnavailableError(cause);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// The price history, for `get_price` with `as_of`. Fetched only when a past
+// date is asked for, so a session that never asks one never downloads it.
+
+export const HISTORY_URL = 'https://promptspend.com/data/price-history.json';
+
+export class HistoryUnavailableError extends Error {
+  constructor(cause: unknown) {
+    super(`Could not read the PromptSpend price history at ${HISTORY_URL}. (${String(cause)})`);
+    this.name = 'HistoryUnavailableError';
+  }
+}
+
+export interface HistoryFetch {
+  (url: string): Promise<PriceHistory>;
+}
+
+let cachedHistory: { history: PriceHistory; fetchedAt: number } | null = null;
+
+const defaultHistoryFetch: HistoryFetch = async (url) => {
+  const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+  if (!response.ok) throw new Error(`HTTP ${response.status} from ${url}`);
+  const contentType = response.headers.get('content-type') ?? '(none)';
+  if (!contentType.includes('json')) throw new Error(`Expected JSON from ${url} but got "${contentType}"`);
+  const body: unknown = await response.json();
+  if (!isPriceHistory(body)) throw new Error(`${url} is not a PromptSpend price history`);
+  return body;
+};
+
+export function clearHistoryCache(): void {
+  cachedHistory = null;
+}
+
+export async function getHistory(
+  now: number = Date.now(),
+  fetcher: HistoryFetch = defaultHistoryFetch,
+): Promise<PriceHistory> {
+  if (cachedHistory && now - cachedHistory.fetchedAt < FRESH_MS) return cachedHistory.history;
+  try {
+    const history = await fetcher(HISTORY_URL);
+    cachedHistory = { history, fetchedAt: now };
+    return history;
+  } catch (cause) {
+    // History does not go stale the way today's rate does: a copy from this
+    // morning answers every past date correctly. A day-old copy is still served.
+    if (cachedHistory && now - cachedHistory.fetchedAt < FALLBACK_MS) return cachedHistory.history;
+    throw new HistoryUnavailableError(cause);
   }
 }

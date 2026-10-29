@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-110-2456E6.svg" alt="110 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1583-blue.svg" alt="1583 tests">
+  <img src="https://img.shields.io/badge/tests-1603-blue.svg" alt="1603 tests">
   <img src="https://img.shields.io/badge/initial%20payload-104%20KB%20gzip-blue.svg" alt="104 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -248,10 +248,26 @@ Three tools, deliberately. `estimate_cost` is the one a price lookup cannot prov
 repository's cost engine**, imported rather than reimplemented, so it accounts for compounding
 conversation history, cache writes, long-context tiers and reasoning tokens — and cannot report a
 figure that disagrees with the calculator, because it is the same code. A test asserts that.
+`get_price` also takes a past date (`as_of`) and answers from the published price history, and
+`estimate_cost` also prices measured usage totals, such as a month from a usage export.
 
 And because MCP tool definitions load into your context on _every_ turn, the server's own overhead is
-measured, budgeted at 900, checked in CI and published: **~823 tokens**. Nothing else in the
-ecosystem appears to publish its own footprint. See [mcp/README.md](mcp/README.md).
+measured, budgeted at 900, checked in CI and published: **~897 tokens**. Nothing else in the
+ecosystem appears to publish its own footprint. See [mcp/README.md](mcp/README.md). If even that is too
+much, the same three tools come as an **Agent Skill** that loads only when a price question comes up:
+see [skills/](skills/README.md).
+
+### Or in your CI
+
+A GitHub Action that fails the build when a model your code calls changes price or is retired. It
+records the rates in force in a committed `promptspend.lock.json`, like a package lockfile, and
+compares on every run:
+
+```yaml
+- uses: AndrewAvery7/promptspend/github-action@action-v1
+```
+
+See [github-action/README.md](github-action/README.md).
 
 ### Or in your editor
 
@@ -412,7 +428,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1583 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1603 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 351 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live                             |

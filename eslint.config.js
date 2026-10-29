@@ -78,6 +78,16 @@ export default tseslint.config(
     },
   },
   {
+    // The GitHub Action is plain ESM run by the Actions runner's Node, with no
+    // build step, and its console output is the workflow-command protocol.
+    files: ['github-action/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: { ...globals.node },
+    },
+  },
+  {
     // The alerts worker runs on workerd. Its console output is not debug
     // clutter — logs are the only observability a Worker has, and the fan-out
     // counts printed after a notify run are how a delivery problem gets found.

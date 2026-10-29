@@ -53,6 +53,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # The build replays every committed catalog into /data/price-history.json
+          # and the feed, and refuses a shallow clone rather than publish a one-day
+          # history. The repository is small enough (~50 MB) for this to be cheap.
+          fetch-depth: 0
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
@@ -157,6 +162,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # The build replays every committed catalog into /data/price-history.json
+          # and the feed, and refuses a shallow clone rather than publish a one-day
+          # history. The repository is small enough (~50 MB) for this to be cheap.
+          fetch-depth: 0
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
