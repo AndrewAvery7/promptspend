@@ -1584,7 +1584,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "138dcace7aa162"
+      "fingerprint": "0f4934c110de37"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1783,8 +1783,8 @@
     },
     "/models/gemini-3-1-flash-lite-preview/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "1c7a7d3ea87fe0"
+      "lastmod": "2026-10-29",
+      "fingerprint": "10251e22ed997f"
     },
     "/models/gemini-3-1-flash-lite/": {
       "published": "2026-08-02",
@@ -2219,7 +2219,7 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "105d317fad06f0"
+      "fingerprint": "1eaf1b8b8af248"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2248,8 +2248,8 @@
     },
     "/providers/google/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0de03dea1f3f77"
+      "lastmod": "2026-10-29",
+      "fingerprint": "00a23f8883cc4d"
     },
     "/providers/inception/": {
       "published": "2026-10-24",
