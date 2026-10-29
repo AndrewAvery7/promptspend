@@ -9,6 +9,25 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Past prices: `get_price` takes `as_of`** (`@promptspend/mcp` 0.1.10, npm and hosted). It returns the
+  rate PromptSpend published on that UTC day, from the price history the site build now publishes at
+  `/data/price-history.json` and `.csv` (the same replay of every committed catalog as the CC0 dataset).
+  A day before a model was tracked is answered "not tracked", never with the first rate seen, and any
+  later correction travels with the figure. The CI build and browser jobs check out full history for
+  it, and the build refuses a shallow clone.
+- **Measured usage: `estimate_cost` takes `usage`** (input, output, cache_read and cache_write
+  totals), billed straight at today's rates. A missing cache rate is billed at the full input rate and
+  said so; a long-context model is flagged because totals cannot show which requests crossed the tier.
+  The two additions take the MCP footprint from ~823 to ~897 tokens, inside the 900 budget.
+- **The feed labels corrections apart from repricing.** `/feed.xml` is now built from the price
+  history instead of the changelog, whose "Price" lines included rates merely starting to be recorded.
+  Each day lists price changes (the vendor's rate moved), corrections (PromptSpend had misread a page)
+  and models added or removed; coverage-only days are left out.
+- **A GitHub Action, `github-action/`**: fails a build when a model the project calls changes price or
+  is retired, against a committed `promptspend.lock.json`. Scans quoted model ids or takes a list; no
+  dependencies, no key.
+- **An Agent Skill, `skills/promptspend/`**: the same three tools as calls to the hosted server, for
+  people who would rather not load MCP tool definitions on every turn.
 - **A hosted MCP server at `https://promptspend.dev/mcp`** (`@promptspend/mcp` 0.1.9 in the MCP Registry).
   The same three tools with nothing to install: add the URL as a custom connector in Claude.ai or
   ChatGPT, or `claude mcp add --transport http`. Streamable HTTP, stateless, no key; the manifest and

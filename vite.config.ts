@@ -396,6 +396,7 @@ export default defineConfig(({ mode }) => {
         'src/**/*.test.tsx',
         'scripts/**/*.test.ts',
         'packages/core/src/**/*.test.ts',
+        'github-action/**/*.test.ts',
       ],
       coverage: {
         provider: 'v8',

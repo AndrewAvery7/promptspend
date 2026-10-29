@@ -18,10 +18,11 @@ import {
   estimateCost,
   findCheaper,
   getPrice,
+  getPriceOn,
   type CheaperInput,
   type EstimateInput,
 } from '../../mcp/src/tools';
-import { readCatalog } from './catalog';
+import { readCatalog, readHistory } from './catalog';
 import type { Env } from './env';
 import { corsHeaders } from './http';
 
@@ -92,9 +93,14 @@ async function callTool(params: unknown, env: Env, ctx: ExecutionContext) {
   let result: unknown;
   try {
     switch (name) {
-      case 'get_price':
-        result = getPrice(catalog, generatedAt, typeof args.model_name === 'string' ? args.model_name : '');
+      case 'get_price': {
+        const modelName = typeof args.model_name === 'string' ? args.model_name : '';
+        result =
+          args.as_of === undefined
+            ? getPrice(catalog, generatedAt, modelName)
+            : getPriceOn(catalog, await readHistory(env, ctx), modelName, String(args.as_of));
         break;
+      }
       case 'estimate_cost':
         result = estimateCost(catalog, generatedAt, args as unknown as EstimateInput);
         break;

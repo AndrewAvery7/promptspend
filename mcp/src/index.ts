@@ -13,17 +13,29 @@ import { fileURLToPath } from 'node:url';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { getCatalog, CatalogUnavailableError } from './catalog';
+import { getCatalog, getHistory, CatalogUnavailableError } from './catalog';
 import { INSTRUCTIONS, SERVER_INFO, TOOLS } from './schema';
-import { estimateCost, findCheaper, getPrice, type CheaperInput, type EstimateInput } from './tools';
+import {
+  estimateCost,
+  findCheaper,
+  getPrice,
+  getPriceOn,
+  type CheaperInput,
+  type EstimateInput,
+} from './tools';
 
 export async function dispatch(name: string, args: Record<string, unknown>): Promise<unknown> {
   const { catalog, generatedAt, fetchedAt, servedFromFallback, warning } = await getCatalog();
   let result: unknown;
   switch (name) {
-    case 'get_price':
-      result = getPrice(catalog, generatedAt, typeof args.model_name === 'string' ? args.model_name : '');
+    case 'get_price': {
+      const modelName = typeof args.model_name === 'string' ? args.model_name : '';
+      result =
+        args.as_of === undefined
+          ? getPrice(catalog, generatedAt, modelName)
+          : getPriceOn(catalog, await getHistory(), modelName, String(args.as_of));
       break;
+    }
     case 'estimate_cost':
       result = estimateCost(catalog, generatedAt, args as unknown as EstimateInput);
       break;
@@ -70,7 +82,7 @@ function handleFlags(argv: string[]): boolean {
         `  { "mcpServers": { "promptspend": {\n` +
         `      "command": "npx", "args": ["-y", "@promptspend/mcp"] } } }\n\n` +
         `Tools: ${TOOLS.map((t) => t.name).join(', ')}\n` +
-        `Context cost: ~823 tokens per turn, measured and budgeted.\n` +
+        `Context cost: ~897 tokens per turn, measured and budgeted.\n` +
         `Docs: https://github.com/AndrewAvery7/promptspend/tree/main/mcp`,
     );
     return true;

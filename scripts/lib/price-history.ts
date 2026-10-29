@@ -38,24 +38,10 @@ export interface CatalogVersion {
  *                recording stopped being recorded, on a model that stayed.
  *                Nobody's bill moved; our coverage did.
  */
-export type HistoryChange = 'listed' | 'delisted' | 'price' | 'correction' | 'coverage';
-
-export interface HistoryRow {
-  date: string;
-  commit: string;
-  model_id: string;
-  model_name: string;
-  provider_id: string;
-  provider_name: string;
-  change: HistoryChange;
-  field: string;
-  old_value: string;
-  new_value: string;
-  unit: string;
-  source: string;
-  source_url: string;
-  provider_pricing_url: string;
-}
+// The row shape is shared with the readers on the site, the MCP server and the
+// API, which take it from `/data/price-history.json`.
+import type { HistoryChange, HistoryRow } from '../../src/lib/pricing/history';
+export type { HistoryChange, HistoryRow };
 
 export const COLUMNS: readonly (keyof HistoryRow)[] = [
   'date',

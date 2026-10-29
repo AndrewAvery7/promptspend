@@ -1,0 +1,46 @@
+name: PromptSpend price check
+description: Fail the build when an LLM a project calls changes price or is retired, from the PromptSpend catalog.
+author: PromptSpend
+branding:
+  icon: dollar-sign
+  color: blue
+
+inputs:
+  models:
+    description: >-
+      Model ids to watch, comma- or newline-separated (ids from https://promptspend.dev/v1/models).
+      Leave empty to scan the repository's tracked source files for quoted model ids.
+    required: false
+    default: ''
+  lockfile:
+    description: Where the rates this project was built against are recorded. Commit it.
+    required: false
+    default: promptspend.lock.json
+  fail-on:
+    description: >-
+      What fails the check: "change" (a recorded rate moved), "retired" (a vendor retired the model),
+      both comma-separated, or "none" to only report.
+    required: false
+    default: change,retired
+  update:
+    description: Rewrite the lockfile with today's rates and pass. Use it to accept a price change.
+    required: false
+    default: 'false'
+  api:
+    description: The PromptSpend API origin.
+    required: false
+    default: https://promptspend.dev
+
+outputs:
+  models:
+    description: Comma-separated ids that were checked.
+  changed:
+    description: Comma-separated ids whose rates moved since the lockfile.
+  retired:
+    description: Comma-separated ids their vendor has retired.
+  lockfile-written:
+    description: '"true" when the lockfile was created or rewritten this run.'
+
+runs:
+  using: node24
+  main: index.mjs

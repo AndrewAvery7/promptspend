@@ -60,6 +60,9 @@ import {
 import { INDEXNOW_KEY, INDEXNOW_KEY_FILE } from './lib/indexnow';
 import { readLedger } from './lib/page-ledger';
 import { renderFeed } from '../src/lib/seo/feed';
+import { buildHistory, toCsv } from './lib/price-history';
+import { loadCatalogVersions } from './price-history-git';
+import type { PriceHistory } from '../src/lib/pricing/history';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
@@ -69,7 +72,6 @@ const INFORMATION_DIR = resolve(ROOT, 'src/content/information');
 const FREE_TIERS = resolve(ROOT, 'data/free-tiers.json');
 const FREE_TIER_CHECK = resolve(ROOT, 'public/data/free-tier-check.json');
 const SYNC_STATUS = resolve(ROOT, 'public/data/sync-status.json');
-const CHANGELOG = resolve(ROOT, 'docs/pricing-changelog.md');
 
 /** Same defaults as `vite.config.ts`, and for the same reasons: an unset
  *  GitHub Actions variable arrives as `""`, so `??` would not catch it. */
@@ -407,8 +409,27 @@ async function main(): Promise<void> {
     ]),
   );
 
-  // Price news as Atom, filtered from the changelog the daily sync writes. See src/lib/seo/feed.ts.
-  await writeFileAt('feed.xml', renderFeed(await readFile(CHANGELOG, 'utf8'), siteUrl));
+  // The price history, replayed from every committed catalog up to the commit
+  // being built: the same table as the archived CSV dataset. It feeds the
+  // `as_of` lookups in the MCP server and the API, and the Atom feed below.
+  // A shallow checkout throws rather than publish a one-day "history".
+  const versions = loadCatalogVersions(ROOT, 'HEAD');
+  const rows = buildHistory(versions);
+  const history: PriceHistory = {
+    schemaVersion: 1,
+    firstDate: rows[0]?.date ?? catalog.generatedAt.slice(0, 10),
+    lastDate: new Date(versions.at(-1)?.committedAt ?? catalog.generatedAt).toISOString().slice(0, 10),
+    rows,
+  };
+  await writeFileAt(
+    'data/price-history.json',
+    `${JSON.stringify(history)}
+`,
+  );
+  await writeFileAt('data/price-history.csv', toCsv(rows));
+
+  // Price news as Atom, with corrections labelled apart from repricing. See src/lib/seo/feed.ts.
+  await writeFileAt('feed.xml', renderFeed(history, siteUrl));
 
   // An index written for the thing that reads it. Points at the pages and the
   // API rather than inlining rates, which would be stale by morning.

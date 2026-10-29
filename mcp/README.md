@@ -91,7 +91,7 @@ data.
 A pricing server that quietly taxes every turn, to tell you about token costs,
 would be an easy and deserved joke. So:
 
-> **This server adds ~823 tokens per turn.** Three tools, short descriptions,
+> **This server adds ~897 tokens per turn.** Three tools, short descriptions,
 > budgeted at 900 and checked in CI by `npm run check:footprint`.
 
 If that number ever stops being true, the build fails — the README figure is
@@ -99,11 +99,25 @@ asserted against the actual manifest, not typed once and trusted.
 
 ## Tools
 
-| Tool            | What it answers                                              |
-| --------------- | ------------------------------------------------------------ |
-| `get_price`     | What does this model cost, and how much should I trust that? |
-| `estimate_cost` | What will _my_ workload actually cost per month on each?     |
-| `find_cheaper`  | What could I test that is cheaper and not obviously worse?   |
+| Tool            | What it answers                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------- |
+| `get_price`     | What does this model cost, and how much should I trust that? With `as_of`, what did it cost then? |
+| `estimate_cost` | What will _my_ workload cost per month on each? With `usage`, what would these totals have cost?  |
+| `find_cheaper`  | What could I test that is cheaper and not obviously worse?                                        |
+
+**`get_price` with `as_of: "2026-09-15"`** returns the rate PromptSpend published
+on that UTC day, read from the [price history](../docs/PRICE_HISTORY.md) — useful
+for checking an old invoice. A day before PromptSpend began tracking the model is
+answered "not tracked", never with the first rate seen, and a later **correction**
+(PromptSpend had been reading the wrong page) is returned with the figure, so an
+agent does not present a misreading as what the vendor charged.
+
+**`estimate_cost` with `usage`** prices measured totals — say a month from a usage
+export — instead of a described workload:
+`{ "input": 1200000, "output": 300000, "cache_read": 4000000, "cache_write": 200000 }`,
+where `input` excludes cache reads. A model without a published cache rate is
+billed at its full input rate (and the response says so), and a model with a
+long-context tier is flagged, because totals cannot show which requests crossed it.
 
 `find_cheaper` returns **candidates to test, never a recommendation** — the
 capability index behind it is an illustrative estimate, not a benchmark, and the
@@ -137,6 +151,9 @@ promptspend.dev, it has Cloudflare's request logging switched on: each entry rec
 address (`/mcp`), request headers and connection details such as an IP address, kept for up to seven
 days. PromptSpend's code never logs the arguments themselves. Run the npm package instead if a
 workload description should never leave your machine.
+
+**Or as an Agent Skill**, which costs context only when a price question comes up rather than on every
+turn: see [skills/](../skills/README.md).
 
 ## What it will not do
 

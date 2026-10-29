@@ -26,7 +26,8 @@
  */
 import { compareModels, effectivePricing, type Workload, type Scale } from '@/lib/engine/cost';
 import { Catalog } from '@/lib/pricing/catalog';
-import type { Model } from '@/lib/pricing/types';
+import type { Model, Pricing } from '@/lib/pricing/types';
+import { isCalendarDate, priceOn, type PriceHistory } from '@/lib/pricing/history';
 import { provenanceOf } from './provenance';
 
 // The comparison workload and the cheaper-model search moved to the site's lib
@@ -147,6 +148,90 @@ export function getPrice(catalog: Catalog, generatedAt: string, model_name: stri
   };
 }
 
+/**
+ * `get_price` with `as_of`: the rate PromptSpend published on a past UTC day.
+ *
+ * Read from the published history, never interpolated. A day before the model
+ * was tracked is answered "not tracked", not with the first rate we saw, and a
+ * later correction is reported with the figure — a rate published before
+ * PromptSpend fixed a misreading is what we said, not necessarily what the
+ * vendor charged.
+ */
+export function getPriceOn(catalog: Catalog, history: PriceHistory, model_name: string, as_of: string) {
+  if (typeof as_of !== 'string' || !isCalendarDate(as_of))
+    return { error: 'as_of must be a real date written YYYY-MM-DD.' };
+  const model = resolveModel(catalog, model_name);
+  if (!model) return notFound(catalog, model_name);
+  const r = priceOn(history, model.id, as_of);
+  const base = { model: model.id, as_of };
+  switch (r.kind) {
+    case 'before_history':
+      return {
+        ...base,
+        error: `PromptSpend's price history begins on ${r.firstDate}; there is no record before it.`,
+      };
+    case 'after_history':
+      return {
+        ...base,
+        error: `The published history runs to ${r.lastDate}. For today's rate, call get_price without as_of.`,
+      };
+    case 'not_tracked':
+      return {
+        ...base,
+        error:
+          r.listedOn === null
+            ? 'PromptSpend has no history for this model.'
+            : `PromptSpend began tracking this model on ${r.listedOn}, so it has no rate for ${as_of}. ` +
+              'That is not a launch date, and the first rate seen is not substituted for an earlier day.',
+      };
+    case 'delisted':
+      return { ...base, error: `This model had left the PromptSpend catalog on ${r.delistedOn}.` };
+  }
+  const p = r.pricing;
+  const corrected = r.later.filter((c) => c.change === 'correction');
+  return {
+    ...base,
+    display_name: r.modelName,
+    input_per_million_usd: p.input,
+    output_per_million_usd: p.output,
+    ...(p.cachedInput !== undefined ? { cached_input_per_million_usd: p.cachedInput } : {}),
+    ...(p.cacheWrite !== undefined ? { cache_write_per_million_usd: p.cacheWrite } : {}),
+    ...(p !== r.standard
+      ? {
+          promotional_pricing: {
+            standard_input_per_million_usd: r.standard.input,
+            standard_output_per_million_usd: r.standard.output,
+            note: 'A promotional rate was in force that day; the rates above are the promoted ones.',
+          },
+        }
+      : {}),
+    tracked_since: r.listedOn,
+    source: r.source,
+    ...(r.sourceUrl ? { source_url: r.sourceUrl } : {}),
+    changes_since: r.later.slice(0, 10).map((c) => ({
+      date: c.date,
+      kind:
+        c.change === 'correction'
+          ? 'correction (PromptSpend misread the page; the vendor did not reprice)'
+          : c.change,
+      field: c.field,
+      from: c.from === '' ? null : c.from,
+      to: c.to === '' ? null : c.to,
+    })),
+    ...(corrected.length > 0
+      ? {
+          warning:
+            `PromptSpend later corrected ${corrected.map((c) => c.field).join(', ')} for this model ` +
+            `(${corrected.map((c) => c.date).join(', ')}). The figure published on ${as_of} was a misreading, ` +
+            'so say so rather than present it as what the vendor charged.',
+        }
+      : {}),
+    note:
+      'The rate PromptSpend published at the end of that UTC day, in USD per million tokens. ' +
+      'History: https://promptspend.com/data/price-history.csv',
+  };
+}
+
 export interface EstimateInput {
   models: string[];
   system_tokens?: number;
@@ -157,6 +242,15 @@ export interface EstimateInput {
   cached_input_share?: number;
   reasoning_multiplier?: number;
   use_batch_api?: boolean;
+  usage?: Usage;
+}
+
+/** Measured token totals, e.g. a month from a usage export. `input` excludes cache reads. */
+export interface Usage {
+  input?: number;
+  output?: number;
+  cache_read?: number;
+  cache_write?: number;
 }
 
 export function estimateCost(catalog: Catalog, generatedAt: string, input: EstimateInput) {
@@ -184,6 +278,9 @@ export function estimateCost(catalog: Catalog, generatedAt: string, input: Estim
       retired_models: retired.length > 0 ? retired : undefined,
     };
   }
+
+  if (input.usage !== undefined)
+    return estimateUsage(catalog, generatedAt, resolved, input, unknown, retired);
 
   const workload: Workload = {
     systemTokens: input.system_tokens ?? DEFAULT_WORKLOAD.systemTokens,
@@ -234,6 +331,85 @@ export function estimateCost(catalog: Catalog, generatedAt: string, input: Estim
       'Standard-tier list prices. Cache writes are billed where the provider publishes a rate. ' +
       'Long-context tiers are applied per request where published. Excludes regional premiums, ' +
       'priority tiers, tool-call fees and negotiated discounts.',
+  };
+}
+
+/**
+ * Price measured totals rather than a described workload — "what would last
+ * month's usage have cost on X". The engine models conversations; totals have
+ * no conversations in them, so they are billed straight at the rates in force.
+ *
+ * Two things follow and are said in the response rather than hidden. A missing
+ * cache-read or cache-write rate is billed at the full input rate (never an
+ * invented discount). And long-context tiers apply per request, which totals
+ * cannot show, so those models carry a warning that the figure is a floor.
+ */
+function estimateUsage(
+  catalog: Catalog,
+  generatedAt: string,
+  models: Model[],
+  input: EstimateInput,
+  unknown: string[],
+  retired: string[],
+) {
+  const u = input.usage!;
+  const tokens = {
+    input: u.input ?? 0,
+    output: u.output ?? 0,
+    cache_read: u.cache_read ?? 0,
+    cache_write: u.cache_write ?? 0,
+  };
+  const now = new Date();
+  const rows = models.map((model) => {
+    const p: Pricing = effectivePricing(model.pricing, now);
+    const fallbacks: string[] = [];
+    const readRate = p.cachedInput ?? p.input;
+    if (tokens.cache_read > 0 && p.cachedInput === undefined)
+      fallbacks.push('cache reads billed at the input rate');
+    const writeRate = p.cacheWrite ?? p.input;
+    if (tokens.cache_write > 0 && p.cacheWrite === undefined)
+      fallbacks.push('cache writes billed at the input rate');
+    const batch = input.use_batch_api && p.batchDiscount !== undefined ? p.batchDiscount : 1;
+    if (input.use_batch_api && p.batchDiscount === undefined) fallbacks.push('no published batch discount');
+    const cost =
+      ((tokens.input * p.input +
+        tokens.cache_read * readRate +
+        tokens.cache_write * writeRate +
+        tokens.output * p.output) /
+        1_000_000) *
+      batch;
+    return {
+      model: model.id,
+      display_name: model.displayName,
+      provider: catalog.providerName(model),
+      cost_usd: Number(cost.toFixed(4)),
+      ...(fallbacks.length > 0 ? { note: fallbacks.join('; ') } : {}),
+      ...(p.longContext
+        ? {
+            long_context_warning:
+              `Requests over ${p.longContext.thresholdTokens} input tokens bill at higher rates; totals cannot ` +
+              'show which requests crossed it, so this is a floor.',
+          }
+        : {}),
+      provenance: provenanceOf(model),
+    };
+  });
+  const cheapest = Math.min(...rows.map((r) => r.cost_usd));
+  return {
+    usage: tokens,
+    results: rows
+      .sort((a, b) => a.cost_usd - b.cost_usd)
+      .map((r) => ({
+        ...r,
+        extra_vs_cheapest_usd: Number((r.cost_usd - cheapest).toFixed(4)),
+        is_cheapest: r.cost_usd === cheapest,
+      })),
+    unknown_models: unknown.length > 0 ? unknown : undefined,
+    retired_models: retired.length > 0 ? retired : undefined,
+    catalog_generated_at: generatedAt,
+    assumptions:
+      "Today's standard-tier list prices applied to the totals given. Output totals should include any " +
+      'reasoning tokens. Excludes regional premiums, priority tiers, tool-call fees and negotiated discounts.',
   };
 }
 
@@ -304,6 +480,20 @@ function validateEstimateInput(input: EstimateInput): string | null {
     return 'models must contain between 1 and 20 model names.';
   if (input.models.some((value) => typeof value !== 'string' || value.trim().length < 2))
     return 'Every model name must be a non-blank string.';
+  if (input.usage !== undefined) {
+    const u = input.usage as Record<string, unknown>;
+    if (typeof u !== 'object' || u === null || Array.isArray(u))
+      return 'usage must be an object of token totals: input, output, cache_read, cache_write.';
+    const keys = Object.keys(u);
+    const bad = keys.find((k) => !['input', 'output', 'cache_read', 'cache_write'].includes(k));
+    if (bad) return `usage has an unknown field "${bad}"; use input, output, cache_read and cache_write.`;
+    for (const k of keys) {
+      const v = u[k];
+      if (typeof v !== 'number' || !Number.isFinite(v) || v < 0 || v > 1e13)
+        return `usage.${k} must be a token count from 0 to 10 trillion.`;
+    }
+    if (keys.every((k) => u[k] === 0)) return 'usage must contain at least one non-zero total.';
+  }
   return validateNumbers(input);
 }
 

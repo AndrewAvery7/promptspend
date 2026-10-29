@@ -10,15 +10,13 @@
  * dataset) that touched `public/data/pricing.json`. The schema of the output is
  * documented in `docs/PRICE_HISTORY.md`.
  */
-import { execFileSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { PricingCatalog } from '../src/lib/pricing/types';
-import { buildHistory, toCsv, type CatalogVersion } from './lib/price-history';
+import { buildHistory, toCsv } from './lib/price-history';
+import { CATALOG_PATH as CATALOG, loadCatalogVersions } from './price-history-git';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const CATALOG = 'public/data/pricing.json';
 
 function flag(name: string, fallback: string): string {
   const i = process.argv.indexOf(name);
@@ -28,22 +26,7 @@ function flag(name: string, fallback: string): string {
 const ref = flag('--ref', 'origin/main');
 const out = resolve(ROOT, flag('--out', 'price-history.csv'));
 
-const git = (...args: string[]): string =>
-  execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
-
-const log = git('log', '--first-parent', '--reverse', '--format=%H%x09%cI', ref, '--', CATALOG)
-  .trim()
-  .split('\n')
-  .filter(Boolean);
-
-const versions: CatalogVersion[] = log.map((line) => {
-  const [commit = '', committedAt = ''] = line.split('\t');
-  return {
-    commit,
-    committedAt,
-    catalog: JSON.parse(git('show', `${commit}:${CATALOG}`)) as PricingCatalog,
-  };
-});
+const versions = loadCatalogVersions(ROOT, ref);
 
 const rows = buildHistory(versions);
 await writeFile(out, toCsv(rows), 'utf8');
