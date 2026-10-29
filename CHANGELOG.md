@@ -9,6 +9,12 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **Google Analytics now runs with every feature on** (owner decision 2026-10-29). Google receives the full
+  page address, scenario and campaign tags included, so it can tell which post or email sent a visitor;
+  Google's automatic tracking (address changes, site search, form starts, scrolls, outbound clicks) is on;
+  Google signals and ad personalization are on, so visits can feed Google's demographic reports and
+  advertising; visit data is kept 14 months. Only the private key in a price-alert link is removed before
+  anything is sent, and pasted text still never leaves the device. The notice and the privacy page say so.
 - **Google Analytics is back on promptspend.com**, reporting to a new property owned by Crestwood Holdings
   (Measurement ID `G-P27XJ53BH9`; its cookie is now `_ga_P27XJ53BH9`). It works exactly as it did before the
   pause: a notice with a _Turn off_ button, nothing after `?` or `#` sent, nothing typed or pasted sent, off

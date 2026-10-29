@@ -140,8 +140,9 @@ describe('the privacy page describes the analytics switch as it is set', () => {
     'names the cookies, what Google receives, and how to turn it off',
     () => {
       expect(policy).toContain('`_ga` and `_ga_' + GA_MEASUREMENT_ID.replace(/^G-/, '') + '`');
-      expect(policy).toContain('without anything after a question mark or a hash sign');
-      expect(policy).toContain('Google never receives text you paste or type');
+      expect(policy).toContain('except the private key a price-alert link carries');
+      expect(policy).toContain('Google never receives text you paste');
+      expect(policy).toContain('Google signals and ad personalization are switched on');
       expect(policy).toContain('tools.google.com/dlpage/gaoptout');
       expect(policy).toContain('Global Privacy Control');
       expect(policy).toContain('[[analytics-choice]]');

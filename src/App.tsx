@@ -6,6 +6,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { useAppearance, ACCENTS } from '@/state/useAppearance';
 import { useEstimator } from '@/state/useEstimator';
 import { Header, VIEWS, type ViewId } from '@/components/Header';
+import { alertsLinkToken } from '@/lib/alerts/link-token';
 
 /** `#compare` -> 'compare'; anything else -> null. */
 function viewFromHash(): ViewId | null {
@@ -92,7 +93,7 @@ function Workspace({ catalog }: { catalog: Catalog }) {
   // Other pages of the site (the Receipt page's header, for one) link to a view
   // as `/#compare`, `/#learn`, `/#data`, so the hash is honored too.
   const [view, setView] = useState<ViewId>(() =>
-    new URLSearchParams(window.location.search).has('alerts') ? 'data' : (viewFromHash() ?? 'estimate'),
+    alertsLinkToken() !== null ? 'data' : (viewFromHash() ?? 'estimate'),
   );
   useEffect(() => {
     const onHash = () => {

@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-126-2456E6.svg" alt="126 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1762-blue.svg" alt="1762 tests">
+  <img src="https://img.shields.io/badge/tests-1766-blue.svg" alt="1766 tests">
   <img src="https://img.shields.io/badge/initial%20payload-106%20KB%20gzip-blue.svg" alt="106 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -429,7 +429,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1762 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1766 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 374 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/SEO_PROGRAM.md](docs/SEO_PROGRAM.md)             | The search baseline, the 90-day plan written before the results, and the dated change log                                           |
@@ -496,7 +496,7 @@ just a confident guess.
 
 ## Privacy, precisely
 
-**Nothing you type or paste leaves your browser.** No accounts, no ads. Fonts are
+**Nothing you paste leaves your browser.** No accounts, and no ads on the site. Fonts are
 self-hosted. One image is not: the footer's LaunchNest listing badge loads from launchnest.io (their
 directory requires it), with no referrer, so LaunchNest's server sees a visitor's IP address but not
 which page they were on.
@@ -504,11 +504,12 @@ which page they were on.
 **The website counts visits with Google Analytics, which sets cookies.** Since 2026-10-24 (apart from a pause on 2026-10-29) every page of
 promptspend.com loads Google Analytics 4 and shows a small notice saying so, with a link to the
 [privacy policy](https://promptspend.com/privacy/) and a _Turn off_ button. Google Analytics sets two
-cookies (`_ga`, `_ga_P27XJ53BH9`). PromptSpend's code sends it the page's site and path only — never the
-query string or `#fragment`, where the scenario and alert tokens live — plus the page title and referring
-page (cut down the same way); it switches off GA's automatic page view, Google signals and ad
-personalization, and passes it nothing anyone types, pastes or enters in a form
-([`src/lib/analytics/`](src/lib/analytics/)). It runs only on promptspend.com, never when the browser
+cookies (`_ga`, `_ga_P27XJ53BH9`). Since 2026-10-29 (owner decision) Google's advertising and measurement features are on: the
+full page address, scenario and campaign tags included, Google's automatic tracking, Google signals and
+ad personalization, and 14-month retention. One thing is still removed before anything is sent: the
+private key a price-alert link carries (`PRIVATE_ADDRESS_PARAMS`). Pasted text is never in the address
+and never passed on ([`src/lib/analytics/`](src/lib/analytics/)). Google's user-provided data collection is on,
+so an email address typed into the price-alert form reaches Google in hashed form. It runs only on promptspend.com, never when the browser
 sends Global Privacy Control, and one line in
 [`src/lib/analytics/config.ts`](src/lib/analytics/config.ts) (`ANALYTICS_REQUIRES_CONSENT`) switches it
 to loading only after a visitor clicks _Accept_. Visitors can turn it off on the notice, on the privacy

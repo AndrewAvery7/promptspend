@@ -52,6 +52,10 @@ const GOOGLE_COLLECT = [
   'https://www.google-analytics.com',
   'https://region1.google-analytics.com',
   'https://region1.analytics.google.com',
+  // Google signals and ad personalization (owner decision 2026-10-29).
+  'https://stats.g.doubleclick.net',
+  'https://googleads.g.doubleclick.net',
+  'https://www.google.com',
 ];
 
 /**

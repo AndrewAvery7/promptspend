@@ -1,28 +1,35 @@
 /**
  * Google Analytics 4 for the website: what it is told, and when it loads.
  *
- * Three rules, each enforced here and held by `ga.test.ts`:
+ * Owner decision, 2026-10-29: use everything Google Analytics offers. Two rules
+ * still hold, each enforced here and held by `ga.test.ts`:
  *
- * 1. **Only the page's origin and path.** PromptSpend keeps the current
- *    scenario in the address (`?…`), alert links carry a private token there,
- *    and the calculator's views live after the `#`. None of that is Google's
- *    business, so `page_location` and `page_referrer` are cut down to origin +
- *    path before anything is queued. GA's own automatic page view is switched
- *    off (`send_page_view: false`) and one clean `page_view` is sent instead.
- * 2. **Nothing a visitor types or pastes.** The only values ever handed to
- *    `gtag` are the three page fields below and fixed settings. No form value,
- *    no scenario, no prompt text: pasted text never leaves the device, which is
- *    the one promise every privacy decision here has kept.
- * 3. **No advertising features.** Google signals and ad personalization are
- *    off, and the ad-related consent types are denied, so Google may count the
- *    visit but not link it to an advertising profile.
+ * 1. **No private keys.** The whole address goes to Google, scenario, campaign
+ *    tags and `#view` included, except the query-string names in
+ *    `PRIVATE_ADDRESS_PARAMS`, an alert link's private key. `src/main.tsx` takes
+ *    that key out of the address bar before this code runs, and the cleaning
+ *    here is the second guard, which also covers the referrer.
+ * 2. **No pasted text.** PromptSpend's code hands `gtag` only the page fields
+ *    below and fixed settings. Pasted prompt text is never in the address and
+ *    never passed on. (Google's own automatic tracking, which is on, reads
+ *    clicks, scrolls, form starts and the address; it does not read what is
+ *    typed into a field.)
+ *
+ * Google signals and ad personalization are on, and every consent type is
+ * granted.
  *
  * Whether it loads at all is `shouldLoad`: only on promptspend.com, never after
  * the visitor turned it off, never when the browser sends Global Privacy
  * Control, and - when the switch in `config.ts` asks for consent - only after
  * "Accept".
  */
-import { ANALYTICS_CHOICE_KEY, GA_HOSTNAMES, GA_MEASUREMENT_ID, GA_SCRIPT_ORIGIN } from './config';
+import {
+  ANALYTICS_CHOICE_KEY,
+  GA_HOSTNAMES,
+  GA_MEASUREMENT_ID,
+  GA_SCRIPT_ORIGIN,
+  PRIVATE_ADDRESS_PARAMS,
+} from './config';
 
 /** What the visitor did with the notice. Absent means they have not chosen. */
 export type AnalyticsChoice = 'dismissed' | 'accepted' | 'declined';
@@ -30,9 +37,11 @@ export type AnalyticsChoice = 'dismissed' | 'accepted' | 'declined';
 const CHOICES: readonly AnalyticsChoice[] = ['dismissed', 'accepted', 'declined'];
 
 /**
- * An address cut down to its origin and path: no query string, no fragment, no
- * user name or password. Anything that is not an ordinary web address becomes
- * the empty string rather than being passed on unexamined.
+ * An address with its private keys removed: the query-string names in
+ * `PRIVATE_ADDRESS_PARAMS`, and any user name or password. Everything else is
+ * kept, including the rest of the query string and the fragment. Anything that
+ * is not an ordinary web address becomes the empty string rather than being
+ * passed on unexamined.
  */
 export function cleanAddress(address: string | null | undefined): string {
   if (!address) return '';
@@ -43,10 +52,13 @@ export function cleanAddress(address: string | null | undefined): string {
     return '';
   }
   if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
-  return `${url.origin}${url.pathname}`;
+  url.username = '';
+  url.password = '';
+  for (const name of PRIVATE_ADDRESS_PARAMS) url.searchParams.delete(name);
+  return url.href;
 }
 
-/** The three page fields Google receives, and nothing else. */
+/** The three page fields PromptSpend's own code hands Google. */
 export interface PageFields {
   page_location: string;
   page_referrer: string;
@@ -140,20 +152,20 @@ export function loadGoogleAnalytics(win: GtagWindow, doc: Document): void {
 
   const page = pageFields(doc);
   gtag('consent', 'default', {
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
+    ad_storage: 'granted',
+    ad_user_data: 'granted',
+    ad_personalization: 'granted',
     analytics_storage: 'granted',
   });
   gtag('js', new Date());
-  // `set` as well as `config`, so every later event Google sends on this page
-  // (engagement time, scrolls) carries the clean address too.
-  gtag('set', page);
+  // The referrer is set for the whole page, so every later event carries the
+  // redacted one. The location is not: Google's history-change page views must
+  // read the address as it is then, after the alerts panel has removed its key.
+  gtag('set', { page_referrer: page.page_referrer });
   gtag('config', GA_MEASUREMENT_ID, {
-    ...page,
     send_page_view: false,
-    allow_google_signals: false,
-    allow_ad_personalization_signals: false,
+    allow_google_signals: true,
+    allow_ad_personalization_signals: true,
   });
   gtag('event', 'page_view', page);
 

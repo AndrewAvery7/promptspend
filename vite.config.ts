@@ -238,9 +238,9 @@ function receiptAssets(): Plugin {
  * beacon needs no exception here: it reports to the site's own `/cdn-cgi/rum`.
  * Google Analytics does (owner decision 2026-10-06), and that is a real cost:
  * a script that got onto the page could post to an analytics account of its
- * own. PromptSpend's own code never hands Google anything but the page's
- * origin and path (`src/lib/analytics/ga.ts`), and `check:csp` holds the list
- * to exactly these hosts.
+ * own. PromptSpend's own code hands Google only the page fields, minus an
+ * alert link's private key (`src/lib/analytics/ga.ts`), and `check:csp` holds
+ * the list to exactly these hosts.
  */
 function contentSecurityPolicy(alertsApi: string): Plugin {
   return {

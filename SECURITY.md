@@ -9,8 +9,11 @@ Analytics beacon (`script-src`), which reports only to the site's own
 fragment; and Google Analytics 4 (since 2026-10-29): `gtag.js` from
 `https://www.googletagmanager.com` (`script-src`, and also `connect-src`
 and `img-src`), reporting to
-`https://www.google-analytics.com`, `https://region1.google-analytics.com` and
-`https://region1.analytics.google.com` (`connect-src` and `img-src`). Where the
+`https://www.google-analytics.com`, `https://region1.google-analytics.com`,
+`https://region1.analytics.google.com`, and, for Google signals and ad
+personalization, `https://stats.g.doubleclick.net`,
+`https://googleads.g.doubleclick.net` and `https://www.google.com`
+(`connect-src` and `img-src`). Where the
 alerts API is configured, Turnstile's `https://challenges.cloudflare.com` is
 admitted too.
 
@@ -105,11 +108,14 @@ counts visits two ways.
   for every visitor with a dismissible notice (or, with the one-line switch
   `ANALYTICS_REQUIRES_CONSENT` in `src/lib/analytics/config.ts`, only after
   _Accept_), and not at all when the visitor turned it off or the browser sends
-  Global Privacy Control. PromptSpend's code sends it `page_location` and
-  `page_referrer` cut down to origin and path (no query string, no fragment),
-  the page title, and fixed settings: GA's automatic page view, Google signals
-  and ad personalization are off. Nothing a visitor types, pastes or enters in a
-  form is passed to it (`src/lib/analytics/ga.ts`, with tests).
+  Global Privacy Control. Since 2026-10-29 Google's advertising and
+  measurement features are on (owner decision). PromptSpend's code sends `page_location` and
+  `page_referrer` whole, query string and fragment included, minus the
+  alert-link key named in `PRIVATE_ADDRESS_PARAMS` (`alerts`), which
+  `src/main.tsx` also takes out of the address bar before Google Analytics
+  starts (`src/lib/alerts/link-token.ts`). Google signals and ad
+  personalization are on and every consent type is granted. Pasted text is
+  never passed to it (`src/lib/analytics/ga.ts`, with tests).
 - **Cloudflare Web Analytics**: a cookieless beacon, injected by Cloudflare,
   that reports page address, referrer, country and timings to the site's own
   `/cdn-cgi/rum`. The policy admits its script origin
@@ -117,19 +123,19 @@ counts visits two ways.
 
 Some of what the privacy page says rests on settings in the Google Analytics
 account rather than in this repository, so they are recorded here: event and
-user data retention **2 months**, with reset on new activity **off**; Google
-signals **off**; all four account data-sharing options **off** (Google products
-and services, modeling contributions, technical support, recommendations); the
-Google tag's cookie settings left at Google's defaults (cookies last up to two
-years); and under the web stream's
-Enhanced measurement, **"Page changes based on browser history events" off**
-(the calculator rewrites its own address as the scenario changes, and Google's
-automatic page view for that would report the full address, query string
-included), with **Form interactions** and **Site search** off too; no
-User-ID or user-provided data collection, and no Google Ads or BigQuery link.
-"Granular location and device data collection" is left at Google's default
-and decides how precise the location the privacy page describes ("such as your
-city or country") is. If
+user data retention **14 months**, with reset on new activity **on**; Google
+signals **on**; ads personalization allowed in **all regions**; granular
+location and device data collection **on**; all four account data-sharing options
+**on**, including "Google products and services" (Google's
+controller-to-controller terms accepted by the owner on 2026-10-29); the Google tag's cookie settings left at
+Google's defaults (cookies last up to two years); every Enhanced measurement
+option **on**, including page changes based on browser history events, site
+search and form interactions; user-provided data collection **on**, with
+**automatically detected** user-provided data on (Google's tag hashes an email
+address typed into the price-alert form and sends it); no User-ID (the site has
+no accounts); data redaction **on** for email addresses and for the query name
+`alerts` (a third guard behind `PRIVATE_ADDRESS_PARAMS`); and no Google
+Ads or BigQuery link. If
 any of these is changed, change the privacy page in the same breath.
 
 What that costs: `connect-src` now admits Google Analytics' collection hosts,

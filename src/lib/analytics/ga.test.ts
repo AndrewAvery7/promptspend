@@ -5,6 +5,7 @@ import {
   GA_COLLECT_ORIGINS,
   GA_MEASUREMENT_ID,
   GA_SCRIPT_ORIGIN,
+  PRIVATE_ADDRESS_PARAMS,
 } from './config';
 import {
   GA_SCRIPT_URL,
@@ -56,33 +57,41 @@ describe('the configuration', () => {
       'https://www.google-analytics.com',
       'https://region1.google-analytics.com',
       'https://region1.analytics.google.com',
+      'https://stats.g.doubleclick.net',
+      'https://googleads.g.doubleclick.net',
+      'https://www.google.com',
     ]);
+  });
+
+  it('treats exactly the alert-link key as private', () => {
+    expect(PRIVATE_ADDRESS_PARAMS).toEqual(['alerts']);
   });
 });
 
 describe('cleanAddress', () => {
-  it('keeps the origin and path and drops the query string and fragment', () => {
-    expect(cleanAddress('https://promptspend.com/?m=claude-opus-5&in=1200&out=400#compare')).toBe(
-      'https://promptspend.com/',
-    );
+  it('keeps the whole address: path, scenario, campaign tags and fragment', () => {
+    const full = 'https://promptspend.com/?m=claude-opus-5&in=1200&out=400&utm_source=linkedin#compare';
+    expect(cleanAddress(full)).toBe(full);
     expect(cleanAddress('https://promptspend.com/models/claude-opus-5/?ref=x')).toBe(
-      'https://promptspend.com/models/claude-opus-5/',
+      'https://promptspend.com/models/claude-opus-5/?ref=x',
     );
   });
 
-  it('drops an alert link private token', () => {
-    const cleaned = cleanAddress('https://promptspend.com/?alerts=PRIVATE-TOKEN-123');
-    expect(cleaned).toBe('https://promptspend.com/');
+  it("removes an alert link's private key and keeps the rest", () => {
+    const cleaned = cleanAddress('https://promptspend.com/?utm_source=email&alerts=PRIVATE-TOKEN-123#data');
+    expect(cleaned).toBe('https://promptspend.com/?utm_source=email#data');
     expect(cleaned).not.toContain('PRIVATE');
+    // `t` is a scenario field on this site, so it is kept.
+    expect(cleanAddress('https://promptspend.com/?m=a&t=6')).toBe('https://promptspend.com/?m=a&t=6');
   });
 
   it('drops a user name and password', () => {
     expect(cleanAddress('https://user:secret@promptspend.com/x/')).toBe('https://promptspend.com/x/');
   });
 
-  it('keeps a referring site to its origin and path', () => {
+  it('keeps a referring page whole', () => {
     expect(cleanAddress('https://news.ycombinator.com/item?id=123')).toBe(
-      'https://news.ycombinator.com/item',
+      'https://news.ycombinator.com/item?id=123',
     );
   });
 
@@ -97,15 +106,15 @@ describe('cleanAddress', () => {
 });
 
 describe('pageFields', () => {
-  it('cuts both the page and the referrer down before anything is queued', () => {
+  it('takes the private keys out of both the page and the referrer before anything is queued', () => {
     const fields = pageFields({
-      location: { href: 'https://promptspend.com/?m=a&paste=1#data' },
+      location: { href: 'https://promptspend.com/?m=a&alerts=TOKEN#data' },
       referrer: 'https://promptspend.com/models/x/?alerts=TOKEN#y',
       title: 'PromptSpend',
     });
     expect(fields).toEqual({
-      page_location: 'https://promptspend.com/',
-      page_referrer: 'https://promptspend.com/models/x/',
+      page_location: 'https://promptspend.com/?m=a#data',
+      page_referrer: 'https://promptspend.com/models/x/#y',
       page_title: 'PromptSpend',
     });
   });
@@ -202,14 +211,14 @@ describe('loadGoogleAnalytics', () => {
     expect(scripts[0]!.async).toBe(true);
   });
 
-  it('switches off the automatic page view and advertising features, and sends one clean page view', () => {
-    window.history.replaceState(null, '', '/models/claude-opus-5/?m=secret-scenario&alerts=TOKEN#data');
-    setReferrer('http://localhost:3000/?scenario=private#x');
+  it('turns on the advertising features and sends one page view without the private key', () => {
+    window.history.replaceState(null, '', '/models/claude-opus-5/?m=a-scenario&alerts=TOKEN#data');
+    setReferrer('http://localhost:3000/?scenario=1&alerts=KEY#x');
     loadGoogleAnalytics(gtagWindow(), document);
 
     const queued = commands();
-    const location = `${window.location.origin}/models/claude-opus-5/`;
-    const referrer = 'http://localhost:3000/';
+    const location = `${window.location.origin}/models/claude-opus-5/?m=a-scenario#data`;
+    const referrer = 'http://localhost:3000/?scenario=1#x';
     const page = { page_location: location, page_referrer: referrer, page_title: document.title };
 
     expect(queued.map((command) => command[0])).toEqual(['consent', 'js', 'set', 'config', 'event']);
@@ -217,33 +226,28 @@ describe('loadGoogleAnalytics', () => {
       'consent',
       'default',
       {
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted',
         analytics_storage: 'granted',
       },
     ]);
-    expect(queued[2]).toEqual(['set', page]);
+    expect(queued[2]).toEqual(['set', { page_referrer: referrer }]);
     expect(queued[3]).toEqual([
       'config',
       'G-P27XJ53BH9',
-      {
-        ...page,
-        send_page_view: false,
-        allow_google_signals: false,
-        allow_ad_personalization_signals: false,
-      },
+      { send_page_view: false, allow_google_signals: true, allow_ad_personalization_signals: true },
     ]);
     expect(queued[4]).toEqual(['event', 'page_view', page]);
 
-    // Nothing after the path reaches the queue, in any command.
+    // The private keys reach no command; the scenario does.
     const everything = JSON.stringify(queued);
-    for (const secret of ['secret-scenario', 'TOKEN', '#data', 'scenario=private', '?']) {
-      expect(everything).not.toContain(secret);
-    }
+    expect(everything).not.toContain('TOKEN');
+    expect(everything).not.toContain('KEY');
+    expect(everything).toContain('a-scenario');
   });
 
-  it('passes nothing a visitor typed or pasted', () => {
+  it('queues nothing a visitor typed or pasted', () => {
     document.body.innerHTML =
       '<textarea id="paste">MY PRIVATE PROMPT</textarea><input id="email" value="me@example.com" />';
     loadGoogleAnalytics(gtagWindow(), document);
