@@ -13,5 +13,5 @@ createRoot(container).render(
   </StrictMode>,
 );
 
-// Google Analytics and its notice, on promptspend.com only (src/lib/analytics).
+// Google Analytics and its notice: promptspend.com only, and nothing at all while it is paused (src/lib/analytics).
 startAnalytics();

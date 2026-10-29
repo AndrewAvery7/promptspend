@@ -11,10 +11,11 @@ import { expect, test } from '@playwright/test';
  * footer, social card, store listings) in the same release and then change the
  * assertion — never to loosen the assertion alone.
  *
- * Google Analytics (since 2026-10-24) does set cookies and talk to Google, but
- * only on promptspend.com, so it never starts on this local server. That
- * absence is itself checked in `analytics.spec.ts`, which also visits the
- * pages as promptspend.com and holds what Google is told.
+ * Google Analytics sets cookies and talks to Google when it runs, but only on
+ * promptspend.com, so it never starts on this local server; and since
+ * 2026-10-29 it is paused everywhere. That absence is itself checked in
+ * `analytics.spec.ts`, which also visits the pages as promptspend.com and
+ * holds what Google is told (nothing, while it is paused).
  *
  * Cloudflare's Web Analytics beacon is never injected here either (it is added
  * at the edge), so the visitor counter is not exercised; its behaviour was

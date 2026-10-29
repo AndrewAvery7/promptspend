@@ -16,6 +16,12 @@ on their own schedule and are not releases.
   better page) are labelled apart, and rates PromptSpend merely began recording are never shown as
   changes. The models index lists the ten latest vendor repricings. Both are plain HTML and SVG that read
   completely without scripts, and both come from the same history as the CSV dataset and the feed.
+- **A daily shut-down check.** `check:shutdowns` reads OpenAI's, Anthropic's and Google's deprecation pages
+  each morning before the sync, and the sync flags any live model past its vendor's shutdown date. A
+  price check cannot see this, because pricing tables keep listing retired models. Its first run found
+  Gemini 3.1 Flash Lite Preview, shut down by Google on 2026-05-25, which is archived in this change. It
+  also lists shutdowns still to come, among them GPT-5, 5 Mini, 5 Nano, 5 Pro, o3 and o3-pro on
+  2026-12-11.
 - **Fifteen first-party models the capture rules had missed.** A comparison with another tracker's model
   list found models the price feed already carried under their makers' own keys but no rule matched:
   OpenAI's GPT-5, 5.2, 5.4 and 5.5 Pro tiers, o1-pro and o3-pro, Mistral's Codestral, Kimi K3.1 Pro and
@@ -89,6 +95,7 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **Google Analytics is paused** (owner decision 2026-10-29). It had run on promptspend.com since 2026-10-24, but no Google Analytics account existed to receive the data, so visitors were told about a count nobody could read. One switch, `GOOGLE_ANALYTICS_ENABLED` in `src/lib/analytics/config.ts`, is now `false`: nothing from Google loads, no notice shows, the privacy page, README, SECURITY.md and ARCHITECTURE.md say the website does not use it, the page policies on the calculator, the Receipt page and the generated pages name none of Google's hosts, and a visitor's old `_ga` cookies are cleared on their next visit. The code and its tests stay (the running-state tests are skipped and paused-state tests run instead), so turning it back on is a new property, a new Measurement ID, the switch, and the wording rewritten first. The Cloudflare counter is unchanged.
 - **Clearer MCP tool descriptions** (`@promptspend/mcp` 0.1.8). `find_cheaper`'s five workload settings
   now state their defaults, `get_price` says its unit (USD per million tokens) and that it suggests close
   matches for an unknown model, and all three tools carry read-only annotations. Prompted by Glama's

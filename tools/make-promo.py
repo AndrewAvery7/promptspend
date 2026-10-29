@@ -556,8 +556,8 @@ def scene_pipeline(fr, n):
 
 # The website's own wording since 2026-10-24: "no accounts, no ads".
 # NOT "no tracking" (the site counts visits) and NOT "no cookies" (since
-# 2026-10-24 it runs Google Analytics, which sets cookies). Both chips were true
-# once and are not now; check() keeps them from returning.
+# 2026-10-24 it ran Google Analytics, which sets cookies, until 2026-10-29). Both chips were true
+# once and are not safe to claim; check() keeps them from returning.
 CTA_CHIPS = ["FREE", "NO ACCOUNTS", "NO ADS", "MIT", "OPEN DATA API"]
 
 
@@ -709,8 +709,8 @@ def check():
             problems.append("missing capture {}.png".format(path))
 
     # Claims the website has withdrawn. It counts visits with Cloudflare Web
-    # Analytics (since 2026-10-05) and Google Analytics, which sets cookies
-    # (since 2026-10-24), so never "no tracking", "no analytics" or "no
+    # Analytics (since 2026-10-05) and, when it runs, Google Analytics, which sets cookies
+    # (paused since 2026-10-29), so never "no tracking", "no analytics" or "no
     # cookies". Checked here so a future edit to the chips cannot quietly put
     # an old promise back on screen.
     for chip in CTA_CHIPS:

@@ -20,6 +20,7 @@ import { existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadEnv } from 'vite';
+import { GOOGLE_ANALYTICS_ENABLED } from '../src/lib/analytics/config';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGES = [
@@ -65,28 +66,36 @@ const GOOGLE_COLLECT = [
  * - img-src: the LaunchNest badge (2026-10-05) and Google Analytics' image
  *   fallback.
  */
+/**
+ * Google's hosts are on the list only while Google Analytics is running
+ * (`GOOGLE_ANALYTICS_ENABLED`). While it is paused (2026-10-29) any page that
+ * still names one fails as "unapproved", so the pause cannot quietly leave the
+ * door open.
+ */
+const GOOGLE_ON = GOOGLE_ANALYTICS_ENABLED;
 const ALLOWED: Record<string, Set<string>> = {
   'script-src': new Set([
     'https://challenges.cloudflare.com',
     'https://static.cloudflareinsights.com',
-    GOOGLE_SCRIPT,
+    ...(GOOGLE_ON ? [GOOGLE_SCRIPT] : []),
   ]),
   'connect-src': new Set([
     'https://challenges.cloudflare.com',
     // The build reads it the same way (vite.config.ts), .env files included.
     ...[(loadEnv('production', ROOT, 'VITE_').VITE_ALERTS_API ?? '').replace(/\/+$/, '')].filter(Boolean),
-    GOOGLE_SCRIPT,
-    ...GOOGLE_COLLECT,
+    ...(GOOGLE_ON ? [GOOGLE_SCRIPT, ...GOOGLE_COLLECT] : []),
   ]),
-  'img-src': new Set(['https://launchnest.io', GOOGLE_SCRIPT, ...GOOGLE_COLLECT]),
+  'img-src': new Set(['https://launchnest.io', ...(GOOGLE_ON ? [GOOGLE_SCRIPT, ...GOOGLE_COLLECT] : [])]),
   'frame-src': new Set(['https://challenges.cloudflare.com']),
 };
 
-/** Origins every page must admit, so Google Analytics can actually report. */
-const MUST_ADMIT: Record<string, string[]> = {
-  'script-src': [GOOGLE_SCRIPT],
-  'connect-src': GOOGLE_COLLECT,
-};
+/** Origins every page must admit, so Google Analytics can actually report. None while it is paused. */
+const MUST_ADMIT: Record<string, string[]> = GOOGLE_ON
+  ? {
+      'script-src': [GOOGLE_SCRIPT],
+      'connect-src': GOOGLE_COLLECT,
+    }
+  : {};
 
 /** The remote origins one directive of a policy admits. */
 function remoteSources(policy: string, directive: string): string[] {
