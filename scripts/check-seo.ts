@@ -86,6 +86,43 @@ interface PageReport {
   path: string;
   title: string;
   description: string;
+  /** Where each of this page's internal links goes, as site paths. */
+  links: string[];
+}
+
+/** An internal link as a path on the site (`/models/x/`), or null if it leaves the site. */
+function sitePath(href: string): string | null {
+  const path = href.split('#')[0]!.split('?')[0]!;
+  if (!path.startsWith(basePath)) return null;
+  return `/${path.slice(basePath.length)}`;
+}
+
+/**
+ * The addresses a sitemap lists, following an index into its files.
+ *
+ * `sitemap.xml` is an index over one file per kind of page (see
+ * src/lib/seo/sitemap.ts). A file the index names that is not in the build is
+ * a problem of its own, because Search Console would report it as unreadable.
+ */
+async function sitemapLocs(file: string, problems: string[], followIndex = true): Promise<string[]> {
+  const xml = await readFile(file, 'utf8');
+  const locs = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map((match) => match[1]!);
+  if (!xml.includes('<sitemapindex')) return locs;
+  if (!followIndex) {
+    problems.push('a sitemap file inside the index is itself an index');
+    return [];
+  }
+  const out: string[] = [];
+  for (const loc of locs) {
+    const path = sitePath(new URL(loc).pathname);
+    const child = path === null ? null : resolve(DIST, path.slice(1));
+    if (child === null || !existsSync(child)) {
+      problems.push(`sitemap.xml names ${loc}, which is not in the build`);
+      continue;
+    }
+    out.push(...(await sitemapLocs(child, problems, false)));
+  }
+  return out;
 }
 
 async function checkGeneratedPage(path: string, problems: string[]): Promise<PageReport> {
@@ -136,13 +173,16 @@ async function checkGeneratedPage(path: string, problems: string[]): Promise<Pag
   if (!csp) say('has no Content Security Policy');
   else if (csp.includes('unsafe-inline')) say('policy permits unsafe-inline');
 
+  const links: string[] = [];
   for (const match of html.matchAll(/href="([^"]+)"/g)) {
     const href = match[1]!.replaceAll('&amp;', '&');
     if (/^(https?:|mailto:|data:|#)/.test(href)) continue;
     if (!resolvesInDist(href)) say(`links to ${href}, which is not in the build`);
+    const target = sitePath(href);
+    if (target !== null) links.push(target);
   }
 
-  return { path, title, description };
+  return { path, title, description, links };
 }
 
 async function main(): Promise<void> {
@@ -291,13 +331,18 @@ async function main(): Promise<void> {
   }
 
   if (existsSync(resolve(DIST, 'sitemap.xml'))) {
-    const sitemap = await readFile(resolve(DIST, 'sitemap.xml'), 'utf8');
-    const locs = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map((match) => match[1]!);
+    const locs = await sitemapLocs(resolve(DIST, 'sitemap.xml'), problems);
     const first = locs[0];
     if (canonical && first && !first.startsWith(new URL(canonical).origin)) {
       problems.push(`sitemap host (${first}) disagrees with the canonical host (${canonical})`);
     }
     if (locs.length !== new Set(locs).size) problems.push('sitemap.xml lists a URL twice');
+
+    // A sitemap lists pages, not scenarios: an address with a query string is
+    // one of the calculator's own links, which robots.txt asks crawlers to skip.
+    for (const loc of locs) {
+      if (new URL(loc).search !== '') problems.push(`sitemap.xml lists ${loc}, which has a query string`);
+    }
 
     const listed = new Set(locs.map((loc) => new URL(loc).pathname));
     for (const path of pages) {
@@ -312,6 +357,62 @@ async function main(): Promise<void> {
       if (listed.has(`${basePath}${path.slice(1)}`))
         problems.push(`${path} is noindex but listed in sitemap.xml`);
     }
+  }
+
+  // ------------------------------------------------- no page left on its own
+
+  // A page nothing links to is a page a crawler is given no reason to value,
+  // and the build used to publish three articles in exactly that state. Every
+  // indexable page must be linked from at least one other page.
+  const inbound = new Map<string, Set<string>>(pages.map((path) => [path, new Set<string>()]));
+  for (const report of reports) {
+    for (const target of report.links) {
+      if (target !== report.path) inbound.get(target)?.add(report.path);
+    }
+  }
+  for (const [path, from] of inbound) {
+    if (from.size === 0) problems.push(`${path} is in the sitemap but no page links to it`);
+  }
+
+  // The list of articles has to list every article.
+  const writingIndex = reports.find((report) => report.path === '/writing/');
+  if (writingIndex) {
+    for (const path of pages.filter(
+      (candidate) => candidate.startsWith('/writing/') && candidate !== '/writing/',
+    )) {
+      if (!writingIndex.links.includes(path)) problems.push(`/writing/ does not list ${path}`);
+    }
+  } else if (pages.some((candidate) => candidate.startsWith('/writing/'))) {
+    problems.push('there are articles under /writing/ but no /writing/ page lists them');
+  }
+
+  // ---------------------------------------------- crawler and visitor files
+
+  if (existsSync(resolve(DIST, 'robots.txt'))) {
+    const robots = await readFile(resolve(DIST, 'robots.txt'), 'utf8');
+    if (!/^Disallow:\s*\/\*\?m=\s*$/m.test(robots)) {
+      problems.push(
+        "robots.txt does not ask crawlers to skip the calculator's scenario links (Disallow: /*?m=)",
+      );
+    }
+    if (!/^Sitemap:\s*\S+\/sitemap\.xml\s*$/m.test(robots))
+      problems.push('robots.txt does not name sitemap.xml');
+  }
+
+  // GitHub Pages serves 404.html for any address that does not exist.
+  if (!existsSync(resolve(DIST, '404.html'))) {
+    problems.push("dist/404.html was not generated; missing addresses fall through to GitHub's bare page");
+  } else {
+    const notFound = await readFile(resolve(DIST, '404.html'), 'utf8');
+    if (!/<meta name="robots" content="[^"]*noindex/.test(notFound)) problems.push('404.html is not noindex');
+    if (!/href="[^"]*\/models\//.test(notFound)) problems.push('404.html does not link to the model prices');
+  }
+
+  for (const file of ['favicon.ico', 'favicon.svg']) {
+    if (!existsSync(resolve(DIST, file))) problems.push(`dist/${file} is missing; the tab icon is a 404`);
+  }
+  if (!/<link rel="icon" href="[^"]*favicon\.ico"/.test(html)) {
+    problems.push('the home page does not link favicon.ico');
   }
 
   if (problems.length === 0) {
