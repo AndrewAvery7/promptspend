@@ -26,6 +26,7 @@ const GENERATED = [
   { path: '/compare/', name: 'the comparison index' },
   { path: '/app/', name: 'the apps page' },
   { path: '/free-tiers/', name: 'the free-tier comparison' },
+  { path: '/changes/', name: 'the price changes page' },
   { path: '/providers/cohere/free/', name: 'a free-tier page' },
 ] as const;
 

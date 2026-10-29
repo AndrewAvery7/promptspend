@@ -24,6 +24,7 @@ import type { PriceHistory } from '../pricing/history';
 import type { FreeTierRecord, FreeTierVerdict } from '../free-tiers/types';
 import type { ComparisonPage, ModelPage, ProviderPage } from './pages';
 import type { FreeTierPage } from './free-tier-pages';
+import type { ChangesPageInput } from './changes-page';
 import { modelHistory } from './price-history-view';
 
 export interface Faq {
@@ -233,4 +234,26 @@ export function freeTierFaq(page: FreeTierPage): Faq[] {
     });
   }
   return faqs;
+}
+
+export function changesFaq(input: ChangesPageInput): Faq[] {
+  const t = input.totals;
+  // The first day is the starting catalog, not news.
+  const days = input.days.filter((day) => day.startedWith === undefined).length;
+  return [
+    {
+      question: 'How often do LLM API prices change?',
+      answer: `Since PromptSpend began tracking on ${input.firstDate}, vendors have changed a published rate ${t.repriced} ${t.repriced === 1 ? 'time' : 'times'}, spread over ${t.repricingDays} ${t.repricingDays === 1 ? 'day' : 'days'}. ${days} ${days === 1 ? 'day has' : 'days have'} had any news at all, counting new and removed models. Earlier changes are not on record here.`,
+    },
+    {
+      question: 'What counts as a price change on this page?',
+      answer:
+        "A price change is a vendor changing a rate it publishes. A correction is PromptSpend reading a better page, so the figure here changes but the vendor's price did not; corrections are labeled apart so repricing is never overstated. A rate PromptSpend only began recording is not a change to anyone's bill and is left out.",
+    },
+    {
+      question: 'Can I get these price changes as a feed or a file?',
+      answer:
+        'Yes. The same changes are published as an Atom feed with one entry a day, and every row, with the commit that published it, is in the price-history dataset as CSV and JSON. Neither needs a key or an account.',
+    },
+  ];
 }

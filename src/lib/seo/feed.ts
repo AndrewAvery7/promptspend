@@ -18,8 +18,6 @@
 import type { HistoryRow, PriceHistory } from '../pricing/history';
 import { escapeHtml } from './render';
 
-const CHANGELOG_URL = 'https://github.com/AndrewAvery7/promptspend/blob/main/docs/pricing-changelog.md';
-
 interface Model {
   id: string;
   name: string;
@@ -132,7 +130,7 @@ export function renderFeed(history: PriceHistory, siteUrl: string, limit = 50): 
     <id>tag:promptspend.com,${d.date}:pricing-changes</id>
     <title>${escapeHtml(title(d))}</title>
     <updated>${d.date}T12:00:00Z</updated>
-    <link rel="alternate" type="text/html" href="${escapeHtml(`${CHANGELOG_URL}#${d.date}`)}" />
+    <link rel="alternate" type="text/html" href="${escapeHtml(`${siteUrl}/changes/#${d.date}`)}" />
     <content type="html">${escapeHtml(body(d, siteUrl))}</content>
   </entry>`,
     )

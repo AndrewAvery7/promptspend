@@ -41,7 +41,8 @@ import { GA_POLICY_COLLECT_ORIGINS, GA_POLICY_SCRIPT_ORIGINS } from '../analytic
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { PriceHistory } from '../pricing/history';
 import type { Model, Pricing } from '../pricing/types';
-import { comparisonFaq, freeTierFaq, modelFaq, providerFaq, type Faq } from './faq';
+import { changesFaq, comparisonFaq, freeTierFaq, modelFaq, providerFaq, type Faq } from './faq';
+import type { ChangeRow, ChangesPageInput } from './changes-page';
 import { priceChartSvg } from './price-chart';
 import {
   correctionCount,
@@ -502,6 +503,7 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div>
           <a href="${escapeHtml(href(ctx, '/providers/'))}">By provider</a> &middot;
           <a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">${escapeHtml(NAV_LABELS.freeTiers)}</a> &middot;
           <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
+          <a href="${escapeHtml(href(ctx, CHANGES_PATH))}">Price changes</a> &middot;
           <a href="${escapeHtml(href(ctx, WRITING_INDEX_PATH))}">Writing</a> &middot;
           <a href="${escapeHtml(href(ctx, DATA_PAGE_PATH))}">Open data</a> &middot;
           <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a>
@@ -836,7 +838,7 @@ ${rows}
 
   const fixes =
     corrections > 0
-      ? ` ${corrections} further ${corrections === 1 ? 'entry was' : 'entries were'} PromptSpend correcting its own reading of a page, which the <a href="${escapeHtml(href(ctx, '/feed.xml'))}">feed</a> labels separately.`
+      ? ` ${corrections} further ${corrections === 1 ? 'entry was' : 'entries were'} PromptSpend correcting its own reading of a page, which <a href="${escapeHtml(href(ctx, CHANGES_PATH))}">the price changes page</a> and the <a href="${escapeHtml(href(ctx, '/feed.xml'))}">feed</a> label separately.`
       : '';
   return `
         <h2 id="recent-changes">Recent price changes</h2>
@@ -1743,6 +1745,169 @@ ${[
 
 /** The file GitHub Pages serves for a missing address, at the site root. */
 export const NOT_FOUND_PATH = '/404.html';
+
+// ------------------------------------------------------------- what changed
+
+export const CHANGES_PATH = '/changes/';
+
+function changeCell(value: string, unit: string): string {
+  return escapeHtml(historyValue(value, unit));
+}
+
+function changesTable(
+  ctx: RenderContext,
+  input: ChangesPageInput,
+  rows: ChangeRow[],
+  caption: string,
+  withPercent: boolean,
+): string {
+  const link = (row: ChangeRow): string => {
+    const path = input.modelPaths[row.modelId];
+    return path
+      ? `<a href="${escapeHtml(href(ctx, path))}">${escapeHtml(row.modelName)}</a>`
+      : escapeHtml(row.modelName);
+  };
+  const body = rows
+    .map((row) => {
+      const percent =
+        row.change === null
+          ? '<td class="num"></td>'
+          : `<td class="num ${row.change < 0 ? 'save' : 'cost'}">${escapeHtml(`${row.change < 0 ? '−' : '+'}${formatPercent(Math.abs(row.change))}`)} <span class="unit">${row.change < 0 ? 'cut' : 'rise'}</span></td>`;
+      return `              <tr>
+                <td>${link(row)}</td>
+                <th scope="row">${escapeHtml(FIELD_LABEL[row.field] ?? row.field)}</th>
+                <td class="num">${changeCell(row.from, row.unit)}</td>
+                <td class="num">${changeCell(row.to, row.unit)}</td>${withPercent ? `\n                ${percent}` : ''}
+              </tr>`;
+    })
+    .join('\n');
+  return `          <div class="card tablewrap" tabindex="0">
+            <table>
+              <caption class="unit cap">${escapeHtml(caption)}</caption>
+              <thead><tr><th>Model</th><th>Rate</th><th class="num">Was</th><th class="num">Now</th>${withPercent ? '<th class="num">Change</th>' : ''}</tr></thead>
+              <tbody>
+${body}
+              </tbody>
+            </table>
+          </div>`;
+}
+
+/**
+ * `/changes/`: every recorded price change, newest first, in words.
+ *
+ * The page form of the Atom feed, built from the same days. It prints nothing
+ * that depends on the date it was built, so the page's date in the sitemap
+ * moves only when a price does.
+ */
+export function renderChangesPage(input: ChangesPageInput, ctx: RenderContext): string {
+  const crumbs: Crumb[] = [
+    { label: 'PromptSpend', path: '/' },
+    { label: 'Price changes', path: null },
+  ];
+  const t = input.totals;
+  const modelLink = (id: string, name: string): string => {
+    const path = input.modelPaths[id];
+    return path ? `<a href="${escapeHtml(href(ctx, path))}">${escapeHtml(name)}</a>` : escapeHtml(name);
+  };
+
+  const days = input.days
+    .map((day) => {
+      const parts: string[] = [];
+      if (day.startedWith) {
+        parts.push(
+          `          <p>PromptSpend began tracking on this day, with ${day.startedWith} ${day.startedWith === 1 ? 'model' : 'models'} in the catalog. Nothing before it is on record here.</p>`,
+        );
+      }
+      if (day.repriced.length > 0) {
+        parts.push(
+          `          <h3>Price changes</h3>
+          <p class="muted small">The vendor changed a published rate.</p>
+${changesTable(ctx, input, day.repriced, `Vendor rate changes on ${day.date}. USD per 1M tokens.`, true)}`,
+        );
+      }
+      if (day.corrected.length > 0) {
+        parts.push(
+          `          <h3>Corrections</h3>
+          <p class="muted small">PromptSpend had been reading the wrong page. The vendor&rsquo;s rate did not move.</p>
+${changesTable(ctx, input, day.corrected, `Corrections on ${day.date}. USD per 1M tokens.`, false)}`,
+        );
+      }
+      if (day.added.length > 0) {
+        parts.push(
+          `          <h3>Models added</h3>
+          <ul class="plain">
+${day.added
+  .map(
+    (m) =>
+      `            <li>${modelLink(m.id, m.name)}${m.input && m.output ? ` &mdash; ${escapeHtml(rate(Number(m.input)))} in, ${escapeHtml(rate(Number(m.output)))} out per 1M tokens` : ''}</li>`,
+  )
+  .join('\n')}
+          </ul>`,
+        );
+      }
+      if (day.removed.length > 0) {
+        parts.push(
+          `          <h3>Models removed</h3>
+          <ul class="plain">
+${day.removed.map((m) => `            <li>${modelLink(m.id, m.name)}</li>`).join('\n')}
+          </ul>`,
+        );
+      }
+      return `        <section id="${escapeHtml(day.date)}" class="change-day">
+          <h2><a href="#${escapeHtml(day.date)}">${escapeHtml(day.date)}</a></h2>
+${parts.join('\n')}
+        </section>`;
+    })
+    .join('\n');
+
+  const faqs = changesFaq(input);
+  const body = `      ${breadcrumbHtml(ctx, crumbs)}
+      <main id="main">
+        <h1>LLM API price changes</h1>
+        <p class="lede">
+          Every change PromptSpend has recorded to an LLM API price, newest first. Since tracking began on
+          ${escapeHtml(input.firstDate)}, vendors have changed a published rate ${t.repriced} ${t.repriced === 1 ? 'time' : 'times'}
+          on ${t.repricingDays} ${t.repricingDays === 1 ? 'day' : 'days'}, ${t.added} ${t.added === 1 ? 'model was' : 'models were'} added and
+          ${t.removed} ${t.removed === 1 ? 'was' : 'were'} removed.
+        </p>
+        <div class="card">
+          <p>
+            <strong>How to read it.</strong> A <em>price change</em> is the vendor changing a rate. A
+            <em>correction</em> is PromptSpend reading a better page, so the figure changes here but the
+            vendor&rsquo;s price did not; it is labeled apart so repricing is never overstated. A rate
+            PromptSpend only began recording is not a change to anyone&rsquo;s bill and is left out.
+          </p>
+          <p class="muted small">
+            The same changes, one entry a day: <a href="${escapeHtml(href(ctx, '/feed.xml'))}">the Atom feed</a>.
+            Every row, with the commit that published it:
+            <a href="${escapeHtml(absolute(ctx, '/data/price-history.csv'))}">the price-history dataset</a>.
+            Current prices with their sources are on <a href="${escapeHtml(href(ctx, '/models/'))}">the models page</a>.
+          </p>
+        </div>
+
+${days}
+${faqSection(faqs)}      </main>`;
+
+  const description =
+    'Every LLM API price change PromptSpend has recorded, newest first: what vendors changed, what PromptSpend corrected, and which models were added or removed.';
+  return layout(ctx, {
+    path: CHANGES_PATH,
+    title: 'LLM API price changes: every change, dated and sourced',
+    description,
+    graph: [
+      breadcrumbLd(ctx, crumbs, CHANGES_PATH),
+      {
+        '@type': 'WebPage',
+        name: 'LLM API price changes',
+        url: absolute(ctx, CHANGES_PATH),
+        description,
+        dateModified: input.lastChangeDate,
+      },
+      ...faqLd(faqs),
+    ],
+    body,
+  });
+}
 
 // ---------------------------------------------------------------- open data
 

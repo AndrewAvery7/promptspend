@@ -9,6 +9,12 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **A price changes page at `/changes/`.** Every recorded change in one place, newest first: what vendors
+  changed (with the size of each move), what PromptSpend corrected (labeled apart, so repricing is never
+  overstated), and which models were added or removed, each day linked to the model pages. It is the page
+  form of the Atom feed, which now links each entry to its own day on the page instead of to a file on
+  GitHub, and it is linked from every footer, the models page, `llms.txt` and the sitemap. The first day of
+  tracking is shown as the starting catalog rather than as models added. Complete without scripts.
 - **Common questions on model, provider, comparison and free-tier pages.** Each page answers the
   questions people arrive with (what it costs, what it costs to run for a month, whether anything is
   cheaper, how large the context window is, whether the price has changed, where the numbers come from,
