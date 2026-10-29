@@ -9,6 +9,13 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Price history on every model page, and the latest price changes on the models index.** A model whose
+  input or output rate has ever moved gets a staircase chart (each line holds its value until the next
+  change, and the axis starts at zero) with a table of every recorded change; a model that has not moved
+  says so in a sentence and draws nothing. A vendor repricing and a correction (PromptSpend reading a
+  better page) are labelled apart, and rates PromptSpend merely began recording are never shown as
+  changes. The models index lists the ten latest vendor repricings. Both are plain HTML and SVG that read
+  completely without scripts, and both come from the same history as the CSV dataset and the feed.
 - **A daily shut-down check.** `check:shutdowns` reads OpenAI's, Anthropic's and Google's deprecation pages
   each morning before the sync, and the sync flags any live model past its vendor's shutdown date. A
   price check cannot see this, because pricing tables keep listing retired models. Its first run found
