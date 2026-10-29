@@ -1,0 +1,29 @@
+{
+  "$comment": "First-party models the price feed carries that the catalogue leaves out on purpose, so the weekly coverage-gap check (scripts/watch-coverage-gaps.ts) stops naming them. Each entry is a regular expression over the feed's own keys and the reason. Add one only for a decision, never to quiet the issue: a model that should be captured belongs in data/models-allowlist.json instead.",
+  "items": [
+    {
+      "feedKey": "^zai/glm-4\\.\\d+v$",
+      "reason": "Vision variants. Not a comparable chat model; the same exclusion scripts/lib/allowlist.test.ts pins for glm-4.5v."
+    },
+    {
+      "feedKey": "^zai/glm-[\\d.]+-flash$",
+      "reason": "Free tiers, except glm-5.3-flash which is priced and captured. A free model has no cost to compare."
+    },
+    {
+      "feedKey": "^meta/muse-spark-1\\.[12]$",
+      "reason": "Superseded point releases, excluded in the meta-muse family on purpose."
+    },
+    {
+      "feedKey": "-codex(-mini|-max)?$",
+      "reason": "OpenAI's Codex variants are agent-tool models sold for one product; not yet a decision to compare them as general chat."
+    },
+    {
+      "feedKey": "^gpt-(audio|realtime)",
+      "reason": "Audio and realtime voice models, billed per audio token; a text cost calculator cannot price them."
+    },
+    {
+      "feedKey": "^dashscope/qwen-(plus|max|flash|turbo)$",
+      "reason": "Floating aliases that point at whichever Qwen tier is newest; the catalogue tracks the versioned models instead."
+    }
+  ]
+}

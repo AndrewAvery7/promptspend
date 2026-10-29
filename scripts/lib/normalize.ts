@@ -88,7 +88,12 @@ export function fromLiteLLM(catalog: Record<string, unknown>, allowlist: Allowli
   for (const [key, value] of Object.entries(catalog)) {
     if (typeof value !== 'object' || value === null) continue;
     const entry = value as Record<string, unknown>;
-    if (entry.mode !== 'chat') continue;
+    // `responses` is LiteLLM's mode for models OpenAI serves only through the
+    // Responses API (the GPT-5.x Pro tiers, o1-pro, the Codex models). They are
+    // billed per input and output token like any chat model, so they belong in
+    // a cost calculator; which of them are captured is still the families' call.
+    // Realtime, audio, image and embedding modes are not token-priced chat and stay out.
+    if (entry.mode !== 'chat' && entry.mode !== 'responses') continue;
 
     const family = matchFamily(key, allowlist);
     if (!family) continue;

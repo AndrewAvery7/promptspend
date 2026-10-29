@@ -92,6 +92,19 @@ describe('fromLiteLLM', () => {
     expect(rates.map((r) => r.id)).toEqual(['claude-sonnet-5', 'moonshot-kimi-k2.6']);
   });
 
+  it('also keeps a Responses-API model, which is token-priced, but not a realtime one', () => {
+    // claude-opus-9 stands in for a Responses-only model such as GPT-5.5 Pro;
+    // claude-opus-8 is a realtime (voice) entry, which is not token-priced chat.
+    const extra = fromLiteLLM(
+      {
+        'claude-opus-9': { mode: 'responses', input_cost_per_token: 30e-6, output_cost_per_token: 180e-6 },
+        'claude-opus-8': { mode: 'realtime', input_cost_per_token: 4e-6, output_cost_per_token: 24e-6 },
+      },
+      ALLOWLIST,
+    );
+    expect(extra.map((r) => r.id)).toEqual(['claude-opus-9']);
+  });
+
   it('converts per-token costs into per-million rates', () => {
     const sonnet = rates.find((r) => r.id === 'claude-sonnet-5')!;
     expect(sonnet.inputPerMillion).toBe(3);

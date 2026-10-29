@@ -101,6 +101,21 @@ describe('data/models-allowlist.json', () => {
     for (const key of excluded) expect(familyOf(key), key).toBeUndefined();
   });
 
+  it('captures the first-party models a coverage check found missing on 2026-10-29', () => {
+    expect(familyOf('gpt-5.5-pro')).toBe('openai-gpt');
+    expect(familyOf('gpt-5.2-pro')).toBe('openai-gpt');
+    expect(familyOf('mistral/codestral-2508')).toBe('mistral');
+    expect(familyOf('moonshot/kimi-k3.1-pro')).toBe('moonshot-kimi');
+    expect(familyOf('moonshot/kimi-k2.7-code')).toBe('moonshot-kimi');
+    expect(familyOf('dashscope/qwen3.8-flash')).toBe('alibaba-qwen');
+    expect(familyOf('command-r-plus-08-2024')).toBe('cohere-command');
+    expect(familyOf('amazon.nova-micro-v1:0')).toBe('amazon-nova');
+    // Still out: the codex variants, a floating alias, and a dated snapshot.
+    expect(familyOf('gpt-5.2-codex')).toBeUndefined();
+    expect(familyOf('mistral/codestral-latest')).toBeUndefined();
+    expect(familyOf('gpt-5.5-pro-2026-04-23')).toBeUndefined();
+  });
+
   it('keeps the established families matching what they always matched', () => {
     expect(familyOf('claude-opus-5-5')).toBe('anthropic-claude');
     expect(familyOf('gpt-5.6-sol')).toBe('openai-gpt');
