@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
+import type { HistoryRow, PriceHistory } from '@/lib/pricing/history';
 import { buildPages } from './pages';
 import {
   layout,
@@ -500,5 +501,84 @@ describe('the app page', () => {
     for (const { html } of everyPage(SAMPLE)) {
       expect(html).toContain('<a href="/app/">iPhone &amp; Android apps</a>');
     }
+  });
+});
+
+describe('the price history sections', () => {
+  const hist = (rows: Partial<HistoryRow>[]): PriceHistory => ({
+    schemaVersion: 1,
+    firstDate: '2026-08-02',
+    lastDate: '2026-10-01',
+    rows: rows.map((r) => ({
+      date: '2026-08-02',
+      commit: 'abc',
+      model_id: 'gpt-5',
+      model_name: 'gpt-5',
+      provider_id: 'openai',
+      provider_name: 'OpenAI',
+      change: 'listed',
+      field: 'input',
+      old_value: '',
+      new_value: '1',
+      unit: 'USD per 1M tokens',
+      source: 'vendor',
+      source_url: '',
+      provider_pricing_url: '',
+      ...r,
+    })) as HistoryRow[],
+  });
+
+  const MOVED = hist([
+    { field: 'input', new_value: '2' },
+    { field: 'output', new_value: '8' },
+    { date: '2026-09-01', change: 'price', field: 'input', old_value: '2', new_value: '1' },
+    { date: '2026-09-02', change: 'correction', field: 'output', old_value: '8', new_value: '4' },
+  ]);
+
+  const pageFor = (history: PriceHistory | undefined, id = 'gpt-5'): string => {
+    const set = buildPages(catalog(SAMPLE), { asOf: ASOF });
+    return renderModelPage(
+      set.models.find((p) => p.id === id)!,
+      recordingContext({ history }),
+    );
+  };
+
+  it('draws the chart and lists each change with who made it', () => {
+    const html = pageFor(MOVED);
+    expect(html).toContain('id="price-history"');
+    expect(html).toContain('<svg class="chart"');
+    expect(html).toContain('The vendor changed the rate');
+    expect(html).toContain('PromptSpend corrected a misreading');
+    expect(html).toContain('price-history.csv');
+  });
+
+  it('says plainly that nothing has changed, without drawing a flat line', () => {
+    const html = pageFor(hist([{ field: 'input' }, { field: 'output', new_value: '4' }]));
+    expect(html).toContain('none of its rates has changed in that time');
+    expect(html).not.toContain('<svg class="chart"');
+  });
+
+  it('leaves the section out when there is no history, rather than claim "unchanged"', () => {
+    expect(pageFor(undefined)).not.toContain('price-history');
+  });
+
+  it('leaves it out for a model the history never listed', () => {
+    expect(pageFor(MOVED, 'claude-opus-5')).not.toContain('id="price-history"');
+  });
+
+  it('puts no script and no inline style in the section', () => {
+    const html = pageFor(MOVED);
+    const section = html.slice(html.indexOf('id="price-history"'), html.indexOf('id="source"'));
+    expect(section).not.toMatch(/<script|style=/);
+  });
+
+  it('lists vendor moves, not corrections, on the models index', () => {
+    const set = buildPages(catalog(SAMPLE), { asOf: ASOF });
+    const html = renderModelsIndex(set, recordingContext({ history: MOVED }));
+    expect(html).toContain('id="recent-changes"');
+    expect(html).toContain('<a href="/models/gpt-5/">gpt-5</a>');
+    expect(html).toContain('&minus;50%'.replace('&minus;', '\u2212'));
+    expect(html).toContain('1 further entry was PromptSpend correcting');
+    expect(renderModelsIndex(set, recordingContext())).not.toContain('recent-changes');
   });
 });
