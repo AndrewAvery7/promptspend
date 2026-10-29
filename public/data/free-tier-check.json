@@ -1,81 +1,81 @@
 {
-  "checkedAt": "2026-10-28T11:05:43.151Z",
+  "checkedAt": "2026-10-29T11:05:55.489Z",
   "facts": {
     "alibaba-account-info": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-auto-billing": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-free-trial-signup": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-not-all-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-quota": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-realtime-only": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-region": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-same-speed": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-signup": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-upgrade": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "alibaba-validity": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-bedrock-activity": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-card": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-credits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-expiry-faq": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-expiry-terms": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-free-plan-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-quotas": {
       "status": "missing",
@@ -84,287 +84,287 @@
     },
     "amazon-regions": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "anthropic-buy-first": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "anthropic-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "anthropic-evaluation": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "anthropic-free-credits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "anthropic-prepaid": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "anthropic-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-card-trial": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-chat-limit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-data-commitments": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-data-trial": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-embed-faq": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-embed-limit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-monthly-cap": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-trial": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-trial-auto": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "cohere-upgrade": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "deepseek-402": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "deepseek-balance": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "deepseek-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "deepseek-privacy": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "deepseek-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "deepseek-top-up": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-card": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-data-eea": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-data-review": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-data-unpaid": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-eea-apps": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-free-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-free-requirement": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-free-tier": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-paid-only-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-search-grounding": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "google-welcome-credit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "inception-add-payment-when-low": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "inception-faq-one-time-credit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "inception-faq-retention-custom": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "inception-free-100m-tokens": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "inception-privacy-training-purpose": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "inception-rate-limits-free-tier": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "inception-tou-train-optout": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-billing-setup-needs-card": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-contributor-mode-trains": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-muse-code-defaults-to-contributor": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-pay-as-you-go-or-subscription": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-promotional-credits-clause": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-rate-limit-muse-spark": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-signup-payment-method-before-requests": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-standard-mode-no-training": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-subscription-flat-rate": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "meta-tos-standard-services-no-training": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-azure-free-account-credit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-azure-free-account-needs-card": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-data-not-used-to-improve-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-data-not-used-to-train": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-foundry-billed-at-normal-rates": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-mai-are-models-sold-by-azure": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-mai-image-free-tier-zero": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-mai-needs-paid-account": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-mai-thinking-default-quota-zero": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-mai-thinking-price": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "microsoft-mai-voice-free-subscription": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "minimax-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "minimax-free-quota": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "minimax-free-tier": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "minimax-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "minimax-top-up": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "minimax-upgrade": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "mistral-credits": {
       "status": "missing",
@@ -373,95 +373,97 @@
     },
     "mistral-credits-no-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "mistral-data-free": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "mistral-default": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "mistral-free-mode": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "mistral-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "mistral-opt-out": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "mistral-shared-allowance": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "mistral-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "moonshot-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "moonshot-k3": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "moonshot-minimum": {
-      "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "status": "missing",
+      "lastConfirmed": "2026-10-28",
+      "changedOn": "2026-10-29"
     },
     "moonshot-payment": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "moonshot-region": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "moonshot-tier0": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "moonshot-tiers": {
-      "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "status": "missing",
+      "lastConfirmed": "2026-10-28",
+      "changedOn": "2026-10-29"
     },
     "openai-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "openai-data-sharing": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "openai-free-row": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "openai-gpt5-free": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "openai-minimum": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "openai-moderation": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "openai-prepaid": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "openai-regions": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "openai-tiers": {
       "status": "missing",
@@ -470,7 +472,7 @@
     },
     "xai-credits-for-data": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xai-data": {
       "status": "missing",
@@ -479,107 +481,107 @@
     },
     "xai-load-credits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xai-not-free": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xai-rejected": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xai-tiers": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-agreement-recharge-in-advance": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-bonus-expires-40-days": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-changelog-registration-credit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-changelog-trial-credit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-desktop-privacy-trains": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-negative-balance-stops-service": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-overseas-topup-methods": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-pay-as-you-go-balance": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-privacy-no-training": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-promotions-faq-bonus-credit": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-rate-limit-flash": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-tts-free-limited-time": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "xiaomi-welcome-bonus-needs-first-recharge": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-completely-free": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-data-api": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-data-individual": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-data-not-stored": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-free-models": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-free-models-more": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-limits": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-regions": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     },
     "zai-top-up": {
       "status": "confirmed",
-      "lastConfirmed": "2026-10-28"
+      "lastConfirmed": "2026-10-29"
     }
   }
 }

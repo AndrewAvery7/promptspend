@@ -1335,3 +1335,10 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-10-27
 
 - **Metadata** `gpt-6.1-terra` — capabilityIndex: — → 88
+
+## 2026-10-29
+
+- **Review** `mistral-mistral-large-4` — provenance.needsReview: true → —
+- **Review** `mistral-mistral-large-4` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18 → —
+- **Review** `mistral-mistral-large-4-0` — provenance.needsReview: true → —
+- **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18 → —
