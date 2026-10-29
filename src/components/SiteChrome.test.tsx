@@ -209,7 +209,7 @@ describe('the footer', () => {
     for (const path of ['/models/', '/free-tiers/', '/free-tiers/acme/']) {
       const footer = generated(path, ctx).querySelector('footer')!;
       expect(alts(footer)).toEqual(alts(container));
-      expect(alts(footer).length).toBeGreaterThanOrEqual(7);
+      expect(alts(footer).length).toBeGreaterThanOrEqual(8);
       expect(stats(footer)).toEqual(stats(container));
     }
   });

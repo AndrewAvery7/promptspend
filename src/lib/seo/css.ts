@@ -192,6 +192,8 @@ article :not(pre) > code {
 /* The link carries the 44px a thumb needs; every badge's artwork stays 40px. */
 .footer__badge a { display: inline-flex; align-items: center; min-height: 44px; }
 .footer__badge img { display: block; height: 40px; width: auto; }
+/* mcpservers.org's badge is a shields-style strip, not a card: 28px tall. */
+.footer__badge img.footer__badge-strip { height: 28px; }
 /* The apps band at the top of every footer (src/styles/footer.css draws the
  * same one in the calculator). The store badge and QR rules below are the app
  * page's; inside the band they are re-sized to match the calculator's. */

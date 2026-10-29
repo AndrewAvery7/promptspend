@@ -15,6 +15,8 @@ import {
   LAUNCHNEST_BADGE_LIGHT,
   LAUNCHNEST_URL,
   MCP_PACKAGE_URL,
+  MCPSERVERS_BADGE,
+  MCPSERVERS_URL,
   MODELS_INDEX_URL,
   PRIVACY_URL,
   OPEN_VSX_URL,
@@ -172,6 +174,15 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               alt="PromptSpend on Product Hunt"
               width={151}
               height={40}
+            />
+          </a>
+          <a href={MCPSERVERS_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              className="footer__badge-strip"
+              src={MCPSERVERS_BADGE}
+              alt="PromptSpend listed on mcpservers.org"
+              width={228}
+              height={28}
             />
           </a>
         </div>

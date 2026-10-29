@@ -36,7 +36,7 @@
 }
 
 /* The directory listing badges - Sell With boost, PeerPush, Peerlist,
-   LaunchNest, Uneed, Fazier, then Product Hunt.
+   LaunchNest, Uneed, Fazier, Product Hunt, then mcpservers.org.
    Their artwork carries whatever frame it needs, so nothing is added here but
    a height. */
 .footer__badge {
@@ -63,6 +63,12 @@
   display: block;
   height: 40px;
   width: auto;
+}
+
+/* mcpservers.org's badge is a shields-style strip, not a card: its 163 x 20
+   drawn at 228 x 28, so it does not outgrow the cards beside it. */
+.footer__badge img.footer__badge-strip {
+  height: 28px;
 }
 
 /* ---- store badges and QR codes (StoreBadges.tsx) ----
