@@ -1342,3 +1342,21 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `mistral-mistral-large-4` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18 → —
 - **Review** `mistral-mistral-large-4-0` — provenance.needsReview: true → —
 - **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.68/$2.09 vs $1.36/$4.18 → —
+
+## 2026-10-29
+
+- **Added** `amazon.nova-lite-v1-0` — Nova Lite V1:0 ($0.06 in / $0.24 out per 1M)
+- **Added** `amazon.nova-micro-v1-0` — Nova Micro V1:0 ($0.035 in / $0.14 out per 1M)
+- **Added** `amazon.nova-pro-v1-0` — Nova Pro V1:0 ($0.8 in / $3.2 out per 1M)
+- **Added** `command-r-08-2024` — Command R 08 2024 ($0.15 in / $0.6 out per 1M)
+- **Added** `command-r-plus-08-2024` — Command R Plus 08 2024 ($2.5 in / $10 out per 1M)
+- **Added** `dashscope-qwen3.8-flash` — Qwen3.8 Flash ($0.15 in / $0.47 out per 1M)
+- **Added** `gpt-5-pro` — GPT 5 Pro ($15 in / $120 out per 1M)
+- **Added** `gpt-5.2-pro` — GPT 5.2 Pro ($21 in / $168 out per 1M)
+- **Added** `gpt-5.4-pro` — GPT 5.4 Pro ($30 in / $180 out per 1M)
+- **Added** `gpt-5.5-pro` — GPT 5.5 Pro ($30 in / $180 out per 1M)
+- **Added** `mistral-codestral-2508` — Codestral 2508 ($0.3 in / $0.9 out per 1M)
+- **Added** `moonshot-kimi-k2.7-code` — Kimi K2.7 Code ($0.95 in / $4 out per 1M)
+- **Added** `moonshot-kimi-k3.1-pro` — Kimi K3.1 Pro ($2 in / $10 out per 1M)
+- **Added** `o1-pro` — O1 Pro ($150 in / $600 out per 1M)
+- **Added** `o3-pro` — O3 Pro ($20 in / $80 out per 1M)

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-29T11:04:23.446Z",
+  "checkedAt": "2026-10-29T14:06:05.142Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -167,7 +167,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
       "ok": true,
-      "note": "53904 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "62081 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-max"
       ]
@@ -519,7 +519,7 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series Models pricing table on the page is empty; no price for kimi-k2.6 is printed)"
+      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page; no price is printed for kimi-k2.6)"
     },
     {
       "id": "moonshot-kimi-k3",
@@ -609,7 +609,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the LLM pricing tables list only MiniMax-M3.1-Flash and MiniMax-M3; no minimax-m2.5 row is present)"
+      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -669,7 +669,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row is shown)"
+      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",

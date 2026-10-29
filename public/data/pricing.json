@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-29T11:07:18.571Z",
+  "generatedAt": "2026-10-29T14:07:52.565Z",
   "providers": [
     {
       "id": "anthropic",
@@ -156,6 +156,102 @@
       },
       "maxOutput": 64000,
       "capabilityIndex": 61
+    },
+    {
+      "id": "amazon.nova-lite-v1-0",
+      "providerId": "amazon",
+      "displayName": "Nova Lite V1:0",
+      "status": "current",
+      "contextWindow": 300000,
+      "pricing": {
+        "input": 0.06,
+        "output": 0.24,
+        "cachedInput": 0.015
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Nova tokenizer"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 10000
+    },
+    {
+      "id": "amazon.nova-micro-v1-0",
+      "providerId": "amazon",
+      "displayName": "Nova Micro V1:0",
+      "status": "current",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 0.035,
+        "output": 0.14,
+        "cachedInput": 0.00875
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Nova tokenizer"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 10000
+    },
+    {
+      "id": "amazon.nova-pro-v1-0",
+      "providerId": "amazon",
+      "displayName": "Nova Pro V1:0",
+      "status": "current",
+      "contextWindow": 300000,
+      "pricing": {
+        "input": 0.8,
+        "output": 3.2,
+        "cachedInput": 0.2
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.7,
+        "note": "Estimate — Nova tokenizer"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 10000
     },
     {
       "id": "azure-ai-mai-thinking-1",
@@ -665,6 +761,68 @@
       "capabilityIndex": 55
     },
     {
+      "id": "command-r-08-2024",
+      "providerId": "cohere",
+      "displayName": "Command R 08 2024",
+      "status": "current",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 0.15,
+        "output": 0.6
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.8,
+        "note": "Estimate — Cohere tokenizer"
+      },
+      "capabilities": {
+        "reasoning": false,
+        "vision": false
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 4096
+    },
+    {
+      "id": "command-r-plus-08-2024",
+      "providerId": "cohere",
+      "displayName": "Command R Plus 08 2024",
+      "status": "current",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 2.5,
+        "output": 10
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.8,
+        "cjkCharsPerToken": 1.8,
+        "note": "Estimate — Cohere tokenizer"
+      },
+      "capabilities": {
+        "reasoning": false,
+        "vision": false
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 4096
+    },
+    {
       "id": "dashscope-qwen3-next-80b-a3b-instruct",
       "providerId": "alibaba",
       "displayName": "Qwen3 Next 80B",
@@ -773,6 +931,38 @@
       },
       "maxOutput": 65536,
       "capabilityIndex": 74
+    },
+    {
+      "id": "dashscope-qwen3.8-flash",
+      "providerId": "alibaba",
+      "displayName": "Qwen3.8 Flash",
+      "status": "current",
+      "contextWindow": 991808,
+      "pricing": {
+        "input": 0.15,
+        "output": 0.47,
+        "cachedInput": 0.016
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.5,
+        "cjkCharsPerToken": 1.5,
+        "note": "Estimate — Qwen tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": false
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 131072
     },
     {
       "id": "dashscope-qwen3.8-max",
@@ -1563,6 +1753,35 @@
       "maxOutput": 128000
     },
     {
+      "id": "gpt-5-pro",
+      "providerId": "openai",
+      "displayName": "GPT 5 Pro",
+      "status": "current",
+      "contextWindow": 400000,
+      "pricing": {
+        "input": 15,
+        "output": 120
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 272000
+    },
+    {
       "id": "gpt-5.1",
       "providerId": "openai",
       "displayName": "GPT-5.1",
@@ -1615,6 +1834,35 @@
       },
       "maxOutput": 128000,
       "capabilityIndex": 74
+    },
+    {
+      "id": "gpt-5.2-pro",
+      "providerId": "openai",
+      "displayName": "GPT 5.2 Pro",
+      "status": "current",
+      "contextWindow": 272000,
+      "pricing": {
+        "input": 21,
+        "output": 168
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 128000
     },
     {
       "id": "gpt-5.4",
@@ -1707,6 +1955,35 @@
       "capabilityIndex": 67
     },
     {
+      "id": "gpt-5.4-pro",
+      "providerId": "openai",
+      "displayName": "GPT 5.4 Pro",
+      "status": "current",
+      "contextWindow": 1050000,
+      "pricing": {
+        "input": 30,
+        "output": 180
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 128000
+    },
+    {
       "id": "gpt-5.5",
       "providerId": "openai",
       "displayName": "GPT-5.5",
@@ -1739,6 +2016,35 @@
       },
       "maxOutput": 128000,
       "capabilityIndex": 81
+    },
+    {
+      "id": "gpt-5.5-pro",
+      "providerId": "openai",
+      "displayName": "GPT 5.5 Pro",
+      "status": "current",
+      "contextWindow": 1050000,
+      "pricing": {
+        "input": 30,
+        "output": 180
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 128000
     },
     {
       "id": "gpt-5.6",
@@ -2289,6 +2595,38 @@
       "capabilityIndex": 72
     },
     {
+      "id": "mistral-codestral-2508",
+      "providerId": "mistral",
+      "displayName": "Codestral 2508",
+      "status": "current",
+      "contextWindow": 128000,
+      "pricing": {
+        "input": 0.3,
+        "output": 0.9,
+        "cachedInput": 0.03
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.7,
+        "cjkCharsPerToken": 1.8,
+        "note": "Estimate — Mistral tokenizer"
+      },
+      "capabilities": {
+        "reasoning": false,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 128000
+    },
+    {
       "id": "mistral-mistral-large-3",
       "providerId": "mistral",
       "displayName": "Mistral Large 3",
@@ -2513,6 +2851,39 @@
       "capabilityIndex": 72
     },
     {
+      "id": "moonshot-kimi-k2.7-code",
+      "providerId": "moonshot",
+      "displayName": "Kimi K2.7 Code",
+      "status": "current",
+      "contextWindow": 262144,
+      "pricing": {
+        "input": 0.95,
+        "output": 4,
+        "cachedInput": 0.19
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.4,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Moonshot tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "OpenRouter disagrees (41%): $0.56/$3.1 vs $0.95/$4; new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "openrouter-disagreement",
+          "new-model"
+        ]
+      },
+      "maxOutput": 262144
+    },
+    {
       "id": "moonshot-kimi-k3",
       "providerId": "moonshot",
       "displayName": "Kimi K3",
@@ -2542,6 +2913,38 @@
       "maxOutput": 1048576
     },
     {
+      "id": "moonshot-kimi-k3.1-pro",
+      "providerId": "moonshot",
+      "displayName": "Kimi K3.1 Pro",
+      "status": "current",
+      "contextWindow": 1048576,
+      "pricing": {
+        "input": 2,
+        "output": 10,
+        "cachedInput": 0.2
+      },
+      "tokenizer": {
+        "kind": "approx",
+        "charsPerToken": 3.4,
+        "cjkCharsPerToken": 1.6,
+        "note": "Estimate — Moonshot tokenizer, calibrated for mixed English/Chinese"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
+      },
+      "maxOutput": 1048576
+    },
+    {
       "id": "o1",
       "providerId": "openai",
       "displayName": "o1",
@@ -2564,6 +2967,35 @@
         "source": "vendor",
         "lastVerified": "2026-10-29",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 100000
+    },
+    {
+      "id": "o1-pro",
+      "providerId": "openai",
+      "displayName": "O1 Pro",
+      "status": "current",
+      "contextWindow": 200000,
+      "pricing": {
+        "input": 150,
+        "output": 600
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
       },
       "maxOutput": 100000
     },
@@ -2616,6 +3048,35 @@
         "source": "vendor",
         "lastVerified": "2026-10-29",
         "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
+      },
+      "maxOutput": 100000
+    },
+    {
+      "id": "o3-pro",
+      "providerId": "openai",
+      "displayName": "O3 Pro",
+      "status": "current",
+      "contextWindow": 200000,
+      "pricing": {
+        "input": 20,
+        "output": 80
+      },
+      "tokenizer": {
+        "kind": "tiktoken",
+        "encoding": "o200k_base"
+      },
+      "capabilities": {
+        "reasoning": true,
+        "vision": true
+      },
+      "provenance": {
+        "source": "litellm",
+        "lastVerified": "2026-10-29",
+        "needsReview": true,
+        "reviewNote": "new model discovered by pattern match — confirm name and rates",
+        "reviewCodes": [
+          "new-model"
+        ]
       },
       "maxOutput": 100000
     },

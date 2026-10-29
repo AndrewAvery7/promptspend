@@ -1562,8 +1562,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-27",
-      "fingerprint": "1da099eb1f67ad"
+      "lastmod": "2026-10-29",
+      "fingerprint": "1b9247eec083b1"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1574,6 +1574,21 @@
       "published": "2026-08-02",
       "lastmod": "2026-10-03",
       "fingerprint": "0493722d15ed8c"
+    },
+    "/models/amazon-nova-lite-v1-0/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "0ad491061f9a5c"
+    },
+    "/models/amazon-nova-micro-v1-0/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "1b14e5f517a761"
+    },
+    "/models/amazon-nova-pro-v1-0/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "165751ad003872"
     },
     "/models/azure-ai-mai-thinking-1/": {
       "published": "2026-10-24",
@@ -1660,10 +1675,25 @@
       "lastmod": "2026-08-02",
       "fingerprint": "12640b947c44a6"
     },
+    "/models/command-r-08-2024/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "17b7895f2ba2ee"
+    },
+    "/models/command-r-plus-08-2024/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "0432b95c340c45"
+    },
     "/models/dashscope-qwen3-7-max/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-16",
       "fingerprint": "0da62f20dd6e3d"
+    },
+    "/models/dashscope-qwen3-8-flash/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "1cc717cdd23d7e"
     },
     "/models/dashscope-qwen3-8-max/": {
       "published": "2026-10-24",
@@ -1805,6 +1835,11 @@
       "lastmod": "2026-08-03",
       "fingerprint": "096dfbb4092802"
     },
+    "/models/gpt-5-2-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "168e5b4b664477"
+    },
     "/models/gpt-5-2/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-03",
@@ -1820,10 +1855,20 @@
       "lastmod": "2026-08-02",
       "fingerprint": "1d4ec3d75b1090"
     },
+    "/models/gpt-5-4-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "0f87b32b26c76a"
+    },
     "/models/gpt-5-4/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-02",
       "fingerprint": "16aa3ce19b7d3a"
+    },
+    "/models/gpt-5-5-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "099fceec72d83f"
     },
     "/models/gpt-5-5/": {
       "published": "2026-08-02",
@@ -1854,6 +1899,11 @@
       "published": "2026-08-02",
       "lastmod": "2026-08-03",
       "fingerprint": "0a398986a19d60"
+    },
+    "/models/gpt-5-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "041b880394875b"
     },
     "/models/gpt-5/": {
       "published": "2026-08-02",
@@ -1925,6 +1975,11 @@
       "lastmod": "2026-08-02",
       "fingerprint": "1b7a77fcca1c72"
     },
+    "/models/mistral-codestral-2508/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "1f3f8c9668aca1"
+    },
     "/models/mistral-large-3/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-30",
@@ -1960,15 +2015,30 @@
       "lastmod": "2026-08-09",
       "fingerprint": "112d4756525e73"
     },
+    "/models/moonshot-kimi-k2-7-code/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "1e7778313c5d36"
+    },
     "/models/moonshot-kimi-k2-thinking/": {
       "published": "2026-08-02",
       "lastmod": "2026-09-29",
       "fingerprint": "04f3bfb8e58a73"
     },
+    "/models/moonshot-kimi-k3-1-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "05599b4b5585ff"
+    },
     "/models/moonshot-kimi-k3/": {
       "published": "2026-08-22",
       "lastmod": "2026-10-21",
       "fingerprint": "137c2437ec78a7"
+    },
+    "/models/o1-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "07bdb4dc6baeed"
     },
     "/models/o1/": {
       "published": "2026-08-02",
@@ -1979,6 +2049,11 @@
       "published": "2026-08-02",
       "lastmod": "2026-08-03",
       "fingerprint": "1553b07a14ed38"
+    },
+    "/models/o3-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "066e792d38123a"
     },
     "/models/o3/": {
       "published": "2026-08-02",
@@ -2117,18 +2192,18 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0449bf980cc5b0"
+      "lastmod": "2026-10-29",
+      "fingerprint": "0ae231bb2c901a"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-24",
-      "fingerprint": "07470e611bfa11"
+      "lastmod": "2026-10-29",
+      "fingerprint": "06bf7db0b027ef"
     },
     "/providers/amazon/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-03",
-      "fingerprint": "0f0725555255e7"
+      "lastmod": "2026-10-29",
+      "fingerprint": "0bf9ee44fa3f9a"
     },
     "/providers/anthropic/": {
       "published": "2026-08-02",
@@ -2137,8 +2212,8 @@
     },
     "/providers/cohere/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "058edec6ba2af6"
+      "lastmod": "2026-10-29",
+      "fingerprint": "0ec1f1641ccfc0"
     },
     "/providers/deepseek/": {
       "published": "2026-08-02",
@@ -2172,18 +2247,18 @@
     },
     "/providers/mistral/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-27",
-      "fingerprint": "058b06fce789b0"
+      "lastmod": "2026-10-29",
+      "fingerprint": "05528b1455e6a0"
     },
     "/providers/moonshot/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-21",
-      "fingerprint": "1cedd312dd65aa"
+      "lastmod": "2026-10-29",
+      "fingerprint": "059d1568e5c40e"
     },
     "/providers/openai/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-27",
-      "fingerprint": "1ad770fa25a60b"
+      "lastmod": "2026-10-29",
+      "fingerprint": "18ce4154c50b85"
     },
     "/providers/xai/": {
       "published": "2026-08-02",
