@@ -11,8 +11,9 @@ import { getTabBarNavigatorStyle } from '@/lib/tabBarLayout';
 import { MobileThemeProvider, useMobileTheme } from '@/theme/useMobileTheme';
 
 // Expo Router reads this before the tab navigator mounts. Keeping Home as the
-// anchor here makes cold starts and deep-link back navigation deterministic.
-export const unstable_settings = { initialRouteName: 'home' };
+// anchor puts it beneath any deep-linked tab, so back navigation lands there.
+// The launch URL still decides the first screen; index redirects `/` to Home.
+export const unstable_settings = { anchor: 'home' };
 
 export default function RootLayout() {
   return (
@@ -35,7 +36,6 @@ function ThemedTabs() {
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <Tabs
         backBehavior="history"
-        initialRouteName="home"
         screenOptions={{
           headerShown: false,
           sceneStyle: { backgroundColor: theme.background },
@@ -63,7 +63,7 @@ function ThemedTabs() {
           options={{
             tabBarAccessibilityLabel: 'Home, Cost Brief',
             tabBarIcon: ({ color, focused, size }) => (
-              <Ionicons color={color} name={focused ? 'home' : 'home-outline'} size={size} />
+              <Ionicons color={color as string} name={focused ? 'home' : 'home-outline'} size={size} />
             ),
             title: 'Home',
           }}
@@ -73,7 +73,11 @@ function ThemedTabs() {
           options={{
             tabBarAccessibilityLabel: 'Estimate one model',
             tabBarIcon: ({ color, focused, size }) => (
-              <Ionicons color={color} name={focused ? 'calculator' : 'calculator-outline'} size={size} />
+              <Ionicons
+                color={color as string}
+                name={focused ? 'calculator' : 'calculator-outline'}
+                size={size}
+              />
             ),
             title: 'Estimate',
           }}
@@ -83,7 +87,7 @@ function ThemedTabs() {
           options={{
             tabBarAccessibilityLabel: 'Compare up to four models',
             tabBarIcon: ({ color, focused, size }) => (
-              <Ionicons color={color} name={focused ? 'podium' : 'podium-outline'} size={size} />
+              <Ionicons color={color as string} name={focused ? 'podium' : 'podium-outline'} size={size} />
             ),
             title: 'Compare',
           }}
@@ -93,7 +97,7 @@ function ThemedTabs() {
           options={{
             tabBarAccessibilityLabel: 'Data and Alerts',
             tabBarIcon: ({ color, focused, size }) => (
-              <Ionicons color={color} name={focused ? 'pulse' : 'pulse-outline'} size={size} />
+              <Ionicons color={color as string} name={focused ? 'pulse' : 'pulse-outline'} size={size} />
             ),
             tabBarLabel: ({ color }) => <DataAlertsTabLabel color={color} />,
             title: 'Data & Alerts',
@@ -104,7 +108,7 @@ function ThemedTabs() {
           options={{
             tabBarAccessibilityLabel: 'Learn about AI costs',
             tabBarIcon: ({ color, focused, size }) => (
-              <Ionicons color={color} name={focused ? 'book' : 'book-outline'} size={size} />
+              <Ionicons color={color as string} name={focused ? 'book' : 'book-outline'} size={size} />
             ),
             title: 'Learn',
           }}

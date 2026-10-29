@@ -12,6 +12,7 @@ import {
   View,
   type ColorValue,
   type ViewStyle,
+  type HostInstance,
 } from 'react-native';
 
 import { AppText as Text, TYPE_ROLES } from '@/components/AppText';
@@ -500,7 +501,7 @@ function MiniAction({
         pressed && styles.pressed,
       ]}
     >
-      <Ionicons color={styles.miniActionText.color as ColorValue} name={icon} size={17} />
+      <Ionicons color={styles.miniActionText.color as string} name={icon} size={17} />
       <Text style={styles.miniActionText}>{label}</Text>
     </Pressable>
   );
@@ -519,7 +520,7 @@ function Sheet({
   styles: Styles;
   visible: boolean;
 }) {
-  const sheet = useRef<View>(null);
+  const sheet = useRef<HostInstance>(null);
 
   useEffect(() => {
     if (!visible) return;

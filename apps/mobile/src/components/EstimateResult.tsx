@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Alert, findNodeHandle, Pressable, Share, StyleSheet, View } from 'react-native';
+import { Alert, findNodeHandle, Pressable, Share, StyleSheet, View, type HostInstance } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { CountryBadge } from '@/components/CountryBadge';
@@ -27,7 +27,7 @@ interface EstimateResultProps {
 export function EstimateResult({ breakdown, country, model, scaled, validateAction }: EstimateResultProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const shareButtonRef = useRef<View>(null);
+  const shareButtonRef = useRef<HostInstance>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
 

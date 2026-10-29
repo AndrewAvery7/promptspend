@@ -53,7 +53,7 @@ updates:
       prefix: 'deps'
     # Everything Expo ships as a set is excluded, and deliberately so. The
     # versions of expo, expo-*, react, react-native* and their type packages
-    # are not free choices: they are dictated by the SDK 57 version map that
+    # are not free choices: they are dictated by the SDK 58 version map that
     # `npx expo-doctor` fetches at run time and checks the install against.
     # Dependabot does not read that map, so a bump it considers routine is a
     # bump expo-doctor considers drift — a red pull request describing a
@@ -79,16 +79,15 @@ updates:
       - dependency-name: 'typescript'
         update-types:
           - 'version-update:semver-major'
-      # jest and eslint majors follow jest-expo and eslint-config-expo, which
-      # cap them: the jest proposal broke every mobile suite outright (#113),
-      # and eslint 10 outran eslint-plugin-import's peer range (#122). Drop
-      # these entries when the SDK's own packages move.
+      # jest and @types/jest are pinned by the SDK itself since SDK 58 (the
+      # version map names jest ~30.5.x and @types/jest 30.0.0), so
+      # `expo install --check` and expo-doctor treat any other version as
+      # drift, minor bumps included. They move with the SDK, like jest-expo.
       - dependency-name: 'jest'
-        update-types:
-          - 'version-update:semver-major'
       - dependency-name: '@types/jest'
-        update-types:
-          - 'version-update:semver-major'
+      # eslint majors follow eslint-config-expo, which caps them: eslint 10
+      # outran eslint-plugin-import's peer range (#122). Drop this entry when
+      # the SDK's own packages move.
       - dependency-name: 'eslint'
         update-types:
           - 'version-update:semver-major'

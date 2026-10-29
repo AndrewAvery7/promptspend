@@ -11,6 +11,7 @@ import {
   Share,
   StyleSheet,
   View,
+  type HostInstance,
 } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
@@ -49,7 +50,7 @@ interface CostReceiptSheetProps {
 export function CostReceiptSheet(props: CostReceiptSheetProps) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const receiptRef = useRef<View>(null);
+  const receiptRef = useRef<HostInstance>(null);
   const [sharingImage, setSharingImage] = useState(false);
   const receiptInput: CostReceiptInput = props;
   const receipt = useMemo(() => buildCostReceiptData(receiptInput), [receiptInput]);

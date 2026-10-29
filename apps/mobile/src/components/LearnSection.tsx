@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type RefObject } from 'react';
-import { Pressable, type ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View, type ScrollViewInstance } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 
 import { AppText as Text } from '@/components/AppText';
@@ -27,7 +27,7 @@ export function LearnSection({
   initialHelpEntryId?: string;
   onHelpEntryConsumed?: () => void;
   onNavigate: (destination: HelpDestination) => void;
-  tourScrollRef?: RefObject<ScrollView | null>;
+  tourScrollRef?: RefObject<ScrollViewInstance | null>;
 }) {
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);

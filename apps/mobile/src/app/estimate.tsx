@@ -12,6 +12,7 @@ import {
   Switch,
   View,
   useWindowDimensions,
+  type ScrollViewInstance,
 } from 'react-native';
 
 import { AppText as Text, FONT_FAMILIES } from '@/components/AppText';
@@ -111,7 +112,7 @@ export function EstimatorWorkspace({
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { startTour } = useGuidedTour();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const {
     batchEnabled,
     assertCurrentPricing,

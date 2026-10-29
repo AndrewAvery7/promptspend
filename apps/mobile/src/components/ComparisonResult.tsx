@@ -1,5 +1,14 @@
 import { type ReactNode, useMemo, useRef, useState } from 'react';
-import { Alert, findNodeHandle, Pressable, Share, StyleSheet, useWindowDimensions, View } from 'react-native';
+import {
+  Alert,
+  findNodeHandle,
+  Pressable,
+  Share,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+  type HostInstance,
+} from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { CountryBadge } from '@/components/CountryBadge';
@@ -26,7 +35,7 @@ export function ComparisonResult({ catalog, rows, validateAction, wrapTourTarget
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const { fontScale, width } = useWindowDimensions();
-  const shareButtonRef = useRef<View>(null);
+  const shareButtonRef = useRef<HostInstance>(null);
   const [isSharing, setIsSharing] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const useGrid = width >= 760 && fontScale <= 1.2;

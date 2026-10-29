@@ -121,7 +121,7 @@ store build** workflow (GitHub → Actions → Android store build → Run
 workflow, with the commit to build and a reason), or from PowerShell:
 
 ```powershell
-gh workflow run android-build.yml --repo AndrewAvery7/promptspend -f ref=main -f reason="0.1.2 store release"
+gh workflow run android-build.yml --repo AndrewAvery7/promptspend -f ref=main -f reason="0.2.0 store release"
 ```
 
 It runs `eas build --local` on a free GitHub runner, signed with the same

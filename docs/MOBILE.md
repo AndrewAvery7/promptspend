@@ -83,11 +83,11 @@ considered live until the website deployment containing them is verified.
 
 ### Dependency security checkpoint
 
-The SDK 57 scaffold's current npm audit findings and risk controls are documented in `apps/mobile/SECURITY.md`. Expo Doctor and Expo's version compatibility check must remain green, but those checks do not replace advisory review. Forced audit downgrades are prohibited; findings must be traced to reachable runtime or build-tool behavior and reviewed again before beta and release.
+The SDK 58 app's current npm audit findings and risk controls are documented in `apps/mobile/SECURITY.md`. Expo Doctor and Expo's version compatibility check must remain green, but those checks do not replace advisory review. Forced audit downgrades are prohibited; findings must be traced to reachable runtime or build-tool behavior and reviewed again before beta and release.
 
 ### Current source evidence (2026-08-16)
 
-- Expo SDK 57 application created at `apps/mobile`.
+- Expo SDK 57 application created at `apps/mobile`; upgraded to Expo SDK 58 (React Native 0.88) on 2026-10-29 as app version 0.2.0.
 - EAS project linked to `@crestwood-holdings/promptspend-app`.
 - App name, owner, slug, project ID, native URL scheme, iOS bundle identifier, and Android application ID resolve through Expo's public configuration command.
 - Generated tutorial code and unrelated tutorial assets removed.

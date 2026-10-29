@@ -3,7 +3,7 @@ name: Expo drift check
 # The one check in this repository whose verdict is decided by a registry
 # rather than by the commit: `npx expo-doctor` compares the versions pinned
 # in apps/mobile against a version map Expo serves at run time, so the day
-# Expo ships new SDK 57 patch releases, this goes red without anything in the
+# Expo ships new SDK 58 patch releases, this goes red without anything in the
 # repository having changed.
 #
 # It used to close the mobile verify job, and through it every push and pull
@@ -14,7 +14,7 @@ name: Expo drift check
 #
 # Since 2026-09-07 it also takes the patches itself (Andrew: "as hands-off as
 # possible"). When expo-doctor reports drift, `npx expo install --fix` moves
-# the pins to the versions Expo names for SDK 57 — the same command a54782b,
+# the pins to the versions Expo names for SDK 58 — the same command a54782b,
 # 3231809 and ca8d2e4 were made with by hand — and the result is kept only if
 # a clean install, the tests, typecheck, lint and expo-doctor all pass on it.
 # Otherwise package.json and the lockfile go back and the run fails, which

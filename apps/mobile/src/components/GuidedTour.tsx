@@ -4,9 +4,10 @@ import {
   findNodeHandle,
   Modal,
   Pressable,
-  type ScrollView,
   StyleSheet,
   View,
+  type HostInstance,
+  type ScrollViewInstance,
 } from 'react-native';
 import {
   createContext,
@@ -166,13 +167,13 @@ export function TourTarget({
   id: GuidedTourTargetId;
   enabled?: boolean;
   onReveal?: () => void;
-  scrollRef?: RefObject<ScrollView | null>;
+  scrollRef?: RefObject<ScrollViewInstance | null>;
   style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }>) {
   const { currentTargetId, reduceMotion, registerTarget } = useGuidedTour();
   const { theme } = useMobileTheme();
   const targetStyles = useMemo(() => createTargetStyles(theme), [theme]);
-  const container = useRef<View>(null);
+  const container = useRef<HostInstance>(null);
   const contentY = useRef(0);
   const isCurrentTarget = isActiveTourTarget(id, currentTargetId);
 
@@ -183,9 +184,10 @@ export function TourTarget({
         onReveal?.();
         const scrollView = scrollRef?.current;
         const target = container.current;
-        if (scrollView && target) {
+        const innerView = scrollView?.getInnerViewRef();
+        if (scrollView && target && innerView) {
           target.measureLayout(
-            scrollView.getInnerViewNode(),
+            innerView,
             (_x, y) =>
               scrollView.scrollTo({
                 animated: !reduceMotion,
@@ -247,7 +249,7 @@ function GuidedTourOverlay({
   const { theme } = useMobileTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const insets = useSafeAreaInsets();
-  const card = useRef<View>(null);
+  const card = useRef<HostInstance>(null);
   useEffect(() => {
     if (!active) return;
     const timer = setTimeout(
