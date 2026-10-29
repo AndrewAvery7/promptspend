@@ -218,6 +218,19 @@ ${rows}
           <a href="${siteOrigin}/">the calculator</a>, because it is the same code.
         </p>
         <p>
+          <code>get_price</code> also takes <code>as_of</code>, a past date, and answers from the
+          <a href="${siteOrigin}/data/price-history.csv">published price history</a>; a later
+          correction comes back with the figure. <code>estimate_cost</code> also takes
+          <code>usage</code>, measured token totals such as a month from a usage export.
+        </p>
+        <p>
+          The same tools come as an
+          <a href="https://github.com/AndrewAvery7/promptspend/tree/main/skills">Agent Skill</a>,
+          which costs context only when a price question comes up, and there is a
+          <a href="https://github.com/AndrewAvery7/promptspend/tree/main/github-action">GitHub check</a>
+          that fails a build when a model your code calls changes price or is retired.
+        </p>
+        <p>
           <strong>It adds about 897 tokens to your context per turn.</strong> Tool definitions load
           into every message for as long as a server is connected, so that figure is budgeted,
           checked in CI, and published here rather than left for you to discover.
@@ -309,6 +322,11 @@ context per turn, measured and budgeted.
 
 Hosted, no install: \`${origin}/mcp\` (MCP Streamable HTTP, stateless, no key).
 Add it as a custom connector in Claude.ai or ChatGPT.
+
+\`get_price\` takes \`as_of\` (YYYY-MM-DD) for the rate published on a past day,
+from ${siteOrigin}/data/price-history.csv. \`estimate_cost\` takes \`usage\`
+(input, output, cache_read, cache_write token totals) to price measured usage.
+Also as an Agent Skill: https://github.com/AndrewAvery7/promptspend/tree/main/skills
 
 ## Related
 

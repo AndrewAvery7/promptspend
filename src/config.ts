@@ -198,8 +198,11 @@ export const PRODUCTHUNT_BADGE_DARK = `${import.meta.env.BASE_URL}producthunt-ba
  * reads above would throw.
  */
 export {
+  AGENT_SKILL_URL,
   APP_STORE_URL,
+  GITHUB_ACTION_URL,
   GOOGLE_PLAY_URL,
+  MCP_HOSTED_URL,
   MCP_INSTALL_COMMAND,
   MCP_PACKAGE_URL,
   OPEN_VSX_URL,

@@ -16,6 +16,13 @@
 /** The MCP server on npm. */
 export const MCP_PACKAGE_URL = 'https://www.npmjs.com/package/@promptspend/mcp';
 
+/** The same server, hosted, for clients that take a URL instead of a command. */
+export const MCP_HOSTED_URL = 'https://promptspend.dev/mcp';
+
+/** The CI price check and the Agent Skill, both documented in the repository. */
+export const GITHUB_ACTION_URL = 'https://github.com/AndrewAvery7/promptspend/tree/main/github-action';
+export const AGENT_SKILL_URL = 'https://github.com/AndrewAvery7/promptspend/tree/main/skills';
+
 /**
  * The extension, on both marketplaces.
  *

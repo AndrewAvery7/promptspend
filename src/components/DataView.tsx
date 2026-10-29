@@ -2,6 +2,9 @@ import type { Catalog } from '@/lib/pricing/catalog';
 import {
   APP_PAGE_URL,
   DEVELOPER_HUB_URL,
+  AGENT_SKILL_URL,
+  GITHUB_ACTION_URL,
+  MCP_HOSTED_URL,
   MCP_INSTALL_COMMAND,
   MCP_PACKAGE_URL,
   OPEN_VSX_URL,
@@ -218,6 +221,17 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                 <p className="privacy-note">
                   Adds ~897 tokens of context per turn — measured, budgeted and published, because a pricing
                   tool that quietly taxes every message would be a poor joke.
+                </p>
+                <p className="privacy-note">
+                  Also hosted at <code>{MCP_HOSTED_URL}</code> with nothing to install, as an{' '}
+                  <a href={AGENT_SKILL_URL} target="_blank" rel="noreferrer noopener">
+                    Agent Skill
+                  </a>{' '}
+                  that loads only when asked, and as a{' '}
+                  <a href={GITHUB_ACTION_URL} target="_blank" rel="noreferrer noopener">
+                    GitHub check
+                  </a>{' '}
+                  that fails a build when a model your code calls changes price.
                 </p>
                 {/* Every card ends with somewhere to go. The command suits
                     people who already know they want it; the link is for
