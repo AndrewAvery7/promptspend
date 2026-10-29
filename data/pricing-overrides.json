@@ -426,7 +426,9 @@
     },
     {
       "$note": "Capability score rescored 70 -> 63 (2026-10-24): Artificial Analysis Intelligence Index 16.7, an ESTIMATED index (computed from a subset of evaluations), mapped onto this scale through four existing rows that also appear in the index.",
+      "$note": "ARCHIVED 2026-10-29 (status `deprecated`): OpenAI's deprecations page says \"Access to these models was shut down on October 23, 2026\" and lists `o4-mini-2025-04-16 | o4-mini` with shutdown date October 23, 2026. Its pricing table still prints a rate for it, which is why the daily vendor check kept confirming the price; the model itself is gone.",
       "id": "o4-mini",
+      "status": "deprecated",
       "displayName": "o4-mini",
       "capabilityIndex": 63,
       "vendorVerified": true,
@@ -441,14 +443,18 @@
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
+      "$note": "ARCHIVED 2026-10-29 (status `deprecated`): OpenAI's deprecations page says \"Access to these models was shut down on October 23, 2026\" and lists `o3-mini-2025-01-31 | o3-mini` with shutdown date October 23, 2026. Its pricing table still prints a rate for it, which is why the daily vendor check kept confirming the price; the model itself is gone.",
       "id": "o3-mini",
+      "status": "deprecated",
       "displayName": "o3-mini",
       "vendorVerified": true,
       "lastVerified": "2026-10-29",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
+      "$note": "ARCHIVED 2026-10-29 (status `deprecated`): OpenAI's deprecations page says \"Access to these models was shut down on October 23, 2026\" and lists `o1-2024-12-17 | o1` with shutdown date October 23, 2026. Its pricing table still prints a rate for it, which is why the daily vendor check kept confirming the price; the model itself is gone.",
       "id": "o1",
+      "status": "deprecated",
       "displayName": "o1",
       "vendorVerified": true,
       "lastVerified": "2026-10-29",

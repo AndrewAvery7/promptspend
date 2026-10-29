@@ -1454,3 +1454,22 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `moonshot-kimi-k3.1-pro` — provenance.verifiedUrl: — → https://platform.kimi.ai/docs/pricing/chat
 - **Review** `o3-pro` — provenance.source: litellm → vendor
 - **Review** `o3-pro` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+
+## 2026-10-29
+
+- **Coverage** `claude-fable-5` — cacheWrite1h now tracked: — → 20
+- **Coverage** `claude-fable-5-1` — cacheWrite1h now tracked: — → 20
+- **Coverage** `claude-haiku-4-5` — cacheWrite1h now tracked: — → 2
+- **Coverage** `claude-opus-4-8` — cacheWrite1h now tracked: — → 10
+- **Coverage** `claude-opus-5` — cacheWrite1h now tracked: — → 10
+- **Coverage** `claude-opus-5-5` — cacheWrite1h now tracked: — → 8
+- **Coverage** `claude-sonnet-5` — cacheWrite1h now tracked: — → 4
+- **Coverage** `claude-sonnet-5-5` — cacheWrite1h now tracked: — → 4
+- **Coverage** `moonshot-kimi-k3` — cacheWrite1h now tracked: — → 6
+- **Coverage** `moonshot-kimi-k3.1-pro` — cacheWrite1h now tracked: — → 4
+
+## 2026-10-29
+
+- **Metadata** `o1` — status: current → deprecated
+- **Metadata** `o3-mini` — status: current → deprecated
+- **Metadata** `o4-mini` — status: current → deprecated
