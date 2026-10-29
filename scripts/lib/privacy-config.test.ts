@@ -1,7 +1,11 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ANALYTICS_REQUIRES_CONSENT, GA_MEASUREMENT_ID } from '../../src/lib/analytics/config';
+import {
+  ANALYTICS_REQUIRES_CONSENT,
+  GA_MEASUREMENT_ID,
+  GOOGLE_ANALYTICS_ENABLED,
+} from '../../src/lib/analytics/config';
 
 /**
  * The logging settings the privacy policy describes, held to what the
@@ -119,22 +123,44 @@ describe('the privacy page describes the analytics switch as it is set', () => {
   ];
   const CONSENT_MODE = ['Google Analytics loads only after you click Accept', 'choose Decline on the notice'];
 
-  it('says when Google Analytics loads, and how to refuse it, for the way the switch is set', () => {
-    const [required, forbidden] = ANALYTICS_REQUIRES_CONSENT
-      ? [CONSENT_MODE, NOTICE_MODE]
-      : [NOTICE_MODE, CONSENT_MODE];
-    for (const sentence of required) expect(policy).toContain(sentence);
-    for (const sentence of forbidden) expect(policy).not.toContain(sentence);
-  });
+  // `GOOGLE_ANALYTICS_ENABLED` has two positions and each has sentences only it
+  // makes true: running (the next two tests) or paused (the test after them).
+  it.runIf(GOOGLE_ANALYTICS_ENABLED)(
+    'says when Google Analytics loads, and how to refuse it, for the way the switch is set',
+    () => {
+      const [required, forbidden] = ANALYTICS_REQUIRES_CONSENT
+        ? [CONSENT_MODE, NOTICE_MODE]
+        : [NOTICE_MODE, CONSENT_MODE];
+      for (const sentence of required) expect(policy).toContain(sentence);
+      for (const sentence of forbidden) expect(policy).not.toContain(sentence);
+    },
+  );
 
-  it('names the cookies, what Google receives, and how to turn it off', () => {
-    expect(policy).toContain('`_ga` and `_ga_' + GA_MEASUREMENT_ID.replace(/^G-/, '') + '`');
-    expect(policy).toContain('without anything after a question mark or a hash sign');
-    expect(policy).toContain('Google never receives text you paste or type');
-    expect(policy).toContain('tools.google.com/dlpage/gaoptout');
-    expect(policy).toContain('Global Privacy Control');
-    expect(policy).toContain('[[analytics-choice]]');
-  });
+  it.runIf(GOOGLE_ANALYTICS_ENABLED)(
+    'names the cookies, what Google receives, and how to turn it off',
+    () => {
+      expect(policy).toContain('`_ga` and `_ga_' + GA_MEASUREMENT_ID.replace(/^G-/, '') + '`');
+      expect(policy).toContain('without anything after a question mark or a hash sign');
+      expect(policy).toContain('Google never receives text you paste or type');
+      expect(policy).toContain('tools.google.com/dlpage/gaoptout');
+      expect(policy).toContain('Global Privacy Control');
+      expect(policy).toContain('[[analytics-choice]]');
+    },
+  );
+
+  it.skipIf(GOOGLE_ANALYTICS_ENABLED)(
+    'says the website does not use Google Analytics, and describes nothing that is not running',
+    () => {
+      expect(policy).toContain('does not currently use Google Analytics');
+      for (const sentence of [...NOTICE_MODE, ...CONSENT_MODE]) expect(policy).not.toContain(sentence);
+      expect(policy).not.toContain('[[analytics-choice]]');
+      expect(policy).not.toContain('`_ga_' + GA_MEASUREMENT_ID.replace(/^G-/, '') + '`');
+      expect(policy).not.toContain('tools.google.com/dlpage/gaoptout');
+      // The README and SECURITY.md describe the same state.
+      expect(read('README.md')).toContain('Google Analytics is paused');
+      expect(read('SECURITY.md')).toContain('is paused');
+    },
+  );
 
   it('no longer promises what the website stopped doing', () => {
     for (const file of [

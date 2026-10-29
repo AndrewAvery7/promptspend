@@ -94,6 +94,12 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 > difference between the two records is noted here rather than either being
 > rewritten: if the original "consent banner" wording is what was meant,
 > flipping that switch is the whole code change.
+>
+> **Addendum, 2026-10-29.** Google Analytics 4 is paused (`GOOGLE_ANALYTICS_ENABLED = false`):
+> the Analytics account it reported to no longer existed, so visitors were being told about a
+> count nobody could read. The privacy page, README and SECURITY.md say so, and the page policies
+> name no Google host. Turning it back on needs a new property, a new Measurement ID and those
+> documents rewritten first.
 
 **Analytics on either host, for launch measurement.** Considered because a
 launch is the one moment traffic is worth watching closely, and rejected

@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-126-2456E6.svg" alt="126 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1614-blue.svg" alt="1614 tests">
+  <img src="https://img.shields.io/badge/tests-1637-blue.svg" alt="1637 tests">
   <img src="https://img.shields.io/badge/initial%20payload-104%20KB%20gzip-blue.svg" alt="104 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -428,7 +428,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1614 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1637 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 367 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live                             |
@@ -499,26 +499,15 @@ self-hosted. One image is not: the footer's LaunchNest listing badge loads from 
 directory requires it), with no referrer, so LaunchNest's server sees a visitor's IP address but not
 which page they were on.
 
-**The website counts visits with Google Analytics, which sets cookies.** Since 2026-10-24 every page of
-promptspend.com loads Google Analytics 4 and shows a small notice saying so, with a link to the
-[privacy policy](https://promptspend.com/privacy/) and a _Turn off_ button. Google Analytics sets two
-cookies (`_ga`, `_ga_08GFGLY4VD`). PromptSpend's code sends it the page's site and path only — never the
-query string or `#fragment`, where the scenario and alert tokens live — plus the page title and referring
-page (cut down the same way); it switches off GA's automatic page view, Google signals and ad
-personalisation, and passes it nothing anyone types, pastes or enters in a form
-([`src/lib/analytics/`](src/lib/analytics/)). It runs only on promptspend.com, never when the browser
-sends Global Privacy Control, and one line in
-[`src/lib/analytics/config.ts`](src/lib/analytics/config.ts) (`ANALYTICS_REQUIRES_CONSENT`) switches it
-to loading only after a visitor clicks _Accept_. Visitors can turn it off on the notice, on the privacy
-page, or with Google's own opt-out add-on.
+**Google Analytics is paused.** From 2026-10-24 to 2026-10-29 the website loaded Google Analytics 4 and showed a small notice saying so. It is switched off (`GOOGLE_ANALYTICS_ENABLED` in [`src/lib/analytics/config.ts`](src/lib/analytics/config.ts)) because no Google Analytics account exists to receive the data: nothing from Google loads, no notice shows, the page policies name none of Google's hosts, and a visitor who still holds its cookies from those days has them cleared the next time they open the site. The code, its tests and its safeguards stay in place so it can return ([`src/lib/analytics/`](src/lib/analytics/)): it is sent the page's site and path only — never the query string or `#fragment`, where the scenario and alert tokens live — with Google signals and ad personalization off, and nothing anyone types, pastes or enters in a form. It runs only on promptspend.com and never when the browser sends Global Privacy Control. Turning it back on means a new property and Measurement ID, the switch, and the privacy page, this file and SECURITY.md rewritten first.
 
-The website also keeps Cloudflare Web Analytics, a cookieless beacon that reports a page's address
+The website counts visits with Cloudflare Web Analytics, a cookieless beacon that reports a page's address
 (without its query string or fragment), referrer, country and load timings to promptspend.com's own
-`/cdn-cgi/rum`; neither service sees pasted text. The apps, the VS Code extension, the MCP server and the
+`/cdn-cgi/rum`; it never sees pasted text. The apps, the VS Code extension, the MCP server and the
 API carry no analytics. Pasted prompt text is tokenised in your browser, deliberately excluded from the
 shareable URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds
 only interface choices: your theme, accent and background, whether you dismissed the welcome and apps
-banners, and your answer to the analytics notice.
+banners.
 
 **Price alerts are the one exception, and only if you opt in.** They are a feature you have to switch on,
 and they are the only reason this project has a server that stores anything
@@ -529,13 +518,7 @@ request logs (kept up to seven days), and the apps' update server has its loggin
   configured, `script-src`, `connect-src` and `frame-src` for Turnstile's `challenges.cloudflare.com`
   (whether Turnstile is actually required is decided at runtime, so the build permits it). Beyond
   that, the remote origins are `img-src` for the LaunchNest badge, `script-src` for the Cloudflare
-  beacon (which posts only to this site), and Google Analytics: `www.googletagmanager.com` for
-  `gtag.js` (in `script-src`, and in `connect-src` and `img-src` as Google's guidance asks), and its collection hosts (`www.google-analytics.com`, `region1.google-analytics.com`,
-  `region1.analytics.google.com`) in `connect-src` and `img-src`, each named rather than wildcarded.
-  That `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is
-  generated from configured values rather than hand-maintained, and `npm run check:csp` fails on any
-  origin it does not list. Admitting Google's collector is a real cost — a script that got onto the
-  page could post to an analytics account of its own — accepted on 2026-10-06 for visit counts.
+  beacon (which posts only to this site). While Google Analytics is paused (since 2026-10-29) the policies name none of Google's hosts; when it runs they name `www.googletagmanager.com` for `gtag.js` and `www.google-analytics.com`, `region1.google-analytics.com` and `region1.analytics.google.com` for its reports, each named rather than wildcarded. That `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is generated from configured values rather than hand-maintained, and `npm run check:csp` fails on any origin it does not list. While Google Analytics runs, admitting Google's collector is a real cost — a script that got onto the page could post to an analytics account of its own — accepted on 2026-10-06 for visit counts.
 - **Browser push stores nothing personal.** A push subscription is an opaque URL the browser issues. No
   address, no name, nothing that identifies you.
 - **Request logs.** Alert links carry a private token in their address, so the alerts Worker keeps no

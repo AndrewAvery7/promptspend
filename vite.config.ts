@@ -5,7 +5,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { renderReceiptInstructions, renderReceiptSpecJson } from './src/receipt/receiptSpec';
-import { GA_COLLECT_ORIGINS, GA_SCRIPT_ORIGIN } from './src/lib/analytics/config';
+import { GA_POLICY_COLLECT_ORIGINS, GA_POLICY_SCRIPT_ORIGINS } from './src/lib/analytics/config';
 
 // GitHub Pages serves the site from /<repo>/ unless a custom domain is configured;
 // set BASE_PATH=/ in the workflow when deploying to one. The dev server always
@@ -247,8 +247,12 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
     name: 'promptspend-csp',
     transformIndexHtml(html) {
       const api = alertsApi;
-      const connect = ["'self'", api, GA_SCRIPT_ORIGIN, ...GA_COLLECT_ORIGINS].filter(Boolean);
-      const script = ["'self'", WEB_ANALYTICS_SCRIPT_ORIGIN, GA_SCRIPT_ORIGIN];
+      // Google's hosts appear here only while Google Analytics is running
+      // (`GOOGLE_ANALYTICS_ENABLED`); while it is paused the policy names none.
+      const connect = ["'self'", api, ...GA_POLICY_SCRIPT_ORIGINS, ...GA_POLICY_COLLECT_ORIGINS].filter(
+        Boolean,
+      );
+      const script = ["'self'", WEB_ANALYTICS_SCRIPT_ORIGIN, ...GA_POLICY_SCRIPT_ORIGINS];
       const frame = ["'none'"];
       // The Receipt uses a stylesheet and no style attributes, so it can carry
       // a stricter policy than the calculator, whose charts use inline geometry.
@@ -272,7 +276,7 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
         // 2026-10-05; their verifier refuses a self-hosted copy), and Google
         // Analytics' hosts for the image fallback `gtag.js` reports through
         // when a browser cannot send a beacon.
-        `img-src 'self' data: https://launchnest.io ${[GA_SCRIPT_ORIGIN, ...GA_COLLECT_ORIGINS].join(' ')}`,
+        `img-src ${["'self'", 'data:', 'https://launchnest.io', ...GA_POLICY_SCRIPT_ORIGINS, ...GA_POLICY_COLLECT_ORIGINS].join(' ')}`,
         "font-src 'self'",
         `connect-src ${connect.join(' ')}`,
         `frame-src ${frame.join(' ')}`,

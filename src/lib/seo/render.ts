@@ -37,7 +37,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Header } from '../../components/Header';
 import { DEFAULT_SCENARIO, encodeScenario } from '../url/scenario';
-import { GA_COLLECT_ORIGINS, GA_SCRIPT_ORIGIN } from '../analytics/config';
+import { GA_POLICY_COLLECT_ORIGINS, GA_POLICY_SCRIPT_ORIGINS } from '../analytics/config';
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { Model, Pricing } from '../pricing/types';
 import { promoFor, promoTitle, type RateField } from '../pricing/promo';
@@ -307,14 +307,16 @@ export function layout(ctx: RenderContext, input: LayoutInput): string {
   // permit every future inline script, which nothing here needs. Google
   // Analytics (owner decision 2026-10-06) is loaded by the site header's own
   // script and reports to the hosts listed in `src/lib/analytics/config.ts`.
-  const googleAnalytics = [GA_SCRIPT_ORIGIN, ...GA_COLLECT_ORIGINS].join(' ');
+  // The Google origins are in the policy only while Google Analytics is
+  // running (`GOOGLE_ANALYTICS_ENABLED`); while it is paused there are none.
+  const sources = (...parts: (string | readonly string[])[]): string => parts.flat().join(' ');
   const csp = [
     "default-src 'none'",
     "style-src 'self'",
     "font-src 'self'",
-    `img-src 'self' data: https://launchnest.io ${googleAnalytics}`,
-    `script-src 'self' 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com ${GA_SCRIPT_ORIGIN}`,
-    `connect-src 'self' ${googleAnalytics}`,
+    `img-src ${sources("'self' data: https://launchnest.io", GA_POLICY_SCRIPT_ORIGINS, GA_POLICY_COLLECT_ORIGINS)}`,
+    `script-src ${sources(`'self' 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com`, GA_POLICY_SCRIPT_ORIGINS)}`,
+    `connect-src ${sources("'self'", GA_POLICY_SCRIPT_ORIGINS, GA_POLICY_COLLECT_ORIGINS)}`,
     "base-uri 'self'",
     "form-action 'none'",
     "frame-ancestors 'none'",

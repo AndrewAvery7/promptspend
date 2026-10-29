@@ -82,6 +82,7 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **Google Analytics is paused** (owner decision 2026-10-29). It had run on promptspend.com since 2026-10-24, but no Google Analytics account existed to receive the data, so visitors were told about a count nobody could read. One switch, `GOOGLE_ANALYTICS_ENABLED` in `src/lib/analytics/config.ts`, is now `false`: nothing from Google loads, no notice shows, the privacy page, README, SECURITY.md and ARCHITECTURE.md say the website does not use it, the page policies on the calculator, the Receipt page and the generated pages name none of Google's hosts, and a visitor's old `_ga` cookies are cleared on their next visit. The code and its tests stay (the running-state tests are skipped and paused-state tests run instead), so turning it back on is a new property, a new Measurement ID, the switch, and the wording rewritten first. The Cloudflare counter is unchanged.
 - **Clearer MCP tool descriptions** (`@promptspend/mcp` 0.1.8). `find_cheaper`'s five workload settings
   now state their defaults, `get_price` says its unit (USD per million tokens) and that it suggests close
   matches for an unknown model, and all three tools carry read-only annotations. Prompted by Glama's

@@ -12,7 +12,7 @@
  * names the privacy page. Its wording follows the switch in `config.ts`:
  * "uses" with OK / Turn off, or "would like to use" with Accept / Decline.
  */
-import { ANALYTICS_REQUIRES_CONSENT, GA_HOSTNAMES } from './config';
+import { ANALYTICS_REQUIRES_CONSENT, GA_HOSTNAMES, GOOGLE_ANALYTICS_ENABLED } from './config';
 import {
   disableGoogleAnalytics,
   loadGoogleAnalytics,
@@ -33,6 +33,8 @@ export interface AnalyticsEnvironment {
   window: Window;
   document: Document;
   storage: Storage | undefined;
+  /** False while Google Analytics is paused (`GOOGLE_ANALYTICS_ENABLED`): load nothing, show nothing. */
+  enabled: boolean;
   requiresConsent: boolean;
   /** Where the privacy page is, for the notice's link. */
   privacyHref: string;
@@ -49,6 +51,7 @@ function defaultEnvironment(): AnalyticsEnvironment {
     window,
     document,
     storage,
+    enabled: GOOGLE_ANALYTICS_ENABLED,
     requiresConsent: ANALYTICS_REQUIRES_CONSENT,
     privacyHref: `${import.meta.env.BASE_URL}privacy/`,
   };
@@ -136,6 +139,7 @@ export function showNotice(env: AnalyticsEnvironment): HTMLElement {
  * sentence for readers without JavaScript, which this replaces.
  */
 export function renderPrivacyControl(env: AnalyticsEnvironment): void {
+  if (!env.enabled) return;
   const doc = env.document;
   const mount = doc.getElementById(PRIVACY_CONTROL_ID);
   if (!mount) return;
@@ -185,8 +189,22 @@ export function renderPrivacyControl(env: AnalyticsEnvironment): void {
   mount.append(button);
 }
 
+/**
+ * While Google Analytics is paused: load nothing, show nothing, and clear the
+ * `_ga` cookies an earlier visit left on the site's own address. This is the
+ * same cleanup "Turn off" does, and it touches no other cookie.
+ */
+function retireAnalytics(env: AnalyticsEnvironment): void {
+  const hostname = env.window.location.hostname;
+  if (GA_HOSTNAMES.includes(hostname)) disableGoogleAnalytics(gtagWindow(env), env.document, hostname);
+}
+
 /** Run once per page: load Google Analytics if allowed, and show the notice if due. */
 export function startAnalytics(env: AnalyticsEnvironment = defaultEnvironment()): void {
+  if (!env.enabled) {
+    retireAnalytics(env);
+    return;
+  }
   const d = decision(env);
   if (shouldLoad(d)) loadGoogleAnalytics(gtagWindow(env), env.document);
   if (shouldShowNotice(d)) showNotice(env);
