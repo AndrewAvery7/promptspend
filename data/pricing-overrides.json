@@ -1444,6 +1444,160 @@
       "id": "xai-grok-4.7",
       "capabilityIndex": 87,
       "$note": "Capability score 87: Artificial Analysis Intelligence Index 46 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there."
+    },
+    {
+      "$note": "Added 2026-10-29 after a coverage check found it missing. Read on OpenAI's own pricing page: \"gpt-5.5-pro (<272K context length) | $30.00 | $180.00\", long context $60 / $270 above 272K input tokens. No cached or cache-write rate is published (every cell is '-'). Batch is 50%, but the batch long-context cells are '-', so batch pricing above 272K is not published.",
+      "id": "gpt-5.5-pro",
+      "providerId": "openai",
+      "displayName": "GPT-5.5 Pro",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 30,
+        "output": 180,
+        "batchDiscount": 0.5,
+        "longContext": { "thresholdTokens": 272000, "input": 60, "output": 270 }
+      }
+    },
+    {
+      "$note": "Added 2026-10-29. OpenAI's pricing page prints $30 / $180 and, above 272K input tokens, $60 / $270; the model page says such prompts \"are priced at 2x input and 1.5x output\". Batch 50% ($15 / $90, long context $30 / $135). No cached rate.",
+      "id": "gpt-5.4-pro",
+      "providerId": "openai",
+      "displayName": "GPT-5.4 Pro",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 30,
+        "output": 180,
+        "batchDiscount": 0.5,
+        "longContext": { "thresholdTokens": 272000, "input": 60, "output": 270 }
+      }
+    },
+    {
+      "$note": "Added 2026-10-29. OpenAI's pricing page: \"gpt-5.2-pro | $21.00 | $168.00 | -\". Batch 50%. No cached rate, no long-context tier.",
+      "id": "gpt-5.2-pro",
+      "providerId": "openai",
+      "displayName": "GPT-5.2 Pro",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": { "input": 21, "output": 168, "batchDiscount": 0.5 }
+    },
+    {
+      "$note": "Added 2026-10-29 as legacy: OpenAI's model page says \"Status: Deprecated\" and its deprecations page schedules shutdown on Dec 11, 2026, replaced by gpt-5.6-sol in pro mode. Still sold until then at \"gpt-5-pro | $15.00 | $120.00 | -\"; batch 50%. Archive it (status deprecated) after Dec 11, 2026.",
+      "id": "gpt-5-pro",
+      "providerId": "openai",
+      "displayName": "GPT-5 Pro",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": { "input": 15, "output": 120, "batchDiscount": 0.5 }
+    },
+    {
+      "$note": "Added 2026-10-29 as legacy: OpenAI's model page says \"Status: Deprecated\", shutdown Dec 11, 2026. Priced until then at \"o3-pro | $20.00 | $80.00 | -\"; batch 50%. Archive it after Dec 11, 2026.",
+      "id": "o3-pro",
+      "providerId": "openai",
+      "displayName": "o3-pro",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": { "input": 20, "output": 80, "batchDiscount": 0.5 }
+    },
+    {
+      "$note": "ARCHIVED 2026-10-29 (status `deprecated`) on the day it was captured: OpenAI's model page says \"Status: Shut down\" and its deprecations page says \"Access to these models was shut down on October 23, 2026\", o1-pro among them. The pricing table still prints $150 / $600, which is how the feed carried it.",
+      "id": "o1-pro",
+      "displayName": "o1-pro",
+      "status": "deprecated"
+    },
+    {
+      "$note": "Added 2026-10-29. Mistral's own pricing documentation, Code models row: \"Codestral | $0.3 | $0.03 | $0.9\" (input, cached input, output). The model card (docs.mistral.ai/models/codestral-25-08) shows the same and a 128k context. mistral.ai/pricing no longer carries a per-model API table, so it is not the source here.",
+      "id": "mistral-codestral-2508",
+      "providerId": "mistral",
+      "displayName": "Codestral 25.08",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://docs.mistral.ai/inference/pricing",
+      "verifiedAs": "Codestral",
+      "pricing": { "input": 0.3, "output": 0.9, "cachedInput": 0.03 }
+    },
+    {
+      "$note": "Added 2026-10-29; was on the later-additions list until the feed carried it. Kimi's chat pricing page (its table renders in a browser) prints \"kimi-k3.1-pro | $2.00 / MTok | $10.00 / MTok | $0.20 / MTok\" and a $2.00 cache write at the default 5-minute TTL ($4.00 at 1 hour). Not listed as batch-supported. Context 1,048,576.",
+      "id": "moonshot-kimi-k3.1-pro",
+      "providerId": "moonshot",
+      "displayName": "Kimi K3.1 Pro",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat",
+      "pricing": { "input": 2, "output": 10, "cachedInput": 0.2, "cacheWrite": 2 }
+    },
+    {
+      "$note": "Added 2026-10-29 as legacy. Kimi's chat pricing page prints \"kimi-k2.7-code | $0.95 / MTok | $4.00 / MTok | $0.19 / MTok\"; batch is \"60% of the standard model price\". The same page says K2 models close to new users from October 31, 2026 and Kimi plans \"to retire all K2 series models by the end of December 2026\". Archive it then.",
+      "id": "moonshot-kimi-k2.7-code",
+      "providerId": "moonshot",
+      "displayName": "Kimi K2.7 Code",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat",
+      "pricing": { "input": 0.95, "output": 4, "cachedInput": 0.19, "batchDiscount": 0.6 }
+    },
+    {
+      "$note": "Added 2026-10-29. Alibaba's per-model page, Singapore (International) table: \"Input | 0.15\", \"Output | 0.47\", \"Input(Implicit Cache) | 0.016\"; one price band up to 1M tokens; batch unsupported in Singapore. An explicit-cache creation rate (0.2) is printed too; like Qwen 3.8 Max, only the implicit-cache rate is recorded.",
+      "id": "dashscope-qwen3.8-flash",
+      "providerId": "alibaba",
+      "displayName": "Qwen 3.8 Flash",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash",
+      "verifyHint": "Read the Singapore (International) table only. This page renders a separate pricing table for each region and they list this model at different prices; the Singapore rows carry International as their deployment scope.",
+      "pricing": { "input": 0.15, "output": 0.47, "cachedInput": 0.016 }
+    },
+    {
+      "$note": "Added 2026-10-29 on the owner's decision after the first weekly coverage check. Alibaba's model-pricing page, Singapore row: \"qwen3.8-omni-flash | International | $0.15 | $0.016 | $0.47\" (input, cache hit, output), one flat price with no per-modality split; context 1M. Not to be confused with qwen3.8-omni-flash-realtime, priced differently.",
+      "id": "dashscope-qwen3.8-omni-flash",
+      "providerId": "alibaba",
+      "displayName": "Qwen 3.8 Omni Flash",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "verifyHint": "Read the Singapore (International) table only. This page renders a separate pricing table for each region and they list this model at different prices; the Singapore rows carry International as their deployment scope.",
+      "pricing": { "input": 0.15, "output": 0.47, "cachedInput": 0.016 }
+    },
+    {
+      "$note": "Added 2026-10-29 as legacy: Cohere prices it under the FAQ \"Where do I find pricing for our legacy models?\": \"Command R+ 08-2024 pricing is $2.50/1M tokens for input and $10.00/1M tokens\". Not on the deprecation list.",
+      "id": "command-r-plus-08-2024",
+      "providerId": "cohere",
+      "displayName": "Command R+",
+      "status": "legacy",
+      "vendorVerified": true,
+      "lastVerified": "2026-10-29",
+      "verifiedUrl": "https://cohere.com/pricing",
+      "verifiedAs": "Command R+ 08-2024",
+      "pricing": { "input": 2.5, "output": 10 }
+    },
+    {
+      "$note": "Name only, NOT a price claim (2026-10-29). Cohere's pricing card reads \"Command R\" at $0.15 / $0.60, matching the feed, but the card has no 08-2024 label; that it is this version is an inference from the deprecation of command-r-03-2024, so the row keeps the feed's provenance.",
+      "id": "command-r-08-2024",
+      "displayName": "Command R"
+    },
+    {
+      "$note": "Name only, NOT a price claim (2026-10-29). Amazon's Nova pricing page confirms $0.035 / $0.14, but its cached rate is contradictory on the same page: a footnote says cache reads are \"75% less than on-demand input token price\" while the On Demand table prints N/A in the cache-read column. The feed's cached rate is that 75% figure, so the row stays feed-sourced rather than verified.",
+      "id": "amazon.nova-micro-v1-0",
+      "displayName": "Nova Micro"
+    },
+    {
+      "$note": "Name only, NOT a price claim (2026-10-29). $0.06 / $0.24 confirmed on Amazon's page; cached rate contradictory there (footnote 75% off vs N/A in the table), see Nova Micro.",
+      "id": "amazon.nova-lite-v1-0",
+      "displayName": "Nova Lite"
+    },
+    {
+      "$note": "Name only, NOT a price claim (2026-10-29). $0.80 / $3.20 confirmed on Amazon's page; cached rate contradictory there (footnote 75% off vs N/A in the table), see Nova Micro.",
+      "id": "amazon.nova-pro-v1-0",
+      "displayName": "Nova Pro"
     }
   ],
   "$verificationPasses": "2026-08-01: Anthropic and OpenAI flagship rows read against the first-party pricing pages; all matched the automated feed, and the additions were the modifiers the feed does not carry (cache writes, long-context tiers, batch discounts). 2026-08-03: a second pass covering 27 more rows across Anthropic, OpenAI, Google, xAI and DeepSeek. Every one of the 27 matched the feed exactly, so these entries record provenance ONLY — no `pricing` block — which leaves the rate flowing from the feed and self-correcting. Recording a price we did not need to change would freeze it for no reason. NOT verifiable on 2026-08-03, and deliberately left as `litellm`: Mistral Large 3 and Medium 3.5, Command A, all four Kimi rows, all four MiniMax rows and GLM-5-Code are absent from their vendors' own pricing pages; Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are not listed on the pages that carry their siblings. An aggregator would have numbers for all of them, which is exactly why this catalog does not accept one. 2026-08-09: Kimi K2.6 read against Moonshot's own per-model pricing page and moved to `vendor`. The 2026-08-03 pass recorded it as not verifiable because no such page existed; the platform has since moved from platform.moonshot.ai to platform.kimi.ai and now publishes a page per model. The vendor's figures match the feed exactly — $0.95 input on a cache miss, $4.00 output, $0.16 on a cache hit — so this row records provenance ONLY and its rate keeps flowing from the feed. That also settles the standing cross-source flag on it: OpenRouter's $0.58/$2.44 is a reseller-routed price, the 20-50% adrift case `$coverage` describes, and the published number was the right one all along. NOT verified in this pass and deliberately still `litellm`: Kimi K2.5 and K2-thinking, which the vendor's pricing index no longer lists — it now carries K3, K2.7 Code, K2.6 and the sunsetting Moonshot V1. The vendor publishes K3 and K2.7 Code, which the feed does not yet carry; per `$coverage` those are left to arrive on their own rather than hand-added. 2026-09-02: a pass over all 23 standing flags, clearing 16. Fourteen were `vendor-verification-stale` — the 30-day re-read rule coming due at once on ten Anthropic and OpenAI rows and four Z.ai rows. All three vendor pages were re-read in full and EVERY figure still matched what was published, so only the dates move; no rate changed. Two more cleared by first-party confirmation of newly arrived models: Claude Fable 5.1 (note the 0.025x cache-hit exception, which the house 0.1x multiplier would have got fourfold wrong) and GLM-5.2. Also recorded, though they were not flagged: xAI retired grok-3, grok-4-0709 and grok-4-1-fast on 2026-05-15 and now bills all of them at grok-4.3's $1.25/$2.50, which is why three unrelated rows share one figure — it looks exactly like a feed placeholder and is not; those rows move from `litellm` to `vendor` and are marked legacy. Grok 4.20 gains the long-context tier the feed omits. NOT cleared, each now carrying a note saying why so the next pass does not re-tread it: DeepSeek R1 (the `deepseek-reasoner` name was discontinued 2026-07-24, so no current first-party price exists), Mistral Medium 3 (absent from Mistral's own page, with the feed and OpenRouter 73% apart and no way to adjudicate), Grok 2 (retirement confirmed from xAI's model list, but removing the row is a human's call), and Kimi K2.5, Gemini 3.6/3.7 Flash and GPT-5.6 Sol, whose flags are correct by design — a live promotional rate reported by the feed as if it were the base. 2026-09-16: a pass aimed only at the two rows the daily vendor-page check was calling mismatches, which are a different animal from the OpenRouter cross-check flags and were worth separating. One was a real price cut: DeepSeek's own page has renamed its cheap model to `deepseek-flash` (DeepSeek-V4.1-Flash) and cut the peak rate to $0.30/$1.20 with a $0.006 cache hit, down from $0.44/$1.32/$0.014, while stating that the legacy `deepseek-v4-flash` name is still accepted and billed at the Flash price - so the row keeps its id and takes the new figures. The column mapping was proved rather than assumed: the page's other column is V4 Pro at $1.32/$3.96/$0.044, matching this catalog's separately verified V4 Pro row on all three figures. The other was not a price problem at all: Qwen 3.7 Max's recorded $2.5/$7.5 is exactly what Alibaba's Singapore (International) table prints, and the $1.65/$4.951 the checker kept reporting is the China (Beijing) table on the same page. The page renders six regional tables and the reader had no way to tell them apart, so this pass added an optional `verifyHint` to an override - one sentence naming where on a page to read, handed to the reader verbatim, narrowing where to look and never saying what to find - and set it on that row. Deliberately NOT re-attempted, because each already carries a note saying why it cannot be settled: DeepSeek R1, Mistral Medium 3, Kimi K2.5 and Grok 2.",
