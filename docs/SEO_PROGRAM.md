@@ -41,11 +41,12 @@ The machine-readable copy is [seo/baseline-2026-10-29.json](seo/baseline-2026-10
 
 **The site itself** (live files on 2026-10-29)
 
-| Measure       | Value                                                                                                                           |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Sitemap       | An index of six files listing 403 addresses: 229 comparisons, 126 models, 16 free tiers, 16 providers, 13 site pages, 3 writing |
-| Google's read | Read the new index on 2026-10-29 and accepted all six files                                                                     |
-| Real visitors | About 11 a day by Cloudflare's cookieless counter. A belief carried from the 2026-10-24 report, not re-measured today           |
+| Measure                      | Value                                                                                                                                                                                                                                                                                                                                                                      |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sitemap                      | An index of six files listing 403 addresses: 229 comparisons, 126 models, 16 free tiers, 16 providers, 13 site pages, 3 writing                                                                                                                                                                                                                                            |
+| Google's read                | Read the new index on 2026-10-29 and accepted all six files                                                                                                                                                                                                                                                                                                                |
+| Real visitors                | 22 visits and 29 page views in the 24 hours to 2026-10-29, bots excluded (Cloudflare's cookieless counter). The earlier belief of about 11 a day was lower; one day is a thin sample                                                                                                                                                                                       |
+| Page speed for real visitors | Cloudflare Web Analytics, 24 hours to 2026-10-29, bots excluded: the largest content takes about 1.3 seconds to appear at the 75th percentile (57 ms waiting for the server, 1.28 s drawing), inside the 2.5 second good range. Interaction delay is in the good range for every sample, and there are few. Layout shift was not read. About 22 visits, so indicative only |
 
 ## The 90-day plan, written before the results
 
@@ -70,14 +71,14 @@ At about 11 visits a day, daily changes in these numbers are mostly noise. Judge
 
 Each listing is a place an assistant or a developer can find the server, and a link back to the site. Nothing is submitted without Andrew's say-so, and each directory's own form decides what it accepts. Routes were read on 2026-10-29 and should be re-checked when used.
 
-| Directory             | State                                                                                              | Next step                                                                              |
-| --------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Official MCP registry | Set up: `server.json` and `mcpName`, published by `publish-mcp.yml` when an `mcp-v*` tag is pushed | None                                                                                   |
-| Glama                 | Submitted 2026-10-28 from Andrew's Glama account, waiting for approval                             | Wait for the approval email                                                            |
-| PulseMCP              | A third-party issue says it reads the official registry weekly. Not verified                       | Look for the listing on pulsemcp.com in a week; submit by hand if it is missing        |
-| mcp.so                | Takes a repository URL at `mcp.so/submit` and lists after review                                   | Andrew submits `https://github.com/AndrewAvery7/promptspend` with the text below       |
-| Smithery              | Not listed that we know of                                                                         | Andrew adds the server at smithery.ai with the text below                              |
-| awesome-mcp-servers   | Not listed that we know of. A community list on GitHub that takes pull requests                    | Andrew approves a pull request to `punkpeye/awesome-mcp-servers` adding the line below |
+| Directory             | State                                                                                                                                                                 | Next step                                                                                         |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Official MCP registry | Set up: `server.json` and `mcpName`, published by `publish-mcp.yml` when an `mcp-v*` tag is pushed                                                                    | None                                                                                              |
+| Glama                 | Submitted 2026-10-28 from Andrew's Glama account, waiting for approval                                                                                                | Wait for the approval email                                                                       |
+| PulseMCP              | A third-party issue says it reads the official registry weekly. Not verified                                                                                          | Look for the listing on pulsemcp.com in a week; submit by hand if it is missing                   |
+| mcp.so                | Its submit form now offers only a $39 paid submission. The free review route in its FAQ is not shown to a signed-out visitor. Nothing submitted                       | Andrew decides whether to pay, or looks again while signed in                                     |
+| Smithery              | Publishing needs an account (sign in with Google or GitHub). Nothing submitted                                                                                        | Andrew signs in and publishes the hosted endpoint `https://promptspend.dev/mcp` or the repository |
+| awesome-mcp-servers   | Pull request opened 2026-10-29 under Andrew's account: `punkpeye/awesome-mcp-servers#18038`, one line in Developer Tools, with the agent opt-in their guide describes | Watch the pull request; the maintainers may ask for changes                                       |
 
 Text to paste:
 
@@ -96,6 +97,7 @@ Every deploy, report, outreach message and setting change that could move these 
 
 | Date       | Change                                                                                                                                                                                                                                                                                       |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-29 | MCP directory work: a pull request opened to add the server to awesome-mcp-servers. mcp.so (paid only) and Smithery (needs a sign-in) left for Andrew. Real-visitor page speed read from Cloudflare                                                                                          |
 | 2026-10-29 | The 90-day plan's six thresholds confirmed by Andrew exactly as proposed. From here they are fixed                                                                                                                                                                                           |
 | 2026-10-29 | Home page: the no-JavaScript text now has a heading, a description and links to every main section. Baseline and this plan written. A tally script for the monthly price report added (`scripts/monthly-report-tally.ts`); the October report is written on 1 November, from the whole month |
 | 2026-10-29 | Structure batch live (pull request 317): sitemap split into six files, related comparisons, `/writing/`, `/data/`, a 404 page, favicon files, organization data on the home page, `robots.txt` skips scenario links. Sitemap resubmitted to Bing; Google read it the same day                |
