@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-29T16:13:57.976Z",
+  "checkedAt": "2026-10-29T17:08:53.519Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -105,7 +105,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "128656 chars via fetch, read by deepseek/deepseek-v4-flash",
+      "note": "212447 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -728,7 +728,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing shown)"
+      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row is shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",
