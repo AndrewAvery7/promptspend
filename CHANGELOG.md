@@ -34,7 +34,7 @@ on their own schedule and are not releases.
   better page) are labeled apart, and rates PromptSpend merely began recording are never shown as
   changes. The models index lists the ten latest vendor repricings. Both are plain HTML and SVG that read
   completely without scripts, and both come from the same history as the CSV dataset and the feed.
-- **A daily shut-down check.** `check:shutdowns` reads OpenAI's, Anthropic's and Google's deprecation pages
+- **A daily shut-down check.** `check:shutdowns` reads OpenAI's, Anthropic's, Google's, Cohere's and Mistral's deprecation pages
   each morning before the sync, and the sync flags any live model past its vendor's shutdown date. A
   price check cannot see this, because pricing tables keep listing retired models. Its first run found
   Gemini 3.1 Flash Lite Preview, shut down by Google on 2026-05-25, which is archived in this change. It

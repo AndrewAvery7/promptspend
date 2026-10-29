@@ -11,6 +11,9 @@
  * every one re-confirmed each morning. A price check cannot see that; the
  * deprecation page can.
  *
+ * Five vendors publish such a table (OpenAI, Anthropic, Google, Cohere,
+ * Mistral); docs/AUTOMATION.md lists the rest and why each is not read.
+ *
  * Deprecation pages are tables, so they are read by code rather than by a
  * model: a column named like "Shutdown date" and a column of model names. Only
  * an exact calendar date counts — "Not sooner than…", "To be announced" and
@@ -41,6 +44,15 @@ export interface ShutdownSource {
    * OpenAI, whose `gpt-4o-2024-05-13` can be shut down while `gpt-4o` lives on.
    */
   matchUndated?: boolean;
+  /**
+   * Match on the page's human name instead of an API id, for vendors whose ids
+   * are dated snapshots the catalogue does not use (Mistral's
+   * `mistral-medium-2505` is the catalogue's "Mistral Medium 3"). A name the page
+   * repeats across versions only matches together with its version.
+   */
+  matchDisplayName?: { versionColumn: RegExp };
+  /** The date cell holds several dates ("deprecated retired"); the last one is the shutdown. */
+  lastDateInCell?: boolean;
 }
 
 export const SOURCES: readonly ShutdownSource[] = [
@@ -70,11 +82,32 @@ export const SOURCES: readonly ShutdownSource[] = [
     modelColumn: /^model$/i,
     dateColumn: /^shutdown date/i,
   },
+  {
+    providerId: 'cohere',
+    label: "Cohere's deprecations page",
+    url: 'https://docs.cohere.com/docs/deprecations.md',
+    format: 'markdown',
+    modelColumn: /^deprecated model$/i,
+    dateColumn: /^shutdown date/i,
+  },
+  {
+    providerId: 'mistral',
+    label: "Mistral's models page",
+    url: 'https://docs.mistral.ai/models/',
+    format: 'html',
+    modelColumn: /^model$/i,
+    // One cell holds both dates: "5/22/2026 8/31/2026" is deprecation, then retirement.
+    dateColumn: /retirement/i,
+    lastDateInCell: true,
+    matchDisplayName: { versionColumn: /^version$/i },
+  },
 ];
 
 /** One model a deprecation page gives an exact shutdown date for. */
 export interface Notice {
   name: string;
+  /** The page's version for the row, where it has a version column. */
+  version?: string;
   date: string;
   /** False when the page's own state column still calls the model active. */
   stateAllows: boolean;
@@ -118,9 +151,21 @@ const MONTHS = [
   'december',
 ];
 
-/** "October 23, 2026" or "Dec 11, 2026" -> ISO. Anything that is not exactly a date is null. */
+function validIso(iso: string): string | null {
+  const parsed = new Date(`${iso}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === iso ? iso : null;
+}
+
+/**
+ * "October 23, 2026", "Dec 11, 2026", "2025-04-30" or "8/31/2026" (US order) ->
+ * ISO. Anything that is not exactly one date is null.
+ */
 export function parseDate(cell: string): string | null {
-  const m = /^([A-Za-z]+)\.?\s+(\d{1,2}),\s*(\d{4})$/.exec(cell.trim());
+  const text = cell.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return validIso(text);
+  const us = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(text);
+  if (us) return validIso(`${us[3]}-${us[1]!.padStart(2, '0')}-${us[2]!.padStart(2, '0')}`);
+  const m = /^([A-Za-z]+)\.?\s+(\d{1,2}),\s*(\d{4})$/.exec(text);
   if (!m) return null;
   const word = m[1]!.toLowerCase();
   const month = MONTHS.findIndex((name) => name === word || (word.length >= 3 && name.startsWith(word)));
@@ -185,11 +230,27 @@ function names(cell: string): string[] {
   return /^[a-z0-9][a-z0-9._:-]+$/i.test(first) ? [first] : [];
 }
 
+/** The last date in a cell that holds several, e.g. "5/22/2026 8/31/2026". */
+function lastDate(cell: string): string | null {
+  const found = cell.match(/\d{1,2}\/\d{1,2}\/\d{4}|\d{4}-\d{2}-\d{2}|[A-Za-z]+\.? \d{1,2}, \d{4}/g) ?? [];
+  return found.length > 0 ? parseDate(found[found.length - 1]!) : null;
+}
+
+/** A display name as the catalogue writes it: no trailing link arrow, single spaces. */
+function displayName(cell: string): string {
+  return cell.replace(/[↗→]/g, '').replace(/\s+/g, ' ').trim();
+}
+
 export function readNotices(source: ShutdownSource, text: string): Notice[] {
   const notices: Notice[] = [];
+  // Carried into the next table only when this one held nothing but its header:
+  // Mistral renders its header and its rows as two separate tables.
+  let carried: string[] | null = null;
   for (const table of tables(text, source.format)) {
     // A page can restate its header inside one table (Google does, per section).
-    let header: string[] | null = null;
+    let header: string[] | null = carried;
+    carried = null;
+    let dataRows = 0;
     for (const row of table) {
       const looksLikeHeader =
         row.some((cell) => source.dateColumn.test(cell)) && row.some((cell) => source.modelColumn.test(cell));
@@ -198,17 +259,26 @@ export function readNotices(source: ShutdownSource, text: string): Notice[] {
         continue;
       }
       if (!header) continue;
+      dataRows += 1;
       const modelAt = header.findIndex((cell) => source.modelColumn.test(cell));
       const dateAt = header.findIndex((cell) => source.dateColumn.test(cell));
-      const date = parseDate(row[dateAt] ?? '');
+      const date = source.lastDateInCell ? lastDate(row[dateAt] ?? '') : parseDate(row[dateAt] ?? '');
       if (!date) continue;
       let stateAllows = true;
       if (source.state) {
         const stateAt = header.findIndex((cell) => source.state!.column.test(cell));
         stateAllows = stateAt === -1 || !source.state.active.test(row[stateAt] ?? '');
       }
+      if (source.matchDisplayName) {
+        const versionAt = header.findIndex((cell) => source.matchDisplayName!.versionColumn.test(cell));
+        const name = displayName(row[modelAt] ?? '');
+        const version = (row[versionAt] ?? '').trim();
+        if (name) notices.push({ name, date, stateAllows, ...(version ? { version } : {}) });
+        continue;
+      }
       for (const name of names(row[modelAt] ?? '')) notices.push({ name, date, stateAllows });
     }
+    if (header && dataRows === 0) carried = header;
   }
   return notices;
 }
@@ -228,12 +298,37 @@ function undated(name: string): string {
 }
 
 export function matchShutdowns(args: {
-  models: readonly { id: string; providerId: string }[];
+  models: readonly { id: string; providerId: string; displayName?: string }[];
   results: readonly { source: ShutdownSource; notices: readonly Notice[] }[];
   today: string;
 }): ShutdownItem[] {
   const items: ShutdownItem[] = [];
   for (const { source, notices } of args.results) {
+    if (source.matchDisplayName) {
+      const repeated = new Set(notices.map((n) => n.name).filter((name, i, all) => all.indexOf(name) !== i));
+      const byDisplay = new Map<string, Notice>();
+      for (const notice of notices) {
+        // A name the page lists once stands alone; a repeated one ("Codestral"
+        // 25.01 and 24.05) only ever matches with its version attached.
+        const key = repeated.has(notice.name) ? `${notice.name} ${notice.version ?? ''}`.trim() : notice.name;
+        const seen = byDisplay.get(key.toLowerCase());
+        if (!seen || notice.date < seen.date) byDisplay.set(key.toLowerCase(), notice);
+      }
+      for (const model of args.models.filter((m) => m.providerId === source.providerId)) {
+        const hit = model.displayName ? byDisplay.get(model.displayName.toLowerCase()) : undefined;
+        if (!hit) continue;
+        items.push({
+          id: model.id,
+          providerId: model.providerId,
+          vendorName: hit.version ? `${hit.name} (${hit.version})` : hit.name,
+          date: hit.date,
+          shutDown: hit.date <= args.today && hit.stateAllows,
+          source: source.label,
+          url: source.url,
+        });
+      }
+      continue;
+    }
     const byName = new Map<string, Notice>();
     for (const notice of notices) {
       for (const key of new Set(source.matchUndated ? [notice.name, undated(notice.name)] : [notice.name])) {

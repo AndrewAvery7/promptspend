@@ -9,7 +9,9 @@ import {
   tables,
 } from './shutdowns';
 
-const [OPENAI, ANTHROPIC, GOOGLE] = SOURCES as [
+const [OPENAI, ANTHROPIC, GOOGLE, COHERE, MISTRAL] = SOURCES as [
+  (typeof SOURCES)[number],
+  (typeof SOURCES)[number],
   (typeof SOURCES)[number],
   (typeof SOURCES)[number],
   (typeof SOURCES)[number],
@@ -129,5 +131,62 @@ describe('the shut-down check', () => {
     expect(isFreshShutdownReport(report, new Date('2026-10-29T12:00:00Z'))).toBe(true);
     expect(isFreshShutdownReport(report, new Date('2026-11-02T12:00:00Z'))).toBe(false);
     expect(isFreshShutdownReport(undefined, new Date())).toBe(false);
+  });
+});
+
+// Mistral renders its header and its rows as two separate tables, writes US
+// dates, and puts deprecation and retirement in one cell.
+const MISTRAL_HTML = `
+<table><thead><tr><th>Model</th><th>Version</th><th>API</th><th>Deprecation Retirement</th><th>Alternative</th></tr></thead></table>
+<table><tbody>
+<tr><td>Z.ai GLM 5.2 ↗</td><td>5.2</td><td>zai-glm-5-2</td><td>9/29/2026 10/31/2026</td><td>Z.ai GLM 5.3</td></tr>
+<tr><td>Mistral Medium 3 ↗</td><td>25.05</td><td>mistral-medium-2505</td><td>5/22/2026 8/31/2026</td><td>Mistral Medium 3.5</td></tr>
+<tr><td>Codestral ↗</td><td>25.01</td><td>codestral-2501</td><td>11/6/2025 11/30/2025</td><td>Codestral</td></tr>
+<tr><td>Codestral ↗</td><td>24.05</td><td>codestral-2405</td><td>12/2/2024 6/16/2025</td><td>Codestral</td></tr>
+<tr><td>Mistral Next ↗</td><td></td><td></td><td></td><td>Mistral Large 3</td></tr>
+</tbody></table>`;
+
+const COHERE_MD = `
+| Shutdown Date | Deprecated Model | Deprecated Model Price | Recommended Replacement |
+| ------------- | ---------------- | ---------------------- | ----------------------- |
+| 2025-04-30 | \`rerank-english-v2.0\` | \\$1.00 / 1K searches | \`rerank-v3.5\` |
+`;
+
+describe('the shut-down check, beyond the first three vendors', () => {
+  it('reads ISO and US dates, and the last of several in one cell', () => {
+    expect(parseDate('2025-04-30')).toBe('2025-04-30');
+    expect(parseDate('8/31/2026')).toBe('2026-08-31');
+    expect(parseDate('13/1/2026')).toBeNull();
+    expect(readNotices(COHERE, COHERE_MD)).toEqual([
+      { name: 'rerank-english-v2.0', date: '2025-04-30', stateAllows: true },
+    ]);
+  });
+
+  it('carries a header-only table onto the rows that follow it, and skips rows with no date', () => {
+    const notices = readNotices(MISTRAL, MISTRAL_HTML);
+    expect(notices.map((n) => `${n.name}|${n.version}|${n.date}`)).toEqual([
+      'Z.ai GLM 5.2|5.2|2026-10-31',
+      'Mistral Medium 3|25.05|2026-08-31',
+      'Codestral|25.01|2025-11-30',
+      'Codestral|24.05|2025-06-16',
+    ]);
+  });
+
+  it('matches Mistral by display name, and a repeated name only with its version', () => {
+    const items = matchShutdowns({
+      models: [
+        { id: 'mistral-mistral-medium-3', providerId: 'mistral', displayName: 'Mistral Medium 3' },
+        { id: 'mistral-codestral-2508', providerId: 'mistral', displayName: 'Codestral 25.08' },
+        { id: 'mistral-codestral-2501', providerId: 'mistral', displayName: 'Codestral 25.01' },
+        // Mistral's hosted copy of another lab's model is not that lab's model.
+        { id: 'zai-glm-5.2', providerId: 'zai', displayName: 'Z.ai GLM 5.2' },
+      ],
+      results: [{ source: MISTRAL, notices: readNotices(MISTRAL, MISTRAL_HTML) }],
+      today: '2026-10-29',
+    });
+    expect(items.map((i) => `${i.id} ${i.vendorName} ${i.shutDown ? 'shut' : 'scheduled'}`)).toEqual([
+      'mistral-codestral-2501 Codestral (25.01) shut',
+      'mistral-mistral-medium-3 Mistral Medium 3 (25.05) shut',
+    ]);
   });
 });
