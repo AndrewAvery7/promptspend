@@ -58,7 +58,8 @@ against the full catalog as it stood that day:
 
 `input`, `output` — base rates. `cachedInput` — a cache read (hit).
 `cacheWrite` — writing a prompt cache (the 5-minute tier where a vendor has
-several). `cacheStoragePerMillionTokenHour` — a separate cache-residency
+several). `cacheWrite1h` — the same write with a one-hour lifetime, recorded
+since 2026-10-29. `cacheStoragePerMillionTokenHour` — a separate cache-residency
 charge. `batchDiscount` — multiplier for the batch API. `intro.*` — a
 promotional rate and the date it ends. `longContext.*` — the rates that
 replace the base ones once a request's input passes `thresholdTokens`.

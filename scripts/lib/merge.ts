@@ -319,6 +319,9 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       output,
       ...(cachedInput !== undefined ? { cachedInput } : {}),
       ...(override?.pricing?.cacheWrite !== undefined ? { cacheWrite: override.pricing.cacheWrite } : {}),
+      ...(override?.pricing?.cacheWrite1h !== undefined
+        ? { cacheWrite1h: override.pricing.cacheWrite1h }
+        : {}),
       ...(override?.pricing?.cacheStoragePerMillionTokenHour !== undefined
         ? { cacheStoragePerMillionTokenHour: override.pricing.cacheStoragePerMillionTokenHour }
         : {}),

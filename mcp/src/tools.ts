@@ -47,6 +47,7 @@ export interface PriceBlock {
   output_per_million_usd: number;
   cached_input_per_million_usd?: number;
   cache_write_per_million_usd?: number;
+  cache_write_1h_per_million_usd?: number;
   context_window: number;
   max_output?: number;
   promotional_pricing?: {
@@ -78,6 +79,8 @@ function priceBlock(catalog: Catalog, model: Model, asOf: Date): PriceBlock {
   };
   if (p.cachedInput !== undefined) block.cached_input_per_million_usd = p.cachedInput;
   if (p.cacheWrite !== undefined) block.cache_write_per_million_usd = p.cacheWrite;
+  if (model.pricing.cacheWrite1h !== undefined)
+    block.cache_write_1h_per_million_usd = model.pricing.cacheWrite1h;
   if (model.maxOutput !== undefined) block.max_output = model.maxOutput;
   // A promoted rate that silently differs from the vendor's headline number is
   // the kind of unexplained discrepancy this server exists to avoid, so say

@@ -583,7 +583,28 @@ function rateRows(model: Model, pricing: Pricing): string {
   }
   if (pricing.cacheWrite !== undefined) {
     rows.push(
-      row('Cache write', pricing.cacheWrite, 'Charged once, to put a prefix into the cache.', 'cacheWrite'),
+      pricing.cacheWrite1h === undefined
+        ? row(
+            'Cache write',
+            pricing.cacheWrite,
+            'Charged once, to put a prefix into the cache.',
+            'cacheWrite',
+          )
+        : row(
+            'Cache write (5 minutes)',
+            pricing.cacheWrite,
+            'Charged once, to put a prefix into the cache for the default five minutes. Estimates use this rate.',
+            'cacheWrite',
+          ),
+    );
+  }
+  if (pricing.cacheWrite1h !== undefined) {
+    rows.push(
+      row(
+        'Cache write (1 hour)',
+        pricing.cacheWrite1h,
+        'The same write with a one-hour lifetime, for prompts reused less often than every five minutes.',
+      ),
     );
   }
   if (pricing.cacheStoragePerMillionTokenHour !== undefined) {

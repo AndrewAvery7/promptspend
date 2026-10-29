@@ -19,6 +19,13 @@ on their own schedule and are not releases.
   Watch's public model list and opens one issue for models the feed carries on their maker's own platform
   that no capture rule takes. Names only are used; prices come from the feed. Deliberate omissions live in
   `data/coverage-ignore.json`.
+- **One-hour cache writes, beside the five-minute rate.** `pricing.cacheWrite1h` records the one-hour
+  lifetime where a vendor sells one: all eight Claude models with a cache-write rate ($2 to $20) and Kimi
+  K3 and K3.1 Pro, read from Anthropic's and Kimi's own pricing pages. Model pages label both rows, the API
+  adds a `cacheWrite1h` column (appended to the CSV), and `get_price` returns it. Estimates keep using the
+  default five-minute rate.
+- **The MCP footprint budget is 1,200 tokens**, up from 900, so the next tool option does not have to come
+  out of wording that prevents misuse. The measured footprint is unchanged at ~897.
 - **Past prices: `get_price` takes `as_of`** (`@promptspend/mcp` 0.1.10, npm and hosted). It returns the
   rate PromptSpend published on that UTC day, from the price history the site build now publishes at
   `/data/price-history.json` and `.csv` (the same replay of every committed catalog as the CC0 dataset).

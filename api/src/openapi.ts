@@ -45,6 +45,10 @@ export function openApiDocument(origin: string): unknown {
           output: { type: 'number', example: 25 },
           cachedInput: { type: 'number' },
           cacheWrite: { type: 'number' },
+          cacheWrite1h: {
+            type: 'number',
+            description: 'Cache write with a one-hour lifetime, where sold beside the default (cacheWrite).',
+          },
           cacheStoragePerMillionTokenHour: {
             type: 'number',
             description: 'Separate cache-residency charge; not included in token-only estimates.',
@@ -152,6 +156,7 @@ export function openApiDocument(origin: string): unknown {
       'output',
       'cachedInput',
       'cacheWrite',
+      'cacheWrite1h',
       'cacheStoragePerMillionTokenHour',
       'contextWindow',
       'maxOutput',
@@ -169,6 +174,7 @@ export function openApiDocument(origin: string): unknown {
       output: { type: 'number' },
       cachedInput: { type: ['number', 'null'] },
       cacheWrite: { type: ['number', 'null'] },
+      cacheWrite1h: { type: ['number', 'null'] },
       cacheStoragePerMillionTokenHour: { type: ['number', 'null'] },
       contextWindow: { type: 'integer' },
       maxOutput: { type: ['integer', 'null'] },

@@ -21,6 +21,7 @@
         "output": 50,
         "cachedInput": 0.25,
         "cacheWrite": 12.5,
+        "cacheWrite1h": 20,
         "batchDiscount": 0.5
       }
     },
@@ -40,6 +41,7 @@
         "output": 50,
         "cachedInput": 1,
         "cacheWrite": 12.5,
+        "cacheWrite1h": 20,
         "batchDiscount": 0.5
       }
     },
@@ -59,6 +61,7 @@
         "output": 25,
         "cachedInput": 0.5,
         "cacheWrite": 6.25,
+        "cacheWrite1h": 10,
         "batchDiscount": 0.5
       }
     },
@@ -78,6 +81,7 @@
         "output": 20,
         "cachedInput": 0.2,
         "cacheWrite": 5,
+        "cacheWrite1h": 8,
         "batchDiscount": 0.5
       }
     },
@@ -97,6 +101,7 @@
         "output": 25,
         "cachedInput": 0.5,
         "cacheWrite": 6.25,
+        "cacheWrite1h": 10,
         "batchDiscount": 0.5
       }
     },
@@ -116,6 +121,7 @@
         "output": 10,
         "cachedInput": 0.2,
         "cacheWrite": 2.5,
+        "cacheWrite1h": 4,
         "batchDiscount": 0.5
       }
     },
@@ -135,6 +141,7 @@
         "output": 10,
         "cachedInput": 0.1,
         "cacheWrite": 2.5,
+        "cacheWrite1h": 4,
         "batchDiscount": 0.5
       }
     },
@@ -154,6 +161,7 @@
         "output": 5,
         "cachedInput": 0.1,
         "cacheWrite": 1.25,
+        "cacheWrite1h": 2,
         "batchDiscount": 0.5
       }
     },
@@ -618,7 +626,8 @@
         "input": 3,
         "output": 15,
         "cachedInput": 0.3,
-        "cacheWrite": 3
+        "cacheWrite": 3,
+        "cacheWrite1h": 6
       }
     },
     {
@@ -1532,7 +1541,7 @@
       "vendorVerified": true,
       "lastVerified": "2026-10-29",
       "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat",
-      "pricing": { "input": 2, "output": 10, "cachedInput": 0.2, "cacheWrite": 2 }
+      "pricing": { "input": 2, "output": 10, "cachedInput": 0.2, "cacheWrite": 2, "cacheWrite1h": 4 }
     },
     {
       "$note": "Added 2026-10-29 as legacy. Kimi's chat pricing page prints \"kimi-k2.7-code | $0.95 / MTok | $4.00 / MTok | $0.19 / MTok\"; batch is \"60% of the standard model price\". The same page says K2 models close to new users from October 31, 2026 and Kimi plans \"to retire all K2 series models by the end of December 2026\". Archive it then.",

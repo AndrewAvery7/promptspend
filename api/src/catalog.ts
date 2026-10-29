@@ -260,6 +260,7 @@ export interface PriceRow {
   output: number;
   cachedInput: number | null;
   cacheWrite: number | null;
+  cacheWrite1h: number | null;
   cacheStoragePerMillionTokenHour: number | null;
   contextWindow: number;
   maxOutput: number | null;
@@ -282,6 +283,7 @@ export function priceRows(catalog: PricingCatalog, asOf: Date = new Date()): Pri
       output: rates.output,
       cachedInput: rates.cachedInput ?? null,
       cacheWrite: rates.cacheWrite ?? null,
+      cacheWrite1h: model.pricing.cacheWrite1h ?? null,
       cacheStoragePerMillionTokenHour: model.pricing.cacheStoragePerMillionTokenHour ?? null,
       contextWindow: model.contextWindow,
       maxOutput: model.maxOutput ?? null,
@@ -312,6 +314,7 @@ const CSV_COLUMNS: (keyof PriceRow)[] = [
   'standardInput',
   'standardOutput',
   'cacheStoragePerMillionTokenHour',
+  'cacheWrite1h',
 ];
 
 /** RFC 4180: quote anything containing a comma, quote or newline; double the quotes. */

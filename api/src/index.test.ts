@@ -305,9 +305,20 @@ describe('catalog endpoints', () => {
   it('quotes a display name containing a comma and a quote, per RFC 4180', async () => {
     const csv = await (await get('/v1/prices.csv')).text();
     expect(csv.split('\r\n')[0]).toBe(
-      'id,provider,displayName,input,output,cachedInput,cacheWrite,contextWindow,maxOutput,status,lastVerified,promotionalUntil,standardInput,standardOutput,cacheStoragePerMillionTokenHour',
+      'id,provider,displayName,input,output,cachedInput,cacheWrite,contextWindow,maxOutput,status,lastVerified,promotionalUntil,standardInput,standardOutput,cacheStoragePerMillionTokenHour,cacheWrite1h',
     );
     expect(csv).toContain('"Claude, ""the Opus"" 5"');
+  });
+
+  it('carries a one-hour cache-write rate where the model has one, and null where it does not', async () => {
+    const rows = priceRows({
+      ...CATALOG,
+      models: [
+        { ...CATALOG.models[0]!, pricing: { input: 5, output: 25, cacheWrite: 6.25, cacheWrite1h: 10 } },
+      ],
+    });
+    expect(rows[0]!.cacheWrite1h).toBe(10);
+    expect(priceRows(CATALOG)[0]!.cacheWrite1h).toBeNull();
   });
 
   it('reports freshness in headers as well as the body', async () => {
