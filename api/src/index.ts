@@ -18,6 +18,7 @@ import { filterModels, priceCsv, priceRows, readCatalog, readSyncStatus, type Mo
 import { DOCS_CSS, docsPage, llmsTxt } from './docs';
 import type { Env } from './env';
 import { ApiError, badRequest, corsHeaders, etagFor, html, json, notFound, notModified, text } from './http';
+import { mcpResponse } from './mcp';
 import { openApiDocument } from './openapi';
 
 const STATUSES = new Set(['current', 'legacy', 'deprecated']);
@@ -96,6 +97,10 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, '') || '/';
   const method = request.method.toUpperCase();
+
+  // The hosted MCP server speaks JSON-RPC over POST, so it is routed before the
+  // read-only rule below. Every tool it exposes is still a read.
+  if (path === '/mcp') return mcpResponse(request, env, ctx);
 
   if (method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders() });
   if (method !== 'GET' && method !== 'HEAD') {

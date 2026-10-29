@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-110-2456E6.svg" alt="110 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1570-blue.svg" alt="1570 tests">
+  <img src="https://img.shields.io/badge/tests-1583-blue.svg" alt="1583 tests">
   <img src="https://img.shields.io/badge/initial%20payload-104%20KB%20gzip-blue.svg" alt="104 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -231,6 +231,9 @@ fresh on every fetch — no cache — so the date it shows is always the day tha
 claude mcp add promptspend -- npx -y @promptspend/mcp
 ```
 
+Or with nothing to install: add `https://promptspend.dev/mcp` as a custom connector in Claude.ai or
+ChatGPT (`claude mcp add --transport http promptspend https://promptspend.dev/mcp` in Claude Code).
+
 Other pricing MCP servers exist and index more models than this one. What none of them do is
 tell you **where a number came from and when it was last confirmed** — the competing server's own
 documentation says only that pricing "is updated regularly", with no verification date per price.
@@ -409,7 +412,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1570 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1583 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 351 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/API.md](docs/API.md)                             | The public pricing API on `promptspend.dev` — endpoints, why it fetches rather than bundles, going live                             |
@@ -503,7 +506,7 @@ banners, and your answer to the analytics notice.
 
 **Price alerts are the one exception, and only if you opt in.** They are a feature you have to switch on,
 and they are the only reason this project has a server that stores anything
-(a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)); the pricing API stores nothing but Cloudflare's
+(a Cloudflare Worker — [docs/ALERTS.md](docs/ALERTS.md)); the pricing API (including the hosted MCP endpoint) stores nothing but Cloudflare's
 request logs (kept up to seven days), and the apps' update server has its logging switched off. Precisely what changes:
 
 - The Content Security Policy opens `connect-src` for that one API origin and, whenever an API is

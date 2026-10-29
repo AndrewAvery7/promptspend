@@ -139,7 +139,7 @@ export function openApiDocument(origin: string): unknown {
     },
   ];
   const commonErrors = {
-    '405': { description: 'Only GET and HEAD are supported.' },
+    '405': { description: 'Only GET and HEAD are supported here. (POST is accepted only at /mcp.)' },
     '503': { description: 'The catalog could not be read or is outside the freshness contract.' },
   };
   const priceRow = {

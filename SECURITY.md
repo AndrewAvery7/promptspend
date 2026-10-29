@@ -21,18 +21,22 @@ personal data:
   holding email subscribers and push subscriptions. Small and deliberately
   boring, but it is a backend that stores personal data and can send mail, so it
   is squarely in scope.
-- **The public pricing API** in [`api/`](api), serving `promptspend.dev`. It is
-  stateless, keyless and read-only — it holds no data and has no accounts — but
-  it re-serves prices to callers who cannot see the catalog behind it, which
-  puts it inside the blast radius of the first item below.
+- **The public pricing API** in [`api/`](api), serving `promptspend.dev`,
+  including the hosted MCP endpoint `POST /mcp`. It is stateless and keyless —
+  it holds no data and has no accounts — but it re-serves prices to callers who
+  cannot see the catalog behind it, which puts it inside the blast radius of the
+  first item below. `/mcp` accepts JSON-RPC tool calls (model names and workload
+  numbers) from anyone, answers them from the public catalog, and stores
+  nothing; it is the one part of this server that takes a request body.
 - **The apps' update server** in [`updates/`](updates), serving
   `updates.promptspend.dev`: signed app updates for the iPhone and Android
   apps. It keeps no record of who asks: its request logging is switched off
   (see the privacy policy, "App updates").
 
-Two more surfaces re-serve those prices without being servers at all: the MCP
-server ([`mcp/`](mcp)) and the VS Code extension ([`vscode/`](vscode)). Neither
-stores anything and neither accepts input from anyone but its own user, but a
+Two more surfaces re-serve those prices without being servers at all: the npm
+MCP package ([`mcp/`](mcp), which runs on its user's machine) and the VS Code
+extension ([`vscode/`](vscode)). Neither stores anything and neither accepts
+input from anyone but its own user, but a
 wrong price reaching either is the same class of bug as a wrong price on the
 site, and reports about them belong here.
 

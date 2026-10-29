@@ -123,6 +123,21 @@ claude mcp add promptspend -- npx -y @promptspend/mcp
 { "mcpServers": { "promptspend": { "command": "npx", "args": ["-y", "@promptspend/mcp"] } } }
 ```
 
+**No install — hosted** at `https://promptspend.dev/mcp`. Same tools, same answers, imported from this
+package rather than copied. In Claude.ai or ChatGPT, add it as a custom connector with that URL; in
+Claude Code:
+
+```bash
+claude mcp add --transport http promptspend https://promptspend.dev/mcp
+```
+
+The hosted server receives your tool arguments (a model name, a workload's token counts) to answer
+them, and stores none of them; it needs no key or account. Like the rest of the pricing API at
+promptspend.dev, it has Cloudflare's request logging switched on: each entry records the time, the
+address (`/mcp`), request headers and connection details such as an IP address, kept for up to seven
+days. PromptSpend's code never logs the arguments themselves. Run the npm package instead if a
+workload description should never leave your machine.
+
 ## What it will not do
 
 - **It will not pass off a stale price as current.** The catalog is fetched,
@@ -132,9 +147,9 @@ claude mcp add promptspend -- npx -y @promptspend/mcp
   grace period, the tools return an error rather than an old number.
 - **It has no benchmarks, latency or endpoint data.** Other servers do. Three
   tools is a deliberate choice about your context budget.
-- **It has no telemetry.** The server itself reports nothing about you, and
-  needs no key and no account — the same as [the API](https://promptspend.dev)
-  it reads.
+- **It has no telemetry.** Neither the npm package nor the hosted endpoint sends
+  analytics or usage reports, and neither needs a key or an account. The hosted
+  endpoint's request logging is described under Install.
 
 ## Scope of the prices
 
