@@ -197,6 +197,21 @@ export const PRODUCTHUNT_BADGE_LIGHT = `${import.meta.env.BASE_URL}producthunt-b
 export const PRODUCTHUNT_BADGE_DARK = `${import.meta.env.BASE_URL}producthunt-badge-dark.svg`;
 
 /**
+ * The mcpservers.org listing of the MCP server, and its badge, after the
+ * Product Hunt one.
+ *
+ * A local copy of the badge their approval email hot-links from
+ * `mcpservers.org/badge.svg`, which `img-src` would block. Their file,
+ * unedited: a 163x20 shields-style strip (slate and blue, white Verdana text),
+ * no scripts or outside references, so one file serves both themes. It is a
+ * strip rather than a card, so it is drawn 28px tall (228x28) instead of the
+ * cards' 40px - at 40px it would be the widest thing in the row. mcpservers.org
+ * has no badge verifier, so it is not in `index.html`.
+ */
+export const MCPSERVERS_URL = 'https://mcpservers.org/servers/andrewavery7/promptspend';
+export const MCPSERVERS_BADGE = `${import.meta.env.BASE_URL}mcpservers-badge.svg`;
+
+/**
  * Install routes for the two things that are not this website.
  *
  * Defined in `@/lib/links` and re-exported here so components keep importing

@@ -567,6 +567,9 @@ ${footerStats(ctx)}        <div class="footer__badge">
               <img src="${escapeHtml(href(ctx, '/producthunt-badge-light.svg'))}" alt="PromptSpend on Product Hunt" width="151" height="40" />
             </picture>
           </a>
+          <a href="https://mcpservers.org/servers/andrewavery7/promptspend" target="_blank" rel="noopener noreferrer">
+            <img class="footer__badge-strip" src="${escapeHtml(href(ctx, '/mcpservers-badge.svg'))}" alt="PromptSpend listed on mcpservers.org" width="228" height="28" />
+          </a>
         </div>
       </div>
     </footer>`;
