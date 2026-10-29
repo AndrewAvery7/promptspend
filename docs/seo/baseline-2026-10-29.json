@@ -1,0 +1,71 @@
+{
+  "readOn": "2026-10-29",
+  "note": "Day-0 baseline for the 90-day plan in docs/SEO_PROGRAM.md. Numbers are as read from each tool on the date above; the live-site figures were checked against the files served that day.",
+  "googleSearchConsole": {
+    "property": "promptspend.com (domain)",
+    "pageIndexing": {
+      "reportUpdated": "2026-10-22",
+      "indexed": 161,
+      "notIndexed": 182,
+      "reasons": {
+        "alternatePageWithCanonical": 118,
+        "discoveredNotIndexed": 47,
+        "redirectError": 8,
+        "notFound404": 4,
+        "pageWithRedirect": 4,
+        "crawledNotIndexed": 1
+      }
+    },
+    "search90Days": {
+      "from": "2026-07-28",
+      "to": "2026-10-27",
+      "clicks": 8,
+      "impressions": 970,
+      "ctrPercent": 0.8,
+      "averagePosition": 37.7,
+      "queries": 87
+    },
+    "search28Days": {
+      "from": "2026-09-30",
+      "to": "2026-10-27",
+      "clicks": 0,
+      "impressions": 12
+    },
+    "links": {
+      "externalTotal": 42,
+      "externalToHomePage": 42,
+      "topLinkingSites": {
+        "ycombinator.com": 22,
+        "github.com": 4
+      },
+      "internalTotal": 632
+    }
+  },
+  "bingWebmasterTools": {
+    "sitemapBeforeResubmission": {
+      "url": "https://promptspend.com/sitemap.xml",
+      "urlsDiscovered": 372,
+      "lastRead": "2026-10-26"
+    },
+    "backlinks": {
+      "referringDomains": 24,
+      "referringPages": 83,
+      "anchorTexts": 17
+    }
+  },
+  "site": {
+    "sitemapUrls": 403,
+    "sitemapFiles": {
+      "compare": 229,
+      "models": 126,
+      "providers": 16,
+      "freeTiers": 16,
+      "site": 13,
+      "writing": 3
+    },
+    "realVisitorsPerDay": {
+      "value": 11,
+      "status": "belief carried from the 2026-10-24 report, not re-measured"
+    }
+  }
+}

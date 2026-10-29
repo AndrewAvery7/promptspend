@@ -241,6 +241,27 @@ async function main(): Promise<void> {
     }
   }
 
+  // What a visitor or crawler with no JavaScript is given. The calculator draws
+  // everything itself, so the raw HTML used to say 36 words and link nowhere.
+  const noscript = /<noscript>([\s\S]*?)<\/noscript>/.exec(html)?.[1] ?? '';
+  if (!/<h1>[^<]{10,}<\/h1>/.test(noscript))
+    problems.push('the home page has no heading for readers without JavaScript');
+  if (
+    noscript
+      .replace(/<[^>]*>/g, ' ')
+      .split(/\s+/)
+      .filter(Boolean).length < 60
+  ) {
+    problems.push('the home page gives readers without JavaScript fewer than 60 words');
+  }
+  for (const hub of ['models', 'providers', 'compare', 'free-tiers', 'writing', 'data']) {
+    if (!noscript.includes(`href="./${hub}/"`))
+      problems.push(`the home page's no-JavaScript text does not link ${hub}/`);
+    else if (!existsSync(resolve(DIST, hub, 'index.html'))) {
+      problems.push(`the home page links ${hub}/, which is not in the build`);
+    }
+  }
+
   const ogImage = attr(html, /<meta property="og:image" content="([^"]*)"/);
   if (!ogImage) problems.push('no og:image — shares will render as a bare link');
   else if (!absolute(ogImage)) problems.push(`og:image is not absolute: ${ogImage}`);

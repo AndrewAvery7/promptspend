@@ -164,10 +164,33 @@
         </div>
       </footer>
     </div>
+    <!-- What a reader sees with no JavaScript, and what a crawler that does not
+         run it is given: a heading, a description and the way into every other
+         page. This used to be 36 words and no links, so the home page said
+         nothing to them. It sits in <noscript> on purpose. Anything placed in
+         #root shows for a moment on every visit before React replaces it and
+         would shift the page; this is never drawn when scripts run.
+         scripts/check-seo.ts requires the heading and the links below. -->
     <noscript>
-      PromptSpend is an interactive calculator and needs JavaScript. The underlying pricing data is a plain
-      JSON file you can read directly at
-      <a href="./data/pricing.json">data/pricing.json</a>.
+      <h1>PromptSpend: what an LLM API call really costs</h1>
+      <p>
+        PromptSpend is a free price list and cost calculator for the APIs behind GPT, Claude, Gemini and other
+        large language models. It compares %MODEL_COUNT% models side by side, and every price shows its source
+        and the date it was last confirmed. There are no accounts and no ads. The calculator needs JavaScript;
+        the prices are also plain pages and files you can read without it.
+      </p>
+      <ul>
+        <li><a href="./models/">Every model, by price</a></li>
+        <li><a href="./providers/">Prices by provider</a></li>
+        <li><a href="./compare/">Head-to-head comparisons</a></li>
+        <li><a href="./free-tiers/">Free API tiers, compared</a></li>
+        <li><a href="./writing/">Writing and the monthly price reports</a></li>
+        <li><a href="./data/">Open data: the catalog, the price history and the free tiers</a></li>
+        <li><a href="./receipt/">PromptSpend Receipt</a></li>
+        <li><a href="./app/">The iPhone and Android apps</a></li>
+        <li><a href="./data/pricing.json">The price catalog as JSON</a></li>
+        <li><a href="./llms.txt">An index for AI assistants</a></li>
+      </ul>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
