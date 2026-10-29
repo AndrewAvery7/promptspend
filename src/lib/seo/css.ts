@@ -138,7 +138,7 @@ td.when { white-space: nowrap; }
 /* Question-and-answer sections: plain headings and paragraphs, nothing to expand. */
 .faq h3 { margin: 1.1rem 0 0.2rem; font-size: 1rem; }
 .faq h3:first-child { margin-top: 0; }
-.faq p { margin: 0; max-width: 46rem; }
+.faq p { margin: 0; max-width: 46rem; overflow-wrap: anywhere; }
 .chart-card { margin: 0 0 1rem; }
 .chart { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto; overflow: visible; }
 .chart-grid { stroke: var(--border); stroke-width: 1; }
