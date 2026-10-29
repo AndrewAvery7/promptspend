@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-29T14:41:31.731Z",
+  "generatedAt": "2026-10-29T14:49:57.668Z",
   "providers": [
     {
       "id": "anthropic",
@@ -160,7 +160,7 @@
     {
       "id": "amazon.nova-lite-v1-0",
       "providerId": "amazon",
-      "displayName": "Nova Lite V1:0",
+      "displayName": "Nova Lite",
       "status": "current",
       "contextWindow": 300000,
       "pricing": {
@@ -187,7 +187,7 @@
     {
       "id": "amazon.nova-micro-v1-0",
       "providerId": "amazon",
-      "displayName": "Nova Micro V1:0",
+      "displayName": "Nova Micro",
       "status": "current",
       "contextWindow": 128000,
       "pricing": {
@@ -214,7 +214,7 @@
     {
       "id": "amazon.nova-pro-v1-0",
       "providerId": "amazon",
-      "displayName": "Nova Pro V1:0",
+      "displayName": "Nova Pro",
       "status": "current",
       "contextWindow": 300000,
       "pricing": {
@@ -748,7 +748,7 @@
     {
       "id": "command-r-08-2024",
       "providerId": "cohere",
-      "displayName": "Command R 08 2024",
+      "displayName": "Command R",
       "status": "current",
       "contextWindow": 128000,
       "pricing": {
@@ -774,8 +774,8 @@
     {
       "id": "command-r-plus-08-2024",
       "providerId": "cohere",
-      "displayName": "Command R Plus 08 2024",
-      "status": "current",
+      "displayName": "Command R+",
+      "status": "legacy",
       "contextWindow": 128000,
       "pricing": {
         "input": 2.5,
@@ -792,8 +792,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://cohere.com/pricing"
       },
       "maxOutput": 4096
     },
@@ -910,7 +911,7 @@
     {
       "id": "dashscope-qwen3.8-flash",
       "providerId": "alibaba",
-      "displayName": "Qwen3.8 Flash",
+      "displayName": "Qwen 3.8 Flash",
       "status": "current",
       "contextWindow": 991808,
       "pricing": {
@@ -929,8 +930,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash"
       },
       "maxOutput": 131072
     },
@@ -966,7 +968,7 @@
     {
       "id": "dashscope-qwen3.8-omni-flash",
       "providerId": "alibaba",
-      "displayName": "Qwen3.8 Omni Flash",
+      "displayName": "Qwen 3.8 Omni Flash",
       "status": "current",
       "contextWindow": 991808,
       "pricing": {
@@ -985,13 +987,9 @@
         "vision": false
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-10-29",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
       },
       "maxOutput": 131072
     },
@@ -1757,12 +1755,13 @@
     {
       "id": "gpt-5-pro",
       "providerId": "openai",
-      "displayName": "GPT 5 Pro",
-      "status": "current",
+      "displayName": "GPT-5 Pro",
+      "status": "legacy",
       "contextWindow": 400000,
       "pricing": {
         "input": 15,
-        "output": 120
+        "output": 120,
+        "batchDiscount": 0.5
       },
       "tokenizer": {
         "kind": "tiktoken",
@@ -1773,8 +1772,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 272000
     },
@@ -1835,12 +1835,13 @@
     {
       "id": "gpt-5.2-pro",
       "providerId": "openai",
-      "displayName": "GPT 5.2 Pro",
+      "displayName": "GPT-5.2 Pro",
       "status": "current",
       "contextWindow": 272000,
       "pricing": {
         "input": 21,
-        "output": 168
+        "output": 168,
+        "batchDiscount": 0.5
       },
       "tokenizer": {
         "kind": "tiktoken",
@@ -1851,8 +1852,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
     },
@@ -1949,12 +1951,18 @@
     {
       "id": "gpt-5.4-pro",
       "providerId": "openai",
-      "displayName": "GPT 5.4 Pro",
+      "displayName": "GPT-5.4 Pro",
       "status": "current",
       "contextWindow": 1050000,
       "pricing": {
         "input": 30,
-        "output": 180
+        "output": 180,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 60,
+          "output": 270
+        }
       },
       "tokenizer": {
         "kind": "tiktoken",
@@ -1965,8 +1973,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
     },
@@ -2007,12 +2016,18 @@
     {
       "id": "gpt-5.5-pro",
       "providerId": "openai",
-      "displayName": "GPT 5.5 Pro",
+      "displayName": "GPT-5.5 Pro",
       "status": "current",
       "contextWindow": 1050000,
       "pricing": {
         "input": 30,
-        "output": 180
+        "output": 180,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 60,
+          "output": 270
+        }
       },
       "tokenizer": {
         "kind": "tiktoken",
@@ -2023,8 +2038,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
     },
@@ -2579,7 +2595,7 @@
     {
       "id": "mistral-codestral-2508",
       "providerId": "mistral",
-      "displayName": "Codestral 2508",
+      "displayName": "Codestral 25.08",
       "status": "current",
       "contextWindow": 128000,
       "pricing": {
@@ -2598,8 +2614,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://docs.mistral.ai/inference/pricing"
       },
       "maxOutput": 128000
     },
@@ -2831,12 +2848,13 @@
       "id": "moonshot-kimi-k2.7-code",
       "providerId": "moonshot",
       "displayName": "Kimi K2.7 Code",
-      "status": "current",
+      "status": "legacy",
       "contextWindow": 262144,
       "pricing": {
         "input": 0.95,
         "output": 4,
-        "cachedInput": 0.19
+        "cachedInput": 0.19,
+        "batchDiscount": 0.6
       },
       "tokenizer": {
         "kind": "approx",
@@ -2849,13 +2867,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
+        "source": "vendor",
         "lastVerified": "2026-10-29",
-        "needsReview": true,
-        "reviewNote": "OpenRouter disagrees (41%): $0.56/$3.1 vs $0.95/$4",
-        "reviewCodes": [
-          "openrouter-disagreement"
-        ]
+        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat"
       },
       "maxOutput": 262144
     },
@@ -2897,7 +2911,8 @@
       "pricing": {
         "input": 2,
         "output": 10,
-        "cachedInput": 0.2
+        "cachedInput": 0.2,
+        "cacheWrite": 2
       },
       "tokenizer": {
         "kind": "approx",
@@ -2910,8 +2925,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat"
       },
       "maxOutput": 1048576
     },
@@ -2944,8 +2960,8 @@
     {
       "id": "o1-pro",
       "providerId": "openai",
-      "displayName": "O1 Pro",
-      "status": "current",
+      "displayName": "o1-pro",
+      "status": "deprecated",
       "contextWindow": 200000,
       "pricing": {
         "input": 150,
@@ -3020,12 +3036,13 @@
     {
       "id": "o3-pro",
       "providerId": "openai",
-      "displayName": "O3 Pro",
-      "status": "current",
+      "displayName": "o3-pro",
+      "status": "legacy",
       "contextWindow": 200000,
       "pricing": {
         "input": 20,
-        "output": 80
+        "output": 80,
+        "batchDiscount": 0.5
       },
       "tokenizer": {
         "kind": "tiktoken",
@@ -3036,8 +3053,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-10-29"
+        "source": "vendor",
+        "lastVerified": "2026-10-29",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 100000
     },

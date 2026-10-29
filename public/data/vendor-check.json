@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-29T14:39:36.322Z",
+  "checkedAt": "2026-10-29T14:47:53.437Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -52,7 +52,12 @@
         "gpt-4.1",
         "gpt-4.1-mini",
         "gpt-4o",
-        "gpt-4o-mini"
+        "gpt-4o-mini",
+        "gpt-5.5-pro",
+        "gpt-5.4-pro",
+        "gpt-5.2-pro",
+        "gpt-5-pro",
+        "o3-pro"
       ]
     },
     {
@@ -95,15 +100,18 @@
       "ok": true,
       "note": "3305 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
-        "moonshot-kimi-k3"
+        "moonshot-kimi-k3",
+        "moonshot-kimi-k3.1-pro",
+        "moonshot-kimi-k2.7-code"
       ]
     },
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "213297 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "212447 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
-        "dashscope-qwen3.7-max"
+        "dashscope-qwen3.7-max",
+        "dashscope-qwen3.8-omni-flash"
       ]
     },
     {
@@ -205,6 +213,30 @@
       "note": "11391 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "azure-ai-mai-thinking-1"
+      ]
+    },
+    {
+      "url": "https://docs.mistral.ai/inference/pricing",
+      "ok": true,
+      "note": "4349 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "mistral-codestral-2508"
+      ]
+    },
+    {
+      "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash",
+      "ok": true,
+      "note": "55013 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "dashscope-qwen3.8-flash"
+      ]
+    },
+    {
+      "url": "https://cohere.com/pricing",
+      "ok": true,
+      "note": "19167 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "modelIds": [
+        "command-r-plus-08-2024"
       ]
     }
   ],
@@ -438,6 +470,36 @@
       "detail": "page lists $0.15/$0.6 (cached $0.075)"
     },
     {
+      "id": "gpt-5.5-pro",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $30/$180"
+    },
+    {
+      "id": "gpt-5.4-pro",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $30/$180"
+    },
+    {
+      "id": "gpt-5.2-pro",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $21/$168"
+    },
+    {
+      "id": "gpt-5-pro",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $15/$120"
+    },
+    {
+      "id": "o3-pro",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "status": "confirmed",
+      "detail": "page lists $20/$80"
+    },
+    {
       "id": "gemini-gemini-3.1-pro-preview",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "confirmed",
@@ -453,7 +515,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only Gemini 3.8 Flash and 3.6 Flash are listed)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash on the page; only Gemini 3.8 Flash and Gemini 3.6 Flash are listed)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -489,7 +551,7 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite is listed)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash listed; the page lists Gemini 3.5 Flash-Lite)"
     },
     {
       "id": "gemini-gemini-4-argon",
@@ -525,13 +587,31 @@
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table on the page is empty; no price is printed for kimi-k3)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
+    },
+    {
+      "id": "moonshot-kimi-k3.1-pro",
+      "url": "https://platform.kimi.ai/docs/pricing/chat",
+      "status": "unconfirmed",
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
+    },
+    {
+      "id": "moonshot-kimi-k2.7-code",
+      "url": "https://platform.kimi.ai/docs/pricing/chat",
+      "status": "unconfirmed",
+      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page)"
     },
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "confirmed",
       "detail": "page lists $2.5/$7.5"
+    },
+    {
+      "id": "dashscope-qwen3.8-omni-flash",
+      "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.15/$0.47 (cached $0.016)"
     },
     {
       "id": "zai-glm-5.1",
@@ -609,7 +689,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
+      "detail": "not priced on the page (the LLM pricing tables list only MiniMax-M3.1-Flash and MiniMax-M3; no minimax-m2.5 row is present)"
     },
     {
       "id": "xai-grok-4.6",
@@ -718,9 +798,27 @@
       "url": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
       "status": "confirmed",
       "detail": "page lists $2/$8 (cached $0.2)"
+    },
+    {
+      "id": "mistral-codestral-2508",
+      "url": "https://docs.mistral.ai/inference/pricing",
+      "status": "confirmed",
+      "detail": "page lists $0.3/$0.9"
+    },
+    {
+      "id": "dashscope-qwen3.8-flash",
+      "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash",
+      "status": "confirmed",
+      "detail": "page lists $0.15/$0.47 (cached $0.016)"
+    },
+    {
+      "id": "command-r-plus-08-2024",
+      "url": "https://cohere.com/pricing",
+      "status": "confirmed",
+      "detail": "page lists $2.5/$10"
     }
   ],
-  "confirmed": 79,
+  "confirmed": 88,
   "mismatched": 0,
-  "unconfirmed": 6
+  "unconfirmed": 8
 }

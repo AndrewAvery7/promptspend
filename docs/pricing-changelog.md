@@ -1393,3 +1393,64 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `o1-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
 - **Review** `o3-pro` — provenance.needsReview: true → —
 - **Review** `o3-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+
+## 2026-10-29
+
+- **Coverage** `gpt-5-pro` — batchDiscount now tracked: — → 0.5
+- **Coverage** `gpt-5.2-pro` — batchDiscount now tracked: — → 0.5
+- **Coverage** `gpt-5.4-pro` — batchDiscount now tracked: — → 0.5
+- **Coverage** `gpt-5.4-pro` — longContext.thresholdTokens now tracked: — → 272000
+- **Coverage** `gpt-5.4-pro` — longContext.input now tracked: — → 60
+- **Coverage** `gpt-5.4-pro` — longContext.output now tracked: — → 270
+- **Coverage** `gpt-5.5-pro` — batchDiscount now tracked: — → 0.5
+- **Coverage** `gpt-5.5-pro` — longContext.thresholdTokens now tracked: — → 272000
+- **Coverage** `gpt-5.5-pro` — longContext.input now tracked: — → 60
+- **Coverage** `gpt-5.5-pro` — longContext.output now tracked: — → 270
+- **Coverage** `moonshot-kimi-k2.7-code` — batchDiscount now tracked: — → 0.6
+- **Coverage** `moonshot-kimi-k3.1-pro` — cacheWrite now tracked: — → 2
+- **Coverage** `o3-pro` — batchDiscount now tracked: — → 0.5
+- **Metadata** `amazon.nova-lite-v1-0` — displayName: Nova Lite V1:0 → Nova Lite
+- **Metadata** `amazon.nova-micro-v1-0` — displayName: Nova Micro V1:0 → Nova Micro
+- **Metadata** `amazon.nova-pro-v1-0` — displayName: Nova Pro V1:0 → Nova Pro
+- **Metadata** `command-r-08-2024` — displayName: Command R 08 2024 → Command R
+- **Metadata** `command-r-plus-08-2024` — displayName: Command R Plus 08 2024 → Command R+
+- **Metadata** `command-r-plus-08-2024` — status: current → legacy
+- **Metadata** `dashscope-qwen3.8-flash` — displayName: Qwen3.8 Flash → Qwen 3.8 Flash
+- **Metadata** `dashscope-qwen3.8-omni-flash` — displayName: Qwen3.8 Omni Flash → Qwen 3.8 Omni Flash
+- **Metadata** `gpt-5-pro` — displayName: GPT 5 Pro → GPT-5 Pro
+- **Metadata** `gpt-5-pro` — status: current → legacy
+- **Metadata** `gpt-5.2-pro` — displayName: GPT 5.2 Pro → GPT-5.2 Pro
+- **Metadata** `gpt-5.4-pro` — displayName: GPT 5.4 Pro → GPT-5.4 Pro
+- **Metadata** `gpt-5.5-pro` — displayName: GPT 5.5 Pro → GPT-5.5 Pro
+- **Metadata** `mistral-codestral-2508` — displayName: Codestral 2508 → Codestral 25.08
+- **Metadata** `moonshot-kimi-k2.7-code` — status: current → legacy
+- **Metadata** `o1-pro` — displayName: O1 Pro → o1-pro
+- **Metadata** `o1-pro` — status: current → deprecated
+- **Metadata** `o3-pro` — displayName: O3 Pro → o3-pro
+- **Metadata** `o3-pro` — status: current → legacy
+- **Review** `command-r-plus-08-2024` — provenance.source: litellm → vendor
+- **Review** `command-r-plus-08-2024` — provenance.verifiedUrl: — → https://cohere.com/pricing
+- **Review** `dashscope-qwen3.8-flash` — provenance.source: litellm → vendor
+- **Review** `dashscope-qwen3.8-flash` — provenance.verifiedUrl: — → https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash
+- **Review** `dashscope-qwen3.8-omni-flash` — provenance.source: litellm → vendor
+- **Review** `dashscope-qwen3.8-omni-flash` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3.8-omni-flash` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `dashscope-qwen3.8-omni-flash` — provenance.verifiedUrl: — → https://www.alibabacloud.com/help/en/model-studio/model-pricing
+- **Review** `gpt-5-pro` — provenance.source: litellm → vendor
+- **Review** `gpt-5-pro` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.2-pro` — provenance.source: litellm → vendor
+- **Review** `gpt-5.2-pro` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.4-pro` — provenance.source: litellm → vendor
+- **Review** `gpt-5.4-pro` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-5.5-pro` — provenance.source: litellm → vendor
+- **Review** `gpt-5.5-pro` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `mistral-codestral-2508` — provenance.source: litellm → vendor
+- **Review** `mistral-codestral-2508` — provenance.verifiedUrl: — → https://docs.mistral.ai/inference/pricing
+- **Review** `moonshot-kimi-k2.7-code` — provenance.source: litellm → vendor
+- **Review** `moonshot-kimi-k2.7-code` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k2.7-code` — provenance.reviewNote: OpenRouter disagrees (41%): $0.56/$3.1 vs $0.95/$4 → —
+- **Review** `moonshot-kimi-k2.7-code` — provenance.verifiedUrl: — → https://platform.kimi.ai/docs/pricing/chat
+- **Review** `moonshot-kimi-k3.1-pro` — provenance.source: litellm → vendor
+- **Review** `moonshot-kimi-k3.1-pro` — provenance.verifiedUrl: — → https://platform.kimi.ai/docs/pricing/chat
+- **Review** `o3-pro` — provenance.source: litellm → vendor
+- **Review** `o3-pro` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing

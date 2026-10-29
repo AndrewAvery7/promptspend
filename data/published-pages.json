@@ -1563,7 +1563,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "17c45adf78a878"
+      "fingerprint": "09f5468228ef76"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1578,17 +1578,17 @@
     "/models/amazon-nova-lite-v1-0/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "0ad491061f9a5c"
+      "fingerprint": "131997c5629cf2"
     },
     "/models/amazon-nova-micro-v1-0/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "1b14e5f517a761"
+      "fingerprint": "187540daa029d7"
     },
     "/models/amazon-nova-pro-v1-0/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "165751ad003872"
+      "fingerprint": "110496319f9d12"
     },
     "/models/azure-ai-mai-thinking-1/": {
       "published": "2026-10-24",
@@ -1678,12 +1678,12 @@
     "/models/command-r-08-2024/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "17b7895f2ba2ee"
+      "fingerprint": "050d7155ddfb94"
     },
     "/models/command-r-plus-08-2024/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "0432b95c340c45"
+      "fingerprint": "1286b2979faf3d"
     },
     "/models/dashscope-qwen3-7-max/": {
       "published": "2026-08-02",
@@ -1693,7 +1693,7 @@
     "/models/dashscope-qwen3-8-flash/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "1cc717cdd23d7e"
+      "fingerprint": "134724b46b3e66"
     },
     "/models/dashscope-qwen3-8-max/": {
       "published": "2026-10-24",
@@ -1703,7 +1703,7 @@
     "/models/dashscope-qwen3-8-omni-flash/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "1e7e19aef5205d"
+      "fingerprint": "0d658da832b859"
     },
     "/models/dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
@@ -1843,7 +1843,7 @@
     "/models/gpt-5-2-pro/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "168e5b4b664477"
+      "fingerprint": "12fb6898a34660"
     },
     "/models/gpt-5-2/": {
       "published": "2026-08-02",
@@ -1863,7 +1863,7 @@
     "/models/gpt-5-4-pro/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "0f87b32b26c76a"
+      "fingerprint": "0e43b1753830b5"
     },
     "/models/gpt-5-4/": {
       "published": "2026-08-02",
@@ -1873,7 +1873,7 @@
     "/models/gpt-5-5-pro/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "099fceec72d83f"
+      "fingerprint": "19e44349285206"
     },
     "/models/gpt-5-5/": {
       "published": "2026-08-02",
@@ -1908,7 +1908,7 @@
     "/models/gpt-5-pro/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "041b880394875b"
+      "fingerprint": "03c58064eeaec1"
     },
     "/models/gpt-5/": {
       "published": "2026-08-02",
@@ -1983,7 +1983,7 @@
     "/models/mistral-codestral-2508/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "1f3f8c9668aca1"
+      "fingerprint": "10ceaad3328d07"
     },
     "/models/mistral-large-3/": {
       "published": "2026-08-02",
@@ -2023,7 +2023,7 @@
     "/models/moonshot-kimi-k2-7-code/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "1e7778313c5d36"
+      "fingerprint": "1b991da967d340"
     },
     "/models/moonshot-kimi-k2-thinking/": {
       "published": "2026-08-02",
@@ -2033,7 +2033,7 @@
     "/models/moonshot-kimi-k3-1-pro/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "05599b4b5585ff"
+      "fingerprint": "1d0b7d0406660b"
     },
     "/models/moonshot-kimi-k3/": {
       "published": "2026-08-22",
@@ -2043,7 +2043,7 @@
     "/models/o1-pro/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "07bdb4dc6baeed"
+      "fingerprint": "1f8b6fae277020"
     },
     "/models/o1/": {
       "published": "2026-08-02",
@@ -2058,7 +2058,7 @@
     "/models/o3-pro/": {
       "published": "2026-10-29",
       "lastmod": "2026-10-29",
-      "fingerprint": "066e792d38123a"
+      "fingerprint": "1a91b79b6ca2f0"
     },
     "/models/o3/": {
       "published": "2026-08-02",
@@ -2198,17 +2198,17 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "0f902245b2fd02"
+      "fingerprint": "104e4ec52556b3"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "0db1139cf339cd"
+      "fingerprint": "05a65165ed3915"
     },
     "/providers/amazon/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "0bf9ee44fa3f9a"
+      "fingerprint": "0f234ecfde55be"
     },
     "/providers/anthropic/": {
       "published": "2026-08-02",
@@ -2218,7 +2218,7 @@
     "/providers/cohere/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "0ec1f1641ccfc0"
+      "fingerprint": "0a48615e7a533a"
     },
     "/providers/deepseek/": {
       "published": "2026-08-02",
@@ -2253,17 +2253,17 @@
     "/providers/mistral/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "05528b1455e6a0"
+      "fingerprint": "1d1fe748506246"
     },
     "/providers/moonshot/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "059d1568e5c40e"
+      "fingerprint": "1719531a9ce714"
     },
     "/providers/openai/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "18ce4154c50b85"
+      "fingerprint": "0cee2b1303e5d4"
     },
     "/providers/xai/": {
       "published": "2026-08-02",
