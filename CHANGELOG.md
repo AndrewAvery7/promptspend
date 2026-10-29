@@ -9,6 +9,15 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **A tally script for the monthly Price Movement Report** (`npx tsx scripts/monthly-report-tally.ts 2026-10`).
+  It counts one whole month of the pricing changelog by kind, lists every rate move by size, and sets the
+  month beside the one before. It says plainly when the month is not finished. The August report counted four
+  days short because the tally was done by hand; this reproduces both published reports exactly.
+- **Readable text and links on the home page for visitors and crawlers without JavaScript.** The page used to
+  say 36 words and link nowhere in its plain HTML. It now has a heading, a description and links to every
+  main section, inside the existing no-JavaScript block, so nothing changes on screen when scripts run.
+  `check:seo` fails if they go missing. The same release adds `docs/SEO_PROGRAM.md`: the search baseline
+  read on 2026-10-29, the 90-day plan written before the results, and a dated change log.
 - **A token counter at `/token-counter/`.** Paste text and see its token count for any model in the
   catalog, what it would cost as input, how much of the context window it fills, and the same text on every
   model in a table. OpenAI-family models use the real tokenizer, so those counts are exact for the text;
