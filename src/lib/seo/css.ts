@@ -202,7 +202,7 @@ article :not(pre) > code {
 @media (max-width: 860px) {
   .footer__cols { grid-template-columns: 1fr 1fr; gap: 18px 20px; }
   .footer__brand { grid-column: 1 / -1; }
-  .footer__col a { padding: 0; min-height: 40px; display: flex; align-items: center; }
+  .footer__col a { padding: 0; min-height: 44px; display: flex; align-items: center; }
 }
 /* Every badge card 34px tall, all eight on one line on a computer; a grid of
  * two on a phone, each centered in an equal cell. The link carries the 44px a
