@@ -14,26 +14,26 @@
  */
 
 /**
- * THE PAUSE (owner decision, 2026-10-29).
+ * THE PAUSE (owner decisions, 2026-10-29).
+ *
+ * `true`: Google Analytics runs as described under the switch below. It was
+ * paused on the morning of 2026-10-29 because the account it reported to had
+ * been deleted, and switched back on the same day with a new property owned by
+ * info@crestwood.holdings (andrew@averyemail.com is a second administrator).
  *
  * `false`: Google Analytics is off. Nothing from Google loads, no notice
  * shows, the privacy page says the website does not use it, the page policies
- * stop naming Google's hosts, and a visitor who still holds its cookies from
- * before has them cleared the next time they open the site. `true`: it runs as
- * described under the switch below.
- *
- * Why it is off: no Google Analytics account exists for the website to report
- * to, so visitors were being told their visits were counted when nobody could
- * read the count. Turning it back on is more than this word: create a new
- * property, replace `GA_MEASUREMENT_ID`, and rewrite the privacy page, README,
- * SECURITY.md and ARCHITECTURE.md from "paused" back to "running" BEFORE the
- * deploy. `scripts/lib/privacy-config.test.ts` fails until the privacy page
- * matches, and `npm run check:csp` fails until the policies match.
+ * stop naming Google's hosts, and a visitor who still holds its cookies has
+ * them cleared the next time they open the site. Switching it off again means
+ * rewriting the privacy page, README, SECURITY.md and ARCHITECTURE.md to
+ * "paused" in the same commit. `scripts/lib/privacy-config.test.ts` fails until
+ * the privacy page matches, and `npm run check:csp` fails until the policies
+ * match.
  */
-export const GOOGLE_ANALYTICS_ENABLED: boolean = false;
+export const GOOGLE_ANALYTICS_ENABLED: boolean = true;
 
 /** The GA4 web stream's Measurement ID. */
-export const GA_MEASUREMENT_ID = 'G-08GFGLY4VD';
+export const GA_MEASUREMENT_ID = 'G-P27XJ53BH9';
 
 /**
  * THE SWITCH.

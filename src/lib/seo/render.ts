@@ -12,7 +12,7 @@
  *    script and no third-party script beyond the approved two: the JSON-LD
  *    data block is admitted by its hash, Cloudflare adds the Web Analytics
  *    beacon (owner-approved 2026-10-05) as it serves the page, and the site
- *    header's script adds Google Analytics while it runs (owner decision 2026-10-06; paused since 2026-10-29).
+ *    header's script adds Google Analytics while it runs (owner decision 2026-10-06).
  * 2. **Therefore a very tight Content Security Policy** — `default-src 'none'`,
  *    with the JSON-LD admitted by its exact SHA-256 rather than by
  *    `'unsafe-inline'`. The hash is computed over the string that is actually
@@ -24,7 +24,7 @@
  *    2026-10-05 - its image loads from launchnest.io, with no referrer, and
  *    `img-src` admits that one origin. The Cloudflare beacon's script is
  *    another (`script-src`); it posts only to this site. Google Analytics is
- *    the last, and only while it runs (it is paused since 2026-10-29, so the policy names no Google host): its script host, and the collection hosts it reports to in
+ *    the last, and only while it runs (while it is paused, the policy names no Google host): its script host, and the collection hosts it reports to in
  *    `connect-src` and `img-src`, all named in `src/lib/analytics/config.ts`.
  *
  * Every string that reaches the output goes through `escapeHtml`. Catalog data

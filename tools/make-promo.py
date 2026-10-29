@@ -710,7 +710,7 @@ def check():
 
     # Claims the website has withdrawn. It counts visits with Cloudflare Web
     # Analytics (since 2026-10-05) and, when it runs, Google Analytics, which sets cookies
-    # (paused since 2026-10-29), so never "no tracking", "no analytics" or "no
+    # (briefly paused on 2026-10-29), so never "no tracking", "no analytics" or "no
     # cookies". Checked here so a future edit to the chips cannot quietly put
     # an old promise back on screen.
     for chip in CTA_CHIPS:

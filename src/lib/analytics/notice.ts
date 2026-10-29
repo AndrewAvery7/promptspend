@@ -14,6 +14,7 @@
  */
 import { ANALYTICS_REQUIRES_CONSENT, GA_HOSTNAMES, GOOGLE_ANALYTICS_ENABLED } from './config';
 import {
+  clearRetiredStreamCookies,
   disableGoogleAnalytics,
   loadGoogleAnalytics,
   readChoice,
@@ -205,6 +206,8 @@ export function startAnalytics(env: AnalyticsEnvironment = defaultEnvironment())
     retireAnalytics(env);
     return;
   }
+  const hostname = env.window.location.hostname;
+  if (GA_HOSTNAMES.includes(hostname)) clearRetiredStreamCookies(env.document, hostname);
   const d = decision(env);
   if (shouldLoad(d)) loadGoogleAnalytics(gtagWindow(env), env.document);
   if (shouldShowNotice(d)) showNotice(env);

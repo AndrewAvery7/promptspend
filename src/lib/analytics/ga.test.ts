@@ -43,7 +43,7 @@ afterEach(() => {
 
 describe('the configuration', () => {
   it('is the Measurement ID Andrew gave, with the G- prefix GA4 uses', () => {
-    expect(GA_MEASUREMENT_ID).toBe('G-08GFGLY4VD');
+    expect(GA_MEASUREMENT_ID).toBe('G-P27XJ53BH9');
   });
 
   it('ships with the owner-chosen default: load for everyone, with a notice', () => {
@@ -197,7 +197,7 @@ describe('loadGoogleAnalytics', () => {
     loadGoogleAnalytics(gtagWindow(), document);
     const scripts = [...document.head.querySelectorAll('script')];
     expect(scripts).toHaveLength(1);
-    expect(scripts[0]!.src).toBe('https://www.googletagmanager.com/gtag/js?id=G-08GFGLY4VD');
+    expect(scripts[0]!.src).toBe('https://www.googletagmanager.com/gtag/js?id=G-P27XJ53BH9');
     expect(GA_SCRIPT_URL).toBe(scripts[0]!.src);
     expect(scripts[0]!.async).toBe(true);
   });
@@ -226,7 +226,7 @@ describe('loadGoogleAnalytics', () => {
     expect(queued[2]).toEqual(['set', page]);
     expect(queued[3]).toEqual([
       'config',
-      'G-08GFGLY4VD',
+      'G-P27XJ53BH9',
       {
         ...page,
         send_page_view: false,
@@ -274,9 +274,9 @@ describe('loadGoogleAnalytics', () => {
   });
 
   it('clears an earlier off switch when it is turned back on', () => {
-    gtagWindow()['ga-disable-G-08GFGLY4VD'] = true;
+    gtagWindow()['ga-disable-G-P27XJ53BH9'] = true;
     loadGoogleAnalytics(gtagWindow(), document);
-    expect(gtagWindow()['ga-disable-G-08GFGLY4VD']).toBe(false);
+    expect(gtagWindow()['ga-disable-G-P27XJ53BH9']).toBe(false);
   });
 });
 
@@ -286,7 +286,7 @@ describe('disableGoogleAnalytics', () => {
     document.cookie = '_ga_08GFGLY4VD=GS1.1.789; path=/';
     document.cookie = 'unrelated=keep; path=/';
     disableGoogleAnalytics(gtagWindow(), document, window.location.hostname);
-    expect(gtagWindow()['ga-disable-G-08GFGLY4VD']).toBe(true);
+    expect(gtagWindow()['ga-disable-G-P27XJ53BH9']).toBe(true);
     expect(document.cookie).not.toContain('_ga');
     expect(document.cookie).toContain('unrelated=keep');
     document.cookie = 'unrelated=; Max-Age=0; path=/';

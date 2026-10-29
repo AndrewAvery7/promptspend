@@ -27,7 +27,9 @@ ordinary way a document goes wrong: nobody re-reads the paragraph they are not e
 Neither Worker is in the path of the estimator. Close the alerts form and the site is still a static page
 that sends nothing you type anywhere. Its remote requests are the footer's LaunchNest badge image,
 which carries no data, Cloudflare's Web Analytics beacon, which reports page views to the site's
-own `/cdn-cgi/rum`, and no others. (Google Analytics 4 ran on promptspend.com from 2026-10-24 to 2026-10-29 and is paused; its code and safeguards stay in `src/lib/analytics/`.) There is still no account system.
+own `/cdn-cgi/rum`, and (since 2026-10-24, apart from a pause on 2026-10-29; promptspend.com only) Google Analytics 4, which sets
+cookies and is sent each page's origin and path, never its query string, fragment or anything typed
+(`src/lib/analytics/`). There is still no account system.
 
 ## The data pipeline (`scripts/`)
 
@@ -312,7 +314,10 @@ views; each of those would be ceremony. Styling is plain CSS custom properties o
 No accounts, no ads, and nothing a visitor types or pastes ever leaves the device. Those hold, and they
 are the ones that matter. "No cookies" and "no analytics" used to sit here too and no longer do: since
 2026-10-05 the website (only) counts visits in aggregate with Cloudflare Web Analytics, a cookieless beacon,
-and from 2026-10-24 to 2026-10-29 (owner decision 2026-10-06) it also ran Google Analytics 4, which sets cookies. That is paused (`GOOGLE_ANALYTICS_ENABLED` in `src/lib/analytics/config.ts`) because no Analytics account exists to receive it. When it runs it loads for every visitor with a dismissible notice, or only after _Accept_ if `ANALYTICS_REQUIRES_CONSENT` is flipped, and receives page origin and path only, with Google signals and ad personalization off. The privacy policy says which is the case. The apps, the VS Code extension, the MCP
+and since 2026-10-29 (owner decision 2026-10-06; first live 2026-10-24, paused that week until a new property existed) it also runs Google Analytics 4, which sets cookies. GA
+loads for every visitor with a dismissible notice, or only after _Accept_ if `ANALYTICS_REQUIRES_CONSENT` in
+`src/lib/analytics/config.ts` is flipped; it receives page origin and path only, with Google signals and ad
+personalization off. Both are disclosed in the privacy policy. The apps, the VS Code extension, the MCP
 server and the API have no analytics.
 
 Three entries that used to sit in this list have since been built, and recording that is more useful than
