@@ -20,7 +20,7 @@ describe('shared PromptSpend Receipt parser', () => {
     ).toEqual(complete);
   });
 
-  it('normalizes display text and preserves defaults for omitted optional fields', () => {
+  it('normalizes display text and marks omitted fields as not provided, never as the sample', () => {
     const parsed = parseShareReceipt(
       JSON.stringify({
         conversation: '  12   visible\nturns ',
@@ -30,7 +30,22 @@ describe('shared PromptSpend Receipt parser', () => {
       }),
     );
     expect(parsed.conversation).toBe('12 visible turns');
-    expect(parsed.alternativeModel).toBe(DEFAULT_SHARE_RECEIPT.alternativeModel);
+    expect(parsed.alternativeModel).toBe('Not provided');
+    expect(parsed.alternativeCost).toBe('Not provided');
+  });
+
+  it('never lets the sample usage leak into an import that omits it', () => {
+    const parsed = parseShareReceipt(
+      JSON.stringify({
+        currentModel: 'Model A',
+        estimatedCost: '$0.12',
+        alternativeModel: 'Model B',
+        alternativeCost: '$0.03',
+      }),
+    );
+    expect(parsed.conversation).not.toBe(DEFAULT_SHARE_RECEIPT.conversation);
+    expect(parsed.estimatedTokens).not.toBe(DEFAULT_SHARE_RECEIPT.estimatedTokens);
+    expect(parsed.conversation).toBe('Not provided');
   });
 
   it('rejects oversized, malformed, and incomplete input', () => {
