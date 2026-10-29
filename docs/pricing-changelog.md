@@ -1477,3 +1477,7 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-10-29
 
 - **Metadata** `gemini-gemini-3.1-flash-lite-preview` — status: current → deprecated
+
+## 2026-10-29
+
+- **Metadata** `moonshot-kimi-k3.1-pro` — capabilityIndex: — → 89

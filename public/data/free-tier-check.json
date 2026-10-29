@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-29T17:10:20.678Z",
+  "checkedAt": "2026-10-29T17:44:23.994Z",
   "facts": {
     "alibaba-account-info": {
       "status": "confirmed",
@@ -78,9 +78,8 @@
       "lastConfirmed": "2026-10-29"
     },
     "amazon-quotas": {
-      "status": "missing",
-      "lastConfirmed": "2026-10-08",
-      "changedOn": "2026-10-09"
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-29"
     },
     "amazon-regions": {
       "status": "confirmed",
@@ -366,11 +365,6 @@
       "status": "confirmed",
       "lastConfirmed": "2026-10-29"
     },
-    "mistral-credits": {
-      "status": "missing",
-      "lastConfirmed": "2026-10-07",
-      "changedOn": "2026-10-08"
-    },
     "mistral-credits-no-limits": {
       "status": "confirmed",
       "lastConfirmed": "2026-10-29"
@@ -412,9 +406,8 @@
       "lastConfirmed": "2026-10-29"
     },
     "moonshot-minimum": {
-      "status": "missing",
-      "lastConfirmed": "2026-10-28",
-      "changedOn": "2026-10-29"
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-29"
     },
     "moonshot-payment": {
       "status": "confirmed",
@@ -429,9 +422,8 @@
       "lastConfirmed": "2026-10-29"
     },
     "moonshot-tiers": {
-      "status": "missing",
-      "lastConfirmed": "2026-10-28",
-      "changedOn": "2026-10-29"
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-29"
     },
     "openai-data": {
       "status": "confirmed",
@@ -466,18 +458,16 @@
       "lastConfirmed": "2026-10-29"
     },
     "openai-tiers": {
-      "status": "missing",
-      "lastConfirmed": "2026-10-05",
-      "changedOn": "2026-10-07"
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-29"
     },
     "xai-credits-for-data": {
       "status": "confirmed",
       "lastConfirmed": "2026-10-29"
     },
     "xai-data": {
-      "status": "missing",
-      "lastConfirmed": "2026-10-12",
-      "changedOn": "2026-10-13"
+      "status": "confirmed",
+      "lastConfirmed": "2026-10-29"
     },
     "xai-load-credits": {
       "status": "confirmed",

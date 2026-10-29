@@ -4,7 +4,7 @@
     "/compare/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "09bb4181e55518"
+      "fingerprint": "131cc5d1ad112e"
     },
     "/compare/amazon-nova-2-lite-v1-0-vs-claude-haiku-4-5/": {
       "published": "2026-10-29",
@@ -495,6 +495,13 @@
       "fingerprint": "12fca1371ee28e",
       "left": "claude-opus-5",
       "right": "gpt-6-sol"
+    },
+    "/compare/claude-opus-5-vs-moonshot-kimi-k3-1-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "04d419f3ed8c84",
+      "left": "claude-opus-5",
+      "right": "moonshot-kimi-k3-1-pro"
     },
     "/compare/claude-sonnet-4-6-vs-dashscope-qwen3-7-max/": {
       "published": "2026-08-02",
@@ -1308,6 +1315,13 @@
       "left": "gpt-5-6-luna",
       "right": "zai-glm-5-3-flash"
     },
+    "/compare/gpt-5-6-sol-vs-moonshot-kimi-k3-1-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "0e5ab07eefc4c6",
+      "left": "gpt-5-6-sol",
+      "right": "moonshot-kimi-k3-1-pro"
+    },
     "/compare/gpt-5-6-terra-vs-xai-grok-4-5/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-22",
@@ -1342,6 +1356,13 @@
       "fingerprint": "0de3a8593852ab",
       "left": "gpt-6-1-sol",
       "right": "meta-muse-wonder-1-0"
+    },
+    "/compare/gpt-6-1-terra-vs-moonshot-kimi-k3-1-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "19c89b64e8ebeb",
+      "left": "gpt-6-1-terra",
+      "right": "moonshot-kimi-k3-1-pro"
     },
     "/compare/gpt-6-1-terra-vs-xai-grok-4-7/": {
       "published": "2026-10-27",
@@ -1391,6 +1412,13 @@
       "fingerprint": "1d73955f4f97f6",
       "left": "gpt-6-sol",
       "right": "meta-muse-wonder-1-0"
+    },
+    "/compare/gpt-6-sol-vs-moonshot-kimi-k3-1-pro/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "0ecf9d7f392270",
+      "left": "gpt-6-sol",
+      "right": "moonshot-kimi-k3-1-pro"
     },
     "/compare/minimax-m3-vs-mistral-large-3/": {
       "published": "2026-08-02",

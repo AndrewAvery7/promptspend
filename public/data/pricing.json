@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-29T17:10:55.191Z",
+  "generatedAt": "2026-10-29T17:45:01.527Z",
   "providers": [
     {
       "id": "anthropic",
@@ -2939,7 +2939,8 @@
         "lastVerified": "2026-10-29",
         "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat"
       },
-      "maxOutput": 1048576
+      "maxOutput": 1048576,
+      "capabilityIndex": 89
     },
     {
       "id": "o1",
