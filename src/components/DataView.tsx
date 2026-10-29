@@ -132,7 +132,7 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                 {/* Copy, not open. Opening an Atom feed in a browser shows raw
                     XML, which reads as a page of rubbish and is nobody's goal:
                     the address is meant to be pasted into a reader. The link
-                    survives for anyone who does want to look, labelled as what
+                    survives for anyone who does want to look, labeled as what
                     it is rather than as an invitation. */}
                 <div className="alert-actions">
                   <button

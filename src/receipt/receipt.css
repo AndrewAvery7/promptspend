@@ -79,9 +79,9 @@ main {
 .receipt-hero {
   /* The status line under the receipt is space reserved for a message that is
    * empty until you copy: 44px plus its 8px gap. It made the object column
-   * taller than the visible card, so centring the two columns left the wording
+   * taller than the visible card, so centering the two columns left the wording
    * 26px below the card's middle. The copy column carries the same reserve, so
-   * both now centre on the card itself. */
+   * both now center on the card itself. */
   --receipt-status-reserve: 52px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(340px, 0.78fr);
@@ -380,7 +380,7 @@ main {
 
 /* The heading column stretches to the height of the column beside it, so
  * without this its text pinned to the top and left up to 228px empty
- * underneath. Centred, the heading sits against the middle of its content. */
+ * underneath. Centered, the heading sits against the middle of its content. */
 .receipt-section--split,
 .receipt-limitations {
   display: grid;

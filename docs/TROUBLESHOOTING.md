@@ -69,7 +69,7 @@ that label refers to.
 
 **Exact vs estimated.** OpenAI-family models get an exact count from the real
 tokenizer, run in your browser. Everyone else gets a calibrated
-characters-per-token ratio, labelled `est`, because those providers do not ship
+characters-per-token ratio, labeled `est`, because those providers do not ship
 a tokenizer that can run client-side.
 
 ---

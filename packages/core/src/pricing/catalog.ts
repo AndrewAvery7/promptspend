@@ -165,7 +165,7 @@ export class Catalog {
 
   /**
    * Whether the pipeline is currently keeping its promise, as a state the UI
-   * can colour rather than a date the reader has to interpret.
+   * can color rather than a date the reader has to interpret.
    *
    * The thresholds match `.github/workflows/freshness.yml`, which raises an
    * issue when the published catalog is more than two days old. A quiet

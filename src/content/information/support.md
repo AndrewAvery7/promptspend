@@ -20,7 +20,7 @@ Confirm the device can reach the internet and try again. PromptSpend may use a p
 
 ## A token count looks different
 
-Pasted-text counts in the native app are deliberately labelled as estimates until exact tokenizer parity is proven on supported devices. Different model families can tokenize the same text differently, so Compare calculates a workload separately for every selected model. For a known production count, choose Enter tokens and use the provider's billed or tokenizer-reported values.
+Pasted-text counts in the native app are deliberately labeled as estimates until exact tokenizer parity is proven on supported devices. Different model families can tokenize the same text differently, so Compare calculates a workload separately for every selected model. For a known production count, choose Enter tokens and use the provider's billed or tokenizer-reported values.
 
 ## Sharing or export does not open
 

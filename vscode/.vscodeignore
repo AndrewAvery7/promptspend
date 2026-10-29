@@ -37,7 +37,7 @@ package-lock.json
 #      entirely different package directory.
 #
 # Listed file by file rather than by whole subtree with exclusions: vsce's
-# matcher does not honour a re-exclusion underneath a broad negation, so
+# matcher does not honor a re-exclusion underneath a broad negation, so
 # `!js-tiktoken/**` followed by `dist/ranks/**` shipped all eleven megabytes of
 # rank tables. Explicit negations are the only form that behaves.
 #

@@ -20,7 +20,7 @@ on their own schedule and are not releases.
 - **Crawl and site-structure fixes for search engines.** `sitemap.xml` is now an index over six smaller files,
   one per kind of page, so Search Console shows how each kind is being indexed. Every comparison links to
   up to six related comparisons (three per side); a `/writing/` page lists every article (the three
-  articles had no link from anywhere); a `/data/` page describes the free data files with their licences and
+  articles had no link from anywhere); a `/data/` page describes the free data files with their licenses and
   the archived DOI, with schema.org Dataset markup; a branded `404.html` replaces GitHub's bare page; the
   footer links Writing and Open data on every page. `robots.txt` asks crawlers to skip the calculator's
   `?m=` scenario links. The home page gains Organization and WebSite structured data, and a real
@@ -31,7 +31,7 @@ on their own schedule and are not releases.
   input or output rate has ever moved gets a staircase chart (each line holds its value until the next
   change, and the axis starts at zero) with a table of every recorded change; a model that has not moved
   says so in a sentence and draws nothing. A vendor repricing and a correction (PromptSpend reading a
-  better page) are labelled apart, and rates PromptSpend merely began recording are never shown as
+  better page) are labeled apart, and rates PromptSpend merely began recording are never shown as
   changes. The models index lists the ten latest vendor repricings. Both are plain HTML and SVG that read
   completely without scripts, and both come from the same history as the CSV dataset and the feed.
 - **A daily shut-down check.** `check:shutdowns` reads OpenAI's, Anthropic's and Google's deprecation pages
@@ -46,7 +46,7 @@ on their own schedule and are not releases.
   K2.7 Code, Qwen 3.8 Flash, Cohere Command R and R+, and Amazon Nova Micro, Lite and Pro. The sync now
   also accepts the feed's `responses` mode, which is how it files the models OpenAI serves only through the
   Responses API; they are billed per token like any chat model. Each arrives flagged for review.
-- **A weekly coverage-gap check** (`watch-coverage-gaps.yml`): it compares the catalogue with Model Price
+- **A weekly coverage-gap check** (`watch-coverage-gaps.yml`): it compares the catalog with Model Price
   Watch's public model list and opens one issue for models the feed carries on their maker's own platform
   that no capture rule takes. Names only are used; prices come from the feed. Deliberate omissions live in
   `data/coverage-ignore.json`.
@@ -236,7 +236,7 @@ catalog it relied on.
   hard-coded to `--save` green and bound only to `pricesLastChanged`, so it
   could not express staleness at all: a dead pipeline and a quiet market looked
   identical, and both looked healthy. It now carries two clauses — how recently
-  the sources were checked, and whether prices moved — with colour driven by
+  the sources were checked, and whether prices moved — with color driven by
   `Catalog.freshness()`: green within a day, `--info` at two days, `--warn`
   past the window `freshness.yml` tolerates or after a degraded run. The
   strongest evidence the project holds was previously only visible to a reader
@@ -254,7 +254,7 @@ catalog it relied on.
   freshness monitor exists to catch.
 - **`--info` on `--info-soft` failed AA in dark, and had been failing for as
   long as `.note` has existed.** 4.32:1 against its own fill. The accent matrix
-  in `contrast.test.ts` never covered it, because the status and money colours
+  in `contrast.test.ts` never covered it, because the status and money colors
   sit outside the accent system on purpose — so the one pairing the stylesheet
   actually uses for `.note b`, and now for the chip's aging state, was the one
   nothing checked. The dark token moves to `#4d93ce` (4.53:1), a change too
@@ -274,7 +274,7 @@ catalog it relied on.
   so their next Tab continues from somewhere they cannot see. `scroll-margin-top`
   keeps the heading clear of the sticky header, whose height changes at two
   breakpoints, rather than JavaScript offset arithmetic. `prefers-reduced-motion`
-  is honoured in the JavaScript, as the guided tour already does, because no CSS
+  is honored in the JavaScript, as the guided tour already does, because no CSS
   rule reaches `scrollIntoView`.
 
 - **The four hero figures are the largest thing in their column.** 1.6rem, then
@@ -283,7 +283,7 @@ catalog it relied on.
 
   A row of chips lived here briefly, naming what the engine models, to level this
   column against the taller aside beside it. That answered the wrong question: a
-  column being shorter than its neighbour is not a problem, and filling it pushed
+  column being shorter than its neighbor is not a problem, and filling it pushed
   the figures back into being one element among several. Removed — the numbers
   carry the space on their own, and the space did not need carrying.
 
@@ -303,7 +303,7 @@ catalog it relied on.
   a link and the reason to pick it.
 
   The clipboard test moved with the command rather than being deleted. It asserts
-  the same behaviour on the panel that now owns it, because "the install command
+  the same behavior on the panel that now owns it, because "the install command
   copy button writes to the clipboard" is still a claim worth holding — it needs
   a real browser, since `clipboard.writeText` requires transient user activation
   and refuses a programmatic click.
@@ -625,7 +625,7 @@ file in git catches one of them.
   frontier cluster — models within a few capability points and a couple of
   dollars of each other — printed straight through itself. Placement now tries
   four positions and drops a label that fits nowhere; it remains in the tooltip
-  and the table, and an unreadable label takes its neighbour down with it.
+  and the table, and an unreadable label takes its neighbor down with it.
 
   A second pass fixed a collision the first could not see: candidates were
   bounded against the svg edge rather than the plot area, so a cheap model's
@@ -703,7 +703,7 @@ file in git catches one of them.
   do not appear on their vendors' own pricing pages at all; Gemini 3 Pro
   Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are missing from the
   pages that carry their siblings. Aggregators have numbers for all of them,
-  which is exactly the source this catalog refuses. Those rows stay labelled
+  which is exactly the source this catalog refuses. Those rows stay labeled
   `litellm`. See [docs/DEFERRED.md](docs/DEFERRED.md).
 
 ### Fixed
@@ -738,7 +738,7 @@ file in git catches one of them.
   `base64-js` from a different package directory. `check-footprint` had proved
   the externals resolved — with `createRequire().resolve`, which is CJS
   resolution, so it found the `.cjs` trio and passed. Nothing threw at any point:
-  `loadEncoder` catches a failed import and falls back to a labelled estimate,
+  `loadEncoder` catches a failed import and falls back to a labeled estimate,
   which is what it is for.
 
   `npm run check:package` is the answer. It asks `vsce ls` what would be
@@ -751,7 +751,7 @@ file in git catches one of them.
   forward search stopped at the next model id; the backward search stopped at the
   previous one, which is the obvious bound and the wrong one, because a cap
   between two model ids sits inside the earlier one's forward window. A call with
-  no cap of its own displayed a ceiling computed from its neighbour's: a real
+  no cap of its own displayed a ceiling computed from its neighbor's: a real
   number, correct arithmetic, describing a request nobody had written. Backwards
   now stops where the previous match's forward search stopped, and the
   configuration case it exists for — a cap written above the model — has a test
@@ -858,12 +858,12 @@ file in git catches one of them.
   stock for sale — false in every particular, since the rate is the vendor's and
   the page links to the vendor's own page to prove it. Removed. It was also the
   strongest signal inviting Google to grade a price reference as a shop, which
-  is how a catalogue that sells nothing came to be sent a Search Console report
+  is how a catalog that sells nothing came to be sent a Search Console report
   asking for a shipping policy and a returns policy.
 
   Four of the five fields those reports asked for stay missing on purpose.
   `aggregateRating` and `review` do not exist because nobody rates a price list,
-  and inventing them is the specific thing Google calls a manual-action offence.
+  and inventing them is the specific thing Google calls a manual-action offense.
   `shippingDetails` and `hasMerchantReturnPolicy` describe a transaction that
   never happens. `image` would mean attaching a photograph of something else to
   an API endpoint. The markup is already valid for what these pages are —
@@ -873,7 +873,7 @@ file in git catches one of them.
   warnings are permanent so the next person to receive one does not "fix" it.
 
 - **The MCP readme's worked example was not the response the server returns.**
-  It was labelled as what an agent receives for `gpt-5` and showed that model as
+  It was labeled as what an agent receives for `gpt-5` and showed that model as
   `source: vendor` with a `verified_url`, while the published catalog had it as
   `litellm` with neither — aspirational when written, and made mostly true only
   by the verification pass above, which is the wrong reason for an example to
@@ -928,7 +928,7 @@ file in git catches one of them.
   Nothing caught it — the result is valid UTF-8 and valid markdown, and Prettier
   obligingly re-padded the tables around the now-wider cells.
 - **The logo sat off-centre.** `assets/logo.png` had 9px of padding on the left
-  and 167 on the right, so `align="center"` centred a canvas whose artwork did
+  and 167 on the right, so `align="center"` centered a canvas whose artwork did
   not fill it. A fixed canvas is a guess about text metrics, and the font lookup
   walks a fallback list, so the error differed per machine. Both the README logo
   and the video's end card are now cropped to what was actually drawn.
@@ -1072,7 +1072,7 @@ Price alerts, in both the forms `0.2.0` described as planned. The Data & Alerts
 view previously carried two cards reading "PLANNED — NOT BUILT YET"; they are
 now working features, and the rule that put those labels there — never render a
 control that cannot do what it appears to offer — is what governs their
-behaviour when a deployment has no API configured.
+behavior when a deployment has no API configured.
 
 This adds a server to a project that did not have one. That is a real change to
 what the site is, so the privacy and security documents were rewritten rather
@@ -1125,7 +1125,7 @@ than appended to.
   an attacker registers an internal URL and the worker POSTs to it, from
   Cloudflare's network, on every price change.
 - Email link tokens are scoped to one purpose each. An unsubscribe link travels
-  through forwards, archives and mail scanners; if it also authorised preference
+  through forwards, archives and mail scanners; if it also authorized preference
   changes, every one of those copies would be a credential.
 - `GET /v1/email/unsubscribe` asks rather than acts, because scanners prefetch
   links. One-click unsubscribe from a mail client is unaffected — RFC 8058 sends
@@ -1205,7 +1205,7 @@ certain than its evidence now says what it actually knows.
 - **The value map was pointer-only.** Every point is a real focusable button with
   Enter/Space handling, and the catalog table can select a model directly.
 - Focus is restored when the command palette closes; the guided tour no longer
-  steals arrow keys from sliders and honours `prefers-reduced-motion` in
+  steals arrow keys from sliders and honors `prefers-reduced-motion` in
   JavaScript as well as CSS; `title`-only help is replaced with real disclosures.
 - CSV export escapes properly and neutralises spreadsheet formulas.
 - The initial commit's author metadata was rewritten to the public noreply

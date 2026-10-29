@@ -10,7 +10,7 @@
  * completely either way, which is what a crawler and a reader with scripts off
  * get.
  *
- * The colours are lifted from `src/styles/tokens.css` so a visitor arriving
+ * The colors are lifted from `src/styles/tokens.css` so a visitor arriving
  * from Google and then clicking into the calculator does not appear to change
  * websites. They are duplicated rather than imported because the app's tokens
  * are compiled into a hashed bundle these pages deliberately do not load.
@@ -131,9 +131,9 @@ caption.cap { text-align: left; padding-bottom: 0.5rem; }
 .cta:hover { opacity: 0.92; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem; margin: 1rem 0 0.25rem; }
 ul.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; }
-/* The price-history chart: plain SVG, coloured from the page's tokens. The
- * output line is dashed as well as a different colour, so the two lines are
- * told apart without relying on colour alone. */
+/* The price-history chart: plain SVG, colored from the page's tokens. The
+ * output line is dashed as well as a different color, so the two lines are
+ * told apart without relying on color alone. */
 td.when { white-space: nowrap; }
 /* Question-and-answer sections: plain headings and paragraphs, nothing to expand. */
 .faq h3 { margin: 1.1rem 0 0.2rem; font-size: 1rem; }
@@ -211,7 +211,7 @@ article :not(pre) > code {
 .store-qr__code img { display: block; width: 132px; height: 132px; background: #fff; border: 1px solid var(--border); border-radius: 10px; }
 @media (max-width: 860px), (hover: none) { .store-qr { display: none; } }
 .credit { color: var(--muted); font-size: 0.78rem; margin-top: 2rem; }
-/* Free-tier pages. The verdict is a word first and a colour second: the label
+/* Free-tier pages. The verdict is a word first and a color second: the label
  * carries the answer, the tint only helps a reader scan the comparison table.
  * Green is reserved for "you can start free", matching the app's rule that
  * green always means money kept. */

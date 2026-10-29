@@ -99,7 +99,7 @@ export class ModelIndex {
     this.pattern = new RegExp(`(?<![A-Za-z0-9._-])(?:${alternatives})(?![A-Za-z0-9._-])`, 'g');
   }
 
-  /** How many distinct written forms this index recognises. */
+  /** How many distinct written forms this index recognizes. */
   get size(): number {
     return this.byWritten.size;
   }

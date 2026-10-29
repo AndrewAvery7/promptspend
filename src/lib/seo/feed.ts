@@ -142,7 +142,7 @@ export function renderFeed(history: PriceHistory, siteUrl: string, limit = 50): 
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>${escapeHtml(`${siteUrl}/feed.xml`)}</id>
   <title>PromptSpend — LLM API price changes</title>
-  <subtitle>New models and price changes, as the daily check publishes them, with corrections labelled apart from real repricing.</subtitle>
+  <subtitle>New models and price changes, as the daily check publishes them, with corrections labeled apart from real repricing.</subtitle>
   <link rel="self" type="application/atom+xml" href="${escapeHtml(`${siteUrl}/feed.xml`)}" />
   <link rel="alternate" type="text/html" href="${escapeHtml(`${siteUrl}/`)}" />
   <updated>${updated}</updated>

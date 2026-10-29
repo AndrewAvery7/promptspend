@@ -80,7 +80,7 @@ export function sessionTokens(w: Workload): SessionTokens {
   };
 }
 
-/** Pricing in force on a given date, honouring promotional windows. */
+/** Pricing in force on a given date, honoring promotional windows. */
 export function effectivePricing(pricing: Pricing, asOf: Date): Pricing {
   const intro = pricing.intro;
   if (!intro) return pricing;

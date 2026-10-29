@@ -359,7 +359,7 @@ describe('the server describes itself accurately', () => {
 
 describe('a promotional rate is the rate', () => {
   // get_price read `pricing.input` while estimate_cost billed through the
-  // engine, which honours promotional windows. So on 2026-08-06 the two tools
+  // engine, which honors promotional windows. So on 2026-08-06 the two tools
   // disagreed about Claude Sonnet 5 on the same day: get_price quoted $3/$15,
   // the September rate, while estimate_cost billed a million tokens at $2 —
   // and get_price stamped its answer "confirmed against the provider's own

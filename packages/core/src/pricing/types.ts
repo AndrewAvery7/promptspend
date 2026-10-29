@@ -60,7 +60,7 @@ export interface Pricing {
   cacheStoragePerMillionTokenHour?: number;
   /** Multiplier applied to both rates when the batch API is used (e.g. 0.5). */
   batchDiscount?: number;
-  /** Promotional pricing that expires — engine honours it up to `until`.
+  /** Promotional pricing that expires — engine honors it up to `until`.
    *  Cache rates move with the promotion where the vendor publishes them. */
   intro?: { input: number; output: number; cachedInput?: number; cacheWrite?: number; until: string };
   /** Rates that replace the base ones for requests above a token threshold. */

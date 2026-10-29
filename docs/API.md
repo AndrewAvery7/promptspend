@@ -101,7 +101,7 @@ There is deliberately **no bundled fallback**. A snapshot baked in at deploy tim
 could be months old, and "here are some prices, they might be from March" is
 worse than an honest 503. What there is instead: a validated edge-cached copy
 retained for a day. If the origin briefly fails, that copy may be served only
-inside the API's 48-hour freshness ceiling and is labelled with
+inside the API's 48-hour freshness ceiling and is labeled with
 `X-PromptSpend-Stale: true`. Beyond that ceiling the API fails honestly with 503. Stale and dated beats absent; stale and undated does not.
 
 Every fetched catalog is run through `validateCatalog` — the same rules the site

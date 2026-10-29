@@ -104,7 +104,7 @@ and four things follow from that:
 Non-price changes — names, context windows, review flags, status — are in the
 changelog but not in this file.
 
-## Licence and citation
+## License and citation
 
 The data (`price-history.csv`) is dedicated to the public domain under
 [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Prices are

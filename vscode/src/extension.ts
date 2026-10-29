@@ -50,7 +50,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   const decoration = vscode.window.createTextEditorDecorationType({
     after: {
-      // `editorCodeLens.foreground` is the theme's own colour for text that
+      // `editorCodeLens.foreground` is the theme's own color for text that
       // annotates code rather than being code. Hard-coding a grey would look
       // wrong in half the themes people use.
       color: new vscode.ThemeColor('editorCodeLens.foreground'),

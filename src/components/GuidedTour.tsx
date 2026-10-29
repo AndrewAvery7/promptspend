@@ -70,7 +70,7 @@ export function GuidedTour({ step, onStep, onFinish }: GuidedTourProps) {
     const target = document.getElementById(current.target);
     if (!target) return;
     target.classList.add('tour-highlight');
-    // `prefers-reduced-motion` has to be honoured in JavaScript too: a CSS rule
+    // `prefers-reduced-motion` has to be honored in JavaScript too: a CSS rule
     // cannot reach a smooth scroll requested from script, and a full-page glide
     // is exactly the motion the setting exists to prevent.
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;

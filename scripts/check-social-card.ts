@@ -15,7 +15,7 @@
  *
  * So this recomputes the card's three chips the way the site computes its own
  * default estimate — same catalog, same default selection, same default
- * scenario, same engine, promotional rates honoured — and fails when the image
+ * scenario, same engine, promotional rates honored — and fails when the image
  * or the `og:image:alt` text has drifted away from them.
  *
  *   npm run check:social-card
@@ -86,7 +86,7 @@ async function main(): Promise<void> {
 
   const problems: string[] = [];
 
-  // The artwork: three ("LABEL", "$n/mo", colour) tuples, in slot order.
+  // The artwork: three ("LABEL", "$n/mo", color) tuples, in slot order.
   const artwork = await readFile(ARTWORK, 'utf8');
   SLOTS.forEach((slot, index) => {
     const drawn = new RegExp(`\\("${slot}",\\s*"([^"]+)"`).exec(artwork)?.[1];

@@ -1,7 +1,7 @@
 # Sponsors: the policy
 
 **Status: policy, no sponsor yet.** On 2026-10-06 the owner decided PromptSpend may
-accept clearly labelled sponsors, and that a sponsor may never appear inside the
+accept clearly labeled sponsors, and that a sponsor may never appear inside the
 price data. The site still says "no ads" until the first sponsor goes live, and
 that line changes in the same release.
 
@@ -14,8 +14,8 @@ rules below exist to keep that true and to make it visible.
    the value map, the calculator's results, the free-tier pages' answers, the
    API, the MCP server, the VS Code extension or the data files. A sponsor can
    never change an order, a price, a flag or a "cheapest" label.
-2. **Always labelled.** Every placement says "Sponsor" in words, not only a
-   colour, and its link carries `rel="sponsored"`.
+2. **Always labeled.** Every placement says "Sponsor" in words, not only a
+   color, and its link carries `rel="sponsored"`.
 3. **One per page, outside the content.** A single slot, below the main content,
    visually separate from it. No pop-ups, no floating banners, no sponsor inside
    an article or a table row.
@@ -33,7 +33,7 @@ rules below exist to keep that true and to make it visible.
 | ---------------------------- | -------------------------------------------------------------------- |
 | Below the content, home page | The most-visited page; below the calculator, never inside it         |
 | Generated-page footer area   | Model, provider and free-tier pages; above the site footer, one slot |
-| The monthly price report     | One labelled line in the article and the email, never in the figures |
+| The monthly price report     | One labeled line in the article and the email, never in the figures  |
 
 Not in: the Receipt, the apps (their store declarations say "no ads"; changing
 that means a store resubmission), the API, the MCP server or the extension.

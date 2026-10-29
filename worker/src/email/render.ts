@@ -183,7 +183,7 @@ ${links.siteUrl}`;
  * Deliberately explicit that this is a single message and not a subscription,
  * because the reader has no other way to tell: an address that also gets price
  * alerts would otherwise see two near-identical confirmation mails and have no
- * idea they authorise different things.
+ * idea they authorize different things.
  */
 export function renderLaunchConfirmation(confirmUrl: string, siteUrl: string): RenderedEmail {
   const body = `<h1 class="ps-ink" style="margin:0 0 14px;font:700 24px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${INK};letter-spacing:-0.02em;">Confirm and you're on the launch list</h1>

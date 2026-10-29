@@ -5,7 +5,7 @@
  *
  * The other tracker is a hint and nothing more. Its prices are never read: a
  * gap is only reported when the feed itself has a first-party row with a real
- * per-token price, so anything that reaches the catalogue still arrives through
+ * per-token price, so anything that reaches the catalog still arrives through
  * the daily sync, flagged for review and checked against the vendor's page like
  * every other row. The check exists because the capture rules are patterns, and
  * a pattern that is too narrow fails silently — on 2026-10-29 one comparison
@@ -43,7 +43,7 @@ export interface Gap {
 
 const RETIRED = /^(retired|deprecated)$/i;
 
-/** One spelling for a model name, whatever the catalogue: lower case, dots and spaces as hyphens. */
+/** One spelling for a model name, whatever the catalog: lower case, dots and spaces as hyphens. */
 export function nameKey(name: string): string {
   return name
     .toLowerCase()
@@ -71,7 +71,7 @@ export function keyNames(key: string): Set<string> {
  * Whose platform each feed row is sold on, learned from the rows the capture
  * rules already take: `gpt-5` is sold on `openai`, `dashscope/qwen3.8-max` on
  * `dashscope`, `amazon.nova-2-pro` on `bedrock_converse`. A row counts as a
- * vendor's own only when its platform is one the catalogue already trusts for
+ * vendor's own only when its platform is one the catalog already trusts for
  * that vendor AND the other list names the same vendor — so Amazon's Bedrock
  * copy of Claude, or Alibaba hosting DeepSeek, is somebody's copy, not a gap.
  */
@@ -126,7 +126,7 @@ export function findCoverageGaps(args: {
   const vendorName = new Map(allowlist.providers.map((p) => [p.id, p.name]));
   const ignored = ignore.map((rule) => new RegExp(rule.feedKey));
 
-  // Every priced, uncaptured row on a platform the catalogue trusts, indexed by its name.
+  // Every priced, uncaptured row on a platform the catalog trusts, indexed by its name.
   const candidates = new Map<string, { key: string; input: number; output: number; vendor: string }[]>();
   for (const [key, value] of Object.entries(feed)) {
     const owner = owners.get(platformOf(value) ?? '');
@@ -177,7 +177,7 @@ export function renderGapReport(gaps: readonly Gap[], date: string, hintSource: 
       `${gaps.length === 1 ? 'its' : 'their'} maker's own key ${gaps.length === 1 ? 'is' : 'are'} not ` +
       `captured by any rule in \`data/models-allowlist.json\` (checked ${date}).`,
     '',
-    `Found by comparing the catalogue with the model list at ${hintSource}. Only the names were used; ` +
+    `Found by comparing the catalog with the model list at ${hintSource}. Only the names were used; ` +
       'the prices below are the feed’s own, and nothing has been added.',
     '',
     '| Feed key | Feed price (in / out per 1M) | Listed elsewhere as |',

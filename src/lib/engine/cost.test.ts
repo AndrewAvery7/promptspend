@@ -100,7 +100,7 @@ describe('conversationCost', () => {
   });
 
   it('invents no discount when a provider publishes no cached rate', () => {
-    // The old behaviour assumed 90% off, which is a real industry norm and an
+    // The old behavior assumed 90% off, which is a real industry norm and an
     // entirely made-up number for any specific model. Charging full price and
     // saying so is the only defensible option.
     const cost = conversationCost(CHEAP, WORKLOAD, { cachedInputShare: 0.5 });

@@ -16,7 +16,7 @@ export class HttpError extends Error {
 }
 
 export const badRequest = (message: string, detail?: string) => new HttpError(400, message, detail);
-export const unauthorized = (detail?: string) => new HttpError(401, 'Not authorised.', detail);
+export const unauthorized = (detail?: string) => new HttpError(401, 'Not authorized.', detail);
 export const notFound = () => new HttpError(404, 'Not found.');
 export const tooManyRequests = () =>
   new HttpError(429, 'Too many requests from this address. Try again in a few minutes.');

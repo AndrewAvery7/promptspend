@@ -36,7 +36,7 @@ export function StoreBadges() {
  * Hidden by CSS wherever the page is probably already on a phone — a narrow
  * viewport or no hovering pointer — because a code you are holding cannot be
  * scanned. The Android robot's attribution travels with it, as Google's
- * licence requires.
+ * license requires.
  */
 export function StoreQrCodes({ credit = true }: { credit?: boolean }) {
   return (

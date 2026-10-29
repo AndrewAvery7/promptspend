@@ -12,7 +12,7 @@
  *   2. **An external that is not in the package.** The inverse mistake: marked
  *      external, then excluded by `.vscodeignore`, so `require` throws at the
  *      moment someone runs the estimate command. The site's loader catches that
- *      and falls back to a labelled estimate, which means the failure is not an
+ *      and falls back to a labeled estimate, which means the failure is not an
  *      error anyone sees — exact counting just stops happening. Resolving each
  *      specifier here is what turns that into a red build.
  */

@@ -1,5 +1,5 @@
 {
-  "$comment": "First-party models the price feed carries that the catalogue leaves out on purpose, so the weekly coverage-gap check (scripts/watch-coverage-gaps.ts) stops naming them. Each entry is a regular expression over the feed's own keys and the reason. Add one only for a decision, never to quiet the issue: a model that should be captured belongs in data/models-allowlist.json instead.",
+  "$comment": "First-party models the price feed carries that the catalog leaves out on purpose, so the weekly coverage-gap check (scripts/watch-coverage-gaps.ts) stops naming them. Each entry is a regular expression over the feed's own keys and the reason. Add one only for a decision, never to quiet the issue: a model that should be captured belongs in data/models-allowlist.json instead.",
   "items": [
     {
       "feedKey": "^zai/glm-4\\.\\d+v$",
@@ -23,7 +23,7 @@
     },
     {
       "feedKey": "^dashscope/qwen-(plus|max|flash|turbo)$",
-      "reason": "Floating aliases that point at whichever Qwen tier is newest; the catalogue tracks the versioned models instead."
+      "reason": "Floating aliases that point at whichever Qwen tier is newest; the catalog tracks the versioned models instead."
     }
   ]
 }

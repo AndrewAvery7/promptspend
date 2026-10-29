@@ -67,7 +67,7 @@ describe('Rate', () => {
     expect(container.querySelector('.rate-promo')).toBeNull();
   });
 
-  it('honours the whole of the last promotional day, exactly as the engine does', () => {
+  it('honors the whole of the last promotional day, exactly as the engine does', () => {
     // Off by a day here would show a standard rate while the engine was still
     // charging the promotional one — two numbers on one page for one model.
     const lastMoment = new Date('2026-12-31T23:59:59.999Z');

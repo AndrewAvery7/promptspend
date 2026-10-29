@@ -80,7 +80,7 @@ describe('pasted fields', () => {
     expect(encoded).toMatch(/px=system%2Cuser/);
   });
 
-  it('ignores field names it does not recognise', () => {
+  it('ignores field names it does not recognize', () => {
     expect(decodeScenario('?px=system,../etc/passwd,user').pastedFields).toEqual(['system', 'user']);
     expect(decodeScenario('?px=').pastedFields).toEqual([]);
   });

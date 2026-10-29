@@ -395,7 +395,7 @@ ${siteFooter(ctx, input)}
  * element and cannot be hand-copied wrong. It is complete without scripts;
  * `src/chrome/site-header.tsx` replaces it with the live component, which is what
  * makes search, the appearance picker and the theme switch work. Its views are
- * links into the calculator, which honours `/#compare` and the others.
+ * links into the calculator, which honors `/#compare` and the others.
  *
  * The wrapper is `display: contents` (see `css.ts`) so the header still sticks
  * to the top of the window: a sticky box only sticks inside its parent.
@@ -972,7 +972,7 @@ ${rateRows(model, effective)}
         </div>
 
         <h2>What that means in practice</h2>
-        <p class="muted">The same three workloads are costed on every model page, so these numbers are directly comparable across the catalog. No prompt caching and no batch discount is assumed — the figures are what you pay before you optimise anything.</p>
+        <p class="muted">The same three workloads are costed on every model page, so these numbers are directly comparable across the catalog. No prompt caching and no batch discount is assumed — the figures are what you pay before you optimize anything.</p>
         <div class="grid">
 ${examples}
         </div>
@@ -1059,7 +1059,7 @@ ${faqSection(faqs)}      </main>`;
  * false in every particular. Nobody buys tokens here; the rate belongs to the
  * vendor and the page links to their page to prove it. It was also the loudest
  * signal telling Google to grade these as merchant listings, which is how a
- * catalogue that sells nothing came to be asked for a shipping policy.
+ * catalog that sells nothing came to be asked for a shipping policy.
  */
 function offer(name: string, dollarsPerMillion: number, ctx: RenderContext, page: ModelPage): unknown {
   return {
@@ -1793,7 +1793,7 @@ export function renderDataPage(input: DataPageInput, ctx: RenderContext): string
         <p>
           ${file('/data/pricing.json', 'pricing.json')} holds ${input.models} models from ${input.providers} providers.
           Every price carries the vendor page it came from and the date it was last confirmed, and the file is
-          rebuilt every morning. Licence: MIT. Use it in anything, including commercially; a link back is
+          rebuilt every morning. License: MIT. Use it in anything, including commercially; a link back is
           appreciated and not required. Notes on reading a price correctly are in ${file('/llms.txt', 'llms.txt')}.
         </p>
 
@@ -1802,20 +1802,20 @@ export function renderDataPage(input: DataPageInput, ctx: RenderContext): string
           ${file('/data/price-history.csv', 'price-history.csv')} and ${file('/data/price-history.json', 'price-history.json')}
           list every rate PromptSpend has published: one row for each rate that appeared, moved, was restated or went
           away, from ${escapeHtml(history.firstDate)} onward (${history.rows} rows so far). Every row names the commit that published it.
-          Licence: public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>).
+          License: public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>).
           An archived copy is on Zenodo, <a href="https://doi.org/${PRICE_HISTORY_DOI}">doi:${PRICE_HISTORY_DOI}</a>.
         </p>
 
         <h2>Free-tier facts</h2>
         <p>
           ${file('/data/free-tiers.json', 'free-tiers.json')} records what each tracked provider says about free use,
-          with a link and the date it was read on every fact. Licence: MIT, like the rest of the repository.
+          with a link and the date it was read on every fact. License: MIT, like the rest of the repository.
         </p>
 
         <h2>Price changes as a feed</h2>
         <p>
           New models, price changes and corrections, one entry a day, in ${file('/feed.xml', 'the Atom feed')}.
-          Corrections (PromptSpend misread a page) are labelled apart from repricing (the vendor changed a rate).
+          Corrections (PromptSpend misread a page) are labeled apart from repricing (the vendor changed a rate).
         </p>
 
         <h2>The pricing API</h2>
@@ -1857,7 +1857,7 @@ export function renderDataPage(input: DataPageInput, ctx: RenderContext): string
   });
 
   const description =
-    'Download PromptSpend’s LLM price catalog, its price history and its free-tier facts as plain files, with the licence for each and no key or sign-up.';
+    'Download PromptSpend’s LLM price catalog, its price history and its free-tier facts as plain files, with the license for each and no key or sign-up.';
   return layout(ctx, {
     path: DATA_PAGE_PATH,
     title: 'Open data: LLM API prices, price history and free tiers',
@@ -2017,7 +2017,7 @@ export function renderAppPage(ctx: RenderContext): string {
           </ul>
 
           <h2>Private by design</h2>
-          <p>Text you paste is processed on your phone and is not uploaded or saved by PromptSpend. There is no account, advertising SDK, behavioural analytics or cross-app tracking, and the random installation code the update check carries is not read, logged or stored. The details are in the <a href="${escapeHtml(href(ctx, '/privacy/'))}">privacy policy</a>.</p>
+          <p>Text you paste is processed on your phone and is not uploaded or saved by PromptSpend. There is no account, advertising SDK, behavioral analytics or cross-app tracking, and the random installation code the update check carries is not read, logged or stored. The details are in the <a href="${escapeHtml(href(ctx, '/privacy/'))}">privacy policy</a>.</p>
 
           <h2>Rather use the browser?</h2>
           <p>Nothing to install: <a href="${escapeHtml(href(ctx, '/'))}">the PromptSpend calculator</a> runs the same estimates in any browser.</p>

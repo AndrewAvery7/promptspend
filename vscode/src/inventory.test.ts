@@ -93,7 +93,7 @@ describe('languageIdForPath', () => {
     expect(languageIdForPath('config.YAML')).toBe('yaml');
   });
 
-  it('recognises dotenv files, which have no extension in the usual sense', () => {
+  it('recognizes dotenv files, which have no extension in the usual sense', () => {
     expect(languageIdForPath('.env')).toBe('dotenv');
     expect(languageIdForPath('deploy/.env.production')).toBe('dotenv');
   });

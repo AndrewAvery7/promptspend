@@ -1,6 +1,6 @@
 /**
  * The weekly check behind data/later-additions.json: has the automated price
- * feed started carrying something the catalogue is waiting for?
+ * feed started carrying something the catalog is waiting for?
  *
  * Pure so it can be tested against fixtures. scripts/watch-later-additions.ts
  * owns the network call and the report.
@@ -12,7 +12,7 @@
  *   (`tencent/glm-5.3-flashx`, `novita/stepfun/...`) never counts.
  *
  *   It stops listing anything already published. Once a model reaches the
- *   catalogue the watcher has done its job, and a report that kept naming it
+ *   catalog the watcher has done its job, and a report that kept naming it
  *   would be one nobody reads.
  */
 import { slugify } from './normalize';
@@ -73,7 +73,7 @@ export function findAvailable(
 /** The body of the issue: what appeared, what the feed says, where to verify. */
 export function renderReport(found: readonly Available[], date: string): string {
   const lines = [
-    `The price feed now carries ${found.length === 1 ? 'something' : `${found.length} things`} the catalogue has been waiting for (checked ${date}).`,
+    `The price feed now carries ${found.length === 1 ? 'something' : `${found.length} things`} the catalog has been waiting for (checked ${date}).`,
     '',
     'Nothing has been added. Each one still needs its price read from the vendor page, and the notes below say what else it needs.',
     '',

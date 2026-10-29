@@ -145,7 +145,7 @@ describe('a cap belongs to exactly one call', () => {
 
 describe('two calls in one file', () => {
   it('does not let the second call lend its cap to the first', () => {
-    // Without the neighbour bound this was the failure: the first call has no
+    // Without the neighbor bound this was the failure: the first call has no
     // cap of its own, and the forward search would happily walk into the
     // second call's and price it with confidence.
     const source = `

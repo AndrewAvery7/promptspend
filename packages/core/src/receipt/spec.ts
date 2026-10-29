@@ -65,7 +65,7 @@ RETURN
 - Assumptions + exclusions
 
 SHARE BLOCK
-- After the human-readable audit, return this exact JSON shape in a fenced block labelled promptspend-receipt.
+- After the human-readable audit, return this exact JSON shape in a fenced block labeled promptspend-receipt.
 - Use short display strings. Preserve ranges, estimates, unknown states, and caveats; do not turn them into false precision.
 - Include only facts already supported in the audit.
 

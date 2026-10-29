@@ -14,7 +14,7 @@ post-build step adds it to the sitemap and `llms.txt`.
 
 Four more files are written by the same step and are not counted in the arithmetic either, because they are
 not catalog pages: `/writing/` (a list of every article), `/data/` (what the open data files are, their
-licences and the archived DOI), `404.html` (what GitHub Pages serves for an address that does not exist;
+licenses and the archived DOI), `404.html` (what GitHub Pages serves for an address that does not exist;
 `noindex`, with links to the main sections) and the favicon files. `sitemap.xml` is an index over one file
 per kind of page (`sitemap-models.xml`, `-providers.xml`, `-compare.xml`, `-free-tiers.xml`, `-writing.xml`
 and `-site.xml`), so Search Console reports each kind's coverage separately. `check:seo` also fails the build
@@ -53,7 +53,7 @@ of the sitemap and out of the counts above. There are none today.
 ## The rule these pages live or die by
 
 **Every page must contain something no other page contains.** Mass-produced
-pages that differ only in a name are doorway pages, they are recognised as such,
+pages that differ only in a name are doorway pages, they are recognized as such,
 and they drag down the pages around them.
 
 So each carries its own rate card, its own three monthly bills, its own position
@@ -224,7 +224,7 @@ fails if it is missing, because without it every submission is refused and the
 only sign is a 403 in a job nobody reads.
 
 A rejected submission is a warning, never a failed build. IndexNow is an
-optimisation on top of ordinary crawling, and it must not be able to turn a
+optimization on top of ordinary crawling, and it must not be able to turn a
 perfectly good pricing update into a red deploy.
 
 ---
@@ -237,13 +237,13 @@ Read this before acting on one.
 
 **Product snippets — missing `aggregateRating`, missing `review`.** These pages
 carry `name` and `offers`, which is valid: Google requires only `name` plus one
-of `review`, `aggregateRating` or `offers`. The warning is documented behaviour
+of `review`, `aggregateRating` or `offers`. The warning is documented behavior
 for supplying `offers` alone — its own reference says the test "may report a
 warning if you provide `offers` without `review` or `aggregateRating`".
 
 There are no reviews and no ratings, because nobody reviews or rates a price
 list. Inventing them is not a shortcut, it is the one thing Google names a
-manual-action offence: _"reviews or ratings not by actual users may result in
+manual-action offense: _"reviews or ratings not by actual users may result in
 manual action"_, alongside _"don't mark up irrelevant or misleading content,
 such as fake reviews"_. **These two warnings are permanent. Leave them.**
 

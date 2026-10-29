@@ -185,7 +185,7 @@ body.tour-active .main {
 }
 /* The split. Two segments in one track; the feed segment is the accent
  * mixed toward the surface so it reads as "the same thing, less settled"
- * in both themes rather than as a second colour. */
+ * in both themes rather than as a second color. */
 .prov__bar {
   display: flex;
   height: 16px;
@@ -390,7 +390,7 @@ body.tour-active .main {
   content: '';
   position: absolute;
   left: 0;
-  /* Aligned to the first line's optical centre rather than its box, so the
+  /* Aligned to the first line's optical center rather than its box, so the
      marker does not ride high beside a bullet that wraps to two lines. */
   top: 0.56em;
   width: 5px;
@@ -630,11 +630,11 @@ body.tour-active .main {
    continuation of it. `margin-left: auto` rather than `justify-content` because
    the title is the only other child and must stay left. When the head wraps at
    a narrow width the chip drops to its own line and still sits right, which is
-   the behaviour that would otherwise need a media query. */
+   the behavior that would otherwise need a media query. */
 .panel__title .sync-chip {
   margin-left: auto;
 }
-/* The chip carries two clauses and one state. Colour is the state — how recently
+/* The chip carries two clauses and one state. Color is the state — how recently
    the sources were checked — and it is deliberately NOT decorative: green here
    means a live pipeline, so it has to be able to stop being green. The default
    below is the healthy case; the modifiers are the other three. */
@@ -798,7 +798,7 @@ body.tour-active .main {
 /* The marker beside a figure that is a promotional rate (see PromoRate.tsx).
    Same warn tokens as the INTRO badge so the two read as one fact; the tokens
    are re-declared for the dark theme, so unlike .badge--cheapest there is no
-   hard-coded colour here to override. Sized in em so it follows the figure it
+   hard-coded color here to override. Sized in em so it follows the figure it
    sits beside, from a ticker line to a table cell. */
 .rate-promo {
   /* Positioned so the visually-hidden text inside is contained by the
@@ -1785,7 +1785,7 @@ table.catalog tbody tr:hover {
 }
 /* The "are you sure" step before unsubscribing.
    Amber, not money-red: red in this app means "this costs more", and a
-   destructive-action colour that also means a number is a colour doing two
+   destructive-action color that also means a number is a color doing two
    jobs. The wording carries the warning; the fill only has to catch the eye. */
 .alerts-confirm {
   margin: 14px 0 4px;
@@ -1801,7 +1801,7 @@ table.catalog tbody tr:hover {
 .alerts-confirm .alerts-actions {
   margin-top: 12px;
 }
-/* --surface as the label colour flips with the theme, so the text stays
+/* --surface as the label color flips with the theme, so the text stays
    readable on both the dark amber (light mode) and the bright amber (dark). */
 .button--danger {
   background: var(--warn);
@@ -2038,7 +2038,7 @@ table.catalog tbody tr:hover {
   flex: none;
   border-radius: 2px;
   /* Kept subtle. It is a wayfinding cue next to the code, not information in
-   * its own right — nothing depends on recognising it. */
+   * its own right — nothing depends on recognizing it. */
   opacity: 0.92;
 }
 .country-tag {
@@ -2174,7 +2174,7 @@ table.catalog tbody tr:hover {
   margin: 14px 0 6px;
 }
 /* `margin-left: auto` rather than `justify-content: space-between`, because the
-   country chips beside it are conditional — a catalogue with one country
+   country chips beside it are conditional — a catalog with one country
    renders none. Space-between would then send the lone checkbox to the left
    edge; auto keeps it right whatever it is sharing the row with, and keeps it
    right again once the row wraps on a narrow screen. */

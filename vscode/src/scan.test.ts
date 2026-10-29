@@ -125,7 +125,7 @@ describe('index', () => {
     }
   });
 
-  it('recognises more written forms than there are models', () => {
+  it('recognizes more written forms than there are models', () => {
     // The stripped forms are the difference. If this ever equals the model
     // count, prefix stripping has silently stopped happening.
     expect(index.size).toBeGreaterThan(catalog.models.length);

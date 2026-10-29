@@ -65,7 +65,7 @@ jobs:
       # It never writes a price, and it never fails the morning — a page that
       # cannot be read leaves its rows as they were, and the 30-day rule in
       # merge.ts is still the backstop. Skipped, not failed, when no reader key
-      # is present, so a missing secret degrades to the old behaviour rather
+      # is present, so a missing secret degrades to the old behavior rather
       # than stopping the catalog.
       #
       # The reader is DeepSeek when its key is set (a transcription job, done
@@ -107,11 +107,11 @@ jobs:
       # A model arriving or leaving changes how many pages the build emits, and
       # that count is written into prose in three files. They were maintained by
       # hand, so the morning `moonshot-kimi-k3` appeared — 2026-08-22 — the sync
-      # published a correct catalogue and then failed its own deploy on
+      # published a correct catalog and then failed its own deploy on
       # `check:pages`, describing 161 pages while building 162.
       #
       # Before validation, so a run that cannot publish does not leave the
-      # documentation rewritten for a catalogue nobody will see.
+      # documentation rewritten for a catalog nobody will see.
       #
       # The same step records the day's pages in data/published-pages.json: a
       # new page or a page whose rates moved gets today's date as its sitemap

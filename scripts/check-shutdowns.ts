@@ -2,12 +2,12 @@
  * Daily shut-down check.
  *
  *   read each vendor's deprecation page -> find exact shutdown dates -> match
- *   them to the published catalogue -> write public/data/shutdown-check.json
+ *   them to the published catalog -> write public/data/shutdown-check.json
  *
  * Run by .github/workflows/sync-pricing.yml before the sync, which raises a
  * review flag on any still-live model whose shutdown date has passed. Needs no
  * keys: the pages are plain markdown or HTML tables. It never edits the
- * catalogue and never fails the morning; an unreadable page is recorded as
+ * catalog and never fails the morning; an unreadable page is recorded as
  * unread. See scripts/lib/shutdowns.ts.
  *
  *   npm run check:shutdowns              # read, match, write the report

@@ -8,7 +8,7 @@
  * **This is the output ceiling, not the request ceiling.** The input side is
  * whatever the caller sends — unknown at this point in the file, and frequently
  * the larger half once conversation history is included. Every string this
- * module produces says "max output" rather than "max", because a number labelled
+ * module produces says "max output" rather than "max", because a number labeled
  * as the whole cost when it is half of it is exactly the error this project
  * exists to correct.
  */
@@ -51,7 +51,7 @@ function forwardEnd(text: string, match: ModelMatch, next: ModelMatch | undefine
 /**
  * The cap governing one model match, if there is one.
  *
- * Neither direction may reach a cap that belongs to a neighbour, and the two
+ * Neither direction may reach a cap that belongs to a neighbor, and the two
  * directions need different guards for that.
  *
  * **Forwards** stops at the next model id. Without it, a call with no cap of its

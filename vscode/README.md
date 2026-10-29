@@ -97,7 +97,7 @@ Nothing about your code or prompts is sent anywhere. The extension makes exactly
 one network request — a `GET` for the public pricing catalog — and reads your
 files only in memory to find model ids. No telemetry, no account, no prompt text leaves your machine.
 Token counting runs locally, using the model's own tokenizer where one can be
-run and a clearly labelled ratio where it cannot.
+run and a clearly labeled ratio where it cannot.
 
 The workspace sweep opens the configured source-file types, including `.env`
 files when `dotenv` is enabled. Their contents are scanned in memory only for
@@ -145,7 +145,7 @@ model ids; they are never transmitted, logged, or stored. VS Code's
 - [promptspend.dev](https://promptspend.dev) — a keyless JSON API over the catalog
 - PromptSpend for [iPhone and iPad](https://apps.apple.com/app/id6800386428) and [Android](https://play.google.com/store/apps/details?id=com.promptspend.app) — the same catalog in free native apps
 
-## Licence
+## License
 
 MIT — see
 [LICENSE](https://github.com/AndrewAvery7/promptspend/blob/main/LICENSE).

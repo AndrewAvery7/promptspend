@@ -4,7 +4,7 @@
  * It answers two questions that a single date cannot, and that a reader
  * deciding whether to trust these numbers asks in this order:
  *
- *   1. Is anybody still checking?   ← the colour, from the health manifest
+ *   1. Is anybody still checking?   ← the color, from the health manifest
  *   2. Have the prices moved?       ← the text, from the catalog
  *
  * Before this, the chip answered only the second, and answered it in green
@@ -30,7 +30,7 @@ export function shortDate(iso: string): string {
 
 export interface SyncChipContent {
   level: Freshness['level'];
-  /** The freshness clause — what the colour is about. */
+  /** The freshness clause — what the color is about. */
   checked: string;
   /** The price clause. Always present: "no change" is a real answer. */
   prices: string;

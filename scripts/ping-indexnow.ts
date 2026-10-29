@@ -148,7 +148,7 @@ async function main(): Promise<void> {
 
   const result = await submitUrls(host, urls);
   if (result.status >= 400) {
-    // A warning, not a failure. IndexNow is an optimisation on top of ordinary
+    // A warning, not a failure. IndexNow is an optimization on top of ordinary
     // crawling — failing the build over it would mean a rejected submission
     // blocked a deploy that was otherwise perfect.
     console.log(`::warning::IndexNow returned HTTP ${result.status}: ${result.body}`);

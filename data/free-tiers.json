@@ -655,10 +655,10 @@
     },
     "openai": {
       "verdict": "none",
-      "answer": "No general free tier. The OpenAI API is prepaid with a $5 minimum; the free exceptions are the moderation model and an opt-in scheme that gives some eligible organisations daily tokens in exchange for their data.",
+      "answer": "No general free tier. The OpenAI API is prepaid with a $5 minimum; the free exceptions are the moderation model and an opt-in scheme that gives some eligible organizations daily tokens in exchange for their data.",
       "card": "yes",
       "training": "no",
-      "whatsFree": "The moderation model; daily tokens only for eligible organisations that opt in to sharing their data",
+      "whatsFree": "The moderation model; daily tokens only for eligible organizations that opt in to sharing their data",
       "updated": "2026-10-05",
       "basis": {
         "verdict": ["openai-prepaid", "openai-minimum"],
@@ -712,7 +712,7 @@
         {
           "id": "openai-data-sharing",
           "topic": "credits",
-          "statement": "Some organisations that opt in to share their API traffic with OpenAI qualify for complimentary daily tokens, but they still need a positive balance.",
+          "statement": "Some organizations that opt in to share their API traffic with OpenAI qualify for complimentary daily tokens, but they still need a positive balance.",
           "quote": "Some organizations may qualify for daily complimentary tokens on traffic shared with OpenAI. … You need a positive account balance to use OpenAI models and the free tokens.",
           "url": "https://help.openai.com/en/articles/10306912-sharing-feedback-evaluation-and-fine-tuning-data-and-api-inputs-and-outputs-with-openai",
           "readOn": "2026-10-05"
@@ -747,12 +747,12 @@
       ],
       "unpublished": [
         "Who receives the 'free credits' the billing article mentions, how much, and for how long.",
-        "Whether usage in the 'Free' rate-limit tier costs nothing, or is simply the tier before an organisation has paid."
+        "Whether usage in the 'Free' rate-limit tier costs nothing, or is simply the tier before an organization has paid."
       ]
     },
     "anthropic": {
       "verdict": "unclear",
-      "answer": "Anthropic's own pages disagree. Its pricing page says new users get a small amount of free credit; its help centre says you must buy credits before using the API.",
+      "answer": "Anthropic's own pages disagree. Its pricing page says new users get a small amount of free credit; its help center says you must buy credits before using the API.",
       "card": "yes",
       "training": "no",
       "whatsFree": "Possibly a small trial credit; no ongoing free tier",
@@ -776,7 +776,7 @@
         {
           "id": "anthropic-buy-first",
           "topic": "credits",
-          "statement": "The help centre's getting-started article says to add credits and enter payment details before using the API, and mentions no free grant.",
+          "statement": "The help center's getting-started article says to add credits and enter payment details before using the API, and mentions no free grant.",
           "quote": "To use the Claude API and the playground, add usage credits to your organization's balance. … Then, you'll enter your payment details and fund your account.",
           "url": "https://support.claude.com/en/articles/8114531-i-created-a-claude-console-organization-how-do-i-start-using-the-claude-api",
           "readOn": "2026-10-05",
@@ -793,7 +793,7 @@
         {
           "id": "anthropic-evaluation",
           "topic": "limits",
-          "statement": "New organisations may start in an Evaluation tier with lower limits than the published ones. That tier sets limits, not free usage.",
+          "statement": "New organizations may start in an Evaluation tier with lower limits than the published ones. That tier sets limits, not free usage.",
           "quote": "New organizations and organizations with limited usage history may start in the Evaluation tier, with limits below the standard limits shown on this page while account history is established.",
           "url": "https://platform.claude.com/docs/en/api/rate-limits",
           "readUrl": "https://platform.claude.com/docs/en/api/rate-limits.md",
@@ -810,7 +810,7 @@
         {
           "id": "anthropic-tiers",
           "topic": "upgrade",
-          "statement": "Organisations move up tiers automatically as their usage history builds.",
+          "statement": "Organizations move up tiers automatically as their usage history builds.",
           "quote": "Organizations are placed on a tier automatically based on usage history and account standing and can move to a higher tier over time as they use the API.",
           "url": "https://platform.claude.com/docs/en/api/rate-limits",
           "readUrl": "https://platform.claude.com/docs/en/api/rate-limits.md",

@@ -372,7 +372,7 @@ describe('sharing a pasted prompt', () => {
     await user.type(textarea, 'You are a helpful assistant.');
 
     await waitFor(() => {
-      // The old behaviour left sys=800 in the URL while the screen showed ~8
+      // The old behavior left sys=800 in the URL while the screen showed ~8
       // tokens, then told the user the link restored every input.
       expect(window.location.search).not.toMatch(/sys=800/);
       expect(window.location.search).toMatch(/px=system/);

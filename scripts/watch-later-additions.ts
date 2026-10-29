@@ -1,11 +1,11 @@
 /**
- * Weekly watch on the models and labs the catalogue is waiting for.
+ * Weekly watch on the models and labs the catalog is waiting for.
  *
  *   fetch the price feed -> match data/later-additions.json -> drop what is
  *   already published -> write a report and tell the workflow whether to open,
  *   refresh or close the issue
  *
- * Read-only: it never touches the catalogue. The reason it exists is that the
+ * Read-only: it never touches the catalog. The reason it exists is that the
  * rule "wait for the feed rather than hand-add a price nothing can correct" is
  * only a policy if something notices the day the wait is over.
  *
@@ -31,10 +31,10 @@ async function main(): Promise<void> {
   const watch = JSON.parse(await readFile(resolve(ROOT, 'data/later-additions.json'), 'utf8')) as {
     items: WatchItem[];
   };
-  const catalogue = JSON.parse(await readFile(resolve(ROOT, 'public/data/pricing.json'), 'utf8')) as {
+  const catalog = JSON.parse(await readFile(resolve(ROOT, 'public/data/pricing.json'), 'utf8')) as {
     models: { id: string }[];
   };
-  const publishedIds = new Set(catalogue.models.map((model) => model.id));
+  const publishedIds = new Set(catalog.models.map((model) => model.id));
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);

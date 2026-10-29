@@ -24,7 +24,7 @@ describe('PricingService', () => {
   });
 
   it('returns no matches at all when the catalog is unavailable', async () => {
-    // The load-bearing behaviour: an unreachable catalog must produce silence,
+    // The load-bearing behavior: an unreachable catalog must produce silence,
     // not a guess. There is no bundled copy to fall back to by design.
     const { service } = serviceWith(vi.fn(async () => Promise.reject(new Error('offline'))));
     const outcome = await service.scan('model="claude-sonnet-5"', {}, 0);

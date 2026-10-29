@@ -94,7 +94,7 @@ describe('describing a change', () => {
   });
 });
 
-describe('summarising a set', () => {
+describe('summarizing a set', () => {
   it('uses the single change verbatim when there is only one', () => {
     expect(summariseChangeSet(set([priceChange()]))).toBe(describeChange(priceChange()));
   });

@@ -63,7 +63,7 @@ ${writing
   .map((page) => `- [${markdownLabel(page.heading)}](${siteUrl}${page.path}): ${page.description}`)
   .join('\n')}
 - [Price changes as an Atom feed](${siteUrl}/feed.xml): new models, price changes and corrections, one entry a day
-- [Open data](${siteUrl}/data/): the catalog (MIT), the price history (CC0) and the free-tier facts, with licences and an archived DOI
+- [Open data](${siteUrl}/data/): the catalog (MIT), the price history (CC0) and the free-tier facts, with licenses and an archived DOI
 `
       : '';
   const freeTierSection = freeTiers
@@ -180,7 +180,7 @@ ${freeTierSection}${writingSection}
 - \`provenance.needsReview\` marks a row where two independent sources disagreed
   and no human has adjudicated. **Do not present those as settled.**
 
-## Licence
+## License
 
 MIT. Use the data in anything, including commercially. Attribution is
 appreciated and not required; a link to ${siteUrl} helps.

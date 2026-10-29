@@ -30,7 +30,7 @@ permissions:
 # to clear the block, every retry of the same commit failed instantly. The site
 # served a two-day-old catalog through all of it.
 #
-# Queued runs still collapse to the newest, which is the behaviour worth having:
+# Queued runs still collapse to the newest, which is the behavior worth having:
 # skip the middle, never interrupt the one in flight.
 concurrency:
   group: pages

@@ -31,7 +31,7 @@ Account details. They were already correct, so they were not touched.
 4096 × 2304, opaque PNG, about 190 KB. Google's limits are 1 MB, JPEG or 24-bit
 PNG, no transparency.
 
-- Navy field `#0B1F3A`. This is the brand's primary colour; the brand guide
+- Navy field `#0B1F3A`. This is the brand's primary color; the brand guide
   pairs it with the reversed (white) logo.
 - The white horizontal Crestwood logo, with its sub-line retypeset as
   `HOLDINGS MANAGEMENT LLC` in Inter Bold. Store pages use the full legal name.

@@ -116,7 +116,7 @@ async function callTool(params: unknown, env: Env, ctx: ExecutionContext) {
     };
   }
 
-  // Same rule as the npm server: a copy past its window is labelled, never passed off as current.
+  // Same rule as the npm server: a copy past its window is labeled, never passed off as current.
   const ageHours = (Date.now() - Date.parse(generatedAt)) / 3.6e6;
   if ((read.stale || ageHours > 48) && typeof result === 'object' && result !== null) {
     result = {

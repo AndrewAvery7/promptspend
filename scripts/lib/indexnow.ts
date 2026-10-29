@@ -18,7 +18,7 @@
  *
  * **Public by design.** The whole verification model is that this value is
  * readable at https://promptspend.com/<key>.txt — it proves control of the host
- * and authorises nothing else. Committing it is correct; hiding it in a secret
+ * and authorizes nothing else. Committing it is correct; hiding it in a secret
  * would only mean the key file and the submissions could drift apart.
  */
 export const INDEXNOW_KEY = '14a148f330e156c29b9b75cdaf341a0e';

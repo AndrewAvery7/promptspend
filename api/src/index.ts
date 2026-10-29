@@ -46,7 +46,7 @@ function robotsTxt(origin: string): string {
   return `# PromptSpend developer hub.
 #
 # Public, MIT-licensed pricing data that exists to be used. Crawl it, retrieve
-# it, ground on it, train on it — the licence already permits all four, and this
+# it, ground on it, train on it — the license already permits all four, and this
 # file says so rather than leaving a crawler to infer it.
 #
 # Machine-readable index of what is here: ${origin}/llms.txt

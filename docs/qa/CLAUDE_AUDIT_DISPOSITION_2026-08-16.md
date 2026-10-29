@@ -67,7 +67,7 @@ symptom.
 - `PIPE-07` is implemented only where first-party evidence exists. Gemini 2.5
   Pro and 3.1 Pro Preview now carry their verified over-200k tiers. No
   `flatRate` or tier metadata was invented for other providers.
-- `PIPE-04` was labelled refuted in the audit's own consolidated table. The
+- `PIPE-04` was labeled refuted in the audit's own consolidated table. The
   broader concern is nevertheless closed: vendor provenance now requires a
   verification date and HTTPS source, and a vendor-verified override no longer
   suppresses feed cross-checking unless it actually supplies the base rates.
@@ -82,7 +82,7 @@ symptom.
 These are not source tasks Codex can honestly mark complete without a different
 kind of evidence:
 
-1. Exact native tokenization remains labelled approximate until shared golden
+1. Exact native tokenization remains labeled approximate until shared golden
    fixtures pass under Hermes on physical iPhone, iPad, and Android hardware.
 2. The remaining modal/error-state accessibility journeys, VoiceOver/TalkBack,
    largest text, orientation, keyboard, performance, real email delivery, and

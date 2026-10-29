@@ -98,13 +98,13 @@ export function SiteHeader({ base, current, appearance, freshness, catalog }: Si
       {
         id: 'canvas-cool',
         label: 'Canvas: cool paper',
-        kind: 'colour',
+        kind: 'color',
         run: () => appearance.setCanvas('cool'),
       },
       {
         id: 'canvas-warm',
         label: 'Canvas: warm cream',
-        kind: 'colour',
+        kind: 'color',
         run: () => appearance.setCanvas('warm'),
       },
     );
@@ -112,7 +112,7 @@ export function SiteHeader({ base, current, appearance, freshness, catalog }: Si
       list.push({
         id: `accent-${accent.id}`,
         label: `Accent: ${accent.label}`,
-        kind: 'colour',
+        kind: 'color',
         run: () => appearance.setAccent(accent.id),
       });
     }

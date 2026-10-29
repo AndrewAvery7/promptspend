@@ -47,7 +47,7 @@ const dark = tokensFor("[data-theme='dark'] {");
 const lightWarm = { ...light, ...tokensFor("[data-theme='light'][data-canvas='warm']") };
 const darkWarm = { ...dark, ...tokensFor("[data-theme='dark'][data-canvas='warm']") };
 
-/** Text-bearing surfaces an accent or money colour can land on. */
+/** Text-bearing surfaces an accent or money color can land on. */
 function surfaces(base: Record<string, string>): string[] {
   return [base.surface!, base['surface-2']!, base.bg!];
 }
@@ -97,7 +97,7 @@ describe('accent contrast across the whole theme matrix', () => {
   }
 });
 
-describe('money and status colours', () => {
+describe('money and status colors', () => {
   // These never change with branding, so they are checked once per theme.
   const semantic = ['save', 'cost', 'info', 'warn', 'muted', 'ink'] as const;
 
@@ -141,7 +141,7 @@ describe('accent fills stay legible', () => {
  * The status chip on the results panel: semantic ink on its own soft fill.
  *
  * This pairing is not part of the accent matrix above — the money and status
- * colours are deliberately outside the accent system — so nothing was checking
+ * colors are deliberately outside the accent system — so nothing was checking
  * it, and the first version of the chip shipped `opacity: 0.72` on its second
  * clause. That composited `--save` down to #4a9c71 on #e3f0e8: a ratio of
  * 2.84, caught by axe at 320 and 390 only after it was pushed. Softening
@@ -156,7 +156,7 @@ describe('status chip contrast', () => {
     if (hex) return `#${hex[1]!.toLowerCase()}`;
 
     const rgba = value.trim().match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\/\s*([\d.]+)%\s*\)$/);
-    if (!rgba) throw new Error(`cannot parse colour: ${value}`);
+    if (!rgba) throw new Error(`cannot parse color: ${value}`);
     const alpha = Number(rgba[4]) / 100;
     const base = over.replace('#', '');
     const mixed = [1, 2, 3].map((i) => {

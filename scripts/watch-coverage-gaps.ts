@@ -2,10 +2,10 @@
  * Weekly coverage-gap check.
  *
  *   fetch another tracker's model list, the price feed and the published
- *   catalogue -> find first-party feed rows no capture rule picks up -> write a
+ *   catalog -> find first-party feed rows no capture rule picks up -> write a
  *   report and tell the workflow whether to open, refresh or close the issue
  *
- * Read-only: it never touches the catalogue. The other tracker's list supplies
+ * Read-only: it never touches the catalog. The other tracker's list supplies
  * names only; see scripts/lib/coverage-gaps.ts for why its prices are not used.
  *
  *   npx tsx scripts/watch-coverage-gaps.ts
@@ -55,7 +55,7 @@ async function readJson<T>(path: string): Promise<T> {
 async function main(): Promise<void> {
   const allowlist = await readJson<Allowlist>('data/models-allowlist.json');
   const ignore = (await readJson<{ items: IgnoreRule[] }>('data/coverage-ignore.json')).items;
-  const catalogue = await readJson<{ models: { id: string; displayName: string }[] }>(
+  const catalog = await readJson<{ models: { id: string; displayName: string }[] }>(
     'public/data/pricing.json',
   );
 
@@ -68,7 +68,7 @@ async function main(): Promise<void> {
   if (hints.length < MIN_HINTS)
     throw new Error(`the hint list has ${hints.length} rows; refusing to report from it`);
 
-  const gaps = findCoverageGaps({ hints, feed, allowlist, published: catalogue.models, ignore });
+  const gaps = findCoverageGaps({ hints, feed, allowlist, published: catalog.models, ignore });
   await writeFile(
     resolve(ROOT, 'coverage-gaps-report.md'),
     renderGapReport(gaps, new Date().toISOString().slice(0, 10), HINT_SOURCE),

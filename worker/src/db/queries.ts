@@ -551,7 +551,7 @@ export async function recordDeliveryOutcome(
  *
  * Fixed windows allow a burst of up to 2× the limit across a boundary, which is
  * fine here: this exists to stop a script enumerating the subscribe endpoint,
- * not to shape traffic precisely. Turnstile is the primary defence; this is the
+ * not to shape traffic precisely. Turnstile is the primary defense; this is the
  * backstop for when it is not configured.
  */
 export async function withinRateLimit(

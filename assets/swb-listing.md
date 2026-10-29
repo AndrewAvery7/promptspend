@@ -80,7 +80,7 @@ the calculator's own URL does not.
 ## Their image frames, measured
 
 Measured on the live site at a 1826px window, 2026-09-16. All three use
-`object-fit: cover` centred, so anything the frame's shape does not want is
+`object-fit: cover` centered, so anything the frame's shape does not want is
 **cropped, not letterboxed** — and none of the three matches the shape the upload
 form asks for.
 
@@ -99,5 +99,5 @@ Consequences worth not rediscovering:
   the real shape, with its own README.
 - Gallery images must be **1.60:1** or they lose their left and right edges.
   `swb-gallery/` holds the social card and the five Product Hunt captures padded
-  to exactly that, with their own background colour so the join is invisible.
+  to exactly that, with their own background color so the join is invisible.
   Nothing is scaled and nothing is lost.

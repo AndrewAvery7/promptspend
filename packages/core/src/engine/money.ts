@@ -40,7 +40,7 @@ export function rateToMicros(dollarsPerMillion: number): number {
 /**
  * Exact cost of `tokens` tokens at `dollarsPerMillion`, in pico-dollars.
  * Token counts are rounded to integers first — a fractional token is always an
- * estimation artefact, never a real billable quantity.
+ * estimation artifact, never a real billable quantity.
  */
 export function costPico(tokens: number, dollarsPerMillion: number): number {
   if (!Number.isFinite(tokens) || tokens < 0) {

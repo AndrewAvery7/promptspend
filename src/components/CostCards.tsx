@@ -103,7 +103,7 @@ export function CostCards({ rows, catalog, cacheEnabled, conversationsPerMonth, 
                   {/* Net of cache writes. Showing the read saving alone would
                       report a discount the invoice does not contain. It is a
                       comparison with an uncached bill, not a line of this one,
-                      so it is labelled as such and left out of the bar. */}
+                      so it is labeled as such and left out of the bar. */}
                   CACHE {breakdown.cacheSavings > 0 ? '−' : '+'}
                   {formatMoney(Math.abs(breakdown.cacheSavings) * conversationsPerMonth)}/mo vs no cache
                 </span>

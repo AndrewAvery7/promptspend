@@ -40,7 +40,7 @@ export const LEARN_MODULES: LearnModule[] = [
     body: [
       'Almost every provider charges more for tokens the model writes than for tokens you send. Three to five times more is typical, and on some frontier models the gap is wider still.',
       'The practical consequence is counter-intuitive: trimming a long system prompt often saves less than asking for a shorter answer. Cutting a 900-token response to 400 tokens usually beats cutting an 800-token system prompt to 300 — and the system prompt can be cached, while the response cannot.',
-      'Watch the split bar on any cost card. If output dominates it, your cheapest optimisation is a instruction to be concise, or a max-tokens ceiling.',
+      'Watch the split bar on any cost card. If output dominates it, your cheapest optimization is a instruction to be concise, or a max-tokens ceiling.',
     ],
   },
   {
@@ -53,7 +53,7 @@ export const LEARN_MODULES: LearnModule[] = [
     kind: 'value map',
     body: [
       'On a like-for-like blended rate, the catalog on this site spans roughly two orders of magnitude between its cheapest and priciest model. No other line item in a software budget has that range. (Beware the bigger numbers you will see quoted elsewhere — they are usually the priciest *output* rate over the cheapest *input* rate, which compares two different goods.)',
-      'The trap is treating that as a simple "use the cheap one" instruction. Frontier models earn their price on genuinely hard work — long autonomous tasks, subtle reasoning, code that has to be right the first time. Budget models are astonishing at classification, extraction, summarisation and routing.',
+      'The trap is treating that as a simple "use the cheap one" instruction. Frontier models earn their price on genuinely hard work — long autonomous tasks, subtle reasoning, code that has to be right the first time. Budget models are astonishing at classification, extraction, summarization and routing.',
       'The useful move is routing: send the easy majority of traffic to a cheap model and escalate only what needs it. Model the two tiers separately here, then blend them by your expected split.',
     ],
   },
@@ -66,9 +66,9 @@ export const LEARN_MODULES: LearnModule[] = [
     minutes: 4,
     kind: 'interactive',
     body: [
-      'Continuing a conversation means the model sees everything that came before, so the input side of turn N carries the whole transcript up to that point. Classically your client resends it; several current APIs will instead hold the conversation server-side and let you reference it. Either way the prior context is normally reprocessed and billed — check your provider’s usage fields for the exact behaviour, because the transport and the billing are separate questions.',
+      'Continuing a conversation means the model sees everything that came before, so the input side of turn N carries the whole transcript up to that point. Classically your client resends it; several current APIs will instead hold the conversation server-side and let you reference it. Either way the prior context is normally reprocessed and billed — check your provider’s usage fields for the exact behavior, because the transport and the billing are separate questions.',
       'On the resend model — which is what this calculator uses, and the conservative case — total input across a conversation grows with the square of the turn count, not linearly. Doubling the number of turns roughly quadruples the input tokens. Raise the turn slider on the Estimate tab and watch the curve.',
-      'Two defences: prompt caching, which makes the repeated prefix roughly ten times cheaper to read (though the write costs more than a normal input token, so it pays off from the first hit and not before), and summarising older turns instead of resending them verbatim.',
+      'Two defenses: prompt caching, which makes the repeated prefix roughly ten times cheaper to read (though the write costs more than a normal input token, so it pays off from the first hit and not before), and summarizing older turns instead of resending them verbatim.',
     ],
   },
   {

@@ -70,7 +70,7 @@ function freshSeconds(env: Env): number {
  *
  * `caches.default` is per-colo, so a busy location revalidates every five
  * minutes and a quiet one may go longer between origin hits — which is exactly
- * the behaviour wanted from a file that changes once a day.
+ * the behavior wanted from a file that changes once a day.
  */
 export async function readCatalog(env: Env, ctx?: ExecutionContext): Promise<CatalogRead> {
   const key = new Request(CACHE_KEY, { method: 'GET' });
@@ -85,7 +85,7 @@ export async function readCatalog(env: Env, ctx?: ExecutionContext): Promise<Cat
     }
 
     // Past its freshness window. Try the origin; if that fails, the retained
-    // copy is still the best answer available, labelled as such.
+    // copy is still the best answer available, labeled as such.
     try {
       return await fetchAndStore(env, key, cache, ctx);
     } catch {
