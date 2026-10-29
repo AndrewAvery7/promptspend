@@ -1540,8 +1540,9 @@
       "pricing": { "input": 0.3, "output": 0.9, "cachedInput": 0.03 }
     },
     {
-      "$note": "Added 2026-10-29; was on the later-additions list until the feed carried it. Kimi's chat pricing page (its table renders in a browser) prints \"kimi-k3.1-pro | $2.00 / MTok | $10.00 / MTok | $0.20 / MTok\" and a $2.00 cache write at the default 5-minute TTL ($4.00 at 1 hour). Not listed as batch-supported. Context 1,048,576.",
+      "$note": "Added 2026-10-29; was on the later-additions list until the feed carried it. Kimi's chat pricing page (its table renders in a browser) prints \"kimi-k3.1-pro | $2.00 / MTok | $10.00 / MTok | $0.20 / MTok\" and a $2.00 cache write at the default 5-minute TTL ($4.00 at 1 hour). Not listed as batch-supported. Context 1,048,576. Capability score 89 (2026-10-29): Artificial Analysis Intelligence Index v5.0 46 (Kimi K3.1 Pro). v5.0 re-based the index and scores only 22 of the 109 live models, so the catalogue was not re-scored; this one value is mapped onto the existing scale by a linear fit through the 20 models scored in both (score = 68.44 + 0.449 x v5, r = 0.88), and its four nearest v5 neighbours sit at 88-90.",
       "id": "moonshot-kimi-k3.1-pro",
+      "capabilityIndex": 89,
       "providerId": "moonshot",
       "displayName": "Kimi K3.1 Pro",
       "vendorVerified": true,
