@@ -49,7 +49,7 @@ The machine-readable copy is [seo/baseline-2026-10-29.json](seo/baseline-2026-10
 
 ## The 90-day plan, written before the results
 
-**Status: proposed. The thresholds are guesses and are Andrew's to confirm or change.** Once confirmed, they are not moved after the fact. Review dates: day 28 is 2026-11-26, day 59 is 2026-12-27 and day 90 is 2027-01-27.
+**Status: confirmed by Andrew on 2026-10-29, as proposed.** The thresholds were guesses when they were written and are not moved after the fact. If one proves badly chosen, the change log says so and the original stays here. Review dates: day 28 is 2026-11-26, day 59 is 2026-12-27 and day 90 is 2027-01-27.
 
 The working explanation for the fall in September is that Google re-evaluated a young site made mostly of templated pages and chose to show it far less. That is a belief. Nothing in Search Console reports a manual action. The plan tests it by changing the things that explanation points at and watching the same measures.
 
@@ -96,6 +96,7 @@ Every deploy, report, outreach message and setting change that could move these 
 
 | Date       | Change                                                                                                                                                                                                                                                                                       |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-29 | The 90-day plan's six thresholds confirmed by Andrew exactly as proposed. From here they are fixed                                                                                                                                                                                           |
 | 2026-10-29 | Home page: the no-JavaScript text now has a heading, a description and links to every main section. Baseline and this plan written. A tally script for the monthly price report added (`scripts/monthly-report-tally.ts`); the October report is written on 1 November, from the whole month |
 | 2026-10-29 | Structure batch live (pull request 317): sitemap split into six files, related comparisons, `/writing/`, `/data/`, a 404 page, favicon files, organization data on the home page, `robots.txt` skips scenario links. Sitemap resubmitted to Bing; Google read it the same day                |
 | 2026-10-29 | Google Analytics switched off on the site (pull request 314). No Analytics account existed to receive the data                                                                                                                                                                               |
