@@ -41,6 +41,7 @@ import { GA_POLICY_COLLECT_ORIGINS, GA_POLICY_SCRIPT_ORIGINS } from '../analytic
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { PriceHistory } from '../pricing/history';
 import type { Model, Pricing } from '../pricing/types';
+import { comparisonFaq, freeTierFaq, modelFaq, providerFaq, type Faq } from './faq';
 import { priceChartSvg } from './price-chart';
 import {
   correctionCount,
@@ -660,6 +661,39 @@ function rateRows(model: Model, pricing: Pricing): string {
   }
 }
 
+// ------------------------------------------------------------------- Q&A
+
+/** The visible questions and answers. The same strings go into the markup. */
+function faqSection(faqs: Faq[]): string {
+  if (faqs.length === 0) return '';
+  return `
+        <h2 id="faq">Common questions</h2>
+        <div class="faq">
+${faqs
+  .map(
+    (faq) => `          <h3>${escapeHtml(faq.question)}</h3>
+          <p>${escapeHtml(faq.answer)}</p>`,
+  )
+  .join('\n')}
+        </div>
+`;
+}
+
+/** The FAQPage node for the JSON-LD graph: empty when there is nothing to say. */
+function faqLd(faqs: Faq[]): unknown[] {
+  if (faqs.length === 0) return [];
+  return [
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+      })),
+    },
+  ];
+}
+
 // ------------------------------------------------------- price history
 
 const FIELD_LABEL: Record<string, string> = {
@@ -812,6 +846,7 @@ ${rows}
 
 export function renderModelPage(page: ModelPage, ctx: RenderContext): string {
   const { model, effective } = page;
+  const faqs = modelFaq(page, { sourceLabel: sourceLabel(model), history: ctx.history });
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
     { label: 'Models', path: '/models/' },
@@ -983,7 +1018,7 @@ ${specRows.map(([label, value]) => `            <tr><th scope="row">${escapeHtml
             catalog does.
           </p>
         </div>
-      </main>`;
+${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
     path: page.path,
@@ -991,6 +1026,7 @@ ${specRows.map(([label, value]) => `            <tr><th scope="row">${escapeHtml
     description: page.description,
     graph: [
       breadcrumbLd(ctx, crumbs, page.path),
+      ...faqLd(faqs),
       {
         '@type': 'Product',
         name: model.displayName,
@@ -1073,6 +1109,10 @@ export interface FreeTierLink {
 }
 
 export function renderProviderPage(page: ProviderPage, ctx: RenderContext, freeTier?: FreeTierLink): string {
+  const faqs = providerFaq(
+    page,
+    freeTier ? { verdict: freeTier.verdict, label: VERDICT_LABEL[freeTier.verdict] } : undefined,
+  );
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
     { label: 'Providers', path: '/providers/' },
@@ -1122,7 +1162,7 @@ ${rows}
           page.models.slice(0, 4).map((entry) => entry.model.id),
           `Compare ${page.provider.name}’s models on your own workload`,
         )}
-      </main>`;
+${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
     path: page.path,
@@ -1130,6 +1170,7 @@ ${rows}
     description: page.description,
     graph: [
       breadcrumbLd(ctx, crumbs, page.path),
+      ...faqLd(faqs),
       {
         '@type': 'CollectionPage',
         name: page.heading,
@@ -1167,6 +1208,7 @@ function gap(multiple: number): string {
 }
 
 export function renderComparisonPage(page: ComparisonPage, ctx: RenderContext): string {
+  const faqs = comparisonFaq(page);
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
     { label: 'Comparisons', path: '/compare/' },
@@ -1251,7 +1293,7 @@ ${spec('Vision', page.left.capabilities.vision ? 'yes' : 'no', page.right.capabi
           Full detail: <a href="${escapeHtml(href(ctx, `/models/${page.leftSlug}/`))}">${escapeHtml(page.left.displayName)} pricing</a>
           &middot; <a href="${escapeHtml(href(ctx, `/models/${page.rightSlug}/`))}">${escapeHtml(page.right.displayName)} pricing</a>
         </p>
-      </main>`;
+${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
     path: page.path,
@@ -1259,6 +1301,7 @@ ${spec('Vision', page.left.capabilities.vision ? 'yes' : 'no', page.right.capabi
     description: page.description,
     graph: [
       breadcrumbLd(ctx, crumbs, page.path),
+      ...faqLd(faqs),
       {
         '@type': 'WebPage',
         name: page.heading,
@@ -1782,6 +1825,7 @@ function factHtml(fact: CheckedFact, conflictName: string | null): string {
 export function renderFreeTierPage(page: FreeTierPage, ctx: RenderContext): string {
   const name = page.provider.name;
   const record = page.record;
+  const faqs = freeTierFaq(page);
   const crumbs: Crumb[] = [
     { label: 'PromptSpend', path: '/' },
     { label: NAV_LABELS.freeTiers, path: FREE_TIERS_PATH },
@@ -1842,7 +1886,7 @@ ${record.unpublished.map((item) => `          <li>${escapeHtml(item)}</li>`).joi
 ${[sections, unpublished, after].filter(Boolean).join('\n')}
         <h2>How this page is kept accurate</h2>
         <p class="small muted">Every fact above is ${escapeHtml(name)}&rsquo;s own wording, with a link to the page it came from and the date it was read. Each morning we re-read those pages and check the wording is still there; if it has gone, the fact is marked as under review rather than quietly changed. <a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">Compare every provider&rsquo;s free tier</a>.</p>
-      </main>`;
+${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
     path: page.path,
@@ -1850,6 +1894,7 @@ ${[sections, unpublished, after].filter(Boolean).join('\n')}
     description: page.description,
     graph: [
       breadcrumbLd(ctx, crumbs, page.path),
+      ...faqLd(faqs),
       {
         '@type': 'WebPage',
         name: page.heading,

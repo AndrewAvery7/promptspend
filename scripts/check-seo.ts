@@ -28,6 +28,14 @@ function absolute(value: string | undefined): boolean {
   return typeof value === 'string' && /^https:\/\/[^/]+\//.test(value);
 }
 
+/** The same escaping the page renderer applies to text, so markup can be matched to what is visible. */
+function escapeForHtml(value: string): string {
+  return value.replace(
+    /[&<>"']/g,
+    (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!,
+  );
+}
+
 function attr(html: string, pattern: RegExp): string | undefined {
   return pattern.exec(html)?.[1];
 }
@@ -100,7 +108,25 @@ async function checkGeneratedPage(path: string, problems: string[]): Promise<Pag
   else {
     const ld = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ?? '';
     try {
-      JSON.parse(ld);
+      const parsed = JSON.parse(ld) as { '@graph'?: { '@type'?: string; mainEntity?: unknown }[] };
+      // A FAQPage may only say what the page says. Search engines treat markup
+      // that is not visible on the page as a defect, so every question and every
+      // answer in the markup must appear, as written, in the visible text.
+      const visible = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, '');
+      for (const node of parsed['@graph'] ?? []) {
+        if (node['@type'] !== 'FAQPage') continue;
+        const entities = Array.isArray(node.mainEntity)
+          ? (node.mainEntity as { name?: string; acceptedAnswer?: { text?: string } }[])
+          : [];
+        if (entities.length === 0) say('has a FAQPage with no questions');
+        for (const entity of entities) {
+          for (const text of [entity.name, entity.acceptedAnswer?.text]) {
+            if (!text || !visible.includes(escapeForHtml(text))) {
+              say(`has FAQ markup that is not on the page: "${(text ?? '').slice(0, 60)}"`);
+            }
+          }
+        }
+      }
     } catch {
       say('has structured data that is not valid JSON');
     }

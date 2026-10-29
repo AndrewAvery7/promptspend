@@ -9,6 +9,14 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Common questions on model, provider, comparison and free-tier pages.** Each page answers the
+  questions people arrive with (what it costs, what it costs to run for a month, whether anything is
+  cheaper, how large the context window is, whether the price has changed, where the numbers come from,
+  and for a free tier whether a card is needed and whether free use trains the vendor's models). The
+  answers are assembled from the page's own data, so they cannot disagree with its figures, and the same
+  sentences are carried in FAQPage markup. `npm run check:seo` now fails if any question or answer in the
+  markup is not visible on the page. Google shows FAQ rich results only for a few authoritative sites, so
+  none is promised; the markup is accurate either way.
 - **Price history on every model page, and the latest price changes on the models index.** A model whose
   input or output rate has ever moved gets a staircase chart (each line holds its value until the next
   change, and the axis starts at zero) with a table of every recorded change; a model that has not moved
