@@ -1563,7 +1563,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "1b9247eec083b1"
+      "fingerprint": "17c45adf78a878"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1699,6 +1699,11 @@
       "published": "2026-10-24",
       "lastmod": "2026-10-24",
       "fingerprint": "0fc60ad46acd4e"
+    },
+    "/models/dashscope-qwen3-8-omni-flash/": {
+      "published": "2026-10-29",
+      "lastmod": "2026-10-29",
+      "fingerprint": "1e7e19aef5205d"
     },
     "/models/dashscope-qwen3-next-80b-a3b-instruct/": {
       "published": "2026-08-02",
@@ -2193,12 +2198,12 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "0ae231bb2c901a"
+      "fingerprint": "0f902245b2fd02"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
       "lastmod": "2026-10-29",
-      "fingerprint": "06bf7db0b027ef"
+      "fingerprint": "0db1139cf339cd"
     },
     "/providers/amazon/": {
       "published": "2026-08-02",

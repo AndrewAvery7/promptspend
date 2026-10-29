@@ -1360,3 +1360,36 @@ value that moves in the same run as its source URL is a correction.
 - **Added** `moonshot-kimi-k3.1-pro` — Kimi K3.1 Pro ($2 in / $10 out per 1M)
 - **Added** `o1-pro` — O1 Pro ($150 in / $600 out per 1M)
 - **Added** `o3-pro` — O3 Pro ($20 in / $80 out per 1M)
+
+## 2026-10-29
+
+- **Added** `dashscope-qwen3.8-omni-flash` — Qwen3.8 Omni Flash ($0.15 in / $0.47 out per 1M)
+- **Review** `amazon.nova-lite-v1-0` — provenance.needsReview: true → —
+- **Review** `amazon.nova-lite-v1-0` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `amazon.nova-micro-v1-0` — provenance.needsReview: true → —
+- **Review** `amazon.nova-micro-v1-0` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `amazon.nova-pro-v1-0` — provenance.needsReview: true → —
+- **Review** `amazon.nova-pro-v1-0` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `command-r-08-2024` — provenance.needsReview: true → —
+- **Review** `command-r-08-2024` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `command-r-plus-08-2024` — provenance.needsReview: true → —
+- **Review** `command-r-plus-08-2024` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `dashscope-qwen3.8-flash` — provenance.needsReview: true → —
+- **Review** `dashscope-qwen3.8-flash` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gpt-5-pro` — provenance.needsReview: true → —
+- **Review** `gpt-5-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gpt-5.2-pro` — provenance.needsReview: true → —
+- **Review** `gpt-5.2-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gpt-5.4-pro` — provenance.needsReview: true → —
+- **Review** `gpt-5.4-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gpt-5.5-pro` — provenance.needsReview: true → —
+- **Review** `gpt-5.5-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `mistral-codestral-2508` — provenance.needsReview: true → —
+- **Review** `mistral-codestral-2508` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `moonshot-kimi-k2.7-code` — provenance.reviewNote: OpenRouter disagrees (41%): $0.56/$3.1 vs $0.95/$4; new model discovered by pattern match — confirm name and rates → OpenRouter disagrees (41%): $0.56/$3.1 vs $0.95/$4
+- **Review** `moonshot-kimi-k3.1-pro` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k3.1-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `o1-pro` — provenance.needsReview: true → —
+- **Review** `o1-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `o3-pro` — provenance.needsReview: true → —
+- **Review** `o3-pro` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
