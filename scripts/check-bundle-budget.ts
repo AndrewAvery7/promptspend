@@ -28,7 +28,11 @@ const BUDGETS = {
   // the shared header sheet and the theme script) is built into this same folder
   // and this check adds up every file in it, so those ~3 KB are counted here
   // although the calculator never loads them.
-  initialJs: 105,
+  // 107 from 2026-10-29: the token counter's own script (src/chrome/token-counter.ts)
+  // lands in the same folder, and the code it shares with the calculator is split
+  // into a small chunk of its own, adding about 1.5 KB to this sum. The calculator's
+  // own load is unchanged.
+  initialJs: 107,
   initialCss: 40,
   tokenizer: 2048,
 };

@@ -380,6 +380,8 @@ export default defineConfig(({ mode }) => {
           receipt: resolve(projectRoot, 'receipt/index.html'),
           // Not a page: the live header for the generated pages.
           siteHeader: resolve(projectRoot, 'src/chrome/site-header.tsx'),
+          // Not a page either: the token counter's counting, loaded by /token-counter/.
+          tokenCounter: resolve(projectRoot, 'src/chrome/token-counter.ts'),
         },
         output: {
           // Keep the tokenizer out of the initial bundle — it is only fetched

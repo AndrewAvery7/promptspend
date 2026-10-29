@@ -135,6 +135,19 @@ ul.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem;
  * output line is dashed as well as a different color, so the two lines are
  * told apart without relying on color alone. */
 td.when { white-space: nowrap; }
+/* The token counter: a text box, a model picker and a row of figures. */
+.tc-label { display: block; font-weight: 600; margin: 0 0 0.35rem; }
+.tc-text, .tc-select {
+  width: 100%; font: inherit; color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 0.75rem;
+}
+.tc-text { min-height: 12rem; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9rem; }
+.tc-select { margin-bottom: 1rem; }
+.tc-text:focus-visible, .tc-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tc-stats { display: grid; gap: 0.75rem 1.25rem; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); margin: 0 0 0.5rem; }
+.tc-stats dt { color: var(--muted); font-size: 0.8rem; }
+.tc-stats dd { margin: 0; font-size: 1.35rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.tc .note { margin: 0.75rem 0 1rem; }
 /* Question-and-answer sections: plain headings and paragraphs, nothing to expand. */
 .faq h3 { margin: 1.1rem 0 0.2rem; font-size: 1rem; }
 .faq h3:first-child { margin-top: 0; }

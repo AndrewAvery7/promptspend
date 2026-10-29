@@ -5,6 +5,7 @@ import {
   FREE_TIERS_URL,
   CONTACT_EMAIL,
   CHANGES_PAGE_URL,
+  TOKEN_COUNTER_URL,
   DATA_PAGE_URL,
   DEVELOPER_HUB_URL,
   FAZIER_BADGE_DARK,
@@ -86,8 +87,9 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
         <div>
           <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
           <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a> · <a href={COMPARE_INDEX_URL}>Comparisons</a> ·{' '}
-          <a href={CHANGES_PAGE_URL}>Price changes</a> · <a href={WRITING_INDEX_URL}>Writing</a> ·{' '}
-          <a href={DATA_PAGE_URL}>Open data</a> · <a href={DEVELOPER_HUB_URL}>Pricing API</a>
+          <a href={CHANGES_PAGE_URL}>Price changes</a> · <a href={TOKEN_COUNTER_URL}>Token counter</a> ·{' '}
+          <a href={WRITING_INDEX_URL}>Writing</a> · <a href={DATA_PAGE_URL}>Open data</a> ·{' '}
+          <a href={DEVELOPER_HUB_URL}>Pricing API</a>
         </div>
         {/* The places this catalog answers that are not a web page. The footer
             is the only row present on every view, so it is where somebody who
