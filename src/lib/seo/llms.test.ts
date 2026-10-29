@@ -141,3 +141,25 @@ describe('renderLlmsTxt', () => {
     expect(text).not.toContain('/models/retired-one/');
   });
 });
+
+describe('renderLlmsTxt writing section', () => {
+  const writing = [
+    { path: '/writing/october-report/', heading: 'October price report', description: 'What moved.' },
+  ];
+
+  it('lists the articles, the feed and the open-data page when there is writing', () => {
+    const text = renderLlmsTxt(SET, { ...INPUT, writing });
+    expect(text).toContain('## Writing');
+    expect(text).toContain('[All writing](https://promptspend.com/writing/)');
+    expect(text).toContain(
+      '[October price report](https://promptspend.com/writing/october-report/): What moved.',
+    );
+    expect(text).toContain('https://promptspend.com/feed.xml');
+    expect(text).toContain('https://promptspend.com/data/');
+  });
+
+  it('leaves the section out when there is no writing to list', () => {
+    expect(renderLlmsTxt(SET, INPUT)).not.toContain('## Writing');
+    expect(renderLlmsTxt(SET, { ...INPUT, writing: [] })).not.toContain('## Writing');
+  });
+});

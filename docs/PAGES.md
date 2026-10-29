@@ -12,6 +12,14 @@ today: 126 models, 16 providers, 225 comparisons, 3 indexes.
 is therefore not included in the page arithmetic below. Vite builds it from `receipt/index.html`; the
 post-build step adds it to the sitemap and `llms.txt`.
 
+Four more files are written by the same step and are not counted in the arithmetic either, because they are
+not catalog pages: `/writing/` (a list of every article), `/data/` (what the open data files are, their
+licences and the archived DOI), `404.html` (what GitHub Pages serves for an address that does not exist;
+`noindex`, with links to the main sections) and the favicon files. `sitemap.xml` is an index over one file
+per kind of page (`sitemap-models.xml`, `-providers.xml`, `-compare.xml`, `-free-tiers.xml`, `-writing.xml`
+and `-site.xml`), so Search Console reports each kind's coverage separately. `check:seo` also fails the build
+if an indexable page has no link pointing to it from another page.
+
 ---
 
 ## What gets built

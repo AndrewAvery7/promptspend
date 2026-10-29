@@ -149,6 +149,11 @@ export interface ComparisonPage {
   /** True when today's curation would not pick this pair, and the page is
    *  built only because it was published before. See `buildComparisons`. */
   kept: boolean;
+  /** Other published comparisons that include either of these two models, up
+   *  to three per side, so a comparison is linked from its siblings and not
+   *  only from the index. Worked out from the other pages, so it is not part
+   *  of `fingerprint`: a new model arriving must not re-date every page. */
+  related: RelatedLink[];
   fingerprint: string;
   lastmod: string;
 }
@@ -234,6 +239,10 @@ const COMPARE_ROOT = '/compare/';
 /** Peers offered per model. Three is enough to be useful and few enough that
  *  the set stays curated; see `buildComparisons`. */
 const PEERS_PER_MODEL = 3;
+
+/** Sibling comparisons linked from a comparison page, per side. Three a side
+ *  keeps it a list a reader might use, not a block of links for a crawler. */
+const RELATED_PER_SIDE = 3;
 
 /** Beyond this ratio of blended rates the two models are not alternatives to
  *  each other, and a page comparing them answers a question nobody asked. */
@@ -574,6 +583,7 @@ function comparisonPage(
     verdict,
     differences: pairDifferences(left, right, leftEffective, rightEffective),
     kept,
+    related: [], // filled in once every comparison exists, in `buildPages`
     fingerprint: print,
     lastmod: '', // resolved against the ledger once every page exists
   };
@@ -772,6 +782,22 @@ export function buildPages(raw: PricingCatalog, options: BuildOptions): PageSet 
   });
 
   for (const page of comparisons) page.lastmod = resolveLastmod(ledger, page.path, page.fingerprint, today);
+
+  // Each comparison links to a few siblings that share one of its models. Until
+  // now a comparison was reachable only from the index and its two model pages,
+  // so the set read as a pile of pages with no relation to one another.
+  for (const page of comparisons) {
+    const seen = new Set<string>([page.path]);
+    page.related = [page.left, page.right].flatMap((model) =>
+      (comparisonsByModel.get(model.id) ?? [])
+        .filter((link) => !seen.has(link.path))
+        .slice(0, RELATED_PER_SIDE)
+        .map((link) => {
+          seen.add(link.path);
+          return link;
+        }),
+    );
+  }
 
   const providers: ProviderPage[] = catalog.providers
     .map((provider) => {

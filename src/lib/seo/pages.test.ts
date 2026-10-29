@@ -455,3 +455,42 @@ describe('pairDifferences', () => {
     ]);
   });
 });
+
+describe('related comparisons', () => {
+  const models = [
+    model('a', { providerId: 'openai' }),
+    model('b', { providerId: 'anthropic' }),
+    model('c', { providerId: 'google' }),
+    model('d', { providerId: 'mistral' }),
+  ];
+
+  it('gives each comparison siblings that share one of its models, never itself', () => {
+    const set = buildPages(catalog(models), { asOf: ASOF });
+    const page = set.comparisons.find((candidate) => candidate.slug === 'a-vs-b')!;
+
+    expect(page.related.length).toBeGreaterThan(0);
+    expect(page.related.map((link) => link.path)).not.toContain(page.path);
+  });
+
+  it('lists a sibling once even when it shares a model on both sides', () => {
+    const set = buildPages(catalog(models), { asOf: ASOF });
+    for (const page of set.comparisons) {
+      const paths = page.related.map((link) => link.path);
+      expect(new Set(paths).size).toBe(paths.length);
+    }
+  });
+
+  it('shows at most three siblings for each side', () => {
+    const many = Array.from({ length: 9 }, (_, index) => model(`m${index}`, { providerId: `p${index}` }));
+    const set = buildPages(catalog(many), { asOf: ASOF });
+    for (const page of set.comparisons) expect(page.related.length).toBeLessThanOrEqual(6);
+  });
+
+  it('leaves a lone comparison with nothing related to show', () => {
+    const set = buildPages(
+      catalog([model('x', { providerId: 'openai' }), model('y', { providerId: 'anthropic' })]),
+      { asOf: ASOF },
+    );
+    expect(set.comparisons[0]!.related).toEqual([]);
+  });
+});

@@ -44,6 +44,11 @@ export const COMPARE_INDEX_URL = `${import.meta.env.BASE_URL}compare/`;
  *  page only the generated pages link to is a page the calculator's visitors
  *  never find. */
 export const FREE_TIERS_URL = `${import.meta.env.BASE_URL}free-tiers/`;
+/** The articles and the monthly price reports, listed on one page so none of
+ *  them is reachable only by its own address. */
+export const WRITING_INDEX_URL = `${import.meta.env.BASE_URL}writing/`;
+/** The files the site publishes as data, with the licence for each. */
+export const DATA_PAGE_URL = `${import.meta.env.BASE_URL}data/`;
 
 /** The help and policy pages, which the generated pages' footers already linked. */
 export const SUPPORT_URL = `${import.meta.env.BASE_URL}support/`;

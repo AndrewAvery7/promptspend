@@ -49,10 +49,8 @@
          It is Apple's native UI, drawn by the browser, not a script of ours. -->
     <meta name="apple-itunes-app" content="app-id=6800386428" />
 
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1.5' y='1.5' width='23' height='23' rx='6' fill='none' stroke='%232456E6' stroke-width='2'/%3E%3Cpath d='M7 9.5h12M7 13.5h8M7 17.5h10' stroke='%232456E6' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"
-    />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="PromptSpend" />
@@ -90,6 +88,38 @@
         "isAccessibleForFree": true,
         "license": "https://opensource.org/licenses/MIT",
         "codeRepository": "https://github.com/AndrewAvery7/promptspend"
+      }
+    </script>
+    <!-- Who is behind the site, for search engines: the organization, its
+         public profiles (each a page that exists and links back), and the
+         website itself. Nothing here is a claim about ratings or reviews. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "%SITE_URL%/#organization",
+            "name": "PromptSpend",
+            "url": "%SITE_URL%/",
+            "logo": "%SITE_URL%/icon-512.png",
+            "sameAs": [
+              "https://github.com/AndrewAvery7/promptspend",
+              "https://www.npmjs.com/package/@promptspend/mcp",
+              "https://marketplace.visualstudio.com/items?itemName=promptspend.promptspend",
+              "https://open-vsx.org/extension/promptspend/promptspend",
+              "https://apps.apple.com/app/id6800386428",
+              "https://play.google.com/store/apps/details?id=com.promptspend.app"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "%SITE_URL%/#website",
+            "name": "PromptSpend",
+            "url": "%SITE_URL%/",
+            "publisher": { "@id": "%SITE_URL%/#organization" }
+          }
+        ]
       }
     </script>
   </head>

@@ -4,6 +4,7 @@ import {
   COMPARE_INDEX_URL,
   FREE_TIERS_URL,
   CONTACT_EMAIL,
+  DATA_PAGE_URL,
   DEVELOPER_HUB_URL,
   FAZIER_BADGE_DARK,
   FAZIER_BADGE_LIGHT,
@@ -33,6 +34,7 @@ import {
   UNEED_BADGE_LIGHT,
   UNEED_URL,
   VSCODE_MARKETPLACE_URL,
+  WRITING_INDEX_URL,
 } from '@/config';
 import { NAV_LABELS } from '@/lib/links';
 import { StoreBadges, StoreQrCodes } from '@/components/StoreBadges';
@@ -83,6 +85,7 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
         <div>
           <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
           <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a> · <a href={COMPARE_INDEX_URL}>Comparisons</a> ·{' '}
+          <a href={WRITING_INDEX_URL}>Writing</a> · <a href={DATA_PAGE_URL}>Open data</a> ·{' '}
           <a href={DEVELOPER_HUB_URL}>Pricing API</a>
         </div>
         {/* The places this catalog answers that are not a web page. The footer
