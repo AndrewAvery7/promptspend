@@ -171,7 +171,7 @@
       "id": "alibaba-qwen",
       "providerId": "alibaba",
       "include": [
-        "^dashscope/qwen3\\.\\d+-(max|plus|flash)$",
+        "^dashscope/qwen3\\.\\d+-(max|plus|flash|omni-flash)$",
         "^dashscope/qwen3-next-80b-a3b-(instruct|thinking)$",
         "^dashscope/qwen3-vl-235b-a22b-instruct$"
       ],
