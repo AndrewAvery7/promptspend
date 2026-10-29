@@ -110,7 +110,10 @@
     {
       "id": "openai-gpt",
       "providerId": "openai",
-      "include": ["^gpt-(5|6)(\\.\\d+)?(-mini|-nano|-terra|-luna|-sol|-astra)?$", "^o\\d+(-mini|-pro)?$"],
+      "include": [
+        "^gpt-(5|6)(\\.\\d+)?(-mini|-nano|-terra|-luna|-sol|-astra|-pro)?$",
+        "^o\\d+(-mini|-pro)?$"
+      ],
       "tokenizer": { "kind": "tiktoken", "encoding": "o200k_base" },
       "capabilities": { "reasoning": true, "vision": true }
     },
@@ -154,7 +157,7 @@
     {
       "id": "moonshot-kimi",
       "providerId": "moonshot",
-      "include": ["^moonshot/kimi-k[\\d.]+(-thinking)?$"],
+      "include": ["^moonshot/kimi-k[\\d.]+(-thinking|-pro|-code)?$"],
       "stripPrefix": "moonshot/",
       "tokenizer": {
         "kind": "approx",
@@ -168,7 +171,7 @@
       "id": "alibaba-qwen",
       "providerId": "alibaba",
       "include": [
-        "^dashscope/qwen3\\.\\d+-(max|plus)$",
+        "^dashscope/qwen3\\.\\d+-(max|plus|flash)$",
         "^dashscope/qwen3-next-80b-a3b-(instruct|thinking)$",
         "^dashscope/qwen3-vl-235b-a22b-instruct$"
       ],
@@ -232,7 +235,7 @@
     {
       "id": "mistral",
       "providerId": "mistral",
-      "include": ["^mistral/mistral-(large|medium)-\\d(\\.\\d|-\\d)?$"],
+      "include": ["^mistral/mistral-(large|medium)-\\d(\\.\\d|-\\d)?$", "^mistral/codestral-\\d{4}$"],
       "stripPrefix": "mistral/",
       "tokenizer": {
         "kind": "approx",
@@ -245,7 +248,7 @@
     {
       "id": "cohere-command",
       "providerId": "cohere",
-      "include": ["^command-a-\\d{2}-\\d{4}$"],
+      "include": ["^command-a-\\d{2}-\\d{4}$", "^command-r(-plus)?-\\d{2}-\\d{4}$"],
       "tokenizer": {
         "kind": "approx",
         "charsPerToken": 3.8,
@@ -257,7 +260,7 @@
     {
       "id": "amazon-nova",
       "providerId": "amazon",
-      "include": ["^amazon\\.nova-2-(pro|lite)"],
+      "include": ["^amazon\\.nova-2-(pro|lite)", "^amazon\\.nova-(micro|lite|pro)-v1:0$"],
       "stripPrefix": "amazon.",
       "tokenizer": {
         "kind": "approx",

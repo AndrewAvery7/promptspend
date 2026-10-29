@@ -88,6 +88,10 @@ Never paste the token into a chat or a file in the repository.
 
 `data/later-additions.json` lists models and labs that have a vendor price page but are not in the catalogue because the automated price feed does not carry them yet. `.github/workflows/watch-later-additions.yml` reads the feed every Monday and opens one issue, "Later additions now in the price feed", the week any of them appears. It adds nothing itself, and the issue closes itself once everything on it has been added. To put something on the list, add an item with a feed-key pattern anchored on the vendor's own prefix, so a copy hosted by a cloud never counts.
 
+## The weekly coverage-gap check
+
+The capture rules in `data/models-allowlist.json` are patterns, and a pattern that is too narrow fails silently. `.github/workflows/watch-coverage-gaps.yml` runs `scripts/watch-coverage-gaps.ts` every Monday: it compares the catalogue with [Model Price Watch](https://modelpricewatch.com)'s public model list and opens one issue, "Coverage gaps: models the capture rules miss", naming each model the price feed already carries on its maker's own platform (learned from the rows the rules already capture, so Amazon's Bedrock copy of Claude never counts) that no rule picks up. The other list supplies names only: the prices in the issue are the feed's, and nothing is added. To act on a row, widen its family in the allowlist and the next daily sync adds it, flagged for review; to leave one out on purpose, add it with a reason to `data/coverage-ignore.json`. The issue closes itself once nothing is left.
+
 ## Formatting and screenshots
 
 `.playwright-mcp/` (screenshots and page snapshots from the browser tools) is

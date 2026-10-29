@@ -84,3 +84,4 @@ tools/__pycache__/
 
 # Written by scripts/watch-later-additions.ts when it runs locally.
 later-additions-report.md
+coverage-gaps-report.md

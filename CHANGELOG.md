@@ -9,6 +9,16 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **Fifteen first-party models the capture rules had missed.** A comparison with another tracker's model
+  list found models the price feed already carried under their makers' own keys but no rule matched:
+  OpenAI's GPT-5, 5.2, 5.4 and 5.5 Pro tiers, o1-pro and o3-pro, Mistral's Codestral, Kimi K3.1 Pro and
+  K2.7 Code, Qwen 3.8 Flash, Cohere Command R and R+, and Amazon Nova Micro, Lite and Pro. The sync now
+  also accepts the feed's `responses` mode, which is how it files the models OpenAI serves only through the
+  Responses API; they are billed per token like any chat model. Each arrives flagged for review.
+- **A weekly coverage-gap check** (`watch-coverage-gaps.yml`): it compares the catalogue with Model Price
+  Watch's public model list and opens one issue for models the feed carries on their maker's own platform
+  that no capture rule takes. Names only are used; prices come from the feed. Deliberate omissions live in
+  `data/coverage-ignore.json`.
 - **Past prices: `get_price` takes `as_of`** (`@promptspend/mcp` 0.1.10, npm and hosted). It returns the
   rate PromptSpend published on that UTC day, from the price history the site build now publishes at
   `/data/price-history.json` and `.csv` (the same replay of every committed catalog as the CC0 dataset).

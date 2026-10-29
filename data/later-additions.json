@@ -72,14 +72,6 @@
       "feedKey": "^zai/glm-4\\.7-flashx$",
       "vendorPage": "https://docs.z.ai/guides/overview/pricing",
       "note": "2026-10-24: $0.07 in / $0.01 cached / $0.4 out, listed under Other Pricing, so mark it legacy. The Z.ai patterns must be widened first."
-    },
-    {
-      "id": "kimi-k3-1",
-      "kind": "model",
-      "label": "Moonshot Kimi K3.1 Pro",
-      "feedKey": "^moonshot/kimi-k3\\.1",
-      "vendorPage": "https://platform.kimi.ai/docs/pricing/chat",
-      "note": "2026-10-24: named on the page but its price table only renders in a browser, so the price was not read. The Kimi family pattern matches kimi-k3.1 but not a -pro suffix, so check the feed key and widen it if needed; read the table with a rendered fetch before recording."
     }
   ]
 }
