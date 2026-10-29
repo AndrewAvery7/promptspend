@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-29T16:15:59.361Z",
+  "checkedAt": "2026-10-29T17:01:15.291Z",
   "sources": [
     {
       "url": "https://developers.openai.com/api/docs/deprecations.md",
       "ok": true,
-      "notices": 95
+      "notices": 173
     },
     {
       "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations.md",
@@ -16,6 +16,16 @@
       "url": "https://ai.google.dev/gemini-api/docs/deprecations",
       "ok": true,
       "notices": 52
+    },
+    {
+      "url": "https://docs.cohere.com/docs/deprecations.md",
+      "ok": true,
+      "notices": 2
+    },
+    {
+      "url": "https://docs.mistral.ai/models/",
+      "ok": true,
+      "notices": 46
     }
   ],
   "items": [
@@ -34,15 +44,6 @@
       "vendorName": "gemini-3.1-flash-lite",
       "date": "2027-05-07",
       "shutDown": false,
-      "source": "Google's Gemini API deprecations page",
-      "url": "https://ai.google.dev/gemini-api/docs/deprecations"
-    },
-    {
-      "id": "gemini-gemini-3.1-flash-lite-preview",
-      "providerId": "google",
-      "vendorName": "gemini-3.1-flash-lite-preview",
-      "date": "2026-05-25",
-      "shutDown": true,
       "source": "Google's Gemini API deprecations page",
       "url": "https://ai.google.dev/gemini-api/docs/deprecations"
     },

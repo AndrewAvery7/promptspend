@@ -93,7 +93,7 @@ jobs:
 
       # A pricing table can keep printing a rate for weeks after the model is
       # gone, so the check above cannot see a shutdown. This reads the vendors'
-      # deprecation pages (OpenAI, Anthropic, Google) and the sync below raises
+      # deprecation pages (OpenAI, Anthropic, Google, Cohere, Mistral) and the sync below raises
       # a review flag on any live model past its shutdown date. No keys; never
       # fails the morning.
       - name: Read the vendors' deprecation pages
