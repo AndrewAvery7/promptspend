@@ -49,6 +49,7 @@ export const FREE_TIERS_URL = `${import.meta.env.BASE_URL}free-tiers/`;
 export const WRITING_INDEX_URL = `${import.meta.env.BASE_URL}writing/`;
 /** The files the site publishes as data, with the license for each. */
 export const DATA_PAGE_URL = `${import.meta.env.BASE_URL}data/`;
+export const CHANGES_PAGE_URL = `${import.meta.env.BASE_URL}changes/`;
 
 /** The help and policy pages, which the generated pages' footers already linked. */
 export const SUPPORT_URL = `${import.meta.env.BASE_URL}support/`;

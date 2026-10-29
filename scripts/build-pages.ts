@@ -37,6 +37,7 @@ import { PAGE_CSS } from '@/lib/seo/css';
 import { renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import { receiptSpec } from '@/receipt/receiptSpec';
+import { changesPageInput } from '@/lib/seo/changes-page';
 import { sitemapIndex, urlset, type SitemapEntry, type SitemapFile } from '@/lib/seo/sitemap';
 import { APP_PAGE_PATH } from '@/lib/links';
 import {
@@ -52,10 +53,12 @@ import {
   renderProviderPage,
   renderProvidersIndex,
   renderRetiredComparisonPage,
+  renderChangesPage,
   renderDataPage,
   renderNotFoundPage,
   renderWritingIndex,
   renderWritingPage,
+  CHANGES_PATH,
   DATA_PAGE_PATH,
   WRITING_INDEX_PATH,
   type DataPageInput,
@@ -397,6 +400,11 @@ async function main(): Promise<void> {
     history: { firstDate: history.firstDate, rows: rows.length, lastChangeDate },
   };
   await writeFileAt(fileFor(DATA_PAGE_PATH), renderDataPage(dataPage, ctx));
+  const changes = changesPageInput(
+    history,
+    Object.fromEntries(set.models.map((page) => [page.id, page.path])),
+  );
+  await writeFileAt(fileFor(CHANGES_PATH), renderChangesPage(changes, ctx));
   await writeFileAt('404.html', renderNotFoundPage(ctx));
 
   // The sitemap lives here rather than in `vite.config.ts` because it has to
@@ -424,6 +432,7 @@ async function main(): Promise<void> {
         entry(freeTiers.index.path, freeTiers.index.lastmod),
         ...(newestArticle ? [entry(WRITING_INDEX_PATH, newestArticle)] : []),
         entry(DATA_PAGE_PATH, lastChangeDate),
+        entry(CHANGES_PATH, changes.lastChangeDate),
         ...informationPages.map((page) => entry(page.path, page.updatedDate)),
       ],
     },
