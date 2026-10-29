@@ -9,6 +9,12 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **A daily shut-down check.** `check:shutdowns` reads OpenAI's, Anthropic's and Google's deprecation pages
+  each morning before the sync, and the sync flags any live model past its vendor's shutdown date. A
+  price check cannot see this, because pricing tables keep listing retired models. Its first run found
+  Gemini 3.1 Flash Lite Preview, shut down by Google on 2026-05-25, which is archived in this change. It
+  also lists shutdowns still to come, among them GPT-5, 5 Mini, 5 Nano, 5 Pro, o3 and o3-pro on
+  2026-12-11.
 - **Fifteen first-party models the capture rules had missed.** A comparison with another tracker's model
   list found models the price feed already carried under their makers' own keys but no rule matched:
   OpenAI's GPT-5, 5.2, 5.4 and 5.5 Pro tiers, o1-pro and o3-pro, Mistral's Codestral, Kimi K3.1 Pro and
