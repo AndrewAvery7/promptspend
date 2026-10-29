@@ -464,13 +464,13 @@ function appBand(ctx: RenderContext): string {
   const store = (url: string) => `href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"`;
   const asset = (path: string) => escapeHtml(href(ctx, path));
   return `        <section class="footer__apps" aria-labelledby="footer-apps-title">
-          <div>
+          <div class="footer__apps-text">
             <p class="footer__apps-title" id="footer-apps-title">PromptSpend on iPhone and Android</p>
-            <p class="footer__apps-sub">The same catalog, the same sources and dates, built for a phone. Free &mdash; no account, no ads, and what you paste stays on your device.</p>
-            <div class="store-badges">
-              <a ${store(APP_STORE_URL)}><img src="${asset('/store/app-store-badge.svg')}" alt="Download on the App Store" width="120" height="40" /></a>
-              <a ${store(GOOGLE_PLAY_URL)}><img src="${asset('/store/google-play-badge.png')}" alt="Get it on Google Play" width="134" height="40" /></a>
-            </div>
+            <p class="footer__apps-sub">The same catalog, sources and dates, built for a phone. Free, no account, no ads.</p>
+          </div>
+          <div class="store-badges">
+            <a ${store(APP_STORE_URL)}><img src="${asset('/store/app-store-badge.svg')}" alt="Download on the App Store" width="120" height="40" /></a>
+            <a ${store(GOOGLE_PLAY_URL)}><img src="${asset('/store/google-play-badge.png')}" alt="Get it on Google Play" width="134" height="40" /></a>
           </div>
           <div class="store-qr">
             <a class="store-qr__code" ${store(APP_STORE_URL)}><img src="${asset('/store/qr-ios.svg')}" alt="QR code: PromptSpend on the App Store" width="92" height="92" /><span>iPhone</span></a>
@@ -487,14 +487,15 @@ function footerStats(ctx: RenderContext): string {
   if (!f) return '';
   const changed = f.pricesChangedOn ?? 'no change recorded since tracking began';
   const checked = f.sourcesCheckedOn ? ` &middot; sources checked ${escapeHtml(f.sourcesCheckedOn)}` : '';
-  return `        <div class="footer__stats">${f.models} models &middot; prices last changed ${escapeHtml(changed)}${checked}</div>
-`;
+  return `
+          <span class="footer__stats">${f.models} models &middot; prices last changed ${escapeHtml(changed)}${checked}</span>`;
 }
 
 /**
  * The footer every generated page closes with, identical in content to the
- * calculator's (`SiteFooter.tsx`): the apps band, three rows of links, the
- * counts row and the directory badges. It carries no note of its own - the
+ * calculator's (`SiteFooter.tsx`): the apps band, the links in four headed
+ * columns, the "Listed on" badges and a last line with the license and the
+ * counts. It carries no note of its own - the
  * "where these prices come from" sentence sits at the foot of each page's
  * content - because a page with a different footer is a page that reads as a
  * different site. `SiteChrome.test.tsx` fails if the two drift.
@@ -503,35 +504,55 @@ function siteFooter(ctx: RenderContext, input: LayoutInput): string {
   const external = 'target="_blank" rel="noreferrer noopener"';
   return `    <footer class="footer">
       <div class="footer__inner">
-${input.appBand === false ? '' : appBand(ctx)}        <div>
-          <b>PromptSpend</b> &middot; open source, MIT &middot; no accounts, no ads &middot;
-          <a href="https://github.com/AndrewAvery7/promptspend">star it on GitHub</a> &middot;
-          <a href="mailto:info@promptspend.com">info@promptspend.com</a> &middot;
-          <a href="${escapeHtml(href(ctx, SUPPORT_PATH))}">Support</a> &middot;
-          <a href="${escapeHtml(href(ctx, PRIVACY_PATH))}">Privacy</a>
+${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
+          <div class="footer__brand">
+            <p class="footer__brand-name">PromptSpend</p>
+            <p>LLM API prices that show their work. Open source, no accounts, no ads.</p>
+            <a class="footer__gh" href="https://github.com/AndrewAvery7/promptspend">Star it on GitHub</a>
+          </div>
+          <nav class="footer__col" aria-labelledby="footer-col-prices">
+            <h2 id="footer-col-prices">Prices</h2>
+            <ul>
+              <li><a href="${escapeHtml(href(ctx, '/models/'))}">All model prices</a></li>
+              <li><a href="${escapeHtml(href(ctx, '/providers/'))}">By provider</a></li>
+              <li><a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">${escapeHtml(NAV_LABELS.freeTiers)}</a></li>
+              <li><a href="${escapeHtml(href(ctx, CHANGES_PATH))}">Price changes</a></li>
+            </ul>
+          </nav>
+          <nav class="footer__col" aria-labelledby="footer-col-tools">
+            <h2 id="footer-col-tools">Tools</h2>
+            <ul>
+              <li><a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a></li>
+              <li><a href="${escapeHtml(href(ctx, TOKEN_COUNTER_PATH))}">Token counter</a></li>
+              <li><a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a></li>
+              <li><a href="${escapeHtml(href(ctx, DATA_PAGE_PATH))}">Open data</a></li>
+            </ul>
+          </nav>
+          <nav class="footer__col" aria-labelledby="footer-col-elsewhere">
+            <h2 id="footer-col-elsewhere">Use it elsewhere</h2>
+            <ul>
+              <li><a href="${escapeHtml(href(ctx, APP_PAGE_PATH))}">iPhone &amp; Android apps</a></li>
+              <li><a href="${escapeHtml(MCP_PACKAGE_URL)}" ${external}>MCP server</a></li>
+              <li><a href="${escapeHtml(VSCODE_MARKETPLACE_URL)}" ${external}>VS Code extension</a></li>
+              <li><a href="${escapeHtml(OPEN_VSX_URL)}" ${external}>Open VSX</a></li>
+            </ul>
+          </nav>
+          <nav class="footer__col" aria-labelledby="footer-col-about">
+            <h2 id="footer-col-about">About</h2>
+            <ul>
+              <li><a href="${escapeHtml(href(ctx, WRITING_INDEX_PATH))}">Writing</a></li>
+              <li><a href="${escapeHtml(href(ctx, SUPPORT_PATH))}">Support</a></li>
+              <li><a href="${escapeHtml(href(ctx, PRIVACY_PATH))}">Privacy</a></li>
+              <li><a href="mailto:info@promptspend.com">info@promptspend.com</a></li>
+            </ul>
+          </nav>
         </div>
-        <div>
-          <a href="${escapeHtml(href(ctx, '/models/'))}">All model prices</a> &middot;
-          <a href="${escapeHtml(href(ctx, '/providers/'))}">By provider</a> &middot;
-          <a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">${escapeHtml(NAV_LABELS.freeTiers)}</a> &middot;
-          <a href="${escapeHtml(href(ctx, '/compare/'))}">Comparisons</a> &middot;
-          <a href="${escapeHtml(href(ctx, CHANGES_PATH))}">Price changes</a> &middot;
-          <a href="${escapeHtml(href(ctx, TOKEN_COUNTER_PATH))}">Token counter</a> &middot;
-          <a href="${escapeHtml(href(ctx, WRITING_INDEX_PATH))}">Writing</a> &middot;
-          <a href="${escapeHtml(href(ctx, DATA_PAGE_PATH))}">Open data</a> &middot;
-          <a href="${escapeHtml(ctx.apiUrl)}">Pricing API</a>
-        </div>
-        <div>
-          <a href="${escapeHtml(href(ctx, APP_PAGE_PATH))}">iPhone &amp; Android apps</a> &middot;
-          <a href="${escapeHtml(MCP_PACKAGE_URL)}" ${external}>MCP server</a> &middot;
-          <a href="${escapeHtml(VSCODE_MARKETPLACE_URL)}" ${external}>VS Code extension</a> &middot;
-          <a href="${escapeHtml(OPEN_VSX_URL)}" ${external}>Open VSX</a>
-        </div>
-${footerStats(ctx)}        <div class="footer__badge">
+        <div class="footer__badge">
+          <span class="footer__listed">Listed on</span>
           <a href="https://sellwithboost.com" target="_blank" rel="noopener noreferrer">
             <picture>
               <source srcset="${escapeHtml(href(ctx, '/sellwithboost-dark.svg'))}" media="(prefers-color-scheme: dark)" />
-              <img src="${escapeHtml(href(ctx, '/sellwithboost-light.svg'))}" alt="Listed on Sell With boost" width="160" height="40" />
+              <img src="${escapeHtml(href(ctx, '/sellwithboost-light.svg'))}" alt="Listed on Sell With boost" width="104" height="40" />
             </picture>
           </a>
           <a href="https://peerpush.com/p/promptspend" target="_blank" rel="noopener noreferrer">
@@ -570,6 +591,9 @@ ${footerStats(ctx)}        <div class="footer__badge">
           <a href="https://mcpservers.org/servers/andrewavery7/promptspend" target="_blank" rel="noopener noreferrer">
             <img class="footer__badge-strip" src="${escapeHtml(href(ctx, '/mcpservers-badge.svg'))}" alt="PromptSpend listed on mcpservers.org" width="228" height="28" />
           </a>
+        </div>
+        <div class="footer__legal">
+          <span>PromptSpend &middot; open source under the MIT license &middot; no accounts, no ads</span>${footerStats(ctx)}
         </div>
       </div>
     </footer>`;
