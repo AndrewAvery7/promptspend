@@ -12,14 +12,14 @@
   margin-top: 24px;
 }
 
+/* Four stacked parts: the apps band, the link columns, the "Listed on" row
+   and the last line. */
 .footer__inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 22px 24px;
+  padding: 20px 24px 18px;
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
   /* The site-wide floor: nothing readable renders under 12px, which
      `tests/e2e/mobile.spec.ts` enforces on every viewport. */
   font-size: max(0.75rem, 12px);
@@ -30,45 +30,136 @@
   color: var(--accent);
 }
 
-.footer__stats {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
+/* ---- the link columns ----
+   The name and a line about it, then four headed columns. Two columns on a
+   phone, where each link gets a taller row to tap. */
+.footer__cols {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  gap: 20px 28px;
+  padding: 22px 0 18px;
+}
+.footer__brand-name {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.footer__brand p:not(.footer__brand-name) {
+  margin: 0 0 10px;
+  max-width: 34ch;
+  line-height: 1.55;
+}
+.footer__gh {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 500;
+}
+.footer__col h2 {
+  margin: 0 0 6px;
+  font-size: max(0.75rem, 12px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.footer__col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.footer__col a {
+  display: block;
+  padding: 4px 0;
+  font-size: 0.8125rem;
+}
+@media (max-width: 860px) {
+  .footer__cols {
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 20px;
+  }
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+  .footer__col a {
+    padding: 0;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
 }
 
-/* The directory listing badges - Sell With boost, PeerPush, Peerlist,
-   LaunchNest, Uneed, Fazier, Product Hunt, then mcpservers.org.
-   Their artwork carries whatever frame it needs, so nothing is added here but
-   a height. */
+/* ---- the "Listed on" row ----
+   Sell With boost, PeerPush, Peerlist, LaunchNest, Uneed, Fazier, Product
+   Hunt, then mcpservers.org, behind a label and a divider. Their artwork
+   carries whatever frame it needs, so nothing is added here but a height:
+   every card is drawn 34px tall, which keeps all eight on one line on a
+   computer. On a phone they sit in a two-column grid, each centered in an
+   equal cell, so the uneven widths still line up. The link, not the picture,
+   is the target, so the link carries the 44px a thumb needs. */
 .footer__badge {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 4px 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
 }
-
-/* Every badge is drawn 40px tall (PeerPush's 460 x 130 card at 142 x 40,
-   Peerlist's 245 x 72 at 136 x 40 and LaunchNest's 590 x 150 at 157 x 40, Uneed's 582 x 152 at 153 x 40, Fazier's
-   103 x 44 at 94 x 40, Product Hunt's 204 x 54 at 151 x 40, to match Sell With
-   boost's), four short
-   of the 44px a thumb needs and that the mobile e2e run enforces. The link,
-   not the picture, is the target, so the link carries the height and the
-   artwork stays the size it was drawn. */
+.footer__listed {
+  margin-right: 4px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .footer__badge a {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 44px;
 }
-
 .footer__badge img {
   display: block;
-  height: 40px;
+  height: 34px;
   width: auto;
 }
-
 /* mcpservers.org's badge is a shields-style strip, not a card: its 163 x 20
-   drawn at 228 x 28, so it does not outgrow the cards beside it. */
+   drawn 22px tall, so its solid color does not outweigh the cards. */
 .footer__badge img.footer__badge-strip {
-  height: 28px;
+  height: 22px;
+}
+@media (max-width: 600px) {
+  .footer__badge {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 10px;
+  }
+  .footer__listed {
+    grid-column: 1 / -1;
+  }
+  .footer__badge img {
+    height: 32px;
+  }
+  .footer__badge img.footer__badge-strip {
+    height: 18px;
+  }
+}
+
+/* ---- the last line: the license, then the catalog's counts ---- */
+.footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 20px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+.footer__stats {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---- store badges and QR codes (StoreBadges.tsx) ----
@@ -137,37 +228,39 @@
 /* The app band: first thing in every footer, on every page. A tinted card with
    the two store badges and, on a computer, the two QR codes. It is permanent -
    unlike the launch banner it has nothing to dismiss - so the apps stay one
-   glance away once that banner has been closed. */
+   glance away once that banner has been closed. One row on a computer: the
+   pitch, the store badges, the QR codes. */
 .footer__apps {
-  flex: 1 1 100%;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px 24px;
+  gap: 10px 28px;
   background: var(--accent-soft);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px 18px;
+  padding: 12px 16px;
+}
+.footer__apps-text {
+  flex: 1 1 280px;
 }
 .footer__apps-title {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 650;
   letter-spacing: -0.01em;
   color: var(--ink);
 }
 .footer__apps-sub {
-  margin: 3px 0 0;
-  max-width: 52ch;
-  line-height: 1.5;
-}
-.footer__apps .store-badges {
-  margin-top: 10px;
+  margin: 2px 0 0;
+  line-height: 1.45;
 }
 /* The footer paints every link in the accent; the code's label is a caption. */
 .footer .store-qr__code {
   color: var(--muted);
+}
+.footer__apps .store-qr__code img {
+  width: 64px;
+  height: 64px;
 }
 .footer__apps-credit {
   flex-basis: 100%;

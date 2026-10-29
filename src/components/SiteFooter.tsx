@@ -53,82 +53,136 @@ import type { Theme } from '@/state/useAppearance';
  * Both entry points now render this, so a link added here appears on both and
  * cannot be forgotten on one.
  *
+ * Top to bottom: the apps band, the links in four headed columns beside the
+ * name, one labeled row of directory badges, and a quiet last line with the
+ * license and the catalog's counts. The generated pages (`layout` in
+ * `seo/render.ts`) draw the same thing in the same order;
+ * `SiteChrome.test.tsx` fails if the two drift.
+ *
  * `catalog` is nullable because the Receipt page renders while its catalog is
- * still loading. The counts row is the only part that needs it, so the rest of
+ * still loading. The counts are the only part that needs it, so the rest of
  * the footer is there from the first paint rather than popping in late.
  */
 export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme: Theme }) {
+  const external = { target: '_blank', rel: 'noreferrer noopener' } as const;
   return (
     <footer className="footer">
       <div className="footer__inner">
-        {/* The apps, on every page. The launch banner can be dismissed and then
-            the apps are only in a link; this cannot, and the QR codes are for the
-            visitor on a computer. The robot's credit travels with its code. */}
+        {/* The apps, on every page, in one slim row: the pitch, the store
+            badges and, on a computer, the QR codes. The launch banner can be
+            dismissed; this cannot. The robot's credit travels with its code. */}
         <section className="footer__apps" aria-labelledby="footer-apps-title">
-          <div>
+          <div className="footer__apps-text">
             <p className="footer__apps-title" id="footer-apps-title">
               PromptSpend on iPhone and Android
             </p>
             <p className="footer__apps-sub">
-              The same catalog, the same sources and dates, built for a phone. Free — no account, no ads, and
-              what you paste stays on your device.
+              The same catalog, sources and dates, built for a phone. Free, no account, no ads.
             </p>
-            <StoreBadges />
           </div>
+          <StoreBadges />
           <StoreQrCodes credit={false} />
           <p className="footer__apps-credit">{ANDROID_ROBOT_CREDIT}</p>
         </section>
-        <div>
-          <b>PromptSpend</b> · open source, MIT · no accounts, no ads ·{' '}
-          <a href={REPO_URL}>star it on GitHub</a> · <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> ·{' '}
-          <a href={SUPPORT_URL}>Support</a> · <a href={PRIVACY_URL}>Privacy</a>
-        </div>
-        {/* The generated pages. Every model has a permanent URL of its own —
-            useful to link to, and the route by which anything that does not
-            run JavaScript can read this catalog at all. */}
-        <div>
-          <a href={MODELS_INDEX_URL}>All model prices</a> · <a href={PROVIDERS_INDEX_URL}>By provider</a> ·{' '}
-          <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a> · <a href={COMPARE_INDEX_URL}>Comparisons</a> ·{' '}
-          <a href={CHANGES_PAGE_URL}>Price changes</a> · <a href={TOKEN_COUNTER_URL}>Token counter</a> ·{' '}
-          <a href={WRITING_INDEX_URL}>Writing</a> · <a href={DATA_PAGE_URL}>Open data</a> ·{' '}
-          <a href={DEVELOPER_HUB_URL}>Pricing API</a>
-        </div>
-        {/* The places this catalog answers that are not a web page. The footer
-            is the only row present on every view, so it is where somebody who
-            never opens Data & Alerts finds out they exist — and where anyone
-            who dismissed the launch banner finds the apps again. */}
-        <div>
-          <a href={APP_PAGE_URL}>iPhone &amp; Android apps</a> ·{' '}
-          <a href={MCP_PACKAGE_URL} target="_blank" rel="noreferrer noopener">
-            MCP server
-          </a>{' '}
-          ·{' '}
-          <a href={VSCODE_MARKETPLACE_URL} target="_blank" rel="noreferrer noopener">
-            VS Code extension
-          </a>{' '}
-          ·{' '}
-          <a href={OPEN_VSX_URL} target="_blank" rel="noreferrer noopener">
-            Open VSX
-          </a>
-        </div>
-        {catalog && (
-          <div className="footer__stats">
-            {catalog.primaryModels.length} models · prices last changed{' '}
-            {catalog.pricesLastChanged() ?? 'no change recorded since tracking began'}
-            {catalog.sourcesLastChecked() ? ` · sources checked ${catalog.sourcesLastChecked()}` : ''}
+        <div className="footer__cols">
+          <div className="footer__brand">
+            <p className="footer__brand-name">PromptSpend</p>
+            <p>LLM API prices that show their work. Open source, no accounts, no ads.</p>
+            <a className="footer__gh" href={REPO_URL}>
+              Star it on GitHub
+            </a>
           </div>
-        )}
+          <nav className="footer__col" aria-labelledby="footer-col-prices">
+            <h2 id="footer-col-prices">Prices</h2>
+            <ul>
+              <li>
+                <a href={MODELS_INDEX_URL}>All model prices</a>
+              </li>
+              <li>
+                <a href={PROVIDERS_INDEX_URL}>By provider</a>
+              </li>
+              <li>
+                <a href={FREE_TIERS_URL}>{NAV_LABELS.freeTiers}</a>
+              </li>
+              <li>
+                <a href={CHANGES_PAGE_URL}>Price changes</a>
+              </li>
+            </ul>
+          </nav>
+          <nav className="footer__col" aria-labelledby="footer-col-tools">
+            <h2 id="footer-col-tools">Tools</h2>
+            <ul>
+              <li>
+                <a href={COMPARE_INDEX_URL}>Comparisons</a>
+              </li>
+              <li>
+                <a href={TOKEN_COUNTER_URL}>Token counter</a>
+              </li>
+              <li>
+                <a href={DEVELOPER_HUB_URL}>Pricing API</a>
+              </li>
+              <li>
+                <a href={DATA_PAGE_URL}>Open data</a>
+              </li>
+            </ul>
+          </nav>
+          {/* The places this catalog answers that are not a web page. The
+              footer is on every view, so it is where somebody who never opens
+              Data & Alerts finds out they exist. */}
+          <nav className="footer__col" aria-labelledby="footer-col-elsewhere">
+            <h2 id="footer-col-elsewhere">Use it elsewhere</h2>
+            <ul>
+              <li>
+                <a href={APP_PAGE_URL}>iPhone &amp; Android apps</a>
+              </li>
+              <li>
+                <a href={MCP_PACKAGE_URL} {...external}>
+                  MCP server
+                </a>
+              </li>
+              <li>
+                <a href={VSCODE_MARKETPLACE_URL} {...external}>
+                  VS Code extension
+                </a>
+              </li>
+              <li>
+                <a href={OPEN_VSX_URL} {...external}>
+                  Open VSX
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <nav className="footer__col" aria-labelledby="footer-col-about">
+            <h2 id="footer-col-about">About</h2>
+            <ul>
+              <li>
+                <a href={WRITING_INDEX_URL}>Writing</a>
+              </li>
+              <li>
+                <a href={SUPPORT_URL}>Support</a>
+              </li>
+              <li>
+                <a href={PRIVACY_URL}>Privacy</a>
+              </li>
+              <li>
+                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
         {/* The directory listings' price: a link back, on a page they can
-            fetch. The artwork is served from here, not from theirs - see
+            fetch. One labeled row at one height, a two-column grid on a phone.
+            The artwork is served from here, not from theirs - see
             `SWB_BADGE_LIGHT` in `@/config` for why. LaunchNest's and Fazier's
             links are also in `index.html`, for verifiers that do not run this
             code. */}
         <div className="footer__badge">
+          <span className="footer__listed">Listed on</span>
           <a href={SWB_URL} target="_blank" rel="noopener noreferrer">
             <img
               src={theme === 'dark' ? SWB_BADGE_DARK : SWB_BADGE_LIGHT}
               alt="Listed on Sell With boost"
-              width={160}
+              width={104}
               height={40}
             />
           </a>
@@ -185,6 +239,16 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               height={28}
             />
           </a>
+        </div>
+        <div className="footer__legal">
+          <span>PromptSpend · open source under the MIT license · no accounts, no ads</span>
+          {catalog && (
+            <span className="footer__stats">
+              {catalog.primaryModels.length} models · prices last changed{' '}
+              {catalog.pricesLastChanged() ?? 'no change recorded since tracking began'}
+              {catalog.sourcesLastChecked() ? ` · sources checked ${catalog.sourcesLastChecked()}` : ''}
+            </span>
+          )}
         </div>
       </div>
     </footer>

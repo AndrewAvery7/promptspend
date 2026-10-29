@@ -180,34 +180,67 @@ article :not(pre) > code {
  * sheet). Its mount point must not make a box of its own: a sticky header only
  * sticks inside its parent, and this parent would be exactly as tall as it. */
 #site-header { display: contents; }
-/* The footer, drawn to match the calculator's (src/styles/footer.css). */
+/* The footer, drawn to match the calculator's (src/styles/footer.css): the apps
+ * band, four headed link columns beside the name, one "Listed on" row of
+ * badges, then a last line with the license and the counts. */
 .footer { margin-top: 3rem; border-top: 1px solid var(--border); }
 .footer__inner {
-  max-width: 1280px; margin: 0 auto; padding: 22px 24px; display: flex; justify-content: space-between;
-  gap: 16px; flex-wrap: wrap; font-size: max(0.75rem, 12px); color: var(--muted);
+  max-width: 1280px; margin: 0 auto; padding: 20px 24px 18px; display: flex; flex-direction: column;
+  font-size: max(0.75rem, 12px); color: var(--muted);
 }
 .footer a { color: var(--accent); }
-.footer__stats { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
-.footer__badge { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-/* The link carries the 44px a thumb needs; every badge's artwork stays 40px. */
-.footer__badge a { display: inline-flex; align-items: center; min-height: 44px; }
-.footer__badge img { display: block; height: 40px; width: auto; }
-/* mcpservers.org's badge is a shields-style strip, not a card: 28px tall. */
-.footer__badge img.footer__badge-strip { height: 28px; }
-/* The apps band at the top of every footer (src/styles/footer.css draws the
- * same one in the calculator). The store badge and QR rules below are the app
- * page's; inside the band they are re-sized to match the calculator's. */
-.footer__apps {
-  flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: 12px 24px; background: var(--accent-soft); border: 1px solid var(--border);
-  border-radius: 8px; padding: 16px 18px;
+.footer__cols { display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 20px 28px; padding: 22px 0 18px; }
+.footer__brand-name { margin: 0 0 6px; font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.footer__brand p:not(.footer__brand-name) { margin: 0 0 10px; max-width: 34ch; line-height: 1.55; }
+.footer__gh { display: inline-flex; align-items: center; min-height: 44px; font-weight: 500; }
+.footer__col h2 {
+  margin: 0 0 6px; font-size: max(0.75rem, 12px); font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink);
 }
-.footer__apps-title { margin: 0; font-size: 1rem; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
-.footer__apps-sub { margin: 3px 0 0; max-width: 52ch; line-height: 1.5; }
-.footer__apps .store-badges { margin: 10px 0 0; gap: 10px; }
+.footer__col ul { list-style: none; margin: 0; padding: 0; }
+.footer__col a { display: block; padding: 4px 0; font-size: 0.8125rem; }
+@media (max-width: 860px) {
+  .footer__cols { grid-template-columns: 1fr 1fr; gap: 18px 20px; }
+  .footer__brand { grid-column: 1 / -1; }
+  .footer__col a { padding: 0; min-height: 40px; display: flex; align-items: center; }
+}
+/* Every badge card 34px tall, all eight on one line on a computer; a grid of
+ * two on a phone, each centered in an equal cell. The link carries the 44px a
+ * thumb needs. mcpservers.org's is a strip, not a card: 22px. */
+.footer__badge {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px;
+  border-top: 1px solid var(--border); padding-top: 10px;
+}
+.footer__listed { margin-right: 4px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.footer__badge a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+.footer__badge img { display: block; height: 34px; width: auto; }
+.footer__badge img.footer__badge-strip { height: 22px; }
+@media (max-width: 600px) {
+  .footer__badge { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .footer__listed { grid-column: 1 / -1; }
+  .footer__badge img { height: 32px; }
+  .footer__badge img.footer__badge-strip { height: 18px; }
+}
+.footer__legal {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px;
+  border-top: 1px solid var(--border); margin-top: 8px; padding-top: 12px;
+}
+.footer__stats { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+/* The apps band at the top of every footer (src/styles/footer.css draws the
+ * same one in the calculator): one row of the pitch, the store badges and the
+ * QR codes. The store badge and QR rules below are the app page's; inside the
+ * band they are re-sized to match the calculator's. */
+.footer__apps {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px;
+  background: var(--accent-soft); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px;
+}
+.footer__apps-text { flex: 1 1 280px; }
+.footer__apps-title { margin: 0; font-size: 0.95rem; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
+.footer__apps-sub { margin: 2px 0 0; line-height: 1.45; }
+.footer__apps .store-badges { margin: 0; gap: 10px; }
 .footer__apps .store-qr { margin: 0; gap: 12px; }
 .footer .store-qr__code { color: var(--muted); font-size: max(0.75rem, 12px); }
-.footer__apps .store-qr__code img { width: 92px; height: 92px; border-radius: 8px; }
+.footer__apps .store-qr__code img { width: 64px; height: 64px; border-radius: 8px; }
 .footer__apps-credit { flex-basis: 100%; margin: 0; line-height: 1.5; }
 @media (max-width: 860px), (hover: none) { .footer__apps-credit { display: none; } }
 /* The app page. Badge links carry the 44px a thumb needs; the artwork is the

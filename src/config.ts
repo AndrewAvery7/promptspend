@@ -75,9 +75,11 @@ export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
  * unchanged. Both files are self-contained - the mark is a data URI inside the
  * SVG - so neither reaches the network.
  *
- * One edit to their artwork: the opaque plate and its border are removed, so
- * the badge sits on the footer rather than on a white card floating in it. The
- * mark, the wordmark and their colors are untouched.
+ * Two edits to their artwork: the opaque plate and its border are removed, so
+ * the badge sits on the footer rather than on a white card floating in it, and
+ * the empty right-hand 56px is cropped (160 wide to 104, 2026-10-29) so it sits
+ * centered in the footer's badge grid. The mark, the wordmark and their colors
+ * are untouched.
  */
 export const SWB_URL = 'https://sellwithboost.com';
 export const SWB_BADGE_LIGHT = `${import.meta.env.BASE_URL}sellwithboost-light.svg`;
