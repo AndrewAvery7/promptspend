@@ -143,8 +143,8 @@
       "answer": "Yes. New Mistral accounts start in a free mode with API access, a monthly allowance and no payment card needed.",
       "card": "no",
       "training": "opt-out",
-      "whatsFree": "$10 a month of API credit, shared with Mistral's other tools",
-      "updated": "2026-10-05",
+      "whatsFree": "A monthly allowance of API credit, shared with Mistral's other tools; the amount is no longer stated on the pricing page",
+      "updated": "2026-10-29",
       "basis": {
         "verdict": ["mistral-free-mode", "mistral-default"],
         "card": ["mistral-free-mode"],
@@ -165,14 +165,6 @@
           "statement": "Free mode is where every new account starts.",
           "quote": "Free mode is the default state for new accounts.",
           "url": "https://docs.mistral.ai/admin/billing-usage/subscriptions",
-          "readOn": "2026-10-05"
-        },
-        {
-          "id": "mistral-credits",
-          "topic": "credits",
-          "statement": "The Free plan includes $10 a month in API credits.",
-          "quote": "$10 /mo in API credits.",
-          "url": "https://mistral.ai/pricing",
           "readOn": "2026-10-05"
         },
         {
@@ -226,7 +218,8 @@
       ],
       "unpublished": [
         "Free-mode request and token limits per model. Mistral shows these only in the logged-in Admin panel.",
-        "Which models can be used in Free mode. No public per-model list."
+        "Which models can be used in Free mode. No public per-model list.",
+        "The size of the Free plan's monthly API credit. Mistral's pricing page listed $10 a month when last read on 2026-10-05 and no longer lists any amount for the Free plan."
       ]
     },
     "zai": {
@@ -566,7 +559,7 @@
       "card": "no",
       "training": "no",
       "whatsFree": "$100 of AWS credit at sign-up, plus up to $100 more for completing activities",
-      "updated": "2026-10-05",
+      "updated": "2026-10-29",
       "basis": {
         "verdict": ["amazon-credits", "amazon-bedrock-activity"],
         "card": ["amazon-card"],
@@ -627,9 +620,9 @@
           "id": "amazon-quotas",
           "topic": "limits",
           "statement": "Bedrock has no separate free-tier limits. Account quotas apply and can depend on payment history.",
-          "quote": "the default quotas assigned to an account might be updated depending on regional factors, payment history, fraudulent usage, and/or approval of a quota increase request.",
+          "quote": "the default quotas assigned to an account might be updated depending on regional factors, account age, usage history, payment history, fraudulent usage, and/or approval of a quota increase request.",
           "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/quotas.html",
-          "readOn": "2026-10-05"
+          "readOn": "2026-10-29"
         },
         {
           "id": "amazon-data",
@@ -659,7 +652,7 @@
       "card": "yes",
       "training": "no",
       "whatsFree": "The moderation model; daily tokens only for eligible organizations that opt in to sharing their data",
-      "updated": "2026-10-05",
+      "updated": "2026-10-29",
       "basis": {
         "verdict": ["openai-prepaid", "openai-minimum"],
         "card": ["openai-minimum"],
@@ -729,11 +722,11 @@
         {
           "id": "openai-tiers",
           "topic": "upgrade",
-          "statement": "Limits rise automatically with total spend: Tier 1 at $5, up to Tier 5 at $1,000.",
-          "quote": "As your spend on our API goes up, we automatically graduate you to the next usage tier.",
+          "statement": "Limits rise automatically as total credit purchases reach each tier's threshold.",
+          "quote": "Your organization's usage tier upgrades automatically as its total credit purchases reach each threshold.",
           "url": "https://developers.openai.com/api/docs/guides/rate-limits",
           "readUrl": "https://developers.openai.com/api/docs/guides/rate-limits.md",
-          "readOn": "2026-10-05"
+          "readOn": "2026-10-29"
         },
         {
           "id": "openai-regions",
@@ -902,7 +895,7 @@
       "card": "yes",
       "training": "no",
       "whatsFree": "The Console Playground only, not the API",
-      "updated": "2026-10-05",
+      "updated": "2026-10-29",
       "basis": {
         "verdict": ["xai-not-free"],
         "card": ["xai-load-credits", "xai-rejected"],
@@ -946,11 +939,11 @@
         {
           "id": "xai-data",
           "topic": "data",
-          "statement": "xAI does not train on API inputs or outputs without your explicit permission.",
-          "quote": "SpaceXAI never trains on your API inputs or outputs without your explicit permission.",
+          "statement": "xAI does not train on API inputs or outputs without your explicit permission. The page now names the company SpaceXSI.",
+          "quote": "SpaceXSI never trains on your API inputs or outputs without your explicit permission.",
           "url": "https://docs.x.ai/developers/faq/security",
           "readUrl": "https://docs.x.ai/developers/faq/security.md",
-          "readOn": "2026-10-05"
+          "readOn": "2026-10-29"
         },
         {
           "id": "xai-tiers",
@@ -970,7 +963,7 @@
       "card": "yes",
       "training": "yes",
       "whatsFree": "Nothing up front; a $5 voucher after $5 of top-ups",
-      "updated": "2026-10-24",
+      "updated": "2026-10-29",
       "basis": {
         "verdict": ["moonshot-minimum"],
         "card": ["moonshot-minimum", "moonshot-payment"],
@@ -981,9 +974,9 @@
           "id": "moonshot-minimum",
           "topic": "free",
           "statement": "You must top up at least $1 to start, and receive a $5 voucher once your top-ups reach $5.",
-          "quote": "To prevent abuse, you need to recharge at least $1 to start using, and when your cumulative recharge reaches $5, you will receive a $5 voucher.",
+          "quote": "To prevent abuse, a minimum recharge of $1 is required to start using the API; when your cumulative recharge reaches $5, you receive a $5 voucher.",
           "url": "https://platform.kimi.ai/docs/pricing/limits",
-          "readOn": "2026-10-05"
+          "readOn": "2026-10-29"
         },
         {
           "id": "moonshot-k3",
@@ -1024,9 +1017,9 @@
           "id": "moonshot-tiers",
           "topic": "upgrade",
           "statement": "Rate limits rise with your total top-ups, from Tier0 at $1 up to Tier5 at $3,000.",
-          "quote": "we currently apply rate limits based on the cumulative recharge amount of each account.",
+          "quote": "Rate limits are applied based on each account’s cumulative recharge amount",
           "url": "https://platform.kimi.ai/docs/pricing/limits",
-          "readOn": "2026-10-05"
+          "readOn": "2026-10-29"
         },
         {
           "id": "moonshot-region",
