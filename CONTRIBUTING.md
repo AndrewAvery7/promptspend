@@ -87,7 +87,7 @@ formatting it never looked at.
   first. Add the case, watch it fail, then make it pass.
 - `scripts/lib/pipeline.test.ts` — the trust ladder and the sanity rules, against fixtures rather than the
   network.
-- `src/lib/palette.test.ts` — the colour-vision guarantee. If you re-theme the charts, this tells you
+- `src/lib/palette.test.ts` — the color-vision guarantee. If you re-theme the charts, this tells you
   whether the result is still readable.
 - `src/App.test.tsx` — that the views render, the scenario round-trips through the URL, and the tour and
   command palette work.

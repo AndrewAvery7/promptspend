@@ -96,7 +96,7 @@ jobs:
           done
           (cd apps/mobile && npm ci --ignore-scripts && npm rebuild unrs-resolver)
 
-      # Includes the colour-vision palette guarantee and the pricing-pipeline
+      # Includes the color-vision palette guarantee and the pricing-pipeline
       # rules, so a change that breaks either fails the build.
       - name: Verify
         env:

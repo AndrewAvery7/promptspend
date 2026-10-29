@@ -927,7 +927,7 @@ file in git catches one of them.
   non-ASCII character went one layer deep and the pipeline diagram became noise.
   Nothing caught it — the result is valid UTF-8 and valid markdown, and Prettier
   obligingly re-padded the tables around the now-wider cells.
-- **The logo sat off-centre.** `assets/logo.png` had 9px of padding on the left
+- **The logo sat off-center.** `assets/logo.png` had 9px of padding on the left
   and 167 on the right, so `align="center"` centered a canvas whose artwork did
   not fill it. A fixed canvas is a guess about text metrics, and the font lookup
   walks a fallback list, so the error differed per machine. Both the README logo
@@ -1257,6 +1257,6 @@ First working build.
 - The daily pricing pipeline: family-level capture patterns, an explicit trust
   ladder, cross-source disagreement flagging, and a public changelog.
 - Four views — Estimate, Compare, Learn, Data & Alerts — with a guided tour, a
-  command palette, light and dark themes, and a colour-vision-validated chart
+  command palette, light and dark themes, and a color-vision-validated chart
   palette.
 - 120 tests across the engine, tokenizer, pipeline, palette and components.

@@ -413,7 +413,7 @@ curated set of head-to-heads — from the same catalog and the same cost engine.
 
 Cobalt on a cool-paper canvas, with a distinct set of _money_ colors that never change with branding:
 green means savings, red means this option costs more. The input/output chart pair is validated for
-colour-vision deficiency **in CI** — `src/lib/palette.test.ts` simulates protanopia and deuteranopia and
+color-vision deficiency **in CI** — `src/lib/palette.test.ts` simulates protanopia and deuteranopia and
 fails the build if the two marks stop being distinguishable.
 
 `src/lib/contrast.test.ts` reads `tokens.css` directly and fails the build if any accent, on any theme and

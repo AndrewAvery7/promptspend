@@ -92,7 +92,7 @@ both slots.
 - Use the same look across the icon, header, search image and screenshots.
 
 **Production approach for both apps:** one 16:9 universal PNG per app as the
-primary file, built centre-weighted so both crops work. Add dedicated 21:9 and
+primary file, built center-weighted so both crops work. Add dedicated 21:9 and
 3:2 versions only if Apple's preview crops the universal one badly.
 
 ---

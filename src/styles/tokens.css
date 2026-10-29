@@ -7,7 +7,7 @@
  *
  * Money semantics are deliberately NOT part of the accent system. Green always
  * means "you save", red always means "this costs more", and the chart pair is a
- * fixed blue/green validated for colour-vision deficiency in both themes
+ * fixed blue/green validated for color-vision deficiency in both themes
  * (see src/lib/palette.test.ts). Re-branding must never repaint them.
  *
  * Every accent here is checked against every surface it can appear on by
@@ -41,7 +41,7 @@
   --warn: #9a5b08;
   --warn-soft: #f6ebd8;
 
-  /* chart marks — validated colour-blind-safe against --surface */
+  /* chart marks — validated color-blind-safe against --surface */
   --c-in: #2166a5;
   --c-out: #0e7b43;
   --c-write: #b8690c;
