@@ -252,13 +252,14 @@ describe('the Q&A on rendered pages', () => {
       expect(faq?.mainEntity?.length).toBeGreaterThan(1);
       const visible = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, '');
       for (const q of faq!.mainEntity!) {
-        // The page escapes text; compare through a decode.
+        // The page escapes text; compare through a decode, with `&amp;` last so
+        // an escaped ampersand is never decoded twice.
         const decoded = visible
-          .replace(/&amp;/g, '&')
           .replace(/&lt;/g, '<')
           .replace(/&gt;/g, '>')
           .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'");
+          .replace(/&#39;/g, "'")
+          .replace(/&amp;/g, '&');
         expect(decoded).toContain(q.name);
         expect(decoded).toContain(q.acceptedAnswer.text);
       }
