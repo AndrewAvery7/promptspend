@@ -506,7 +506,7 @@ promptspend.com loads Google Analytics 4 and shows a small notice saying so, wit
 [privacy policy](https://promptspend.com/privacy/) and a _Turn off_ button. Google Analytics sets two
 cookies (`_ga`, `_ga_P27XJ53BH9`). Since 2026-10-29 (owner decision) Google's advertising and measurement features are on: the
 full page address, scenario and campaign tags included, Google's automatic tracking, Google signals and
-ad personalization, and 14-month retention. One thing is still removed before anything is sent: the
+ad personalization, and 14-month retention; PromptSpend's own code adds three counts (an app-store click, a Copy on the MCP, API or VS Code command, and a model added to the comparison, each with a fixed label or catalog model id). One thing is still removed before anything is sent: the
 private key a price-alert link carries (`PRIVATE_ADDRESS_PARAMS`). Pasted text is never in the address
 and never passed on ([`src/lib/analytics/`](src/lib/analytics/)). Google's user-provided data collection is on,
 so an email address typed into the price-alert form reaches Google in hashed form. It runs only on promptspend.com, never when the browser
