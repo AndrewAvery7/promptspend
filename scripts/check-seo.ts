@@ -321,6 +321,45 @@ async function main(): Promise<void> {
     }
   }
 
+  // ---------------------------------------------- featured comparison depth
+  // The featured pages exist to be worth citing (SEO register 3.8). If a
+  // template change ever drops their analysis, the build says so rather than
+  // quietly shipping them back at ~220 words. Provider pages likewise keep
+  // their sub-headed sections (3.7).
+  const featuredFile = resolve(ROOT, 'data/featured-comparisons.json');
+  if (existsSync(featuredFile)) {
+    const { slugs } = JSON.parse(await readFile(featuredFile, 'utf8')) as { slugs: string[] };
+    for (const slug of slugs) {
+      const file = resolve(DIST, 'compare', slug, 'index.html');
+      if (!existsSync(file)) {
+        problems.push(`featured comparison /compare/${slug}/ was not built`);
+        continue;
+      }
+      const page = await readFile(file, 'utf8');
+      const main = /<main[\s\S]*?<\/main>/.exec(page)?.[0] ?? '';
+      const words = main
+        .replace(/<[^>]*>/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean).length;
+      if (words < 450)
+        problems.push(`featured comparison /compare/${slug}/ has ${words} words; it should have 450 or more`);
+      for (const heading of ['Verdict by workload', 'Where the answer flips', 'Benchmark']) {
+        if (!main.includes(`<h2>${heading}</h2>`))
+          problems.push(`featured comparison /compare/${slug}/ lost its "${heading}" section`);
+      }
+    }
+  }
+  const providerDir = resolve(DIST, 'providers');
+  if (existsSync(providerDir)) {
+    for (const entry of await readdir(providerDir, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const page = await readFile(resolve(providerDir, entry.name, 'index.html'), 'utf8');
+      if (!page.includes('<h2>Discounts: caching and batch</h2>')) {
+        problems.push(`/providers/${entry.name}/ lost its sub-headed sections`);
+      }
+    }
+  }
+
   // ------------------------------------------------------- generated pages
 
   const discoveredPages = await findPages();

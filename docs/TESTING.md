@@ -15,7 +15,7 @@ to publish past it.
 
 ## What the suite covers
 
-**1790 tests in all**: 857 unit and integration tests in this package, 240 in
+**1794 tests in all**: 861 unit and integration tests in this package, 240 in
 `apps/mobile/`, 102 in `worker/`, 60 in `api/`, 53 in `mcp/`, 9 in `updates/`, 141 in `vscode/`,
 and 328 browser tests across four viewports. Those eight figures are the whole suite and they sum to the
 total. Two earlier revisions did not: one claimed 533, which was neither the sum
@@ -112,6 +112,7 @@ anyone adding them up.
 
 | `src/lib/seo/css.test.ts` | 3 | That the generated-page stylesheet defines every class the renderers emit, styles both color schemes, and lets wide tables scroll inside their own container. |
 | `src/lib/seo/featured.test.ts` | 6 | The featured-comparison analysis: the read-versus-write break-even point, the cache-hit break-even, both null when one side wins outright, and workload token totals with history re-sent. |
+| `scripts/ga-watch.test.ts` | 4 | The GA watch alarms: tag-health fires only when Cloudflare saw visitors and GA saw none, and drift names each setting that no longer matches the privacy page. |
 
 Six more packages, each with its own runtime, lockfile and CI job, plus the
 browser run:
