@@ -16,6 +16,7 @@ import {
   renderDataPage,
   renderNotFoundPage,
   renderWritingIndex,
+  renderWritingPage,
   renderProviderPage,
   renderProvidersIndex,
   renderRetiredComparisonPage,
@@ -742,5 +743,62 @@ describe('the price history sections', () => {
     expect(html).toContain('&minus;50%'.replace('&minus;', '\u2212'));
     expect(html).toContain('1 further entry was PromptSpend correcting');
     expect(renderModelsIndex(set, recordingContext())).not.toContain('recent-changes');
+  });
+});
+
+describe('share metadata', () => {
+  const set = buildPages(catalog(SAMPLE), { asOf: ASOF });
+  const reference = [
+    renderModelPage(set.models[0]!, recordingContext()),
+    renderProviderPage(set.providers[0]!, recordingContext()),
+    renderComparisonPage(set.comparisons[0]!, recordingContext()),
+  ];
+
+  it('calls reference pages websites, not articles', () => {
+    for (const html of reference) {
+      expect(html).toContain('<meta property="og:type" content="website" />');
+      expect(html).not.toContain('article:published_time');
+    }
+  });
+
+  it('calls a piece of writing an article, with its publication date', () => {
+    const html = renderWritingPage(
+      {
+        path: '/writing/report/',
+        title: 'Report | PromptSpend',
+        description: 'A report.',
+        heading: 'Report',
+        publishedDate: '2026-09-01',
+        bodyHtml: '<p>Body.</p>',
+      },
+      recordingContext(),
+    );
+    expect(html).toContain('<meta property="og:type" content="article" />');
+    expect(html).toContain('<meta property="article:published_time" content="2026-09-01" />');
+  });
+
+  it('uses the page’s own card, with its size and alt text, when the build drew one', () => {
+    const page = set.models[0]!;
+    const ctx = recordingContext({
+      shareImages: new Map([
+        [page.path, { url: `/og/models/${page.slug}.png?v=0123abcd`, alt: 'Figures & more' }],
+      ]),
+    });
+    const html = renderModelPage(page, ctx);
+    const url = `https://promptspend.com/og/models/${page.slug}.png?v=0123abcd`;
+    expect(html).toContain(`<meta property="og:image" content="${url}" />`);
+    expect(html).toContain(`<meta name="twitter:image" content="${url}" />`);
+    expect(html).toContain('<meta property="og:image:width" content="1200" />');
+    expect(html).toContain('<meta property="og:image:height" content="630" />');
+    expect(html).toContain('<meta property="og:image:alt" content="Figures &amp; more" />');
+  });
+
+  it('falls back to the site-wide card, at its own size, for every other page', () => {
+    const html = renderNotFoundPage(recordingContext());
+    expect(html).toMatch(
+      /<meta property="og:image" content="https:\/\/promptspend\.com\/social-card\.png\?v=[0-9a-f]{8}" \/>/,
+    );
+    expect(html).toContain('<meta property="og:image:width" content="1280" />');
+    expect(html).not.toContain('og:image:alt');
   });
 });

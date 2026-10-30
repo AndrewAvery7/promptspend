@@ -43,9 +43,11 @@ describe('renderMarkdown', () => {
     expect(renderMarkdown('[Unsafe](javascript:alert(1))')).toBe('<p>[Unsafe](javascript:alert(1))</p>');
   });
 
-  it('renders a fenced code block as <pre><code>, tagged with its language', () => {
+  it('renders a fenced code block as a focusable <pre><code>, tagged with its language', () => {
     const html = renderMarkdown('```bash\ncurl -s https://promptspend.dev\n```');
-    expect(html).toBe('<pre><code class="language-bash">curl -s https://promptspend.dev</code></pre>');
+    expect(html).toBe(
+      '<pre tabindex="0"><code class="language-bash">curl -s https://promptspend.dev</code></pre>',
+    );
   });
 
   it('collapses a soft-wrapped paragraph to one line', () => {

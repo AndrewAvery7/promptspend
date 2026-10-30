@@ -168,6 +168,7 @@ article p { margin: 0 0 1.1rem; max-width: 42rem; }
 /* The app page is a few short paragraphs among a full-width list and badges, so
  * a 42rem cap on only the paragraphs made the page look narrower than it is. */
 article.app-page p { max-width: none; }
+article pre:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 article pre {
   background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
   padding: 0.85rem 1rem; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 0 0 1.1rem;

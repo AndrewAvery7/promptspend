@@ -171,6 +171,13 @@ export interface RenderContext {
   benchmarks?: ReadonlyMap<string, BenchmarkEntry>;
   /** The token counter's own script, as a site path; the page has no counting without it. */
   tokenCounterScript?: string;
+  /**
+   * Each model, provider and comparison page's own share image, by page path:
+   * a site path carrying its cache key, and the alt text naming its figures.
+   * Drawn by the build (`scripts/lib/share-card-image.ts`, specs in
+   * `share-cards.ts`). A page not listed shares the site-wide card.
+   */
+  shareImages?: ReadonlyMap<string, { url: string; alt: string }>;
   chrome?: {
     /** The live header: a deferred module. */
     script: string;
@@ -308,6 +315,15 @@ export interface LayoutInput {
   description: string;
   /** Extra `<head>` markup for one page, e.g. the app page's Smart App Banner tag. */
   extraHead?: string;
+  /**
+   * The Open Graph type. `website` unless the page is a dated piece of writing:
+   * a model's price page is a reference that is rebuilt whenever the catalog
+   * moves, not an article with a publication date, and calling it one told
+   * every platform the opposite. Only the writing pages are `article`.
+   */
+  ogType?: 'website' | 'article';
+  /** `article:published_time`, for an `article` page. */
+  publishedTime?: string;
   /** Nodes for the JSON-LD `@graph`. */
   graph: unknown[];
   body: string;
@@ -328,6 +344,14 @@ export interface LayoutInput {
 
 export function layout(ctx: RenderContext, input: LayoutInput): string {
   const canonical = absolute(ctx, input.canonicalPath ?? input.path);
+  const ogType = input.ogType ?? 'website';
+  // The page's own card when the build drew one, else the site-wide card. The
+  // site-wide card's alt text lives in index.html, where check:social-card holds
+  // its figures to the catalog, so it is not repeated here.
+  const share = ctx.shareImages?.get(input.path);
+  const image = share
+    ? { url: absolute(ctx, share.url), width: 1200, height: 630, alt: share.alt }
+    : { url: absolute(ctx, '/social-card.png?v=b75d1de1'), width: 1280, height: 640, alt: '' };
   const ld = jsonForScript({ '@context': 'https://schema.org', '@graph': input.graph });
   const scripts = input.scripts ?? [];
   // The header's typefaces are asked for first, ahead of every stylesheet, so
@@ -393,15 +417,17 @@ export function layout(ctx: RenderContext, input: LayoutInput): string {
 ${input.robots ? `    <meta name="robots" content="${escapeHtml(input.robots)}" />\n` : ''}    <meta http-equiv="Content-Security-Policy" content="${escapeHtml(csp)}" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="${PAGE_TYPE_META}" content="${escapeHtml(input.pageType)}" />
-${input.extraHead ?? ''}    <meta property="og:type" content="article" />
-    <meta property="og:site_name" content="PromptSpend" />
+${input.extraHead ?? ''}    <meta property="og:type" content="${ogType}" />
+${input.publishedTime && ogType === 'article' ? `    <meta property="article:published_time" content="${escapeHtml(input.publishedTime)}" />\n` : ''}    <meta property="og:site_name" content="PromptSpend" />
     <meta property="og:url" content="${escapeHtml(canonical)}" />
     <meta property="og:title" content="${escapeHtml(input.title)}" />
     <meta property="og:description" content="${escapeHtml(input.description)}" />
-    <meta property="og:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=b75d1de1'))}" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="${escapeHtml(absolute(ctx, '/social-card.png?v=b75d1de1'))}" />
-${fontLinks}    <link rel="stylesheet" href="${escapeHtml(href(ctx, ctx.cssPath))}" />
+    <meta property="og:image" content="${escapeHtml(image.url)}" />
+    <meta property="og:image:width" content="${image.width}" />
+    <meta property="og:image:height" content="${image.height}" />
+${image.alt ? `    <meta property="og:image:alt" content="${escapeHtml(image.alt)}" />\n` : ''}    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="${escapeHtml(image.url)}" />
+${image.alt ? `    <meta name="twitter:image:alt" content="${escapeHtml(image.alt)}" />\n` : ''}${fontLinks}    <link rel="stylesheet" href="${escapeHtml(href(ctx, ctx.cssPath))}" />
 ${chromeLinks}    <link rel="icon" href="${escapeHtml(href(ctx, '/favicon.ico'))}" sizes="any" />
     <link rel="icon" href="${escapeHtml(href(ctx, '/favicon.svg'))}" type="image/svg+xml" />
     <script type="application/ld+json">${ld}</script>
@@ -1844,6 +1870,8 @@ ${analyticsChoice(page.bodyHtml)}
     path: page.path,
     title: page.title,
     description: page.description,
+    ogType: 'article',
+    publishedTime: page.publishedDate,
     graph: [
       breadcrumbLd(ctx, crumbs, page.path),
       {
