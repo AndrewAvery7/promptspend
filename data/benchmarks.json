@@ -1,0 +1,145 @@
+{
+  "$comment": "Sourced benchmark figures for the featured comparison pages. One independent index so pairs compare like for like. Each row names the page read, a verbatim quote and the date. Re-read before changing a score; never fill one from memory. Checked row by row by the source-fact-checker agent on 2026-10-30; the score is at the highest listed effort setting, which is not always the best score.",
+  "entries": [
+    {
+      "modelId": "claude-opus-5-5",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 58,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "Claude Opus 5.5 (max with fallback) | Anthropic | 58",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "claude-sonnet-5-5",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 54,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "Claude Sonnet 5.5 (max with fallback) | Anthropic | 54",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "claude-haiku-5-5",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 36,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "Claude Haiku 5.5 (max) | Anthropic | 36",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "claude-fable-5-1",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 49,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "Claude Fable 5.1 (max with fallback) | Anthropic | 49",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "gemini-gemini-3.5-flash-lite",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 12,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "Gemini 3.5 Flash-Lite | Google | 12",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "gpt-6.1-sol",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 52,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "GPT-6.1 Sol (xhigh) | OpenAI | 52",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "gpt-6.1-terra",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 45,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "GPT-6.1 Terra (xhigh) | OpenAI | 45",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "gpt-6-luna",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 28,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "GPT-6 Luna (max) | OpenAI | 28",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "moonshot-kimi-k3.1-pro",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 46,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "Kimi K3.1 Pro | Kimi | 46",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "xai-grok-4.7",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 34,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "Grok 4.7 (xhigh) | SpaceXAI | 34",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "zai-glm-5.3",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 32,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "GLM-5.3 (max) | Z AI | 32",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "zai-glm-5.3-flash",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 28,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "GLM-5.3-Flash | Z AI | 28",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "mistral-mistral-large-4",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 26,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "Mistral Large 4 (high) | Mistral | 26",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    },
+    {
+      "modelId": "xiaomi-mimo-mimo-v2.6-pro",
+      "benchmark": "Artificial Analysis Intelligence Index",
+      "score": 30,
+      "unit": "",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "quote": "MiMo-V2.6-Pro | Xiaomi | 30",
+      "reportedBy": "independent (Artificial Analysis), highest listed effort setting",
+      "readOn": "2026-10-30"
+    }
+  ]
+}

@@ -5,6 +5,8 @@ import {
   FREE_TIERS_URL,
   CONTACT_EMAIL,
   CHANGES_PAGE_URL,
+  CORRECTIONS_PAGE_URL,
+  TOPICS_PAGE_URL,
   TOKEN_COUNTER_URL,
   DATA_PAGE_URL,
   DEVELOPER_HUB_URL,
@@ -106,6 +108,12 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               </li>
               <li>
                 <a href={CHANGES_PAGE_URL}>Price changes</a>
+              </li>
+              <li>
+                <a href={CORRECTIONS_PAGE_URL}>Corrections</a>
+              </li>
+              <li>
+                <a href={TOPICS_PAGE_URL}>Topic map</a>
               </li>
             </ul>
           </nav>

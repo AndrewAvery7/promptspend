@@ -35,7 +35,7 @@ import { pathToFileURL } from 'node:url';
 import { buildOutboundChanges } from './lib/notify';
 import { submitUrls } from './lib/indexnow';
 import { LEDGER_FILE, ledgerFromText, readLedger } from './lib/page-ledger';
-import { buildPages } from '@/lib/seo/pages';
+import { buildPages, COMPARISON_GROWTH_FROZEN } from '@/lib/seo/pages';
 import { changedPaths, type PageLedger } from '@/lib/seo/ledger';
 import type { PricingCatalog } from '@/lib/pricing/types';
 
@@ -75,7 +75,11 @@ export function affectedPaths(
   changedIds: readonly string[],
   ledger?: PageLedger,
 ): string[] {
-  const set = buildPages(catalog, { asOf: new Date(catalog.generatedAt), ledger });
+  const set = buildPages(catalog, {
+    asOf: new Date(catalog.generatedAt),
+    ledger,
+    maxComparisons: COMPARISON_GROWTH_FROZEN,
+  });
   const changed = new Set(changedIds);
   const paths = new Set<string>();
 

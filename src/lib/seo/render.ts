@@ -55,6 +55,13 @@ import { FRAMING_CAVEAT } from '../tokenize';
 import type { ChangeRow, ChangesPageInput } from './changes-page';
 import { priceChartSvg } from './price-chart';
 import {
+  cacheBreakEvenSentence,
+  mixBreakEvenSentence,
+  pairHistory,
+  workloadVerdict,
+  type BenchmarkEntry,
+} from './featured';
+import {
   correctionCount,
   hasChartableMove,
   modelHistory,
@@ -153,6 +160,14 @@ export interface RenderContext {
    * claiming "no changes" about data nobody loaded.
    */
   history?: PriceHistory;
+  /**
+   * Comparison slugs that get the full analysis (verdict per workload,
+   * break-even points, price history, benchmark), from
+   * `data/featured-comparisons.json`. Absent in a test context.
+   */
+  featured?: ReadonlySet<string>;
+  /** Sourced benchmark figures by model id, from `data/benchmarks.json`. */
+  benchmarks?: ReadonlyMap<string, BenchmarkEntry>;
   /** The token counter's own script, as a site path; the page has no counting without it. */
   tokenCounterScript?: string;
   chrome?: {
@@ -517,6 +532,8 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
               <li><a href="${escapeHtml(href(ctx, '/providers/'))}">By provider</a></li>
               <li><a href="${escapeHtml(href(ctx, FREE_TIERS_PATH))}">${escapeHtml(NAV_LABELS.freeTiers)}</a></li>
               <li><a href="${escapeHtml(href(ctx, CHANGES_PATH))}">Price changes</a></li>
+              <li><a href="${escapeHtml(href(ctx, '/corrections/'))}">Corrections</a></li>
+              <li><a href="${escapeHtml(href(ctx, '/topics/'))}">Topic map</a></li>
             </ul>
           </nav>
           <nav class="footer__col" aria-labelledby="footer-col-tools">
@@ -1154,6 +1171,78 @@ export interface FreeTierLink {
   path: string;
 }
 
+/**
+ * The sub-headed sections under a provider's rate table: the spread of its
+ * prices, which discounts it offers, and its recorded price moves. Worked out
+ * from the catalog and the price history, so each provider's text is its own.
+ */
+function providerDetail(page: ProviderPage, ctx: RenderContext): string {
+  const current = page.models.filter((entry) => entry.model.status === 'current');
+  if (current.length === 0) return '';
+  const byOutput = [...current].sort((a, b) => a.effective.output - b.effective.output);
+  const cheapest = byOutput[0]!;
+  const dearest = byOutput[byOutput.length - 1]!;
+  const name = page.provider.name;
+  const money = (value: number): string =>
+    `$${value
+      .toFixed(value < 1 ? 3 : 2)
+      .replace(/0+$/, '')
+      .replace(/\.$/, '')}`;
+  const spread =
+    current.length === 1
+      ? `${name} has one current model here, ${cheapest.model.displayName}, at ${money(cheapest.effective.input)} per 1M input tokens and ${money(cheapest.effective.output)} per 1M output tokens.`
+      : `Output prices across ${name}'s ${current.length} current models run from ${money(cheapest.effective.output)} per 1M tokens (${cheapest.model.displayName}) to ${money(dearest.effective.output)} (${dearest.model.displayName})${cheapest.effective.output > 0 ? `, a ${(dearest.effective.output / cheapest.effective.output).toFixed(0)}x spread` : ''}. Picking the smallest model that does the job is usually the biggest saving available.`;
+
+  const cached = current.filter((entry) => entry.effective.cachedInput !== undefined);
+  const batch = current.filter((entry) => entry.effective.batchDiscount !== undefined);
+  const discounts = `${cached.length} of ${current.length} current models list a cached-input rate${
+    cached.length > 0
+      ? `, from ${Math.round((1 - cached[0]!.effective.cachedInput! / cached[0]!.effective.input) * 100)}% off the fresh input rate on ${cached[0]!.model.displayName}`
+      : ''
+  }. ${batch.length} list a batch discount for work that can wait.`;
+
+  let moves = '';
+  if (ctx.history) {
+    const lines = page.models.flatMap((entry) =>
+      modelHistory(ctx.history!, entry.model.id)
+        .changes.filter(
+          (change) => change.kind === 'price' && (change.field === 'input' || change.field === 'output'),
+        )
+        .map((change) => ({ ...change, model: entry.model.displayName })),
+    );
+    lines.sort((a, b) => b.date.localeCompare(a.date));
+    moves =
+      lines.length === 0
+        ? `<p>No vendor price change to a ${escapeHtml(name)} input or output rate is on record since tracking began. Corrections we made to our own readings are listed on the <a href="${escapeHtml(href(ctx, CHANGES_PATH))}">changes page</a>.</p>`
+        : `<ul>
+${lines
+  .slice(0, 8)
+  .map(
+    (line) =>
+      `          <li>${escapeHtml(`${line.date}: ${line.model} ${line.field} $${line.from} to $${line.to}`)}</li>`,
+  )
+  .join('\n')}
+        </ul>`;
+  }
+
+  return `
+        <h2>How ${escapeHtml(name)} prices its models</h2>
+        <p>${escapeHtml(spread)}</p>
+
+        <h2>Discounts: caching and batch</h2>
+        <p>${escapeHtml(discounts)}</p>
+${
+  moves
+    ? `
+        <h2>Recorded price changes</h2>
+        ${moves}
+`
+    : ''
+}
+        <h2>Where these prices come from</h2>
+        <p>Every rate above is read from ${escapeHtml(name)}'s own pricing page${page.provider.pricingUrl ? ` (<a href="${escapeHtml(page.provider.pricingUrl)}" rel="nofollow noopener">linked here</a>)` : ''} and re-checked every morning. A disputed figure is marked rather than hidden; see <a href="${escapeHtml(href(ctx, '/about/'))}">how PromptSpend checks prices</a>.</p>`;
+}
+
 export function renderProviderPage(page: ProviderPage, ctx: RenderContext, freeTier?: FreeTierLink): string {
   const faqs = providerFaq(
     page,
@@ -1208,6 +1297,7 @@ ${rows}
           page.models.slice(0, 4).map((entry) => entry.model.id),
           `Compare ${page.provider.name}’s models on your own workload`,
         )}
+${providerDetail(page, ctx)}
 ${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
@@ -1251,6 +1341,78 @@ function gap(multiple: number): string {
   if (!Number.isFinite(multiple)) return '';
   if (multiple >= 1.5) return `${Number(multiple.toFixed(multiple < 10 ? 1 : 0))}×`;
   return `+${Math.round((multiple - 1) * 100)}%`;
+}
+
+/**
+ * The analysis only featured comparisons carry. Empty for every other page, so
+ * the long tail stays exactly as it was. See src/lib/seo/featured.ts.
+ */
+function featuredAnalysis(page: ComparisonPage, ctx: RenderContext): string {
+  if (!ctx.featured?.has(page.slug)) return '';
+  const { left, right, leftEffective: l, rightEffective: r } = page;
+  const verdicts = page.rows
+    .map((row) => `          <li>${escapeHtml(workloadVerdict(row, left, right))}</li>`)
+    .join('\n');
+  const cache = cacheBreakEvenSentence(left, right, l, r);
+
+  const history = ctx.history
+    ? pairHistory(ctx.history, [left, right])
+        .map((entry) => {
+          const since = entry.listedOn ? ` (tracked since ${entry.listedOn})` : '';
+          const moves =
+            entry.changes.length === 0
+              ? `no change to its input or output rate on record${since}.`
+              : entry.changes
+                  .map(
+                    (change) =>
+                      `${change.date}: ${change.field} ${change.from ? `$${change.from}` : 'unrecorded'} to $${change.to}${change.kind === 'correction' ? ' (our correction, not a vendor change)' : ''}`,
+                  )
+                  .join('; ') + `${since}.`;
+          return `          <li><strong>${escapeHtml(entry.model.displayName)}</strong>: ${escapeHtml(moves)}</li>`;
+        })
+        .join('\n')
+    : '';
+
+  const benchRows = [left, right]
+    .map((model) => ({ model, entry: ctx.benchmarks?.get(model.id) }))
+    .filter((item): item is { model: Model; entry: BenchmarkEntry } => item.entry?.score != null);
+  const sameBenchmark =
+    benchRows.length === 2 && benchRows[0]!.entry.benchmark === benchRows[1]!.entry.benchmark;
+  const benchmark =
+    benchRows.length === 0
+      ? `<p class="muted">No benchmark figure from a citable source covers both models yet, so none is shown rather than one from memory.</p>`
+      : `<ul>
+${benchRows
+  .map(
+    ({ model, entry }) =>
+      `          <li>${escapeHtml(model.displayName)}: ${escapeHtml(String(entry.score))}${escapeHtml(entry.unit)} on ${escapeHtml(entry.benchmark)}, ${escapeHtml(entry.reportedBy)}. <a href="${escapeHtml(entry.url)}" rel="nofollow noopener">Source</a>, read ${escapeHtml(entry.readOn)}.</li>`,
+  )
+  .join('\n')}
+        </ul>
+        <p class="muted">${sameBenchmark ? 'One benchmark is a narrow view of quality; test both on your own prompts.' : 'Only one side has a sourced figure on this benchmark, so it is shown for context, not as a head-to-head.'}</p>`;
+
+  return `
+        <h2>Verdict by workload</h2>
+        <ul>
+${verdicts}
+        </ul>
+
+        <h2>Where the answer flips</h2>
+        <p>${escapeHtml(mixBreakEvenSentence(left, right, l, r))}</p>
+        ${cache ? `<p>${escapeHtml(cache)}</p>` : ''}
+
+        ${
+          history
+            ? `<h2>Price history</h2>
+        <ul>
+${history}
+        </ul>`
+            : ''
+        }
+
+        <h2>Benchmark</h2>
+        ${benchmark}
+`;
 }
 
 export function renderComparisonPage(page: ComparisonPage, ctx: RenderContext): string {
@@ -1330,7 +1492,7 @@ ${workloadRows}
           </table>
         </div>
         <p class="muted">No prompt caching and no batch discount on either side, so the comparison is like for like. Both figures assume 30 days a month.</p>
-
+${featuredAnalysis(page, ctx)}
         <h2>The rate cards</h2>
         <div class="card tablewrap" tabindex="0">
           <table>
