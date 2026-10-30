@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-126-2456E6.svg" alt="126 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1762-blue.svg" alt="1762 tests">
+  <img src="https://img.shields.io/badge/tests-1774-blue.svg" alt="1774 tests">
   <img src="https://img.shields.io/badge/initial%20payload-106%20KB%20gzip-blue.svg" alt="106 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -429,7 +429,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1762 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1774 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 374 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/SEO_PROGRAM.md](docs/SEO_PROGRAM.md)             | The search baseline, the 90-day plan written before the results, and the dated change log                                           |
@@ -508,7 +508,10 @@ cookies (`_ga`, `_ga_P27XJ53BH9`). PromptSpend's code sends it the page's site a
 query string or `#fragment`, where the scenario and alert tokens live — plus the page title and referring
 page (cut down the same way); it switches off GA's automatic page view, Google signals and ad
 personalization, and passes it nothing anyone types, pastes or enters in a form
-([`src/lib/analytics/`](src/lib/analytics/)). It runs only on promptspend.com, never when the browser
+([`src/lib/analytics/`](src/lib/analytics/)). Since the owner's 2026-10-29 settings choice, Google's own
+enhanced measurement can also record history-change page views with the full address (scenario models and
+numbers included), form starts and submits, and a hashed email from forms; the stream's redaction strips
+email addresses, the `alerts` token parameter and the scenario's `t` first (see [SECURITY.md](SECURITY.md)). It runs only on promptspend.com, never when the browser
 sends Global Privacy Control, and one line in
 [`src/lib/analytics/config.ts`](src/lib/analytics/config.ts) (`ANALYTICS_REQUIRES_CONSENT`) switches it
 to loading only after a visitor clicks _Accept_. Visitors can turn it off on the notice, on the privacy
@@ -516,8 +519,11 @@ page, or with Google's own opt-out add-on.
 
 The website also keeps Cloudflare Web Analytics, a cookieless beacon that reports a page's address
 (without its query string or fragment), referrer, country and load timings to promptspend.com's own
-`/cdn-cgi/rum`; neither service sees pasted text. The apps, the VS Code extension, the MCP server and the
-API carry no analytics. Pasted prompt text is tokenised in your browser, deliberately excluded from the
+`/cdn-cgi/rum`; neither service sees pasted text. The VS Code extension, the MCP server and the API
+carry no analytics. The iOS and Android apps report screen names and a fixed list of actions to the same
+Google Analytics property through Firebase, with no advertising identifier and an in-app off switch
+([`apps/mobile/src/lib/usageStats.ts`](apps/mobile/src/lib/usageStats.ts)); they never send typed or pasted
+text. Pasted prompt text is tokenized in your browser, deliberately excluded from the
 shareable URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds
 only interface choices: your theme, accent and background, whether you dismissed the welcome and apps
 banners, and your answer to the analytics notice.

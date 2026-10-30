@@ -316,9 +316,12 @@ are the ones that matter. "No cookies" and "no analytics" used to sit here too a
 2026-10-05 the website (only) counts visits in aggregate with Cloudflare Web Analytics, a cookieless beacon,
 and since 2026-10-29 (owner decision 2026-10-06; first live 2026-10-24, paused that week until a new property existed) it also runs Google Analytics 4, which sets cookies. GA
 loads for every visitor with a dismissible notice, or only after _Accept_ if `ANALYTICS_REQUIRES_CONSENT` in
-`src/lib/analytics/config.ts` is flipped; it receives page origin and path only, with Google signals and ad
-personalization off. Both are disclosed in the privacy policy. The apps, the VS Code extension, the MCP
-server and the API have no analytics.
+`src/lib/analytics/config.ts` is flipped; PromptSpend's code gives it page origin and path only, with Google
+signals and ad personalization off, though since 2026-10-29 the account's enhanced measurement and
+user-provided data detection can add more (see SECURITY.md). Both are disclosed in the privacy policy. From the store release that follows 0.1.2, the iOS and
+Android apps also report screen names and a fixed list of actions to the same property through Firebase,
+with no advertising identifier and an in-app off switch (`apps/mobile/src/lib/usageStats.ts`). The VS Code
+extension, the MCP server and the API have no analytics.
 
 Three entries that used to sit in this list have since been built, and recording that is more useful than
 quietly deleting them: the opt-in alerts worker, the hosted API, and static pre-rendering — 159 crawlable

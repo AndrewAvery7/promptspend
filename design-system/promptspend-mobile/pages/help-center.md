@@ -44,7 +44,7 @@ the conceptual lessons without duplicating either one.
 
 - Help search is local and requires no analytics, account, or network request.
 - Raw prompt text is never indexed by Help search.
-- Alert privacy copy must truthfully distinguish optional email data from no tracking and on-device prompt text.
+- Alert privacy copy must truthfully distinguish optional email data from the optional usage statistics and on-device prompt text.
 - Content is a typed registry shared by Help and global Search so the two surfaces cannot contradict one another.
 - Tests enforce unique IDs, category coverage, natural-language retrieval, valid in-app destinations, and minimum
   answer substance.

@@ -13,6 +13,7 @@ import { CostReceiptSheet } from '@/components/CostReceiptSheet';
 import { useLaunchState } from '@/state/useLaunchState';
 import { assertNumericDraftsValid } from '@/lib/numericDrafts';
 import { cleanOldCsvExports } from '@/lib/csvExports';
+import { trackEvent } from '@/lib/usageStats';
 
 interface ScenarioActionsProps {
   batchEnabled: boolean;
@@ -54,6 +55,7 @@ export function ScenarioActions(props: ScenarioActionsProps) {
         message: `Open this PromptSpend scenario:\r\n${scenarioUrl}\r\n\r\nOnly model choices, derived token counts, and assumptions are included. Pasted prompt text is never placed in the link.`,
         title: 'PromptSpend scenario',
       });
+      trackEvent({ name: 'share', content: 'scenario', method: 'text' });
     } catch (error) {
       Alert.alert(
         'Sharing is unavailable',
@@ -84,6 +86,7 @@ export function ScenarioActions(props: ScenarioActionsProps) {
         mimeType: 'text/csv',
         UTI: 'public.comma-separated-values-text',
       });
+      trackEvent({ name: 'share', content: 'scenario', method: 'csv' });
     } catch (error) {
       Alert.alert(
         'CSV export is unavailable',

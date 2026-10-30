@@ -30,6 +30,8 @@ Check that sharing is allowed on the device and that at least one compatible des
 
 Saved scenarios can be removed from the saved-scenarios sheet. Appearance and onboarding settings remain on the device. To remove all PromptSpend app data, use the operating system's app-storage controls or uninstall the app. PromptSpend has no native app account to delete.
 
+To stop the app's usage statistics, turn off Share usage statistics in Data & Alerts, under Privacy & support. The app stops sending them at once, deletes the analytics identifier and data it keeps on the device, and remembers the choice. To ask for statistics already sent to Google Analytics to be deleted, email [info@promptspend.com](mailto:info@promptspend.com).
+
 ## Alerts
 
 The native app can create, confirm, review, change, and delete an optional email price-alert subscription. Request a six-digit management code in Data & Alerts, enter the code from your email, and update the cadence or followed models directly in the app. The code expires after 10 minutes; the resulting in-app management session expires after 30 minutes. Every alert email also includes an unsubscribe link. The first public release does not register for native push notifications; browser-push subscriptions remain a website feature.

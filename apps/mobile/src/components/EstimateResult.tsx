@@ -15,6 +15,7 @@ import {
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 import { assertNumericDraftsValid } from '@/lib/numericDrafts';
+import { trackEvent } from '@/lib/usageStats';
 
 interface EstimateResultProps {
   breakdown: CostBreakdown;
@@ -50,6 +51,7 @@ export function EstimateResult({ breakdown, country, model, scaled, validateActi
           ...(anchor === null ? {} : { anchor }),
         },
       );
+      trackEvent({ name: 'share', content: 'estimate', method: 'text' });
     } catch (error) {
       Alert.alert(
         'Sharing is unavailable',

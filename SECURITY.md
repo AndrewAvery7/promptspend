@@ -97,8 +97,11 @@ in spare time, so please allow a reasonable window before disclosing publicly.
 
 ## Data handling
 
-The website (not the apps, the VS Code extension, the MCP server or the API)
-counts visits two ways.
+The website (not the VS Code extension, the MCP server or the API) counts
+visits two ways. The iOS and Android apps report screen names and a fixed list
+of actions to the same Google Analytics property through Firebase, with no
+advertising identifier (`apps/mobile/src/lib/usageStats.ts`,
+`apps/mobile/firebase.json`).
 
 - **Google Analytics 4** (owner decision 2026-10-06; live 2026-10-24, paused, back on 2026-10-29 with a new property) sets the
   cookies `_ga` and `_ga_P27XJ53BH9`. It runs on promptspend.com only, loads
@@ -116,17 +119,31 @@ counts visits two ways.
   (`static.cloudflareinsights.com`) but keeps `connect-src` closed to it.
 
 Some of what the privacy page says rests on settings in the Google Analytics
-account rather than in this repository, so they are recorded here: event and
-user data retention **2 months**, with reset on new activity **off**; Google
-signals **off**; all four account data-sharing options **off** (Google products
-and services, modeling contributions, technical support, recommendations); the
-Google tag's cookie settings left at Google's defaults (cookies last up to two
-years); and under the web stream's
-Enhanced measurement, **"Page changes based on browser history events" off**
-(the calculator rewrites its own address as the scenario changes, and Google's
-automatic page view for that would report the full address, query string
-included), with **Form interactions** and **Site search** off too; no
-User-ID or user-provided data collection, and no Google Ads or BigQuery link.
+account rather than in this repository, so they are recorded here (re-read on
+2026-10-29, after the owner's "Option B" choice turned every feature on): event
+and user data retention **14 months**, with reset on new activity **on**; Google
+signals **on** in all regions (the website's own code still sends
+`allow_google_signals: false` and `allow_ad_personalization_signals: false`
+with every hit, so in practice it affects the iOS and Android apps only); all
+four account data-sharing options **on** (Google products and services, with
+the controller-to-controller terms accepted 2026-10-29, modeling
+contributions, technical support, recommendations); user-provided data
+collection acknowledged, with automatic detection on; the Google tag's cookie
+settings left at Google's defaults (cookies last up to two years); and under
+the web stream's Enhanced measurement, **all seven options on**, including
+"Page changes based on browser history events" (the calculator rewrites its
+own address as the scenario changes, so Google's own page view may report the
+full address, query string included, unless the `page_location` that `ga.ts`
+sets overrides it; not yet checked with a network capture) and Form
+interactions. The stream's
+**Redact data** removes email addresses and the `alerts` query parameter (the
+website's alert-preference token) before Google stores an address. It also
+removes `t`, which on the website is the scenario's turns, not a token (alert
+`?t=` tokens only ever go to the alerts Worker's own origin), so GA's addresses
+lose the turns figure; harmless for privacy. No
+User-ID, and no Google Ads or BigQuery link. The app streams ("PromptSpend
+iOS", "PromptSpend Android", Firebase project `promptspend`) are described in
+`docs/STORE_RELEASE_PACKAGE.md`.
 "Granular location and device data collection" is left at Google's default
 and decides how precise the location the privacy page describes ("such as your
 city or country") is. If

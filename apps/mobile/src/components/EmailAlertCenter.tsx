@@ -46,6 +46,7 @@ import {
 } from '@/lib/turnstileVerification';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { trackEvent } from '@/lib/usageStats';
 import { Catalog, type Model } from '@promptspend/core';
 
 type Mode = 'subscribe' | 'manage';
@@ -192,6 +193,7 @@ export function EmailAlertCenter({
           { ...draft, email: draft.email.trim(), models: uniqueValidModels(draft.models, catalog) },
           turnstileToken,
         );
+        trackEvent({ name: 'alert_signup_sent' });
         setSuccess(
           `Check ${draft.email.trim()} and tap Confirm my subscription. Nothing else will be sent until you confirm.`,
         );

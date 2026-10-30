@@ -12,3 +12,13 @@ jest.mock('expo-font', () => ({
   isLoaded: jest.fn(() => true),
   loadAsync: jest.fn(() => Promise.resolve()),
 }));
+
+// Firebase Analytics is a native module that does not exist under jest. Every
+// call resolves and is recorded, so tests can check exactly what would be sent.
+jest.mock('@react-native-firebase/analytics', () => ({
+  getAnalytics: jest.fn(() => ({})),
+  logEvent: jest.fn(() => Promise.resolve()),
+  logScreenView: jest.fn(() => Promise.resolve()),
+  resetAnalyticsData: jest.fn(() => Promise.resolve()),
+  setAnalyticsCollectionEnabled: jest.fn(() => Promise.resolve()),
+}));

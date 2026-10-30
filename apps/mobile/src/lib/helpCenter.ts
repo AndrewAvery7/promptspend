@@ -702,7 +702,8 @@ export const HELP_ENTRIES: readonly HelpEntry[] = [
     question: 'Does PromptSpend upload or save pasted prompts?',
     answer: [
       'No. Pasted text is token-estimated on the device and is not sent to PromptSpend, saved in scenarios, included in shared results, or written to analytics.',
-      'The app has no advertising SDK or cross-app tracking. You should still avoid pasting secrets or regulated information into any planning tool.',
+      'The app has no advertising SDK, advertising identifier, or cross-app tracking. Usage statistics (screen names, time in the app, and a few actions, never your text) go to Google Analytics; switch them off under Data & Alerts, Privacy & support.',
+      'You should still avoid pasting secrets or regulated information into any planning tool.',
     ],
     keywords: ['privacy', 'prompt', 'upload', 'save', 'analytics', 'tracking', 'secret'],
   },

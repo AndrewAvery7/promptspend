@@ -1,8 +1,8 @@
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import { type RefObject, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View, type ScrollViewInstance } from 'react-native';
+import { type RefObject, useEffect, useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Switch, View, type ScrollViewInstance } from 'react-native';
 
 import { AppText as Text } from '@/components/AppText';
 import { EmailAlertCenter } from '@/components/EmailAlertCenter';
@@ -12,6 +12,7 @@ import { type Catalog } from '@promptspend/core';
 import type { MobileTheme } from '@/theme/tokens';
 import { modelRateDisplay } from '@/lib/pricingDisplay';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { getUsageStatsEnabled, type LinkName, setUsageStatsEnabled, trackEvent } from '@/lib/usageStats';
 
 const REPO_URL = 'https://github.com/AndrewAvery7/promptspend';
 const FEED_URL = `${REPO_URL}/commits/main/public/data/pricing.json.atom`;
@@ -23,6 +24,17 @@ const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=promptsp
 const OPEN_VSX_URL = 'https://open-vsx.org/extension/promptspend/promptspend';
 const PRIVACY_URL = `${SITE_URL}privacy/`;
 const SUPPORT_URL = `${SITE_URL}support/`;
+
+const LINK_NAMES_BY_URL: Record<string, LinkName> = {
+  [REPO_URL]: 'source_code',
+  [HEALTH_URL]: 'sync_status',
+  [DEVELOPER_HUB_URL]: 'developer_hub',
+  [MCP_URL]: 'mcp',
+  [VSCODE_URL]: 'vscode',
+  [OPEN_VSX_URL]: 'open_vsx',
+  [PRIVACY_URL]: 'privacy',
+  [SUPPORT_URL]: 'support',
+};
 
 export function DataSection({
   asOf,
@@ -45,8 +57,18 @@ export function DataSection({
   const vendorVerified = catalog?.primaryModels.filter((model) => model.provenance.source === 'vendor') ?? [];
   const feedSourced = catalog?.feedSourcedCount() ?? 0;
 
+  const [usageStats, setUsageStats] = useState<boolean | null>(null);
+  useEffect(() => {
+    let live = true;
+    void getUsageStatsEnabled().then((value) => live && setUsageStats(value));
+    return () => {
+      live = false;
+    };
+  }, []);
+
   const open = async (url: string) => {
     setNotice(null);
+    trackEvent({ name: 'link_open', link: LINK_NAMES_BY_URL[url] ?? 'other' });
     try {
       await WebBrowser.openBrowserAsync(url, {
         controlsColor: theme.accent,
@@ -200,9 +222,29 @@ export function DataSection({
 
       <Card styles={styles} title="Privacy & support">
         <Text style={styles.body}>
-          PromptSpend has no native account, advertising SDK, behavioral analytics, or cross-app tracking.
-          Pasted text stays on this device and is excluded from shares.
+          PromptSpend has no account, advertising SDK, advertising ID, or cross-app tracking. Pasted text
+          stays on this device and is excluded from shares.
         </Text>
+        <View style={styles.switchRow}>
+          <View style={styles.switchCopy}>
+            <Text style={styles.switchTitle}>Share usage statistics</Text>
+            <Text style={styles.body}>
+              Google Analytics counts which screens are opened and when something is shared, so we can see
+              what helps. Never your text, numbers, or email address.
+            </Text>
+          </View>
+          <Switch
+            accessibilityLabel="Share usage statistics with Google Analytics"
+            disabled={usageStats === null}
+            ios_backgroundColor={theme.border}
+            onValueChange={(value) => {
+              setUsageStats(value);
+              void setUsageStatsEnabled(value);
+            }}
+            trackColor={{ false: theme.border, true: theme.accent }}
+            value={usageStats ?? false}
+          />
+        </View>
         <Action label="Read the privacy policy" onPress={() => void open(PRIVACY_URL)} styles={styles} />
         <Action
           label="Open support and troubleshooting"
@@ -211,14 +253,15 @@ export function DataSection({
         />
         <Action
           label="Email PromptSpend support"
-          onPress={() =>
+          onPress={() => {
+            trackEvent({ name: 'link_open', link: 'support_email' });
             void Linking.openURL('mailto:info@promptspend.com?subject=PromptSpend%20app%20support').catch(
               () =>
                 setNotice(
                   'An email app could not open. You can email info@promptspend.com from your preferred mail app.',
                 ),
-            )
-          }
+            );
+          }}
           styles={styles}
         />
       </Card>
@@ -386,6 +429,9 @@ function createStyles(theme: MobileTheme) {
     },
     cardTitle: { color: theme.text, fontSize: 20, fontWeight: '800', lineHeight: 26 },
     body: { color: theme.mutedText, fontSize: 14, lineHeight: 21 },
+    switchRow: { alignItems: 'center', flexDirection: 'row', gap: 12 },
+    switchCopy: { flex: 1, gap: 4 },
+    switchTitle: { color: theme.text, fontSize: 15, fontWeight: '700' },
     metric: { backgroundColor: theme.surfaceRaised, borderRadius: 10, gap: 3, padding: 12 },
     metricLabel: { color: theme.mutedText, fontSize: 11, fontWeight: '700' },
     metricValue: { color: theme.text, fontSize: 15, fontVariant: ['tabular-nums'], fontWeight: '800' },

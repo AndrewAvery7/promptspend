@@ -55,7 +55,8 @@ Never store an Expo password, access token, recovery code, Apple signing credent
 - Prices must pass schema validation before display, with sync freshness evidence shown in the interface.
 - Each cold start attempts a live catalog refresh. A failed refresh may use the last validated download only while it is under 24 hours old, with a persistent warning and timestamp. At 24 hours the app withholds calculations.
 - Token counts are called exact only after tokenizer parity is proven on the target runtime.
-- No behavioral analytics, advertisements, purchases, subscriptions, or user accounts are planned for version 1.
+- Usage statistics go to Google Analytics through Firebase, from `src/lib/usageStats.ts` only: screen names and a fixed list of events (share opened, tour finished, alert sign-up sent, link opened, opened from a link), with every value taken from a closed list. No advertising identifier is collected (`withoutAdIdSupport` on iOS, the `AD_ID` permission removed on Android, ad flags off in `firebase.json`), nothing starts until the saved choice is read, and **Share usage statistics** on the Data & Alerts screen switches it off and clears the on-device data. It ships only in a store build, because it adds native code.
+- No advertisements, purchases, subscriptions, or user accounts are planned for version 1.
 
 See [`../../docs/MOBILE.md`](../../docs/MOBILE.md) and [`../../design-system/promptspend-mobile/MASTER.md`](../../design-system/promptspend-mobile/MASTER.md) for the project gates and visual source of truth.
 

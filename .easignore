@@ -50,6 +50,11 @@ apps/mobile/expo-env.d.ts
 credentials.json
 google-services.json
 GoogleService-Info.plist
+# ...except the app's own Firebase files, which the build must embed. They hold
+# public identifiers and a client API key Google designs to ship in every copy
+# of the app (see apps/mobile/SECURITY.md), not a secret.
+!apps/mobile/firebase/google-services.json
+!apps/mobile/firebase/GoogleService-Info.plist
 
 # The build needs apps/mobile and packages/core. These repository surfaces are
 # not build inputs and only increase archive size and disclosure surface.

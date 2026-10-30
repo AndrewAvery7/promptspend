@@ -2,7 +2,8 @@
  * Google Analytics on the website, configured in one place.
  *
  * Owner decision, 2026-10-06: the website (promptspend.com only - never the
- * apps, the VS Code extension, the API or the MCP server) counts visits with
+ * VS Code extension, the API or the MCP server; the iOS and Android apps report
+ * separately through Firebase, see apps/mobile/src/lib/usageStats.ts) counts visits with
  * Google Analytics 4, which sets cookies. Every visitor sees a small notice
  * that says so and links to the privacy page. The Cloudflare Web Analytics
  * counter stays as well.
