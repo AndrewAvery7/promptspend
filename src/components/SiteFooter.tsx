@@ -164,6 +164,11 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               <li>
                 <a href={PRIVACY_URL}>Privacy</a>
               </li>
+              {/* The U.S. opt-out of Google's advertising use, on every page now
+                  that there is no notice: the privacy page's on/off control. */}
+              <li>
+                <a href={`${PRIVACY_URL}#analytics-choice`}>Your privacy choices</a>
+              </li>
               <li>
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
               </li>

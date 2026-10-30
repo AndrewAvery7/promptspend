@@ -9,6 +9,13 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **No more Google Analytics pop-up; Europe is denied by default instead** (owner decision 2026-10-30). The
+  notice at the foot of every page is gone. Every footer now has a _Your privacy choices_ link to the on/off
+  control on the privacy page, which, with Global Privacy Control, is the U.S. opt-out. In the European
+  Economic Area, the UK and Switzerland, Google is told that no consent was given, so it sets no cookies
+  there, does not use the visit for advertising, and receives only cookieless pings, unless the visitor turns
+  Google Analytics on with that control. Google works out the region; the site never sees it. Earlier
+  _OK_ and _Turn off_ answers still hold.
 - **Google Analytics counts three key events.** A click on an App Store or Google Play button (and which
   store), a click on Copy beside the MCP, API or VS Code command (and which), and a model added to the
   comparison (and which model). Each carries only a fixed label or a catalog model id, and nothing is sent

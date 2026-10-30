@@ -8,9 +8,11 @@
  * owns a React tree that covers the whole page. Called once per page by
  * `startAnalytics()` from each entry point.
  *
- * The notice is small, sits at the foot of the window, never takes focus, and
- * names the privacy page. Its wording follows the switch in `config.ts`:
- * "uses" with OK / Turn off, or "would like to use" with Accept / Decline.
+ * The notice shows only when the switch in `config.ts` asks for consent
+ * (it has been off since 2026-10-30): small, at the foot of the window, never
+ * taking focus, naming the privacy page, with Accept / Decline. Without it,
+ * the privacy page's control, linked from every footer as "Your privacy
+ * choices", is how a visitor turns Google Analytics off.
  */
 import { ANALYTICS_REQUIRES_CONSENT, GA_HOSTNAMES, GOOGLE_ANALYTICS_ENABLED } from './config';
 import {
@@ -92,9 +94,7 @@ export function showNotice(env: AnalyticsEnvironment): HTMLElement {
     doc,
     'p',
     'ga-notice__text',
-    env.requiresConsent
-      ? 'PromptSpend would like to use Google Analytics cookies to count visits. Nothing from Google loads unless you accept. Google would get the page you are on, never text you paste, and could use the visit for its advertising features. '
-      : 'PromptSpend uses Google Analytics cookies to count visits and for Google advertising features. Google gets the page you are on, never text you paste. ',
+    'PromptSpend would like to use Google Analytics cookies to count visits. Nothing from Google loads unless you accept. Google would get the page you are on, never text you paste, and could use the visit for its advertising features. ',
   );
   const link = element(doc, 'a', 'ga-notice__link', 'Privacy policy');
   link.href = env.privacyHref;
@@ -104,20 +104,15 @@ export function showNotice(env: AnalyticsEnvironment): HTMLElement {
   const choose = (choice: AnalyticsChoice) => () => {
     writeChoice(env.storage, choice);
     notice.remove();
-    if (choice === 'accepted') loadGoogleAnalytics(gtagWindow(env), doc);
+    if (choice === 'accepted') loadGoogleAnalytics(gtagWindow(env), doc, true);
     if (choice === 'declined') disableGoogleAnalytics(gtagWindow(env), doc, env.window.location.hostname);
     renderPrivacyControl(env);
   };
-  const [primary, secondary] = env.requiresConsent
-    ? [
-        ['Accept', 'accepted'],
-        ['Decline', 'declined'],
-      ]
-    : [
-        ['OK', 'dismissed'],
-        ['Turn off', 'declined'],
-      ];
-  for (const [label, choice] of [primary!, secondary!] as [string, AnalyticsChoice][]) {
+  const buttons: [string, AnalyticsChoice][] = [
+    ['Accept', 'accepted'],
+    ['Decline', 'declined'],
+  ];
+  for (const [label, choice] of buttons) {
     const button = element(
       doc,
       'button',
@@ -181,8 +176,9 @@ export function renderPrivacyControl(env: AnalyticsEnvironment): void {
       writeChoice(env.storage, 'declined');
       disableGoogleAnalytics(gtagWindow(env), doc, d.hostname);
     } else {
-      writeChoice(env.storage, env.requiresConsent ? 'accepted' : 'dismissed');
-      loadGoogleAnalytics(gtagWindow(env), doc);
+      // Turning it on here is the visitor's own yes, in any region.
+      writeChoice(env.storage, 'accepted');
+      loadGoogleAnalytics(gtagWindow(env), doc, true);
     }
     doc.querySelector('.ga-notice')?.remove();
     renderPrivacyControl(env);
@@ -209,7 +205,7 @@ export function startAnalytics(env: AnalyticsEnvironment = defaultEnvironment())
   const hostname = env.window.location.hostname;
   if (GA_HOSTNAMES.includes(hostname)) clearRetiredStreamCookies(env.document, hostname);
   const d = decision(env);
-  if (shouldLoad(d)) loadGoogleAnalytics(gtagWindow(env), env.document);
+  if (shouldLoad(d)) loadGoogleAnalytics(gtagWindow(env), env.document, d.choice === 'accepted');
   if (shouldShowNotice(d)) showNotice(env);
   renderPrivacyControl(env);
 }
