@@ -99,16 +99,14 @@ function buildTimeChrome(): { freshness: object | null; tickerHtml: string | nul
  * and redrawn a moment later, with the buttons on its right shifting as the
  * widths changed. A preload starts the fetch with the page, so the real faces are
  * usually there for the first paint. The generated pages do the same, from
- * `scripts/build-pages.ts`, which finds the same five files by the same names.
+ * `scripts/build-pages.ts`, which finds the same two files by the same names.
+ *
+ * Two, not all five header faces: the wordmark's and the nav's, whose widths
+ * move the header. Every extra preload competes with the stylesheet for the
+ * first round trips (see the note on `HEADER_FONTS` there for the measurement).
  */
 function preloadHeaderFonts(): Plugin {
-  const faces = [
-    'space-grotesk-latin-700-normal',
-    'ibm-plex-sans-latin-400-normal',
-    'ibm-plex-sans-latin-600-normal',
-    'jetbrains-mono-latin-400-normal',
-    'jetbrains-mono-latin-700-normal',
-  ];
+  const faces = ['space-grotesk-latin-700-normal', 'ibm-plex-sans-latin-600-normal'];
   return {
     name: 'promptspend-font-preload',
     apply: 'build',

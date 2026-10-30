@@ -30,3 +30,75 @@
 @import '@fontsource/jetbrains-mono/latin-400.css';
 @import '@fontsource/jetbrains-mono/latin-500.css';
 @import '@fontsource/jetbrains-mono/latin-700.css';
+
+/*
+ * Stand-ins for JetBrains Mono, sized to its metrics, so its late arrival moves
+ * nothing.
+ *
+ * Only two faces are preloaded (the wordmark's and the nav's; see
+ * `HEADER_FONTS` in scripts/build-pages.ts), so the ticker, the freshness line
+ * and the search button's key hint are first drawn in a system monospace. A
+ * monospace face can be matched exactly: every glyph of JetBrains Mono advances
+ * 0.6em, with a 1.02em ascent and a 0.3em descent. Each stand-in is scaled to
+ * that advance (`size-adjust`) and given those vertical metrics, divided by the
+ * same scale because the overrides are scaled with it.
+ *
+ * One family per stand-in, because the scale depends on which one is
+ * installed: a `local()` that is missing fails, and the stack moves on.
+ */
+@font-face {
+  font-family: 'JetBrains Mono Consolas';
+  src: local('Consolas');
+  font-weight: 100 500;
+  size-adjust: 109.13%;
+  ascent-override: 93.47%;
+  descent-override: 27.49%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'JetBrains Mono Consolas';
+  src: local('Consolas Bold'), local('Consolas-Bold');
+  font-weight: 600 900;
+  size-adjust: 109.13%;
+  ascent-override: 93.47%;
+  descent-override: 27.49%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'JetBrains Mono Menlo';
+  src: local('Menlo'), local('Menlo-Regular'), local('DejaVu Sans Mono'), local('DejaVuSansMono');
+  font-weight: 100 500;
+  size-adjust: 99.66%;
+  ascent-override: 102.35%;
+  descent-override: 30.1%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'JetBrains Mono Menlo';
+  src: local('Menlo Bold'), local('Menlo-Bold'), local('DejaVu Sans Mono Bold'), local('DejaVuSansMono-Bold');
+  font-weight: 600 900;
+  size-adjust: 99.66%;
+  ascent-override: 102.35%;
+  descent-override: 30.1%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'JetBrains Mono Courier';
+  src: local('Courier New'), local('CourierNewPSMT'), local('Liberation Mono'), local('LiberationMono');
+  font-weight: 100 500;
+  size-adjust: 99.98%;
+  ascent-override: 102.02%;
+  descent-override: 30.01%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'JetBrains Mono Courier';
+  src:
+    local('Courier New Bold'), local('CourierNewPS-BoldMT'), local('Liberation Mono Bold'),
+    local('LiberationMono-Bold');
+  font-weight: 600 900;
+  size-adjust: 99.98%;
+  ascent-override: 102.02%;
+  descent-override: 30.01%;
+  line-gap-override: 0%;
+}

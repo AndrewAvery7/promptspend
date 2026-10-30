@@ -75,7 +75,10 @@ export function renderMarkdown(markdown: string): string {
     const fence = /^```(\w*)\r?\n([\s\S]*?)\r?\n```$/.exec(trimmed);
     if (fence) {
       const lang = fence[1] ? ` class="language-${escapeHtml(fence[1])}"` : '';
-      html.push(`<pre><code${lang}>${escapeHtml(fence[2]!)}</code></pre>`);
+      // Focusable, because a long line scrolls sideways on a phone and a
+      // keyboard user could otherwise never scroll it (axe:
+      // scrollable-region-focusable).
+      html.push(`<pre tabindex="0"><code${lang}>${escapeHtml(fence[2]!)}</code></pre>`);
       continue;
     }
 

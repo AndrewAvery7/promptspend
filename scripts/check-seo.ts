@@ -184,6 +184,19 @@ async function checkGeneratedPage(path: string, problems: string[]): Promise<Pag
     }
   }
 
+  // A page's own share image has to be in the build, or the share renders as a
+  // bare link; and only a piece of writing is an article.
+  const ogImage = attr(html, /<meta property="og:image" content="([^"]*)"/);
+  if (!absolute(ogImage)) say(`og:image is missing or not absolute: ${ogImage ?? '(none)'}`);
+  const ownCard = /\/(og\/[^?"]+\.png)(\?|$)/.exec(ogImage ?? '')?.[1];
+  if (ownCard && !existsSync(resolve(DIST, ownCard)))
+    say(`og:image points at ${ownCard}, which is not in the build`);
+  const ogType = attr(html, /<meta property="og:type" content="([^"]*)"/);
+  const isArticle = /^\/writing\/[^/]+\/$/.test(path);
+  if (ogType !== (isArticle ? 'article' : 'website')) {
+    say(`og:type is ${ogType ?? '(none)'}; expected ${isArticle ? 'article' : 'website'}`);
+  }
+
   const csp = attr(html, /<meta http-equiv="Content-Security-Policy" content="([^"]*)"/);
   if (!csp) say('has no Content Security Policy');
   else if (csp.includes('unsafe-inline')) say('policy permits unsafe-inline');

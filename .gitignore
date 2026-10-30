@@ -89,3 +89,6 @@ coverage-gaps-report.md
 # Client audit output from tools/site-audit/audit.ts. Never committed: it is a
 # client's site, read with the owner's permission, not part of this repository.
 tools/site-audit/reports/
+
+# Share images drawn by scripts/build-pages.ts, keyed by content (scripts/lib/share-card-image.ts).
+.cache/

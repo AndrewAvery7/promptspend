@@ -96,6 +96,19 @@ jobs:
           done
           (cd apps/mobile && npm ci --ignore-scripts && npm rebuild unrs-resolver)
 
+      # The per-page share images (scripts/lib/share-card-image.ts) are keyed by
+      # what they draw, so a build draws only the cards whose figures changed.
+      # Restoring the previous run's set is what makes that true here too; a miss
+      # costs about ten seconds of drawing, never a wrong image, because the key
+      # of each file is its content. A fresh key per run keeps the newest set,
+      # and the build prunes cards no page uses. The renderer's own files are in
+      # the key so a change to the drawing starts from an empty cache.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .cache/share-images
+          key: share-images-${{ hashFiles('scripts/lib/raster.ts', 'scripts/lib/share-card-image.ts') }}-${{ github.run_id }}
+          restore-keys: share-images-${{ hashFiles('scripts/lib/raster.ts', 'scripts/lib/share-card-image.ts') }}-
+
       # Includes the color-vision palette guarantee and the pricing-pipeline
       # rules, so a change that breaks either fails the build.
       - name: Verify

@@ -35,6 +35,17 @@ const GENERATED = [
   { path: '/changes/', name: 'the price changes page' },
   { path: '/token-counter/', name: 'the token counter' },
   { path: '/providers/cohere/free/', name: 'a free-tier page' },
+  // Every other kind of page, added in the 2026-10-30 sweep (one of each).
+  { path: '/writing/what-llm-cost-calculators-get-wrong/', name: 'an article' },
+  { path: '/writing/', name: 'the writing index' },
+  { path: '/data/', name: 'the open-data page' },
+  { path: '/about/', name: 'the about page' },
+  { path: '/corrections/', name: 'the corrections page' },
+  { path: '/topics/', name: 'the topics page' },
+  { path: '/privacy/', name: 'the privacy page' },
+  // `vite preview` answers an unknown address with the calculator, so the
+  // not-found page is asked for by its file name.
+  { path: '/404.html', name: 'the not-found page' },
 ] as const;
 
 /**
@@ -80,6 +91,38 @@ test.describe('the generated pages', () => {
   for (const { path, name } of GENERATED) {
     test(`${name} has no accessibility violations`, async ({ page }) => {
       await page.goto(path);
+      await expect(page.locator('main')).toBeVisible();
+      await audit(page);
+    });
+  }
+});
+
+/**
+ * The same audit in the dark theme, which is a different set of colors on every
+ * page and was never audited: the 2026-10-30 sweep found the ticker's amber,
+ * green and dimmed text all under 4.5:1 there, on every page, because the bar
+ * is `--ink` and turns light. With no choice saved, the theme follows the
+ * operating system, so asking for a dark color scheme is how a dark-mode
+ * visitor arrives.
+ */
+test.describe('in the dark theme', () => {
+  test.use({ colorScheme: 'dark' });
+
+  for (const view of VIEWS) {
+    test(`${view} has no accessibility violations`, async ({ page }) => {
+      await page.goto('/');
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+      await page.getByRole('button', { name: view, exact: true }).click();
+      await expect(page.locator('main')).toBeVisible();
+      await page.waitForLoadState('networkidle');
+      await audit(page);
+    });
+  }
+
+  for (const { path, name } of GENERATED) {
+    test(`${name} has no accessibility violations`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
       await expect(page.locator('main')).toBeVisible();
       await audit(page);
     });

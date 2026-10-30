@@ -73,6 +73,8 @@ import {
 } from '@/lib/seo/render';
 import { INDEXNOW_KEY, INDEXNOW_KEY_FILE } from './lib/indexnow';
 import { readLedger } from './lib/page-ledger';
+import { writeShareImages } from './lib/share-card-image';
+import { comparisonShareCard, modelShareCard, providerShareCard } from '@/lib/seo/share-cards';
 import { renderFeed } from '../src/lib/seo/feed';
 import { buildHistory, toCsv } from './lib/price-history';
 import { loadCatalogVersions } from './price-history-git';
@@ -88,6 +90,8 @@ const FREE_TIER_CHECK = resolve(ROOT, 'public/data/free-tier-check.json');
 const SYNC_STATUS = resolve(ROOT, 'public/data/sync-status.json');
 const FEATURED = resolve(ROOT, 'data/featured-comparisons.json');
 const BENCHMARKS = resolve(ROOT, 'data/benchmarks.json');
+/** Drawn share images by content key; ignored by git, kept between builds (and by CI's cache). */
+const SHARE_IMAGE_CACHE = resolve(ROOT, '.cache/share-images');
 
 /** Same defaults as `vite.config.ts`, and for the same reasons: an unset
  *  GitHub Actions variable arrives as `""`, so `??` would not catch it. */
@@ -154,16 +158,16 @@ async function headerAssets(): Promise<NonNullable<RenderContext['chrome']>> {
   };
   visit(entryKey);
 
-  // The faces the header is drawn in, found by name rather than listed by hash.
-  // These are the ones it actually uses: the wordmark, the nav and its buttons,
-  // and the freshness line with its bold lead.
-  const HEADER_FONTS = [
-    'space-grotesk-latin-700-normal.woff2',
-    'ibm-plex-sans-latin-400-normal.woff2',
-    'ibm-plex-sans-latin-600-normal.woff2',
-    'jetbrains-mono-latin-400-normal.woff2',
-    'jetbrains-mono-latin-700-normal.woff2',
-  ];
+  // The two faces worth a preload, found by name rather than listed by hash:
+  // the wordmark (Space Grotesk 700) and the nav and its buttons (IBM Plex Sans
+  // 600), whose widths move everything beside them in the header. Five were
+  // preloaded until 2026-10-30, and on a slow connection the three extra
+  // requests held back the stylesheet, so first paint came about 340 ms later.
+  // The rest load from the stylesheet as text needs them; JetBrains Mono, the
+  // ticker's and the freshness line's face, falls back to metric-matched local
+  // stand-ins (src/styles/fonts.css), so its arrival moves nothing. The same
+  // two are preloaded on the calculator by vite.config.ts.
+  const HEADER_FONTS = ['space-grotesk-latin-700-normal.woff2', 'ibm-plex-sans-latin-600-normal.woff2'];
   // Vite names a font `<face>-<hash>.woff2`.
   const fonts = HEADER_FONTS.map((name) => {
     const face = name.replace('.woff2', '');
@@ -344,7 +348,24 @@ async function main(): Promise<void> {
     .entries;
   const benchmarks = new Map(benchmarkRows.map((row) => [row.modelId, row]));
 
+  // Every model, provider and comparison page's own share image, drawn from the
+  // figures the page leads with. Keyed by what is drawn, so an unchanged page
+  // reuses yesterday's PNG from the cache and a price change redraws only the
+  // cards that show that price. See scripts/lib/share-card-image.ts.
+  const shareStarted = performance.now();
+  const share = await writeShareImages(
+    [
+      ...set.models.map(modelShareCard),
+      ...set.providers.map(providerShareCard),
+      ...set.comparisons.map(comparisonShareCard),
+    ],
+    DIST,
+    SHARE_IMAGE_CACHE,
+  );
+  const shareSeconds = ((performance.now() - shareStarted) / 1000).toFixed(1);
+
   const ctx: RenderContext = {
+    shareImages: share.images,
     featured,
     benchmarks,
     siteUrl,
@@ -527,6 +548,9 @@ async function main(): Promise<void> {
     );
   }
   console.log(`  stylesheet ${cssName}`);
+  console.log(
+    `  share      ${share.images.size} images under og/ (${share.drawn} drawn, ${share.reused} reused from cache) in ${shareSeconds}s`,
+  );
   console.log(
     `  sitemap    ${sitemapUrls} URLs in ${files.filter((file) => file.entries.length > 0).length} files, indexed at ${siteUrl}/sitemap.xml`,
   );

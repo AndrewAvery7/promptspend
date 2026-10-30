@@ -142,7 +142,11 @@
 :root {
   --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* The three stand-ins are metric-matched local faces (fonts.css), so text
+     drawn before JetBrains Mono arrives takes the same room it will after. */
+  --font-mono:
+    'JetBrains Mono', 'JetBrains Mono Consolas', 'JetBrains Mono Menlo', 'JetBrains Mono Courier',
+    ui-monospace, 'SFMono-Regular', monospace;
 
   --radius-sm: 8px;
   --radius: 12px;

@@ -95,6 +95,19 @@
 .ticker__dim {
   opacity: 0.55;
 }
+/* The bar is `--ink`, so in the dark theme it turns light, and the amber and
+ * green chosen for a dark bar fell to 1.5:1 and 1.8:1 on it, with the dimmed
+ * text at 4.1:1 (axe, 2026-10-30). Darker shades of the same two hues and a
+ * lighter dimming hold 5:1 or better on both dark canvases' bars. */
+[data-theme='dark'] .ticker__up {
+  color: #0b6b3a;
+}
+[data-theme='dark'] .ticker__chg {
+  color: #8a5700;
+}
+[data-theme='dark'] .ticker__dim {
+  opacity: 0.65;
+}
 
 /* ---------------------------------------------------------------- header */
 .header {
