@@ -35,6 +35,7 @@ const CONTEXT: RenderContext = {
 function generated(path = '/models/', ctx: RenderContext = CONTEXT) {
   const html = layout(ctx, {
     path,
+    pageType: 'hub',
     title: 'A page',
     description: 'A page.',
     graph: [{ '@type': 'WebPage' }],

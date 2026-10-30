@@ -29,7 +29,7 @@ that sends no pasted text anywhere (the scenario in its address does go to Googl
 which carries no data, Cloudflare's Web Analytics beacon, which reports page views to the site's
 own `/cdn-cgi/rum`, and (since 2026-10-24, apart from a pause on 2026-10-29; promptspend.com only) Google Analytics 4, which sets
 cookies and, since 2026-10-29, runs with every feature on: the full address minus alert links' private
-key, Google signals and ad personalization, and three key events with fixed labels or catalog model ids (`src/lib/analytics/events.ts`); never pasted text (`src/lib/analytics/`). There is still no account system.
+key, Google signals and ad personalization, the kind of page (`page_type`, a fixed label), and three key events with fixed labels or catalog model ids (`src/lib/analytics/events.ts`); never pasted text (`src/lib/analytics/`). There is still no account system.
 
 ## The data pipeline (`scripts/`)
 
@@ -295,7 +295,7 @@ runners actually report rather than to what anyone remembers.
 
 **What closed, and what did not.** This section used to name three gaps — no browser suite, no automated
 axe pass, no visual-regression snapshots — and call Playwright plus axe the obvious next investment. Both
-landed: 320 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
+landed: 336 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
 two real defects, each a scrollable region no keyboard could reach.
 
 Screenshot diffing is still absent, and now deliberately rather than pending. A visual suite has a real
@@ -318,7 +318,7 @@ and since 2026-10-29 (owner decision 2026-10-06; first live 2026-10-24, paused t
 loads for every visitor with no notice (since 2026-10-30; a footer link reaches the off switch, and every region, the EEA, the UK and
 Switzerland included, is treated the same), or only after _Accept_ if `ANALYTICS_REQUIRES_CONSENT` in
 `src/lib/analytics/config.ts` is flipped; it receives the full address minus alert links' private key, with Google
-signals and ad personalization on, plus three key events with fixed labels or catalog model ids (`src/lib/analytics/events.ts`). Both are disclosed in the privacy policy. From the store release that follows 0.1.2, the iOS and Android
+signals and ad personalization on, the kind of page as a fixed `page_type` label (every page declares one in `<meta name="ps:page-type">`; `src/lib/analytics/page-type.ts`), plus three key events with fixed labels or catalog model ids (`src/lib/analytics/events.ts`). Both are disclosed in the privacy policy. From the store release that follows 0.1.2, the iOS and Android
 apps also report screen names and a fixed list of actions to the same property through Firebase, with no
 advertising identifier and an in-app off switch (`apps/mobile/src/lib/usageStats.ts`). The VS Code
 extension, the MCP server and the API have no analytics.

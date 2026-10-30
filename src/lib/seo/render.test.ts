@@ -3,6 +3,7 @@ import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
 import type { HistoryRow, PriceHistory } from '@/lib/pricing/history';
 import { GOOGLE_ANALYTICS_ENABLED, GOOGLE_COUNTRY_DOMAINS } from '@/lib/analytics/config';
+import { pageTypeForPath } from '@/lib/analytics/page-type';
 import { buildPages } from './pages';
 import {
   layout,
@@ -424,7 +425,14 @@ describe('rendered pages', () => {
 
   it("loads a page's own scripts from this site, and refuses anything remote", () => {
     const ctx = recordingContext({ basePath: '/promptspend/' });
-    const page = { path: '/x/', title: 't', description: 'd', graph: [], body: '<main id="main"></main>' };
+    const page = {
+      path: '/x/',
+      pageType: 'data' as const,
+      title: 't',
+      description: 'd',
+      graph: [],
+      body: '<main id="main"></main>',
+    };
     const html = layout(ctx, { ...page, scripts: ['/assets/chart-abc.js'] });
     expect(html).toContain('<script type="module" src="/promptspend/assets/chart-abc.js"></script>');
     expect(layout(ctx, page).match(/<script/g)).toHaveLength(1);
@@ -432,6 +440,29 @@ describe('rendered pages', () => {
       /path on this site/,
     );
     expect(() => layout(ctx, { ...page, scripts: ['//cdn.example/x.js'] })).toThrow(/path on this site/);
+  });
+
+  it('declares every page type, the one its address stands for, and refuses a page without one', () => {
+    const ctx = recordingContext();
+    const pages = [
+      ...everyPage(SAMPLE).map(({ html }) => html),
+      renderAppPage(ctx),
+      renderNotFoundPage(ctx),
+      renderDataPage(
+        { models: 1, providers: 1, history: { firstDate: 'x', rows: 0, lastChangeDate: 'x' } },
+        ctx,
+      ),
+    ];
+    for (const html of pages) {
+      const type = /<meta name="ps:page-type" content="([^"]+)" \/>/.exec(html)?.[1];
+      const canonical = /<link rel="canonical" href="https:\/\/promptspend\.com([^"]*)"/.exec(html)?.[1];
+      expect(type, canonical).toBeDefined();
+      // The not-found page's canonical is the home page; its type is its own.
+      if (type !== 'not-found') expect(type).toBe(pageTypeForPath(canonical!));
+    }
+    const page = { path: '/x/', title: 't', description: 'd', graph: [], body: '' };
+    expect(() => layout(ctx, { ...page, pageType: 'other' })).toThrow(/no page type/);
+    expect(() => layout(ctx, { ...page, pageType: undefined as never })).toThrow(/no page type/);
   });
 
   it('never marks an ordinary page noindex', () => {
