@@ -437,7 +437,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | [docs/DOMAINS.md](docs/DOMAINS.md)                     | What each hostname serves and why, plus the cutover runbook and rollback                                                            |
 | [docs/ALERTS.md](docs/ALERTS.md)                       | The price-alerts Worker — push and email architecture, the cost model, the domain cutover                                           |
 | [docs/pricing-changelog.md](docs/pricing-changelog.md) | Every price change the daily sync has published, written by the pipeline itself                                                     |
-| [docs/PRICE_HISTORY.md](docs/PRICE_HISTORY.md)         | The same history as a citable CSV (CC0): its columns, units, and what the data does and does not claim                              |
+| [docs/PRICE_HISTORY.md](docs/PRICE_HISTORY.md)         | The same history as a citable CSV (CC BY 4.0): its columns, units, and what the data does and does not claim                        |
 | [CHANGELOG.md](CHANGELOG.md)                           | Changes to the application, as opposed to the data                                                                                  |
 | [docs/DEFERRED.md](docs/DEFERRED.md)                   | Work proposed and deliberately not done yet, with the reason — a decision, not a gap                                                |
 | [docs/FREE_TIERS.md](docs/FREE_TIERS.md)               | The free-tier pages: where the facts live, the daily quote check, and how to update a record                                        |

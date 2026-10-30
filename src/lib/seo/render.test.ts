@@ -625,6 +625,9 @@ describe('the open-data page', () => {
     const html = renderDataPage(input, recordingContext());
     expect(html.match(/"@type":\s*"Dataset"/g)).toHaveLength(3);
     expect(html).toContain('MIT');
+    expect(html).toContain('CC BY 4.0');
+    expect(html).toContain('creativecommons.org/licenses/by/4.0/');
+    // Copies released before the switch keep their public-domain dedication.
     expect(html).toContain('CC0');
     expect(html).toContain('10.5281/zenodo.23170741');
   });

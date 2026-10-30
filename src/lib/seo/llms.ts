@@ -65,7 +65,7 @@ ${writing
 - [Token counter](${siteUrl}/token-counter/): paste text to count its tokens and see its input cost on any model; runs in the browser
 - [Price changes](${siteUrl}/changes/): every recorded change, newest first, vendor repricing labeled apart from corrections
 - [Price changes as an Atom feed](${siteUrl}/feed.xml): new models, price changes and corrections, one entry a day
-- [Open data](${siteUrl}/data/): the catalog (MIT), the price history (CC0) and the free-tier facts, with licenses and an archived DOI
+- [Open data](${siteUrl}/data/): the catalog (MIT), the price history (CC BY 4.0: credit PromptSpend) and the free-tier facts, with licenses and an archived DOI
 `
       : '';
   const freeTierSection = freeTiers
