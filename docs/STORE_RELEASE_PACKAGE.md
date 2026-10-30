@@ -153,13 +153,13 @@ What it does not do, and how that is enforced:
   those settings is loosened.
 
 **Google signals.** It is on in the property (Andrew's "Option B",
-2026-10-29). The website's own code switches it off on every page view, so in
-practice it now affects only the apps. Google's guidance says Firebase
+2026-10-29), and since #342 the website uses it too. Google's guidance says Firebase
 Analytics "conditionally collects signed-in account information if Google
 Signals is enabled", which is why the answers above say the data is linked to
 the user while it stays on. Switching Google signals off in Admin > Data
-collection lets every analytics answer become "Not linked to you" and drops
-the Google Play "User IDs" line below.
+collection would let every analytics answer become "Not linked to you" and
+drop the Google Play "User IDs" line below, but it would also switch it off for
+the website, which Option B chose to keep.
 
 Evidence supporting that draft:
 

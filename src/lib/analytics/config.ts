@@ -73,7 +73,23 @@ export const GA_COLLECT_ORIGINS: readonly string[] = [
   'https://www.google-analytics.com',
   'https://region1.google-analytics.com',
   'https://region1.analytics.google.com',
+  // Google signals and ad personalization (owner decision 2026-10-29, "everything
+  // Google Analytics offers"): the cross-device and advertising hits.
+  'https://stats.g.doubleclick.net',
+  'https://googleads.g.doubleclick.net',
+  'https://www.google.com',
 ];
+
+/**
+ * Query-string names that carry a private key and are removed from every
+ * address before Google sees it: `alerts`, the price-alert preferences link
+ * (`/?alerts=<token>`). `src/main.tsx` also takes it out of the address bar
+ * before Google Analytics starts; this is the second guard, for the referrer.
+ * (The alerts service's own `?t=` key lives on that service's pages, which load
+ * no analytics and send no referrer; on this site `t` is a scenario field.)
+ * Everything else in the address, scenario and campaign tags included, is sent.
+ */
+export const PRIVATE_ADDRESS_PARAMS: readonly string[] = ['alerts'];
 
 /** Every Google origin any page's policy admits, for the checks that pin them. */
 export const GA_ORIGINS: readonly string[] = [GA_SCRIPT_ORIGIN, ...GA_COLLECT_ORIGINS];
