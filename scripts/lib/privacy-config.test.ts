@@ -160,6 +160,11 @@ describe("Google Analytics stays on the website and the apps' one module", () =>
     expect(importers.sort()).toEqual(['src/chrome/site-header.tsx', 'src/main.tsx', 'src/receipt/main.tsx']);
   });
 
+  it('sends key events through a module that cannot load Google Analytics itself', () => {
+    const events = read('src/lib/analytics/events.ts');
+    expect(events).not.toMatch(/createElement|googletagmanager|from '\.\/(ga|notice)'/);
+  });
+
   it('keeps the Measurement ID in one place', () => {
     const holders = [
       ...sources('src'),

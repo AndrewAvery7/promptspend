@@ -14,8 +14,8 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-126-2456E6.svg" alt="126 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1778-blue.svg" alt="1778 tests">
-  <img src="https://img.shields.io/badge/initial%20payload-106%20KB%20gzip-blue.svg" alt="106 KB gzip initial payload">
+  <img src="https://img.shields.io/badge/tests-1784-blue.svg" alt="1784 tests">
+  <img src="https://img.shields.io/badge/initial%20payload-107%20KB%20gzip-blue.svg" alt="107 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
   <a href="https://mcprush.com/to/promptspend-mcp?ref=badge"><img src="https://mcprush.com/badge/promptspend-mcp/score.svg" alt="PromptSpend MCP on mcprush"></a>
@@ -429,7 +429,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1778 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1784 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 374 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/SEO_PROGRAM.md](docs/SEO_PROGRAM.md)             | The search baseline, the 90-day plan written before the results, and the dated change log                                           |
@@ -506,7 +506,7 @@ promptspend.com loads Google Analytics 4 and shows a small notice saying so, wit
 [privacy policy](https://promptspend.com/privacy/) and a _Turn off_ button. Google Analytics sets two
 cookies (`_ga`, `_ga_P27XJ53BH9`). Since 2026-10-29 (owner decision) Google's advertising and measurement features are on: the
 full page address, scenario and campaign tags included, Google's automatic tracking, Google signals and
-ad personalization, and 14-month retention. One thing is still removed before anything is sent: the
+ad personalization, and 14-month retention; PromptSpend's own code adds three counts (an app-store click, a Copy on the MCP, API or VS Code command, and a model added to the comparison, each with a fixed label or catalog model id). One thing is still removed before anything is sent: the
 private key a price-alert link carries (`PRIVATE_ADDRESS_PARAMS`). Pasted text is never in the address
 and never passed on ([`src/lib/analytics/`](src/lib/analytics/)). Google's user-provided data collection is on,
 so an email address typed into the price-alert form reaches Google in hashed form. It runs only on promptspend.com, never when the browser

@@ -9,6 +9,10 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **Google Analytics counts three key events.** A click on an App Store or Google Play button (and which
+  store), a click on Copy beside the MCP, API or VS Code command (and which), and a model added to the
+  comparison (and which model). Each carries only a fixed label or a catalog model id, and nothing is sent
+  unless Google Analytics is already running on the page. The privacy page lists them.
 - **Google Analytics now runs with every feature on** (owner decision 2026-10-29). Google receives the full
   page address, scenario and campaign tags included, so it can tell which post or email sent a visitor;
   Google's automatic tracking (address changes, site search, form starts, scrolls, outbound clicks) is on;

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { trackKeyEvent } from '@/lib/analytics/events';
 import { Catalog } from '@/lib/pricing/catalog';
 import type { Model } from '@/lib/pricing/types';
 import { compareModels, type ComparisonRow, type Workload } from '@/lib/engine/cost';
@@ -322,6 +323,7 @@ export function useEstimator(catalog: Catalog) {
   const toggleModel = useCallback(
     (id: string): { ok: boolean; reason?: string } => {
       let result: { ok: boolean; reason?: string } = { ok: true };
+      let added = false;
       setScenario((prev) => {
         if (prev.modelIds.includes(id)) {
           return { ...prev, modelIds: prev.modelIds.filter((existing) => existing !== id) };
@@ -340,8 +342,10 @@ export function useEstimator(catalog: Catalog) {
           result = { ok: false, reason: `Compare up to ${MAX_MODELS} models at once` };
           return prev;
         }
+        added = true;
         return { ...prev, modelIds: [...prev.modelIds, id] };
       });
+      if (added) trackKeyEvent({ name: 'model_added', model_id: id });
       return result;
     },
     [catalog],

@@ -118,7 +118,11 @@ Android", Firebase project `promptspend`) are described in
   `page_referrer` whole, query string and fragment included, minus the
   alert-link key named in `PRIVATE_ADDRESS_PARAMS` (`alerts`), which
   `src/main.tsx` also takes out of the address bar before Google Analytics
-  starts (`src/lib/alerts/link-token.ts`). Google signals and ad
+  starts (`src/lib/alerts/link-token.ts`). It also sends three key events,
+  each with one fixed label or a catalog model id: `store_click` {store},
+  `install_copy` {tool: mcp, api or vscode} and `model_added` {model_id}
+  (`src/lib/analytics/events.ts`), and none while Google Analytics is off.
+  Google signals and ad
   personalization are on and every consent type is granted. Pasted text is
   never passed to it (`src/lib/analytics/ga.ts`, with tests).
 - **Cloudflare Web Analytics**: a cookieless beacon, injected by Cloudflare,

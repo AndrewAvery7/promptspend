@@ -20,6 +20,7 @@ import {
   type GtagWindow,
   type LoadDecision,
 } from './ga';
+import { keyEventForClick, sendKeyEvent, storeForAddress } from './events';
 
 const gtagWindow = () => window as unknown as GtagWindow;
 
@@ -294,5 +295,71 @@ describe('disableGoogleAnalytics', () => {
     expect(document.cookie).not.toContain('_ga');
     expect(document.cookie).toContain('unrelated=keep');
     document.cookie = 'unrelated=; Max-Age=0; path=/';
+  });
+});
+
+describe('key events', () => {
+  /** The queued key events, as [name, params] pairs. */
+  const keyEvents = () =>
+    commands()
+      .filter((command) => command[0] === 'event' && command[1] !== 'page_view')
+      .map((command) => [command[1], command[2]]);
+
+  afterEach(() => {
+    document.body.replaceChildren();
+  });
+
+  it('recognizes the two store listings and nothing else', () => {
+    expect(storeForAddress('https://apps.apple.com/app/id6800386428')).toBe('app_store');
+    expect(storeForAddress('https://play.google.com/store/apps/details?id=com.promptspend.app')).toBe(
+      'google_play',
+    );
+    expect(storeForAddress('https://play.google.com/books')).toBeNull();
+    expect(storeForAddress('https://example.com/apps.apple.com')).toBeNull();
+    expect(storeForAddress('http://apps.apple.com/app/id1')).toBeNull();
+    expect(storeForAddress('not an address')).toBeNull();
+  });
+
+  it('reads a click on a store badge image as a click on its store link', () => {
+    document.body.innerHTML =
+      '<a href="https://apps.apple.com/app/id6800386428"><img alt="App Store" /></a><a href="/models/">Models</a>';
+    expect(keyEventForClick(document.querySelector('img'))).toEqual({
+      name: 'store_click',
+      store: 'app_store',
+    });
+    expect(keyEventForClick(document.querySelector('a[href="/models/"]'))).toBeNull();
+  });
+
+  it('reads only the fixed tool labels from a Copy button', () => {
+    document.body.innerHTML =
+      '<button data-ga-install="mcp">Copy</button><button data-ga-install="something else">Copy</button>';
+    const [mcp, other] = Array.from(document.querySelectorAll('button'));
+    expect(keyEventForClick(mcp!)).toEqual({ name: 'install_copy', tool: 'mcp' });
+    expect(keyEventForClick(other!)).toBeNull();
+  });
+
+  it('queues nothing before Google Analytics has loaded, or after it is turned off', () => {
+    sendKeyEvent(gtagWindow(), { name: 'model_added', model_id: 'gpt-5' });
+    expect(gtagWindow().dataLayer).toBeUndefined();
+    loadGoogleAnalytics(gtagWindow(), document);
+    disableGoogleAnalytics(gtagWindow(), document, window.location.hostname);
+    sendKeyEvent(gtagWindow(), { name: 'model_added', model_id: 'gpt-5' });
+    expect(keyEvents()).toEqual([]);
+  });
+
+  it('counts a store click and a copy once each once loaded', () => {
+    loadGoogleAnalytics(gtagWindow(), document);
+    loadGoogleAnalytics(gtagWindow(), document);
+    document.body.innerHTML =
+      '<a href="https://play.google.com/store/apps/details?id=com.promptspend.app">Play</a><button data-ga-install="vscode">Copy</button>';
+    document.querySelector('a')!.addEventListener('click', (event) => event.preventDefault());
+    document.querySelector('a')!.click();
+    document.querySelector('button')!.click();
+    sendKeyEvent(gtagWindow(), { name: 'model_added', model_id: 'claude-opus-5-5' });
+    expect(keyEvents()).toEqual([
+      ['store_click', { store: 'google_play' }],
+      ['install_copy', { tool: 'vscode' }],
+      ['model_added', { model_id: 'claude-opus-5-5' }],
+    ]);
   });
 });

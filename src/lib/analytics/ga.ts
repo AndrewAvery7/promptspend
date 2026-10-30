@@ -10,7 +10,8 @@
  *    that key out of the address bar before this code runs, and the cleaning
  *    here is the second guard, which also covers the referrer.
  * 2. **No pasted text.** PromptSpend's code hands `gtag` only the page fields
- *    below and fixed settings. Pasted prompt text is never in the address and
+ *    below, fixed settings, and the key events in `KeyEvent` (fixed labels and
+ *    catalog model ids). Pasted prompt text is never in the address and
  *    never passed on. (Google's own automatic tracking, which is on, reads
  *    clicks, scrolls, form starts and the address; it does not read what is
  *    typed into a field.)
@@ -30,6 +31,9 @@ import {
   GA_SCRIPT_ORIGIN,
   PRIVATE_ADDRESS_PARAMS,
 } from './config';
+import { DISABLE_FLAG, keyEventForClick, queueOn, sendKeyEvent, type GtagWindow } from './events';
+
+export type { GtagWindow } from './events';
 
 /** What the visitor did with the notice. Absent means they have not chosen. */
 export type AnalyticsChoice = 'dismissed' | 'accepted' | 'declined';
@@ -123,14 +127,6 @@ export function writeChoice(storage: Pick<Storage, 'setItem'> | undefined, choic
   }
 }
 
-/** The page globals `gtag.js` reads. */
-export interface GtagWindow {
-  dataLayer?: unknown[];
-  [disableFlag: `ga-disable-${string}`]: boolean | undefined;
-}
-
-const DISABLE_FLAG = `ga-disable-${GA_MEASUREMENT_ID}` as const;
-
 /** The script tag's address. */
 export const GA_SCRIPT_URL = `${GA_SCRIPT_ORIGIN}/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
 
@@ -143,12 +139,7 @@ export function loadGoogleAnalytics(win: GtagWindow, doc: Document): void {
   if (doc.querySelector(`script[src="${GA_SCRIPT_URL}"]`)) return;
 
   const layer = (win.dataLayer = win.dataLayer ?? []);
-  // `gtag.js` reads each queued command as an `arguments` object, not an
-  // array, which is why this is the one place a rest parameter will not do.
-  function gtag(..._command: unknown[]): void {
-    // eslint-disable-next-line prefer-rest-params
-    layer.push(arguments);
-  }
+  const gtag = queueOn(layer);
 
   const page = pageFields(doc);
   gtag('consent', 'default', {
@@ -173,7 +164,24 @@ export function loadGoogleAnalytics(win: GtagWindow, doc: Document): void {
   script.async = true;
   script.src = GA_SCRIPT_URL;
   doc.head.append(script);
+
+  // One listener for the whole page, in the capture phase so a click still
+  // counts when a handler further down stops it.
+  if (!listening.has(doc)) {
+    listening.add(doc);
+    doc.addEventListener(
+      'click',
+      (event) => {
+        const keyEvent = keyEventForClick(event.target);
+        if (keyEvent) sendKeyEvent(win, keyEvent);
+      },
+      true,
+    );
+  }
 }
+
+/** The documents that already have the key-event click listener. */
+const listening = new WeakSet<Document>();
 
 /**
  * Stop Google Analytics on this page and remove its cookies.
