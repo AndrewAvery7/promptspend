@@ -538,7 +538,8 @@ request logs (kept up to seven days), and the apps' update server has its loggin
   that, the remote origins are `img-src` for the LaunchNest badge, `script-src` for the Cloudflare
   beacon (which posts only to this site), and Google Analytics: `www.googletagmanager.com` for
   `gtag.js` (in `script-src`, and in `connect-src` and `img-src` as Google's guidance asks), and its collection hosts (`www.google-analytics.com`, `region1.google-analytics.com`,
-  `region1.analytics.google.com`) in `connect-src` and `img-src`, each named rather than wildcarded.
+  `region1.analytics.google.com`) and, for Google signals and ad personalization, `stats.g.doubleclick.net`,
+  `googleads.g.doubleclick.net` and `www.google.com`, in `connect-src` and `img-src`, each named rather than wildcarded.
   That `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is
   generated from configured values rather than hand-maintained, and `npm run check:csp` fails on any
   origin it does not list. Admitting Google's collector is a real cost — a script that got onto the

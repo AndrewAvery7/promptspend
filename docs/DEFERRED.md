@@ -104,6 +104,12 @@ and cannot self-correct. See `$coverage` in `data/pricing-overrides.json`.
 > **Addendum, later 2026-10-29.** Back on: a new property owned by info@crestwood.holdings,
 > Measurement ID `G-P27XJ53BH9`, with the account settings SECURITY.md records. The privacy page,
 > README, SECURITY.md and ARCHITECTURE.md were rewritten in the same change.
+>
+> **Addendum, 2026-10-30.** The notice is removed (#347). Every footer links to the privacy page's
+> on/off control ("Your privacy choices"); that control and Global Privacy Control are the only
+> opt-outs. A regional consent default for the EEA, the UK and Switzerland was added and removed the
+> same day (#349): every region now gets every consent type granted, with Google signals, ad
+> personalization and user-provided data collection on. `ANALYTICS_REQUIRES_CONSENT` stays `false`.
 
 **Analytics on either host, for launch measurement.** Considered because a
 launch is the one moment traffic is worth watching closely, and rejected

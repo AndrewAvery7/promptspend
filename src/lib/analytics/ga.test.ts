@@ -48,7 +48,7 @@ describe('the configuration', () => {
     expect(GA_MEASUREMENT_ID).toBe('G-P27XJ53BH9');
   });
 
-  it('ships with the owner-chosen default: load for everyone, with a notice', () => {
+  it('ships with the owner-chosen default: load for everyone, with no notice', () => {
     expect(ANALYTICS_REQUIRES_CONSENT).toBe(false);
   });
 
