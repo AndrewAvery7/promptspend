@@ -403,6 +403,7 @@ export default defineConfig(({ mode }) => {
         'scripts/**/*.test.ts',
         'packages/core/src/**/*.test.ts',
         'github-action/**/*.test.ts',
+        'tools/site-audit/**/*.test.ts',
       ],
       coverage: {
         provider: 'v8',
@@ -420,6 +421,8 @@ export default defineConfig(({ mode }) => {
           'src/components/**/*.tsx',
           'scripts/lib/**/*.ts',
           'packages/core/src/**/*.ts',
+          // The audit's logic, not its CLI: the same split as scripts/ and scripts/lib/.
+          'tools/site-audit/lib/**/*.ts',
         ],
         exclude: ['**/*.test.ts', '**/*.test.tsx'],
         thresholds: {
