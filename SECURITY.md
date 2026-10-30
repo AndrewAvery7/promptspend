@@ -124,9 +124,8 @@ Android", Firebase project `promptspend`) are described in
   `install_copy` {tool: mcp, api or vscode} and `model_added` {model_id}
   (`src/lib/analytics/events.ts`), and none while Google Analytics is off.
   Google signals and ad
-  personalization are on and every consent type is granted, except in the
-  EEA, the UK and Switzerland (`CONSENT_DENIED_REGIONS`), where every type is
-  denied by default and Google does not set cookies. Pasted text is
+  personalization are on and every consent type is granted, in every region
+  (the EEA, the UK and Switzerland included; owner decision 2026-10-30). Pasted text is
   never passed to it (`src/lib/analytics/ga.ts`, with tests).
 - **Cloudflare Web Analytics**: a cookieless beacon, injected by Cloudflare,
   that reports page address, referrer, country and timings to the site's own

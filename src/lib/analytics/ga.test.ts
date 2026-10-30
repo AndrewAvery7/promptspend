@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   ANALYTICS_CHOICE_KEY,
   ANALYTICS_REQUIRES_CONSENT,
-  CONSENT_DENIED_REGIONS,
   GA_COLLECT_ORIGINS,
   GA_MEASUREMENT_ID,
   GA_SCRIPT_ORIGIN,
@@ -224,26 +223,8 @@ describe('loadGoogleAnalytics', () => {
     const referrer = 'http://localhost:3000/?scenario=1#x';
     const page = { page_location: location, page_referrer: referrer, page_title: document.title };
 
-    expect(queued.map((command) => command[0])).toEqual([
-      'consent',
-      'consent',
-      'js',
-      'set',
-      'config',
-      'event',
-    ]);
+    expect(queued.map((command) => command[0])).toEqual(['consent', 'js', 'set', 'config', 'event']);
     expect(queued[0]).toEqual([
-      'consent',
-      'default',
-      {
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        analytics_storage: 'denied',
-        region: [...CONSENT_DENIED_REGIONS],
-      },
-    ]);
-    expect(queued[1]).toEqual([
       'consent',
       'default',
       {
@@ -253,13 +234,13 @@ describe('loadGoogleAnalytics', () => {
         analytics_storage: 'granted',
       },
     ]);
-    expect(queued[3]).toEqual(['set', { page_referrer: referrer }]);
-    expect(queued[4]).toEqual([
+    expect(queued[2]).toEqual(['set', { page_referrer: referrer }]);
+    expect(queued[3]).toEqual([
       'config',
       'G-P27XJ53BH9',
       { send_page_view: false, allow_google_signals: true, allow_ad_personalization_signals: true },
     ]);
-    expect(queued[5]).toEqual(['event', 'page_view', page]);
+    expect(queued[4]).toEqual(['event', 'page_view', page]);
 
     // The private keys reach no command; the scenario does.
     const everything = JSON.stringify(queued);
@@ -268,32 +249,12 @@ describe('loadGoogleAnalytics', () => {
     expect(everything).toContain('a-scenario');
   });
 
-  it('denies every consent type in the EEA, the UK and Switzerland, and nowhere else', () => {
-    expect(CONSENT_DENIED_REGIONS).toHaveLength(32);
-    expect(new Set(CONSENT_DENIED_REGIONS).size).toBe(32);
-    for (const code of ['DE', 'FR', 'IE', 'NO', 'IS', 'LI', 'GB', 'CH'])
-      expect(CONSENT_DENIED_REGIONS).toContain(code);
-    for (const code of ['US', 'CA', 'AU']) expect(CONSENT_DENIED_REGIONS).not.toContain(code);
-  });
-
-  it("passes on a visitor's own yes, even when gtag.js is already on the page", () => {
-    const win = gtagWindow();
-    loadGoogleAnalytics(win, document, true);
-    const granted = [
-      'consent',
-      'update',
-      {
-        ad_storage: 'granted',
-        ad_user_data: 'granted',
-        ad_personalization: 'granted',
-        analytics_storage: 'granted',
-      },
-    ];
-    expect(commands()[2]).toEqual(granted);
-
-    loadGoogleAnalytics(win, document, true);
-    expect(commands().at(-1)).toEqual(granted);
-    expect(document.head.querySelectorAll('script')).toHaveLength(1);
+  it('treats every region the same: no regional consent default, Europe included', () => {
+    loadGoogleAnalytics(gtagWindow(), document);
+    const consent = commands().filter((command) => command[0] === 'consent');
+    expect(consent).toHaveLength(1);
+    expect(JSON.stringify(consent)).not.toContain('denied');
+    expect(JSON.stringify(consent)).not.toContain('region');
   });
 
   it('queues nothing a visitor typed or pasted', () => {
@@ -320,7 +281,6 @@ describe('loadGoogleAnalytics', () => {
         'page_location',
         'page_referrer',
         'page_title',
-        'region',
         'send_page_view',
       ].sort(),
     );

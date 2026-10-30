@@ -184,12 +184,12 @@ describe('the privacy page describes the analytics switch as it is set', () => {
 
   // Each position of the switch has sentences only it makes true. Flipping the
   // switch fails this test until the privacy page is rewritten to match.
-  // No notice in this mode since 2026-10-30: the footer's link and Europe's
-  // denied-by-default consent replace it.
+  // No notice in this mode since 2026-10-30: the footer's link replaces it, and
+  // every region, Europe included, is treated the same.
   const NOTICE_MODE = [
     'Google Analytics loads when a page opens; there is no pop-up',
     'Your privacy choices, at the foot of every page',
-    'In the European Economic Area, the United Kingdom and Switzerland, PromptSpend tells Google that you have not agreed',
+    'Google Analytics works the same way wherever you are, including in the European Economic Area',
     'If your browser sends Global Privacy Control, Google Analytics does not load at all.',
   ];
   const CONSENT_MODE = ['Google Analytics loads only after you click Accept', 'choose Decline on the notice'];
