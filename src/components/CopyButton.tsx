@@ -1,3 +1,5 @@
+import type { InstallTool } from '@/lib/analytics/events';
+
 interface CopyButtonProps {
   /** The exact text placed on the clipboard. */
   value: string;
@@ -7,6 +9,8 @@ interface CopyButtonProps {
    */
   label: string;
   onToast: (message: string) => void;
+  /** Counted as a Google Analytics key event when set; see `KeyEvent`. */
+  tool?: InstallTool;
 }
 
 /**
@@ -22,12 +26,13 @@ interface CopyButtonProps {
  * indistinguishable from success, and the user would paste whatever was on the
  * clipboard before.
  */
-export function CopyButton({ value, label, onToast }: CopyButtonProps) {
+export function CopyButton({ value, label, onToast, tool }: CopyButtonProps) {
   return (
     <button
       type="button"
       className="copy-button"
       aria-label={`Copy ${label}`}
+      data-ga-install={tool}
       onClick={() => {
         void navigator.clipboard
           .writeText(value)

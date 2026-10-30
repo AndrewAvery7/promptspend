@@ -216,7 +216,12 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   <pre className="mono" tabIndex={0}>
                     <code>{MCP_INSTALL_COMMAND}</code>
                   </pre>
-                  <CopyButton value={MCP_INSTALL_COMMAND} label="install command" onToast={onToast} />
+                  <CopyButton
+                    value={MCP_INSTALL_COMMAND}
+                    label="install command"
+                    onToast={onToast}
+                    tool="mcp"
+                  />
                 </div>
                 <p className="privacy-note">
                   Adds ~897 tokens of context per turn — measured, budgeted and published, because a pricing
@@ -262,6 +267,7 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                     value={`curl ${DEVELOPER_HUB_URL}/v1/prices`}
                     label="API command"
                     onToast={onToast}
+                    tool="api"
                   />
                 </div>
                 <p className="privacy-note">
@@ -288,7 +294,12 @@ export function DataView({ catalog, theme, onToast }: DataViewProps) {
                   <pre className="mono" tabIndex={0}>
                     <code>{VSCODE_INSTALL_COMMAND}</code>
                   </pre>
-                  <CopyButton value={VSCODE_INSTALL_COMMAND} label="install command" onToast={onToast} />
+                  <CopyButton
+                    value={VSCODE_INSTALL_COMMAND}
+                    label="install command"
+                    onToast={onToast}
+                    tool="vscode"
+                  />
                 </div>
                 <p className="privacy-note">
                   <a href={VSCODE_MARKETPLACE_URL} target="_blank" rel="noreferrer noopener">
