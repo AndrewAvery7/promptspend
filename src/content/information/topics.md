@@ -38,6 +38,6 @@ PromptSpend answers a handful of questions about what LLM APIs cost. Each sectio
 - [Open data](/data/): the catalog and the full price history as JSON and CSV, MIT licensed.
 - The public API, the MCP server for coding agents and the VS Code extension read the same catalog.
 
-## Who is behind this?
+## How are prices checked?
 
-- [About and methodology](/about/): who runs the site and how every price is checked.
+- [How prices are checked](/about/): where every price comes from and how it is re-checked.

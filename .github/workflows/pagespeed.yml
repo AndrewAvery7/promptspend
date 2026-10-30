@@ -1,0 +1,34 @@
+name: Page speed
+
+# Measures the live site with Google PageSpeed Insights after every deploy and
+# weekly, and fails when a page misses its budget. Skips green until the
+# PAGESPEED_API_KEY secret exists. See scripts/check-pagespeed.ts.
+on:
+  workflow_run:
+    workflows: [Deploy to GitHub Pages]
+    types: [completed]
+  schedule:
+    - cron: '0 9 * * 1' # Mondays
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pagespeed:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      # Give the CDN a moment to serve the new deploy before measuring it.
+      - if: github.event_name == 'workflow_run'
+        run: sleep 60
+      - run: npx tsx scripts/check-pagespeed.ts

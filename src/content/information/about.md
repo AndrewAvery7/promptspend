@@ -1,16 +1,12 @@
 ---
 slug: about
-title: About PromptSpend and how prices are checked | PromptSpend
-description: Who runs PromptSpend, where every price comes from, how it is re-checked each morning, and what happens when two sources disagree.
-heading: About PromptSpend
+title: How PromptSpend checks prices | PromptSpend
+description: Where every price comes from, how it is re-checked each morning, and what happens when two sources disagree.
+heading: How PromptSpend checks prices
 updated: 2026-10-30
 ---
 
 PromptSpend is a free calculator and reference for what large language model (LLM) APIs cost. It is open source under the MIT license, and the whole pipeline that gathers the prices is public on [GitHub](https://github.com/AndrewAvery7/promptspend).
-
-## Who runs it
-
-PromptSpend is built and run by Andrew Avery. Andrew spent more than fifteen years in operations and program leadership, most recently as a senior manager at NRG Energy, and before that in cost and process programs at Direct Energy and in management consulting. Since April 2026 he has worked full time on applied AI, including the University of Texas at Austin McCombs post-graduate program in AI and machine learning. The site is published by Crestwood Holdings. More about Andrew is on [LinkedIn](https://www.linkedin.com/in/andrewavery) and at [averyresume.com](https://averyresume.com).
 
 ## Where the prices come from
 
