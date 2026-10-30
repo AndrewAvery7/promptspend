@@ -9,6 +9,11 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **Google signals now reach Google from every country** (2026-10-30). The page security policy listed only six
+  Google addresses, so a visitor whose Google is a country version (google.de, google.co.uk...) had their
+  signals report blocked, and the regional measurement hosts, user-provided data and ad-click hosts were
+  missing too. The policy now admits the hosts Google's CSP guide lists, with `www.google.<country>` named for
+  all 186 of Google's country domains and never `*.google.com`.
 - **Europe, the UK and Switzerland are counted in full** (owner decision 2026-10-30, the same day). The regional
   consent default added in #347 is removed: Google Analytics now loads, sets its cookies and runs its advertising
   features the same way in every region, without asking first. The privacy page says so. The footer's _Your

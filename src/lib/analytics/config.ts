@@ -69,20 +69,53 @@ export const GA_HOSTNAMES: readonly string[] = ['promptspend.com', 'www.promptsp
 export const GA_SCRIPT_ORIGIN = 'https://www.googletagmanager.com';
 
 /**
+ * The country versions of Google's site, from Google's own list
+ * (https://www.google.com/supported_domains, fetched 2026-10-30), without
+ * google.com. A visitor whose Google is one of these (google.de, google.co.uk...)
+ * has their Google signals audience report sent to `www.google.<country>`
+ * (gtag.js builds `https://www.<domain>/ads/ga-audiences`), so the policy names
+ * each one. Without them, Europe's and most other countries' signals reports
+ * were blocked (owner decision 2026-10-30: nothing restricted).
+ */
+export const GOOGLE_COUNTRY_DOMAINS: readonly string[] = (
+  'ad ae com.af com.ag al am co.ao com.ar as at com.au az ba com.bd be bf bg com.bh bi bj com.bn ' +
+  'com.bo com.br bs bt co.bw by com.bz ca cd cf cg ch ci co.ck cl cm cn com.co co.cr com.cu cv ' +
+  'com.cy cz de dj dk dm com.do dz com.ec ee com.eg es com.et fi com.fj fm fr ga ge gg com.gh ' +
+  'com.gi gl gm gr com.gt gy com.hk hn hr ht hu co.id ie co.il im co.in iq is it je com.jm jo ' +
+  'co.jp co.ke com.kh ki kg co.kr com.kw kz la com.lb li lk co.ls lt lu lv com.ly co.ma md me mg ' +
+  'mk ml com.mm mn com.mt mu mv mw com.mx com.my co.mz com.na com.ng com.ni ne nl no com.np nr nu ' +
+  'co.nz com.om com.pa com.pe com.pg com.ph com.pk pl pn com.pr ps pt com.py com.qa ro ru rw ' +
+  'com.sa com.sb sc se com.sg sh si sk com.sl sn so sm sr st com.sv td tg co.th com.tj tl tm tn to ' +
+  'com.tr tt com.tw co.tz com.ua co.ug co.uk com.uy co.uz com.vc co.ve co.vi com.vn vu ws rs co.za ' +
+  'co.zm co.zw cat'
+)
+  .split(' ')
+  .map((tld) => `google.${tld}`);
+
+/**
  * Where Google Analytics 4 sends its measurements (`connect-src`, and
- * `img-src` for the image fallback). Named one by one rather than with a
- * wildcard: if Google ever moves to a host not listed here, the browser blocks
- * the report, which loses a count and never leaks anything.
+ * `img-src` for the image fallback): the hosts in Google's Content Security
+ * Policy guide for Google Analytics with its advertising features
+ * (developers.google.com/tag-platform/security/guides/csp), as gtag.js
+ * actually uses them. Named host by host wherever Google's code names one,
+ * and never `*.google.com`, which would also admit Google Forms and Docs, a
+ * way out for a script that got onto the page. If Google ever moves to a host
+ * not listed here, the browser blocks the report, which loses a count and
+ * never leaks anything.
  */
 export const GA_COLLECT_ORIGINS: readonly string[] = [
-  'https://www.google-analytics.com',
-  'https://region1.google-analytics.com',
-  'https://region1.analytics.google.com',
+  // Measurement. gtag.js picks a regional subdomain (region1 today) on its own.
+  'https://*.google-analytics.com',
+  'https://*.analytics.google.com',
   // Google signals and ad personalization (owner decision 2026-10-29, "everything
   // Google Analytics offers"): the cross-device and advertising hits.
-  'https://stats.g.doubleclick.net',
-  'https://googleads.g.doubleclick.net',
+  'https://*.g.doubleclick.net',
   'https://www.google.com',
+  // User-provided data (the hashed alert-form email) and ad-click registration.
+  'https://google.com',
+  'https://adservice.google.com',
+  'https://pagead2.googlesyndication.com',
+  ...GOOGLE_COUNTRY_DOMAINS.map((domain) => `https://www.${domain}`),
 ];
 
 /**

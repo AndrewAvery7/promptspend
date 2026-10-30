@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
 import type { HistoryRow, PriceHistory } from '@/lib/pricing/history';
-import { GOOGLE_ANALYTICS_ENABLED } from '@/lib/analytics/config';
+import { GOOGLE_ANALYTICS_ENABLED, GOOGLE_COUNTRY_DOMAINS } from '@/lib/analytics/config';
 import { buildPages } from './pages';
 import {
   layout,
@@ -372,12 +372,15 @@ describe('rendered pages', () => {
     const google = GOOGLE_ANALYTICS_ENABLED
       ? [
           'https://www.googletagmanager.com',
-          'https://www.google-analytics.com',
-          'https://region1.google-analytics.com',
-          'https://region1.analytics.google.com',
-          'https://stats.g.doubleclick.net',
-          'https://googleads.g.doubleclick.net',
+          'https://*.google-analytics.com',
+          'https://*.analytics.google.com',
+          'https://*.g.doubleclick.net',
           'https://www.google.com',
+          'https://google.com',
+          'https://adservice.google.com',
+          'https://pagead2.googlesyndication.com',
+          // www.google.<country> for Google's 186 country domains (2026-10-30).
+          ...GOOGLE_COUNTRY_DOMAINS.map((domain) => `https://www.${domain}`),
         ]
       : [];
     const approved: Record<string, string[]> = {
@@ -403,7 +406,19 @@ describe('rendered pages', () => {
         const remote = sources.filter((source) => source.startsWith('http'));
         expect(remote, `${name} admits an unapproved origin`).toEqual(approved[name!] ?? []);
       }
-      expect(csp).not.toMatch(/\*/);
+      // The only wildcards are Google Analytics' own three: never a bare *,
+      // and never *.google.com, which would admit Google Forms and Docs.
+      expect(csp.match(/\S*\*\S*/g)?.sort() ?? []).toEqual(
+        GOOGLE_ANALYTICS_ENABLED
+          ? Array.from({ length: 2 }, () => [
+              'https://*.analytics.google.com',
+              'https://*.g.doubleclick.net',
+              'https://*.google-analytics.com',
+            ])
+              .flat()
+              .sort()
+          : [],
+      );
     }
   });
 
