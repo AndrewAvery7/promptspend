@@ -1,0 +1,54 @@
+name: GA watch
+
+# Read-only checks on the Google Analytics property: a daily tag-health alarm,
+# a weekly settings check against the privacy page, and the four-week baseline.
+# Each step skips cleanly until the secrets exist. See scripts/ga-watch.ts.
+on:
+  schedule:
+    - cron: '30 7 * * *' # daily, after the morning sync
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: tag-health, drift or baseline
+        required: true
+        default: tag-health
+
+permissions:
+  contents: read
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GA_SERVICE_ACCOUNT_JSON: ${{ secrets.GA_SERVICE_ACCOUNT_JSON }}
+      CF_ANALYTICS_TOKEN: ${{ secrets.CF_ANALYTICS_TOKEN }}
+      CF_ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}
+      CF_SITE_TAG: ${{ vars.CF_SITE_TAG }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Manual run
+        if: github.event_name == 'workflow_dispatch'
+        run: npx tsx scripts/ga-watch.ts "${{ inputs.mode }}"
+      - name: Tag health
+        if: github.event_name == 'schedule'
+        run: npx tsx scripts/ga-watch.ts tag-health
+      - name: Settings against the privacy page (Mondays)
+        if: github.event_name == 'schedule'
+        run: |
+          if [ "$(date -u +%u)" = "1" ]; then npx tsx scripts/ga-watch.ts drift; else echo "Not Monday; skipped."; fi
+      - name: Four-week baseline (Mondays, from 2026-11-30)
+        if: github.event_name == 'schedule'
+        run: |
+          if [ "$(date -u +%u)" = "1" ]; then npx tsx scripts/ga-watch.ts baseline; else echo "Not Monday; skipped."; fi
+      - name: Keep the baseline
+        if: github.event_name != 'pull_request' && hashFiles('docs/seo/ga-baseline-*.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: ga-baseline
+          path: docs/seo/ga-baseline-*.json
