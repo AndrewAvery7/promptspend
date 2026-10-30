@@ -147,7 +147,7 @@ describe('the crawl', () => {
     const evidence = await runAudit({ ...OPTIONS, skipBrokenLinks: true }, { fetch: site.fetch, now: FIXED });
     expect(evidence.links.notChecked).toMatch(/skipped/);
     expect(evidence.speed.notChecked).toBe('no PAGESPEED_API_KEY set');
-    expect(site.requests.some((r) => r.includes('other.org'))).toBe(false);
+    expect(site.requests.some((r) => new URL(r.split(' ')[1]!).hostname === 'other.org')).toBe(false);
   });
 
   it('runs PageSpeed for the home page and top pages when a client is given, and saves the raw JSON', async () => {

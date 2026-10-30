@@ -173,7 +173,7 @@ export function extractPage(html: string, pageUrl: string): ExtractedPage {
   const types = new Set<string>();
   let jsonLdErrors = 0;
   const scripts: string[] = [];
-  for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+  for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)) {
     const opening = match[1]!;
     const body = match[2]!;
     scripts.push(`${opening} ${body}`);
