@@ -9,6 +9,10 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **The price data now asks for credit** (2026-10-30). The price history files and the pricing API's answers are
+  released under CC BY 4.0: anyone may use them, including commercially, as long as they credit PromptSpend.
+  Copies released before today, including the archived Zenodo version and the Hugging Face copy, stay public
+  domain (CC0). The catalog and the code stay MIT.
 - **Every page has its own share image** (2026-10-30). Model, comparison and provider pages each show their own
   1200x630 card with that page's prices or monthly bills when the link is shared, instead of one card for the
   whole site. Model, comparison and provider pages now call themselves a website, not an article.

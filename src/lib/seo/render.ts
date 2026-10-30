@@ -2329,7 +2329,8 @@ export interface DataPageInput {
  * The page that describes the files the site already publishes as data.
  *
  * The facts here are the ones the repository already states (docs/PRICE_HISTORY.md
- * and llms.txt): the catalog is MIT, the price history is CC0, and the history
+ * and llms.txt): the catalog is MIT, the price history is CC BY 4.0 (CC0 up to
+ * 2026-10-30, which covers the archived copy), and the history
  * has an archived copy with a DOI. Nothing is printed that changes every day,
  * so the page's date in the sitemap moves only when a price does.
  */
@@ -2363,8 +2364,11 @@ export function renderDataPage(input: DataPageInput, ctx: RenderContext): string
           ${file('/data/price-history.csv', 'price-history.csv')} and ${file('/data/price-history.json', 'price-history.json')}
           list every rate PromptSpend has published: one row for each rate that appeared, moved, was restated or went
           away, from ${escapeHtml(history.firstDate)} onward (${history.rows} rows so far). Every row names the commit that published it.
-          License: public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>).
-          An archived copy is on Zenodo, <a href="https://doi.org/${PRICE_HISTORY_DOI}">doi:${PRICE_HISTORY_DOI}</a>.
+          License: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Use it for anything,
+          including commercially, as long as you credit PromptSpend with a link to promptspend.com.
+          Copies published before 30 October 2026 stay public domain
+          (<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>), including the archived copy on
+          Zenodo, <a href="https://doi.org/${PRICE_HISTORY_DOI}">doi:${PRICE_HISTORY_DOI}</a>.
         </p>
 
         <h2>Free-tier facts</h2>
@@ -2383,11 +2387,14 @@ export function renderDataPage(input: DataPageInput, ctx: RenderContext): string
         <p>
           The same prices as JSON or CSV, keyless and open to browsers, at
           <a href="${escapeHtml(ctx.apiUrl)}">${escapeHtml(ctx.apiUrl.replace(/^https?:\/\//, ''))}</a>.
+          Its answers are released under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>:
+          credit PromptSpend wherever you show or republish them.
         </p>
 
         <h2>Citing it</h2>
         <p>
-          Cite the archived price history by its DOI. For the catalog, a link to PromptSpend is enough. The code
+          Credit PromptSpend, with a link to promptspend.com, wherever you use the price history or the API.
+          To cite a fixed version, use the archived price history's DOI. For the catalog, a link to PromptSpend is enough. The code
           that builds all of it is open source on <a href="https://github.com/AndrewAvery7/promptspend">GitHub</a>.
         </p>
       </main>`;
@@ -2443,7 +2450,7 @@ export function renderDataPage(input: DataPageInput, ctx: RenderContext): string
         'PromptSpend LLM API price history',
         'Every rate PromptSpend has published for an LLM API: one row for each rate that appeared, moved, was restated or went away, each naming the commit that published it.',
         'history',
-        'https://creativecommons.org/publicdomain/zero/1.0/',
+        'https://creativecommons.org/licenses/by/4.0/',
         [
           { path: '/data/price-history.csv', type: 'text/csv' },
           { path: '/data/price-history.json', type: 'application/json' },

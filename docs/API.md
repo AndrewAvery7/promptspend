@@ -85,6 +85,17 @@ prior status.
 
 ---
 
+## License of the answers
+
+The API's answers are released under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (since 2026-10-30).
+Use them for anything, including commercially, and credit PromptSpend with a
+link to <https://promptspend.com> wherever you show or republish them, for
+example "Prices: PromptSpend (promptspend.com)". The badge carries its own
+credit. The code is MIT, like the rest of the repository.
+
+---
+
 ## Where the data comes from
 
 The catalog is **fetched from `promptspend.com` at request time**, not bundled

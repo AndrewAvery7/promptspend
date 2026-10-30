@@ -1,6 +1,6 @@
 /**
  * `feed.xml` — an Atom feed of price news, built from the published price
- * history (`/data/price-history.json`, the same table as the CC0 dataset).
+ * history (`/data/price-history.json`, the same table as the published price-history dataset).
  *
  * It used to be filtered from `docs/pricing-changelog.md`, and that is the
  * reason it is not any more. The changelog's "Price" lines include rates

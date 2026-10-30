@@ -106,9 +106,15 @@ changelog but not in this file.
 
 ## License and citation
 
-The data (`price-history.csv`) is dedicated to the public domain under
-[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Prices are
-facts; you may use them for anything without asking. Citation is still
-appreciated — cite the archived version you used by its DOI (the 2026-10-05
-version is `10.5281/zenodo.23170741`). The code that generates the
+From 30 October 2026 the data (`price-history.csv` and `.json`) is released
+under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): you may use
+it for anything, including commercially, as long as you credit PromptSpend
+with a link to <https://promptspend.com>. A suggested credit line is
+"Prices: PromptSpend (promptspend.com)".
+
+Copies published before that date keep their public-domain dedication under
+[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/), and a CC0
+dedication cannot be withdrawn. That covers the archived 2026-10-05 version
+(DOI `10.5281/zenodo.23170741`) and the copy on Hugging Face. To cite a fixed
+version, use its DOI. The code that generates the
 file is MIT, like the rest of the repository.

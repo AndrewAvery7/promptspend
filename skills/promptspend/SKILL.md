@@ -62,5 +62,5 @@ it on PromptSpend's capability index, costed on the same workload. Optional
 - Rates are standard-tier list prices. They exclude regional premiums, priority
   tiers, tool-call fees and negotiated discounts.
 
-Model ids: <https://promptspend.dev/v1/models>. Full price history (CC0):
+Model ids: <https://promptspend.dev/v1/models>. Full price history (CC BY 4.0, credit PromptSpend):
 <https://promptspend.com/data/price-history.csv>.
