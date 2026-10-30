@@ -85,3 +85,7 @@ tools/__pycache__/
 # Written by scripts/watch-later-additions.ts when it runs locally.
 later-additions-report.md
 coverage-gaps-report.md
+
+# Client audit output from tools/site-audit/audit.ts. Never committed: it is a
+# client's site, read with the owner's permission, not part of this repository.
+tools/site-audit/reports/
