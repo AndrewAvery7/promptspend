@@ -3,7 +3,7 @@ import type { Scorecard } from './score';
 import type { AuditEvidence } from './types';
 
 function cell(value: string): string {
-  return value.replace(/\|/g, '\\|').replace(/\s+/g, ' ');
+  return value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\s+/g, ' ');
 }
 
 function when(iso: string | null): string {
