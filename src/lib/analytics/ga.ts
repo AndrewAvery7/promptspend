@@ -13,8 +13,9 @@
  *    below, fixed settings, and the key events in `KeyEvent` (fixed labels and
  *    catalog model ids). Pasted prompt text is never in the address and
  *    never passed on. (Google's own automatic tracking, which is on, reads
- *    clicks, scrolls, form starts and the address; it does not read what is
- *    typed into a field.)
+ *    clicks, scrolls, form starts and the address, and its user-provided data
+ *    collection hashes the email address typed into the price-alert form; see
+ *    SECURITY.md.)
  *
  * Google signals and ad personalization are on, and every consent type is
  * granted, in every region (owner decision 2026-10-30: Europe, the UK and
@@ -36,7 +37,11 @@ import { DISABLE_FLAG, keyEventForClick, queueOn, sendKeyEvent, type GtagWindow 
 
 export type { GtagWindow } from './events';
 
-/** What the visitor did with the notice. Absent means they have not chosen. */
+/**
+ * The visitor's stored choice: `accepted` / `declined` from the privacy page's
+ * control (or the consent-mode notice), `dismissed` from the retired notice's
+ * OK. Absent means they have not chosen.
+ */
 export type AnalyticsChoice = 'dismissed' | 'accepted' | 'declined';
 
 const CHOICES: readonly AnalyticsChoice[] = ['dismissed', 'accepted', 'declined'];

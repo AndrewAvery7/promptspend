@@ -109,5 +109,5 @@ export const GA_POLICY_COLLECT_ORIGINS: readonly string[] = GOOGLE_ANALYTICS_ENA
   ? GA_COLLECT_ORIGINS
   : [];
 
-/** The browser-storage key that remembers the visitor's choice about the notice. */
+/** The browser-storage key that remembers the visitor's Google Analytics on/off choice (and any answer to the retired notice). */
 export const ANALYTICS_CHOICE_KEY = 'ps.analyticsChoice';

@@ -13,13 +13,11 @@ on their own schedule and are not releases.
   consent default added in #347 is removed: Google Analytics now loads, sets its cookies and runs its advertising
   features the same way in every region, without asking first. The privacy page says so. The footer's _Your
   privacy choices_ link, the off switch and Global Privacy Control still work everywhere.
-- **No more Google Analytics pop-up; Europe is denied by default instead** (owner decision 2026-10-30). The
-  notice at the foot of every page is gone. Every footer now has a _Your privacy choices_ link to the on/off
-  control on the privacy page, which, with Global Privacy Control, is the U.S. opt-out. In the European
-  Economic Area, the UK and Switzerland, Google is told that no consent was given, so it sets no cookies
-  there, does not use the visit for advertising, and receives only cookieless pings, unless the visitor turns
-  Google Analytics on with that control. Google works out the region; the site never sees it. Earlier
-  _OK_ and _Turn off_ answers still hold.
+- **No more Google Analytics pop-up** (owner decision 2026-10-30). The notice at the foot of every page is
+  gone. Every footer now has a _Your privacy choices_ link to the on/off control on the privacy page; that
+  control and Global Privacy Control are how a visitor turns Google Analytics off. Earlier _Turn off_ answers
+  still hold. (A regional consent default for Europe, added that morning, was removed the same day; see
+  above.)
 - **Google Analytics counts three key events.** A click on an App Store or Google Play button (and which
   store), a click on Copy beside the MCP, API or VS Code command (and which), and a model added to the
   comparison (and which model). Each carries only a fixed label or a catalog model id, and nothing is sent
@@ -29,8 +27,8 @@ on their own schedule and are not releases.
   Google's automatic tracking (address changes, site search, form starts, scrolls, outbound clicks) is on;
   Google signals and ad personalization are on, so visits can feed Google's demographic reports and
   advertising; visit data is kept 14 months. Only the private key in a price-alert link is removed before
-  anything is sent, and pasted text still never leaves the device. The notice and the privacy page say so.
-- **Google Analytics is back on promptspend.com**, reporting to a new property owned by Crestwood Holdings
+  anything is sent, and pasted text still never leaves the device. The privacy page says so.
+- **Google Analytics is back on promptspend.com** (superseded by the entries above), reporting to a new property owned by Crestwood Holdings
   (Measurement ID `G-P27XJ53BH9`; its cookie is now `_ga_P27XJ53BH9`). It works exactly as it did before the
   pause: a notice with a _Turn off_ button, nothing after `?` or `#` sent, nothing typed or pasted sent, off
   under Global Privacy Control. The new account keeps visit data for two months, shares nothing with other
@@ -138,11 +136,11 @@ on their own schedule and are not releases.
   changes, one entry per day, filtered from the changelog the daily sync writes; provenance and
   metadata bookkeeping are left out. Every generated page and the calculator advertise it.
 
-- **Google Analytics 4 on the website, with cookies** (owner decision 2026-10-06). Every page of
+- **Google Analytics 4 on the website, with cookies** (owner decision 2026-10-06; superseded by the Changed entries above). Every page of
   promptspend.com loads it and shows a small notice that says so, links to the privacy policy and offers
   _Turn off_; the privacy page has an on/off control. It is sent the page's origin and path only, never the
   query string or `#fragment` (where scenarios and alert tokens live), and nothing anyone types, pastes or
-  enters in a form; GA's automatic page view, Google signals and ad personalisation are off, and it does not
+  enters in a form; GA's automatic page view, Google signals and ad personalization are off, and it does not
   load when the browser sends Global Privacy Control. One line, `ANALYTICS_REQUIRES_CONSENT` in
   `src/lib/analytics/config.ts`, switches it to loading only after _Accept_. The Content Security Policy on
   the calculator, the Receipt page and the generated pages admits `www.googletagmanager.com` and the three

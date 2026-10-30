@@ -1,7 +1,9 @@
 # Security policy
 
-PromptSpend is a static site with no accounts and no login. Nothing a visitor types or
-pastes into the calculator is sent anywhere, which removes most of the usual attack surface. The pages
+PromptSpend is a static site with no accounts and no login. Nothing a visitor
+pastes into the calculator is sent anywhere, which removes most of the usual attack surface. The numbers and
+models a visitor chooses are part of the page address, which Google Analytics receives on promptspend.com
+(see Data handling). The pages
 load from these remote origins: `https://launchnest.io`, for one badge image
 (`img-src` only); `https://static.cloudflareinsights.com`, the Cloudflare Web
 Analytics beacon (`script-src`), which reports only to the site's own

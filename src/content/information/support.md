@@ -30,6 +30,8 @@ Check that sharing is allowed on the device and that at least one compatible des
 
 Saved scenarios can be removed from the saved-scenarios sheet. Appearance and onboarding settings remain on the device. To remove all PromptSpend app data, use the operating system's app-storage controls or uninstall the app. PromptSpend has no native app account to delete.
 
+To turn off Google Analytics on the website, use Your privacy choices at the foot of any page, or send Global Privacy Control from your browser.
+
 To stop the app's usage statistics, turn off Share usage statistics in Data & Alerts, under Privacy & support. The app stops sending them at once, deletes the analytics identifier and data it keeps on the device, and remembers the choice. To ask for statistics already sent to Google Analytics to be deleted, email [info@promptspend.com](mailto:info@promptspend.com).
 
 ## Alerts
