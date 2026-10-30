@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "620216472671",
+    "project_id": "promptspend",
+    "storage_bucket": "promptspend.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620216472671:android:4900f6249e086d447237ea",
+        "android_client_info": {
+          "package_name": "com.promptspend.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwSE1QzVCxuQMItzCLezuxgtY-WnZDu5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

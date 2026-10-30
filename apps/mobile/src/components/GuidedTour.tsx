@@ -32,6 +32,7 @@ import {
 } from '@/lib/guidedTour';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { trackEvent } from '@/lib/usageStats';
 
 interface RegisteredTarget {
   reveal?: () => void;
@@ -84,6 +85,7 @@ export function GuidedTourProvider({ children }: PropsWithChildren) {
     (nextIndex: number) => {
       if (nextIndex < 0) return;
       if (nextIndex >= GUIDED_TOUR_STEPS.length) {
+        trackEvent({ name: 'tutorial_complete' });
         close();
         return;
       }

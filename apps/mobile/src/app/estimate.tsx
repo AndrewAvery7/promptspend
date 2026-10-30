@@ -872,7 +872,8 @@ export function EstimatorWorkspace({
                     download is schema-validated before it can replace the bundled catalog.
                   </Text>
                   <Text style={styles.privacyText}>
-                    No account, prompt upload, tracker, or advertising identifier.
+                    No account, prompt upload, or advertising identifier. Usage statistics can be switched off
+                    in Data & Alerts.
                   </Text>
                 </View>
 

@@ -81,8 +81,12 @@ behavior before submission:
 > sheet, then confirm using the received email. Existing subscribers can request
 > a six-digit code and manage cadence and followed models in the app. The code
 > expires after 10 minutes and the management session after 30 minutes. No review
-> account or credentials are required. Native push notifications, accounts,
-> ads, analytics, and in-app purchases are not present in this version.
+> account or credentials are required. The app sends usage statistics (screen
+> names and a fixed list of actions, never typed or pasted text) to Google
+> Analytics through Firebase; they can be switched off under Data & Alerts >
+> Privacy & support > Share usage statistics. It collects no advertising
+> identifier and does not track. Native push notifications, accounts, ads, and
+> in-app purchases are not present in this version.
 
 No review credentials are required. Reviewer contact information belongs in
 the private store portal and must not be committed to this public repository.
@@ -91,19 +95,77 @@ the private store portal and must not be committed to this public repository.
 
 Provisional answer: **Yes, Contact Info — Email Address is collected only when a user opts into email alerts.**
 
-Recommended App Store Connect declaration:
+Recommended App Store Connect declaration (from the release that adds usage
+statistics; see "App usage statistics" below):
 
 - Data type: Contact Info → Email Address.
-- Purpose: App Functionality.
-- Linked to the user: Yes. The address identifies the alert subscription.
-- Used for tracking: No.
-- Collection is optional; estimates, comparisons, Learn, and local saved
-  scenarios require no email address or account.
+  - Purpose: App Functionality.
+  - Linked to the user: Yes. The address identifies the alert subscription.
+  - Used for tracking: No.
+  - Collection is optional; estimates, comparisons, Learn, and local saved
+    scenarios require no email address or account.
+- Data type: Usage Data → Product Interaction.
+  - Purpose: Analytics.
+  - Linked to the user: **Yes while Google signals is on** in the Google
+    Analytics property (see below); No if it is switched off.
+  - Used for tracking: No.
+- Data type: Identifiers → Device ID (Firebase's app-instance ID).
+  - Purpose: Analytics.
+  - Linked to the user: same answer as Product Interaction.
+  - Used for tracking: No.
+- Data type: Location → Coarse Location (Google derives it from the masked IP
+  address).
+  - Purpose: Analytics.
+  - Linked to the user: same answer as Product Interaction.
+  - Used for tracking: No.
+
+### App usage statistics
+
+From the release that adds the **Share usage statistics** switch, the app
+reports to the PromptSpend Google Analytics property (p561559697) through
+Firebase Analytics (`@react-native-firebase/analytics`, Firebase project
+`promptspend`; streams "PromptSpend iOS" 16232777068 and "PromptSpend Android"
+16232765586). `apps/mobile/src/lib/usageStats.ts` sends only screen names and
+five fixed events, each value from a closed list: `share` (content and form),
+`tutorial_complete`, `alert_signup_sent`, `link_open` (fixed link names), and
+`opened_from_link`. Firebase adds its app-instance ID, device and OS details,
+app version, language, and coarse location from the masked IP address.
+
+What it does not do, and how that is enforced:
+
+- No advertising identifier: `withoutAdIdSupport` on iOS (no IDFA, no
+  AdSupport framework), the `AD_ID` permission removed from the Android
+  manifest, and `google_analytics_adid_collection_enabled`,
+  `google_analytics_ssaid_collection_enabled` and
+  `analytics_idfv_collection_enabled` false in `apps/mobile/firebase.json`.
+- Ad storage, ad user data, ad personalization and ad-network registration are
+  off by default in `firebase.json`, so app data is not used for advertising,
+  and no App Tracking Transparency prompt is needed.
+- Collection is off at launch (`analytics_auto_collection_enabled: false`) and
+  is switched on only after the saved choice is read, so a person who turned
+  statistics off sends nothing, not even a first-open event. With it on,
+  Firebase also sends its automatic events (first_open, session_start,
+  user_engagement, app_update, os_update, and on Android app_clear_data and
+  app_remove). Turning it off also clears Firebase's on-device analytics
+  identifier and data.
+- `scripts/lib/privacy-config.test.ts` fails if any other file loads Firebase
+  Analytics, any other analytics or advertising library is added, or any of
+  those settings is loosened.
+
+**Google signals.** It is on in the property (Andrew's "Option B",
+2026-10-29), and since #342 the website uses it too. Google's guidance says Firebase
+Analytics "conditionally collects signed-in account information if Google
+Signals is enabled", which is why the answers above say the data is linked to
+the user while it stays on. Switching Google signals off in Admin > Data
+collection would let every analytics answer become "Not linked to you" and
+drop the Google Play "User IDs" line below, but it would also switch it off for
+the website, which Option B chose to keep.
 
 Evidence supporting that draft:
 
-- No account, advertising, analytics, attribution, crash-reporting, or tracking
-  SDK is declared in the mobile dependency graph.
+- No account, advertising, attribution, crash-reporting, or tracking SDK is
+  declared in the mobile dependency graph. The one analytics SDK, Firebase
+  Analytics, is limited as described under "App usage statistics".
 - Pasted prompt, user-message, and response text remain in component state and
   never enter catalog requests, persistence, URLs, or share builders.
 - Saved scenarios and appearance choices stay in app-local storage.
@@ -138,28 +200,53 @@ User Privacy Choices URL: `https://promptspend.com/support/`. The support and
 privacy pages explain in-app management and deletion. This is not an account;
 unsubscribing deletes the alert address and preferences.
 
-Tracking: No. ATT permission: not requested.
+Tracking: No. ATT permission: not requested. Firebase Analytics is built
+without ad-ID support and with ad personalization off, so nothing it collects
+meets Apple's definition of tracking.
 
 ## Google Play Data Safety draft
 
 Provisional answers:
 
-- Does the app collect or share required user-data types? **Yes, optional email
-  address for app functionality. It is collected, not sold or shared for
-  advertising.**
+- Does the app collect or share required user-data types? **Yes: an optional
+  email address for app functionality, and usage statistics for analytics.
+  Collected, not sold or shared for advertising.** Firebase normally acts as
+  PromptSpend's service provider, which Google's form does not count as
+  sharing. **But** the account's "Google products & services" data-sharing
+  option is on (controller-to-controller terms accepted 2026-10-29), so Google
+  also receives app data as an independent controller. While that stays on,
+  answer **shared: Yes** (with Google, for improving its products) for every
+  analytics data type below; switch it off and every "shared" answer can be
+  No.
+- App activity → **App interactions**: collected, shared (see above), not
+  processed ephemerally, optional (on by default; users can switch it off in
+  the app; re-read Google's live help text on "optional" when filling it in),
+  purpose Analytics.
+- Location → **Approximate location** (derived by Google from the masked IP
+  address): collected, shared (see above), not ephemeral, optional, purpose
+  Analytics.
+- Personal info → **User IDs**: declare **only while Google signals is on**
+  (Google's own guidance: Firebase "conditionally collects signed-in account
+  information if Google Signals is enabled"): collected, shared (see above),
+  optional, purpose Analytics.
+- Advertising ID: **No**, the app does not use it; the `AD_ID` permission is
+  removed from the manifest.
 - Is user data encrypted in transit? **Yes; public network requests use HTTPS**.
 - Does the app provide account creation? **No**.
 - Account-deletion URL required? **No native account is created.** The in-app
   unsubscribe action deletes the optional alert address and preferences, and
   the privacy/support URL documents that deletion path.
 - Privacy policy: `https://promptspend.com/privacy/`.
-- Over-the-air update check (from the first release built with expo-updates):
-  **declare Device or other IDs → collected, processed ephemerally, not
-  shared, required (not optional), purpose App functionality.** Google counts
-  any transmission off the device as collection, and expo-updates sends a
-  random per-install ID with every update check even though PromptSpend's
-  server does not keep it. "Processed ephemerally" is the accurate
-  qualifier. See `docs/MOBILE_OTA_UPDATES.md`.
+- **Device or other IDs**: collected, shared with Google while the
+  data-sharing option is on (see above), **not** processed
+  ephemerally, required, purposes **App functionality** and **Analytics**.
+  Two things send one: the over-the-air update check (expo-updates adds a
+  random per-install ID that PromptSpend's server never keeps; on its own
+  that would be "processed ephemerally", see `docs/MOBILE_OTA_UPDATES.md`) and
+  Firebase Analytics' app-instance ID, which Google keeps. Because the form
+  takes one answer per data type, the analytics use decides it: not
+  ephemeral. "Required" because the update check cannot be switched off,
+  although the analytics use can.
 
 Google defines collection broadly as transmitting user data off-device,
 including third-party SDK behavior. On-device prompt processing remains outside
@@ -198,7 +285,7 @@ user preferences, accounts, or media, retake both rating questionnaires.
 
 - Export compliance: `ITSAppUsesNonExemptEncryption` is false. PromptSpend uses
   operating-system HTTPS and does not implement non-exempt cryptography.
-- Advertising identifier: not used.
+- Advertising identifier: not used (IDFA support is not built in; Android's `AD_ID` permission is removed).
 - Government/medical/news/children categories: not applicable.
 - Content rights: screenshots and brand artwork must be created from the app;
   provider names and pricing are factual references backed by source links.

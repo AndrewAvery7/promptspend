@@ -11,6 +11,7 @@ import type { HelpDestination } from '@/lib/helpCenter';
 import { MAX_PASTE_CHARS } from '@/lib/promptInput';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { trackEvent } from '@/lib/usageStats';
 
 const SAMPLE =
   'Compare the cost of running this prompt on several AI models at one million requests per month.';
@@ -56,7 +57,10 @@ export function LearnSection({
       <Pressable
         accessibilityHint="Opens the current PromptSpend market report on the website"
         accessibilityRole="link"
-        onPress={() => void WebBrowser.openBrowserAsync(LATEST_REPORT_URL)}
+        onPress={() => {
+          trackEvent({ name: 'link_open', link: 'market_report' });
+          void WebBrowser.openBrowserAsync(LATEST_REPORT_URL);
+        }}
         style={({ pressed }) => [styles.reportCard, pressed && styles.pressed]}
       >
         <View style={styles.reportHeading}>

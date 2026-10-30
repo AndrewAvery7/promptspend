@@ -1,7 +1,7 @@
 ---
 slug: privacy
 title: Privacy Policy | PromptSpend
-description: How PromptSpend handles pasted text, local app data, website analytics and cookies, pricing requests, app updates, sharing, alerts, and support messages.
+description: How PromptSpend handles pasted text, local app data, website and app analytics, cookies, pricing requests, app updates, sharing, alerts, and support messages.
 heading: Privacy Policy
 updated: 2026-10-29
 ---
@@ -10,9 +10,9 @@ PromptSpend is designed to estimate AI costs without turning your prompts into o
 
 ## The short version
 
-The native app has no account system, advertising SDK, behavioral analytics, cross-app tracking, or tracking identifier. The random installation code its update check carries, described under App updates, is not read, logged, or stored by PromptSpend and is not used to identify you. Text pasted into the estimator is processed on your device. PromptSpend does not transmit or save that pasted text. You choose whether to share a result, and shared results contain derived counts and costs rather than the pasted text. If you opt into email alerts, the app sends the email address and alert choices you enter to the PromptSpend alert service solely to provide and secure that feature.
+The native app has no account system, advertising SDK, advertising identifier, or cross-app tracking. It counts which screens are opened, how long it is used, and a few actions, such as sharing a result, through Google Analytics, and never sends what you type or paste; you can switch this off in the app, see App usage statistics. The random installation code its update check carries, described under App updates, is not read, logged, or stored by PromptSpend and is not used to identify you. Text pasted into the estimator is processed on your device. PromptSpend does not transmit or save that pasted text. You choose whether to share a result, and shared results contain derived counts and costs rather than the pasted text. If you opt into email alerts, the app sends the email address and alert choices you enter to the PromptSpend alert service solely to provide and secure that feature.
 
-The website, promptspend.com, is different in one way: it uses Google Analytics, which sets cookies, to count visits, with Google's advertising features switched on. Google receives the full address of the page you are on, including your scenario, and a scrambled (hashed) copy of an email address you enter in the price-alert form, but never text you paste. You can turn it off; see Website visit statistics.
+The website, promptspend.com, also uses Google Analytics, which sets cookies, to count visits, with Google's advertising features switched on. Google receives the full address of the page you are on, including your scenario, and a scrambled (hashed) copy of an email address you enter in the price-alert form, but never text you paste. You can turn it off; see Website visit statistics.
 
 ## Information that stays on your device
 
@@ -22,13 +22,13 @@ On the website, prompt text is processed in the browser, including on the token 
 
 ## Network requests
 
-The native app uses encrypted HTTPS requests to download PromptSpend's public pricing catalog and source-check status. These requests do not include your pasted text, saved scenarios, contacts, advertising identifier, or precise location. Like other internet services, hosting and network providers may process ordinary connection information, such as an IP address, request time, and user agent, to deliver and secure the service. PromptSpend does not use that information to build advertising profiles or track activity across apps or websites.
+The native app uses encrypted HTTPS requests to download PromptSpend's public pricing catalog and source-check status and, unless you switch it off, to send usage statistics to Google Analytics, described under App usage statistics. These requests do not include your pasted text, saved scenarios, contacts, advertising identifier, or precise location. Like other internet services, hosting and network providers may process ordinary connection information, such as an IP address, request time, and user agent, to deliver and secure the service. PromptSpend does not use that information to build advertising profiles or track activity across apps or websites.
 
 The website's footer shows a badge for PromptSpend's listing on LaunchNest, a product directory. That one image is loaded from launchnest.io, so your browser contacts LaunchNest's server when a page loads, which tells it your IP address and browser type. It is requested without telling LaunchNest which page you were on, and it sets no cookies.
 
 ## Website visit statistics
 
-The website, promptspend.com, counts visits in two ways, so we can see which pages are read and which sites send visitors. Neither runs in the native apps, the VS Code extension, the MCP server, or the pricing API at promptspend.dev, which contain no analytics. When an app opens a page of the website for you, such as this policy or the Receipt page, it opens in a browser view and is the website, so the notice and Google Analytics apply there as they do in any browser.
+The website, promptspend.com, counts visits in two ways, so we can see which pages are read and which sites send visitors. Neither runs in the VS Code extension, the MCP server, or the pricing API at promptspend.dev, which contain no analytics; the native apps have their own, more limited statistics, described under App usage statistics. When an app opens a page of the website for you, such as this policy or the Receipt page, it opens in a browser view and is the website, so the notice and Google Analytics apply there as they do in any browser.
 
 **Google Analytics.** Each page of the website loads Google Analytics from www.googletagmanager.com, with Google's advertising and measurement features switched on. Google Analytics loads when a page opens, and a notice at the foot of the page says so until you choose OK or Turn off. It sets two cookies on promptspend.com, named `_ga` and `_ga_P27XJ53BH9`, which hold a random identifier so that Google can tell a returning browser from a new one; they last up to two years after your last visit. Google receives:
 
@@ -45,6 +45,23 @@ To turn Google Analytics off in your browser, choose Turn off on the notice or u
 **Cloudflare Web Analytics.** Each page also loads a small script from static.cloudflareinsights.com that reports the page's address without anything after a question mark or a hash sign, the referring site, your browser and device type, your country, and how quickly the page loaded, along with an identifier for that single page load. It sets no cookies and uses no local storage. Its reports are totals, not individual visits.
 
 Neither service ever reads text you paste into the estimator, and PromptSpend never places pasted text in a page address. The website is hosted by GitHub Pages and served through Cloudflare, so both process ordinary connection information, such as an IP address, when a page is requested, as any host does.
+
+## App usage statistics
+
+The iOS and Android apps count how they are used, so we can see which features help. They report to the same Google Analytics account as the website, through Google's Firebase Analytics library. This arrives with the app release that adds the Share usage statistics switch to the Data & Alerts screen; earlier versions send nothing.
+
+The app sends Google only these things:
+
+- the name of the screen you open: Home, Estimate, Compare, Data & Alerts, Learn, or Receipt
+- that you opened a share sheet, with what kind of result (an estimate, a comparison, a receipt, a scenario, or the audit instructions) and in what form (text, image, or CSV file)
+- that you finished the guided tour, sent an alert sign-up, opened one of the app's links to the website or other PromptSpend resources (named from a fixed list), or opened the app from a promptspend.com link
+- Firebase's own automatic events: that the app was opened for the first time, when a session starts and how long the app is in use, that the app or the phone's system was updated, and on Android that the app's data was cleared or the app was removed
+
+Every name and value comes from a fixed list in the app's code, so nothing you type or paste, no scenario value, model choice, or email address, can be included. Along with each item, Firebase sends what any analytics library sends: a random identifier for this installation of the app, which lets Google tell a returning user from a new one, your device model, operating system and app version, your language, and an approximate location, such as your city or country, that Google works out from your connection.
+
+Unlike the website, the app collects no advertising identifier (the iPhone's IDFA or Android's advertising ID), does not request permission to track you, and has ad personalization switched off, so app activity is not used for advertising. Because our Google Analytics account has Google signals switched on, Google may connect app activity with the Google account of someone who has allowed that in their Google settings, to report on how many people use more than one device; PromptSpend sees only totals. Firebase also keeps its own random installation ID on your device to run the library. The app's statistics are kept for 14 months from your most recent use, and our account's data sharing with Google, described under Website visit statistics, applies to them as well: Google receives that data to improve its products and services under its controller-to-controller terms.
+
+To switch it off, turn off Share usage statistics in the Privacy & support section of the Data & Alerts screen. The app then sends nothing more, deletes the analytics identifier and data stored on your device, and remembers your choice, including the next time it opens. Google processes the data under its own terms, explained at [How Google uses information from sites or apps that use its services](https://policies.google.com/technologies/partner-sites).
 
 ## App updates
 
@@ -78,7 +95,7 @@ If you contact us, we receive the information you choose to send, such as your e
 
 ## Sale, advertising, and disclosure
 
-PromptSpend does not sell personal information for money. The website's Google Analytics has Google signals and ad personalization switched on, so Google may use website visits for targeted advertising, as described under Website visit statistics; under some U.S. state laws that may count as sharing personal information for targeted advertising. To stop it, choose Turn off on the notice, use the control on this page, or send Global Privacy Control from your browser, which PromptSpend treats as that opt-out. We may disclose information when required by law, to protect users or the service, or to vendors acting under instructions to operate hosting, email, security, or delivery infrastructure.
+PromptSpend does not sell personal information for money. The website's Google Analytics has Google signals and ad personalization switched on, so Google may use website visits for targeted advertising, as described under Website visit statistics (the apps collect no advertising identifier and have ad personalization switched off); under some U.S. state laws that may count as sharing personal information for targeted advertising. To stop it, choose Turn off on the notice, use the control on this page, or send Global Privacy Control from your browser, which PromptSpend treats as that opt-out. We may disclose information when required by law, to protect users or the service, or to vendors acting under instructions to operate hosting, email, security, or delivery infrastructure.
 
 ## Children
 
@@ -86,7 +103,7 @@ PromptSpend is a technical cost-planning tool and is not directed to children un
 
 ## Security and retention
 
-PromptSpend minimizes collection, uses HTTPS for network traffic, and keeps private prompt processing on-device. No system is perfectly secure. Local app data remains until you remove it or uninstall the app. Alert records follow the time limits described above. Google Analytics keeps visit-level data for 14 months.
+PromptSpend minimizes collection, uses HTTPS for network traffic, and keeps private prompt processing on-device. No system is perfectly secure. Local app data remains until you remove it or uninstall the app. Alert records follow the time limits described above. Google Analytics keeps visit-level data from the website and the apps for 14 months, counted from a person's most recent visit or use.
 
 The public pricing API, at promptspend.dev, has Cloudflare's request logging switched on so we can diagnose faults. It includes a hosted MCP server at promptspend.dev/mcp, which receives the model names and workload numbers an AI assistant sends it, uses them to answer, and does not store them; our code does not log them. A request log can include the address requested, the time, and connection details such as an IP address, and Cloudflare keeps these logs for up to seven days. The pricing API needs no account or key and its addresses carry no secrets. PromptSpend keeps no request logs for the website's pages, and the update server's logging is switched off; their hosts process ordinary connection information as described under Network requests.
 

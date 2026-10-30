@@ -50,7 +50,7 @@ considered live until the website deployment containing them is verified.
   double opt-in and short-lived management codes.
 - Phone-first layouts for the initial release.
 - A deliberate tablet experience follows the phone release.
-- No behavioral analytics or cross-app tracking.
+- No cross-app tracking and no advertising identifier. Usage statistics (screen names and a fixed list of actions) go to Google Analytics through Firebase and can be switched off in the app; see `apps/mobile/README.md`.
 - Optional native price alerts are the only planned server-backed personal configuration.
 
 ## Non-negotiable safety boundaries

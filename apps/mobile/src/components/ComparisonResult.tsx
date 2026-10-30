@@ -23,6 +23,7 @@ import {
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
 import { assertNumericDraftsValid } from '@/lib/numericDrafts';
+import { trackEvent } from '@/lib/usageStats';
 
 interface ComparisonResultProps {
   catalog: Catalog;
@@ -59,6 +60,7 @@ export function ComparisonResult({ catalog, rows, validateAction, wrapTourTarget
           ...(anchor === null ? {} : { anchor }),
         },
       );
+      trackEvent({ name: 'share', content: 'comparison', method: 'text' });
     } catch (error) {
       Alert.alert(
         'Sharing is unavailable',

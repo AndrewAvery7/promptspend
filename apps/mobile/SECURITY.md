@@ -7,7 +7,7 @@ Last reviewed: October 29, 2026
 
 ## Current audit (generated)
 
-Re-derived October 29, 2026 from `npm audit --package-lock-only` against lockfile `64275f27`: **16 findings: 0 moderate, 3 high, 0 critical**. Expo 58.0.21, expo-router 58.0.28, react-native-webview 14.0.1.
+Re-derived October 29, 2026 from `npm audit --package-lock-only` against lockfile `39ece4fe`: **16 findings: 0 moderate, 3 high, 0 critical**. Expo 58.0.21, expo-router 58.0.28, react-native-webview 14.0.1.
 
 | Package                            | Severity | Vulnerable range                   | Advisory                                                                 | Reached through                                                                 | Fix                                                            |
 | ---------------------------------- | -------- | ---------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -87,6 +87,15 @@ readings, and they stay until the finding they describe leaves the audit.
 - The August 16 findings (`image-size@1.2.1`, `uuid@7.0.3`) left the
   dependency graph by September 5; `image-size` is gone and `uuid` resolves
   to 11.1.1.
+- `@grpc/grpc-js` (GHSA-m9gg-hp2v-232j and GHSA-f596-whhp-79r4, both high)
+  arrived on October 29, 2026 with Firebase Analytics: `@react-native-firebase/app`
+  depends on Google's `firebase` web SDK, whose Firestore package pins
+  `@grpc/grpc-js` ~1.9. Both advisories concern gRPC servers, and the phone apps
+  run Firebase's native iOS and Android libraries, not that web SDK, so neither
+  was reachable. They were still removed rather than accepted: an npm
+  `overrides` entry pins `@grpc/grpc-js` to 1.13.7, the first fixed release.
+  The only code that loads it is Firestore's Node.js path, which nothing in the
+  app imports.
 
 ## Why `npm audit fix --force` is prohibited
 
@@ -107,6 +116,8 @@ Do not run `npm audit fix --force`.
 - Keep link handling to the parameters read today (`alerts`, `help` and the shared-scenario parameters on `estimate`); any new deep-link parameter re-opens this triage.
 - Reassess immediately if the app later adds image import, document upload, or any server-side bundling of user content.
 - Block release for any critical advisory or any advisory shown to be reachable in shipped runtime behavior.
+- Keep app analytics to `src/lib/usageStats.ts`, with its fixed lists of screens and events, and keep advertising identifiers off in `firebase.json` and `app.json`; `scripts/lib/privacy-config.test.ts` at the repository root enforces both. Any new analytics event or parameter, or any other analytics or advertising library, re-opens the privacy policy and both store privacy forms.
+- `firebase/GoogleService-Info.plist` and `firebase/google-services.json` are committed on purpose: they hold the app's public Firebase identifiers and a client API key that Google designs to ship inside every copy of the app, not a secret. Never commit a Firebase service-account key (a JSON file with a `private_key`).
 
 This is a dated triage record derived from the September 1 lockfile, not a
 permanent waiver. The dependency state must be re-derived whenever that

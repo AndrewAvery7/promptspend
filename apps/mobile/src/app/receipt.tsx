@@ -35,6 +35,7 @@ import { AppearanceSheet, CommandSheet, GlobalActions, type AppSection } from '@
 import { TourTarget, useGuidedTour } from '@/components/GuidedTour';
 import { WebDocumentHead } from '@/components/WebDocumentHead';
 import { APP_ROUTES, helpHref } from '@/lib/routes';
+import { trackEvent } from '@/lib/usageStats';
 import { toggleComparisonSelection } from '@/lib/comparison';
 import { useLaunchState } from '@/state/useLaunchState';
 import type { MobileTheme } from '@/theme/tokens';
@@ -113,6 +114,7 @@ function ReceiptContent() {
         message: renderReceiptInstructions(),
         title: 'PromptSpend conversation audit instructions',
       });
+      trackEvent({ name: 'share', content: 'audit_instructions', method: 'text' });
     } catch {
       setNotice('The system share menu could not open. Use Copy audit instructions instead.');
     }
@@ -122,6 +124,7 @@ function ReceiptContent() {
     if (!imported) return;
     try {
       await Share.share({ message: receiptText(data), title: 'My PromptSpend Receipt' });
+      trackEvent({ name: 'share', content: 'conversation_receipt', method: 'text' });
     } catch {
       setNotice('The system share menu could not open.');
     }
@@ -148,6 +151,7 @@ function ReceiptContent() {
         mimeType: 'image/png',
         UTI: 'public.png',
       });
+      trackEvent({ name: 'share', content: 'conversation_receipt', method: 'image' });
     } catch (error) {
       Alert.alert('Receipt sharing is unavailable', error instanceof Error ? error.message : 'Try again.');
     } finally {
@@ -370,11 +374,12 @@ function ReceiptContent() {
           )}
           <Pressable
             accessibilityRole="link"
-            onPress={() =>
+            onPress={() => {
+              trackEvent({ name: 'link_open', link: 'receipt_page' });
               void WebBrowser.openBrowserAsync(RECEIPT_PAGE_URL).catch(() =>
                 setNotice('The specification could not open. Check your connection and try again.'),
-              )
-            }
+              );
+            }}
             style={styles.websiteLink}
           >
             <Text style={styles.helpText}>Open the complete specification and demonstration ↗</Text>

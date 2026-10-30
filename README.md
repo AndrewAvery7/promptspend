@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-126-2456E6.svg" alt="126 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1766-blue.svg" alt="1766 tests">
+  <img src="https://img.shields.io/badge/tests-1778-blue.svg" alt="1778 tests">
   <img src="https://img.shields.io/badge/initial%20payload-106%20KB%20gzip-blue.svg" alt="106 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -429,7 +429,7 @@ there is a `Ctrl`/`Cmd`+`K` command palette.
 | Document                                               | What is in it                                                                                                                       |
 | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)           | How the pipeline, the engine and the state layer work, and **why** each is shaped that way                                          |
-| [docs/TESTING.md](docs/TESTING.md)                     | What the 1766 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
+| [docs/TESTING.md](docs/TESTING.md)                     | What the 1778 tests cover, the uneven coverage thresholds, and what the suite deliberately does not cover                           |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)     | "The estimate does not match my bill", flagged prices, missing models, running it locally                                           |
 | [docs/PAGES.md](docs/PAGES.md)                         | The 374 generated pages: what is built, why the comparison set is curated, and the IndexNow pipeline                                |
 | [docs/SEO_PROGRAM.md](docs/SEO_PROGRAM.md)             | The search baseline, the 90-day plan written before the results, and the dated change log                                           |
@@ -517,8 +517,11 @@ page, or with Google's own opt-out add-on.
 
 The website also keeps Cloudflare Web Analytics, a cookieless beacon that reports a page's address
 (without its query string or fragment), referrer, country and load timings to promptspend.com's own
-`/cdn-cgi/rum`; neither service sees pasted text. The apps, the VS Code extension, the MCP server and the
-API carry no analytics. Pasted prompt text is tokenised in your browser, deliberately excluded from the
+`/cdn-cgi/rum`; neither service sees pasted text. The VS Code extension, the MCP server and the API
+carry no analytics. The iOS and Android apps report screen names and a fixed list of actions to the same
+Google Analytics property through Firebase, with no advertising identifier and an in-app off switch
+([`apps/mobile/src/lib/usageStats.ts`](apps/mobile/src/lib/usageStats.ts)); they never send typed or pasted
+text. Pasted prompt text is tokenized in your browser, deliberately excluded from the
 shareable URL, held in a bounded in-memory cache, and gone when you close the tab. `localStorage` holds
 only interface choices: your theme, accent and background, whether you dismissed the welcome and apps
 banners, and your answer to the analytics notice.

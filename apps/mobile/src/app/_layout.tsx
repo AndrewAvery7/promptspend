@@ -1,6 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Tabs } from 'expo-router';
+import { Tabs, usePathname } from 'expo-router';
+import * as Linking from 'expo-linking';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import type { ColorValue } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -9,6 +11,7 @@ import { GuidedTourProvider } from '@/components/GuidedTour';
 import { AppText, FONT_FAMILIES } from '@/components/AppText';
 import { getTabBarNavigatorStyle } from '@/lib/tabBarLayout';
 import { MobileThemeProvider, useMobileTheme } from '@/theme/useMobileTheme';
+import { initUsageStats, trackEvent, trackScreen } from '@/lib/usageStats';
 
 // Expo Router reads this before the tab navigator mounts. Keeping Home as the
 // anchor puts it beneath any deep-linked tab, so back navigation lands there.
@@ -21,12 +24,31 @@ export default function RootLayout() {
       <MobileThemeProvider>
         <LaunchStateProvider>
           <GuidedTourProvider>
+            <UsageStatsTracker />
             <ThemedTabs />
           </GuidedTourProvider>
         </LaunchStateProvider>
       </MobileThemeProvider>
     </SafeAreaProvider>
   );
+}
+
+// Reports which screen is open (a fixed list of names, never the address's
+// query or anything typed) and whether the app was opened from a link.
+function UsageStatsTracker() {
+  const pathname = usePathname();
+  useEffect(() => {
+    void initUsageStats();
+    void Linking.getInitialURL()
+      .then((url) => {
+        if (url?.startsWith('https://promptspend.com/')) trackEvent({ name: 'opened_from_link' });
+      })
+      .catch(() => {});
+  }, []);
+  useEffect(() => {
+    trackScreen(pathname);
+  }, [pathname]);
+  return null;
 }
 
 function ThemedTabs() {

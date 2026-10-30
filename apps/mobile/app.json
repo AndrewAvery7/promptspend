@@ -21,6 +21,7 @@
       "associatedDomains": ["applinks:promptspend.com"],
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.promptspend.app",
+      "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -28,6 +29,8 @@
     },
     "android": {
       "package": "com.promptspend.app",
+      "googleServicesFile": "./firebase/google-services.json",
+      "blockedPermissions": ["com.google.android.gms.permission.AD_ID"],
       "allowBackup": false,
       "adaptiveIcon": {
         "backgroundColor": "#2456E6",
@@ -128,7 +131,10 @@
         }
       ],
       "expo-web-browser",
-      "expo-sharing"
+      "expo-sharing",
+      "@react-native-firebase/app",
+      ["@react-native-firebase/analytics", { "ios": { "withoutAdIdSupport": true } }],
+      ["expo-build-properties", { "ios": { "useFrameworks": "dynamic" } }]
     ],
     "experiments": {
       "typedRoutes": true,

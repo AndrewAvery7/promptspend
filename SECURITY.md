@@ -100,8 +100,13 @@ in spare time, so please allow a reasonable window before disclosing publicly.
 
 ## Data handling
 
-The website (not the apps, the VS Code extension, the MCP server or the API)
-counts visits two ways.
+The website (not the VS Code extension, the MCP server or the API) counts
+visits two ways. The iOS and Android apps report screen names and a fixed list
+of actions to the same Google Analytics property through Firebase, with no
+advertising identifier and ad personalization off (`apps/mobile/src/lib/usageStats.ts`,
+`apps/mobile/firebase.json`); their streams ("PromptSpend iOS", "PromptSpend
+Android", Firebase project `promptspend`) are described in
+`docs/STORE_RELEASE_PACKAGE.md`.
 
 - **Google Analytics 4** (owner decision 2026-10-06; live 2026-10-24, paused, back on 2026-10-29 with a new property) sets the
   cookies `_ga` and `_ga_P27XJ53BH9`. It runs on promptspend.com only, loads

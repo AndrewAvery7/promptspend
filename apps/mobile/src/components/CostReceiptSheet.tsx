@@ -28,6 +28,7 @@ import {
 import type { PromptFieldKey } from '@/lib/promptInput';
 import type { MobileTheme } from '@/theme/tokens';
 import { useMobileTheme } from '@/theme/useMobileTheme';
+import { trackEvent } from '@/lib/usageStats';
 
 interface CostReceiptSheetProps {
   batchEnabled: boolean;
@@ -83,6 +84,7 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
         mimeType: 'image/png',
         UTI: 'public.png',
       });
+      trackEvent({ name: 'share', content: 'estimate_receipt', method: 'image' });
     } catch (error) {
       Alert.alert(
         'Estimate Receipt sharing is unavailable',
@@ -98,6 +100,7 @@ export function CostReceiptSheet(props: CostReceiptSheetProps) {
     try {
       props.validateAction?.();
       await Share.share({ message: receipt.shareText, title: 'PromptSpend Estimate Receipt' });
+      trackEvent({ name: 'share', content: 'estimate_receipt', method: 'text' });
     } catch (error) {
       Alert.alert(
         'Text sharing is unavailable',

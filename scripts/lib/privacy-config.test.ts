@@ -61,25 +61,89 @@ function sources(directory: string): string[] {
 }
 
 /**
- * Google Analytics belongs to the website only (owner decision 2026-10-06).
- * The apps' store privacy labels, the extension's listing and the API's docs
- * all say they carry no analytics, so a Google tag reaching any of them would
- * make a published declaration false without anyone editing it.
+ * Google Analytics belongs to the website and, since 2026-10-29 (owner
+ * decision), the iOS and Android apps, which report through Firebase from one
+ * module only. The extension's listing and the API's docs say they carry no
+ * analytics, and the apps' store labels promise no advertising ID and no
+ * tracking, so a Google tag reaching anything else, or the app module loosening
+ * its settings, would make a published declaration false without anyone
+ * editing it.
  */
-describe('Google Analytics stays on the website', () => {
+describe("Google Analytics stays on the website and the apps' one module", () => {
   const GOOGLE_TAG =
     /googletagmanager|google-analytics|analytics\.google|gtag\(|firebase\/analytics|@react-native-firebase\/analytics/i;
 
-  it.each(['apps/mobile/src', 'api/src', 'mcp/src', 'vscode/src', 'worker/src', 'updates/src'])(
-    'is not in %s',
-    (directory) => {
-      expect(sources(directory).filter((file) => GOOGLE_TAG.test(read(file)))).toEqual([]);
-    },
-  );
+  it.each(['api/src', 'mcp/src', 'vscode/src', 'worker/src', 'updates/src'])('is not in %s', (directory) => {
+    expect(sources(directory).filter((file) => GOOGLE_TAG.test(read(file)))).toEqual([]);
+  });
 
-  it("is not in the apps' own dependencies", () => {
-    const manifest = read('apps/mobile/package.json');
-    expect(manifest).not.toMatch(/analytics|firebase|segment|amplitude|mixpanel/i);
+  it('is loaded in the apps only by src/lib/usageStats.ts', () => {
+    const holders = sources('apps/mobile/src').filter(
+      (file) => !file.includes('/__tests__/') && GOOGLE_TAG.test(read(file)),
+    );
+    expect(holders).toEqual(['apps/mobile/src/lib/usageStats.ts']);
+  });
+
+  it("adds no other analytics or advertising library to the apps' dependencies", () => {
+    const { dependencies } = JSON.parse(read('apps/mobile/package.json')) as {
+      dependencies: Record<string, string>;
+    };
+    const tracking = Object.keys(dependencies).filter((name) =>
+      /analytics|firebase|segment|amplitude|mixpanel|adjust|appsflyer|branch|admob|ads/i.test(name),
+    );
+    expect(tracking.sort()).toEqual(['@react-native-firebase/analytics', '@react-native-firebase/app']);
+  });
+
+  it('keeps advertising identifiers and ad features off in the apps', () => {
+    const settings = (
+      JSON.parse(read('apps/mobile/firebase.json')) as { 'react-native': Record<string, boolean> }
+    )['react-native'];
+    expect(settings).toMatchObject({
+      analytics_auto_collection_enabled: false,
+      google_analytics_adid_collection_enabled: false,
+      google_analytics_ssaid_collection_enabled: false,
+      analytics_idfv_collection_enabled: false,
+      google_analytics_registration_with_ad_network_enabled: false,
+      analytics_default_allow_ad_storage: false,
+      analytics_default_allow_ad_user_data: false,
+      analytics_default_allow_ad_personalization_signals: false,
+    });
+    const app = read('apps/mobile/app.json');
+    expect(app).toContain('"withoutAdIdSupport": true');
+    expect(app).toContain('"blockedPermissions": ["com.google.android.gms.permission.AD_ID"]');
+  });
+
+  it('names every screen and event the apps report on the privacy page', () => {
+    const policy = read('src/content/information/privacy.md');
+    const module = read('apps/mobile/src/lib/usageStats.ts');
+    const screens = /USAGE_SCREENS = \[([^\]]+)\]/.exec(module)?.[1]?.match(/'([a-z_]+)'/g) ?? [];
+    expect(screens.map((name) => name.replaceAll("'", ''))).toEqual([
+      'home',
+      'estimate',
+      'compare',
+      'data',
+      'learn',
+      'receipt',
+    ]);
+    expect(policy).toContain('Home, Estimate, Compare, Data & Alerts, Learn, or Receipt');
+    const events = [...module.matchAll(/\| \{ name: '([a-z_]+)'/g)].map((match) => match[1]);
+    expect(events).toEqual([
+      'share',
+      'tutorial_complete',
+      'alert_signup_sent',
+      'link_open',
+      'opened_from_link',
+    ]);
+    for (const wording of [
+      'that you opened a share sheet',
+      'finished the guided tour',
+      'sent an alert sign-up',
+      "opened one of the app's links",
+      'opened the app from a promptspend.com link',
+      'Share usage statistics',
+      'collects no advertising identifier',
+    ])
+      expect(policy).toContain(wording);
   });
 
   it('is not on the bot-check page the apps open inside their own web view', () => {
