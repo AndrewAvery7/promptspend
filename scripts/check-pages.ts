@@ -39,7 +39,7 @@ import { fileURLToPath } from 'node:url';
 
 import type { PricingCatalog } from '@/lib/pricing/types';
 import { assertCatalog } from '@/lib/pricing/types';
-import { buildPages, isoDate, ledgerPages } from '@/lib/seo/pages';
+import { buildPages, isoDate, ledgerPages, COMPARISON_GROWTH_FROZEN } from '@/lib/seo/pages';
 import { ledgerDrift, updateLedger } from '@/lib/seo/ledger';
 import { LEDGER_FILE, readLedger, writeLedger } from './lib/page-ledger';
 
@@ -99,7 +99,11 @@ let ledger = await readLedger();
    end. Fixed first and then counted, because recording a comparison is what
    keeps it in the set. */
 if (FIX_LEDGER) {
-  const recorded = updateLedger(ledger, ledgerPages(buildPages(catalog, { asOf, ledger })), isoDate(asOf));
+  const recorded = updateLedger(
+    ledger,
+    ledgerPages(buildPages(catalog, { asOf, ledger, maxComparisons: COMPARISON_GROWTH_FROZEN })),
+    isoDate(asOf),
+  );
   if (JSON.stringify(recorded) !== JSON.stringify(ledger)) {
     await writeLedger(recorded);
     console.log(`  rewrote ${LEDGER_FILE}`);
@@ -107,7 +111,7 @@ if (FIX_LEDGER) {
   ledger = recorded;
 }
 
-const set = buildPages(catalog, { asOf, ledger });
+const set = buildPages(catalog, { asOf, ledger, maxComparisons: COMPARISON_GROWTH_FROZEN });
 
 const models = set.models.length;
 const providers = set.providers.length;

@@ -1,0 +1,31 @@
+{
+  "$comment": "Comparison pages that carry the full analysis: a verdict per workload, break-even points, price history and a sourced benchmark. Chosen by hand as the current flagship and popular pairs (SEO register item 3.8). While this list is being worked through, new comparison pages are frozen (maxComparisons 0 in build-pages and check-pages).",
+  "slugs": [
+    "claude-opus-5-5-vs-gemini-4-argon",
+    "claude-opus-5-5-vs-gpt-6-1-sol",
+    "claude-opus-5-5-vs-gpt-5-5",
+    "claude-opus-5-5-vs-meta-muse-wonder-1-0",
+    "claude-fable-5-1-vs-gemini-4-argon",
+    "claude-fable-5-1-vs-gpt-6-astra",
+    "claude-sonnet-5-5-vs-gemini-4-argon",
+    "claude-sonnet-5-5-vs-gpt-6-1-sol",
+    "claude-sonnet-5-5-vs-gpt-5-5",
+    "claude-sonnet-5-5-vs-meta-muse-wonder-1-0",
+    "claude-haiku-5-5-vs-deepseek-v4-flash",
+    "claude-haiku-5-5-vs-gpt-6-luna",
+    "claude-haiku-5-5-vs-zai-glm-5-3-flash",
+    "gemini-4-argon-vs-gpt-6-1-sol",
+    "gemini-4-argon-vs-gpt-6-astra",
+    "gpt-6-1-sol-vs-meta-muse-wonder-1-0",
+    "gpt-6-sol-vs-moonshot-kimi-k3-1-pro",
+    "gpt-6-1-terra-vs-xai-grok-4-7",
+    "gpt-6-1-terra-vs-zai-glm-5-3",
+    "dashscope-qwen3-8-max-vs-gpt-6-1-terra",
+    "gemini-3-1-pro-preview-vs-xai-grok-4-7",
+    "deepseek-v4-flash-vs-gemini-3-5-flash-lite",
+    "deepseek-v4-pro-vs-mistral-large-4",
+    "gpt-6-luna-vs-xiaomi-mimo-mimo-v2-6-pro",
+    "xai-grok-4-7-vs-zai-glm-5-3",
+    "claude-opus-5-vs-moonshot-kimi-k3-1-pro"
+  ]
+}
