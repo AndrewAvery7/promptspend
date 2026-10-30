@@ -14,7 +14,7 @@ import { GOOGLE_ANALYTICS_ENABLED } from '../../src/lib/analytics/config';
  * What is held here: gtag.js loads with the right ID on all three kinds of page
  * and the Content Security Policy lets it; no notice shows, every footer's
  * "Your privacy choices" link reaches the privacy page's control, which stops
- * it; Europe, the UK and Switzerland are denied consent by default; the address Google is told keeps everything but the alert
+ * it; every region is treated the same; the address Google is told keeps everything but the alert
  * links' private key; text pasted never reaches it; and none of this happens anywhere but
  * promptspend.com. What the real `gtag.js` then sends is Google's code; it is
  * told only what `src/lib/analytics/ga.ts` queues, which is what is asserted.
@@ -139,12 +139,10 @@ test.describe('on promptspend.com', () => {
       expect(await recorder.violations()).toEqual([]);
       await expect(notice(page)).toHaveCount(0);
 
-      // Europe, the UK and Switzerland: every consent type denied by default.
-      const regional = (await queued(page)).find(
-        (c) => c[0] === 'consent' && c[1] === 'default' && (c[2] as { region?: string[] }).region,
-      );
-      expect(regional?.[2]).toMatchObject({ ad_storage: 'denied', analytics_storage: 'denied' });
-      expect((regional?.[2] as { region: string[] }).region).toContain('DE');
+      // Every region the same, Europe included: one consent default, all granted.
+      const consent = (await queued(page)).filter((c) => c[0] === 'consent');
+      expect(consent).toHaveLength(1);
+      expect(consent[0]![2]).toMatchObject({ ad_storage: 'granted', analytics_storage: 'granted' });
 
       await expect(page.getByRole('link', { name: 'Your privacy choices' })).toHaveAttribute(
         'href',

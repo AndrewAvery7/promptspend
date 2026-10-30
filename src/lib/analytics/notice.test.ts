@@ -161,7 +161,6 @@ describe('the control on the privacy page', () => {
     button('Turn Google Analytics on')!.click();
     expect(gtagLoaded()).toBe(true);
     expect(control.textContent).toContain('Google Analytics is on in this browser.');
-    // Turning it on is the visitor's own yes, so Europe's denied default no longer applies.
     expect(localStorage.getItem(ANALYTICS_CHOICE_KEY)).toBe('accepted');
   });
 

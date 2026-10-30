@@ -9,6 +9,10 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **Europe, the UK and Switzerland are counted in full** (owner decision 2026-10-30, the same day). The regional
+  consent default added in #347 is removed: Google Analytics now loads, sets its cookies and runs its advertising
+  features the same way in every region, without asking first. The privacy page says so. The footer's _Your
+  privacy choices_ link, the off switch and Global Privacy Control still work everywhere.
 - **No more Google Analytics pop-up; Europe is denied by default instead** (owner decision 2026-10-30). The
   notice at the foot of every page is gone. Every footer now has a _Your privacy choices_ link to the on/off
   control on the privacy page, which, with Global Privacy Control, is the U.S. opt-out. In the European

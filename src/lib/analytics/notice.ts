@@ -104,7 +104,7 @@ export function showNotice(env: AnalyticsEnvironment): HTMLElement {
   const choose = (choice: AnalyticsChoice) => () => {
     writeChoice(env.storage, choice);
     notice.remove();
-    if (choice === 'accepted') loadGoogleAnalytics(gtagWindow(env), doc, true);
+    if (choice === 'accepted') loadGoogleAnalytics(gtagWindow(env), doc);
     if (choice === 'declined') disableGoogleAnalytics(gtagWindow(env), doc, env.window.location.hostname);
     renderPrivacyControl(env);
   };
@@ -176,9 +176,8 @@ export function renderPrivacyControl(env: AnalyticsEnvironment): void {
       writeChoice(env.storage, 'declined');
       disableGoogleAnalytics(gtagWindow(env), doc, d.hostname);
     } else {
-      // Turning it on here is the visitor's own yes, in any region.
       writeChoice(env.storage, 'accepted');
-      loadGoogleAnalytics(gtagWindow(env), doc, true);
+      loadGoogleAnalytics(gtagWindow(env), doc);
     }
     doc.querySelector('.ga-notice')?.remove();
     renderPrivacyControl(env);
@@ -205,7 +204,7 @@ export function startAnalytics(env: AnalyticsEnvironment = defaultEnvironment())
   const hostname = env.window.location.hostname;
   if (GA_HOSTNAMES.includes(hostname)) clearRetiredStreamCookies(env.document, hostname);
   const d = decision(env);
-  if (shouldLoad(d)) loadGoogleAnalytics(gtagWindow(env), env.document, d.choice === 'accepted');
+  if (shouldLoad(d)) loadGoogleAnalytics(gtagWindow(env), env.document);
   if (shouldShowNotice(d)) showNotice(env);
   renderPrivacyControl(env);
 }
