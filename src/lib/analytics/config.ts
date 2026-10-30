@@ -4,8 +4,9 @@
  * Owner decision, 2026-10-06: the website (promptspend.com only - never the
  * VS Code extension, the API or the MCP server; the iOS and Android apps report
  * separately through Firebase, see apps/mobile/src/lib/usageStats.ts) counts visits with
- * Google Analytics 4, which sets cookies. Every visitor sees a small notice
- * that says so and links to the privacy page. The Cloudflare Web Analytics
+ * Google Analytics 4, which sets cookies. Since 2026-10-30 there is no notice;
+ * the footer's "Your privacy choices" link leads to the privacy page's on/off
+ * control, and Europe is handled by `CONSENT_DENIED_REGIONS`. The Cloudflare Web Analytics
  * counter stays as well.
  *
  * This module has no imports and reads no `import.meta.env`, because three
@@ -39,9 +40,13 @@ export const GA_MEASUREMENT_ID = 'G-P27XJ53BH9';
 /**
  * THE SWITCH.
  *
- * `false` (the owner's choice, 2026-10-06): Google Analytics loads for every
- * visitor, and a notice says so, with a "Turn off" button.
- * `true`: nothing from Google loads until the visitor clicks "Accept".
+ * `false` (the owner's choice, 2026-10-06; notice removed 2026-10-30):
+ * Google Analytics loads for every visitor with no notice, except that in
+ * `CONSENT_DENIED_REGIONS` Google is told no consent was given, so it sets no
+ * cookies there. Turning it off is the privacy page's control, reached from
+ * the footer's "Your privacy choices" link, or Global Privacy Control.
+ * `true`: nothing from Google loads until the visitor clicks "Accept" on a
+ * notice.
  *
  * Changing this one word is the whole code change; the notice's wording and
  * buttons follow it. The words that describe it do not change themselves: the
@@ -52,6 +57,53 @@ export const GA_MEASUREMENT_ID = 'G-P27XJ53BH9';
  * reword them in the same commit.
  */
 export const ANALYTICS_REQUIRES_CONSENT: boolean = false;
+
+/**
+ * Where Google is told that no consent was given (owner decision 2026-10-30):
+ * the European Economic Area, the United Kingdom and Switzerland, whose laws
+ * and Google's own EU user consent policy ask for a "yes" before analytics or
+ * advertising cookies. Google works out the visitor's region itself; the site
+ * never sees it. There, Google sets no cookies, uses nothing for advertising,
+ * and receives only cookieless pings. A visitor there who turns Google
+ * Analytics on with the privacy page's control has said yes, and gets the
+ * same as everyone else.
+ */
+export const CONSENT_DENIED_REGIONS: readonly string[] = [
+  // The 27 EU members
+  'AT',
+  'BE',
+  'BG',
+  'HR',
+  'CY',
+  'CZ',
+  'DK',
+  'EE',
+  'FI',
+  'FR',
+  'DE',
+  'GR',
+  'HU',
+  'IE',
+  'IT',
+  'LV',
+  'LT',
+  'LU',
+  'MT',
+  'NL',
+  'PL',
+  'PT',
+  'RO',
+  'SK',
+  'SI',
+  'ES',
+  'SE',
+  // The rest of the EEA, then the UK and Switzerland
+  'IS',
+  'LI',
+  'NO',
+  'GB',
+  'CH',
+];
 
 /**
  * The only hosts Google Analytics runs on. Anywhere else - a local build, a

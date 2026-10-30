@@ -62,7 +62,7 @@ describe('the pause: Google Analytics switched off', () => {
   });
 });
 
-describe('the default: Google Analytics for everyone, with a notice', () => {
+describe('the default: Google Analytics for everyone, with no notice', () => {
   it("clears the first property's leftover cookie and keeps the current ones", () => {
     document.cookie = '_ga_08GFGLY4VD=GS1.1.old; path=/';
     document.cookie = '_ga_P27XJ53BH9=GS1.1.new; path=/';
@@ -74,44 +74,25 @@ describe('the default: Google Analytics for everyone, with a notice', () => {
     document.cookie = '_ga_P27XJ53BH9=; Max-Age=0; path=/';
   });
 
-  it('loads gtag.js and shows a notice that names Google Analytics cookies and links to the privacy page', () => {
+  it('loads gtag.js and shows no notice', () => {
     startAnalytics(environment());
     expect(gtagLoaded()).toBe(true);
-    const shown = notice();
-    expect(shown).not.toBeNull();
-    expect(shown!.getAttribute('aria-label')).toBe('Analytics notice');
-    expect(shown!.textContent).toContain('uses Google Analytics cookies');
-    expect(shown!.textContent).toContain('never text you paste');
-    expect(shown!.querySelector('a')!.getAttribute('href')).toBe('/privacy/');
-    expect(button('OK')).toBeDefined();
-    expect(button('Turn off')).toBeDefined();
-    expect(button('Accept')).toBeUndefined();
+    expect(notice()).toBeNull();
+    expect(button('OK')).toBeUndefined();
+    expect(button('Turn off')).toBeUndefined();
   });
 
-  it('OK dismisses the notice for good, and Google Analytics keeps running', () => {
+  it('leaves a visitor who said OK to the old notice running', () => {
+    localStorage.setItem(ANALYTICS_CHOICE_KEY, 'dismissed');
     startAnalytics(environment());
-    button('OK')!.click();
-    expect(notice()).toBeNull();
-    expect(localStorage.getItem(ANALYTICS_CHOICE_KEY)).toBe('dismissed');
-
-    document.head.querySelectorAll('script').forEach((script) => script.remove());
-    startAnalytics(environment());
-    expect(notice()).toBeNull();
     expect(gtagLoaded()).toBe(true);
+    expect(notice()).toBeNull();
   });
 
-  it('Turn off stops it on this page and every later one', () => {
-    const env = environment();
-    startAnalytics(env);
-    button('Turn off')!.click();
-    expect(notice()).toBeNull();
-    expect(localStorage.getItem(ANALYTICS_CHOICE_KEY)).toBe('declined');
-    expect((env.window as unknown as Record<string, unknown>)['ga-disable-G-P27XJ53BH9']).toBe(true);
-
-    document.head.querySelectorAll('script').forEach((script) => script.remove());
+  it('keeps a Turn off from the old notice', () => {
+    localStorage.setItem(ANALYTICS_CHOICE_KEY, 'declined');
     startAnalytics(environment());
     expect(gtagLoaded()).toBe(false);
-    expect(notice()).toBeNull();
   });
 
   it('does nothing at all away from promptspend.com', () => {
@@ -180,7 +161,8 @@ describe('the control on the privacy page', () => {
     button('Turn Google Analytics on')!.click();
     expect(gtagLoaded()).toBe(true);
     expect(control.textContent).toContain('Google Analytics is on in this browser.');
-    expect(localStorage.getItem(ANALYTICS_CHOICE_KEY)).toBe('dismissed');
+    // Turning it on is the visitor's own yes, so Europe's denied default no longer applies.
+    expect(localStorage.getItem(ANALYTICS_CHOICE_KEY)).toBe('accepted');
   });
 
   it('turning it on under the consent switch counts as Accept', () => {
@@ -193,8 +175,8 @@ describe('the control on the privacy page', () => {
 
   it('follows a choice made on the notice', () => {
     const control = mount();
-    startAnalytics(environment());
-    button('Turn off')!.click();
+    startAnalytics(environment({ requiresConsent: true }));
+    button('Decline')!.click();
     expect(control.textContent).toContain('Google Analytics is off in this browser.');
   });
 

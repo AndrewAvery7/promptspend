@@ -17,7 +17,8 @@
  *    typed into a field.)
  *
  * Google signals and ad personalization are on, and every consent type is
- * granted.
+ * granted, except in `CONSENT_DENIED_REGIONS` (Europe, the UK, Switzerland),
+ * where every type is denied until the visitor says yes.
  *
  * Whether it loads at all is `shouldLoad`: only on promptspend.com, never after
  * the visitor turned it off, never when the browser sends Global Privacy
@@ -26,6 +27,7 @@
  */
 import {
   ANALYTICS_CHOICE_KEY,
+  CONSENT_DENIED_REGIONS,
   GA_HOSTNAMES,
   GA_MEASUREMENT_ID,
   GA_SCRIPT_ORIGIN,
@@ -98,15 +100,17 @@ export function shouldLoad(d: LoadDecision): boolean {
   return !d.globalPrivacyControl;
 }
 
-/** Whether the notice is shown on this page view. */
+/**
+ * Whether the notice is shown on this page view: only in consent mode, which
+ * keeps asking until there is an answer. Without consent mode there is no
+ * notice (owner decision 2026-10-30); the footer links to the privacy page's
+ * control instead.
+ */
 export function shouldShowNotice(d: LoadDecision): boolean {
   if (!GA_HOSTNAMES.includes(d.hostname)) return false;
-  // Consent mode keeps asking until there is an answer; a notice merely
-  // dismissed under the old mode is not one.
+  // A notice merely dismissed under the old mode is not an answer.
   if (d.requiresConsent) return d.choice !== 'accepted' && d.choice !== 'declined';
-  // Nothing loads for a Global Privacy Control browser, so there is nothing to
-  // give notice of.
-  return d.choice === null && !d.globalPrivacyControl;
+  return false;
 }
 
 /** Storage can be missing or refuse access (private modes, blocked storage). */
@@ -130,24 +134,40 @@ export function writeChoice(storage: Pick<Storage, 'setItem'> | undefined, choic
 /** The script tag's address. */
 export const GA_SCRIPT_URL = `${GA_SCRIPT_ORIGIN}/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
 
+/** Every consent type Google's consent mode has, set to one value. */
+function consentAll(value: 'granted' | 'denied'): Record<string, string> {
+  return {
+    ad_storage: value,
+    ad_user_data: value,
+    ad_personalization: value,
+    analytics_storage: value,
+  };
+}
+
 /**
  * Queue the configuration and one clean page view, then add `gtag.js`.
- * Safe to call twice: the second call does nothing.
+ * Safe to call twice: the second call does nothing, except that a visitor who
+ * has just said yes has that passed on.
+ *
+ * `consented` is the visitor's own yes (Accept, or turning it on with the
+ * privacy page's control). Without it, Google applies the region default:
+ * denied in `CONSENT_DENIED_REGIONS`, granted elsewhere. Google gives a
+ * region-specific default precedence over the general one whatever the order.
  */
-export function loadGoogleAnalytics(win: GtagWindow, doc: Document): void {
+export function loadGoogleAnalytics(win: GtagWindow, doc: Document, consented = false): void {
   win[DISABLE_FLAG] = false;
-  if (doc.querySelector(`script[src="${GA_SCRIPT_URL}"]`)) return;
+  if (doc.querySelector(`script[src="${GA_SCRIPT_URL}"]`)) {
+    if (consented && win.dataLayer) queueOn(win.dataLayer)('consent', 'update', consentAll('granted'));
+    return;
+  }
 
   const layer = (win.dataLayer = win.dataLayer ?? []);
   const gtag = queueOn(layer);
 
   const page = pageFields(doc);
-  gtag('consent', 'default', {
-    ad_storage: 'granted',
-    ad_user_data: 'granted',
-    ad_personalization: 'granted',
-    analytics_storage: 'granted',
-  });
+  gtag('consent', 'default', { ...consentAll('denied'), region: [...CONSENT_DENIED_REGIONS] });
+  gtag('consent', 'default', consentAll('granted'));
+  if (consented) gtag('consent', 'update', consentAll('granted'));
   gtag('js', new Date());
   // The referrer is set for the whole page, so every later event carries the
   // redacted one. The location is not: Google's history-change page views must

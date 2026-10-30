@@ -560,6 +560,7 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
               <li><a href="${escapeHtml(href(ctx, WRITING_INDEX_PATH))}">Writing</a></li>
               <li><a href="${escapeHtml(href(ctx, SUPPORT_PATH))}">Support</a></li>
               <li><a href="${escapeHtml(href(ctx, PRIVACY_PATH))}">Privacy</a></li>
+              <li><a href="${escapeHtml(href(ctx, PRIVACY_PATH))}#analytics-choice">Your privacy choices</a></li>
               <li><a href="mailto:info@promptspend.com">info@promptspend.com</a></li>
             </ul>
           </nav>

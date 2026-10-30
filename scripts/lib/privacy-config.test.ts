@@ -184,10 +184,12 @@ describe('the privacy page describes the analytics switch as it is set', () => {
 
   // Each position of the switch has sentences only it makes true. Flipping the
   // switch fails this test until the privacy page is rewritten to match.
+  // No notice in this mode since 2026-10-30: the footer's link and Europe's
+  // denied-by-default consent replace it.
   const NOTICE_MODE = [
-    'Google Analytics loads when a page opens',
-    'until you choose OK or Turn off',
-    'choose Turn off on the notice',
+    'Google Analytics loads when a page opens; there is no pop-up',
+    'Your privacy choices, at the foot of every page',
+    'In the European Economic Area, the United Kingdom and Switzerland, PromptSpend tells Google that you have not agreed',
     'If your browser sends Global Privacy Control, Google Analytics does not load at all.',
   ];
   const CONSENT_MODE = ['Google Analytics loads only after you click Accept', 'choose Decline on the notice'];
@@ -202,6 +204,9 @@ describe('the privacy page describes the analytics switch as it is set', () => {
         : [NOTICE_MODE, CONSENT_MODE];
       for (const sentence of required) expect(policy).toContain(sentence);
       for (const sentence of forbidden) expect(policy).not.toContain(sentence);
+      // The notice's old buttons are gone in both modes.
+      expect(policy).not.toContain('OK or Turn off');
+      expect(policy).not.toContain('Turn off on the notice');
     },
   );
 

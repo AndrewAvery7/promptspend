@@ -1,4 +1,3 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Request } from '@playwright/test';
 import { GOOGLE_ANALYTICS_ENABLED } from '../../src/lib/analytics/config';
 
@@ -13,9 +12,9 @@ import { GOOGLE_ANALYTICS_ENABLED } from '../../src/lib/analytics/config';
  * cannot send a single hit to the real account.
  *
  * What is held here: gtag.js loads with the right ID on all three kinds of page
- * and the Content Security Policy lets it; the notice shows, links to the
- * privacy page, and dismisses for good; "Turn off" and the privacy page's
- * control stop it; the address Google is told keeps everything but the alert
+ * and the Content Security Policy lets it; no notice shows, every footer's
+ * "Your privacy choices" link reaches the privacy page's control, which stops
+ * it; Europe, the UK and Switzerland are denied consent by default; the address Google is told keeps everything but the alert
  * links' private key; text pasted never reaches it; and none of this happens anywhere but
  * promptspend.com. What the real `gtag.js` then sends is Google's code; it is
  * told only what `src/lib/analytics/ga.ts` queues, which is what is asserted.
@@ -127,29 +126,30 @@ test.describe('on promptspend.com', () => {
   test.skip(!GOOGLE_ANALYTICS_ENABLED, 'Google Analytics is paused');
 
   for (const path of ['/', '/models/claude-opus-5/', '/receipt/']) {
-    test(`${path} loads gtag.js with the right ID, allowed by its policy, and shows the notice`, async ({
+    test(`${path} loads gtag.js with the right ID, allowed by its policy, with no notice`, async ({
       page,
       baseURL,
     }) => {
       const recorder = await onLiveHost(page, baseURL!);
       await page.goto(`${LIVE}${path}`);
-      await expect(notice(page)).toBeVisible();
       await expect.poll(() => recorder.google.map((request) => request.url())).toEqual([GTAG]);
       expect(
         await page.evaluate(() => (window as unknown as { __gtagStandIn?: boolean }).__gtagStandIn),
       ).toBe(true);
       expect(await recorder.violations()).toEqual([]);
+      await expect(notice(page)).toHaveCount(0);
 
-      await expect(notice(page)).toContainText('uses Google Analytics cookies');
-      await expect(notice(page).getByRole('link', { name: 'Privacy policy' })).toHaveAttribute(
-        'href',
-        '/privacy/',
+      // Europe, the UK and Switzerland: every consent type denied by default.
+      const regional = (await queued(page)).find(
+        (c) => c[0] === 'consent' && c[1] === 'default' && (c[2] as { region?: string[] }).region,
       );
-      const results = await new AxeBuilder({ page })
-        .include('.ga-notice')
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
-      expect(results.violations).toEqual([]);
+      expect(regional?.[2]).toMatchObject({ ad_storage: 'denied', analytics_storage: 'denied' });
+      expect((regional?.[2] as { region: string[] }).region).toContain('DE');
+
+      await expect(page.getByRole('link', { name: 'Your privacy choices' })).toHaveAttribute(
+        'href',
+        '/privacy/#analytics-choice',
+      );
     });
   }
 
@@ -159,7 +159,7 @@ test.describe('on promptspend.com', () => {
   }) => {
     await onLiveHost(page, baseURL!);
     await page.goto(`${LIVE}/?alerts=TEST-TOKEN-NOT-REAL&in=4321&utm_source=test#data`);
-    await expect(notice(page)).toBeVisible();
+    await expect.poll(async () => (await queued(page)).length).toBeGreaterThan(0);
     const commands = await queued(page);
     const pageViews = commands.filter((c) => c[0] === 'event' && c[1] === 'page_view');
     expect(pageViews).toHaveLength(1);
@@ -183,7 +183,6 @@ test.describe('on promptspend.com', () => {
   test('never hands Google text that was pasted', async ({ page, baseURL }) => {
     const recorder = await onLiveHost(page, baseURL!);
     await page.goto(`${LIVE}/`);
-    await notice(page).getByRole('button', { name: 'OK' }).click();
     const secret = 'PRIVATE PROMPT TEXT 7f3a';
     await page.getByRole('button', { name: 'Paste text' }).first().click();
     await page.locator('textarea:visible').first().fill(secret);
@@ -197,23 +196,17 @@ test.describe('on promptspend.com', () => {
     }
   });
 
-  test('OK dismisses the notice for good, and Google Analytics keeps counting', async ({ page, baseURL }) => {
+  test('Your privacy choices in the footer leads to the control, and Turn off holds on every later page', async ({
+    page,
+    baseURL,
+  }) => {
     const recorder = await onLiveHost(page, baseURL!);
-    await page.goto(`${LIVE}/`);
-    await notice(page).getByRole('button', { name: 'OK' }).click();
-    await expect(notice(page)).toHaveCount(0);
     await page.goto(`${LIVE}/models/claude-opus-5/`);
-    await expect.poll(() => recorder.google.length).toBe(2);
-    await expect(notice(page)).toHaveCount(0);
-  });
-
-  test('Turn off stops Google Analytics on every later page', async ({ page, baseURL }) => {
-    const recorder = await onLiveHost(page, baseURL!);
-    await page.goto(`${LIVE}/`);
-    await notice(page).getByRole('button', { name: 'Turn off' }).click();
-    await expect(notice(page)).toHaveCount(0);
+    await page.getByRole('link', { name: 'Your privacy choices' }).click();
+    await expect(page).toHaveURL(/\/privacy\/#analytics-choice$/);
+    await page.getByRole('button', { name: 'Turn off Google Analytics' }).click();
     const before = recorder.google.length;
-    await page.goto(`${LIVE}/models/claude-opus-5/`);
+    await page.goto(`${LIVE}/`);
     await page.waitForLoadState('networkidle');
     expect(recorder.google.length).toBe(before);
     await expect(notice(page)).toHaveCount(0);
@@ -231,17 +224,6 @@ test.describe('on promptspend.com', () => {
     await page.goto(`${LIVE}/`);
     await page.waitForLoadState('networkidle');
     expect(recorder.google.length).toBe(before);
-  });
-
-  test('the notice fits a narrow phone without pushing the page sideways', async ({ page, baseURL }) => {
-    await onLiveHost(page, baseURL!);
-    await page.goto(`${LIVE}/`);
-    await expect(notice(page)).toBeVisible();
-    const box = await notice(page).boundingBox();
-    const width = await page.evaluate(() => document.documentElement.clientWidth);
-    expect(box!.x).toBeGreaterThanOrEqual(0);
-    expect(box!.x + box!.width).toBeLessThanOrEqual(width);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   });
 });
 

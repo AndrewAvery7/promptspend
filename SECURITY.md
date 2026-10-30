@@ -110,9 +110,10 @@ Android", Firebase project `promptspend`) are described in
 
 - **Google Analytics 4** (owner decision 2026-10-06; live 2026-10-24, paused, back on 2026-10-29 with a new property) sets the
   cookies `_ga` and `_ga_P27XJ53BH9`. It runs on promptspend.com only, loads
-  for every visitor with a dismissible notice (or, with the one-line switch
-  `ANALYTICS_REQUIRES_CONSENT` in `src/lib/analytics/config.ts`, only after
-  _Accept_), and not at all when the visitor turned it off or the browser sends
+  for every visitor with no notice (since 2026-10-30; the footer's "Your
+  privacy choices" link leads to the privacy page's off switch), or, with the
+  one-line switch `ANALYTICS_REQUIRES_CONSENT` in `src/lib/analytics/config.ts`,
+  only after _Accept_; and not at all when the visitor turned it off or the browser sends
   Global Privacy Control. Since 2026-10-29 Google's advertising and
   measurement features are on (owner decision). PromptSpend's code sends `page_location` and
   `page_referrer` whole, query string and fragment included, minus the
@@ -123,7 +124,9 @@ Android", Firebase project `promptspend`) are described in
   `install_copy` {tool: mcp, api or vscode} and `model_added` {model_id}
   (`src/lib/analytics/events.ts`), and none while Google Analytics is off.
   Google signals and ad
-  personalization are on and every consent type is granted. Pasted text is
+  personalization are on and every consent type is granted, except in the
+  EEA, the UK and Switzerland (`CONSENT_DENIED_REGIONS`), where every type is
+  denied by default and Google does not set cookies. Pasted text is
   never passed to it (`src/lib/analytics/ga.ts`, with tests).
 - **Cloudflare Web Analytics**: a cookieless beacon, injected by Cloudflare,
   that reports page address, referrer, country and timings to the site's own
@@ -155,7 +158,7 @@ stays in the tab: it is tokenised locally, is deliberately excluded from the
 shareable URL, and is held in a bounded in-memory cache that is cleared when
 the scenario is reset and discarded when the tab closes. `localStorage` holds
 only interface choices: theme, accent and background, whether the welcome and
-apps banners were dismissed, and the answer to the analytics notice.
+apps banners were dismissed, and the Google Analytics off/on choice.
 
 If — and only if — you subscribe to price alerts, the alerts database holds:
 

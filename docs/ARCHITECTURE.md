@@ -295,7 +295,7 @@ runners actually report rather than to what anyone remembers.
 
 **What closed, and what did not.** This section used to name three gaps — no browser suite, no automated
 axe pass, no visual-regression snapshots — and call Playwright plus axe the obvious next investment. Both
-landed: 328 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
+landed: 320 browser tests at four viewports, and an axe pass at WCAG 2.1 A and AA that immediately found
 two real defects, each a scrollable region no keyboard could reach.
 
 Screenshot diffing is still absent, and now deliberately rather than pending. A visual suite has a real
@@ -315,7 +315,8 @@ No accounts, no ads on the site, and nothing a visitor pastes ever leaves the de
 are the ones that matter. "No cookies" and "no analytics" used to sit here too and no longer do: since
 2026-10-05 the website (only) counts visits in aggregate with Cloudflare Web Analytics, a cookieless beacon,
 and since 2026-10-29 (owner decision 2026-10-06; first live 2026-10-24, paused that week until a new property existed) it also runs Google Analytics 4, which sets cookies. GA
-loads for every visitor with a dismissible notice, or only after _Accept_ if `ANALYTICS_REQUIRES_CONSENT` in
+loads for every visitor with no notice (since 2026-10-30; a footer link reaches the off switch, and the EEA, the UK and
+Switzerland get every consent type denied by default, so no cookies there), or only after _Accept_ if `ANALYTICS_REQUIRES_CONSENT` in
 `src/lib/analytics/config.ts` is flipped; it receives the full address minus alert links' private key, with Google
 signals and ad personalization on, plus three key events with fixed labels or catalog model ids (`src/lib/analytics/events.ts`). Both are disclosed in the privacy policy. From the store release that follows 0.1.2, the iOS and Android
 apps also report screen names and a fixed list of actions to the same property through Firebase, with no
