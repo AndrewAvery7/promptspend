@@ -10,12 +10,15 @@ Analytics beacon (`script-src`), which reports only to the site's own
 `/cdn-cgi/rum`, and reports a page's address without its query string or
 fragment; and Google Analytics 4 (since 2026-10-29): `gtag.js` from
 `https://www.googletagmanager.com` (`script-src`, and also `connect-src`
-and `img-src`), reporting to
-`https://www.google-analytics.com`, `https://region1.google-analytics.com`,
-`https://region1.analytics.google.com`, and, for Google signals and ad
-personalization, `https://stats.g.doubleclick.net`,
-`https://googleads.g.doubleclick.net` and `https://www.google.com`
-(`connect-src` and `img-src`). Where the
+and `img-src`), reporting to the hosts in Google's own Content Security Policy guide for
+Google Analytics with its advertising features: `https://*.google-analytics.com`
+and `https://*.analytics.google.com` (gtag.js picks the regional subdomain),
+and, for Google signals, ad personalization and user-provided data,
+`https://*.g.doubleclick.net`, `https://www.google.com`, `https://google.com`,
+`https://adservice.google.com`, `https://pagead2.googlesyndication.com` and
+`https://www.google.<country>` for each of Google's 186 country domains
+(google.de, google.co.uk...), where a visitor's signals report goes
+(`connect-src` and `img-src`; since 2026-10-30). Where the
 alerts API is configured, Turnstile's `https://challenges.cloudflare.com` is
 admitted too.
 
@@ -153,7 +156,10 @@ any of these is changed, change the privacy page in the same breath.
 
 What that costs: `connect-src` now admits Google Analytics' collection hosts,
 so a script that got onto the page could post data to an analytics account of
-its own there. The hosts are named one by one (no wildcard) and
+its own there. The hosts are named one by one wherever Google's code names one; the only
+wildcards are Google Analytics' own `*.google-analytics.com`,
+`*.analytics.google.com` and `*.g.doubleclick.net`, never `*.google.com`
+(which would also admit Google Forms and Docs), and
 `npm run check:csp` fails on any origin it does not list. Pasted prompt text
 stays in the tab: it is tokenised locally, is deliberately excluded from the
 shareable URL, and is held in a bounded in-memory cache that is cleared when

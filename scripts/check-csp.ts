@@ -20,7 +20,7 @@ import { existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadEnv } from 'vite';
-import { GOOGLE_ANALYTICS_ENABLED } from '../src/lib/analytics/config';
+import { GOOGLE_ANALYTICS_ENABLED, GOOGLE_COUNTRY_DOMAINS } from '../src/lib/analytics/config';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGES = [
@@ -49,13 +49,18 @@ const REQUIRED = ['default-src', 'script-src', 'connect-src', 'base-uri', 'objec
  */
 const GOOGLE_SCRIPT = 'https://www.googletagmanager.com';
 const GOOGLE_COLLECT = [
-  'https://www.google-analytics.com',
-  'https://region1.google-analytics.com',
-  'https://region1.analytics.google.com',
+  'https://*.google-analytics.com',
+  'https://*.analytics.google.com',
   // Google signals and ad personalization (owner decision 2026-10-29).
-  'https://stats.g.doubleclick.net',
-  'https://googleads.g.doubleclick.net',
+  'https://*.g.doubleclick.net',
   'https://www.google.com',
+  // User-provided data and ad-click registration (2026-10-30).
+  'https://google.com',
+  'https://adservice.google.com',
+  'https://pagead2.googlesyndication.com',
+  // www.google.<country> for Google's country domains (2026-10-30). The list
+  // itself is imported: 186 names copied twice would only invite typos.
+  ...GOOGLE_COUNTRY_DOMAINS.map((domain) => `https://www.${domain}`),
 ];
 
 /**

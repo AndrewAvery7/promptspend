@@ -3,6 +3,7 @@ import {
   ANALYTICS_CHOICE_KEY,
   ANALYTICS_REQUIRES_CONSENT,
   GA_COLLECT_ORIGINS,
+  GOOGLE_COUNTRY_DOMAINS,
   GA_MEASUREMENT_ID,
   GA_SCRIPT_ORIGIN,
   PRIVATE_ADDRESS_PARAMS,
@@ -52,16 +53,26 @@ describe('the configuration', () => {
     expect(ANALYTICS_REQUIRES_CONSENT).toBe(false);
   });
 
-  it('names its Google hosts exactly, with no wildcard', () => {
+  it('names its Google hosts exactly, with no wildcard on google.com itself', () => {
     expect(GA_SCRIPT_ORIGIN).toBe('https://www.googletagmanager.com');
-    expect(GA_COLLECT_ORIGINS).toEqual([
-      'https://www.google-analytics.com',
-      'https://region1.google-analytics.com',
-      'https://region1.analytics.google.com',
-      'https://stats.g.doubleclick.net',
-      'https://googleads.g.doubleclick.net',
+    expect(GA_COLLECT_ORIGINS.slice(0, 7)).toEqual([
+      'https://*.google-analytics.com',
+      'https://*.analytics.google.com',
+      'https://*.g.doubleclick.net',
       'https://www.google.com',
+      'https://google.com',
+      'https://adservice.google.com',
+      'https://pagead2.googlesyndication.com',
     ]);
+    // Then www.google.<country> for each of Google's 186 country domains.
+    expect(GOOGLE_COUNTRY_DOMAINS).toHaveLength(186);
+    expect(new Set(GOOGLE_COUNTRY_DOMAINS).size).toBe(186);
+    expect(GOOGLE_COUNTRY_DOMAINS).toEqual(
+      expect.arrayContaining(['google.de', 'google.co.uk', 'google.ch', 'google.fr']),
+    );
+    expect(GOOGLE_COUNTRY_DOMAINS).not.toContain('google.com');
+    expect(GA_COLLECT_ORIGINS.slice(7)).toEqual(GOOGLE_COUNTRY_DOMAINS.map((d) => `https://www.${d}`));
+    expect(GA_COLLECT_ORIGINS.some((o) => o.includes('*.google.com'))).toBe(false);
   });
 
   it('treats exactly the alert-link key as private', () => {
