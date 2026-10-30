@@ -9,6 +9,17 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **Every page has its own share image** (2026-10-30). Model, comparison and provider pages each show their own
+  1200x630 card with that page's prices or monthly bills when the link is shared, instead of one card for the
+  whole site. Model, comparison and provider pages now call themselves a website, not an article.
+- **Faster first paint.** The site preloads two fonts instead of five; the code font falls back to a matched
+  local face, so nothing shifts.
+- **Accessibility sweep.** The dark theme's ticker colors now meet contrast rules, and article code blocks can
+  be scrolled from the keyboard. An automatic check covers one page of every type in both themes.
+- **Google Analytics is told what kind of page was viewed** (`page_type`, a fixed label such as "comparison").
+  The privacy page lists it. A new browser test types a unique string into every text box and proves it never
+  leaves the device.
+
 - **Google signals now reach Google from every country** (2026-10-30). The page security policy listed only six
   Google addresses, so a visitor whose Google is a country version (google.de, google.co.uk...) had their
   signals report blocked, and the regional measurement hosts, user-provided data and ad-click hosts were
@@ -41,6 +52,9 @@ on their own schedule and are not releases.
 
 ### Added
 
+- **A one-command website audit** (`tools/site-audit/`): a polite, read-only check of any live site that writes
+  a scorecard. Also a quarterly price-report tally (`scripts/quarterly-report-tally.ts`) for the January "State
+  of LLM Pricing" edition.
 - **A tally script for the monthly Price Movement Report** (`npx tsx scripts/monthly-report-tally.ts 2026-10`).
   It counts one whole month of the pricing changelog by kind, lists every rate move by size, and sets the
   month beside the one before. It says plainly when the month is not finished. The August report counted four
