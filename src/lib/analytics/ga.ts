@@ -10,7 +10,7 @@
  *    that key out of the address bar before this code runs, and the cleaning
  *    here is the second guard, which also covers the referrer.
  * 2. **No pasted text.** PromptSpend's code hands `gtag` only the page fields
- *    below, fixed settings, and the key events in `KeyEvent` (fixed labels and
+ *    below (address, referrer, title and the page's type), fixed settings, and the key events in `KeyEvent` (fixed labels and
  *    catalog model ids). Pasted prompt text is never in the address and
  *    never passed on. (Google's own automatic tracking, which is on, reads
  *    clicks, scrolls, form starts and the address, and its user-provided data
@@ -34,6 +34,7 @@ import {
   PRIVATE_ADDRESS_PARAMS,
 } from './config';
 import { DISABLE_FLAG, keyEventForClick, queueOn, sendKeyEvent, type GtagWindow } from './events';
+import { pageTypeOf, type PageType } from './page-type';
 
 export type { GtagWindow } from './events';
 
@@ -68,20 +69,28 @@ export function cleanAddress(address: string | null | undefined): string {
   return url.href;
 }
 
-/** The three page fields PromptSpend's own code hands Google. */
+/**
+ * The four page fields PromptSpend's own code hands Google. `page_type` is one
+ * label from the closed list in `page-type.ts` ("comparison", "model"...), set
+ * by the build, never anything the visitor typed.
+ */
 export interface PageFields {
   page_location: string;
   page_referrer: string;
   page_title: string;
+  page_type: PageType;
 }
 
 export function pageFields(
-  doc: Pick<Document, 'referrer' | 'title'> & { location: { href: string } },
+  doc: Pick<Document, 'referrer' | 'title' | 'querySelector'> & {
+    location: { href: string };
+  },
 ): PageFields {
   return {
     page_location: cleanAddress(doc.location.href),
     page_referrer: cleanAddress(doc.referrer),
     page_title: doc.title,
+    page_type: pageTypeOf(doc),
   };
 }
 
@@ -161,7 +170,10 @@ export function loadGoogleAnalytics(win: GtagWindow, doc: Document): void {
   // redacted one. The location is not: Google's history-change page views must
   // read the address as it is then, after the alerts panel has removed its key.
   gtag('set', { page_referrer: page.page_referrer });
+  // The page's type goes with the configuration too, so Google's own events on
+  // this page (scrolls, clicks, history-change page views) carry it as well.
   gtag('config', GA_MEASUREMENT_ID, {
+    page_type: page.page_type,
     send_page_view: false,
     allow_google_signals: true,
     allow_ad_personalization_signals: true,

@@ -14,7 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/models-126-2456E6.svg" alt="126 models tracked">
   <img src="https://img.shields.io/badge/providers-16-2456E6.svg" alt="16 providers">
-  <img src="https://img.shields.io/badge/tests-1790-blue.svg" alt="1790 tests">
+  <img src="https://img.shields.io/badge/tests-1845-blue.svg" alt="1845 tests">
   <img src="https://img.shields.io/badge/initial%20payload-107%20KB%20gzip-blue.svg" alt="107 KB gzip initial payload">
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
@@ -507,7 +507,7 @@ _Your privacy choices_ link to the on/off control on the [privacy policy](https:
 the same in every region, the European Economic Area, the UK and Switzerland included (owner decision 2026-10-30). Google Analytics sets two
 cookies (`_ga`, `_ga_P27XJ53BH9`). Since 2026-10-29 (owner decision) Google's advertising and measurement features are on: the
 full page address, scenario and campaign tags included, Google's automatic tracking, Google signals and
-ad personalization, and 14-month retention; PromptSpend's own code adds three counts (an app-store click, a Copy on the MCP, API or VS Code command, and a model added to the comparison, each with a fixed label or catalog model id). One thing is still removed before anything is sent: the
+ad personalization, and 14-month retention; PromptSpend's own code adds the kind of page (`page_type`, a fixed label such as `comparison` or `model`) and three counts (an app-store click, a Copy on the MCP, API or VS Code command, and a model added to the comparison, each with a fixed label or catalog model id). One thing is still removed before anything is sent: the
 private key a price-alert link carries (`PRIVATE_ADDRESS_PARAMS`). Pasted text is never in the address
 and never passed on ([`src/lib/analytics/`](src/lib/analytics/)). Google's user-provided data collection is on,
 so an email address typed into the price-alert form reaches Google in hashed form. It runs only on promptspend.com, never when the browser

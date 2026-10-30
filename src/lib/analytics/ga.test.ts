@@ -123,12 +123,27 @@ describe('pageFields', () => {
       location: { href: 'https://promptspend.com/?m=a&alerts=TOKEN#data' },
       referrer: 'https://promptspend.com/models/x/?alerts=TOKEN#y',
       title: 'PromptSpend',
+      querySelector: () => null,
     });
     expect(fields).toEqual({
       page_location: 'https://promptspend.com/?m=a#data',
       page_referrer: 'https://promptspend.com/models/x/#y',
       page_title: 'PromptSpend',
+      page_type: 'other',
     });
+  });
+
+  it("reads the page's declared type, and sends `other` for none or anything off the list", () => {
+    const meta = (content: string) => ({ getAttribute: () => content }) as unknown as Element;
+    const doc = (content: string | null) => ({
+      location: { href: 'https://promptspend.com/' },
+      referrer: '',
+      title: 'x',
+      querySelector: () => (content === null ? null : meta(content)),
+    });
+    expect(pageFields(doc('comparison')).page_type).toBe('comparison');
+    expect(pageFields(doc(null)).page_type).toBe('other');
+    expect(pageFields(doc('PRIVATE TEXT')).page_type).toBe('other');
   });
 });
 
@@ -232,7 +247,12 @@ describe('loadGoogleAnalytics', () => {
     const queued = commands();
     const location = `${window.location.origin}/models/claude-opus-5/?m=a-scenario#data`;
     const referrer = 'http://localhost:3000/?scenario=1#x';
-    const page = { page_location: location, page_referrer: referrer, page_title: document.title };
+    const page = {
+      page_location: location,
+      page_referrer: referrer,
+      page_title: document.title,
+      page_type: 'other',
+    };
 
     expect(queued.map((command) => command[0])).toEqual(['consent', 'js', 'set', 'config', 'event']);
     expect(queued[0]).toEqual([
@@ -249,7 +269,12 @@ describe('loadGoogleAnalytics', () => {
     expect(queued[3]).toEqual([
       'config',
       'G-P27XJ53BH9',
-      { send_page_view: false, allow_google_signals: true, allow_ad_personalization_signals: true },
+      {
+        page_type: 'other',
+        send_page_view: false,
+        allow_google_signals: true,
+        allow_ad_personalization_signals: true,
+      },
     ]);
     expect(queued[4]).toEqual(['event', 'page_view', page]);
 
@@ -275,7 +300,7 @@ describe('loadGoogleAnalytics', () => {
     const everything = JSON.stringify(commands());
     expect(everything).not.toContain('MY PRIVATE PROMPT');
     expect(everything).not.toContain('me@example.com');
-    // Only the three page fields and fixed settings: no other keys at all.
+    // Only the four page fields and fixed settings: no other keys at all.
     const keys = new Set(
       commands()
         .flatMap((command) => command.filter((part) => typeof part === 'object' && part !== null))
@@ -292,6 +317,7 @@ describe('loadGoogleAnalytics', () => {
         'page_location',
         'page_referrer',
         'page_title',
+        'page_type',
         'send_page_view',
       ].sort(),
     );

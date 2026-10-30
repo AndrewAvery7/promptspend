@@ -23,6 +23,7 @@ const CONTEXT: RenderContext = {
 function openPage(path = '/free-tiers/') {
   const html = layout(CONTEXT, {
     path,
+    pageType: 'hub',
     title: 'A page',
     description: 'A page.',
     graph: [{ '@type': 'WebPage' }],

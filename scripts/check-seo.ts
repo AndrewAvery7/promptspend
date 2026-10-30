@@ -16,6 +16,7 @@ import { existsSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { INDEXNOW_KEY_FILE } from './lib/indexnow';
+import { pageTypeProblems, UNTYPED_FILES } from './lib/page-types';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = resolve(ROOT, 'dist');
@@ -49,6 +50,20 @@ async function findPages(dir = DIST, prefix = '/'): Promise<string[]> {
       found.push(...(await findPages(join(dir, entry.name), `${prefix}${entry.name}/`)));
     } else if (entry.name === 'index.html' && prefix !== '/') {
       found.push(prefix);
+    }
+  }
+  return found.sort();
+}
+
+/** Every `.html` file under dist (except built assets), relative to it, with forward slashes. */
+async function findHtmlFiles(dir = DIST, prefix = ''): Promise<string[]> {
+  const found: string[] = [];
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (entry.name === 'assets') continue;
+      found.push(...(await findHtmlFiles(join(dir, entry.name), `${prefix}${entry.name}/`)));
+    } else if (entry.name.endsWith('.html')) {
+      found.push(`${prefix}${entry.name}`);
     }
   }
   return found.sort();
@@ -475,12 +490,20 @@ async function main(): Promise<void> {
     problems.push('the home page does not link favicon.ico');
   }
 
+  // Every page declares its type, the `page_type` Google Analytics receives.
+  const htmlFiles = await findHtmlFiles();
+  const typed = await Promise.all(
+    htmlFiles.map(async (file) => ({ file, html: await readFile(resolve(DIST, file), 'utf8') })),
+  );
+  problems.push(...pageTypeProblems(typed));
+
   if (problems.length === 0) {
     console.log(`✓ Discoverable — canonical ${canonical}`);
     console.log(`  title       ${title!.length} chars`);
     console.log(`  description ${description!.length} chars`);
     console.log(`  og:image    ${ogImage}`);
     console.log(`  generated   ${reports.length} pages: unique titles, valid data, every link resolves`);
+    console.log(`  page types  ${typed.length - UNTYPED_FILES.length} HTML pages, each with its type`);
     return;
   }
   for (const problem of problems) console.error(`✗ ${problem}`);

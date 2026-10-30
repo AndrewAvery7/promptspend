@@ -38,6 +38,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Header } from '../../components/Header';
 import { DEFAULT_SCENARIO, encodeScenario } from '../url/scenario';
 import { GA_POLICY_COLLECT_ORIGINS, GA_POLICY_SCRIPT_ORIGINS } from '../analytics/config';
+import { isPageType, PAGE_TYPE_META, pageTypeForPath, type PageType } from '../analytics/page-type';
 import { formatContext, formatMoney, formatPercent } from '../engine/format';
 import type { PriceHistory } from '../pricing/history';
 import type { Model, Pricing } from '../pricing/types';
@@ -296,6 +297,13 @@ export interface LayoutInput {
   /** A `<meta name="robots">` value, e.g. `noindex, follow`. Omitted means
    *  indexable, which is every page except the signposts. */
   robots?: string;
+  /**
+   * The kind of page this is, from the closed list in
+   * `src/lib/analytics/page-type.ts`, declared in `<meta name="ps:page-type">`
+   * and sent to Google Analytics as `page_type`. Required, and never `other`:
+   * `layout` refuses a page without a real type.
+   */
+  pageType: PageType;
   title: string;
   description: string;
   /** Extra `<head>` markup for one page, e.g. the app page's Smart App Banner tag. */
@@ -342,6 +350,11 @@ export function layout(ctx: RenderContext, input: LayoutInput): string {
 `,
       ].join('')
     : '';
+  if (!isPageType(input.pageType) || input.pageType === 'other') {
+    throw new Error(
+      `layout: ${input.path} has no page type (got "${String(input.pageType)}"); add it to src/lib/analytics/page-type.ts`,
+    );
+  }
   for (const src of scripts) {
     if (!src.startsWith('/') || src.startsWith('//')) {
       throw new Error(`layout: script "${src}" must be a path on this site, not a URL`);
@@ -379,6 +392,7 @@ export function layout(ctx: RenderContext, input: LayoutInput): string {
     <link rel="alternate" type="application/atom+xml" title="PromptSpend price changes" href="${escapeHtml(absolute(ctx, '/feed.xml'))}" />
 ${input.robots ? `    <meta name="robots" content="${escapeHtml(input.robots)}" />\n` : ''}    <meta http-equiv="Content-Security-Policy" content="${escapeHtml(csp)}" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="${PAGE_TYPE_META}" content="${escapeHtml(input.pageType)}" />
 ${input.extraHead ?? ''}    <meta property="og:type" content="article" />
     <meta property="og:site_name" content="PromptSpend" />
     <meta property="og:url" content="${escapeHtml(canonical)}" />
@@ -1084,6 +1098,7 @@ ${specRows.map(([label, value]) => `            <tr><th scope="row">${escapeHtml
 ${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
+    pageType: 'model',
     path: page.path,
     title: page.title,
     description: page.description,
@@ -1301,6 +1316,7 @@ ${providerDetail(page, ctx)}
 ${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
+    pageType: 'provider',
     path: page.path,
     title: page.title,
     description: page.description,
@@ -1522,6 +1538,7 @@ ${moreComparisons}
 ${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
+    pageType: 'comparison',
     path: page.path,
     title: page.title,
     description: page.description,
@@ -1585,6 +1602,7 @@ ${links.map((link) => `          <li><a href="${escapeHtml(href(ctx, link.path))
       </main>`;
 
   return layout(ctx, {
+    pageType: 'comparison',
     path: page.path,
     canonicalPath: page.canonicalPath,
     robots: 'noindex, follow',
@@ -1650,6 +1668,7 @@ ${rows}
       </main>`;
 
   return layout(ctx, {
+    pageType: 'hub',
     path: page.path,
     title: page.title,
     description: page.description,
@@ -1724,6 +1743,7 @@ ${rows}
       </main>`;
 
   return layout(ctx, {
+    pageType: 'hub',
     path: page.path,
     title: page.title,
     description: page.description,
@@ -1768,6 +1788,7 @@ ${items}
       </main>`;
 
   return layout(ctx, {
+    pageType: 'hub',
     path: page.path,
     title: page.title,
     description: page.description,
@@ -1819,6 +1840,7 @@ ${analyticsChoice(page.bodyHtml)}
       </main>`;
 
   return layout(ctx, {
+    pageType: 'article',
     path: page.path,
     title: page.title,
     description: page.description,
@@ -1881,6 +1903,7 @@ ${items}
   const description =
     'Monthly LLM price-movement reports and notes on how AI API costs are really counted, each figure with its source and the date it was checked.';
   return layout(ctx, {
+    pageType: 'hub',
     path: WRITING_INDEX_PATH,
     title: 'Writing: LLM price reports and notes on what AI really costs',
     description,
@@ -1936,6 +1959,7 @@ ${[
       </main>`;
 
   return layout(ctx, {
+    pageType: 'not-found',
     path: NOT_FOUND_PATH,
     title: 'Page not found | PromptSpend',
     description:
@@ -2094,6 +2118,7 @@ ${faqSection(faqs)}      </main>`;
   const description =
     'Every LLM API price change PromptSpend has recorded, newest first: what vendors changed, what PromptSpend corrected, and which models were added or removed.';
   return layout(ctx, {
+    pageType: 'changes',
     path: CHANGES_PATH,
     title: 'LLM API price changes: every change, dated and sourced',
     description,
@@ -2229,6 +2254,7 @@ ${faqSection(faqs)}      </main>`;
   const description =
     'Paste text to count its tokens and see its input cost on any LLM. Runs in your browser, so your text is never sent anywhere; exact counts for OpenAI-family models.';
   return layout(ctx, {
+    pageType: 'token-counter',
     path: TOKEN_COUNTER_PATH,
     title: 'Token counter: tokens and input cost for any LLM',
     description,
@@ -2366,6 +2392,7 @@ export function renderDataPage(input: DataPageInput, ctx: RenderContext): string
   const description =
     'Download PromptSpend’s LLM price catalog, its price history and its free-tier facts as plain files, with the license for each and no key or sign-up.';
   return layout(ctx, {
+    pageType: 'data',
     path: DATA_PAGE_PATH,
     title: 'Open data: LLM API prices, price history and free tiers',
     description,
@@ -2454,6 +2481,7 @@ ${analyticsChoice(page.bodyHtml)}
       </main>`;
 
   return layout(ctx, {
+    pageType: pageTypeForPath(page.path),
     path: page.path,
     title: page.title,
     description: page.description,
@@ -2543,6 +2571,7 @@ export function renderAppPage(ctx: RenderContext): string {
   });
 
   return layout(ctx, {
+    pageType: 'app',
     path: APP_PAGE_PATH,
     title: 'PromptSpend for iPhone and Android — free AI cost estimates',
     description:
@@ -2688,6 +2717,7 @@ ${[sections, unpublished, after].filter(Boolean).join('\n')}
 ${faqSection(faqs)}      </main>`;
 
   return layout(ctx, {
+    pageType: 'free-tier',
     path: page.path,
     title: page.title,
     description: page.description,
@@ -2767,6 +2797,7 @@ ${notes}
       </main>`;
 
   return layout(ctx, {
+    pageType: 'hub',
     path: page.path,
     title: page.title,
     description: page.description,
