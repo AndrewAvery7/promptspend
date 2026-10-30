@@ -27,5 +27,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "scripts", "tests", "vite.config.ts", "playwright.config.ts"]
+  "include": ["src", "scripts", "tests", "tools/site-audit", "vite.config.ts", "playwright.config.ts"]
 }
