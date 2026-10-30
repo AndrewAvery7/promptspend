@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 import type { PricingCatalog } from '@/lib/pricing/types';
 import { assertCatalog } from '@/lib/pricing/types';
-import { buildPages } from '@/lib/seo/pages';
+import { buildPages, COMPARISON_GROWTH_FROZEN } from '@/lib/seo/pages';
 import { Catalog } from '@/lib/pricing/catalog';
 import { isSyncStatus, type SyncStatus } from '@/lib/pricing/health';
 import { createElement } from 'react';
@@ -34,6 +34,7 @@ import { assertFreeTiers } from '@/lib/free-tiers/types';
 import { EMPTY_CHECK_REPORT, parseCheckReport } from '@/lib/free-tiers/check';
 import { buildFreeTierPages, FREE_TIERS_PATH, publishedFreeTiers } from '@/lib/seo/free-tier-pages';
 import { PAGE_CSS } from '@/lib/seo/css';
+import type { BenchmarkEntry } from '@/lib/seo/featured';
 import { renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import { receiptSpec } from '@/receipt/receiptSpec';
@@ -85,6 +86,8 @@ const INFORMATION_DIR = resolve(ROOT, 'src/content/information');
 const FREE_TIERS = resolve(ROOT, 'data/free-tiers.json');
 const FREE_TIER_CHECK = resolve(ROOT, 'public/data/free-tier-check.json');
 const SYNC_STATUS = resolve(ROOT, 'public/data/sync-status.json');
+const FEATURED = resolve(ROOT, 'data/featured-comparisons.json');
+const BENCHMARKS = resolve(ROOT, 'data/benchmarks.json');
 
 /** Same defaults as `vite.config.ts`, and for the same reasons: an unset
  *  GitHub Actions variable arrives as `""`, so `??` would not catch it. */
@@ -268,7 +271,7 @@ async function main(): Promise<void> {
   // page the date its content last changed rather than today's. See
   // src/lib/seo/ledger.ts.
   const ledger = await readLedger();
-  const set = buildPages(catalog, { asOf, ledger });
+  const set = buildPages(catalog, { asOf, ledger, maxComparisons: COMPARISON_GROWTH_FROZEN });
 
   // Free-tier pages: hand-verified facts plus this morning's re-check of their
   // sources. The facts must cover exactly the catalog's providers; the report
@@ -331,7 +334,19 @@ async function main(): Promise<void> {
     rows,
   };
 
+  const featured = new Set<string>(
+    (JSON.parse(await readFile(FEATURED, 'utf8')) as { slugs: string[] }).slugs,
+  );
+  const unknownFeatured = [...featured].filter((slug) => !set.comparisons.some((page) => page.slug === slug));
+  if (unknownFeatured.length > 0)
+    throw new Error(`featured comparisons not built: ${unknownFeatured.join(', ')}`);
+  const benchmarkRows = (JSON.parse(await readFile(BENCHMARKS, 'utf8')) as { entries: BenchmarkEntry[] })
+    .entries;
+  const benchmarks = new Map(benchmarkRows.map((row) => [row.modelId, row]));
+
   const ctx: RenderContext = {
+    featured,
+    benchmarks,
     siteUrl,
     basePath,
     cssPath: `/${cssName}`,
@@ -421,6 +436,11 @@ async function main(): Promise<void> {
     Object.fromEntries(set.models.map((page) => [page.id, page.path])),
   );
   await writeFileAt(fileFor(CHANGES_PATH), renderChangesPage(changes, ctx));
+  // The same list as data, so a script can read what changed without parsing the page.
+  await writeFileAt(
+    'data/changes.json',
+    `${JSON.stringify({ schemaVersion: 1, page: `${siteUrl}${CHANGES_PATH}`, ...changes }, null, 2)}\n`,
+  );
   await writeFileAt(fileFor(TOKEN_COUNTER_PATH), renderTokenCounterPage(tokenCounterInput(set), ctx));
   await writeFileAt('404.html', renderNotFoundPage(ctx));
 

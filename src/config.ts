@@ -50,6 +50,8 @@ export const WRITING_INDEX_URL = `${import.meta.env.BASE_URL}writing/`;
 /** The files the site publishes as data, with the license for each. */
 export const DATA_PAGE_URL = `${import.meta.env.BASE_URL}data/`;
 export const CHANGES_PAGE_URL = `${import.meta.env.BASE_URL}changes/`;
+export const CORRECTIONS_PAGE_URL = `${import.meta.env.BASE_URL}corrections/`;
+export const TOPICS_PAGE_URL = `${import.meta.env.BASE_URL}topics/`;
 export const TOKEN_COUNTER_URL = `${import.meta.env.BASE_URL}token-counter/`;
 
 /** The help and policy pages, which the generated pages' footers already linked. */

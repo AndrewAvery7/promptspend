@@ -232,6 +232,14 @@ export interface BuildOptions {
   ledger?: PageLedger;
 }
 
+/**
+ * New comparison pages allowed per build while the featured set is being
+ * deepened (SEO register 3.8, from 2026-10-30). Zero: every published pair keeps
+ * being built, nothing new is added. The scripts that build or count the real
+ * site pass it; tests keep the library default. Lift it deliberately.
+ */
+export const COMPARISON_GROWTH_FROZEN = 0;
+
 const MODELS_ROOT = '/models/';
 const PROVIDERS_ROOT = '/providers/';
 const COMPARE_ROOT = '/compare/';
