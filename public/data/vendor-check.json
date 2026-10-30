@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-29T17:43:14.814Z",
+  "checkedAt": "2026-10-30T11:03:57.673Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -78,7 +78,7 @@
     {
       "url": "https://api-docs.deepseek.com/quick_start/pricing",
       "ok": true,
-      "note": "4648 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "13884 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "deepseek-deepseek-v4-pro",
         "deepseek-deepseek-v4-flash"
@@ -105,7 +105,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "212447 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "212474 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -133,7 +133,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "21852 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "21970 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -494,7 +494,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only Gemini 3.8 Flash and 3.6 Flash are listed)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only Gemini 3.8 Flash and Gemini 3.6 Flash are listed)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -728,7 +728,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row is shown)"
+      "detail": "not priced on the page (page lists only mistral-large-4; no separate mistral-large-4-0 pricing row)"
     },
     {
       "id": "dashscope-qwen3.8-max",
