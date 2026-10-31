@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-30T11:03:57.673Z",
+  "checkedAt": "2026-10-31T11:03:56.281Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "22818 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "23502 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -60,7 +60,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "99302 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "100703 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -87,7 +87,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "ok": true,
-      "note": "3305 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3535 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k2.6"
       ]
@@ -95,7 +95,7 @@
     {
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "ok": true,
-      "note": "3305 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3535 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "moonshot-kimi-k3",
         "moonshot-kimi-k3.1-pro",
@@ -105,7 +105,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "212474 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "212514 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -114,7 +114,7 @@
     {
       "url": "https://docs.z.ai/guides/overview/pricing",
       "ok": true,
-      "note": "3008 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3016 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "zai-glm-5.1",
         "zai-glm-5.2",
@@ -133,7 +133,7 @@
     {
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "ok": true,
-      "note": "21970 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22087 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "minimax-minimax-m2.5"
       ]
@@ -163,7 +163,7 @@
     {
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "ok": true,
-      "note": "2882 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "2982 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "mistral-mistral-large-4",
         "mistral-mistral-large-4-0"
@@ -172,7 +172,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
       "ok": true,
-      "note": "62081 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "61389 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-max"
       ]
@@ -198,7 +198,7 @@
     {
       "url": "https://docs.inceptionlabs.ai/get-started/models",
       "ok": true,
-      "note": "13582 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "14190 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "inception-mercury-2",
         "inception-mercury-2.5"
@@ -215,7 +215,7 @@
     {
       "url": "https://docs.mistral.ai/inference/pricing",
       "ok": true,
-      "note": "4349 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "3741 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "mistral-codestral-2508"
       ]
@@ -494,7 +494,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only Gemini 3.8 Flash and Gemini 3.6 Flash are listed)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only Gemini 3.8 Flash and 3.6 Flash are listed)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -560,7 +560,7 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page; no price is printed for kimi-k2.6)"
+      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price for kimi-k2.6 is printed)"
     },
     {
       "id": "moonshot-kimi-k3",
@@ -668,7 +668,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM tables list only MiniMax-M3.1-Flash and MiniMax-M3)"
+      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -721,8 +721,8 @@
     {
       "id": "mistral-mistral-large-4",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
-      "status": "confirmed",
-      "detail": "page lists $1.36/$4.18 (cached $0.14)"
+      "status": "mismatch",
+      "detail": "page lists $0.7/$2.1 vs recorded $1.36/$4.18; cached input $0.07 vs recorded $0.14"
     },
     {
       "id": "mistral-mistral-large-4-0",
@@ -797,7 +797,7 @@
       "detail": "page lists $2.5/$10"
     }
   ],
-  "confirmed": 85,
-  "mismatched": 0,
+  "confirmed": 84,
+  "mismatched": 1,
   "unconfirmed": 8
 }

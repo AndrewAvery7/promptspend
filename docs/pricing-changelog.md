@@ -1481,3 +1481,10 @@ value that moves in the same run as its source URL is a correction.
 ## 2026-10-29
 
 - **Metadata** `moonshot-kimi-k3.1-pro` — capabilityIndex: — → 89
+
+## 2026-10-31
+
+- **Review** `minimax-minimax-m2.5` — provenance.needsReview: — → true
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: — → OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2
+- **Review** `mistral-mistral-large-4` — provenance.needsReview: — → true
+- **Review** `mistral-mistral-large-4` — provenance.reviewNote: — → the vendor's own page disagrees with the record — page lists $0.7/$2.1 vs recorded $1.36/$4.18; cached input $0.07 vs recorded $0.14
