@@ -48,7 +48,7 @@ jobs:
           if [ "$(date -u +%u)" = "1" ]; then npx tsx scripts/ga-watch.ts baseline; else echo "Not Monday; skipped."; fi
       - name: Keep the baseline
         if: github.event_name != 'pull_request' && hashFiles('docs/seo/ga-baseline-*.json') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ga-baseline
           path: docs/seo/ga-baseline-*.json
