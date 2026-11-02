@@ -20,6 +20,7 @@
   <a href="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml"><img src="https://github.com/AndrewAvery7/promptspend/actions/workflows/sync-pricing.yml/badge.svg" alt="Sync pricing"></a>
   <a href="https://mcprush.com/to/promptspend-mcp?ref=badge"><img src="https://mcprush.com/badge/promptspend-mcp/score.svg" alt="PromptSpend MCP on mcprush"></a>
   <a href="https://mcpservers.org/servers/andrewavery7/promptspend"><img src="https://mcpservers.org/badge.svg" alt="Listed on mcpservers.org"></a>
+  <a href="https://wellknown.network/agents/promptspend-mcp"><img src="https://wellknown.network/agents/promptspend-mcp/badge.svg" alt="PromptSpend MCP on Wellknown"></a>
 </p>
 
 <p align="center">

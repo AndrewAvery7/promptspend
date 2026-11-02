@@ -613,9 +613,6 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
               <img src="${escapeHtml(href(ctx, '/sellwithboost-light.svg'))}" alt="Listed on Sell With boost" width="104" height="40" />
             </picture>
           </a>
-          <a href="https://peerpush.com/p/promptspend" target="_blank" rel="noopener noreferrer">
-            <img src="${escapeHtml(href(ctx, '/peerpush-badge.png'))}" alt="PromptSpend on PeerPush" width="142" height="40" />
-          </a>
           <a href="https://peerlist.io/andrewavery7/project/promptspend" target="_blank" rel="noopener noreferrer">
             <picture>
               <source srcset="${escapeHtml(href(ctx, '/peerlist-badge-dark.svg'))}" media="(prefers-color-scheme: dark)" />
@@ -648,6 +645,9 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
           </a>
           <a href="https://mcpservers.org/servers/andrewavery7/promptspend" target="_blank" rel="noopener noreferrer">
             <img class="footer__badge-strip" src="${escapeHtml(href(ctx, '/mcpservers-badge.svg'))}" alt="PromptSpend listed on mcpservers.org" width="228" height="28" />
+          </a>
+          <a href="https://wellknown.network/agents/promptspend-mcp" target="_blank" rel="noopener noreferrer">
+            <img class="footer__badge-strip" src="${escapeHtml(href(ctx, '/wellknown-badge.svg'))}" alt="PromptSpend on Wellknown, verified owner" width="274" height="28" />
           </a>
         </div>
         <div class="footer__legal">

@@ -93,8 +93,8 @@
 }
 
 /* ---- the "Listed on" row ----
-   Sell With boost, PeerPush, Peerlist, LaunchNest, Uneed, Fazier, Product
-   Hunt, then mcpservers.org, behind a label and a divider. Their artwork
+   Sell With boost, Peerlist, LaunchNest, Uneed, Fazier, Product Hunt, then
+   mcpservers.org and Wellknown, behind a label and a divider. Their artwork
    carries whatever frame it needs, so nothing is added here but a height:
    every card is drawn 34px tall, which keeps all eight on one line on a
    computer. On a phone they sit in a two-column grid, each centered in an
@@ -125,8 +125,8 @@
   height: 34px;
   width: auto;
 }
-/* mcpservers.org's badge is a shields-style strip, not a card: its 163 x 20
-   drawn 22px tall, so its solid color does not outweigh the cards. */
+/* mcpservers.org's and Wellknown's badges are shields-style strips, not
+   cards: drawn 22px tall, so their solid color does not outweigh the cards. */
 .footer__badge img.footer__badge-strip {
   height: 22px;
 }
@@ -142,8 +142,15 @@
   .footer__badge img {
     height: 32px;
   }
+  /* The strips are the widest artwork; at 320px Wellknown's would push past
+     its cell, so a strip shrinks to fit (keeping its shape) below 18px. */
+  .footer__badge a {
+    min-width: 0;
+  }
   .footer__badge img.footer__badge-strip {
-    height: 18px;
+    height: auto;
+    max-height: 18px;
+    max-width: 100%;
   }
 }
 
