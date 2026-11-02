@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-01T11:05:57.009Z",
+  "checkedAt": "2026-11-02T20:38:48.636Z",
   "sources": [
     {
       "url": "https://developers.openai.com/api/docs/deprecations.md",
@@ -14,8 +14,9 @@
     },
     {
       "url": "https://ai.google.dev/gemini-api/docs/deprecations",
-      "ok": true,
-      "notices": 52
+      "ok": false,
+      "notices": 0,
+      "note": "no dated rows found — the page layout may have changed"
     },
     {
       "url": "https://docs.cohere.com/docs/deprecations.md",
@@ -37,15 +38,6 @@
       "shutDown": false,
       "source": "Anthropic's model deprecations page",
       "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations.md"
-    },
-    {
-      "id": "gemini-gemini-3.1-flash-lite",
-      "providerId": "google",
-      "vendorName": "gemini-3.1-flash-lite",
-      "date": "2027-05-07",
-      "shutDown": false,
-      "source": "Google's Gemini API deprecations page",
-      "url": "https://ai.google.dev/gemini-api/docs/deprecations"
     },
     {
       "id": "gpt-5",
