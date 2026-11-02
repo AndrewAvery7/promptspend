@@ -25,8 +25,6 @@ import {
   PEERLIST_BADGE_DARK,
   PEERLIST_BADGE_LIGHT,
   PEERLIST_URL,
-  PEERPUSH_BADGE,
-  PEERPUSH_URL,
   PRODUCTHUNT_BADGE_DARK,
   PRODUCTHUNT_BADGE_LIGHT,
   PRODUCTHUNT_URL,
@@ -40,6 +38,8 @@ import {
   UNEED_BADGE_LIGHT,
   UNEED_URL,
   VSCODE_MARKETPLACE_URL,
+  WELLKNOWN_BADGE,
+  WELLKNOWN_URL,
   WRITING_INDEX_URL,
 } from '@/config';
 import { NAV_LABELS } from '@/lib/links';
@@ -199,9 +199,6 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               height={40}
             />
           </a>
-          <a href={PEERPUSH_URL} target="_blank" rel="noopener noreferrer">
-            <img src={PEERPUSH_BADGE} alt="PromptSpend on PeerPush" width={142} height={40} />
-          </a>
           <a href={PEERLIST_URL} target="_blank" rel="noopener noreferrer">
             <img
               src={theme === 'dark' ? PEERLIST_BADGE_DARK : PEERLIST_BADGE_LIGHT}
@@ -249,6 +246,15 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               src={MCPSERVERS_BADGE}
               alt="PromptSpend listed on mcpservers.org"
               width={228}
+              height={28}
+            />
+          </a>
+          <a href={WELLKNOWN_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              className="footer__badge-strip"
+              src={WELLKNOWN_BADGE}
+              alt="PromptSpend on Wellknown, verified owner"
+              width={274}
               height={28}
             />
           </a>

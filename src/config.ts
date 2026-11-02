@@ -88,25 +88,9 @@ export const SWB_BADGE_LIGHT = `${import.meta.env.BASE_URL}sellwithboost-light.s
 export const SWB_BADGE_DARK = `${import.meta.env.BASE_URL}sellwithboost-dark.svg`;
 
 /**
- * The PeerPush listing, and its badge, beside the Sell With Boost one.
- *
- * Self-hosted for the same two reasons as `SWB_BADGE_LIGHT`: their embed
- * snippet hot-links `peerpush.com/p/promptspend/badge.png`, which `img-src
- * 'self'` would block and which would hand them every visitor's IP. The PNG is
- * their official 460x130 artwork, unedited, drawn at 142x40 so it stands the
- * same 40px tall as the Sell With Boost badge. It is a white card with its own
- * border, so one file serves both themes.
- *
- * Their badge is generated on their side and changes with the listing's state
- * (it read "Coming soon - Launching on PeerPush" when copied). This copy does
- * not follow it; refresh `public/peerpush-badge.png` by hand if it matters.
- */
-export const PEERPUSH_URL = 'https://peerpush.com/p/promptspend';
-export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.png`;
-
-/**
  * The Peerlist Launchpad listing (Week 41, 2026), and its badge, after the
- * PeerPush one.
+ * Sell With Boost one. (PeerPush sat between them until 2026-11-02; it was
+ * removed because that listing never went live.)
  *
  * A local copy of the "Live on Peerlist Launchpad" badge from the project's
  * Launch Dashboard, which their embed hot-links from
@@ -150,7 +134,7 @@ export const LAUNCHNEST_BADGE_DARK = `${LAUNCHNEST_ORIGIN}/badge/promptspend.svg
 /**
  * The Uneed listing, and its badge, after the LaunchNest one.
  *
- * A local copy, like Sell With Boost's and PeerPush's: Uneed has no badge
+ * A local copy, like Sell With Boost's: Uneed has no badge
  * verifier, so nothing needs their hot-linked `uneed.best/EMBED3B.png`, which
  * `img-src` would block and which would hand them every visitor's IP. Both
  * PNGs are their official 582x152 artwork, unedited - `uneed-badge-light.png`
@@ -214,6 +198,22 @@ export const PRODUCTHUNT_BADGE_DARK = `${import.meta.env.BASE_URL}producthunt-ba
  */
 export const MCPSERVERS_URL = 'https://mcpservers.org/servers/andrewavery7/promptspend';
 export const MCPSERVERS_BADGE = `${import.meta.env.BASE_URL}mcpservers-badge.svg`;
+
+/**
+ * The Wellknown record of the MCP server, and its badge, last in the row.
+ *
+ * Wellknown (wellknown.network) is an index of MCP servers that calls each
+ * one on a schedule; the owner claimed this record on 2026-11-02. Their badge,
+ * `wellknown.network/agents/promptspend-mcp/badge.svg`, is a live status strip
+ * ("live · 100% 30d"), which `img-src` would block and which would hand them
+ * every visitor's IP. This is a local copy of that 196x20 strip with the live
+ * figures replaced by "verified owner" - the mark their record shows - so the
+ * copy cannot go stale or claim an uptime nobody re-checked. The README carries
+ * the live one. Drawn like mcpservers.org's strip, 28px tall (274x28). No badge
+ * verifier, so it is not in `index.html`.
+ */
+export const WELLKNOWN_URL = 'https://wellknown.network/agents/promptspend-mcp';
+export const WELLKNOWN_BADGE = `${import.meta.env.BASE_URL}wellknown-badge.svg`;
 
 /**
  * Install routes for the two things that are not this website.

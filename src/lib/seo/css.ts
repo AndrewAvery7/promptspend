@@ -207,7 +207,7 @@ article :not(pre) > code {
 }
 /* Every badge card 34px tall, all eight on one line on a computer; a grid of
  * two on a phone, each centered in an equal cell. The link carries the 44px a
- * thumb needs. mcpservers.org's is a strip, not a card: 22px. */
+ * thumb needs. mcpservers.org's and Wellknown's are strips, not cards: 22px. */
 .footer__badge {
   display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px;
   border-top: 1px solid var(--border); padding-top: 10px;
@@ -220,7 +220,8 @@ article :not(pre) > code {
   .footer__badge { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
   .footer__listed { grid-column: 1 / -1; }
   .footer__badge img { height: 32px; }
-  .footer__badge img.footer__badge-strip { height: 18px; }
+  .footer__badge a { min-width: 0; }
+  .footer__badge img.footer__badge-strip { height: auto; max-height: 18px; max-width: 100%; }
 }
 .footer__legal {
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px;
