@@ -34,9 +34,6 @@ import {
   SWB_BADGE_LIGHT,
   SUPPORT_URL,
   SWB_URL,
-  UNEED_BADGE_DARK,
-  UNEED_BADGE_LIGHT,
-  UNEED_URL,
   VSCODE_MARKETPLACE_URL,
   WELLKNOWN_BADGE,
   WELLKNOWN_URL,
@@ -214,14 +211,6 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               width={157}
               height={40}
               referrerPolicy="no-referrer"
-            />
-          </a>
-          <a href={UNEED_URL} target="_blank" rel="noopener noreferrer">
-            <img
-              src={theme === 'dark' ? UNEED_BADGE_DARK : UNEED_BADGE_LIGHT}
-              alt="PromptSpend on Uneed"
-              width={153}
-              height={40}
             />
           </a>
           <a href={FAZIER_URL} target="_blank" rel="noopener noreferrer">
