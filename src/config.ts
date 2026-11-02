@@ -132,22 +132,9 @@ export const LAUNCHNEST_BADGE_LIGHT = `${LAUNCHNEST_ORIGIN}/badge/promptspend.sv
 export const LAUNCHNEST_BADGE_DARK = `${LAUNCHNEST_ORIGIN}/badge/promptspend.svg?variant=featured`;
 
 /**
- * The Uneed listing, and its badge, after the LaunchNest one.
- *
- * A local copy, like Sell With Boost's: Uneed has no badge
- * verifier, so nothing needs their hot-linked `uneed.best/EMBED3B.png`, which
- * `img-src` would block and which would hand them every visitor's IP. Both
- * PNGs are their official 582x152 artwork, unedited - `uneed-badge-light.png`
- * is the cream card, `uneed-badge-dark.png` the dark one - drawn at 153x40 to
- * stand the same 40px tall as the other badges. They read "Launching soon on
- * Uneed" as copied; refresh them by hand if the listing's state matters.
- */
-export const UNEED_URL = 'https://www.uneed.best/tool/promptspend';
-export const UNEED_BADGE_LIGHT = `${import.meta.env.BASE_URL}uneed-badge-light.png`;
-export const UNEED_BADGE_DARK = `${import.meta.env.BASE_URL}uneed-badge-dark.png`;
-
-/**
- * The Fazier listing, and its badge, after the Uneed one.
+ * The Fazier listing, and its badge, after the LaunchNest one. (Uneed sat
+ * between them until 2026-11-02; its badge still read "Launching soon", and
+ * dropping it let the Wellknown badge fit on the row's one line.)
  *
  * A local copy of the badge Fazier's embed hot-links from
  * `fazier.com/api/v1//public/badges/launch_badges.svg`, which `img-src` would

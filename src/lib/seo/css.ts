@@ -205,17 +205,18 @@ article :not(pre) > code {
   .footer__brand { grid-column: 1 / -1; }
   .footer__col a { padding: 0; min-height: 44px; display: flex; align-items: center; }
 }
-/* Every badge card 34px tall, all eight on one line on a computer; a grid of
- * two on a phone, each centered in an equal cell. The link carries the 44px a
- * thumb needs. mcpservers.org's and Wellknown's are strips, not cards: 22px. */
+/* Every badge card 32px tall and each strip 20px, 10px apart: all seven on one
+ * line from a 1080px-wide window up; a grid of two on a phone, each centered in
+ * an equal cell. The link carries the 44px a thumb needs. mcpservers.org's and
+ * Wellknown's are strips, not cards. */
 .footer__badge {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px;
   border-top: 1px solid var(--border); padding-top: 10px;
 }
 .footer__listed { margin-right: 4px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
 .footer__badge a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
-.footer__badge img { display: block; height: 34px; width: auto; }
-.footer__badge img.footer__badge-strip { height: 22px; }
+.footer__badge img { display: block; height: 32px; width: auto; }
+.footer__badge img.footer__badge-strip { height: 20px; }
 @media (max-width: 600px) {
   .footer__badge { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
   .footer__listed { grid-column: 1 / -1; }
