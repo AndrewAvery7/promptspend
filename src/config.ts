@@ -190,17 +190,21 @@ export const MCPSERVERS_BADGE = `${import.meta.env.BASE_URL}mcpservers-badge.svg
  * The Wellknown record of the MCP server, and its badge, last in the row.
  *
  * Wellknown (wellknown.network) is an index of MCP servers that calls each
- * one on a schedule; the owner claimed this record on 2026-11-02. Their badge,
- * `wellknown.network/agents/promptspend-mcp/badge.svg`, is a live status strip
- * ("live · 100% 30d"), which `img-src` would block and which would hand them
- * every visitor's IP. This is a local copy of that 196x20 strip with the live
- * figures replaced by "verified owner" - the mark their record shows - so the
- * copy cannot go stale or claim an uptime nobody re-checked. The README carries
- * the live one. Drawn like mcpservers.org's strip, 28px tall (274x28). No badge
- * verifier, so it is not in `index.html`.
+ * one on a schedule; the owner claimed this record on 2026-11-02.
+ *
+ * The second badge NOT self-hosted. Its point is the live status it draws
+ * ("live · 100% 30d"), which a copy would freeze, so the owner approved, on
+ * 2026-11-02, letting `img-src` admit `https://wellknown.network` on every
+ * surface that shows the footer, exactly as for LaunchNest: requested with
+ * `referrerpolicy="no-referrer"`, so Wellknown learns a visitor's IP but not
+ * which page they were on. The privacy policy says so under "Network
+ * requests". If the MCP server stops answering, this badge says so on every
+ * page. A 196x20 shields-style strip, drawn like mcpservers.org's, 28px tall
+ * (274x28). No badge verifier, so it is not in `index.html`.
  */
 export const WELLKNOWN_URL = 'https://wellknown.network/agents/promptspend-mcp';
-export const WELLKNOWN_BADGE = `${import.meta.env.BASE_URL}wellknown-badge.svg`;
+export const WELLKNOWN_ORIGIN = 'https://wellknown.network';
+export const WELLKNOWN_BADGE = `${WELLKNOWN_ORIGIN}/agents/promptspend-mcp/badge.svg`;
 
 /**
  * Install routes for the two things that are not this website.

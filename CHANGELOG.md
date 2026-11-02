@@ -9,6 +9,10 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **The footer shows the MCP server's live status on Wellknown** (owner-approved 2026-11-02). The badge
+  loads from wellknown.network with no referrer, the second image (after LaunchNest's) that is not
+  self-hosted; the privacy page says so. Uneed and PeerPush badges are gone, and the row fits on one
+  line from a 1080px-wide window up.
 - **The price data now asks for credit** (2026-10-30). The price history files and the pricing API's answers are
   released under CC BY 4.0: anyone may use them, including commercially, as long as they credit PromptSpend.
   Copies released before today, including the archived Zenodo version and the Hugging Face copy, stay public

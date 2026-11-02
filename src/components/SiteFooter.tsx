@@ -242,9 +242,10 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
             <img
               className="footer__badge-strip"
               src={WELLKNOWN_BADGE}
-              alt="PromptSpend on Wellknown, verified owner"
+              alt="PromptSpend MCP server status on Wellknown"
               width={274}
               height={28}
+              referrerPolicy="no-referrer"
             />
           </a>
         </div>

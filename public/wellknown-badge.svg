@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="196" height="20" role="img" aria-label="wellknown: verified owner">
-<title>wellknown: verified owner</title>
-<linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient>
-<clipPath id="r"><rect width="196" height="20" rx="3" fill="#fff"/></clipPath>
-<g clip-path="url(#r)"><rect width="77" height="20" fill="#0b100f"/><rect x="77" width="119" height="20" fill="#3fd08b"/><rect width="196" height="20" fill="url(#s)"/></g>
-<g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-<text x="38.5" y="14" fill="#eaf0ed">wellknown</text>
-<text x="136.5" y="14" fill="#0b100f" font-weight="bold">verified owner</text>
-</g></svg>

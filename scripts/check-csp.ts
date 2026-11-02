@@ -72,8 +72,8 @@ const GOOGLE_COLLECT = [
  *   and the collection hosts it reports to). The
  *   alerts API's origin is whatever the build was given, so it is read from
  *   the same variable the build reads.
- * - img-src: the LaunchNest badge (2026-10-05) and Google Analytics' image
- *   fallback.
+ * - img-src: the LaunchNest badge (2026-10-05), the Wellknown status badge
+ *   (2026-11-02) and Google Analytics' image fallback.
  */
 /**
  * Google's hosts are on the list only while Google Analytics is running
@@ -94,7 +94,11 @@ const ALLOWED: Record<string, Set<string>> = {
     ...[(loadEnv('production', ROOT, 'VITE_').VITE_ALERTS_API ?? '').replace(/\/+$/, '')].filter(Boolean),
     ...(GOOGLE_ON ? [GOOGLE_SCRIPT, ...GOOGLE_COLLECT] : []),
   ]),
-  'img-src': new Set(['https://launchnest.io', ...(GOOGLE_ON ? [GOOGLE_SCRIPT, ...GOOGLE_COLLECT] : [])]),
+  'img-src': new Set([
+    'https://launchnest.io',
+    'https://wellknown.network',
+    ...(GOOGLE_ON ? [GOOGLE_SCRIPT, ...GOOGLE_COLLECT] : []),
+  ]),
   'frame-src': new Set(['https://challenges.cloudflare.com']),
 };
 
