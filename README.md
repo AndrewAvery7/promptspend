@@ -498,9 +498,9 @@ just a confident guess.
 ## Privacy, precisely
 
 **Nothing you paste leaves your browser.** No accounts, and no ads on the site. Fonts are
-self-hosted. One image is not: the footer's LaunchNest listing badge loads from launchnest.io (their
-directory requires it), with no referrer, so LaunchNest's server sees a visitor's IP address but not
-which page they were on.
+self-hosted. Two images are not: the footer's LaunchNest listing badge loads from launchnest.io (their
+directory requires it) and its live MCP server status badge from wellknown.network, both with no
+referrer, so those servers see a visitor's IP address but not which page they were on.
 
 **The website counts visits with Google Analytics, which sets cookies.** Since 2026-10-24 (apart from a pause on 2026-10-29) every page of
 promptspend.com loads Google Analytics 4. Since 2026-10-30 there is no pop-up notice: every footer has a
@@ -536,7 +536,7 @@ request logs (kept up to seven days), and the apps' update server has its loggin
 - The Content Security Policy opens `connect-src` for that one API origin and, whenever an API is
   configured, `script-src`, `connect-src` and `frame-src` for Turnstile's `challenges.cloudflare.com`
   (whether Turnstile is actually required is decided at runtime, so the build permits it). Beyond
-  that, the remote origins are `img-src` for the LaunchNest badge, `script-src` for the Cloudflare
+  that, the remote origins are `img-src` for the LaunchNest and Wellknown badges, `script-src` for the Cloudflare
   beacon (which posts only to this site), and Google Analytics: `www.googletagmanager.com` for
   `gtag.js` (in `script-src`, and in `connect-src` and `img-src` as Google's guidance asks), and the hosts Google's CSP guide lists for Google Analytics with its advertising features, in `connect-src` and
   `img-src`: `*.google-analytics.com`, `*.analytics.google.com`, `*.g.doubleclick.net`, `www.google.com`, `google.com`,

@@ -3,7 +3,7 @@ slug: privacy
 title: Privacy Policy | PromptSpend
 description: How PromptSpend handles pasted text, local app data, website and app analytics, cookies, pricing requests, app updates, sharing, alerts, and support messages.
 heading: Privacy Policy
-updated: 2026-10-30
+updated: 2026-11-02
 ---
 
 PromptSpend is designed to estimate AI costs without turning your prompts into our data. This policy covers the PromptSpend native apps, website, pricing API, and optional alert and support services.
@@ -24,7 +24,7 @@ On the website, prompt text is processed in the browser, including on the token 
 
 The native app uses encrypted HTTPS requests to download PromptSpend's public pricing catalog and source-check status and, unless you switch it off, to send usage statistics to Google Analytics, described under App usage statistics. These requests do not include your pasted text, saved scenarios, contacts, advertising identifier, or precise location. Like other internet services, hosting and network providers may process ordinary connection information, such as an IP address, request time, and user agent, to deliver and secure the service. PromptSpend does not use that information to build advertising profiles or track activity across apps or websites.
 
-The website's footer shows a badge for PromptSpend's listing on LaunchNest, a product directory. That one image is loaded from launchnest.io, so your browser contacts LaunchNest's server when a page loads, which tells it your IP address and browser type. It is requested without telling LaunchNest which page you were on, and it sets no cookies.
+The website's footer shows two badges that load from other servers. One is for PromptSpend's listing on LaunchNest, a product directory, loaded from launchnest.io. The other shows the live status of PromptSpend's MCP server on Wellknown, an index of AI tools, loaded from wellknown.network. For each, your browser contacts that company's server when a page loads, which tells it your IP address and browser type. Both are requested without telling them which page you were on, and neither sets cookies.
 
 ## Website visit statistics
 

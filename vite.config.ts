@@ -271,10 +271,12 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
         `script-src ${script.join(' ')}`,
         `style-src ${style}`,
         // launchnest.io for the footer's LaunchNest badge alone (approved
-        // 2026-10-05; their verifier refuses a self-hosted copy), and Google
+        // 2026-10-05; their verifier refuses a self-hosted copy),
+        // wellknown.network for the footer's live MCP status badge alone
+        // (approved 2026-11-02; a copy would freeze its status), and Google
         // Analytics' hosts for the image fallback `gtag.js` reports through
         // when a browser cannot send a beacon.
-        `img-src ${["'self'", 'data:', 'https://launchnest.io', ...GA_POLICY_SCRIPT_ORIGINS, ...GA_POLICY_COLLECT_ORIGINS].join(' ')}`,
+        `img-src ${["'self'", 'data:', 'https://launchnest.io', 'https://wellknown.network', ...GA_POLICY_SCRIPT_ORIGINS, ...GA_POLICY_COLLECT_ORIGINS].join(' ')}`,
         "font-src 'self'",
         `connect-src ${connect.join(' ')}`,
         `frame-src ${frame.join(' ')}`,

@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
  * A promise nobody tests is a promise that becomes false the day someone adds
  * a script. What is asserted is what PromptSpend's own code does: it sets no
  * cookie, stores only interface choices, and talks only to this site and the
- * LaunchNest badge. When accounts or a sponsor are added, these tests fail on
+ * LaunchNest and Wellknown badges. When accounts or a sponsor are added, these tests fail on
  * purpose, and the fix is to rewrite the promises (README, privacy page,
  * footer, social card, store listings) in the same release and then change the
  * assertion — never to loosen the assertion alone.
@@ -83,7 +83,7 @@ test('changing a setting stores only interface choices, and still no cookie', as
   expect(await context.cookies(), `cookies were set. ${HOW_TO_FIX}`).toEqual([]);
 });
 
-test('talks only to this site and the LaunchNest badge', async ({ page, baseURL }) => {
+test('talks only to this site and the LaunchNest and Wellknown badges', async ({ page, baseURL }) => {
   const hosts = new Set<string>();
   page.on('request', (request) => {
     const url = new URL(request.url());
@@ -92,7 +92,8 @@ test('talks only to this site and the LaunchNest badge', async ({ page, baseURL 
   for (const path of PAGES) await page.goto(path, { waitUntil: 'networkidle' });
 
   const here = new URL(baseURL!).host;
-  const others = [...hosts].filter((host) => host !== here && host !== 'launchnest.io');
+  const badges = ['launchnest.io', 'wellknown.network'];
+  const others = [...hosts].filter((host) => host !== here && !badges.includes(host));
   expect(others, `a request went somewhere unlisted. ${HOW_TO_FIX}`).toEqual([]);
 });
 

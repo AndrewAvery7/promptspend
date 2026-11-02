@@ -152,9 +152,11 @@ the page code by hand, run `--fix` and commit the file with your change.
    computed over the string that is actually emitted, so the two cannot drift.
 3. **Therefore almost no external anything**: no fonts from anywhere but this site
    (`font-src 'self'`, for the header's typefaces), no images beyond an
-   inline SVG favicon and the footer badges. The LaunchNest badge is the one
-   image loaded from another server (launchnest.io, no referrer); its verifier
-   refuses a local copy, and the owner approved the exception on 2026-10-05.
+   inline SVG favicon and the footer badges. Two images load from another
+   server, both with no referrer: the LaunchNest badge (launchnest.io; its
+   verifier refuses a local copy, approved 2026-10-05) and the Wellknown live
+   MCP status badge (wellknown.network; a copy would freeze it, approved
+   2026-11-02).
    The same day he approved Cloudflare Web Analytics: Cloudflare injects its
    beacon as it serves each page, so `script-src` also admits
    `https://static.cloudflareinsights.com`, and the beacon reports only to

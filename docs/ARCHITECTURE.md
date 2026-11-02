@@ -25,8 +25,8 @@ the code, and README.md was corrected at the time. This file and SECURITY.md wer
 ordinary way a document goes wrong: nobody re-reads the paragraph they are not editing.
 
 Neither Worker is in the path of the estimator. Close the alerts form and the site is still a static page
-that sends no pasted text anywhere (the scenario in its address does go to Google Analytics). Its remote requests are the footer's LaunchNest badge image,
-which carries no data, Cloudflare's Web Analytics beacon, which reports page views to the site's
+that sends no pasted text anywhere (the scenario in its address does go to Google Analytics). Its remote requests are the footer's LaunchNest and Wellknown badge images,
+which carry no data, Cloudflare's Web Analytics beacon, which reports page views to the site's
 own `/cdn-cgi/rum`, and (since 2026-10-24, apart from a pause on 2026-10-29; promptspend.com only) Google Analytics 4, which sets
 cookies and, since 2026-10-29, runs with every feature on: the full address minus alert links' private
 key, Google signals and ad personalization, the kind of page (`page_type`, a fixed label), and three key events with fixed labels or catalog model ids (`src/lib/analytics/events.ts`); never pasted text (`src/lib/analytics/`). There is still no account system.
