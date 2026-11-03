@@ -209,6 +209,13 @@ describe('documents that do not need the catalog', () => {
     }
   });
 
+  it('serves the SealKeeper claim token as plain text', async () => {
+    const res = await get('/.well-known/sealkeeper-claim.txt');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('text/plain');
+    expect(await res.text()).toBe('WJNWmUE3Rid68gbolj91uNEBjcXrtSq-T17jNXBbq1M');
+  });
+
   it('leaves the documents indexable — they are the point', async () => {
     for (const path of ['/', '/openapi.json', '/llms.txt']) {
       expect((await get(path)).headers.get('X-Robots-Tag')).toBeNull();
