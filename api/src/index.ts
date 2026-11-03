@@ -24,7 +24,7 @@ import { openApiDocument } from './openapi';
 const STATUSES = new Set(['current', 'legacy', 'deprecated']);
 
 /** SealKeeper domain-claim token for promptspend.dev, served at /.well-known/sealkeeper-claim.txt. */
-const SEALKEEPER_CLAIM_TOKEN = 'WJNWmUE3Rid68gbolj91uNEBjcXrtSq-T17jNXBbq1M';
+const SEALKEEPER_CLAIM_TOKEN = 'X6v-P82Ht6YzH4k340wrdQK-WIOkVp22tz9RuKt88Ws';
 
 /**
  * Crawl policy, stated deliberately rather than left to a default.

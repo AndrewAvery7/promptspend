@@ -213,7 +213,7 @@ describe('documents that do not need the catalog', () => {
     const res = await get('/.well-known/sealkeeper-claim.txt');
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toContain('text/plain');
-    expect(await res.text()).toBe('WJNWmUE3Rid68gbolj91uNEBjcXrtSq-T17jNXBbq1M');
+    expect(await res.text()).toBe('X6v-P82Ht6YzH4k340wrdQK-WIOkVp22tz9RuKt88Ws');
   });
 
   it('leaves the documents indexable — they are the point', async () => {
