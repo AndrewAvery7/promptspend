@@ -1488,3 +1488,9 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: — → OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2
 - **Review** `mistral-mistral-large-4` — provenance.needsReview: — → true
 - **Review** `mistral-mistral-large-4` — provenance.reviewNote: — → the vendor's own page disagrees with the record — page lists $0.7/$2.1 vs recorded $1.36/$4.18; cached input $0.07 vs recorded $0.14
+
+## 2026-11-03
+
+- **Review** `mistral-mistral-large-4` — provenance.reviewNote: the vendor's own page disagrees with the record — page lists $0.7/$2.1 vs recorded $1.36/$4.18; cached input $0.07 vs recorded $0.14 → vendor override differs from the automated feed (50%): $0.7/$2.1 vs $1.36/$4.18; the vendor's own page disagrees with the record — page lists $0.7/$2.1 vs recorded $1.36/$4.18; cached input $0.07 vs recorded $0.14
+- **Review** `mistral-mistral-large-4-0` — provenance.needsReview: — → true
+- **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: — → vendor override differs from the automated feed (50%): $0.7/$2.1 vs $1.36/$4.18
