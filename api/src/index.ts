@@ -23,6 +23,9 @@ import { openApiDocument } from './openapi';
 
 const STATUSES = new Set(['current', 'legacy', 'deprecated']);
 
+/** SealKeeper domain-claim token for promptspend.dev, served at /.well-known/sealkeeper-claim.txt. */
+const SEALKEEPER_CLAIM_TOKEN = 'WJNWmUE3Rid68gbolj91uNEBjcXrtSq-T17jNXBbq1M';
+
 /**
  * Crawl policy, stated deliberately rather than left to a default.
  *
@@ -121,6 +124,10 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
       return text(llmsTxt(url.origin, env.SITE_ORIGIN), 'text/plain; charset=utf-8', { maxAge: 3600 });
     case '/robots.txt':
       return text(robotsTxt(url.origin), 'text/plain; charset=utf-8', { maxAge: 86_400 });
+    case '/.well-known/sealkeeper-claim.txt':
+      // Proves to SealKeeper that this host is ours. It reads the file daily,
+      // so it has to stay.
+      return text(SEALKEEPER_CLAIM_TOKEN, 'text/plain; charset=utf-8', { maxAge: 300 });
     case '/sitemap.xml':
       // One URL, and that is the honest answer: the hub is the only page here.
       // Everything else this Worker serves is data. `/v1/` is omitted from the
