@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-03T18:11:41.050Z",
+  "checkedAt": "2026-11-04T18:21:50.381Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "53406 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "53377 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -78,7 +78,7 @@
     {
       "url": "https://api-docs.deepseek.com/quick_start/pricing",
       "ok": true,
-      "note": "13884 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "13624 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "deepseek-deepseek-v4-pro",
         "deepseek-deepseek-v4-flash"
@@ -105,7 +105,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "211951 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "212794 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -163,7 +163,7 @@
     {
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "ok": true,
-      "note": "2982 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "3414 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "mistral-mistral-large-4",
         "mistral-mistral-large-4-0"
@@ -172,7 +172,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
       "ok": true,
-      "note": "61551 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "62406 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-max"
       ]
@@ -189,7 +189,7 @@
     {
       "url": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
       "ok": true,
-      "note": "4438 chars via fetch, read by deepseek/deepseek-v4-flash",
+      "note": "5575 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xiaomi-mimo-mimo-v2.6-pro",
         "xiaomi-mimo-mimo-v2.6-flash"
@@ -231,7 +231,7 @@
     {
       "url": "https://cohere.com/pricing",
       "ok": true,
-      "note": "19167 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "19483 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "command-r-plus-08-2024"
       ]
@@ -494,7 +494,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash listed; the page lists Gemini 3.8 Flash and Gemini 3.6 Flash)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash listed; page lists Gemini 3.8 Flash and Gemini 3.6 Flash)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -530,7 +530,7 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash listed; the page lists Gemini 3.5 Flash-Lite)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash listed; page lists Gemini 3.5 Flash-Lite)"
     },
     {
       "id": "gemini-gemini-4-argon",
@@ -566,19 +566,19 @@
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series pricing table is empty on the page; no price is printed for kimi-k3)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series pricing table is empty on the page; no price is printed for kimi-k3.1-pro)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price is printed for kimi-k2.7-code)"
+      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -668,7 +668,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
+      "detail": "not priced on the page (the LLM pricing table lists only MiniMax-M3.1-Flash and MiniMax-M3; no minimax-m2.5 row is present)"
     },
     {
       "id": "xai-grok-4.6",
@@ -728,7 +728,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing row is shown)"
+      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing is listed)"
     },
     {
       "id": "dashscope-qwen3.8-max",
