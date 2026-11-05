@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-04T18:21:50.381Z",
+  "checkedAt": "2026-11-05T18:25:43.048Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "21887 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "22158 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -60,7 +60,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "50785 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "103573 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -105,7 +105,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "212794 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "212767 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -189,7 +189,7 @@
     {
       "url": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
       "ok": true,
-      "note": "5575 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "5583 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xiaomi-mimo-mimo-v2.6-pro",
         "xiaomi-mimo-mimo-v2.6-flash"
@@ -223,7 +223,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash",
       "ok": true,
-      "note": "54453 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "55308 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-flash"
       ]
@@ -494,7 +494,7 @@
       "id": "gemini-gemini-3.7-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.7 Flash listed; page lists Gemini 3.8 Flash and Gemini 3.6 Flash)"
+      "detail": "not priced on the page (no Gemini 3.7 Flash section on the page; only 3.8 Flash and 3.6 Flash are listed)"
     },
     {
       "id": "gemini-gemini-3.5-flash-lite",
@@ -530,7 +530,7 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash listed; page lists Gemini 3.5 Flash-Lite)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only 3.5 Flash-Lite, 3.5 Transcribe, and 3.5 Live Translate are listed)"
     },
     {
       "id": "gemini-gemini-4-argon",
@@ -668,7 +668,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the LLM pricing table lists only MiniMax-M3.1-Flash and MiniMax-M3; no minimax-m2.5 row is present)"
+      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -728,7 +728,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing is listed)"
+      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no mistral-large-4-0 row is shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",
