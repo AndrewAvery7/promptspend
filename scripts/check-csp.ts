@@ -51,6 +51,8 @@ const GOOGLE_SCRIPT = 'https://www.googletagmanager.com';
 const GOOGLE_COLLECT = [
   'https://*.google-analytics.com',
   'https://*.analytics.google.com',
+  // The bare host, which the wildcard does not cover (2026-11-05).
+  'https://analytics.google.com',
   // Google signals and ad personalization (owner decision 2026-10-29).
   'https://*.g.doubleclick.net',
   'https://www.google.com',

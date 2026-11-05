@@ -376,6 +376,7 @@ describe('rendered pages', () => {
           'https://www.googletagmanager.com',
           'https://*.google-analytics.com',
           'https://*.analytics.google.com',
+          'https://analytics.google.com',
           'https://*.g.doubleclick.net',
           'https://www.google.com',
           'https://google.com',

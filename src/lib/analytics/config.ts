@@ -118,6 +118,10 @@ function collectOrigins(): string[] {
     // Measurement. gtag.js picks a regional subdomain (region1 today) on its own.
     'https://*.google-analytics.com',
     'https://*.analytics.google.com',
+    // The bare host too: a wildcard never matches the name it sits on, and
+    // gtag.js posts some page views to analytics.google.com/g/collect itself
+    // (seen blocked in the browser console on 2026-11-05).
+    'https://analytics.google.com',
     // Google signals and ad personalization (owner decision 2026-10-29, "everything
     // Google Analytics offers"): the cross-device and advertising hits.
     'https://*.g.doubleclick.net',

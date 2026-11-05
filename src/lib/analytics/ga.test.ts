@@ -55,9 +55,10 @@ describe('the configuration', () => {
 
   it('names its Google hosts exactly, with no wildcard on google.com itself', () => {
     expect(GA_SCRIPT_ORIGIN).toBe('https://www.googletagmanager.com');
-    expect(GA_COLLECT_ORIGINS.slice(0, 7)).toEqual([
+    expect(GA_COLLECT_ORIGINS.slice(0, 8)).toEqual([
       'https://*.google-analytics.com',
       'https://*.analytics.google.com',
+      'https://analytics.google.com',
       'https://*.g.doubleclick.net',
       'https://www.google.com',
       'https://google.com',
@@ -71,7 +72,7 @@ describe('the configuration', () => {
       expect.arrayContaining(['google.de', 'google.co.uk', 'google.ch', 'google.fr']),
     );
     expect(GOOGLE_COUNTRY_DOMAINS).not.toContain('google.com');
-    expect(GA_COLLECT_ORIGINS.slice(7)).toEqual(GOOGLE_COUNTRY_DOMAINS.map((d) => `https://www.${d}`));
+    expect(GA_COLLECT_ORIGINS.slice(8)).toEqual(GOOGLE_COUNTRY_DOMAINS.map((d) => `https://www.${d}`));
     expect(GA_COLLECT_ORIGINS.some((o) => o.includes('*.google.com'))).toBe(false);
   });
 
