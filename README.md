@@ -539,7 +539,7 @@ request logs (kept up to seven days), and the apps' update server has its loggin
   that, the remote origins are `img-src` for the LaunchNest and Wellknown badges, `script-src` for the Cloudflare
   beacon (which posts only to this site), and Google Analytics: `www.googletagmanager.com` for
   `gtag.js` (in `script-src`, and in `connect-src` and `img-src` as Google's guidance asks), and the hosts Google's CSP guide lists for Google Analytics with its advertising features, in `connect-src` and
-  `img-src`: `*.google-analytics.com`, `*.analytics.google.com`, `*.g.doubleclick.net`, `www.google.com`, `google.com`,
+  `img-src`: `*.google-analytics.com`, `*.analytics.google.com`, `analytics.google.com`, `*.g.doubleclick.net`, `www.google.com`, `google.com`,
   `adservice.google.com`, `pagead2.googlesyndication.com`, and `www.google.<country>` for Google's 186 country domains
   (a visitor's signals report goes to their own country's Google). Never `*.google.com`, which would admit Google Forms.
   That `connect-src` line is what stops a compromised dependency exfiltrating a pasted prompt, so it is

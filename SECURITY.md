@@ -12,7 +12,8 @@ fragment; and Google Analytics 4 (since 2026-10-29): `gtag.js` from
 `https://www.googletagmanager.com` (`script-src`, and also `connect-src`
 and `img-src`), reporting to the hosts in Google's own Content Security Policy guide for
 Google Analytics with its advertising features: `https://*.google-analytics.com`
-and `https://*.analytics.google.com` (gtag.js picks the regional subdomain),
+`https://*.analytics.google.com` (gtag.js picks the regional subdomain) and
+the bare `https://analytics.google.com`, which that wildcard does not cover,
 and, for Google signals, ad personalization and user-provided data,
 `https://*.g.doubleclick.net`, `https://www.google.com`, `https://google.com`,
 `https://adservice.google.com`, `https://pagead2.googlesyndication.com` and
