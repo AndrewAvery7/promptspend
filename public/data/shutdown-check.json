@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-05T18:28:09.264Z",
+  "checkedAt": "2026-11-06T17:49:11.581Z",
   "sources": [
     {
       "url": "https://developers.openai.com/api/docs/deprecations.md",
       "ok": true,
-      "notices": 173
+      "notices": 174
     },
     {
       "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations.md",
