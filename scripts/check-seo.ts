@@ -251,10 +251,10 @@ async function main(): Promise<void> {
     }
   }
 
-  // Fazier's free launch needs a followed link to fazier.com on the home page,
+  // Fazier's free launch needs a followed link to its fazier.com listing on the home page,
   // and its verifier is assumed to read the HTML as LaunchNest's does. The
   // badge is a self-hosted copy, so the image is ours, under the base path.
-  const fazier = /<a href="https:\/\/fazier\.com"([^>]*)>([\s\S]*?)<\/a>/.exec(html);
+  const fazier = /<a href="https:\/\/fazier\.com\/launches\/promptspend"([^>]*)>([\s\S]*?)<\/a>/.exec(html);
   if (!fazier) problems.push('no Fazier link in the static HTML');
   else {
     const rel = /\brel="([^"]*)"/.exec(fazier[1]!)?.[1] ?? '';

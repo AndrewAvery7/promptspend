@@ -83,7 +83,7 @@ export const DEVELOPER_HUB_URL = 'https://promptspend.dev';
  * centered in the footer's badge grid. The mark, the wordmark and their colors
  * are untouched.
  */
-export const SWB_URL = 'https://sellwithboost.com';
+export const SWB_URL = 'https://sellwithboost.com/startups/promptspend';
 export const SWB_BADGE_LIGHT = `${import.meta.env.BASE_URL}sellwithboost-light.svg`;
 export const SWB_BADGE_DARK = `${import.meta.env.BASE_URL}sellwithboost-dark.svg`;
 
@@ -148,7 +148,7 @@ export const LAUNCHNEST_BADGE_DARK = `${LAUNCHNEST_ORIGIN}/badge/promptspend.svg
  * `index.html` carries a copy of this badge inside `#root` too; keep the two in
  * step. The link must not carry `nofollow`, `sponsored` or `ugc`.
  */
-export const FAZIER_URL = 'https://fazier.com';
+export const FAZIER_URL = 'https://fazier.com/launches/promptspend';
 export const FAZIER_BADGE_LIGHT = `${import.meta.env.BASE_URL}fazier-badge-light.svg`;
 export const FAZIER_BADGE_DARK = `${import.meta.env.BASE_URL}fazier-badge-dark.svg`;
 
