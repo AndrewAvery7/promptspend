@@ -12,4 +12,6 @@ export interface Env {
   SYNC_STATUS_URL: string;
   SITE_ORIGIN: string;
   FRESH_SECONDS: string;
+  /** The one image `mcptry.ts` relays. Fixed here so the relay cannot fetch anything else. */
+  MCPTRY_BADGE_URL: string;
 }

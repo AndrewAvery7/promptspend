@@ -29,6 +29,9 @@
     // once a day, so five minutes is far tighter than it needs to be and keeps
     // the worst-case staleness trivially small.
     "FRESH_SECONDS": "300",
+    // The live mcptry status badge for the MCP server, relayed at
+    // /status/mcptry.svg so the site footer never makes visitors contact mcptry.
+    "MCPTRY_BADGE_URL": "https://mcptry.com/badge/io.github.AndrewAvery7/promptspend",
   },
 
   // No D1, no KV, no secrets, no bindings of any kind. This Worker reads one

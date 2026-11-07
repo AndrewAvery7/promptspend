@@ -156,7 +156,9 @@ the page code by hand, run `--fix` and commit the file with your change.
    server, both with no referrer: the LaunchNest badge (launchnest.io; its
    verifier refuses a local copy, approved 2026-10-05) and the Wellknown live
    MCP status badge (wellknown.network; a copy would freeze it, approved
-   2026-11-02).
+   2026-11-02). A third live badge, mcptry's, is relayed by this project's own
+   developer hub (promptspend.dev/status/mcptry.svg), so `img-src` admits that
+   origin and visitors never contact mcptry.
    The same day he approved Cloudflare Web Analytics: Cloudflare injects its
    beacon as it serves each page, so `script-src` also admits
    `https://static.cloudflareinsights.com`, and the beacon reports only to

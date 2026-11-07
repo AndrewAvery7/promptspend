@@ -83,7 +83,10 @@ test('changing a setting stores only interface choices, and still no cookie', as
   expect(await context.cookies(), `cookies were set. ${HOW_TO_FIX}`).toEqual([]);
 });
 
-test('talks only to this site and the LaunchNest and Wellknown badges', async ({ page, baseURL }) => {
+test('talks only to this site, its developer hub and the LaunchNest and Wellknown badges', async ({
+  page,
+  baseURL,
+}) => {
   const hosts = new Set<string>();
   page.on('request', (request) => {
     const url = new URL(request.url());
@@ -92,7 +95,8 @@ test('talks only to this site and the LaunchNest and Wellknown badges', async ({
   for (const path of PAGES) await page.goto(path, { waitUntil: 'networkidle' });
 
   const here = new URL(baseURL!).host;
-  const badges = ['launchnest.io', 'wellknown.network'];
+  // promptspend.dev is ours: it relays the mcptry badge so mcptry never sees a visitor.
+  const badges = ['launchnest.io', 'wellknown.network', 'promptspend.dev'];
   const others = [...hosts].filter((host) => host !== here && !badges.includes(host));
   expect(others, `a request went somewhere unlisted. ${HOW_TO_FIX}`).toEqual([]);
 });

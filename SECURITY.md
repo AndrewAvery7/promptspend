@@ -5,7 +5,9 @@ pastes into the calculator is sent anywhere, which removes most of the usual att
 models a visitor chooses are part of the page address, which Google Analytics receives on promptspend.com
 (see Data handling). The pages
 load from these remote origins: `https://launchnest.io` and `https://wellknown.network`, for one badge
-image each (`img-src` only, no referrer); `https://static.cloudflareinsights.com`, the Cloudflare Web
+image each (`img-src` only, no referrer), and `https://promptspend.dev`, this project's own developer hub, which
+relays the live mcptry status badge so mcptry.com is never contacted by a visitor (`img-src` only; the relay
+refuses anything that is not a small, plain SVG); `https://static.cloudflareinsights.com`, the Cloudflare Web
 Analytics beacon (`script-src`), which reports only to the site's own
 `/cdn-cgi/rum`, and reports a page's address without its query string or
 fragment; and Google Analytics 4 (since 2026-10-29): `gtag.js` from

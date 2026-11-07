@@ -389,7 +389,8 @@ describe('rendered pages', () => {
     const approved: Record<string, string[]> = {
       // LaunchNest's badge (2026-10-05), Wellknown's status badge (2026-11-02),
       // and Google Analytics' image fallback.
-      'img-src': ['https://launchnest.io', 'https://wellknown.network', ...google],
+      // promptspend.dev: our own hub, relaying the mcptry badge.
+      'img-src': ['https://launchnest.io', 'https://wellknown.network', 'https://promptspend.dev', ...google],
       // Cloudflare's beacon (2026-10-05) and gtag.js (2026-10-06).
       'script-src': [
         'https://static.cloudflareinsights.com',

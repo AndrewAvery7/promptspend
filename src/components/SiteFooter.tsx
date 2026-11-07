@@ -34,6 +34,8 @@ import {
   SWB_BADGE_LIGHT,
   SUPPORT_URL,
   SWB_URL,
+  MCPTRY_BADGE,
+  MCPTRY_URL,
   VSCODE_MARKETPLACE_URL,
   WELLKNOWN_BADGE,
   WELLKNOWN_URL,
@@ -245,6 +247,16 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               alt="PromptSpend MCP server status on Wellknown"
               width={274}
               height={28}
+              referrerPolicy="no-referrer"
+            />
+          </a>
+          <a href={MCPTRY_URL} target="_blank" rel="noopener noreferrer">
+            <img
+              className="footer__badge-strip"
+              src={MCPTRY_BADGE}
+              alt="PromptSpend MCP server status on mcptry"
+              width={126}
+              height={20}
               referrerPolicy="no-referrer"
             />
           </a>
