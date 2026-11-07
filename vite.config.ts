@@ -275,8 +275,10 @@ function contentSecurityPolicy(alertsApi: string): Plugin {
         // wellknown.network for the footer's live MCP status badge alone
         // (approved 2026-11-02; a copy would freeze its status), and Google
         // Analytics' hosts for the image fallback `gtag.js` reports through
-        // when a browser cannot send a beacon.
-        `img-src ${["'self'", 'data:', 'https://launchnest.io', 'https://wellknown.network', ...GA_POLICY_SCRIPT_ORIGINS, ...GA_POLICY_COLLECT_ORIGINS].join(' ')}`,
+        // when a browser cannot send a beacon. promptspend.dev is this
+        // project's own developer hub, which relays the live mcptry badge so
+        // visitors never contact mcptry.com.
+        `img-src ${["'self'", 'data:', 'https://launchnest.io', 'https://wellknown.network', 'https://promptspend.dev', ...GA_POLICY_SCRIPT_ORIGINS, ...GA_POLICY_COLLECT_ORIGINS].join(' ')}`,
         "font-src 'self'",
         `connect-src ${connect.join(' ')}`,
         `frame-src ${frame.join(' ')}`,

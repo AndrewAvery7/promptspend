@@ -19,6 +19,7 @@ import { DOCS_CSS, docsPage, llmsTxt } from './docs';
 import type { Env } from './env';
 import { ApiError, badRequest, corsHeaders, etagFor, html, json, notFound, notModified, text } from './http';
 import { mcpResponse } from './mcp';
+import { mcptryBadgeResponse } from './mcptry';
 import { openApiDocument } from './openapi';
 
 const STATUSES = new Set(['current', 'legacy', 'deprecated']);
@@ -116,6 +117,8 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
   switch (path) {
     case '/':
       return html(docsPage(url.origin, env.SITE_ORIGIN));
+    case '/status/mcptry.svg':
+      return mcptryBadgeResponse(env);
     case '/style.css':
       return text(DOCS_CSS, 'text/css; charset=utf-8', { maxAge: 86_400 });
     case '/openapi.json':

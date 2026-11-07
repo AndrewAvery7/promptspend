@@ -23,7 +23,9 @@
  *    copies, except two: LaunchNest's (its verifier refuses a copy; approved
  *    2026-10-05) and Wellknown's live status badge (a copy would freeze it;
  *    approved 2026-11-02). Both load with no referrer, and `img-src` admits
- *    those two origins. The Cloudflare beacon's script is
+ *    those two origins. A third live badge (mcptry's) comes through this
+ *    project's own developer hub, https://promptspend.dev, which relays it so
+ *    mcptry never sees a visitor; `img-src` admits that origin too. The Cloudflare beacon's script is
  *    another (`script-src`); it posts only to this site. Google Analytics is
  *    the last, and only while it runs (while it is paused, the policy names no Google host): its script host, and the collection hosts it reports to in
  *    `connect-src` and `img-src`, all named in `src/lib/analytics/config.ts`.
@@ -397,7 +399,7 @@ export function layout(ctx: RenderContext, input: LayoutInput): string {
     "default-src 'none'",
     "style-src 'self'",
     "font-src 'self'",
-    `img-src ${sources("'self' data: https://launchnest.io https://wellknown.network", GA_POLICY_SCRIPT_ORIGINS, GA_POLICY_COLLECT_ORIGINS)}`,
+    `img-src ${sources("'self' data: https://launchnest.io https://wellknown.network https://promptspend.dev", GA_POLICY_SCRIPT_ORIGINS, GA_POLICY_COLLECT_ORIGINS)}`,
     `script-src ${sources(`'self' 'sha256-${ctx.hashInline(ld)}' https://static.cloudflareinsights.com`, GA_POLICY_SCRIPT_ORIGINS)}`,
     `connect-src ${sources("'self'", GA_POLICY_SCRIPT_ORIGINS, GA_POLICY_COLLECT_ORIGINS)}`,
     "base-uri 'self'",
@@ -643,6 +645,9 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
           </a>
           <a href="https://wellknown.network/agents/promptspend-mcp" target="_blank" rel="noopener noreferrer">
             <img class="footer__badge-strip" src="https://wellknown.network/agents/promptspend-mcp/badge.svg" alt="PromptSpend MCP server status on Wellknown" width="274" height="28" referrerpolicy="no-referrer" />
+          </a>
+          <a href="https://mcptry.com/servers/io.github.AndrewAvery7/promptspend" target="_blank" rel="noopener noreferrer">
+            <img class="footer__badge-strip" src="https://promptspend.dev/status/mcptry.svg" alt="PromptSpend MCP server status on mcptry" width="126" height="20" referrerpolicy="no-referrer" />
           </a>
         </div>
         <div class="footer__legal">

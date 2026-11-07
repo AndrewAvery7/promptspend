@@ -99,6 +99,8 @@ const ALLOWED: Record<string, Set<string>> = {
   'img-src': new Set([
     'https://launchnest.io',
     'https://wellknown.network',
+    // Our own developer hub, relaying the mcptry badge.
+    'https://promptspend.dev',
     ...(GOOGLE_ON ? [GOOGLE_SCRIPT, ...GOOGLE_COLLECT] : []),
   ]),
   'frame-src': new Set(['https://challenges.cloudflare.com']),

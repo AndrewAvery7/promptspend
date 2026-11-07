@@ -207,6 +207,20 @@ export const WELLKNOWN_ORIGIN = 'https://wellknown.network';
 export const WELLKNOWN_BADGE = `${WELLKNOWN_ORIGIN}/agents/promptspend-mcp/badge.svg`;
 
 /**
+ * The mcptry status badge for the MCP server, after the Wellknown one.
+ *
+ * mcptry.com calls the server and scores it. Like Wellknown's, the badge is
+ * live, so a copy would freeze it. Unlike the two before it, visitors do NOT
+ * contact the other company: the developer hub (promptspend.dev, same operator)
+ * fetches the badge and re-serves it (`api/src/mcptry.ts`, reused for five
+ * minutes), so mcptry never sees a visitor's address. `img-src` therefore
+ * admits our own `https://promptspend.dev`, not mcptry.com. If mcptry or the
+ * relay is down the badge reads "unavailable" in grey. 126x20, drawn flat.
+ */
+export const MCPTRY_URL = 'https://mcptry.com/servers/io.github.AndrewAvery7/promptspend';
+export const MCPTRY_BADGE = `${DEVELOPER_HUB_URL}/status/mcptry.svg`;
+
+/**
  * Install routes for the two things that are not this website.
  *
  * Defined in `@/lib/links` and re-exported here so components keep importing

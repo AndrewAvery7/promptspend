@@ -71,6 +71,9 @@ let originHits = 0;
  */
 let origin: () => Response;
 
+/** What mcptry answers for the relayed status badge. */
+let mcptry: () => Response;
+
 function serveCatalog(body: unknown = CATALOG, status = 200): void {
   origin = () =>
     new Response(typeof body === 'string' ? body : JSON.stringify(body), {
@@ -93,6 +96,9 @@ function originUnreachable(): void {
 beforeEach(async () => {
   originHits = 0;
   originUnreachable();
+  mcptry = () => {
+    throw new Error('mcptry unreachable');
+  };
   // The Cache API is shared across a test file, and caching is most of what
   // this Worker does. Clearing it makes every test start from the same place.
   await caches.default.delete(new Request(CACHE_KEY));
@@ -157,6 +163,7 @@ beforeEach(async () => {
         ),
       );
     }
+    if (url === env.MCPTRY_BADGE_URL) return Promise.resolve(mcptry());
     if (url !== env.CATALOG_URL) throw new Error(`unexpected outbound fetch to ${url}`);
     originHits += 1;
     return Promise.resolve(origin());
@@ -443,6 +450,53 @@ describe('price badges', () => {
     expect(response.status).toBe(200);
     expect(response.headers.get('Content-Type')).toBe('image/svg+xml; charset=utf-8');
     expect(await response.text()).toContain('catalog unavailable');
+  });
+});
+
+describe('mcptry status relay', () => {
+  const GOOD =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="126" height="20" role="img" aria-label="mcptry: working, score 96/100"><title>mcptry: working</title><rect width="126" height="20" fill="#2ea44f"/></svg>';
+
+  it('relays the live badge with a short cache and a lockdown policy', async () => {
+    mcptry = () => new Response(GOOD, { headers: { 'Content-Type': 'image/svg+xml; charset=utf-8' } });
+    const response = await get('/status/mcptry.svg');
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe(GOOD);
+    expect(response.headers.get('Content-Type')).toBe('image/svg+xml; charset=utf-8');
+    expect(response.headers.get('Cache-Control')).toBe('public, max-age=300');
+    expect(response.headers.get('Content-Security-Policy')).toContain("default-src 'none'");
+    expect(response.headers.get('X-PromptSpend-Relay')).toBe('mcptry');
+  });
+
+  it('shows a grey "unavailable" badge when mcptry cannot be reached', async () => {
+    const response = await get('/status/mcptry.svg');
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain('unavailable');
+    expect(response.headers.get('X-PromptSpend-Relay')).toBe('fallback');
+    expect(response.headers.get('Cache-Control')).toBe('public, max-age=60');
+  });
+
+  it.each([
+    ['a script', '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'],
+    ['an event handler', '<svg xmlns="http://www.w3.org/2000/svg" onload="x()"></svg>'],
+    [
+      'an outside link',
+      '<svg xmlns="http://www.w3.org/2000/svg"><image href="https://evil.example/x.png"/></svg>',
+    ],
+    ['something that is not an SVG', '<html><body>hi</body></html>'],
+    ['an oversized file', `<svg xmlns="http://www.w3.org/2000/svg">${'a'.repeat(30_000)}</svg>`],
+  ])('refuses %s and serves the fallback instead', async (_name, body) => {
+    mcptry = () => new Response(body, { headers: { 'Content-Type': 'image/svg+xml' } });
+    const response = await get('/status/mcptry.svg');
+    expect(response.headers.get('X-PromptSpend-Relay')).toBe('fallback');
+    expect(await response.text()).not.toContain('alert(1)');
+  });
+
+  it('refuses a non-SVG content type and a failing status', async () => {
+    mcptry = () => new Response(GOOD, { headers: { 'Content-Type': 'text/html' } });
+    expect((await get('/status/mcptry.svg')).headers.get('X-PromptSpend-Relay')).toBe('fallback');
+    mcptry = () => new Response(GOOD, { status: 500, headers: { 'Content-Type': 'image/svg+xml' } });
+    expect((await get('/status/mcptry.svg')).headers.get('X-PromptSpend-Relay')).toBe('fallback');
   });
 });
 

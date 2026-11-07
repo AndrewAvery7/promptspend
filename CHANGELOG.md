@@ -9,6 +9,10 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **The footer shows the MCP server's live status on mcptry, without visitors contacting mcptry.** The
+  developer hub (promptspend.dev) fetches the badge and re-serves it at `/status/mcptry.svg`, reusing it for five
+  minutes; it shows a grey "unavailable" badge if mcptry is down or sends anything but a small plain SVG. The
+  privacy page and security policy say so, and `img-src` admits promptspend.dev (our own), not mcptry.com.
 - **The footer shows the MCP server's live status on Wellknown** (owner-approved 2026-11-02). The badge
   loads from wellknown.network with no referrer, the second image (after LaunchNest's) that is not
   self-hosted; the privacy page says so. Uneed and PeerPush badges are gone, and the row fits on one
