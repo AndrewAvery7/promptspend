@@ -610,7 +610,7 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
         </div>
         <div class="footer__badge">
           <span class="footer__listed">Listed on</span>
-          <a href="https://sellwithboost.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://sellwithboost.com/startups/promptspend" target="_blank" rel="noopener noreferrer">
             <picture>
               <source srcset="${escapeHtml(href(ctx, '/sellwithboost-dark.svg'))}" media="(prefers-color-scheme: dark)" />
               <img src="${escapeHtml(href(ctx, '/sellwithboost-light.svg'))}" alt="Listed on Sell With boost" width="104" height="40" />
@@ -628,7 +628,7 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
               <img src="https://launchnest.io/badge/promptspend.svg?variant=featured&amp;theme=light" alt="PromptSpend on LaunchNest" width="157" height="40" referrerpolicy="no-referrer" />
             </picture>
           </a>
-          <a href="https://fazier.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://fazier.com/launches/promptspend" target="_blank" rel="noopener noreferrer">
             <picture>
               <source srcset="${escapeHtml(href(ctx, '/fazier-badge-dark.svg'))}" media="(prefers-color-scheme: dark)" />
               <img src="${escapeHtml(href(ctx, '/fazier-badge-light.svg'))}" alt="PromptSpend on Fazier" width="94" height="40" />

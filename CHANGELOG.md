@@ -9,6 +9,8 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **The footer's Sell With Boost and Fazier badges now link to PromptSpend's own pages there** (2026-11-07),
+  not to those sites' home pages.
 - **The footer shows the MCP server's live status on mcptry, without visitors contacting mcptry.** The
   developer hub (promptspend.dev) fetches the badge and re-serves it at `/status/mcptry.svg`, reusing it for five
   minutes; it shows a grey "unavailable" badge if mcptry is down or sends anything but a small plain SVG. The

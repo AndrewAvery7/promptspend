@@ -49,7 +49,7 @@ test('the LaunchNest and Fazier badges are in the HTML, and on screen exactly on
   // to be in the HTML as served - not only in what React draws.
   const html = await (await request.get('/')).text();
   expect(html).toContain('href="https://launchnest.io/p/promptspend"');
-  expect(html).toContain('href="https://fazier.com"');
+  expect(html).toContain('href="https://fazier.com/launches/promptspend"');
 
   // React replaces those copies on mount and the footer draws its own: one, not two.
   await page.goto('/');
@@ -60,7 +60,7 @@ test('the LaunchNest and Fazier badges are in the HTML, and on screen exactly on
     'src',
     /^https:\/\/launchnest\.io\/badge\/promptspend\.svg\?variant=featured/,
   );
-  const fazier = page.locator('a[href="https://fazier.com"]');
+  const fazier = page.locator('a[href="https://fazier.com/launches/promptspend"]');
   await expect(fazier).toHaveCount(1);
   await expect(fazier.locator('img')).toHaveAttribute('src', /\/fazier-badge-(light|dark)\.svg$/);
 });

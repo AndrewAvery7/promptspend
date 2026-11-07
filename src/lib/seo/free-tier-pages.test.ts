@@ -218,7 +218,7 @@ describe('renderFreeTierPage', () => {
     expect(renderFreeTierIndex(free, CTX)).toContain('class="footer__badge"');
     const providerPage = SET.providers.find((page) => page.id === 'acme')!;
     expect(renderProviderPage(providerPage, CTX)).toContain('class="footer__badge"');
-    expect(renderProviderPage(providerPage, CTX)).toContain('https://sellwithboost.com');
+    expect(renderProviderPage(providerPage, CTX)).toContain('https://sellwithboost.com/startups/promptspend');
   });
 
   it('uses no inline style attribute, which the page policy would drop', () => {
