@@ -134,11 +134,12 @@ test.describe('PromptSpend Receipt', () => {
     const download = await downloadPromise;
     // The built-in sample is an example, and its file says so.
     expect(download.suggestedFilename()).toMatch(/^promptspend-ai-example-receipt-\d{4}-\d{2}-\d{2}\.png$/);
-    // The footer's LaunchNest and Wellknown badges are the approved remote
-    // requests (fixed image URLs that carry no receipt data; LaunchNest
-    // redirects to its static artwork); anything else would be a leak.
+    // The footer's LaunchNest and Wellknown badges, and the mcptry badge relayed
+    // by our own developer hub, are the approved remote requests (fixed image
+    // URLs that carry no receipt data; LaunchNest redirects to its static
+    // artwork); anything else would be a leak.
     const badge =
-      /^(https:\/\/launchnest\.io\/(badge\/promptspend\.svg\?variant=featured(&theme=light)?|brand\/badges\/featured-(light|dark)\.svg)|https:\/\/wellknown\.network\/agents\/promptspend-mcp\/badge\.svg)$/;
+      /^(https:\/\/launchnest\.io\/(badge\/promptspend\.svg\?variant=featured(&theme=light)?|brand\/badges\/featured-(light|dark)\.svg)|https:\/\/wellknown\.network\/agents\/promptspend-mcp\/badge\.svg|https:\/\/promptspend\.dev\/status\/mcptry\.svg)$/;
     expect(requests.filter((url) => !url.startsWith('http://127.0.0.1:4173') && !badge.test(url))).toEqual(
       [],
     );
