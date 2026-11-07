@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-06T17:46:31.973Z",
+  "checkedAt": "2026-11-07T16:42:50.977Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -105,7 +105,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": true,
-      "note": "214129 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "214121 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -172,7 +172,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
       "ok": true,
-      "note": "62782 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "62770 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-max"
       ]
@@ -223,7 +223,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash",
       "ok": true,
-      "note": "55308 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "55696 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-flash"
       ]
@@ -530,7 +530,7 @@
       "id": "gemini-gemini-3.5-flash",
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only 3.5 Flash-Lite, 3.5 Transcribe, and 3.5 Live Translate are listed)"
+      "detail": "not priced on the page (no Gemini 3.5 Flash section on the page; only Gemini 3.5 Flash-Lite, 3.5 Transcribe, and 3.5 Live Translate are listed)"
     },
     {
       "id": "gemini-gemini-4-argon",
@@ -668,7 +668,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (MiniMax M2.5 is not listed on the page; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
+      "detail": "not priced on the page (no MiniMax M2.5 row on the page; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
