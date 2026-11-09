@@ -5,8 +5,8 @@ for a tool and the wrong shape for search: nobody types "LLM cost estimator" int
 Google. They type **"gpt-5.6 pricing"** and **"claude opus vs gemini pro cost"**.
 
 `scripts/build-pages.ts` gives every one of those questions a real page, built
-from the same catalog and costed by the same engine as the app. 374 of them
-today: 126 models, 16 providers, 229 comparisons, 3 indexes.
+from the same catalog and costed by the same engine as the app. 375 of them
+today: 127 models, 16 providers, 229 comparisons, 3 indexes.
 
 `/receipt/` is also a real crawlable page, but it is a product route rather than a catalog-generated page and
 is therefore not included in the page arithmetic below. Vite builds it from `receipt/index.html`; the
@@ -27,7 +27,7 @@ if an indexable page has no link pointing to it from another page.
 | URL                    | Count | Contains                                                            |
 | ---------------------- | ----- | ------------------------------------------------------------------- |
 | `/models/`             | 1     | Every model by blended rate, with one workload costed on each       |
-| `/models/<slug>/`      | 126   | Full rate card, three monthly bills, rank, alternatives, provenance |
+| `/models/<slug>/`      | 127   | Full rate card, three monthly bills, rank, alternatives, provenance |
 | `/providers/`          | 1     | Every provider, model counts, cheapest model                        |
 | `/providers/<slug>/`   | 16    | That provider's models, cheapest first                              |
 | `/compare/`            | 1     | Every head-to-head                                                  |
@@ -64,7 +64,7 @@ description.
 
 ### Why the comparison set is curated
 
-The combinatorial answer is 126 × 125 ÷ 2 = 7,875 pages, nearly all comparing
+The combinatorial answer is 127 × 126 ÷ 2 = 8,001 pages, nearly all comparing
 things nobody would choose between. A $0.14 flash model against a $75 frontier
 model is not a decision, it is a category difference.
 

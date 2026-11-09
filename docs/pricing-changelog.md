@@ -1499,3 +1499,11 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `minimax-minimax-m2.5` — provenance.needsReview: true → —
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2 → —
+
+## 2026-11-09
+
+- **Added** `claude-fable-5-2` — Claude Fable 5 2 ($8 in / $40 out per 1M)
+- **Review** `gemini-gemini-3.5-flash` — provenance.needsReview: — → true
+- **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+- **Review** `gemini-gemini-3.7-flash` — provenance.needsReview: — → true
+- **Review** `gemini-gemini-3.7-flash` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
