@@ -1507,3 +1507,11 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
 - **Review** `gemini-gemini-3.7-flash` — provenance.needsReview: — → true
 - **Review** `gemini-gemini-3.7-flash` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-11-10
+
+- **Added** `gemini-gemini-4-carbon` — Gemini 4 Carbon ($2 in / $10 out per 1M)
+- **Review** `claude-fable-5-2` — provenance.needsReview: true → —
+- **Review** `claude-fable-5-2` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `gemini-gemini-3.7-flash` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
