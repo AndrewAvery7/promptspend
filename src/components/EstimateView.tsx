@@ -129,8 +129,10 @@ export function EstimateView({
               Estimate my cost
             </a>
           </p>
-          <p className="subhead">
-            Want to try before you pay? <a href={FREE_TIERS_URL}>See which providers have a free tier</a>.
+          <p className="subhead hero__free-tiers">
+            {/* Andrew's wording, 2026-11-11. The whole question is the link, so it
+                still leads to the free-tier comparison it replaced. */}
+            <a href={FREE_TIERS_URL}>Which AI models should you try first?</a>
           </p>
           <Provenance catalog={catalog} onOpenData={onOpenData} />
         </div>
@@ -175,11 +177,12 @@ export function EstimateView({
               <b>Pricing API</b> — keyless and CORS-open, as JSON or CSV
             </li>
           </ul>
-          {/* Outlined, not filled: the hero's main column owns the page's one
-              primary action ("Estimate my cost"). The label says what the
-              Receipt does in the visitor's words, since "PromptSpend this
-              conversation" only made sense to someone who already knew. */}
-          <a className="button hero__receipt-cta" href={RECEIPT_URL}>
+          {/* Filled blue like "Estimate my cost" at Andrew's request
+              (2026-11-11): the two columns read as a matched pair. The label
+              says what the Receipt does in the visitor's words, since
+              "PromptSpend this conversation" only made sense to someone who
+              already knew. */}
+          <a className="button button--primary hero__receipt-cta" href={RECEIPT_URL}>
             Price an AI chat you&apos;ve already had
           </a>
           <p className="hero__aside-note">
