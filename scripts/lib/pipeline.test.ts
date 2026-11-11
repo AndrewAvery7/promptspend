@@ -615,6 +615,48 @@ describe('mergeCatalog — the trust ladder', () => {
     ).toBeUndefined();
   });
 
+  it('lets a later hand re-reading answer the machine’s mismatch, but not a same-day one', () => {
+    const readAt = new Date('2026-07-31T18:24:00.000Z');
+    const vendorCheck = {
+      schemaVersion: 1,
+      checkedAt: readAt.toISOString(),
+      extractionModel: 'claude-opus-5',
+      pages: [],
+      items: [
+        {
+          id: 'claude-sonnet-5',
+          url: 'https://platform.claude.com/docs/en/about-claude/pricing',
+          status: 'mismatch' as const,
+          detail: 'page lists $4/$20 vs recorded $3/$15',
+        },
+      ],
+      confirmed: 0,
+      mismatched: 1,
+      unconfirmed: 0,
+    };
+    const codesFor = (lastVerified: string) =>
+      mergeCatalog({
+        litellm,
+        openrouter: new Map(),
+        allowlist: ALLOWLIST,
+        overrides: [
+          {
+            id: 'claude-sonnet-5',
+            vendorVerified: true,
+            lastVerified,
+            verifiedUrl: 'https://platform.claude.com/docs/en/about-claude/pricing',
+            pricing: { input: 4, output: 20 },
+          },
+        ],
+        generatedAt,
+        vendorCheck,
+      }).catalog.models.find((model) => model.id === 'claude-sonnet-5')!.provenance.reviewCodes ?? [];
+    // Re-read by hand the day after the machine's reading: the old reading is moot.
+    expect(codesFor('2026-08-01')).not.toContain('vendor-page-mismatch');
+    // Dated the same day as the reading: the reading still stands.
+    expect(codesFor('2026-07-31')).toContain('vendor-page-mismatch');
+  });
+
   it('flags a live model its vendor has shut down, and leaves a scheduled one alone', () => {
     const item = (id: string, shutDown: boolean) => ({
       id,

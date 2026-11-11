@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T18:26:39.912Z",
+  "generatedAt": "2026-11-11T11:38:36.317Z",
   "providers": [
     {
       "id": "anthropic",
@@ -123,7 +123,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 64000,
       "capabilityIndex": 60
@@ -151,7 +151,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10",
+        "lastVerified": "2026-11-11",
         "lastChanged": "2026-10-03"
       },
       "maxOutput": 64000,
@@ -180,7 +180,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 10000
     },
@@ -207,7 +207,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 10000
     },
@@ -234,7 +234,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 10000
     },
@@ -353,7 +353,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 128000
     },
@@ -412,7 +412,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 128000,
       "capabilityIndex": 86
@@ -775,7 +775,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 8000,
       "capabilityIndex": 55
@@ -802,7 +802,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 4096
     },
@@ -1416,7 +1416,7 @@
       "id": "gemini-gemini-3.5-flash",
       "providerId": "google",
       "displayName": "Gemini 3.5 Flash",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 1048576,
       "pricing": {
         "input": 1.5,
@@ -1436,12 +1436,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-10-09",
-        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536
     },
@@ -1515,7 +1510,7 @@
       "id": "gemini-gemini-3.7-flash",
       "providerId": "google",
       "displayName": "Gemini 3.7 Flash",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 1048576,
       "pricing": {
         "input": 1.5,
@@ -1542,12 +1537,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-10-09",
-        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 32 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 65536,
       "capabilityIndex": 81
@@ -1575,7 +1565,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 65536,
       "capabilityIndex": 85
@@ -1622,9 +1612,15 @@
       "status": "current",
       "contextWindow": 1048576,
       "pricing": {
-        "input": 2,
-        "output": 10,
-        "cachedInput": 0.1
+        "input": 4,
+        "output": 20,
+        "cachedInput": 0.2,
+        "intro": {
+          "input": 2,
+          "output": 10,
+          "cachedInput": 0.1,
+          "until": "2026-11-30"
+        }
       },
       "tokenizer": {
         "kind": "approx",
@@ -1637,13 +1633,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-11-10",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "source": "vendor",
+        "lastVerified": "2026-11-11",
+        "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
       },
       "maxOutput": 1048576
     },
@@ -2142,7 +2134,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10",
+        "lastVerified": "2026-11-11",
         "lastChanged": "2026-08-23",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
@@ -2581,7 +2573,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 8192
     },
@@ -2608,7 +2600,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 8192
     },
@@ -2664,7 +2656,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -2720,7 +2712,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 262144,
       "capabilityIndex": 57
@@ -2732,9 +2724,9 @@
       "status": "current",
       "contextWindow": 1048576,
       "pricing": {
-        "input": 1.36,
-        "output": 4.18,
-        "cachedInput": 0.14
+        "input": 0.7,
+        "output": 2.1,
+        "cachedInput": 0.07
       },
       "tokenizer": {
         "kind": "approx",
@@ -2748,14 +2740,9 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-30",
-        "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4",
-        "needsReview": true,
-        "reviewNote": "vendor override differs from the automated feed (50%): $0.7/$2.1 vs $1.36/$4.18; the vendor's own page disagrees with the record — page lists $0.7/$2.1 vs recorded $1.36/$4.18; cached input $0.07 vs recorded $0.14",
-        "reviewCodes": [
-          "override-drift",
-          "vendor-page-mismatch"
-        ]
+        "lastVerified": "2026-11-11",
+        "lastChanged": "2026-11-11",
+        "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4"
       },
       "maxOutput": 1048576,
       "capabilityIndex": 81
@@ -2767,9 +2754,9 @@
       "status": "current",
       "contextWindow": 1048576,
       "pricing": {
-        "input": 1.36,
-        "output": 4.18,
-        "cachedInput": 0.14
+        "input": 0.7,
+        "output": 2.1,
+        "cachedInput": 0.07
       },
       "tokenizer": {
         "kind": "approx",
@@ -2783,13 +2770,9 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-24",
-        "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4",
-        "needsReview": true,
-        "reviewNote": "vendor override differs from the automated feed (50%): $0.7/$2.1 vs $1.36/$4.18",
-        "reviewCodes": [
-          "override-drift"
-        ]
+        "lastVerified": "2026-11-11",
+        "lastChanged": "2026-11-11",
+        "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4"
       },
       "maxOutput": 1048576
     },
@@ -2843,7 +2826,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 262144,
       "capabilityIndex": 61
@@ -3453,7 +3436,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 500000,
       "capabilityIndex": 87
@@ -3799,7 +3782,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-10"
+        "lastVerified": "2026-11-11"
       },
       "maxOutput": 128000,
       "capabilityIndex": 71

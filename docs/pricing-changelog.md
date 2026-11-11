@@ -1515,3 +1515,34 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `claude-fable-5-2` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
 - **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
 - **Review** `gemini-gemini-3.7-flash` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+
+## 2026-11-11
+
+- **Price** `gemini-gemini-4-carbon` — input up 2 → 4
+- **Price** `gemini-gemini-4-carbon` — output up 10 → 20
+- **Price** `gemini-gemini-4-carbon` — cachedInput up 0.1 → 0.2
+- **Coverage** `gemini-gemini-4-carbon` — intro.input now tracked: — → 2
+- **Coverage** `gemini-gemini-4-carbon` — intro.output now tracked: — → 10
+- **Coverage** `gemini-gemini-4-carbon` — intro.until now tracked: — → 2026-11-30
+- **Price** `mistral-mistral-large-4` — input down 1.36 → 0.7
+- **Price** `mistral-mistral-large-4` — output down 4.18 → 2.1
+- **Price** `mistral-mistral-large-4` — cachedInput down 0.14 → 0.07
+- **Price** `mistral-mistral-large-4-0` — input down 1.36 → 0.7
+- **Price** `mistral-mistral-large-4-0` — output down 4.18 → 2.1
+- **Price** `mistral-mistral-large-4-0` — cachedInput down 0.14 → 0.07
+- **Metadata** `gemini-gemini-3.5-flash` — status: current → deprecated
+- **Metadata** `gemini-gemini-3.7-flash` — status: current → deprecated
+- **Review** `gemini-gemini-3.5-flash` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-3.5-flash` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gemini-gemini-3.7-flash` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-3.7-flash` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → —
+- **Review** `gemini-gemini-4-carbon` — provenance.source: litellm → vendor
+- **Review** `gemini-gemini-4-carbon` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-4-carbon` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gemini-gemini-4-carbon` — provenance.verifiedUrl: — → https://ai.google.dev/gemini-api/docs/pricing
+- **Review** `mistral-mistral-large-4` — provenance.needsReview: true → —
+- **Review** `mistral-mistral-large-4` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.7/$2.1 vs $1.36/$4.18; the vendor's own page disagrees with the record — page lists $0.7/$2.1 vs recorded $1.36/$4.18; cached input $0.07 vs recorded $0.14 → —
+- **Review** `mistral-mistral-large-4` — provenance.lastChanged: — → 2026-11-11
+- **Review** `mistral-mistral-large-4-0` — provenance.needsReview: true → —
+- **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.7/$2.1 vs $1.36/$4.18 → —
+- **Review** `mistral-mistral-large-4-0` — provenance.lastChanged: — → 2026-11-11

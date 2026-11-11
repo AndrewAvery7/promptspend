@@ -266,8 +266,15 @@ export function mergeCatalog(input: MergeInput): MergeResult {
       // The morning's reading of that page. A disagreement never rewrites the
       // record — the page is evidence, the override is the claim — it puts both
       // figures in front of a person.
+      // A person who re-read the page after the machine did, and changed the
+      // record to match it, has already answered the disagreement: the
+      // reading compared the page against a record that no longer exists.
+      // Only a lastVerified date strictly after the reading's own date counts,
+      // so a same-day hand edit cannot silence that morning's mismatch.
       const mismatch = vendorMismatchById.get(id);
-      if (mismatch) {
+      const readAt = vendorCheck ? Date.parse(vendorCheck.checkedAt) : Number.NaN;
+      const supersededByHandReading = Number.isFinite(readAt) && verifiedAt > readAt;
+      if (mismatch && !supersededByHandReading) {
         reasons.push({
           code: 'vendor-page-mismatch',
           text: `the vendor's own page disagrees with the record — ${mismatch.detail}`,
