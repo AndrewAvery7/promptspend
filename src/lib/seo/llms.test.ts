@@ -177,7 +177,7 @@ describe('renderLlmsFullTxt', () => {
           source: 'litellm',
           lastVerified: '2026-08-01',
           needsReview: true,
-          reviewNote: 'sources disagree | by 2x',
+          reviewNote: 'sources disagree \\| by 2x',
         },
       }),
     ]),
@@ -215,7 +215,9 @@ describe('renderLlmsFullTxt', () => {
     const row = renderLlmsFullTxt(FULL_SET, INPUT)
       .split('\n')
       .find((line) => line.includes('/models/disputed/'))!;
-    expect(row).toContain('FLAGGED FOR REVIEW: sources disagree \\| by 2x');
+    // A backslash already in the note is escaped too, so it cannot cancel the
+    // escape added for the pipe after it.
+    expect(row).toContain('FLAGGED FOR REVIEW: sources disagree \\\\\\| by 2x');
     expect(row).toContain('LiteLLM community catalog');
   });
 

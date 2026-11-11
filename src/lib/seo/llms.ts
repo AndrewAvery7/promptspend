@@ -198,7 +198,9 @@ function rateText(value: number): string {
 }
 
 function cell(value: string): string {
-  return value.replace(/\|/g, '\\|').replace(/\s+/g, ' ').trim();
+  // Backslashes first, so a backslash already in the text cannot cancel the
+  // escape added for a pipe (CodeQL: incomplete string escaping).
+  return value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\s+/g, ' ').trim();
 }
 
 const SOURCE_TYPE = {
