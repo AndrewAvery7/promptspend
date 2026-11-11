@@ -272,7 +272,7 @@ describe('App', () => {
     const nav = screen.getByRole('navigation', { name: 'Main' });
     expect(within(nav).getByRole('link', { name: 'Free Tiers' })).toHaveAttribute('href', '/free-tiers/');
     // The home page says it too, so a phone, where the nav scrolls, still shows it.
-    expect(screen.getAllByRole('link', { name: /which providers have a free tier/ })[0]).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Which AI models should you try first?' })).toHaveAttribute(
       'href',
       '/free-tiers/',
     );
@@ -484,7 +484,7 @@ describe('home page order', () => {
     await renderApp();
     expect(screen.getByRole('heading', { level: 1, name: /Know your AI API bill/ })).toBeInTheDocument();
     expect(screen.getByText(/pick up to four models/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /which providers have a free tier/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Which AI models should you try first?' })).toBeInTheDocument();
     expect(screen.getByText('Where each price was read')).toBeInTheDocument();
     expect(screen.getByText(/models tracked/)).toBeInTheDocument();
     expect(screen.getByText(/First time here\?/)).toBeInTheDocument();
@@ -499,11 +499,10 @@ describe('home page order', () => {
     ]) {
       expect(within(aside).getByText(item)).toBeInTheDocument();
     }
-    // Demoted to the outlined style: the Receipt prices a chat that already
-    // happened, so it must not be the page's one filled button.
+    // Filled blue to match "Estimate my cost" (owner review, 2026-11-11).
     const receipt = within(aside).getByRole('link', { name: "Price an AI chat you've already had" });
     expect(receipt).toHaveAttribute('href', expect.stringMatching(/receipt/));
-    expect(receipt).not.toHaveClass('button--primary');
+    expect(receipt).toHaveClass('button--primary');
     expect(within(aside).getByRole('button', { name: /How to install each/ })).toBeInTheDocument();
   });
 
@@ -513,9 +512,9 @@ describe('home page order', () => {
     const copy = document.querySelector('.hero__copy') as HTMLElement;
     const cta = within(copy).getByRole('link', { name: 'Estimate my cost' });
     expect(cta).toHaveClass('button--primary');
-    // The only filled button in the hero, so it reads as the main action.
-    const hero = document.querySelector('.hero') as HTMLElement;
-    expect(hero.querySelectorAll('.button--primary')).toHaveLength(1);
+    // The copy column's only filled button, so it reads as the main action
+    // there (the aside's Receipt button is filled too, by design).
+    expect(copy.querySelectorAll('.button--primary')).toHaveLength(1);
     // A real anchor, so it still works if the script never runs.
     expect(cta).toHaveAttribute('href', '#panel-models');
 

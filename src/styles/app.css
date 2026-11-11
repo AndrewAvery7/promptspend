@@ -347,7 +347,12 @@ body.tour-active .main {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface-2);
-  padding: 16px 18px;
+  padding: 18px 20px;
+  /* A column, so the list can take whatever height the copy column leaves and
+   * spread its items through it, with the button kept at the foot. Andrew,
+   * 2026-11-11: the text should fill the box, not stop halfway down it. */
+  display: flex;
+  flex-direction: column;
 }
 .hero__aside-eyebrow {
   font-family: var(--font-mono);
@@ -359,14 +364,14 @@ body.tour-active .main {
   margin-bottom: 8px;
 }
 .hero__aside-title {
-  font-size: 0.98rem;
+  font-size: 1.1rem;
   font-weight: 650;
   line-height: 1.3;
   margin-bottom: 8px;
 }
 .hero__aside p {
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   line-height: 1.5;
 }
 /* The four places this catalog answers besides a web page. A custom marker
@@ -374,16 +379,22 @@ body.tour-active .main {
    cannot take the accent. */
 .hero__aside-list {
   list-style: none;
-  margin: 10px 0 0;
+  margin: 14px 0 0;
   padding: 0;
   display: grid;
-  gap: 7px;
+  gap: 12px;
+  /* Takes the spare height and shares it between the rows, so a tall copy
+   * column spreads the list out rather than leaving a blank band above the
+   * button. On a phone, where the box is only as tall as its text, this is a
+   * no-op. */
+  flex: 1 0 auto;
+  align-content: space-evenly;
 }
 .hero__aside-list li {
   position: relative;
   padding-left: 15px;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   line-height: 1.45;
 }
 .hero__aside-list li::before {
@@ -423,18 +434,15 @@ body.tour-active .main {
   white-space: pre;
 }
 .hero__aside-note {
-  font-size: 0.76rem;
+  font-size: 0.82rem;
 }
 .hero__receipt-cta {
   width: 100%;
   min-height: 44px;
   justify-content: center;
-  margin-top: 14px;
+  margin-top: 18px;
   text-align: center;
   text-decoration: none;
-  /* The outlined `.button` sets no color of its own, and on an <a> that means
-     link blue — which read as a third style rather than the secondary one. */
-  color: var(--ink);
 }
 /* The hero's primary action. Inline-flex so it sizes to its label rather than
    stretching across the copy column on a desktop — a 700px-wide bar reads as
