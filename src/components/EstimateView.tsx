@@ -130,9 +130,10 @@ export function EstimateView({
             </a>
           </p>
           <p className="subhead hero__free-tiers">
-            {/* Andrew's wording, 2026-11-11. The whole question is the link, so it
-                still leads to the free-tier comparison it replaced. */}
-            <a href={FREE_TIERS_URL}>Which AI models should you try first?</a>
+            {/* Andrew's wording, 2026-11-11: the question stays plain text and only
+                the answer is the link to the free-tier comparison. */}
+            Which AI models should you try first? <a href={FREE_TIERS_URL}>See which LLMs have a free tier</a>
+            .
           </p>
           <Provenance catalog={catalog} onOpenData={onOpenData} />
         </div>

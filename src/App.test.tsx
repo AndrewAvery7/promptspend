@@ -272,7 +272,7 @@ describe('App', () => {
     const nav = screen.getByRole('navigation', { name: 'Main' });
     expect(within(nav).getByRole('link', { name: 'Free Tiers' })).toHaveAttribute('href', '/free-tiers/');
     // The home page says it too, so a phone, where the nav scrolls, still shows it.
-    expect(screen.getByRole('link', { name: 'Which AI models should you try first?' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'See which LLMs have a free tier' })).toHaveAttribute(
       'href',
       '/free-tiers/',
     );
@@ -484,7 +484,8 @@ describe('home page order', () => {
     await renderApp();
     expect(screen.getByRole('heading', { level: 1, name: /Know your AI API bill/ })).toBeInTheDocument();
     expect(screen.getByText(/pick up to four models/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Which AI models should you try first?' })).toBeInTheDocument();
+    expect(screen.getByText(/Which AI models should you try first\?/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'See which LLMs have a free tier' })).toBeInTheDocument();
     expect(screen.getByText('Where each price was read')).toBeInTheDocument();
     expect(screen.getByText(/models tracked/)).toBeInTheDocument();
     expect(screen.getByText(/First time here\?/)).toBeInTheDocument();
