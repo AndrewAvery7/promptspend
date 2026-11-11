@@ -129,7 +129,7 @@ export function EstimateView({
               Estimate my cost
             </a>
           </p>
-          <p className="subhead">
+          <p className="subhead hero__free-tiers">
             {/* Andrew's wording, 2026-11-11. The whole question is the link, so it
                 still leads to the free-tier comparison it replaced. */}
             <a href={FREE_TIERS_URL}>Which AI models should you try first?</a>

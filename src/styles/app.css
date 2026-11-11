@@ -341,6 +341,14 @@ body.tour-active .main {
     min-height: 44px;
     min-width: 44px;
   }
+  /* The free-tier question is a link on its own line, not a link inside a
+   * sentence, so it no longer gets WCAG's in-prose exemption: a thumb needs the
+   * full 44px. Inline-flex keeps it sized to its words. */
+  .hero__free-tiers a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }
 
 .hero__aside {
