@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Model, PricingCatalog } from '@/lib/pricing/types';
 import { SCHEMA_VERSION } from '@/lib/pricing/types';
 import { buildPages } from './pages';
-import { renderLlmsTxt } from './llms';
+import { renderIndexMd, renderLlmsFullTxt, renderLlmsTxt } from './llms';
 
 const ASOF = new Date('2026-08-02T00:00:00Z');
 const INPUT = {
@@ -161,5 +161,82 @@ describe('renderLlmsTxt writing section', () => {
   it('leaves the section out when there is no writing to list', () => {
     expect(renderLlmsTxt(SET, INPUT)).not.toContain('## Writing');
     expect(renderLlmsTxt(SET, { ...INPUT, writing: [] })).not.toContain('## Writing');
+  });
+});
+
+describe('renderLlmsFullTxt', () => {
+  const FULL_SET = buildPages(
+    catalog([
+      model('cheap', { pricing: { input: 0.1, output: 0.4, cachedInput: 0.01 } }),
+      model('dear', { providerId: 'anthropic', pricing: { input: 10, output: 40 } }),
+      model('promo', {
+        pricing: { input: 2, output: 8, intro: { input: 1, output: 4, until: '2026-12-31' } },
+      }),
+      model('disputed', {
+        provenance: {
+          source: 'litellm',
+          lastVerified: '2026-08-01',
+          needsReview: true,
+          reviewNote: 'sources disagree | by 2x',
+        },
+      }),
+    ]),
+    { asOf: ASOF },
+  );
+
+  it('starts with an H1 and carries the caveats', () => {
+    const text = renderLlmsFullTxt(FULL_SET, INPUT);
+    expect(text.startsWith('# PromptSpend')).toBe(true);
+    expect(text).toContain('USD per 1,000,000 tokens');
+    expect(text).toContain('list prices, not a quote');
+    expect(text).toContain('2026-08-02T02:00:00.000Z');
+  });
+
+  it('lists every model in one table, cheapest first, with absolute links', () => {
+    const text = renderLlmsFullTxt(FULL_SET, INPUT);
+    for (const id of ['cheap', 'dear', 'promo', 'disputed']) {
+      expect(text).toContain(`](https://promptspend.com/models/${id}/)`);
+    }
+    expect(text.indexOf('/models/cheap/)')).toBeLessThan(text.indexOf('/models/dear/)'));
+    expect(text).toContain('| $0.1 | $0.4 | $0.01 | vendor pricing page | 2026-08-01 |');
+    const links = [...text.matchAll(/\]\(([^)]+)\)/g)].map((match) => match[1]!);
+    for (const link of links) expect(link).toMatch(/^https:\/\//);
+  });
+
+  it('keeps an intro rate visible with its expiry and the standard rate', () => {
+    const row = renderLlmsFullTxt(FULL_SET, INPUT)
+      .split('\n')
+      .find((line) => line.includes('/models/promo/'))!;
+    expect(row).toContain('| $1 | $4 |');
+    expect(row).toContain('Intro rate until 2026-12-31; standard $2 in / $8 out');
+  });
+
+  it('marks a disputed row instead of hiding it, and escapes pipes', () => {
+    const row = renderLlmsFullTxt(FULL_SET, INPUT)
+      .split('\n')
+      .find((line) => line.includes('/models/disputed/'))!;
+    expect(row).toContain('FLAGGED FOR REVIEW: sources disagree \\| by 2x');
+    expect(row).toContain('LiteLLM community catalog');
+  });
+
+  it('is linked from llms.txt', () => {
+    expect(renderLlmsTxt(FULL_SET, INPUT)).toContain('https://promptspend.com/llms-full.txt');
+    expect(renderLlmsTxt(FULL_SET, INPUT)).toContain('https://promptspend.com/index.md');
+  });
+});
+
+describe('renderIndexMd', () => {
+  it('is a markdown homepage for agents with absolute links and the caveats', () => {
+    const text = renderIndexMd(SET, INPUT);
+    expect(text.startsWith('# PromptSpend')).toBe(true);
+    expect(text).toContain('list prices, not a quote');
+    expect(text).toContain('USD per 1,000,000 tokens');
+    for (const path of ['/models/', '/providers/', '/compare/', '/receipt/', '/llms.txt', '/llms-full.txt']) {
+      expect(text).toContain(`https://promptspend.com${path}`);
+    }
+    expect(text).toContain('https://promptspend.dev');
+    expect(text).toContain('@promptspend/mcp');
+    const links = [...text.matchAll(/\]\(([^)]+)\)/g)].map((match) => match[1]!);
+    for (const link of links) expect(link).toMatch(/^https:\/\//);
   });
 });

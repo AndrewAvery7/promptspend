@@ -15,7 +15,7 @@
  * is worse than no number at all.
  */
 
-import type { PageSet } from './pages';
+import { blendedRate, type PageSet } from './pages';
 import { VERDICT_LABEL, type FreeTierPageSet } from './free-tier-pages';
 import {
   APP_PAGE_PATH,
@@ -140,6 +140,8 @@ came from.
 - [As CSV](${apiUrl}/v1/prices.csv)
 - [The raw catalog](${siteUrl}/data/pricing.json): the file everything above is built from
 - [Receipt specification](${siteUrl}/receipt/spec.json): the exact visible instructions, scope and failure behavior used by the copy object
+- [Full catalog as one markdown file](${siteUrl}/llms-full.txt): every model's rates in a single table, cheapest first
+- [Homepage as markdown](${siteUrl}/index.md): what the tool does and where everything lives
 
 Prefer the API over scraping these pages. It is faster, it is versioned, and it
 will not break when the HTML changes.
@@ -188,5 +190,128 @@ MIT. Use the data in anything, including commercially. Attribution is
 appreciated and not required; a link to ${siteUrl} helps.
 
 Source: https://github.com/AndrewAvery7/promptspend
+`;
+}
+
+function rateText(value: number): string {
+  return `$${Number(value.toFixed(4))}`;
+}
+
+function cell(value: string): string {
+  return value.replace(/\|/g, '\\|').replace(/\s+/g, ' ').trim();
+}
+
+const SOURCE_TYPE = {
+  vendor: 'vendor pricing page',
+  litellm: 'LiteLLM community catalog',
+  openrouter: 'OpenRouter',
+} as const;
+
+function caveatBlock(): string {
+  return `**All rates are USD per 1,000,000 tokens**, standard tier, global endpoint, list
+price. Regional and data-residency premiums, priority tiers, server-side tool
+fees and negotiated discounts are **not** included.
+
+These are list prices, not a quote.
+Check the vendor before committing money to a number.`;
+}
+
+/**
+ * `llms-full.txt`: the same header and caveats as `llms.txt`, then the whole
+ * catalog as one markdown table, cheapest first. It is generated from the same
+ * page set, so it cannot disagree with the model pages. Promotional rates keep
+ * their expiry and the standard rate beside them, and a row whose price
+ * has been flagged is marked FLAGGED FOR REVIEW rather than left out.
+ */
+export function renderLlmsFullTxt(set: PageSet, input: LlmsTxtInput): string {
+  const { siteUrl, apiUrl, generatedAt } = input;
+  const rows = [...set.models]
+    .sort((a, b) => blendedRate(a.model) - blendedRate(b.model) || a.id.localeCompare(b.id))
+    .map((page) => {
+      const { model, effective } = page;
+      const notes: string[] = [];
+      if (page.promotional && model.pricing.intro) {
+        notes.push(
+          `Intro rate until ${model.pricing.intro.until}; standard ${rateText(model.pricing.input)} in / ${rateText(model.pricing.output)} out`,
+        );
+      }
+      if (model.provenance.needsReview) {
+        notes.push(`FLAGGED FOR REVIEW: ${model.provenance.reviewNote ?? 'awaiting a human check'}`);
+      }
+      const cached = effective.cachedInput === undefined ? 'n/a' : rateText(effective.cachedInput);
+      return `| [${cell(markdownLabel(model.displayName))}](${siteUrl}${page.path}) | ${cell(page.providerName)} | ${rateText(effective.input)} | ${rateText(effective.output)} | ${cached} | ${SOURCE_TYPE[model.provenance.source]} | ${model.provenance.lastVerified} | ${cell(notes.join('; '))} |`;
+    });
+
+  return `# PromptSpend: full model price catalog
+
+> Current API prices for ${set.models.length} large language models from ${set.providers.length} providers,
+> re-checked each morning. This is the long form of ${siteUrl}/llms.txt.
+
+Catalog behind this build: ${generatedAt}.
+
+${caveatBlock()}
+
+Rows with "FLAGGED FOR REVIEW" in Notes are awaiting a human check (sources
+disagree, the price is stale, or the model is new): do not present those as settled. "n/a" means no cached-input
+rate is recorded. Where an intro rate is in force the table shows it, with its end
+date and the standard rate in Notes.
+
+## Models, cheapest first
+
+Ordered by blended rate. Each model name links to its page with the full rate card and source.
+
+| Model | Provider | Input $/1M | Output $/1M | Cached input $/1M | Source type | Last confirmed | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+${rows.join('\n')}
+
+## Elsewhere
+
+- [Short index](${siteUrl}/llms.txt)
+- [Pricing API](${apiUrl}): keyless, CORS-open, OpenAPI 3.1 described
+- [The raw catalog](${siteUrl}/data/pricing.json)
+- [Every model, by price](${siteUrl}/models/)
+- [By provider](${siteUrl}/providers/)
+
+## License
+
+MIT. Source: https://github.com/AndrewAvery7/promptspend
+`;
+}
+
+/** `index.md`: the homepage, for agents. */
+export function renderIndexMd(set: PageSet, input: LlmsTxtInput): string {
+  const { siteUrl, apiUrl, generatedAt } = input;
+  return `# PromptSpend: LLM API cost estimator
+
+> Estimate what an LLM API workload will cost across ${set.models.length} models from ${set.providers.length} providers.
+> Every price names its source and the date it was last confirmed. Free, open source, no accounts.
+
+This is the markdown version of ${siteUrl}/, written for AI agents. Catalog behind this build: ${generatedAt}.
+
+## What it does
+
+The calculator at ${siteUrl}/ prices a real workload: conversation length, prompt
+caching, batch discounts and reasoning overhead, on any model in the catalog, and
+compares the monthly bill across models side by side.
+
+${caveatBlock()}
+
+## Where to look
+
+- [Every model, by price](${siteUrl}/models/): the whole catalog, cheapest first
+- [By provider](${siteUrl}/providers/): ${set.providers.length} providers
+- [Head-to-head comparisons](${siteUrl}/compare/): ${set.comparisons.length} pairs costed on the same workloads
+- [PromptSpend Receipt](${siteUrl}/receipt/): a visible, one-response cost-audit object to paste into a conversation
+- [llms.txt](${siteUrl}/llms.txt): the short index for AI assistants
+- [llms-full.txt](${siteUrl}/llms-full.txt): the full catalog as one markdown table
+
+## For programs and coding tools
+
+- [Pricing API](${apiUrl}): keyless, CORS-open, OpenAPI 3.1 described
+- [Raw catalog](${siteUrl}/data/pricing.json)
+- [MCP server](${MCP_PACKAGE_URL}): \`${MCP_INSTALL_COMMAND}\`; hosted at ${MCP_HOSTED_URL}
+- [Agent Skill](${AGENT_SKILL_URL})
+
+Prefer the API or the MCP server over scraping pages.
 `;
 }

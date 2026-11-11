@@ -363,6 +363,58 @@ export function useEstimator(catalog: Catalog) {
     setScenario((prev) => (prev.modelIds.length === 0 ? prev : { ...prev, modelIds: [] }));
   }, []);
 
+  /**
+   * Load an example workload ("Start from an example") in one step.
+   *
+   * One state update rather than five `updateNumber` calls, so the address bar
+   * and the cards move once, together. Every number goes through `clampField`
+   * like any other input — an example is not trusted more than a slider.
+   *
+   * Every field is put back on its slider (the pasted text is kept, just not
+   * used). Otherwise a field left in Paste mode would win: the mirror effect
+   * above would copy the pasted text's count straight back over the example's
+   * number, and the visitor would pick "Coding assistant" and see nothing move.
+   *
+   * Models change only when at least two of the suggestions are still sold:
+   * swapping a four-model comparison for a single card is a worse starting
+   * point than keeping what the visitor already had. The caching, batch and
+   * reasoning assumptions are left alone — those describe the visitor's
+   * traffic, not the kind of app it is.
+   */
+  const applyStarter = useCallback(
+    (starter: {
+      systemTokens: number;
+      userTokens: number;
+      outputTokens: number;
+      turns: number;
+      conversationsPerDay: number;
+      modelIds?: readonly string[];
+    }) => {
+      const suggested = [...new Set(starter.modelIds ?? [])]
+        .filter((id) => isSelectableId(catalog, id))
+        .slice(0, MAX_MODELS);
+      setScenario((prev) => ({
+        ...prev,
+        systemTokens: clampField('systemTokens', starter.systemTokens),
+        userTokens: clampField('userTokens', starter.userTokens),
+        outputTokens: clampField('outputTokens', starter.outputTokens),
+        turns: clampField('turns', starter.turns),
+        conversationsPerDay: clampField('conversationsPerDay', starter.conversationsPerDay),
+        modelIds: suggested.length >= 2 ? suggested : prev.modelIds,
+      }));
+      setFields((prev) =>
+        FIELD_KEYS.every((field) => prev[field].mode === 'slider')
+          ? prev
+          : {
+              system: { ...prev.system, mode: 'slider' },
+              user: { ...prev.user, mode: 'slider' },
+              output: { ...prev.output, mode: 'slider' },
+            },
+      );
+    },
+    [catalog],
+  );
+
   const setFieldMode = useCallback((field: FieldKey, mode: InputMode) => {
     setFields((prev) => ({ ...prev, [field]: { ...prev[field], mode } }));
   }, []);
@@ -407,6 +459,7 @@ export function useEstimator(catalog: Catalog) {
     updateNumber,
     toggleModel,
     clearModels,
+    applyStarter,
     setFieldMode,
     setFieldText,
     tokensForModel,
