@@ -102,7 +102,7 @@ export function EstimateView({
         <div className="hero__copy">
           <p className="eyebrow">Estimate</p>
           <h1 className="headline" id="estimate-heading">
-            Know your AI API bill <em>before</em> you ship.
+            Know your AI API bill <em className="headline__lean">before</em> you ship to production.
           </h1>
           <p className="subhead">
             Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s
