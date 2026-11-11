@@ -617,8 +617,8 @@
     },
     "/compare/claude-sonnet-5-vs-gemini-3-7-flash/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-29",
-      "fingerprint": "06078073698a49",
+      "lastmod": "2026-11-11",
+      "fingerprint": "0fc6e71b464c76",
       "left": "claude-sonnet-5",
       "right": "gemini-3-7-flash"
     },
@@ -666,8 +666,8 @@
     },
     "/compare/claude-sonnet-5-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-29",
-      "fingerprint": "1f7f99a46b86b5",
+      "lastmod": "2026-11-11",
+      "fingerprint": "0b02c24abb5b3b",
       "left": "claude-sonnet-5",
       "right": "mistral-large-4"
     },
@@ -715,8 +715,8 @@
     },
     "/compare/dashscope-qwen3-7-max-vs-gemini-3-7-flash/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "1681862993938d",
+      "lastmod": "2026-11-11",
+      "fingerprint": "1113f182a31896",
       "left": "dashscope-qwen3-7-max",
       "right": "gemini-3-7-flash"
     },
@@ -925,8 +925,8 @@
     },
     "/compare/deepseek-v4-pro-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0adab3b8137fb2",
+      "lastmod": "2026-11-11",
+      "fingerprint": "11887dcdb60a74",
       "left": "deepseek-v4-pro",
       "right": "mistral-large-4"
     },
@@ -1065,8 +1065,8 @@
     },
     "/compare/gemini-3-6-flash-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0446803397a4cc",
+      "lastmod": "2026-11-11",
+      "fingerprint": "12a2f9782d2d04",
       "left": "gemini-3-6-flash",
       "right": "mistral-large-4"
     },
@@ -1086,36 +1086,36 @@
     },
     "/compare/gemini-3-7-flash-vs-gpt-5-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "12cb7492ff01a2",
+      "lastmod": "2026-11-11",
+      "fingerprint": "051fbf88fc0f4e",
       "left": "gemini-3-7-flash",
       "right": "gpt-5-4"
     },
     "/compare/gemini-3-7-flash-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "18a197768ee7a8",
+      "lastmod": "2026-11-11",
+      "fingerprint": "1f7e58adf2acf7",
       "left": "gemini-3-7-flash",
       "right": "mistral-large-4"
     },
     "/compare/gemini-3-7-flash-vs-moonshot-kimi-k2-6/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0ff131dc91c2d9",
+      "lastmod": "2026-11-11",
+      "fingerprint": "151dae9bbb3880",
       "left": "gemini-3-7-flash",
       "right": "moonshot-kimi-k2-6"
     },
     "/compare/gemini-3-7-flash-vs-xai-grok-4-5/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0b5e62ee661b31",
+      "lastmod": "2026-11-11",
+      "fingerprint": "08e2045222b86e",
       "left": "gemini-3-7-flash",
       "right": "xai-grok-4-5"
     },
     "/compare/gemini-3-7-flash-vs-zai-glm-5-2/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "0ffd7d5552c4f5",
+      "lastmod": "2026-11-11",
+      "fingerprint": "0d426bc9ff7824",
       "left": "gemini-3-7-flash",
       "right": "zai-glm-5-2"
     },
@@ -1212,8 +1212,8 @@
     },
     "/compare/gpt-5-2-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "02e84e7b3e763f",
+      "lastmod": "2026-11-11",
+      "fingerprint": "103fc81efd3115",
       "left": "gpt-5-2",
       "right": "mistral-large-4"
     },
@@ -1268,8 +1268,8 @@
     },
     "/compare/gpt-5-4-vs-mistral-large-4/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "056c9ca8a710ad",
+      "lastmod": "2026-11-11",
+      "fingerprint": "0e1fde3e1e6442",
       "left": "gpt-5-4",
       "right": "mistral-large-4"
     },
@@ -1450,36 +1450,36 @@
     },
     "/compare/mistral-large-4-vs-moonshot-kimi-k2-6/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0da5682475a576",
+      "lastmod": "2026-11-11",
+      "fingerprint": "063cdb6ab59b26",
       "left": "mistral-large-4",
       "right": "moonshot-kimi-k2-6"
     },
     "/compare/mistral-large-4-vs-xai-grok-4-3/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "030874482dd899",
+      "lastmod": "2026-11-11",
+      "fingerprint": "1827a9d87c6171",
       "left": "mistral-large-4",
       "right": "xai-grok-4-3"
     },
     "/compare/mistral-large-4-vs-xai-grok-4-5/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0270bae0b9ab18",
+      "lastmod": "2026-11-11",
+      "fingerprint": "097ad70ded4f4b",
       "left": "mistral-large-4",
       "right": "xai-grok-4-5"
     },
     "/compare/mistral-large-4-vs-zai-glm-5-1/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0a8c7373621ed1",
+      "lastmod": "2026-11-11",
+      "fingerprint": "1a998fb13c7fa4",
       "left": "mistral-large-4",
       "right": "zai-glm-5-1"
     },
     "/compare/mistral-large-4-vs-zai-glm-5-2/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0a97fe70bd7a38",
+      "lastmod": "2026-11-11",
+      "fingerprint": "04fb690f4b4dd6",
       "left": "mistral-large-4",
       "right": "zai-glm-5-2"
     },
@@ -1611,8 +1611,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-10",
-      "fingerprint": "0b1a8906e66f4f"
+      "lastmod": "2026-11-11",
+      "fingerprint": "1c4b32acd8698e"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1836,8 +1836,8 @@
     },
     "/models/gemini-3-5-flash/": {
       "published": "2026-08-02",
-      "lastmod": "2026-09-17",
-      "fingerprint": "15a8cf58b70332"
+      "lastmod": "2026-11-11",
+      "fingerprint": "06d2f0d50b0481"
     },
     "/models/gemini-3-6-flash/": {
       "published": "2026-08-02",
@@ -1846,8 +1846,8 @@
     },
     "/models/gemini-3-7-flash/": {
       "published": "2026-08-16",
-      "lastmod": "2026-08-16",
-      "fingerprint": "14ab6ef6aca01b"
+      "lastmod": "2026-11-11",
+      "fingerprint": "0cdc0340909950"
     },
     "/models/gemini-3-8-flash/": {
       "published": "2026-09-04",
@@ -1871,8 +1871,8 @@
     },
     "/models/gemini-4-carbon/": {
       "published": "2026-11-10",
-      "lastmod": "2026-11-10",
-      "fingerprint": "07250fe2867270"
+      "lastmod": "2026-11-11",
+      "fingerprint": "1c94a91b4a9f30"
     },
     "/models/gpt-4-1-mini/": {
       "published": "2026-10-24",
@@ -2051,13 +2051,13 @@
     },
     "/models/mistral-large-4-0/": {
       "published": "2026-10-07",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0a0405eb2b6db0"
+      "lastmod": "2026-11-11",
+      "fingerprint": "0121a8860f7382"
     },
     "/models/mistral-large-4/": {
       "published": "2026-10-07",
-      "lastmod": "2026-10-27",
-      "fingerprint": "0e1db6396073e8"
+      "lastmod": "2026-11-11",
+      "fingerprint": "158afd4f096494"
     },
     "/models/mistral-medium-3-5/": {
       "published": "2026-08-02",
@@ -2256,8 +2256,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-10",
-      "fingerprint": "1477070b47e94a"
+      "lastmod": "2026-11-11",
+      "fingerprint": "1163e53758e1c8"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2286,8 +2286,8 @@
     },
     "/providers/google/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-10",
-      "fingerprint": "16412ca87dc0d3"
+      "lastmod": "2026-11-11",
+      "fingerprint": "03eec8a59cb5bd"
     },
     "/providers/inception/": {
       "published": "2026-10-24",
@@ -2311,8 +2311,8 @@
     },
     "/providers/mistral/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-29",
-      "fingerprint": "1d1fe748506246"
+      "lastmod": "2026-11-11",
+      "fingerprint": "0de712af5b6c0e"
     },
     "/providers/moonshot/": {
       "published": "2026-08-02",

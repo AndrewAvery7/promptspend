@@ -501,7 +501,7 @@
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
-      "$note": "Capability score 83 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between Gemini 3.6 Flash (82) and Gemini 3.8 Flash (85), at the same price as 3.6. Capability score re-estimated 83 -> 81 (2026-10-24): now midway between Gemini 3.6 Flash (77) and Gemini 3.8 Flash (85), at the same price as 3.6. Still an ESTIMATE, not a measurement.",
+      "$note": "ARCHIVED 2026-11-11 (status `deprecated`): Google has withdrawn it as a separate model. Its Gemini deprecations page (ai.google.dev/gemini-api/docs/deprecations, read 2026-11-11) lists `gemini-3.7-flash` with shutdown date N/A and recommended replacement `gemini-3.8-flash`, adding: \"`gemini-3.7-flash` is no longer available in Google AI Studio; the endpoint is not shutting down and automatically routes API requests to `gemini-3.8-flash`\". The pricing page (ai.google.dev/gemini-api/docs/pricing, read the same day) no longer has a Gemini 3.7 Flash section, which is why the daily vendor-page check could not re-confirm it and the row went 32 days unverified. Neither page states what a request sent to the old name is billed at, so no rate is recorded for it; the row keeps its last confirmed figures as a record and is hidden from every picker. Use Gemini 3.8 Flash instead. Earlier note: Capability score 83 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between Gemini 3.6 Flash (82) and Gemini 3.8 Flash (85), at the same price as 3.6. Capability score re-estimated 83 -> 81 (2026-10-24): now midway between Gemini 3.6 Flash (77) and Gemini 3.8 Flash (85), at the same price as 3.6. Still an ESTIMATE, not a measurement.",
       "id": "gemini-gemini-3.7-flash",
       "providerId": "google",
       "displayName": "Gemini 3.7 Flash",
@@ -520,6 +520,27 @@
       },
       "vendorVerified": true,
       "lastVerified": "2026-10-09",
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "deprecated"
+    },
+    {
+      "$note": "Added 2026-11-11 to answer a new-model flag. Confirmed on Google's own pricing page (ai.google.dev/gemini-api/docs/pricing, read 2026-11-11): a \"Gemini 4 Carbon\" section for model id `gemini-4-carbon`, \"Our most capable reasoning model\", paid tier only. Standard rates per 1M tokens: input \"$2.00 through November 30, 2026. $4.00 starting December 1, 2026.\"; output (including thinking tokens) $10.00 through November 30, then $20.00; context caching $0.10 through November 30, then $0.20, \"Implicit caching only (explicit caching is not supported)\", so no storage price. The feed carries only the introductory $2/$10/$0.10, so the list price is recorded as the base with the introductory rate in an `intro` block that ends 2026-11-30; without it every estimate from December 1 would be understated by half. Batch and Flex are half the list price ($2/$10 from December 1); Priority is $7.20/$36 from December 1. Google's deprecations page lists gemini-4-carbon as released November 10, 2026 with no shutdown date. No capabilityIndex yet: that score is an editorial judgement.",
+      "id": "gemini-gemini-4-carbon",
+      "providerId": "google",
+      "displayName": "Gemini 4 Carbon",
+      "pricing": {
+        "input": 4,
+        "output": 20,
+        "cachedInput": 0.2,
+        "intro": {
+          "input": 2,
+          "output": 10,
+          "cachedInput": 0.1,
+          "until": "2026-11-30"
+        }
+      },
+      "vendorVerified": true,
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -930,30 +951,30 @@
       "capabilityIndex": 57
     },
     {
-      "$note": "Read on 2026-10-21 to answer an openrouter-disagreement flag (OpenRouter $1.36/$4.18 vs recorded $0.68/$2.09). Mistral's model page (rendered in a browser, USD) prints Mistral Large 4 at $1.36 input, $0.14 cached input, $4.18 output per 1M tokens, with no strikethrough or promotional wording; the API pricing page's Flagship table prints the same three figures. Mistral's changelog explains the gap: the model went into Public Preview on 2026-10-06 with \"Launch pricing: 50% off for 2 weeks\". The recorded $0.68/$0.068/$2.09 was that launch discount, published from the feed when the model was discovered; the window has now run out, so this is a genuine move to list price, not a correction. The promotion can no longer be recorded as `intro` because it has already lapsed. Same treatment as the pinned alias mistral-mistral-large-4-0. Capability score 81: Artificial Analysis Intelligence Index 38 for Mistral Large 4 Preview (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
+      "$note": "Re-read 2026-11-11 to answer override-drift and vendor-page-mismatch flags. Mistral's model page (docs.mistral.ai/models/mistral-large-4, rendered in a browser, USD) now marks the model GA on November 5, 2026 (version v26.10) and prints $0.7 input, $0.07 cached input, $2.1 output per 1M tokens, with no strikethrough, launch or promotional wording; its id list shows `mistral-large-4` and `mistral-large-4-0`. The automated feed and the daily vendor-page check both read the same $0.7/$2.1. Mistral's changelog (read the same day) has no entry after October 22, so it gives no reason for the move; the record follows the page. If this turns out to be an unannounced promotion, the daily page check will raise a mismatch when the page changes. Previous figures were $1.36/$0.14/$4.18, the list price after the Public Preview launch discount (see history). History: Read on 2026-10-21 to answer an openrouter-disagreement flag (OpenRouter $1.36/$4.18 vs recorded $0.68/$2.09). Mistral's model page (rendered in a browser, USD) prints Mistral Large 4 at $1.36 input, $0.14 cached input, $4.18 output per 1M tokens, with no strikethrough or promotional wording; the API pricing page's Flagship table prints the same three figures. Mistral's changelog explains the gap: the model went into Public Preview on 2026-10-06 with \"Launch pricing: 50% off for 2 weeks\". The recorded $0.68/$0.068/$2.09 was that launch discount, published from the feed when the model was discovered; the window has now run out, so this is a genuine move to list price, not a correction. The promotion can no longer be recorded as `intro` because it has already lapsed. Same treatment as the pinned alias mistral-mistral-large-4-0. Capability score 81: Artificial Analysis Intelligence Index 38 for Mistral Large 4 Preview (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "mistral-mistral-large-4",
       "displayName": "Mistral Large 4",
       "capabilityIndex": 81,
       "vendorVerified": true,
-      "lastVerified": "2026-10-30",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4",
       "pricing": {
-        "input": 1.36,
-        "output": 4.18,
-        "cachedInput": 0.14
+        "input": 0.7,
+        "output": 2.1,
+        "cachedInput": 0.07
       }
     },
     {
-      "$note": "Pinned alias of mistral-mistral-large-4; Mistral's model page lists both `mistral-large-4` and `mistral-large-4-0` as API ids of the same model. Read on 2026-10-21 and again on 2026-10-24 against that page: $1.36 input, $0.14 cached input, $4.18 output per 1M tokens, no promotion shown, list price after the two-week 50%-off launch window that began 2026-10-06 ran out (see the sibling row). Also corrects the generated name \"Mistral Large 4 0\".",
+      "$note": "Pinned alias of mistral-mistral-large-4, kept as its own row on purpose: Mistral's model page lists both `mistral-large-4` and `mistral-large-4-0` as API ids of the same model at the same price, people call it by either id, and removing the row would break its page and comparisons. Re-read 2026-11-11: GA on November 5, 2026, $0.7 input, $0.07 cached input, $2.1 output per 1M tokens, no promotion shown (see the sibling row). Previously $1.36/$0.14/$4.18. Also corrects the generated name \"Mistral Large 4 0\".",
       "id": "mistral-mistral-large-4-0",
       "displayName": "Mistral Large 4.0",
       "vendorVerified": true,
-      "lastVerified": "2026-10-24",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.mistral.ai/models/mistral-large-4",
       "pricing": {
-        "input": 1.36,
-        "output": 4.18,
-        "cachedInput": 0.14
+        "input": 0.7,
+        "output": 2.1,
+        "cachedInput": 0.07
       }
     },
     {
@@ -1025,7 +1046,9 @@
       "displayName": "Gemini 3.5 Flash",
       "vendorVerified": true,
       "lastVerified": "2026-10-09",
-      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
+      "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+      "status": "deprecated",
+      "$note": "ARCHIVED 2026-11-11 (status `deprecated`): Google has withdrawn it as a separate model. Its Gemini deprecations page (ai.google.dev/gemini-api/docs/deprecations, read 2026-11-11) lists `gemini-3.5-flash` with shutdown date N/A and recommended replacement `gemini-3.6-flash`, adding: \"`gemini-3.5-flash` is no longer available in Google AI Studio; the endpoint is not shutting down and automatically routes API requests to `gemini-3.6-flash`\". The pricing page (ai.google.dev/gemini-api/docs/pricing, read the same day) no longer has a Gemini 3.5 Flash section, which is why the daily vendor-page check could not re-confirm it and the row went 32 days unverified. Neither page states what a request sent to the old name is billed at, so no rate is recorded for it; the row keeps its last published figures as a record and is hidden from every picker. Use Gemini 3.6 Flash instead."
     },
     {
       "$note": "ARCHIVED 2026-09-29 (status `deprecated`): the maintainer chose to keep vendor-retired models as records rather than delete them. A deprecated override makes the sync carry the last published row forward unchanged, with no feed price, no cross-check and no review flag, and every picker hides it, so it can be looked up but never selected. Retirement evidence: Google's Gemini deprecations page (ai.google.dev/gemini-api/docs/deprecations, read 2026-09-29) lists gemini-3-pro-preview with shutdown date March 9, 2026 and recommended replacement gemini-3.1-pro-preview. The feed dropped it, which raised upstream-missing.",
@@ -1668,5 +1691,6 @@
     }
   ],
   "$verificationPasses": "2026-08-01: Anthropic and OpenAI flagship rows read against the first-party pricing pages; all matched the automated feed, and the additions were the modifiers the feed does not carry (cache writes, long-context tiers, batch discounts). 2026-08-03: a second pass covering 27 more rows across Anthropic, OpenAI, Google, xAI and DeepSeek. Every one of the 27 matched the feed exactly, so these entries record provenance ONLY — no `pricing` block — which leaves the rate flowing from the feed and self-correcting. Recording a price we did not need to change would freeze it for no reason. NOT verifiable on 2026-08-03, and deliberately left as `litellm`: Mistral Large 3 and Medium 3.5, Command A, all four Kimi rows, all four MiniMax rows and GLM-5-Code are absent from their vendors' own pricing pages; Gemini 3 Pro Preview, Grok 2/3/4/4.1-fast and DeepSeek R1/V3/V3.2 are not listed on the pages that carry their siblings. An aggregator would have numbers for all of them, which is exactly why this catalog does not accept one. 2026-08-09: Kimi K2.6 read against Moonshot's own per-model pricing page and moved to `vendor`. The 2026-08-03 pass recorded it as not verifiable because no such page existed; the platform has since moved from platform.moonshot.ai to platform.kimi.ai and now publishes a page per model. The vendor's figures match the feed exactly — $0.95 input on a cache miss, $4.00 output, $0.16 on a cache hit — so this row records provenance ONLY and its rate keeps flowing from the feed. That also settles the standing cross-source flag on it: OpenRouter's $0.58/$2.44 is a reseller-routed price, the 20-50% adrift case `$coverage` describes, and the published number was the right one all along. NOT verified in this pass and deliberately still `litellm`: Kimi K2.5 and K2-thinking, which the vendor's pricing index no longer lists — it now carries K3, K2.7 Code, K2.6 and the sunsetting Moonshot V1. The vendor publishes K3 and K2.7 Code, which the feed does not yet carry; per `$coverage` those are left to arrive on their own rather than hand-added. 2026-09-02: a pass over all 23 standing flags, clearing 16. Fourteen were `vendor-verification-stale` — the 30-day re-read rule coming due at once on ten Anthropic and OpenAI rows and four Z.ai rows. All three vendor pages were re-read in full and EVERY figure still matched what was published, so only the dates move; no rate changed. Two more cleared by first-party confirmation of newly arrived models: Claude Fable 5.1 (note the 0.025x cache-hit exception, which the house 0.1x multiplier would have got fourfold wrong) and GLM-5.2. Also recorded, though they were not flagged: xAI retired grok-3, grok-4-0709 and grok-4-1-fast on 2026-05-15 and now bills all of them at grok-4.3's $1.25/$2.50, which is why three unrelated rows share one figure — it looks exactly like a feed placeholder and is not; those rows move from `litellm` to `vendor` and are marked legacy. Grok 4.20 gains the long-context tier the feed omits. NOT cleared, each now carrying a note saying why so the next pass does not re-tread it: DeepSeek R1 (the `deepseek-reasoner` name was discontinued 2026-07-24, so no current first-party price exists), Mistral Medium 3 (absent from Mistral's own page, with the feed and OpenRouter 73% apart and no way to adjudicate), Grok 2 (retirement confirmed from xAI's model list, but removing the row is a human's call), and Kimi K2.5, Gemini 3.6/3.7 Flash and GPT-5.6 Sol, whose flags are correct by design — a live promotional rate reported by the feed as if it were the base. 2026-09-16: a pass aimed only at the two rows the daily vendor-page check was calling mismatches, which are a different animal from the OpenRouter cross-check flags and were worth separating. One was a real price cut: DeepSeek's own page has renamed its cheap model to `deepseek-flash` (DeepSeek-V4.1-Flash) and cut the peak rate to $0.30/$1.20 with a $0.006 cache hit, down from $0.44/$1.32/$0.014, while stating that the legacy `deepseek-v4-flash` name is still accepted and billed at the Flash price - so the row keeps its id and takes the new figures. The column mapping was proved rather than assumed: the page's other column is V4 Pro at $1.32/$3.96/$0.044, matching this catalog's separately verified V4 Pro row on all three figures. The other was not a price problem at all: Qwen 3.7 Max's recorded $2.5/$7.5 is exactly what Alibaba's Singapore (International) table prints, and the $1.65/$4.951 the checker kept reporting is the China (Beijing) table on the same page. The page renders six regional tables and the reader had no way to tell them apart, so this pass added an optional `verifyHint` to an override - one sentence naming where on a page to read, handed to the reader verbatim, narrowing where to look and never saying what to find - and set it on that row. Deliberately NOT re-attempted, because each already carries a note saying why it cannot be settled: DeepSeek R1, Mistral Medium 3, Kimi K2.5 and Grok 2.",
-  "$verificationPass20260929": "Clearing pass for the eight flagged rows. Claude Sonnet 5.5 (new-model) was read against Anthropic's pricing page and given a vendor-verified override. The other seven were confirmed retired from each vendor's own site and archived with `status: deprecated`: claude-opus-4-1, gemini-gemini-3-pro-preview, moonshot-kimi-k2-thinking, moonshot-kimi-k2.5, deepseek-deepseek-r1, mistral-mistral-medium-3, xai-grok-2. Each row's $note quotes its evidence. Same day, second part: claude-opus-5-5 given a vendor-verified override (the name read \"Claude Opus 5 5\"), and deepseek-deepseek-v3 and deepseek-deepseek-v3.2 archived as retired on DeepSeek's own change log and pricing page."
+  "$verificationPass20260929": "Clearing pass for the eight flagged rows. Claude Sonnet 5.5 (new-model) was read against Anthropic's pricing page and given a vendor-verified override. The other seven were confirmed retired from each vendor's own site and archived with `status: deprecated`: claude-opus-4-1, gemini-gemini-3-pro-preview, moonshot-kimi-k2-thinking, moonshot-kimi-k2.5, deepseek-deepseek-r1, mistral-mistral-medium-3, xai-grok-2. Each row's $note quotes its evidence. Same day, second part: claude-opus-5-5 given a vendor-verified override (the name read \"Claude Opus 5 5\"), and deepseek-deepseek-v3 and deepseek-deepseek-v3.2 archived as retired on DeepSeek's own change log and pricing page.",
+  "$verificationPass20261111": "Clearing pass for the five flagged rows. Gemini 3.7 Flash and Gemini 3.5 Flash (vendor-verification-stale) had dropped off Google's pricing page; the deprecations page says both names now route to a newer Flash model, so both are archived with status deprecated. Gemini 4 Carbon (new-model) confirmed on Google's pricing page and given a vendor override with its 2026-11-30 introductory window. Mistral Large 4 and its alias Mistral Large 4.0 (override-drift, vendor-page-mismatch) re-read: the model page now prints $0.7/$0.07/$2.1 at GA, so both overrides take that figure. Each row's $note quotes its evidence."
 }
