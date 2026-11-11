@@ -14,7 +14,7 @@
       "displayName": "Claude Fable 5.1",
       "capabilityIndex": 90,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "pricing": {
         "input": 10,
@@ -31,7 +31,7 @@
       "providerId": "anthropic",
       "displayName": "Claude Fable 5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
@@ -51,7 +51,7 @@
       "providerId": "anthropic",
       "displayName": "Claude Opus 5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
@@ -71,7 +71,7 @@
       "providerId": "anthropic",
       "displayName": "Claude Opus 5.5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
@@ -91,7 +91,7 @@
       "providerId": "anthropic",
       "displayName": "Claude Opus 4.8",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
@@ -111,7 +111,7 @@
       "providerId": "anthropic",
       "displayName": "Claude Sonnet 5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
@@ -131,7 +131,7 @@
       "providerId": "anthropic",
       "displayName": "Claude Sonnet 5.5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 1000000,
       "maxOutput": 128000,
@@ -151,7 +151,7 @@
       "providerId": "anthropic",
       "displayName": "Claude Haiku 4.5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing",
       "contextWindow": 200000,
       "maxOutput": 64000,
@@ -171,7 +171,7 @@
       "displayName": "Claude Opus 4.7",
       "capabilityIndex": 85,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -180,7 +180,7 @@
       "displayName": "Claude Opus 4.6",
       "capabilityIndex": 82,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -190,7 +190,7 @@
       "status": "legacy",
       "capabilityIndex": 79,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -209,7 +209,7 @@
       "displayName": "Claude Sonnet 4.6",
       "capabilityIndex": 76,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -219,7 +219,7 @@
       "status": "legacy",
       "capabilityIndex": 69,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://platform.claude.com/docs/en/about-claude/pricing"
     },
     {
@@ -235,7 +235,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.6 Sol",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "verifyHint": "Read the Standard tier only. This page lists every model under several processing tiers — Batch, Flex, Standard, and Fast (formerly Priority) — and Batch and Flex print lower figures for the same model; ignore every tier except Standard. Read both the short-context and long-context Standard rows.",
       "capabilityIndex": 88,
@@ -266,7 +266,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.6 Terra",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 86,
       "pricing": {
@@ -291,7 +291,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.6 Luna",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 80,
       "pricing": {
@@ -315,7 +315,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 81,
       "pricing": {
@@ -337,7 +337,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.4",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 81,
       "pricing": {
@@ -359,7 +359,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.4 Mini",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 69,
       "pricing": {
@@ -375,7 +375,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.4 Nano",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "capabilityIndex": 67,
       "pricing": {
@@ -391,7 +391,7 @@
       "displayName": "GPT-5.2",
       "capabilityIndex": 74,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -400,28 +400,28 @@
       "displayName": "GPT-5.1",
       "capabilityIndex": 70,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "gpt-5",
       "displayName": "GPT-5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "gpt-5-mini",
       "displayName": "GPT-5 Mini",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
       "id": "gpt-5-nano",
       "displayName": "GPT-5 Nano",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -438,7 +438,7 @@
       "id": "o3",
       "displayName": "o3",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -476,7 +476,7 @@
         }
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -497,7 +497,7 @@
         }
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -551,7 +551,7 @@
         "cacheStoragePerMillionTokenHour": 1
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -572,7 +572,7 @@
         }
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -587,7 +587,7 @@
         "cachedInput": 0.044
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
     },
     {
@@ -603,7 +603,7 @@
         "cachedInput": 0.006
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://api-docs.deepseek.com/quick_start/pricing"
     },
     {
@@ -669,7 +669,7 @@
       "displayName": "Qwen 3.7 Max",
       "capabilityIndex": 74,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "verifyHint": "Read the Singapore (International) table only. This page renders a separate pricing table for each region — Singapore, China (Beijing), Hong Kong (China), Germany (Frankfurt), US (Virginia), Japan (Tokyo) — and every one of them lists this model at a different price. The Singapore table is the one whose rows carry International as their deployment scope; ignore every other table, and ignore the batch-inference discount labels that appear in the regional ones.",
       "pricing": {
@@ -716,7 +716,7 @@
       "displayName": "GLM-5.1",
       "capabilityIndex": 71,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 1.4,
@@ -730,7 +730,7 @@
       "displayName": "GLM-5.2",
       "capabilityIndex": 79,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 1.4,
@@ -744,7 +744,7 @@
       "displayName": "GLM-5.3",
       "capabilityIndex": 87,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 1.4,
@@ -758,7 +758,7 @@
       "displayName": "GLM-5",
       "capabilityIndex": 71,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 1,
@@ -770,7 +770,7 @@
       "id": "zai-glm-4.7",
       "displayName": "GLM-4.7",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 0.6,
@@ -782,7 +782,7 @@
       "id": "zai-glm-4.6",
       "displayName": "GLM-4.6",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 0.6,
@@ -820,7 +820,7 @@
       "capabilityIndex": 85,
       "contextWindow": 500000,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
       "pricing": {
         "input": 2,
@@ -839,7 +839,7 @@
       "displayName": "Grok 4.5",
       "capabilityIndex": 84,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
       "pricing": {
         "input": 2,
@@ -859,7 +859,7 @@
       "displayName": "Grok 4.3",
       "capabilityIndex": 70,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
       "pricing": {
         "input": 1.25,
@@ -886,7 +886,7 @@
       "status": "legacy",
       "capabilityIndex": 66,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement",
       "verifiedAs": "grok-4-1-fast-reasoning",
       "pricing": {
@@ -901,7 +901,7 @@
       "displayName": "Grok 3",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement",
       "pricing": {
         "input": 1.25,
@@ -915,7 +915,7 @@
       "displayName": "Grok 4",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.x.ai/developers/migration/may-15-retirement",
       "verifiedAs": "grok-4-0709",
       "pricing": {
@@ -929,7 +929,7 @@
       "id": "xai-grok-4.20",
       "displayName": "Grok 4.20",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
       "verifiedAs": "grok-4.20-0309-reasoning",
       "pricing": {
@@ -1015,7 +1015,7 @@
         "cacheStoragePerMillionTokenHour": 1
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -1026,7 +1026,7 @@
         "cacheStoragePerMillionTokenHour": 1
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -1037,7 +1037,7 @@
         "cacheStoragePerMillionTokenHour": 1
       },
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing"
     },
     {
@@ -1069,7 +1069,7 @@
       "displayName": "GPT-6 Astra",
       "capabilityIndex": 90,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 10,
@@ -1093,7 +1093,7 @@
       "displayName": "GPT-6.1 Sol",
       "capabilityIndex": 90,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 2,
@@ -1117,7 +1117,7 @@
       "displayName": "GPT-6.1 Terra",
       "capabilityIndex": 88,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 1,
@@ -1141,7 +1141,7 @@
       "displayName": "GPT-6 Sol",
       "capabilityIndex": 89,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 2,
@@ -1165,7 +1165,7 @@
       "displayName": "GPT-6 Luna",
       "capabilityIndex": 81,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 0.1,
@@ -1189,7 +1189,7 @@
       "displayName": "GPT-4.1",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -1198,7 +1198,7 @@
       "displayName": "GPT-4.1 Mini",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -1207,7 +1207,7 @@
       "displayName": "GPT-4o",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -1216,7 +1216,7 @@
       "displayName": "GPT-4o Mini",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
     },
     {
@@ -1226,7 +1226,7 @@
       "displayName": "Gemini 4 Argon",
       "capabilityIndex": 90,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
       "pricing": {
         "input": 4,
@@ -1247,7 +1247,7 @@
       "displayName": "Gemini 2.5 Flash-Lite",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://ai.google.dev/gemini-api/docs/pricing",
       "pricing": {
         "input": 0.1,
@@ -1262,7 +1262,7 @@
       "providerId": "xai",
       "displayName": "Grok Build 0.1",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.x.ai/developers/pricing",
       "pricing": {
         "input": 1,
@@ -1283,7 +1283,7 @@
       "displayName": "GLM-5.3 Flash",
       "capabilityIndex": 86,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 0.15,
@@ -1298,7 +1298,7 @@
       "displayName": "GLM-4.5",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 0.6,
@@ -1312,7 +1312,7 @@
       "displayName": "GLM-4.5-X",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 2.2,
@@ -1326,7 +1326,7 @@
       "displayName": "GLM-4.5-Air",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 0.2,
@@ -1340,7 +1340,7 @@
       "displayName": "GLM-4.5-AirX",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 1.1,
@@ -1354,7 +1354,7 @@
       "displayName": "GLM-4 32B",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.z.ai/guides/overview/pricing",
       "pricing": {
         "input": 0.1,
@@ -1368,7 +1368,7 @@
       "displayName": "Qwen 3.8 Max",
       "capabilityIndex": 87,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
       "verifyHint": "Read the Singapore (International) table only. This page renders a separate pricing table for each region (Singapore, China (Beijing), Germany (Frankfurt), US (Virginia), Japan (Tokyo) and others) and they list this model at different prices. The Singapore table is the one whose rows carry International as their deployment scope; ignore every other table.",
       "pricing": {
@@ -1383,7 +1383,7 @@
       "providerId": "meta",
       "displayName": "Muse Spark 1.3",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
     },
     {
@@ -1393,7 +1393,7 @@
       "displayName": "Muse Wonder 1.0",
       "capabilityIndex": 90,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://dev.meta.ai/docs/pricing-rate-limits"
     },
     {
@@ -1403,7 +1403,7 @@
       "displayName": "MiMo V2.6 Pro",
       "capabilityIndex": 87,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
       "verifiedAs": "mimo-v2.6-pro",
       "verifyHint": "Read the 'Overseas Pricing of the Model' section only, whose prices are in US dollars ($). The Domestic table above it lists the same model names in yuan (¥); ignore it. Use the Real-time API rows, not the Batch API rows.",
@@ -1421,7 +1421,7 @@
       "displayName": "MiMo V2.6 Flash",
       "capabilityIndex": 81,
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://mimo.mi.com/docs/en-US/price/pay-as-you-go",
       "verifiedAs": "mimo-v2.6-flash",
       "verifyHint": "Read the 'Overseas Pricing of the Model' section only, whose prices are in US dollars ($). The Domestic table above it lists the same model names in yuan (¥); ignore it. Use the Real-time API rows, not the Batch API rows.",
@@ -1438,7 +1438,7 @@
       "providerId": "inception",
       "displayName": "Mercury 2",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models"
     },
     {
@@ -1447,7 +1447,7 @@
       "providerId": "inception",
       "displayName": "Mercury 2.5",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.inceptionlabs.ai/get-started/models",
       "pricing": {
         "input": 0.2,
@@ -1461,7 +1461,7 @@
       "providerId": "microsoft",
       "displayName": "MAI-Thinking-1",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
       "verifiedAs": "MAI-Thinking-1 Global",
       "verifyHint": "Read the MAI-Thinking-1 Global row only. The same table prices other models and has Regional rows for some; ignore those."
@@ -1488,7 +1488,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.5 Pro",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 30,
@@ -1507,7 +1507,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.4 Pro",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 30,
@@ -1526,7 +1526,7 @@
       "providerId": "openai",
       "displayName": "GPT-5.2 Pro",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 21,
@@ -1541,7 +1541,7 @@
       "displayName": "GPT-5 Pro",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 15,
@@ -1556,7 +1556,7 @@
       "displayName": "o3-pro",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
       "pricing": {
         "input": 20,
@@ -1576,7 +1576,7 @@
       "providerId": "mistral",
       "displayName": "Codestral 25.08",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://docs.mistral.ai/inference/pricing",
       "verifiedAs": "Codestral",
       "pricing": {
@@ -1624,7 +1624,7 @@
       "providerId": "alibaba",
       "displayName": "Qwen 3.8 Flash",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash",
       "verifyHint": "Read the Singapore (International) table only. This page renders a separate pricing table for each region and they list this model at different prices; the Singapore rows carry International as their deployment scope.",
       "pricing": {
@@ -1639,7 +1639,7 @@
       "providerId": "alibaba",
       "displayName": "Qwen 3.8 Omni Flash",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "verifyHint": "Read the Singapore (International) table only. This page renders a separate pricing table for each region and they list this model at different prices; the Singapore rows carry International as their deployment scope.",
       "pricing": {
@@ -1655,7 +1655,7 @@
       "displayName": "Command R+",
       "status": "legacy",
       "vendorVerified": true,
-      "lastVerified": "2026-11-10",
+      "lastVerified": "2026-11-11",
       "verifiedUrl": "https://cohere.com/pricing",
       "verifiedAs": "Command R+ 08-2024",
       "pricing": {
