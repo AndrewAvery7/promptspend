@@ -91,6 +91,11 @@ body.tour-active .main {
   font-style: normal;
   color: var(--accent);
 }
+/* The home page's "before" is italic as well as blue (Andrew, 2026-11-11);
+ * Compare's "10×" stays upright. */
+.headline em.headline__lean {
+  font-style: italic;
+}
 .subhead {
   color: var(--muted);
   font-size: 1.02rem;
@@ -449,7 +454,8 @@ body.tour-active .main {
    a banner, not a button. Two classes because `.button`, later in this file,
    sets `display: flex` and would otherwise win. 44px tall for a thumb. */
 .hero__cta {
-  margin: 4px 0 6px;
+  /* Room above and below the button so it doesn't crowd the copy (Andrew, 2026-11-11). */
+  margin: 20px 0 18px;
 }
 .hero__cta .hero__estimate-cta {
   display: inline-flex;
