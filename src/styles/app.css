@@ -2239,7 +2239,7 @@ table.catalog tbody tr:hover {
 .mobile-cost-bar__label {
   flex: none;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.75rem; /* 12px: the phone floor tests/e2e/mobile.spec.ts enforces */
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
