@@ -349,6 +349,35 @@ async function main(): Promise<void> {
     }
   }
 
+  // The agent-readable markdown files: long form of llms.txt and the homepage.
+  for (const file of ['llms-full.txt', 'index.md']) {
+    if (!existsSync(resolve(DIST, file))) {
+      problems.push(`dist/${file} was not generated`);
+      continue;
+    }
+    const text = await readFile(resolve(DIST, file), 'utf8');
+    if (text.trim().length === 0) problems.push(`${file} is empty`);
+    if (!text.startsWith('# PromptSpend')) problems.push(`${file} does not start with an H1`);
+    if (canonical) {
+      const origin = new URL(canonical).origin;
+      if (!text.includes(origin)) problems.push(`${file} does not use absolute URLs on the canonical host`);
+      const links = [...text.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)].map((m) => m[1]!);
+      for (const link of links) {
+        if (/promptspend\.com|github\.io/.test(link) && !link.startsWith(origin)) {
+          problems.push(`${file} links to a non-canonical host: ${link}`);
+        }
+      }
+    }
+  }
+  if (canonical && existsSync(resolve(DIST, 'index.html'))) {
+    const home = await readFile(resolve(DIST, 'index.html'), 'utf8');
+    for (const file of ['index.md', 'llms.txt', 'llms-full.txt']) {
+      if (!home.includes(`${canonical.replace(/\/$/, '')}/${file}`)) {
+        problems.push(`homepage <head> does not announce /${file}`);
+      }
+    }
+  }
+
   // ---------------------------------------------- featured comparison depth
   // The featured pages exist to be worth citing (SEO register 3.8). If a
   // template change ever drops their analysis, the build says so rather than

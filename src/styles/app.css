@@ -432,6 +432,30 @@ body.tour-active .main {
   margin-top: 14px;
   text-align: center;
   text-decoration: none;
+  /* The outlined `.button` sets no color of its own, and on an <a> that means
+     link blue — which read as a third style rather than the secondary one. */
+  color: var(--ink);
+}
+/* The hero's primary action. Inline-flex so it sizes to its label rather than
+   stretching across the copy column on a desktop — a 700px-wide bar reads as
+   a banner, not a button. Two classes because `.button`, later in this file,
+   sets `display: flex` and would otherwise win. 44px tall for a thumb. */
+.hero__cta {
+  margin: 4px 0 6px;
+}
+.hero__cta .hero__estimate-cta {
+  display: inline-flex;
+  min-height: 44px;
+  padding-left: 22px;
+  padding-right: 22px;
+  justify-content: center;
+  text-decoration: none;
+}
+/* Full width on a phone, where the column is a thumb's width anyway. */
+@media (max-width: 760px) {
+  .hero__cta .hero__estimate-cta {
+    display: flex;
+  }
 }
 
 /* Compare's working row: the chart on the left, the shortlist beside it.
@@ -2128,6 +2152,132 @@ table.catalog tbody tr:hover {
    full strength and throw that guarantee away. Same rule as the sync chip. */
 .country-toggle__count {
   font-weight: 500;
+}
+
+/* "Start from an example" (`StarterPicker.tsx`). The chips borrow the country
+   filter's `.country-toggle` look, the app's existing "this one is on" chip, so
+   only the layout lives here. One row that wraps: on a phone the five labels
+   take two or three short lines rather than one line that scrolls sideways. */
+.starter-picker {
+  margin: 0 0 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.starter-picker__label {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+.starter-picker__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+/* The body font rather than the mono one the country codes use: these are
+   phrases to read, not codes to scan. */
+.starter-picker__chip {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-align: left;
+}
+.starter-picker__note {
+  margin: 8px 0 0;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+/* The phone cost bar (`MobileCostBar.tsx`). Hidden by default and shown only
+   at the phone breakpoint, so a desktop never draws it at all — the results
+   column is already beside the inputs there.
+
+   `left: 0; right: 0` with border-box padding rather than `width: 100vw`:
+   100vw includes a scrollbar's width where there is one, which is exactly the
+   kind of few pixels that makes a page scroll sideways on a phone. z-index 55
+   sits under the consent notice, tour card and toast (60, 70, 99), which are
+   all more urgent than a number that is also on the page. */
+.mobile-cost-bar {
+  display: none;
+}
+@media (max-width: 760px) {
+  .mobile-cost-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 55;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px calc(8px + env(safe-area-inset-bottom, 0px));
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    animation: cost-bar-in 0.2s ease-out;
+  }
+  /* Room for the bar under the footer, so nothing ends up permanently behind
+     it. Set from `MobileCostBar` only while the bar is showing. */
+  body.has-mobile-cost-bar {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+}
+/* `min-width: 0` all the way down is what lets the name shrink: a flex item
+   will not go narrower than its content otherwise, and the content is a model
+   name that can be longer than the phone is wide. */
+.mobile-cost-bar__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.82rem;
+}
+.mobile-cost-bar__label {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem; /* 12px: the phone floor tests/e2e/mobile.spec.ts enforces */
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.mobile-cost-bar__name {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.mobile-cost-bar__price {
+  flex: none;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.mobile-cost-bar__button {
+  flex: none;
+  min-height: 44px;
+  white-space: nowrap;
+}
+@keyframes cost-bar-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+/* The global reduced-motion rule already shortens every animation to nothing;
+   this says so where the animation is, and removes it outright. */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-cost-bar {
+    animation: none;
+  }
 }
 
 /* The Use column is not a sort button, so it does not inherit the padding the

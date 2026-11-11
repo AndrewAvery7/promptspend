@@ -71,7 +71,7 @@ afterEach(() => {
 
 async function renderApp() {
   render(<App />);
-  await waitFor(() => expect(screen.getByText(/Know the tab/)).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText(/Know your AI API bill/)).toBeInTheDocument());
 }
 
 describe('App', () => {
@@ -119,6 +119,28 @@ describe('App', () => {
     await waitFor(() => {
       expect(screen.getByText(/≈ \d+ tok · est/)).toBeInTheDocument();
     });
+  });
+
+  it('fills the workload from an example and lets go of it once edited', async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    const chip = screen.getByRole('button', { name: 'Coding assistant' });
+    expect(chip).toHaveAttribute('aria-pressed', 'false');
+
+    await user.click(chip);
+
+    expect(chip).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByLabelText('Turns per conversation')).toHaveValue('10');
+    await waitFor(() => {
+      expect(window.location.search).toMatch(/sys=2500/);
+      expect(window.location.search).toMatch(/cpd=500/);
+    });
+    // Only one of the coding suggestions is in this two-model test catalog, so
+    // the comparison the visitor already had is kept rather than cut to one card.
+    expect(screen.getAllByRole('article')).toHaveLength(2);
+
+    fireEvent.change(screen.getByLabelText('Turns per conversation'), { target: { value: '12' } });
+    expect(chip).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('keeps the shareable URL in step with the scenario', async () => {
@@ -292,7 +314,7 @@ describe('App', () => {
     await screen.findByText(/Pricing data could not be loaded/);
     failing = false;
     await user.click(screen.getByRole('button', { name: 'Try again' }));
-    await waitFor(() => expect(screen.getByText(/Know the tab/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Know your AI API bill/)).toBeInTheDocument());
   });
 });
 
@@ -358,7 +380,7 @@ describe('honesty of the default estimate', () => {
     );
     await renderApp();
     expect(screen.getAllByRole('article').length).toBeGreaterThan(0);
-    expect(screen.getByText(/Know the tab/)).toBeInTheDocument();
+    expect(screen.getByText(/Know your AI API bill/)).toBeInTheDocument();
   });
 });
 
@@ -460,7 +482,7 @@ describe('home page order', () => {
 
   it('keeps every block that was on the page', async () => {
     await renderApp();
-    expect(screen.getByRole('heading', { level: 1, name: /Know the tab/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: /Know your AI API bill/ })).toBeInTheDocument();
     expect(screen.getByText(/pick up to four models/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /which providers have a free tier/ })).toBeInTheDocument();
     expect(screen.getByText('Where each price was read')).toBeInTheDocument();
@@ -477,8 +499,30 @@ describe('home page order', () => {
     ]) {
       expect(within(aside).getByText(item)).toBeInTheDocument();
     }
-    expect(within(aside).getByRole('link', { name: 'PromptSpend this conversation' })).toBeInTheDocument();
+    // Demoted to the outlined style: the Receipt prices a chat that already
+    // happened, so it must not be the page's one filled button.
+    const receipt = within(aside).getByRole('link', { name: "Price an AI chat you've already had" });
+    expect(receipt).toHaveAttribute('href', expect.stringMatching(/receipt/));
+    expect(receipt).not.toHaveClass('button--primary');
     expect(within(aside).getByRole('button', { name: /How to install each/ })).toBeInTheDocument();
+  });
+
+  it("makes estimating the hero's primary action, landing focus on step 1", async () => {
+    const user = userEvent.setup();
+    await renderApp();
+    const copy = document.querySelector('.hero__copy') as HTMLElement;
+    const cta = within(copy).getByRole('link', { name: 'Estimate my cost' });
+    expect(cta).toHaveClass('button--primary');
+    // The only filled button in the hero, so it reads as the main action.
+    const hero = document.querySelector('.hero') as HTMLElement;
+    expect(hero.querySelectorAll('.button--primary')).toHaveLength(1);
+    // A real anchor, so it still works if the script never runs.
+    expect(cta).toHaveAttribute('href', '#panel-models');
+
+    await user.click(cta);
+    expect(screen.getByRole('heading', { level: 2, name: /1 · Models/ })).toHaveFocus();
+    // The click is handled in script, so the address bar gains no hash.
+    expect(window.location.hash).toBe('');
   });
 
   it('has no app announcement box at the top of any view, and keeps the QR codes in the footer', async () => {
@@ -596,7 +640,7 @@ describe('claims the site makes about itself', () => {
     render(<App />);
 
     expect(await screen.findByText(/Every number shows its work/)).toBeInTheDocument();
-    expect(screen.queryByText(/Know the tab/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Know your AI API bill/)).not.toBeInTheDocument();
   });
 
   it('still offers the two options that need no infrastructure', async () => {

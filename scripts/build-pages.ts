@@ -35,7 +35,7 @@ import { EMPTY_CHECK_REPORT, parseCheckReport } from '@/lib/free-tiers/check';
 import { buildFreeTierPages, FREE_TIERS_PATH, publishedFreeTiers } from '@/lib/seo/free-tier-pages';
 import { PAGE_CSS } from '@/lib/seo/css';
 import type { BenchmarkEntry } from '@/lib/seo/featured';
-import { renderLlmsTxt } from '@/lib/seo/llms';
+import { renderIndexMd, renderLlmsFullTxt, renderLlmsTxt } from '@/lib/seo/llms';
 import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import { receiptSpec } from '@/receipt/receiptSpec';
 import { changesPageInput } from '@/lib/seo/changes-page';
@@ -515,16 +515,17 @@ async function main(): Promise<void> {
 
   // An index written for the thing that reads it. Points at the pages and the
   // API rather than inlining rates, which would be stale by morning.
-  await writeFileAt(
-    'llms.txt',
-    renderLlmsTxt(set, {
-      siteUrl,
-      apiUrl,
-      generatedAt: catalog.generatedAt,
-      freeTiers,
-      writing: newestFirstWriting,
-    }),
-  );
+  const llmsInput = {
+    siteUrl,
+    apiUrl,
+    generatedAt: catalog.generatedAt,
+    freeTiers,
+    writing: newestFirstWriting,
+  };
+  await writeFileAt('llms.txt', renderLlmsTxt(set, llmsInput));
+  // The long form and the homepage as markdown, announced in index.html's head.
+  await writeFileAt('llms-full.txt', renderLlmsFullTxt(set, llmsInput));
+  await writeFileAt('index.md', renderIndexMd(set, llmsInput));
 
   // Proof of control for IndexNow. Served as plain text at the site root; the
   // key is public by design — see scripts/lib/indexnow.ts.
@@ -554,7 +555,7 @@ async function main(): Promise<void> {
   console.log(
     `  sitemap    ${sitemapUrls} URLs in ${files.filter((file) => file.entries.length > 0).length} files, indexed at ${siteUrl}/sitemap.xml`,
   );
-  console.log(`  llms.txt   ${siteUrl}/llms.txt`);
+  console.log(`  llms.txt   ${siteUrl}/llms.txt (+ llms-full.txt, index.md)`);
   if (set.droppedComparisons > 0) {
     // Never silent. A capped page set that looks complete is how a coverage
     // regression hides for months.

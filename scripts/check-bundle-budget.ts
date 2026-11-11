@@ -32,7 +32,11 @@ const BUDGETS = {
   // lands in the same folder, and the code it shares with the calculator is split
   // into a small chunk of its own, adding about 1.5 KB to this sum. The calculator's
   // own load is unchanged.
-  initialJs: 107,
+  // 109 from 2026-11-10: the homepage conversion pass — the "Start from an example"
+  // chips (five workloads and their suggested model ids), the phone cost bar and
+  // the hero's "Estimate my cost" jump — estimated at about 1.2 KB gzip, taking the
+  // sum from about 107 to a measured 108.2. This one is the calculator's own load.
+  initialJs: 109,
   initialCss: 40,
   tokenizer: 2048,
 };

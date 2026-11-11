@@ -14,6 +14,9 @@ import { CountryTag } from './Flag';
 import { SyncChip } from './SyncChip';
 import { Rate, useAsOf } from './PromoRate';
 import { rateOn } from '@/lib/pricing/promo';
+import { StarterPicker } from './StarterPicker';
+import { MobileCostBar } from './MobileCostBar';
+import { jumpTo } from './jumpTo';
 
 type Estimator = ReturnType<typeof useEstimator>;
 
@@ -99,11 +102,32 @@ export function EstimateView({
         <div className="hero__copy">
           <p className="eyebrow">Estimate</p>
           <h1 className="headline" id="estimate-heading">
-            Know the tab <em>before</em> you build.
+            Know your AI API bill <em>before</em> you ship.
           </h1>
           <p className="subhead">
             Paste your real prompt or sketch the workload, pick up to four models, and see every model&apos;s
             bill side by side — at your scale, from prices re-checked every morning.
+          </p>
+          {/* The page's one filled button, and it is the estimate. It used to be
+              the Receipt link in the aside, which audits a chat somebody has
+              already had — a different product — so the loudest thing on the
+              estimator's own page led away from the estimator.
+
+              An anchor, so it still works before the script has run or if it
+              fails; the click handler takes over to move focus as well as the
+              scroll, and to skip the smooth scroll for reduced motion. The
+              target is step 1's heading, which `.panel__title`'s
+              scroll-margin keeps clear of the sticky header. */}
+          <p className="hero__cta">
+            <a
+              className="button button--primary hero__estimate-cta"
+              href="#panel-models"
+              onClick={(event) => {
+                if (jumpTo('models-title')) event.preventDefault();
+              }}
+            >
+              Estimate my cost
+            </a>
           </p>
           <p className="subhead">
             Want to try before you pay? <a href={FREE_TIERS_URL}>See which providers have a free tier</a>.
@@ -151,8 +175,12 @@ export function EstimateView({
               <b>Pricing API</b> — keyless and CORS-open, as JSON or CSV
             </li>
           </ul>
-          <a className="button button--primary hero__receipt-cta" href={RECEIPT_URL}>
-            PromptSpend this conversation
+          {/* Outlined, not filled: the hero's main column owns the page's one
+              primary action ("Estimate my cost"). The label says what the
+              Receipt does in the visitor's words, since "PromptSpend this
+              conversation" only made sense to someone who already knew. */}
+          <a className="button hero__receipt-cta" href={RECEIPT_URL}>
+            Price an AI chat you&apos;ve already had
           </a>
           <p className="hero__aside-note">
             <button type="button" className="linklike" onClick={onOpenData}>
@@ -196,7 +224,8 @@ export function EstimateView({
           {/* 1 — models */}
           <section className="panel" id="panel-models" aria-labelledby="models-title">
             <div className="panel__head">
-              <h2 className="panel__title" id="models-title">
+              {/* `tabIndex={-1}` so "Estimate my cost" can move focus here. */}
+              <h2 className="panel__title" id="models-title" tabIndex={-1}>
                 1 · Models
                 <HelpTip label="Models">
                   Same task, wildly different bills. Comparing before you build is the highest-leverage cost
@@ -205,6 +234,10 @@ export function EstimateView({
               </h2>
             </div>
             <div className="panel__body">
+              {/* At the top of step 1 rather than in step 2, because a starter
+                  sets models as well as the workload — and step 1 is where the
+                  hero's button lands, so it is the first thing a newcomer sees. */}
+              <StarterPicker scenario={scenario} onPick={estimator.applyStarter} />
               <input
                 className="search-input"
                 type="search"
@@ -557,7 +590,8 @@ export function EstimateView({
         <div className="workspace__results" id="panel-results">
           <section className="panel" aria-labelledby="results-title">
             <div className="panel__head">
-              <h2 className="panel__title" id="results-title">
+              {/* `tabIndex={-1}` so the phone cost bar's "See all costs" can move focus here. */}
+              <h2 className="panel__title" id="results-title" tabIndex={-1}>
                 Your models, side by side
                 {/* Two facts, one pill: is anybody still checking, and have the
                     prices moved. What it must never do is name a date to fill
@@ -622,6 +656,8 @@ export function EstimateView({
           </div>
         </div>
       </div>
+
+      <MobileCostBar rows={rows} resultsId="panel-results" targetId="results-title" />
     </section>
   );
 }
