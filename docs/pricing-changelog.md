@@ -1546,3 +1546,7 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `mistral-mistral-large-4-0` — provenance.needsReview: true → —
 - **Review** `mistral-mistral-large-4-0` — provenance.reviewNote: vendor override differs from the automated feed (50%): $0.7/$2.1 vs $1.36/$4.18 → —
 - **Review** `mistral-mistral-large-4-0` — provenance.lastChanged: — → 2026-11-11
+
+## 2026-11-12
+
+- **Added** `gemini-gemini-4-hydrogen` — Gemini 4 Hydrogen ($1.5 in / $7.5 out per 1M)

@@ -1611,8 +1611,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-11",
-      "fingerprint": "1c4b32acd8698e"
+      "lastmod": "2026-11-12",
+      "fingerprint": "08a40f93ad7d14"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1873,6 +1873,11 @@
       "published": "2026-11-10",
       "lastmod": "2026-11-11",
       "fingerprint": "1c94a91b4a9f30"
+    },
+    "/models/gemini-4-hydrogen/": {
+      "published": "2026-11-12",
+      "lastmod": "2026-11-12",
+      "fingerprint": "03e11dd60e079e"
     },
     "/models/gpt-4-1-mini/": {
       "published": "2026-10-24",
@@ -2256,8 +2261,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-11",
-      "fingerprint": "1163e53758e1c8"
+      "lastmod": "2026-11-12",
+      "fingerprint": "06735a1fe14fb6"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2286,8 +2291,8 @@
     },
     "/providers/google/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-11",
-      "fingerprint": "03eec8a59cb5bd"
+      "lastmod": "2026-11-12",
+      "fingerprint": "0a8c74fc501c56"
     },
     "/providers/inception/": {
       "published": "2026-10-24",
