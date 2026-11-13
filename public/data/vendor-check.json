@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-12T18:40:02.891Z",
+  "checkedAt": "2026-11-13T18:19:31.271Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "20976 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "21200 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -60,7 +60,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "114586 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "111617 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -77,7 +77,7 @@
     {
       "url": "https://api-docs.deepseek.com/quick_start/pricing",
       "ok": true,
-      "note": "13624 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "15123 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "deepseek-deepseek-v4-pro",
         "deepseek-deepseek-v4-flash"
@@ -103,8 +103,8 @@
     },
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "ok": true,
-      "note": "214137 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "ok": false,
+      "note": "page is 601004 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -171,7 +171,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-max",
       "ok": true,
-      "note": "62795 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "35646 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-max"
       ]
@@ -222,7 +222,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/qwen3-8-flash",
       "ok": true,
-      "note": "55694 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "15872 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "dashscope-qwen3.8-flash"
       ]
@@ -230,7 +230,7 @@
     {
       "url": "https://cohere.com/pricing",
       "ok": true,
-      "note": "20127 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "16755 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "command-r-plus-08-2024"
       ]
@@ -559,31 +559,31 @@
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page; no price is printed for kimi-k3)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page; no price is printed for kimi-k3.1-pro)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page; no price is printed for kimi-k2.7-code)"
+      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page)"
     },
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "confirmed",
-      "detail": "page lists $2.5/$7.5"
+      "status": "unconfirmed",
+      "detail": "page could not be read: page is 601004 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3.8-omni-flash",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-      "status": "confirmed",
-      "detail": "page lists $0.15/$0.47 (cached $0.016)"
+      "status": "unconfirmed",
+      "detail": "page could not be read: page is 601004 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
@@ -790,7 +790,7 @@
       "detail": "page lists $2.5/$10"
     }
   ],
-  "confirmed": 86,
+  "confirmed": 84,
   "mismatched": 0,
-  "unconfirmed": 6
+  "unconfirmed": 8
 }

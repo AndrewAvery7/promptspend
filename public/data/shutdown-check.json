@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-12T18:42:52.880Z",
+  "checkedAt": "2026-11-13T18:21:15.358Z",
   "sources": [
     {
       "url": "https://developers.openai.com/api/docs/deprecations.md",
-      "ok": true,
-      "notices": 176
+      "ok": false,
+      "notices": 0,
+      "note": "no dated rows found — the page layout may have changed"
     },
     {
       "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations.md",
@@ -40,60 +41,6 @@
       "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations.md"
     },
     {
-      "id": "gpt-5",
-      "providerId": "openai",
-      "vendorName": "gpt-5",
-      "date": "2026-12-11",
-      "shutDown": false,
-      "source": "OpenAI's deprecations page",
-      "url": "https://developers.openai.com/api/docs/deprecations.md"
-    },
-    {
-      "id": "gpt-5-mini",
-      "providerId": "openai",
-      "vendorName": "gpt-5-mini",
-      "date": "2026-12-11",
-      "shutDown": false,
-      "source": "OpenAI's deprecations page",
-      "url": "https://developers.openai.com/api/docs/deprecations.md"
-    },
-    {
-      "id": "gpt-5-nano",
-      "providerId": "openai",
-      "vendorName": "gpt-5-nano",
-      "date": "2026-12-11",
-      "shutDown": false,
-      "source": "OpenAI's deprecations page",
-      "url": "https://developers.openai.com/api/docs/deprecations.md"
-    },
-    {
-      "id": "gpt-5-pro",
-      "providerId": "openai",
-      "vendorName": "gpt-5-pro",
-      "date": "2026-12-11",
-      "shutDown": false,
-      "source": "OpenAI's deprecations page",
-      "url": "https://developers.openai.com/api/docs/deprecations.md"
-    },
-    {
-      "id": "gpt-5.1",
-      "providerId": "openai",
-      "vendorName": "gpt-5.1",
-      "date": "2027-04-01",
-      "shutDown": false,
-      "source": "OpenAI's deprecations page",
-      "url": "https://developers.openai.com/api/docs/deprecations.md"
-    },
-    {
-      "id": "gpt-5.4-nano",
-      "providerId": "openai",
-      "vendorName": "gpt-5.4-nano",
-      "date": "2027-04-01",
-      "shutDown": false,
-      "source": "OpenAI's deprecations page",
-      "url": "https://developers.openai.com/api/docs/deprecations.md"
-    },
-    {
       "id": "mistral-mistral-large-3",
       "providerId": "mistral",
       "vendorName": "Mistral Large 3 (25.12)",
@@ -110,24 +57,6 @@
       "shutDown": false,
       "source": "Mistral's models page",
       "url": "https://docs.mistral.ai/models/"
-    },
-    {
-      "id": "o3",
-      "providerId": "openai",
-      "vendorName": "o3",
-      "date": "2026-12-11",
-      "shutDown": false,
-      "source": "OpenAI's deprecations page",
-      "url": "https://developers.openai.com/api/docs/deprecations.md"
-    },
-    {
-      "id": "o3-pro",
-      "providerId": "openai",
-      "vendorName": "o3-pro",
-      "date": "2026-12-11",
-      "shutDown": false,
-      "source": "OpenAI's deprecations page",
-      "url": "https://developers.openai.com/api/docs/deprecations.md"
     }
   ]
 }
