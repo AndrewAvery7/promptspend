@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-14T16:48:32.562Z",
+  "checkedAt": "2026-11-15T17:31:21.716Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -559,19 +559,19 @@
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series pricing table is empty on the page; no price is printed for kimi-k3)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page; no price is printed for kimi-k3)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series pricing table is empty on the page; no price is printed for kimi-k3.1-pro)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page; no price is printed for kimi-k3.1-pro)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price is printed for kimi-k2.7-code)"
+      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page; no price is printed for kimi-k2.7-code)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -721,7 +721,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing is listed)"
+      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no mistral-large-4-0 pricing shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",
