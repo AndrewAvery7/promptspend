@@ -1557,3 +1557,8 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `gemini-gemini-4-hydrogen` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
 - **Review** `minimax-minimax-m2.5` — provenance.needsReview: — → true
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: — → OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2
+
+## 2026-11-16
+
+- **Review** `minimax-minimax-m2.5` — provenance.needsReview: true → —
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2 → —
