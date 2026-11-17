@@ -40,7 +40,7 @@ import { parseFrontmatter, renderMarkdown } from '@/lib/seo/prose';
 import { receiptSpec } from '@/receipt/receiptSpec';
 import { changesPageInput } from '@/lib/seo/changes-page';
 import { tokenCounterInput } from '@/lib/seo/token-counter-page';
-import { sitemapIndex, urlset, type SitemapEntry, type SitemapFile } from '@/lib/seo/sitemap';
+import { exceptHeld, sitemapIndex, urlset, type SitemapEntry, type SitemapFile } from '@/lib/seo/sitemap';
 import { APP_PAGE_PATH } from '@/lib/links';
 import {
   APP_PAGE_UPDATED,
@@ -89,6 +89,7 @@ const FREE_TIERS = resolve(ROOT, 'data/free-tiers.json');
 const FREE_TIER_CHECK = resolve(ROOT, 'public/data/free-tier-check.json');
 const SYNC_STATUS = resolve(ROOT, 'public/data/sync-status.json');
 const FEATURED = resolve(ROOT, 'data/featured-comparisons.json');
+const SITEMAP_HELD = resolve(ROOT, 'data/sitemap-held-comparisons.json');
 const BENCHMARKS = resolve(ROOT, 'data/benchmarks.json');
 /** Drawn share images by content key; ignored by git, kept between builds (and by CI's cache). */
 const SHARE_IMAGE_CACHE = resolve(ROOT, '.cache/share-images');
@@ -344,6 +345,23 @@ async function main(): Promise<void> {
   const unknownFeatured = [...featured].filter((slug) => !set.comparisons.some((page) => page.slug === slug));
   if (unknownFeatured.length > 0)
     throw new Error(`featured comparisons not built: ${unknownFeatured.join(', ')}`);
+  // Comparisons kept out of the sitemap but still built, linked and indexable.
+  // A held path that is not a built comparison is a typo that would silently
+  // hold nothing; a featured one would hide the pages the sitemap is for.
+  const sitemapHeld = new Set<string>(
+    (JSON.parse(await readFile(SITEMAP_HELD, 'utf8')) as { paths: string[] }).paths,
+  );
+  const comparisonPaths = new Set(set.comparisons.map((page) => page.path));
+  const unknownHeld = [...sitemapHeld].filter((path) => !comparisonPaths.has(path));
+  if (unknownHeld.length > 0)
+    throw new Error(`sitemap-held comparisons not built: ${unknownHeld.join(', ')}`);
+  const featuredHeld = set.comparisons.filter(
+    (page) => featured.has(page.slug) && sitemapHeld.has(page.path),
+  );
+  if (featuredHeld.length > 0)
+    throw new Error(
+      `featured comparisons held out of the sitemap: ${featuredHeld.map((page) => page.path).join(', ')}`,
+    );
   const benchmarkRows = (JSON.parse(await readFile(BENCHMARKS, 'utf8')) as { entries: BenchmarkEntry[] })
     .entries;
   const benchmarks = new Map(benchmarkRows.map((row) => [row.modelId, row]));
@@ -497,7 +515,10 @@ async function main(): Promise<void> {
     },
     { name: 'sitemap-models.xml', entries: set.models.map((page) => entry(page.path, page.lastmod)) },
     { name: 'sitemap-providers.xml', entries: set.providers.map((page) => entry(page.path, page.lastmod)) },
-    { name: 'sitemap-compare.xml', entries: set.comparisons.map((page) => entry(page.path, page.lastmod)) },
+    {
+      name: 'sitemap-compare.xml',
+      entries: exceptHeld(set.comparisons, sitemapHeld).map((page) => entry(page.path, page.lastmod)),
+    },
     {
       name: 'sitemap-free-tiers.xml',
       entries: freeTiers.pages.map((page) => entry(page.path, page.lastmod)),

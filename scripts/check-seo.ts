@@ -462,10 +462,31 @@ async function main(): Promise<void> {
     }
 
     const listed = new Set(locs.map((loc) => new URL(loc).pathname));
+    // Comparisons deliberately kept out of the sitemap (still built, linked and
+    // indexable). They must be absent from it, and none may be featured.
+    const heldFile = resolve(ROOT, 'data/sitemap-held-comparisons.json');
+    const held = new Set<string>(
+      existsSync(heldFile) ? (JSON.parse(await readFile(heldFile, 'utf8')) as { paths: string[] }).paths : [],
+    );
     for (const path of pages) {
       // The sitemap carries absolute URLs, whose pathname already includes the
       // base path; compare the two on the same footing.
-      if (!listed.has(`${basePath}${path.slice(1)}`)) problems.push(`${path} is not in sitemap.xml`);
+      const inSitemap = listed.has(`${basePath}${path.slice(1)}`);
+      if (held.has(path)) {
+        if (inSitemap) problems.push(`${path} is held out of the sitemap but listed in sitemap.xml`);
+      } else if (!inSitemap) problems.push(`${path} is not in sitemap.xml`);
+    }
+    for (const path of held) {
+      if (!pages.includes(path))
+        problems.push(`${path} is held out of the sitemap but is not an indexable page`);
+    }
+    const featuredList = resolve(ROOT, 'data/featured-comparisons.json');
+    if (existsSync(featuredList)) {
+      const { slugs } = JSON.parse(await readFile(featuredList, 'utf8')) as { slugs: string[] };
+      for (const slug of slugs) {
+        if (held.has(`/compare/${slug}/`))
+          problems.push(`featured comparison /compare/${slug}/ is held out of the sitemap`);
+      }
     }
     // The reverse: a sitemap is a list of pages to index, so naming one that
     // says noindex is a contradiction Search Console reports as an error. The
