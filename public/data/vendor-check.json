@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-16T20:45:53.271Z",
+  "checkedAt": "2026-11-17T19:30:29.237Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "21200 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "24003 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -104,7 +104,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": false,
-      "note": "page is 609660 characters — too large to be a pricing page",
+      "note": "page is 610319 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -206,7 +206,7 @@
     {
       "url": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
       "ok": true,
-      "note": "11391 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "11438 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "azure-ai-mai-thinking-1"
       ]
@@ -553,7 +553,7 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price for kimi-k2.6 is listed)"
+      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price for kimi-k2.6 is printed)"
     },
     {
       "id": "moonshot-kimi-k3",
@@ -577,13 +577,13 @@
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 609660 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 610319 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3.8-omni-flash",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 609660 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 610319 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
@@ -721,7 +721,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no mistral-large-4-0 pricing shown)"
+      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing row is shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",

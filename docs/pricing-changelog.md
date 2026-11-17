@@ -1562,3 +1562,8 @@ value that moves in the same run as its source URL is a correction.
 
 - **Review** `minimax-minimax-m2.5` — provenance.needsReview: true → —
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2 → —
+
+## 2026-11-17
+
+- **Added** `gpt-6.2-astra` — GPT 6.2 Astra ($8 in / $40 out per 1M)
+- **Added** `gpt-6.2-sol` — GPT 6.2 Sol ($2 in / $10 out per 1M)

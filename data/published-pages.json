@@ -1611,8 +1611,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-12",
-      "fingerprint": "08a40f93ad7d14"
+      "lastmod": "2026-11-17",
+      "fingerprint": "110d0a8fd438a3"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1989,6 +1989,16 @@
       "lastmod": "2026-10-27",
       "fingerprint": "14679dc33a2805"
     },
+    "/models/gpt-6-2-astra/": {
+      "published": "2026-11-17",
+      "lastmod": "2026-11-17",
+      "fingerprint": "0c72b9244155d5"
+    },
+    "/models/gpt-6-2-sol/": {
+      "published": "2026-11-17",
+      "lastmod": "2026-11-17",
+      "fingerprint": "02ebcc45aec6a2"
+    },
     "/models/gpt-6-astra/": {
       "published": "2026-10-24",
       "lastmod": "2026-10-24",
@@ -2261,8 +2271,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-12",
-      "fingerprint": "06735a1fe14fb6"
+      "lastmod": "2026-11-17",
+      "fingerprint": "058fa04dac9015"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2326,8 +2336,8 @@
     },
     "/providers/openai/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-29",
-      "fingerprint": "12ae7987e9215b"
+      "lastmod": "2026-11-17",
+      "fingerprint": "0d0b7a824fbd09"
     },
     "/providers/xai/": {
       "published": "2026-08-02",
