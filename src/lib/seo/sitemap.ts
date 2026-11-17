@@ -41,6 +41,18 @@ export function latestLastmod(entries: readonly SitemapEntry[]): string {
   return entries.reduce((latest, entry) => (entry.lastmod > latest ? entry.lastmod : latest), '');
 }
 
+/**
+ * The pages a sitemap file should list: every page except the ones held out.
+ *
+ * Holding a page out of the sitemap is not the same as hiding it. The page is
+ * still built, linked and indexable; the sitemap just stops asking crawlers to
+ * spend their visits on it. Used for the comparisons in
+ * `data/sitemap-held-comparisons.json`.
+ */
+export function exceptHeld<T extends { path: string }>(pages: readonly T[], held: ReadonlySet<string>): T[] {
+  return pages.filter((page) => !held.has(page.path));
+}
+
 /** One sitemap file: a plain list of addresses and the dates their content changed. */
 export function urlset(entries: readonly SitemapEntry[]): string {
   const urls = entries

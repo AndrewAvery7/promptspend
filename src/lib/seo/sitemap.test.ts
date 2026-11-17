@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { latestLastmod, sitemapIndex, urlset } from './sitemap';
+import { exceptHeld, latestLastmod, sitemapIndex, urlset } from './sitemap';
 
 const entries = [
   { loc: 'https://promptspend.com/models/a/', lastmod: '2026-10-01' },
@@ -45,5 +45,20 @@ describe('the sitemap files', () => {
     );
     expect(xml).not.toContain('sitemap-empty.xml');
     expect(xml.match(/<sitemap>/g)).toHaveLength(2);
+  });
+});
+
+describe('pages held out of the sitemap', () => {
+  const pages = [{ path: '/compare/a-vs-b/' }, { path: '/compare/a-vs-c/' }, { path: '/compare/b-vs-c/' }];
+
+  it('drops only the held pages and keeps the order of the rest', () => {
+    expect(exceptHeld(pages, new Set(['/compare/a-vs-c/']))).toEqual([
+      { path: '/compare/a-vs-b/' },
+      { path: '/compare/b-vs-c/' },
+    ]);
+  });
+
+  it('keeps every page when nothing is held', () => {
+    expect(exceptHeld(pages, new Set())).toEqual(pages);
   });
 });
