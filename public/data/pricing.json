@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-17T19:33:26.884Z",
+  "generatedAt": "2026-11-18T15:24:04.266Z",
   "providers": [
     {
       "id": "anthropic",
@@ -123,7 +123,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 64000,
       "capabilityIndex": 60
@@ -151,7 +151,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17",
+        "lastVerified": "2026-11-18",
         "lastChanged": "2026-10-03"
       },
       "maxOutput": 64000,
@@ -180,7 +180,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 10000
     },
@@ -207,7 +207,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 10000
     },
@@ -234,7 +234,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 10000
     },
@@ -353,7 +353,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 128000
     },
@@ -412,7 +412,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 128000,
       "capabilityIndex": 86
@@ -775,7 +775,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 8000,
       "capabilityIndex": 55
@@ -802,7 +802,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 4096
     },
@@ -1565,7 +1565,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 65536,
       "capabilityIndex": 85
@@ -1662,7 +1662,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 1048576
     },
@@ -2161,7 +2161,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17",
+        "lastVerified": "2026-11-18",
         "lastChanged": "2026-08-23",
         "verifiedUrl": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
       },
@@ -2467,13 +2467,22 @@
     {
       "id": "gpt-6.2-astra",
       "providerId": "openai",
-      "displayName": "GPT 6.2 Astra",
+      "displayName": "GPT-6.2 Astra",
       "status": "current",
       "contextWindow": 922000,
       "pricing": {
         "input": 8,
         "output": 40,
-        "cachedInput": 0.4
+        "cachedInput": 0.4,
+        "cacheWrite": 10,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 16,
+          "output": 60,
+          "cachedInput": 0.8,
+          "cacheWrite": 20
+        }
       },
       "tokenizer": {
         "kind": "tiktoken",
@@ -2484,26 +2493,31 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-11-17",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "source": "vendor",
+        "lastVerified": "2026-11-18",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
     },
     {
       "id": "gpt-6.2-sol",
       "providerId": "openai",
-      "displayName": "GPT 6.2 Sol",
+      "displayName": "GPT-6.2 Sol",
       "status": "current",
       "contextWindow": 922000,
       "pricing": {
         "input": 2,
         "output": 10,
-        "cachedInput": 0.1
+        "cachedInput": 0.1,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 4,
+          "output": 15,
+          "cachedInput": 0.2,
+          "cacheWrite": 5
+        }
       },
       "tokenizer": {
         "kind": "tiktoken",
@@ -2514,13 +2528,9 @@
         "vision": true
       },
       "provenance": {
-        "source": "litellm",
-        "lastVerified": "2026-11-17",
-        "needsReview": true,
-        "reviewNote": "new model discovered by pattern match — confirm name and rates",
-        "reviewCodes": [
-          "new-model"
-        ]
+        "source": "vendor",
+        "lastVerified": "2026-11-18",
+        "verifiedUrl": "https://developers.openai.com/api/docs/pricing"
       },
       "maxOutput": 128000
     },
@@ -2660,7 +2670,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 8192
     },
@@ -2687,7 +2697,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 8192
     },
@@ -2743,7 +2753,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 128000,
       "capabilityIndex": 72
@@ -2799,7 +2809,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 262144,
       "capabilityIndex": 57
@@ -2913,7 +2923,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 262144,
       "capabilityIndex": 61
@@ -3523,7 +3533,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 500000,
       "capabilityIndex": 87
@@ -3869,7 +3879,7 @@
       },
       "provenance": {
         "source": "litellm",
-        "lastVerified": "2026-11-17"
+        "lastVerified": "2026-11-18"
       },
       "maxOutput": 128000,
       "capabilityIndex": 71

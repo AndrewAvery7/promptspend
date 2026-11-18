@@ -1567,3 +1567,30 @@ value that moves in the same run as its source URL is a correction.
 
 - **Added** `gpt-6.2-astra` — GPT 6.2 Astra ($8 in / $40 out per 1M)
 - **Added** `gpt-6.2-sol` — GPT 6.2 Sol ($2 in / $10 out per 1M)
+
+## 2026-11-18
+
+- **Coverage** `gpt-6.2-astra` — cacheWrite now tracked: — → 10
+- **Coverage** `gpt-6.2-astra` — batchDiscount now tracked: — → 0.5
+- **Coverage** `gpt-6.2-astra` — longContext.thresholdTokens now tracked: — → 272000
+- **Coverage** `gpt-6.2-astra` — longContext.input now tracked: — → 16
+- **Coverage** `gpt-6.2-astra` — longContext.output now tracked: — → 60
+- **Coverage** `gpt-6.2-astra` — longContext.cachedInput now tracked: — → 0.8
+- **Coverage** `gpt-6.2-astra` — longContext.cacheWrite now tracked: — → 20
+- **Coverage** `gpt-6.2-sol` — cacheWrite now tracked: — → 2.5
+- **Coverage** `gpt-6.2-sol` — batchDiscount now tracked: — → 0.5
+- **Coverage** `gpt-6.2-sol` — longContext.thresholdTokens now tracked: — → 272000
+- **Coverage** `gpt-6.2-sol` — longContext.input now tracked: — → 4
+- **Coverage** `gpt-6.2-sol` — longContext.output now tracked: — → 15
+- **Coverage** `gpt-6.2-sol` — longContext.cachedInput now tracked: — → 0.2
+- **Coverage** `gpt-6.2-sol` — longContext.cacheWrite now tracked: — → 5
+- **Metadata** `gpt-6.2-astra` — displayName: GPT 6.2 Astra → GPT-6.2 Astra
+- **Metadata** `gpt-6.2-sol` — displayName: GPT 6.2 Sol → GPT-6.2 Sol
+- **Review** `gpt-6.2-astra` — provenance.source: litellm → vendor
+- **Review** `gpt-6.2-astra` — provenance.needsReview: true → —
+- **Review** `gpt-6.2-astra` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gpt-6.2-astra` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+- **Review** `gpt-6.2-sol` — provenance.source: litellm → vendor
+- **Review** `gpt-6.2-sol` — provenance.needsReview: true → —
+- **Review** `gpt-6.2-sol` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `gpt-6.2-sol` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing

@@ -1063,6 +1063,52 @@
       "status": "deprecated"
     },
     {
+      "$note": "Arrived from the feed on 2026-11-17 as GPT 6.2 Astra with a new-model flag; read 2026-11-18 against OpenAI's pricing page (developers.openai.com/api/docs/pricing and its .md twin), Flagship models. Short context (<=272K input tokens), Standard: $8.00 input, $40.00 output, $0.40 cached input, $10.00 '30m write' - the feed's three figures match exactly. Long context (>272K): $16.00 / $60.00 / $0.80 / $20.00, which the feed does not carry. Batch prints exactly half of both. On the same page GPT-6.1 Sol's long-context row still reads $4/$15/$0.20/$5, matching its recorded override, so the column mapping holds. No capabilityIndex: editorial, left for the maintainer.",
+      "id": "gpt-6.2-astra",
+      "providerId": "openai",
+      "displayName": "GPT-6.2 Astra",
+      "vendorVerified": true,
+      "lastVerified": "2026-11-18",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 8,
+        "output": 40,
+        "cachedInput": 0.4,
+        "cacheWrite": 10,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 16,
+          "output": 60,
+          "cachedInput": 0.8,
+          "cacheWrite": 20
+        }
+      }
+    },
+    {
+      "$note": "Arrived from the feed on 2026-11-17 as GPT 6.2 Sol with a new-model flag; read 2026-11-18 against OpenAI's pricing page (developers.openai.com/api/docs/pricing and its .md twin), Flagship models. Short context (<=272K input tokens), Standard: $2.00 input, $10.00 output, $0.10 cached input, $2.50 '30m write' - the feed's three figures match exactly, and are identical to GPT-6.1 Sol. Long context (>272K): $4.00 / $15.00 / $0.20 / $5.00, which the feed does not carry. Batch prints exactly half of both. No capabilityIndex: editorial, left for the maintainer.",
+      "id": "gpt-6.2-sol",
+      "providerId": "openai",
+      "displayName": "GPT-6.2 Sol",
+      "vendorVerified": true,
+      "lastVerified": "2026-11-18",
+      "verifiedUrl": "https://developers.openai.com/api/docs/pricing",
+      "pricing": {
+        "input": 2,
+        "output": 10,
+        "cachedInput": 0.1,
+        "cacheWrite": 2.5,
+        "batchDiscount": 0.5,
+        "longContext": {
+          "thresholdTokens": 272000,
+          "input": 4,
+          "output": 15,
+          "cachedInput": 0.2,
+          "cacheWrite": 5
+        }
+      }
+    },
+    {
       "$note": "Added 2026-10-24 (coverage pass). OpenAI's pricing page lists the GPT-6 family under 'Flagship models'; the filter only matched gpt-5, so none of it was published. Figures read from the page's Standard table (short context <=272K input tokens, long context above it, '30m write' column as the cache write) and the Batch table (exactly half). No capabilityIndex yet: that score is an editorial judgement and is left for the maintainer. Capability score 90: Artificial Analysis Intelligence Index 53 (read 2026-10-24), mapped onto this scale through four existing rows that also appear there.",
       "id": "gpt-6-astra",
       "providerId": "openai",
