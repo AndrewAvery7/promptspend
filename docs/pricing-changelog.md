@@ -1594,3 +1594,9 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `gpt-6.2-sol` — provenance.needsReview: true → —
 - **Review** `gpt-6.2-sol` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
 - **Review** `gpt-6.2-sol` — provenance.verifiedUrl: — → https://developers.openai.com/api/docs/pricing
+
+## 2026-11-19
+
+- **Added** `gemini-gemini-4-neon` — Gemini 4 Neon ($3 in / $15 out per 1M)
+- **Review** `minimax-minimax-m2.5` — provenance.needsReview: — → true
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
