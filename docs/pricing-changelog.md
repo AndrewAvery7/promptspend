@@ -1600,3 +1600,11 @@ value that moves in the same run as its source URL is a correction.
 - **Added** `gemini-gemini-4-neon` — Gemini 4 Neon ($3 in / $15 out per 1M)
 - **Review** `minimax-minimax-m2.5` — provenance.needsReview: — → true
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-11-20
+
+- **Review** `gemini-gemini-4-neon` — provenance.needsReview: true → —
+- **Review** `gemini-gemini-4-neon` — provenance.reviewNote: new model discovered by pattern match — confirm name and rates → —
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
+- **Review** `moonshot-kimi-k2.6` — provenance.needsReview: — → true
+- **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
