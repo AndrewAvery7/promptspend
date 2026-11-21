@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-20T18:56:12.891Z",
+  "checkedAt": "2026-11-21T17:51:13.968Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
       "url": "https://platform.claude.com/docs/en/about-claude/pricing",
       "ok": true,
-      "note": "55810 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "40588 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "claude-fable-5-1",
         "claude-fable-5",
@@ -106,7 +106,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": false,
-      "note": "page is 617584 characters — too large to be a pricing page",
+      "note": "page is 618564 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -142,7 +142,7 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "16184 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "16343 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",
@@ -232,7 +232,7 @@
     {
       "url": "https://cohere.com/pricing",
       "ok": true,
-      "note": "20372 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "20385 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "command-r-plus-08-2024"
       ]
@@ -591,13 +591,13 @@
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 617584 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 618564 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3.8-omni-flash",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 617584 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 618564 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
@@ -704,8 +704,8 @@
     {
       "id": "xai-grok-build-0.1",
       "url": "https://docs.x.ai/developers/pricing",
-      "status": "unconfirmed",
-      "detail": "not priced on the page (no grok-build-0.1 pricing row on the page; Grok Build is only mentioned as a client for Grok 4.7 Fast)"
+      "status": "confirmed",
+      "detail": "page lists $1/$2 (cached $0.2)"
     },
     {
       "id": "xai-grok-4-1-fast",
@@ -735,7 +735,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing is listed)"
+      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no mistral-large-4-0 pricing shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",
@@ -804,7 +804,7 @@
       "detail": "page lists $2.5/$10"
     }
   ],
-  "confirmed": 85,
+  "confirmed": 86,
   "mismatched": 0,
-  "unconfirmed": 9
+  "unconfirmed": 8
 }
