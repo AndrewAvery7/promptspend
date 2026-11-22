@@ -155,8 +155,8 @@
     },
     "/compare/claude-fable-5-vs-gpt-5-6-sol/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-29",
-      "fingerprint": "19c7c1ca28d193",
+      "lastmod": "2026-11-22",
+      "fingerprint": "0e393d9ec75cce",
       "left": "claude-fable-5",
       "right": "gpt-5-6-sol"
     },
@@ -337,8 +337,8 @@
     },
     "/compare/claude-opus-4-7-vs-gpt-5-6-sol/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-26",
-      "fingerprint": "10d4f4b501baf3",
+      "lastmod": "2026-11-22",
+      "fingerprint": "03474dcb4c9870",
       "left": "claude-opus-4-7",
       "right": "gpt-5-6-sol"
     },
@@ -386,8 +386,8 @@
     },
     "/compare/claude-opus-4-8-vs-gpt-5-6-sol/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-29",
-      "fingerprint": "18526935cfe0ec",
+      "lastmod": "2026-11-22",
+      "fingerprint": "0862ec32938f14",
       "left": "claude-opus-4-8",
       "right": "gpt-5-6-sol"
     },
@@ -435,8 +435,8 @@
     },
     "/compare/claude-opus-5-5-vs-gpt-5-6-sol/": {
       "published": "2026-09-29",
-      "lastmod": "2026-10-29",
-      "fingerprint": "0e2710ed4821d2",
+      "lastmod": "2026-11-22",
+      "fingerprint": "12506f09fe2196",
       "left": "claude-opus-5-5",
       "right": "gpt-5-6-sol"
     },
@@ -477,8 +477,8 @@
     },
     "/compare/claude-opus-5-vs-gpt-5-6-sol/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-29",
-      "fingerprint": "1fdb973008bc4a",
+      "lastmod": "2026-11-22",
+      "fingerprint": "1af922a5695ab2",
       "left": "claude-opus-5",
       "right": "gpt-5-6-sol"
     },
@@ -1149,8 +1149,8 @@
     },
     "/compare/gemini-4-argon-vs-gpt-5-6-sol/": {
       "published": "2026-10-24",
-      "lastmod": "2026-10-24",
-      "fingerprint": "1d78700aa8b4dd",
+      "lastmod": "2026-11-22",
+      "fingerprint": "042858241ad17c",
       "left": "gemini-4-argon",
       "right": "gpt-5-6-sol"
     },
@@ -1317,8 +1317,8 @@
     },
     "/compare/gpt-5-6-sol-vs-moonshot-kimi-k3-1-pro/": {
       "published": "2026-10-29",
-      "lastmod": "2026-10-29",
-      "fingerprint": "0e5ab07eefc4c6",
+      "lastmod": "2026-11-22",
+      "fingerprint": "1af12139822231",
       "left": "gpt-5-6-sol",
       "right": "moonshot-kimi-k3-1-pro"
     },
@@ -1611,8 +1611,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-19",
-      "fingerprint": "0d6b814a03376b"
+      "lastmod": "2026-11-22",
+      "fingerprint": "07456614045731"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1956,8 +1956,8 @@
     },
     "/models/gpt-5-6-sol/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-26",
-      "fingerprint": "08b28b8d8e1385"
+      "lastmod": "2026-11-22",
+      "fingerprint": "1931a05d74585f"
     },
     "/models/gpt-5-6-terra/": {
       "published": "2026-08-02",
@@ -2276,8 +2276,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-19",
-      "fingerprint": "1c4202b01a0cf4"
+      "lastmod": "2026-11-22",
+      "fingerprint": "03ea9b790e95b3"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2341,8 +2341,8 @@
     },
     "/providers/openai/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-18",
-      "fingerprint": "09998467a812e9"
+      "lastmod": "2026-11-22",
+      "fingerprint": "09757f0cb02a15"
     },
     "/providers/xai/": {
       "published": "2026-08-02",

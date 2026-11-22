@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-21T17:51:13.968Z",
+  "checkedAt": "2026-11-22T18:10:30.539Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -320,8 +320,8 @@
     {
       "id": "gpt-5.6-sol",
       "url": "https://developers.openai.com/api/docs/pricing",
-      "status": "confirmed",
-      "detail": "page shows only the promotional rate $4/$20 until 2026-11-21, which agrees; the standard rate $5/$30 is not printed and stays unverified until the window closes"
+      "status": "mismatch",
+      "detail": "page lists $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5"
     },
     {
       "id": "gpt-5.6-terra",
@@ -567,25 +567,25 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price for kimi-k2.6 is printed)"
+      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price is printed for kimi-k2.6)"
     },
     {
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series pricing table is empty on the page; no price is printed for kimi-k3)"
+      "detail": "not priced on the page (the K3 Series pricing table is empty on the page; no prices are printed)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series pricing table is empty on the page; no price is printed for kimi-k3.1-pro)"
+      "detail": "not priced on the page (the K3 Series pricing table is empty on the page; no prices are printed)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price is printed for kimi-k2.7-code)"
+      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no prices are printed)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -675,7 +675,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the LLM pricing table lists only MiniMax-M3.1-Flash and MiniMax-M3; no MiniMax-M2.5 row is present)"
+      "detail": "not priced on the page (no MiniMax-M2.5 row is listed; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -735,7 +735,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no mistral-large-4-0 pricing shown)"
+      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",
@@ -804,7 +804,7 @@
       "detail": "page lists $2.5/$10"
     }
   ],
-  "confirmed": 86,
-  "mismatched": 0,
+  "confirmed": 85,
+  "mismatched": 1,
   "unconfirmed": 8
 }

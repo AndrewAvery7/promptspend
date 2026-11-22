@@ -1615,3 +1615,14 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
 - **Review** `moonshot-kimi-k3` — provenance.needsReview: — → true
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: — → vendor verification is 31 days old — re-read the first-party pricing page
+
+## 2026-11-22
+
+- **Coverage** `gpt-5.6-sol` — intro.input no longer published: 4 → —
+- **Coverage** `gpt-5.6-sol` — intro.output no longer published: 20 → —
+- **Coverage** `gpt-5.6-sol` — intro.until no longer published: 2026-11-21 → —
+- **Review** `gpt-5.6-sol` — provenance.needsReview: — → true
+- **Review** `gpt-5.6-sol` — provenance.reviewNote: — → vendor override differs from the automated feed (33%): $4/$20 vs $5/$30; the vendor's own page disagrees with the record — page lists $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page; OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2 → vendor verification is 34 days old — re-read the first-party pricing page; OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2
+- **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: vendor verification is 32 days old — re-read the first-party pricing page → vendor verification is 33 days old — re-read the first-party pricing page
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: vendor verification is 31 days old — re-read the first-party pricing page → vendor verification is 32 days old — re-read the first-party pricing page
