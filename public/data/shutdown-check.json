@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-22T18:12:46.075Z",
+  "checkedAt": "2026-11-23T22:24:00.564Z",
   "sources": [
     {
       "url": "https://developers.openai.com/api/docs/deprecations.md",
@@ -11,7 +11,7 @@
     {
       "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations.md",
       "ok": true,
-      "notices": 7
+      "notices": 8
     },
     {
       "url": "https://ai.google.dev/gemini-api/docs/deprecations",
@@ -31,6 +31,15 @@
     }
   ],
   "items": [
+    {
+      "id": "claude-opus-4-5",
+      "providerId": "anthropic",
+      "vendorName": "claude-opus-4-5-20251101",
+      "date": "2027-01-22",
+      "shutDown": false,
+      "source": "Anthropic's model deprecations page",
+      "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations.md"
+    },
     {
       "id": "claude-sonnet-4-5",
       "providerId": "anthropic",
