@@ -571,7 +571,7 @@ describe('loadCatalog', () => {
     await Promise.resolve();
     expect(calls).toEqual([
       ['/data/sync-status.json', 'no-cache'],
-      ['/data/pricing.json', 'default'],
+      ['/data/pricing.json', undefined],
     ]);
 
     pending[0]!(new Response('{}', { status: 404 }));

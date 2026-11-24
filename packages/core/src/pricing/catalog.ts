@@ -301,7 +301,7 @@ export class Catalog {
 export async function loadCatalog(
   url: string,
   healthUrl?: string,
-  options: { cache?: RequestCache } = {},
+  options: { cache?: 'default' | 'no-cache' } = {},
 ): Promise<Catalog> {
   // Both requests start together. The manifest used to be asked for only once
   // the catalog had arrived, which put a second round trip in front of the
@@ -310,7 +310,9 @@ export async function loadCatalog(
   // `no-cache` (revalidate every time) unless the caller says otherwise. The
   // homepage passes `default` so the fetch can reuse the copy its HTML preloads;
   // a cache mode that differs from the preload's makes the browser download again.
-  const response = await fetch(url, { cache: options.cache ?? 'no-cache' });
+  // `default` is sent by leaving `cache` out: Cloudflare Workers (the API shares
+  // this file) accept only `no-cache` and `no-store` there.
+  const response = await fetch(url, options.cache === 'default' ? {} : { cache: 'no-cache' });
   if (!response.ok) {
     throw new Error(`Could not load pricing data (HTTP ${response.status})`);
   }
