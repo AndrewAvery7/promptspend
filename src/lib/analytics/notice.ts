@@ -26,6 +26,7 @@ import {
   type AnalyticsChoice,
   type GtagWindow,
   type LoadDecision,
+  type ScriptTiming,
 } from './ga';
 import '@/styles/analytics.css';
 
@@ -195,8 +196,15 @@ function retireAnalytics(env: AnalyticsEnvironment): void {
   if (GA_HOSTNAMES.includes(hostname)) disableGoogleAnalytics(gtagWindow(env), env.document, hostname);
 }
 
-/** Run once per page: load Google Analytics if allowed, and show the notice if due. */
-export function startAnalytics(env: AnalyticsEnvironment = defaultEnvironment()): void {
+/**
+ * Run once per page: load Google Analytics if allowed, and show the notice if
+ * due. `scriptTiming` says when gtag.js itself is added (see `ScriptTiming`);
+ * the page view is queued at once regardless.
+ */
+export function startAnalytics(
+  env: AnalyticsEnvironment = defaultEnvironment(),
+  scriptTiming?: ScriptTiming,
+): void {
   if (!env.enabled) {
     retireAnalytics(env);
     return;
@@ -204,7 +212,7 @@ export function startAnalytics(env: AnalyticsEnvironment = defaultEnvironment())
   const hostname = env.window.location.hostname;
   if (GA_HOSTNAMES.includes(hostname)) clearRetiredStreamCookies(env.document, hostname);
   const d = decision(env);
-  if (shouldLoad(d)) loadGoogleAnalytics(gtagWindow(env), env.document);
+  if (shouldLoad(d)) loadGoogleAnalytics(gtagWindow(env), env.document, scriptTiming);
   if (shouldShowNotice(d)) showNotice(env);
   renderPrivacyControl(env);
 }

@@ -148,12 +148,28 @@ export function writeChoice(storage: Pick<Storage, 'setItem'> | undefined, choic
 export const GA_SCRIPT_URL = `${GA_SCRIPT_ORIGIN}/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
 
 /**
+ * When to add the `gtag.js` tag, given the function that adds it. The default
+ * adds it at once. The homepage passes one that waits until the estimator has
+ * drawn: gtag.js is a large script, and fetching and running it during start-up
+ * pushed the homepage headline from about 1 s to over 5 s on Google's phone
+ * test (PageSpeed, November 2026). The configuration and the page view are
+ * queued first either way, so the page view records the address as it was on
+ * arrival and gtag.js sends it once it runs.
+ */
+export type ScriptTiming = (addScript: () => void) => void;
+
+const atOnce: ScriptTiming = (addScript) => addScript();
+
+/** Pages whose configuration is queued and whose gtag.js tag is still waiting to be added. */
+const pending = new WeakSet<Document>();
+
+/**
  * Queue the configuration and one clean page view, then add `gtag.js`.
  * Safe to call twice: the second call does nothing.
  */
-export function loadGoogleAnalytics(win: GtagWindow, doc: Document): void {
+export function loadGoogleAnalytics(win: GtagWindow, doc: Document, timing: ScriptTiming = atOnce): void {
   win[DISABLE_FLAG] = false;
-  if (doc.querySelector(`script[src="${GA_SCRIPT_URL}"]`)) return;
+  if (pending.has(doc) || doc.querySelector(`script[src="${GA_SCRIPT_URL}"]`)) return;
 
   const layer = (win.dataLayer = win.dataLayer ?? []);
   const gtag = queueOn(layer);
@@ -180,10 +196,15 @@ export function loadGoogleAnalytics(win: GtagWindow, doc: Document): void {
   });
   gtag('event', 'page_view', page);
 
-  const script = doc.createElement('script');
-  script.async = true;
-  script.src = GA_SCRIPT_URL;
-  doc.head.append(script);
+  pending.add(doc);
+  timing(() => {
+    pending.delete(doc);
+    if (doc.querySelector(`script[src="${GA_SCRIPT_URL}"]`)) return;
+    const script = doc.createElement('script');
+    script.async = true;
+    script.src = GA_SCRIPT_URL;
+    doc.head.append(script);
+  });
 
   // One listener for the whole page, in the capture phase so a click still
   // counts when a handler further down stops it.

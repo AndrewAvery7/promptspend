@@ -7,6 +7,7 @@ import { useAppearance, ACCENTS } from '@/state/useAppearance';
 import { useEstimator } from '@/state/useEstimator';
 import { Header, VIEWS, type ViewId } from '@/components/Header';
 import { alertsLinkToken } from '@/lib/alerts/link-token';
+import { markAppReady } from '@/lib/app-ready';
 
 /** `#compare` -> 'compare'; anything else -> null. */
 function viewFromHash(): ViewId | null {
@@ -43,6 +44,12 @@ export default function App() {
       cancelled = true;
     };
   }, [attempt]);
+
+  // Tell deferred work (Google Analytics' script) the page has drawn: either the
+  // estimator or the error message is now on screen.
+  useEffect(() => {
+    if (catalog || error) markAppReady();
+  }, [catalog, error]);
 
   if (error) {
     return (
