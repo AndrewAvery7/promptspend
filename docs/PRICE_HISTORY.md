@@ -39,7 +39,7 @@ against the full catalog as it stood that day:
 
 | Column                 | Meaning                                                                                                                                                                                            |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `date`                 | UTC date (`YYYY-MM-DD`) of the commit that published the change. The daily sync runs at about 11:00 UTC.                                                                                           |
+| `date`                 | UTC date (`YYYY-MM-DD`) of the commit that published the change. The daily sync is scheduled for 07:17 UTC and often starts hours later.                                                           |
 | `commit`               | Full SHA of that commit in `github.com/AndrewAvery7/promptspend`.                                                                                                                                  |
 | `model_id`             | PromptSpend's stable model id, e.g. `claude-sonnet-5`, `deepseek-deepseek-v4-flash`.                                                                                                               |
 | `model_name`           | Display name at the time of the change.                                                                                                                                                            |

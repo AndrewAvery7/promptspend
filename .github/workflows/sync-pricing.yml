@@ -23,8 +23,14 @@ name: Sync pricing
 # workflow has write access to the branch the site deploys from.
 on:
   schedule:
-    # 06:00 America/Chicago, give or take daylight saving.
-    - cron: '0 11 * * *'
+    # 07:17 UTC. GitHub starts scheduled runs late, and later still at the top
+    # of the hour, when every repository's cron fires at once. Through November
+    # 2026 the old '0 11 * * *' started between 16:48 and 22:21 UTC, 6 to 11
+    # hours late. An early, odd minute gets the run in sooner and leaves the
+    # day's publish well before the evening. The Healthchecks check
+    # `promptspend-sync-pricing` must carry this same schedule, with a grace
+    # wide enough for that lateness (14 hours): see docs/ARCHITECTURE.md.
+    - cron: '17 7 * * *'
   workflow_dispatch:
 
 permissions:

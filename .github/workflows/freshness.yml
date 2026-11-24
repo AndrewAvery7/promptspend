@@ -30,9 +30,13 @@ name: Catalog freshness
 # somebody happened to look at the Actions tab.
 on:
   schedule:
-    # 15:00 UTC — four hours after the 11:00 sync, so a slow run is not mistaken
-    # for a stale one.
-    - cron: '0 15 * * *'
+    # 11:47 UTC, four and a half hours after the 07:17 sync. GitHub starts
+    # scheduled runs hours late (6 to 11 through November 2026), so the order
+    # of the two is not guaranteed; that is fine, because a stale verdict needs
+    # a catalog over two days old, which one late or out-of-order run never
+    # produces. The Healthchecks check `promptspend-freshness` must carry this
+    # same schedule with a 14-hour grace: see docs/ARCHITECTURE.md.
+    - cron: '47 11 * * *'
   workflow_dispatch:
 
 permissions:
