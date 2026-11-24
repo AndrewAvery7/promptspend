@@ -33,9 +33,7 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    // The first load reuses the copy index.html preloads (same address, the
-    // browser's normal caching). "Try again" asks the server afresh.
-    loadCatalog(PRICING_URL, HEALTH_URL, { cache: attempt === 0 ? 'default' : 'no-cache' })
+    loadCatalog(PRICING_URL, HEALTH_URL)
       .then((loaded) => {
         if (!cancelled) setCatalog(loaded);
       })
