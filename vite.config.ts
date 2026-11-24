@@ -80,14 +80,51 @@ function primaryModelCount(): number {
  * component. Absent (a dev server, a test run), the page simply waits for the
  * fetch as before.
  */
-function buildTimeChrome(): { freshness: object | null; tickerHtml: string | null } {
+function buildTimeChrome(): {
+  freshness: object | null;
+  tickerHtml: string | null;
+  homeShellHtml: string | null;
+} {
   try {
     const file = fileURLToPath(new URL('./.generated/chrome.json', import.meta.url));
-    const data = JSON.parse(readFileSync(file, 'utf8')) as { freshness?: object; tickerHtml?: string };
-    return { freshness: data.freshness ?? null, tickerHtml: data.tickerHtml ?? null };
+    const data = JSON.parse(readFileSync(file, 'utf8')) as {
+      freshness?: object;
+      tickerHtml?: string;
+      homeShellHtml?: string;
+    };
+    return {
+      freshness: data.freshness ?? null,
+      tickerHtml: data.tickerHtml ?? null,
+      // Drawn with a placeholder base path (scripts/build-chrome-data.ts); this
+      // file is the one that knows the real one.
+      homeShellHtml: data.homeShellHtml?.replaceAll('/__PS_BASE__/', base) ?? null,
+    };
   } catch {
-    return { freshness: null, tickerHtml: null };
+    return { freshness: null, tickerHtml: null, homeShellHtml: null };
   }
+}
+
+/**
+ * Write the homepage's tape, header and hero into index.html's #root
+ * (src/components/HomeShell.tsx), so the headline paints with the page instead
+ * of after the app's code and the price list: about 3 s on Google's phone test
+ * before this. The app renders beside it and removes it in the frame its full page is drawn
+ * (src/lib/static-shell.ts). The wrapper is `display: contents`, so it adds no box of its own.
+ */
+function homeShell(html: string | null): Plugin {
+  return {
+    name: 'promptspend-home-shell',
+    transformIndexHtml(page, ctx) {
+      if (!html || ctx.path !== '/index.html') return undefined;
+      const marker = '<div id="root">';
+      if (!page.includes(marker)) throw new Error('index.html has no <div id="root"> for the home shell');
+      return page.replace(
+        marker,
+        `${marker}
+      <div class="home-shell">${html}</div>`,
+      );
+    },
+  };
 }
 
 /**
@@ -104,9 +141,16 @@ function buildTimeChrome(): { freshness: object | null; tickerHtml: string | nul
  * Two, not all five header faces: the wordmark's and the nav's, whose widths
  * move the header. Every extra preload competes with the stylesheet for the
  * first round trips (see the note on `HEADER_FONTS` there for the measurement).
+ *
+ * The homepage adds a third, body text's regular weight. Its hero is in the
+ * HTML (`homeShell`) and the app draws the same hero again once it loads; when
+ * the first drawing used a stand-in face, the second came out a few pixels
+ * larger and Google's test dated the page's largest paint from it, after the
+ * app's code (2.9 s on its phone profile, November 2026).
  */
 function preloadHeaderFonts(): Plugin {
-  const faces = ['space-grotesk-latin-700-normal', 'ibm-plex-sans-latin-600-normal'];
+  const headerFaces = ['space-grotesk-latin-700-normal', 'ibm-plex-sans-latin-600-normal'];
+  const homeFaces = [...headerFaces, 'ibm-plex-sans-latin-400-normal'];
   return {
     name: 'promptspend-font-preload',
     apply: 'build',
@@ -116,7 +160,7 @@ function preloadHeaderFonts(): Plugin {
         const bundle = ctx.bundle;
         if (!bundle) return undefined;
         const tags = [];
-        for (const face of faces) {
+        for (const face of ctx.path === '/index.html' ? homeFaces : headerFaces) {
           const file = Object.keys(bundle).find(
             (name) => name.startsWith(`assets/${face}-`) && name.endsWith('.woff2'),
           );
@@ -357,6 +401,7 @@ export default defineConfig(({ mode }) => {
       seoAssets(siteUrl),
       receiptAssets(),
       preloadHeaderFonts(),
+      homeShell(mode === 'test' ? null : buildTime.homeShellHtml),
     ],
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
