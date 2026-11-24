@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-24T21:10:47.765Z",
+  "checkedAt": "2026-11-24T21:27:14.728Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -552,25 +552,25 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 series pricing table is empty on the page; no price is printed for kimi-k2.6)"
+      "detail": "not priced on the page (no pricing row for kimi-k2.6 is present on the page; the K2 Series pricing table is empty)"
     },
     {
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 series pricing table is empty on the page; no price is printed for kimi-k3)"
+      "detail": "not priced on the page (no pricing row for kimi-k3 is present on the page; the K3 Series pricing table is empty)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 series pricing table is empty on the page; no price is printed for kimi-k3.1-pro)"
+      "detail": "not priced on the page (no pricing row for kimi-k3.1-pro is present on the page; the K3 Series pricing table is empty)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 series pricing table is empty on the page; no price is printed for kimi-k2.7-code)"
+      "detail": "not priced on the page (no pricing row for kimi-k2.7-code is present on the page; the K2 Series pricing table is empty)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -684,7 +684,7 @@
       "id": "xai-grok-build-0.1",
       "url": "https://docs.x.ai/developers/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no grok-build-0.1 model row is priced on the page; Grok Build is mentioned only as a channel for Grok 4.7 Fast, which is not available on the public API)"
+      "detail": "not priced on the page (no grok-build-0.1 row on the page; Grok Build is mentioned only in connection with Grok 4.7 Fast pricing, which is not available on the public API)"
     },
     {
       "id": "xai-grok-4-1-fast",
@@ -714,7 +714,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing row is shown)"
+      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing is listed)"
     },
     {
       "id": "dashscope-qwen3.8-max",

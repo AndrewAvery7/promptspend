@@ -1612,7 +1612,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-11-24",
-      "fingerprint": "0efd4a40b2f9ca"
+      "fingerprint": "090470db196ca1"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -2041,8 +2041,8 @@
     },
     "/models/minimax-m2-1/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "03c356f62adc93"
+      "lastmod": "2026-11-24",
+      "fingerprint": "024637d9edbcc2"
     },
     "/models/minimax-m2-5/": {
       "published": "2026-08-02",
@@ -2051,8 +2051,8 @@
     },
     "/models/minimax-m2/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-02",
-      "fingerprint": "1e875fdfa24961"
+      "lastmod": "2026-11-24",
+      "fingerprint": "1486a1981d2d3a"
     },
     "/models/minimax-m3/": {
       "published": "2026-08-02",
@@ -2277,7 +2277,7 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-11-24",
-      "fingerprint": "0c7565eaed106f"
+      "fingerprint": "1dd934c55a2ed1"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2327,7 +2327,7 @@
     "/providers/minimax/": {
       "published": "2026-08-02",
       "lastmod": "2026-11-24",
-      "fingerprint": "160eba98eafa9a"
+      "fingerprint": "135b44849633ad"
     },
     "/providers/mistral/": {
       "published": "2026-08-02",

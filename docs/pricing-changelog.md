@@ -1656,3 +1656,8 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `moonshot-kimi-k2.6` — provenance.verifiedUrl: https://platform.kimi.ai/docs/pricing/chat-k26 → https://platform.kimi.ai/docs/pricing/chat
 - **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —
+
+## 2026-11-24
+
+- **Metadata** `minimax-minimax-m2` — status: current → deprecated
+- **Metadata** `minimax-minimax-m2.1` — status: current → deprecated

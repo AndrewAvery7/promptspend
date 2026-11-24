@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-24T21:12:50.766Z",
+  "generatedAt": "2026-11-24T21:29:02.873Z",
   "providers": [
     {
       "id": "anthropic",
@@ -2678,7 +2678,7 @@
       "id": "minimax-minimax-m2",
       "providerId": "minimax",
       "displayName": "MiniMax M2",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 200000,
       "pricing": {
         "input": 0.3,
@@ -2705,7 +2705,7 @@
       "id": "minimax-minimax-m2.1",
       "providerId": "minimax",
       "displayName": "MiniMax M2.1",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 1000000,
       "pricing": {
         "input": 0.3,
