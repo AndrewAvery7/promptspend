@@ -143,8 +143,25 @@ last time anyone looked at it. Two invariants came out of it:
 
 Every gate above asks whether the code is correct. `.github/workflows/freshness.yml` asks the only
 question a visitor has: is the published catalog actually current? It fetches
-`promptspend.com/data/pricing.json` daily at 15:00 UTC — four hours after the sync, so a slow run is not
-mistaken for a stale one — and alerts if `generatedAt` is more than two days old.
+`promptspend.com/data/pricing.json` daily at 11:47 UTC — four and a half hours after the 07:17 UTC sync — and
+alerts if `generatedAt` is more than two days old.
+
+**Scheduled runs start hours late.** GitHub queues scheduled workflows and starts them late, worst at the
+top of the hour. Through November 2026 the sync (then `0 11 * * *`) started 6 to 11 hours late and the
+freshness check (then `0 15 * * *`) 4.5 to 11 hours late, so Healthchecks, with a four-hour grace, reported
+both DOWN most days although every run succeeded. Both now run at an early, odd minute. Each Healthchecks
+check must match its workflow's cron (UTC) and use a **14-hour grace**: the worst observed delay plus
+margin. A longer grace means a stopped schedule is reported later; that is the trade for not crying wolf.
+
+| Healthchecks check         | Workflow           | Schedule (UTC) | Grace    |
+| -------------------------- | ------------------ | -------------- | -------- |
+| `promptspend-sync-pricing` | `sync-pricing.yml` | `17 7 * * *`   | 14 hours |
+| `promptspend-freshness`    | `freshness.yml`    | `47 11 * * *`  | 14 hours |
+
+The two-day budget is measured on the build, and it is deliberately not 24 hours. The apps' 24-hour cache
+limit is measured from when a device last downloaded the catalog, not from `generatedAt`, so a build that
+is 27 hours old because a run started late breaks no promise. Late starts make gaps of more than 24 hours
+between builds routine, and an alarm at 24 hours would fire on them.
 
 **It reads the live site rather than the file in git, and that is the whole design.** Between a price
 moving upstream and a visitor seeing it there are four places to fail: the sync errors or its sources go

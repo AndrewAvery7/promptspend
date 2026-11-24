@@ -138,7 +138,7 @@ function tidy(pricing: Record<string, unknown>): Pricing {
 
 /**
  * The rates PromptSpend published for `modelId` at the end of UTC day `date`.
- * A row dated `date` counts: the daily sync publishes at about 11:00 UTC.
+ * A row dated `date` counts: the daily sync publishes once a day, during the UTC day.
  */
 export function priceOn(history: PriceHistory, modelId: string, date: string): PriceOn {
   if (date < history.firstDate) return { kind: 'before_history', firstDate: history.firstDate };
