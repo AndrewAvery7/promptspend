@@ -230,6 +230,31 @@ describe('the stored choice', () => {
 });
 
 describe('loadGoogleAnalytics', () => {
+  it('can hold gtag.js back while the page view is queued at once, with the arrival address', () => {
+    window.history.replaceState(null, '', '/?arrived=1');
+    let addScript: (() => void) | undefined;
+    loadGoogleAnalytics(gtagWindow(), document, (add) => {
+      addScript = add;
+    });
+    // The app rewrites the address after loading; the queued page view keeps the arrival one.
+    window.history.replaceState(null, '', '/?m=a-scenario');
+    // A second call while the script is held queues nothing more.
+    loadGoogleAnalytics(gtagWindow(), document, () => {
+      throw new Error('should not be asked again');
+    });
+
+    expect(document.head.querySelectorAll('script')).toHaveLength(0);
+    const views = commands().filter((command) => command[0] === 'event' && command[1] === 'page_view');
+    expect(views).toHaveLength(1);
+    expect((views[0]![2] as { page_location: string }).page_location).toBe(
+      `${window.location.origin}/?arrived=1`,
+    );
+
+    addScript!();
+    addScript!();
+    expect(document.head.querySelectorAll('script')).toHaveLength(1);
+  });
+
   it('adds gtag.js for the configured ID, once', () => {
     loadGoogleAnalytics(gtagWindow(), document);
     loadGoogleAnalytics(gtagWindow(), document);

@@ -299,6 +299,10 @@ export class Catalog {
 /** Fetch and validate the published catalog, plus the sync health manifest.
  *  A missing or malformed manifest is not fatal — the app simply says less. */
 export async function loadCatalog(url: string, healthUrl?: string): Promise<Catalog> {
+  // Both requests start together. The manifest used to be asked for only once
+  // the catalog had arrived, which put a second round trip in front of the
+  // homepage's first paint on a slow phone connection.
+  const healthPromise = healthUrl ? loadHealth(healthUrl) : Promise.resolve(null);
   const response = await fetch(url, { cache: 'no-cache' });
   if (!response.ok) {
     throw new Error(`Could not load pricing data (HTTP ${response.status})`);
@@ -306,18 +310,18 @@ export async function loadCatalog(url: string, healthUrl?: string): Promise<Cata
   const raw: unknown = await response.json();
   assertCatalog(raw);
 
-  let health: SyncStatus | null = null;
-  if (healthUrl) {
-    try {
-      const healthResponse = await fetch(healthUrl, { cache: 'no-cache' });
-      if (healthResponse.ok) {
-        const parsed: unknown = await healthResponse.json();
-        if (isSyncStatus(parsed)) health = parsed;
-      }
-    } catch {
-      /* the manifest is supporting evidence, not a dependency */
-    }
-  }
+  return new Catalog(raw, await healthPromise);
+}
 
-  return new Catalog(raw, health);
+/** The sync health manifest, or null when it is missing or malformed. Never throws. */
+async function loadHealth(healthUrl: string): Promise<SyncStatus | null> {
+  try {
+    const healthResponse = await fetch(healthUrl, { cache: 'no-cache' });
+    if (!healthResponse.ok) return null;
+    const parsed: unknown = await healthResponse.json();
+    return isSyncStatus(parsed) ? parsed : null;
+  } catch {
+    /* the manifest is supporting evidence, not a dependency */
+    return null;
+  }
 }
