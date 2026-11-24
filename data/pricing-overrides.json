@@ -627,7 +627,7 @@
       "status": "deprecated"
     },
     {
-      "$note": "Capability score rescored 82 -> 72 (2026-10-24): Artificial Analysis Intelligence Index 27, mapped onto this scale through four existing rows that also appear in the index. The earlier 82 pre-dated that measurement.",
+      "$note": "Capability score rescored 82 -> 72 (2026-10-24): Artificial Analysis Intelligence Index 27, mapped onto this scale through four existing rows that also appear in the index. The earlier 82 pre-dated that measurement. Re-read 2026-11-24 to clear a vendor-verification-stale flag: the old per-model URL (/docs/pricing/chat-k26) now redirects to the combined chat pricing page, whose K2 table prints \"kimi-k2.6 | $0.95 / MTok | $4.00 / MTok | $0.16 / MTok\" over a 262,144-token context, unchanged, so verifiedUrl now points at the page itself. The same page says K2 models closed to new users on October 31, 2026 and Kimi plans to retire all K2 series models by the end of December 2026. Archive this row then.",
       "id": "moonshot-kimi-k2.6",
       "displayName": "Kimi K2.6",
       "capabilityIndex": 72,
@@ -638,22 +638,23 @@
         "cachedInput": 0.16
       },
       "vendorVerified": true,
-      "lastVerified": "2026-10-20",
-      "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k26"
+      "lastVerified": "2026-11-24",
+      "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat"
     },
     {
-      "$note": "Read against Moonshot's own per-model page on 2026-08-22, the morning the daily sync discovered this model by pattern match and published it straight from the feed. All four published fields match that page exactly - $3.00 input on a cache miss, $15.00 output, $0.30 on a cache hit, and a 1,048,576-token context window - so this row records provenance ONLY and its rate keeps flowing from the feed, the same treatment K2.5 gets. Worth writing down because the numbers invited suspicion rather than allayed it: $3/$15 is also Claude Sonnet 5's rate, which is exactly what an unfilled LiteLLM placeholder would look like. It is not one - the vendor's own table prints those figures. No capabilityIndex is recorded here. The field is illustrative and picking a value to get the flagship onto the value map would dress a guess as a measurement, so K3 stays off the chart and in the table until somebody places it deliberately. Re-read on 2026-10-21 to answer an openrouter-disagreement flag (OpenRouter $0.7/$15 vs $3/$15). The per-model URL now redirects to the combined chat pricing page, whose K3 table (rendered in a browser; the plain fetch returns it empty) prints kimi-k3 at $3.00 input, $0.30 cached input, $15.00 output, $3.00 cache write at the default 5min TTL ($6.00 at 1h) and a 1,048,576-token context. The rate is unchanged; OpenRouter's $0.7 is its own resale figure. A base `pricing` block is now written here because that is the only thing that silences the OpenRouter cross-check (vendorVerified alone does not), so this row is no longer provenance-only.",
+      "$note": "Read against Moonshot's own per-model page on 2026-08-22, the morning the daily sync discovered this model by pattern match and published it straight from the feed. All four published fields match that page exactly - $3.00 input on a cache miss, $15.00 output, $0.30 on a cache hit, and a 1,048,576-token context window - so this row records provenance ONLY and its rate keeps flowing from the feed, the same treatment K2.5 gets. Worth writing down because the numbers invited suspicion rather than allayed it: $3/$15 is also Claude Sonnet 5's rate, which is exactly what an unfilled LiteLLM placeholder would look like. It is not one - the vendor's own table prints those figures. No capabilityIndex is recorded here. The field is illustrative and picking a value to get the flagship onto the value map would dress a guess as a measurement, so K3 stays off the chart and in the table until somebody places it deliberately. Re-read on 2026-10-21 to answer an openrouter-disagreement flag (OpenRouter $0.7/$15 vs $3/$15). The per-model URL now redirects to the combined chat pricing page, whose K3 table (rendered in a browser; the plain fetch returns it empty) prints kimi-k3 at $3.00 input, $0.30 cached input, $15.00 output, $3.00 cache write at the default 5min TTL ($6.00 at 1h) and a 1,048,576-token context. The rate is unchanged; OpenRouter's $0.7 is its own resale figure. A base `pricing` block is now written here because that is the only thing that silences the OpenRouter cross-check (vendorVerified alone does not), so this row is no longer provenance-only. Re-read 2026-11-24 to clear a vendor-verification-stale flag: the table still prints \"kimi-k3 | $3.00 / MTok | $15.00 / MTok | $0.30 / MTok | $3.00 / MTok | $6.00 / MTok\" over a 1,048,576-token context, unchanged. The page now also says kimi-k3 supports batch inference \"billed at 60% of the standard price\", so batchDiscount 0.6 is added.",
       "id": "moonshot-kimi-k3",
       "displayName": "Kimi K3",
       "vendorVerified": true,
-      "lastVerified": "2026-10-21",
+      "lastVerified": "2026-11-24",
       "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat",
       "pricing": {
         "input": 3,
         "output": 15,
         "cachedInput": 0.3,
         "cacheWrite": 3,
-        "cacheWrite1h": 6
+        "cacheWrite1h": 6,
+        "batchDiscount": 0.6
       }
     },
     {
@@ -802,15 +803,10 @@
       "capabilityIndex": 72
     },
     {
-      "$note": "MiniMax lists M2.5 under Legacy Models. Input, output, and cache-read rates match the feed, so they remain feed-driven; only the vendor-published cache-write modifier is overridden.",
+      "$note": "ARCHIVED 2026-11-24 (status `deprecated`): retired by the vendor. MiniMax's model list (platform.minimax.io/docs/faq/models) carries a \"MiniMax M2.5 and M2.7 Model Retirement Notice\": the models closed to new users on October 19, 2026 and \"November 18, 2026: These models will be retired\", after which \"API requests to these models will no longer work\". Its pricing page (the old pricing-paygo URL now redirects to /docs/pricing/overview) no longer lists M2.5 at all; the LLM table holds only MiniMax-M3.1-Flash and MiniMax-M3. The row is frozen at its last published rate ($0.30 / $1.20, $0.03 cache read, $0.375 cache write). Earlier history: MiniMax listed M2.5 under Legacy Models; input, output and cache-read rates matched the feed, and only the vendor-published cache-write modifier was overridden (verified 2026-10-19).",
       "id": "minimax-minimax-m2.5",
       "displayName": "MiniMax M2.5",
-      "vendorVerified": true,
-      "lastVerified": "2026-10-19",
-      "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
-      "pricing": {
-        "cacheWrite": 0.375
-      }
+      "status": "deprecated"
     },
     {
       "$note": "Capability score 85 is an ESTIMATE, not a measurement: the index does not list this model, so it sits midway between Grok 4.5 (84) and Grok 4.7 (87), at the same price as both.",
@@ -1632,20 +1628,21 @@
       }
     },
     {
-      "$note": "Added 2026-10-29; was on the later-additions list until the feed carried it. Kimi's chat pricing page (its table renders in a browser) prints \"kimi-k3.1-pro | $2.00 / MTok | $10.00 / MTok | $0.20 / MTok\" and a $2.00 cache write at the default 5-minute TTL ($4.00 at 1 hour). Not listed as batch-supported. Context 1,048,576. Capability score 89 (2026-10-29): Artificial Analysis Intelligence Index v5.0 46 (Kimi K3.1 Pro). v5.0 re-based the index and scores only 22 of the 109 live models, so the catalogue was not re-scored; this one value is mapped onto the existing scale by a linear fit through the 20 models scored in both (score = 68.44 + 0.449 x v5, r = 0.88), and its four nearest v5 neighbours sit at 88-90.",
+      "$note": "Added 2026-10-29; was on the later-additions list until the feed carried it. Kimi's chat pricing page (its table renders in a browser) prints \"kimi-k3.1-pro | $2.00 / MTok | $10.00 / MTok | $0.20 / MTok\" and a $2.00 cache write at the default 5-minute TTL ($4.00 at 1 hour). Not listed as batch-supported. Context 1,048,576. Capability score 89 (2026-10-29): Artificial Analysis Intelligence Index v5.0 46 (Kimi K3.1 Pro). v5.0 re-based the index and scores only 22 of the 109 live models, so the catalogue was not re-scored; this one value is mapped onto the existing scale by a linear fit through the 20 models scored in both (score = 68.44 + 0.449 x v5, r = 0.88), and its four nearest v5 neighbours sit at 88-90. Re-read 2026-11-24 alongside K3: rates unchanged, but the \"Not listed as batch-supported\" line above is now out of date. The page says \"kimi-k3.1-pro and kimi-k3 support batch inference\", \"billed at 60% of the standard price\", so batchDiscount 0.6 is added.",
       "id": "moonshot-kimi-k3.1-pro",
       "capabilityIndex": 89,
       "providerId": "moonshot",
       "displayName": "Kimi K3.1 Pro",
       "vendorVerified": true,
-      "lastVerified": "2026-10-29",
+      "lastVerified": "2026-11-24",
       "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat",
       "pricing": {
         "input": 2,
         "output": 10,
         "cachedInput": 0.2,
         "cacheWrite": 2,
-        "cacheWrite1h": 4
+        "cacheWrite1h": 4,
+        "batchDiscount": 0.6
       }
     },
     {
