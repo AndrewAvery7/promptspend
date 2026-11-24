@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-24T20:30:19.231Z",
+  "checkedAt": "2026-11-24T21:10:47.765Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -86,18 +86,11 @@
       ]
     },
     {
-      "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
-      "ok": true,
-      "note": "3375 chars via markdown, read by deepseek/deepseek-v4-flash",
-      "modelIds": [
-        "moonshot-kimi-k2.6"
-      ]
-    },
-    {
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "ok": true,
       "note": "3375 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
+        "moonshot-kimi-k2.6",
         "moonshot-kimi-k3",
         "moonshot-kimi-k3.1-pro",
         "moonshot-kimi-k2.7-code"
@@ -129,14 +122,6 @@
         "zai-glm-4.5-air",
         "zai-glm-4.5-airx",
         "zai-glm-4-32b-0414-128k"
-      ]
-    },
-    {
-      "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
-      "ok": true,
-      "note": "25476 chars via markdown, read by deepseek/deepseek-v4-flash",
-      "modelIds": [
-        "minimax-minimax-m2.5"
       ]
     },
     {
@@ -565,27 +550,27 @@
     },
     {
       "id": "moonshot-kimi-k2.6",
-      "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
+      "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series pricing table is empty on the page; no price for kimi-k2.6 is printed)"
+      "detail": "not priced on the page (the K2 series pricing table is empty on the page; no price is printed for kimi-k2.6)"
     },
     {
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
+      "detail": "not priced on the page (the K3 series pricing table is empty on the page; no price is printed for kimi-k3)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
+      "detail": "not priced on the page (the K3 series pricing table is empty on the page; no price is printed for kimi-k3.1-pro)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page)"
+      "detail": "not priced on the page (the K2 series pricing table is empty on the page; no price is printed for kimi-k2.7-code)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -672,12 +657,6 @@
       "detail": "page lists $0.1/$0.1"
     },
     {
-      "id": "minimax-minimax-m2.5",
-      "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
-      "status": "unconfirmed",
-      "detail": "not priced on the page (no MiniMax-M2.5 row is listed on the page; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
-    },
-    {
       "id": "xai-grok-4.6",
       "url": "https://docs.x.ai/developers/pricing",
       "status": "confirmed",
@@ -705,7 +684,7 @@
       "id": "xai-grok-build-0.1",
       "url": "https://docs.x.ai/developers/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no grok-build-0.1 pricing row on the page; Grok Build is mentioned only in connection with Grok 4.7 Fast, which is not available on the public xAI API)"
+      "detail": "not priced on the page (no grok-build-0.1 model row is priced on the page; Grok Build is mentioned only as a channel for Grok 4.7 Fast, which is not available on the public API)"
     },
     {
       "id": "xai-grok-4-1-fast",
@@ -735,7 +714,7 @@
       "id": "mistral-mistral-large-4-0",
       "url": "https://docs.mistral.ai/models/mistral-large-4",
       "status": "unconfirmed",
-      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no mistral-large-4-0 pricing shown)"
+      "detail": "not priced on the page (only mistral-large-4 is priced on the page; no separate mistral-large-4-0 pricing row is shown)"
     },
     {
       "id": "dashscope-qwen3.8-max",
@@ -806,5 +785,5 @@
   ],
   "confirmed": 85,
   "mismatched": 0,
-  "unconfirmed": 9
+  "unconfirmed": 8
 }

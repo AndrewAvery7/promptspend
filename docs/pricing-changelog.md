@@ -1643,3 +1643,16 @@ value that moves in the same run as its source URL is a correction.
 - **Review** `minimax-minimax-m2.5` — provenance.reviewNote: vendor verification is 35 days old — re-read the first-party pricing page; OpenRouter disagrees (21%): $0.27/$0.95 vs $0.3/$1.2 → vendor verification is 36 days old — re-read the first-party pricing page
 - **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → vendor verification is 35 days old — re-read the first-party pricing page
 - **Review** `moonshot-kimi-k3` — provenance.reviewNote: vendor verification is 33 days old — re-read the first-party pricing page → vendor verification is 34 days old — re-read the first-party pricing page
+
+## 2026-11-24
+
+- **Coverage** `moonshot-kimi-k3` — batchDiscount now tracked: — → 0.6
+- **Coverage** `moonshot-kimi-k3.1-pro` — batchDiscount now tracked: — → 0.6
+- **Metadata** `minimax-minimax-m2.5` — status: current → deprecated
+- **Review** `minimax-minimax-m2.5` — provenance.needsReview: true → —
+- **Review** `minimax-minimax-m2.5` — provenance.reviewNote: vendor verification is 36 days old — re-read the first-party pricing page → —
+- **Review** `moonshot-kimi-k2.6` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k2.6` — provenance.reviewNote: vendor verification is 35 days old — re-read the first-party pricing page → —
+- **Review** `moonshot-kimi-k2.6` — provenance.verifiedUrl: https://platform.kimi.ai/docs/pricing/chat-k26 → https://platform.kimi.ai/docs/pricing/chat
+- **Review** `moonshot-kimi-k3` — provenance.needsReview: true → —
+- **Review** `moonshot-kimi-k3` — provenance.reviewNote: vendor verification is 34 days old — re-read the first-party pricing page → —

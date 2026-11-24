@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-24T20:32:39.977Z",
+  "generatedAt": "2026-11-24T21:12:50.766Z",
   "providers": [
     {
       "id": "anthropic",
@@ -2732,7 +2732,7 @@
       "id": "minimax-minimax-m2.5",
       "providerId": "minimax",
       "displayName": "MiniMax M2.5",
-      "status": "current",
+      "status": "deprecated",
       "contextWindow": 1000000,
       "pricing": {
         "input": 0.3,
@@ -2753,12 +2753,7 @@
       "provenance": {
         "source": "vendor",
         "lastVerified": "2026-10-19",
-        "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 36 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "verifiedUrl": "https://platform.minimax.io/docs/guides/pricing-paygo"
       },
       "maxOutput": 8192
     },
@@ -3038,13 +3033,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-20",
-        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat-k26",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 35 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-11-24",
+        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat"
       },
       "maxOutput": 262144,
       "capabilityIndex": 72
@@ -3089,7 +3079,8 @@
         "output": 15,
         "cachedInput": 0.3,
         "cacheWrite": 3,
-        "cacheWrite1h": 6
+        "cacheWrite1h": 6,
+        "batchDiscount": 0.6
       },
       "tokenizer": {
         "kind": "approx",
@@ -3103,13 +3094,8 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-21",
-        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat",
-        "needsReview": true,
-        "reviewNote": "vendor verification is 34 days old — re-read the first-party pricing page",
-        "reviewCodes": [
-          "vendor-verification-stale"
-        ]
+        "lastVerified": "2026-11-24",
+        "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat"
       },
       "maxOutput": 1048576
     },
@@ -3124,7 +3110,8 @@
         "output": 10,
         "cachedInput": 0.2,
         "cacheWrite": 2,
-        "cacheWrite1h": 4
+        "cacheWrite1h": 4,
+        "batchDiscount": 0.6
       },
       "tokenizer": {
         "kind": "approx",
@@ -3138,7 +3125,7 @@
       },
       "provenance": {
         "source": "vendor",
-        "lastVerified": "2026-10-29",
+        "lastVerified": "2026-11-24",
         "verifiedUrl": "https://platform.kimi.ai/docs/pricing/chat"
       },
       "maxOutput": 1048576,

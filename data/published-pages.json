@@ -498,8 +498,8 @@
     },
     "/compare/claude-opus-5-vs-moonshot-kimi-k3-1-pro/": {
       "published": "2026-10-29",
-      "lastmod": "2026-10-29",
-      "fingerprint": "04d419f3ed8c84",
+      "lastmod": "2026-11-24",
+      "fingerprint": "13776880c7f10e",
       "left": "claude-opus-5",
       "right": "moonshot-kimi-k3-1-pro"
     },
@@ -1318,7 +1318,7 @@
     "/compare/gpt-5-6-sol-vs-moonshot-kimi-k3-1-pro/": {
       "published": "2026-10-29",
       "lastmod": "2026-11-24",
-      "fingerprint": "145ee4ccde42ac",
+      "fingerprint": "0d96c096fa80a4",
       "left": "gpt-5-6-sol",
       "right": "moonshot-kimi-k3-1-pro"
     },
@@ -1359,8 +1359,8 @@
     },
     "/compare/gpt-6-1-terra-vs-moonshot-kimi-k3-1-pro/": {
       "published": "2026-10-29",
-      "lastmod": "2026-10-29",
-      "fingerprint": "19c89b64e8ebeb",
+      "lastmod": "2026-11-24",
+      "fingerprint": "059172df710ab2",
       "left": "gpt-6-1-terra",
       "right": "moonshot-kimi-k3-1-pro"
     },
@@ -1415,8 +1415,8 @@
     },
     "/compare/gpt-6-sol-vs-moonshot-kimi-k3-1-pro/": {
       "published": "2026-10-29",
-      "lastmod": "2026-10-29",
-      "fingerprint": "0ecf9d7f392270",
+      "lastmod": "2026-11-24",
+      "fingerprint": "19f735346d535a",
       "left": "gpt-6-sol",
       "right": "moonshot-kimi-k3-1-pro"
     },
@@ -1612,7 +1612,7 @@
     "/models/": {
       "published": "2026-08-02",
       "lastmod": "2026-11-24",
-      "fingerprint": "02df08194dd855"
+      "fingerprint": "0efd4a40b2f9ca"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -2046,8 +2046,8 @@
     },
     "/models/minimax-m2-5/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-16",
-      "fingerprint": "0bf847e3842a0d"
+      "lastmod": "2026-11-24",
+      "fingerprint": "084571393b54ea"
     },
     "/models/minimax-m2/": {
       "published": "2026-08-02",
@@ -2111,13 +2111,13 @@
     },
     "/models/moonshot-kimi-k3-1-pro/": {
       "published": "2026-10-29",
-      "lastmod": "2026-10-29",
-      "fingerprint": "132160d9ebd02a"
+      "lastmod": "2026-11-24",
+      "fingerprint": "040aa0adbf349c"
     },
     "/models/moonshot-kimi-k3/": {
       "published": "2026-08-22",
-      "lastmod": "2026-10-29",
-      "fingerprint": "09a18257e29118"
+      "lastmod": "2026-11-24",
+      "fingerprint": "08dd4387b65bed"
     },
     "/models/o1-pro/": {
       "published": "2026-10-29",
@@ -2277,7 +2277,7 @@
     "/providers/": {
       "published": "2026-08-02",
       "lastmod": "2026-11-24",
-      "fingerprint": "18ec18bb55eaf7"
+      "fingerprint": "0c7565eaed106f"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2326,8 +2326,8 @@
     },
     "/providers/minimax/": {
       "published": "2026-08-02",
-      "lastmod": "2026-08-20",
-      "fingerprint": "119a59c9f4796b"
+      "lastmod": "2026-11-24",
+      "fingerprint": "160eba98eafa9a"
     },
     "/providers/mistral/": {
       "published": "2026-08-02",
@@ -2336,8 +2336,8 @@
     },
     "/providers/moonshot/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-29",
-      "fingerprint": "03620fc30208a2"
+      "lastmod": "2026-11-24",
+      "fingerprint": "03ebb85294674c"
     },
     "/providers/openai/": {
       "published": "2026-08-02",
