@@ -298,12 +298,19 @@ export class Catalog {
 
 /** Fetch and validate the published catalog, plus the sync health manifest.
  *  A missing or malformed manifest is not fatal — the app simply says less. */
-export async function loadCatalog(url: string, healthUrl?: string): Promise<Catalog> {
+export async function loadCatalog(
+  url: string,
+  healthUrl?: string,
+  options: { cache?: RequestCache } = {},
+): Promise<Catalog> {
   // Both requests start together. The manifest used to be asked for only once
   // the catalog had arrived, which put a second round trip in front of the
   // homepage's first paint on a slow phone connection.
   const healthPromise = healthUrl ? loadHealth(healthUrl) : Promise.resolve(null);
-  const response = await fetch(url, { cache: 'no-cache' });
+  // `no-cache` (revalidate every time) unless the caller says otherwise. The
+  // homepage passes `default` so the fetch can reuse the copy its HTML preloads;
+  // a cache mode that differs from the preload's makes the browser download again.
+  const response = await fetch(url, { cache: options.cache ?? 'no-cache' });
   if (!response.ok) {
     throw new Error(`Could not load pricing data (HTTP ${response.status})`);
   }
