@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-23T22:22:06.269Z",
+  "checkedAt": "2026-11-24T20:30:19.231Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -26,7 +26,7 @@
     {
       "url": "https://developers.openai.com/api/docs/pricing",
       "ok": true,
-      "note": "24217 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "26102 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gpt-5.6-sol",
         "gpt-5.6-terra",
@@ -106,7 +106,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": false,
-      "note": "page is 617296 characters — too large to be a pricing page",
+      "note": "page is 618152 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -142,7 +142,7 @@
     {
       "url": "https://docs.x.ai/developers/pricing",
       "ok": true,
-      "note": "16343 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "10782 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4.6",
         "xai-grok-4.5",
@@ -154,7 +154,7 @@
     {
       "url": "https://docs.x.ai/developers/migration/may-15-retirement",
       "ok": true,
-      "note": "5660 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "4389 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "xai-grok-4-1-fast",
         "xai-grok-3",
@@ -216,7 +216,7 @@
     {
       "url": "https://docs.mistral.ai/inference/pricing",
       "ok": true,
-      "note": "3741 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "13278 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "mistral-codestral-2508"
       ]
@@ -232,7 +232,7 @@
     {
       "url": "https://cohere.com/pricing",
       "ok": true,
-      "note": "20385 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "21697 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "command-r-plus-08-2024"
       ]
@@ -320,8 +320,8 @@
     {
       "id": "gpt-5.6-sol",
       "url": "https://developers.openai.com/api/docs/pricing",
-      "status": "mismatch",
-      "detail": "page lists $4/$20 vs recorded $5/$30; cached input $0.4 vs recorded $0.5"
+      "status": "confirmed",
+      "detail": "page shows only the promotional rate $4/$20 until 2026-11-30, which agrees; the standard rate $5/$30 is not printed and stays unverified until the window closes"
     },
     {
       "id": "gpt-5.6-terra",
@@ -573,31 +573,31 @@
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page; no prices are printed)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page; no prices are printed)"
+      "detail": "not priced on the page (the K3 Series Models pricing table is empty on the page)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page; no prices are printed)"
+      "detail": "not priced on the page (the K2 Series Models pricing table is empty on the page)"
     },
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 617296 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 618152 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3.8-omni-flash",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 617296 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 618152 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
@@ -675,7 +675,7 @@
       "id": "minimax-minimax-m2.5",
       "url": "https://platform.minimax.io/docs/guides/pricing-paygo",
       "status": "unconfirmed",
-      "detail": "not priced on the page (MiniMax-M2.5 is not listed on the page; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
+      "detail": "not priced on the page (no MiniMax-M2.5 row is listed on the page; the LLM table lists only MiniMax-M3.1-Flash and MiniMax-M3)"
     },
     {
       "id": "xai-grok-4.6",
@@ -704,8 +704,8 @@
     {
       "id": "xai-grok-build-0.1",
       "url": "https://docs.x.ai/developers/pricing",
-      "status": "confirmed",
-      "detail": "page lists $1/$2 (cached $0.2)"
+      "status": "unconfirmed",
+      "detail": "not priced on the page (no grok-build-0.1 pricing row on the page; Grok Build is mentioned only in connection with Grok 4.7 Fast, which is not available on the public xAI API)"
     },
     {
       "id": "xai-grok-4-1-fast",
@@ -805,6 +805,6 @@
     }
   ],
   "confirmed": 85,
-  "mismatched": 1,
-  "unconfirmed": 8
+  "mismatched": 0,
+  "unconfirmed": 9
 }
