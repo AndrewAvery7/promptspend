@@ -51,6 +51,22 @@ textarea {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
+/* The homepage's pre-drawn tape, header and hero (src/components/HomeShell.tsx)
+   sit in .home-shell in index.html, and the app renders into .app-mount beside
+   it (src/lib/static-shell.ts). Neither may add a box of its own, or the sticky
+   header and the hero would sit differently in one than in the other, and the
+   page would move when the app takes over. */
+.home-shell,
+.app-mount {
+  display: contents;
+}
+/* The pre-drawn hero waits for its faces rather than being drawn in a stand-in
+   first: see the "Shell" faces in fonts.css for why. */
+.home-shell .hero {
+  --font-display: 'Space Grotesk Shell', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans Shell', ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body);
+}
 .visually-hidden {
   position: absolute;
   width: 1px;

@@ -22,6 +22,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { HomeShell } from '@/components/HomeShell';
 import { Ticker } from '@/components/Ticker';
 import { Catalog } from '@/lib/pricing/catalog';
 import { isSyncStatus, type SyncStatus } from '@/lib/pricing/health';
@@ -30,6 +31,8 @@ import { assertCatalog } from '@/lib/pricing/types';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA = resolve(ROOT, 'public/data');
 const OUT = resolve(ROOT, '.generated/chrome.json');
+/** Replaced with the real base path by `vite.config.ts` (`buildTimeChrome`). */
+const HOME_SHELL_BASE = '/__PS_BASE__/';
 
 async function main(): Promise<void> {
   const raw: unknown = JSON.parse(await readFile(resolve(DATA, 'pricing.json'), 'utf8'));
@@ -51,6 +54,12 @@ async function main(): Promise<void> {
     },
     // Dated by the catalog, not the clock, so a rebuild of one commit is identical.
     tickerHtml: renderToStaticMarkup(createElement(Ticker, { catalog, asOf: new Date(raw.generatedAt) })),
+    // The homepage's tape, header and hero, written into index.html so the
+    // headline paints before the app's script has run (src/components/HomeShell.tsx).
+    // The base path is a placeholder: Vite knows it, this script does not.
+    homeShellHtml: renderToStaticMarkup(
+      createElement(HomeShell, { base: HOME_SHELL_BASE, catalog, asOf: new Date(raw.generatedAt) }),
+    ),
   };
 
   await mkdir(dirname(OUT), { recursive: true });

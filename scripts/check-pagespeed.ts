@@ -33,17 +33,30 @@ export const BUDGET = {
   cls: 0.1,
 } as const;
 
+/**
+ * Largest-paint limits that differ from `BUDGET.lcp`, by page.
+ *
+ * The homepage, 3 s (owner decision 2026-11-24). It is the one page drawn by
+ * script. Its tape, header and hero are now written into the HTML and shown
+ * before the app's code runs, but they wait for their typefaces so the app's
+ * copy cannot be counted as a second, later paint; that left it at 2.4-2.7 s on
+ * the phone profile against 0.9 s for the pre-built pages. It was ~5 s before
+ * the November 2026 fixes, so 3 s still catches a real regression.
+ */
+export const LCP_BUDGET_BY_PAGE: Readonly<Record<string, number>> = { '/': 3000 };
+
 export interface Measure {
   performance: number;
   lcp: number;
   cls: number;
 }
 
-export function overBudget(measure: Measure): string[] {
+export function overBudget(measure: Measure, path?: string): string[] {
   const misses: string[] = [];
+  const lcpBudget = (path !== undefined ? LCP_BUDGET_BY_PAGE[path] : undefined) ?? BUDGET.lcp;
   if (measure.performance < BUDGET.performance)
     misses.push(`performance ${measure.performance} < ${BUDGET.performance}`);
-  if (measure.lcp > BUDGET.lcp) misses.push(`largest paint ${Math.round(measure.lcp)} ms > ${BUDGET.lcp} ms`);
+  if (measure.lcp > lcpBudget) misses.push(`largest paint ${Math.round(measure.lcp)} ms > ${lcpBudget} ms`);
   if (measure.cls > BUDGET.cls) misses.push(`layout shift ${measure.cls.toFixed(3)} > ${BUDGET.cls}`);
   return misses;
 }
@@ -83,7 +96,7 @@ async function main(): Promise<void> {
     let last: Measure | null = null;
     for (let attempt = 1; attempt <= 2; attempt++) {
       last = await measure(path, key);
-      misses = overBudget(last);
+      misses = overBudget(last, path);
       if (misses.length === 0) break;
     }
     const line = `${path}: performance ${last!.performance}, largest paint ${Math.round(last!.lcp)} ms, layout shift ${last!.cls.toFixed(3)}`;

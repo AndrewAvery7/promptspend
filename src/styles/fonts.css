@@ -32,6 +32,61 @@
 @import '@fontsource/jetbrains-mono/latin-700.css';
 
 /*
+ * The same files under other names, with `font-display: block`, for the
+ * homepage's pre-drawn hero only (`.home-shell .hero` in app.css).
+ *
+ * That hero is in the HTML and the app draws it again once it loads
+ * (src/components/HomeShell.tsx). With `swap`, the first drawing could come
+ * from a stand-in face while the real one was still on its way, the app's
+ * drawing then came out a few pixels larger, and Google's test dated the page's
+ * largest paint from that second drawing, after the app's code (2.4-2.9 s on its
+ * phone profile, November 2026). Holding this text until its face is ready
+ * means the first drawing is already the final one. The 400, 600 and 700 faces
+ * are preloaded on the homepage (vite.config.ts), and a file is only fetched
+ * once whichever family asks for it first.
+ */
+@font-face {
+  font-family: 'Space Grotesk Shell';
+  font-style: normal;
+  font-display: block;
+  font-weight: 500;
+  src: url('../../node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-500-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Space Grotesk Shell';
+  font-style: normal;
+  font-display: block;
+  font-weight: 700;
+  src: url('../../node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans Shell';
+  font-style: normal;
+  font-display: block;
+  font-weight: 400;
+  src: url('../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans Shell';
+  font-style: normal;
+  font-display: block;
+  font-weight: 500;
+  src: url('../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-500-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans Shell';
+  font-style: normal;
+  font-display: block;
+  font-weight: 600;
+  src: url('../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff2')
+    format('woff2');
+}
+
+/*
  * Stand-ins for JetBrains Mono, sized to its metrics, so its late arrival moves
  * nothing.
  *

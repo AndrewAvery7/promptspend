@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Catalog, loadCatalog } from '@/lib/pricing/catalog';
 import { FREE_TIERS_URL, HEALTH_URL, PRICING_URL, REPO_URL } from '@/config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -8,6 +8,7 @@ import { useEstimator } from '@/state/useEstimator';
 import { Header, VIEWS, type ViewId } from '@/components/Header';
 import { alertsLinkToken } from '@/lib/alerts/link-token';
 import { markAppReady } from '@/lib/app-ready';
+import { removeStaticShell, staticShellPainted } from '@/lib/static-shell';
 
 /** `#compare` -> 'compare'; anything else -> null. */
 function viewFromHash(): ViewId | null {
@@ -24,7 +25,12 @@ import { CommandPalette, type Command } from '@/components/CommandPalette';
 
 const WELCOME_KEY = 'ps.welcomeDismissed';
 
-export default function App() {
+/**
+ * `hasStaticShell`: index.html carries the build's pre-drawn tape, header and
+ * hero (src/components/HomeShell.tsx), which stay on screen while the catalog
+ * loads and are removed in the frame the full page is drawn.
+ */
+export default function App({ hasStaticShell = false }: { hasStaticShell?: boolean } = {}) {
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [error, setError] = useState<string | null>(null);
   // Bumped by "Try again". The scenario lives in the address bar, so nothing a
@@ -33,8 +39,12 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
+    // With the build's pre-drawn hero on screen, the full page waits until that
+    // hero has been painted, so it is never replaced unseen (src/lib/static-shell.ts).
+    const shellPainted = hasStaticShell ? staticShellPainted() : Promise.resolve();
     loadCatalog(PRICING_URL, HEALTH_URL)
-      .then((loaded) => {
+      .then(async (loaded) => {
+        await shellPainted;
         if (!cancelled) setCatalog(loaded);
       })
       .catch((cause: unknown) => {
@@ -43,12 +53,18 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [attempt]);
+  }, [attempt, hasStaticShell]);
 
   // Tell deferred work (Google Analytics' script) the page has drawn: either the
   // estimator or the error message is now on screen.
   useEffect(() => {
     if (catalog || error) markAppReady();
+  }, [catalog, error]);
+
+  // Before the browser paints the first full view (or the error), take the
+  // pre-drawn nodes away, so the page never shows both, or neither.
+  useLayoutEffect(() => {
+    if (catalog || error) removeStaticShell();
   }, [catalog, error]);
 
   if (error) {
@@ -77,6 +93,15 @@ export default function App() {
   }
 
   if (!catalog) {
+    // The pre-drawn top of the page is already on screen; leave it untouched
+    // and only tell screen readers what is happening.
+    if (hasStaticShell) {
+      return (
+        <p className="visually-hidden" role="status">
+          Loading today&apos;s prices…
+        </p>
+      );
+    }
     return (
       <main className="state-message" aria-live="polite">
         Loading today&apos;s prices…
