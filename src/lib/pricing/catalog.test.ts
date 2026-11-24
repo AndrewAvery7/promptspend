@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { Catalog } from './catalog';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { Catalog, loadCatalog } from './catalog';
 import type { SyncStatus } from './health';
 import { SCHEMA_VERSION, validateCatalog, type PricingCatalog } from './types';
 
@@ -550,5 +550,43 @@ describe('Catalog.freshness', () => {
       checkedOn: '2026-09-30',
       ageDays: null,
     });
+  });
+});
+
+describe('loadCatalog', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('asks for the catalog and the manifest together, with the cache mode the caller chose', async () => {
+    const calls: Array<[string, RequestCache | undefined]> = [];
+    const pending: Array<(response: Response) => void> = [];
+    vi.stubGlobal('fetch', (url: string, init?: RequestInit) => {
+      calls.push([url, init?.cache]);
+      return new Promise<Response>((resolve) => pending.push(resolve));
+    });
+
+    const loading = loadCatalog('/data/pricing.json', '/data/sync-status.json', { cache: 'default' });
+    // Neither file has arrived, yet both have been requested.
+    await Promise.resolve();
+    expect(calls).toEqual([
+      ['/data/sync-status.json', 'no-cache'],
+      ['/data/pricing.json', undefined],
+    ]);
+
+    pending[0]!(new Response('{}', { status: 404 }));
+    pending[1]!(new Response(JSON.stringify(CATALOG)));
+    const catalog = await loading;
+    expect(catalog.models).toHaveLength(CATALOG.models.length);
+  });
+
+  it('revalidates the catalog by default', async () => {
+    const modes: Array<RequestCache | undefined> = [];
+    vi.stubGlobal('fetch', async (_url: string, init?: RequestInit) => {
+      modes.push(init?.cache);
+      return new Response(JSON.stringify(CATALOG));
+    });
+    await loadCatalog('/data/pricing.json');
+    expect(modes).toEqual(['no-cache']);
   });
 });
