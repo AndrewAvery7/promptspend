@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
-  "attemptedAt": "2026-11-25T17:59:30.129Z",
-  "succeededAt": "2026-11-25T17:59:30.129Z",
+  "attemptedAt": "2026-11-25T23:03:54.482Z",
+  "succeededAt": "2026-11-25T23:03:54.482Z",
   "outcome": "ok",
   "problems": [],
   "sources": [
     {
       "id": "litellm",
       "ok": true,
-      "entries": 7175,
-      "revision": "W/0fd5423bf8d9ec18481e12343239b108e6314069ff74f3142d205204a0bd4fc6"
+      "entries": 7176,
+      "revision": "W/b309fe9943880db450c7b1cd6b772de851b8d845f599ad48306d20ee6ad18ab5"
     },
     {
       "id": "openrouter",
       "ok": true,
-      "entries": 470
+      "entries": 474
     }
   ],
   "modelCount": 133,
   "flaggedCount": 0,
   "staleCount": 0,
-  "catalogHash": "e4ed54fae49cee0a",
+  "catalogHash": "fa82e027498e249c",
   "pricesLastChanged": "2026-11-11",
   "vendorCheck": {
     "checkedAt": "2026-11-25T17:57:29.700Z",

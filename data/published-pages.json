@@ -3,8 +3,8 @@
   "pages": {
     "/compare/": {
       "published": "2026-08-02",
-      "lastmod": "2026-10-29",
-      "fingerprint": "131cc5d1ad112e"
+      "lastmod": "2026-11-25",
+      "fingerprint": "040a906697dfa2"
     },
     "/compare/amazon-nova-2-lite-v1-0-vs-claude-haiku-4-5/": {
       "published": "2026-10-29",
@@ -138,6 +138,34 @@
       "fingerprint": "16acf60fbbd3f9",
       "left": "claude-fable-5-1",
       "right": "meta-muse-wonder-1-0"
+    },
+    "/compare/claude-fable-5-2-vs-gemini-4-argon/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "128f5894027d70",
+      "left": "claude-fable-5-2",
+      "right": "gemini-4-argon"
+    },
+    "/compare/claude-fable-5-2-vs-gemini-4-carbon/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "03dbf203071fb8",
+      "left": "claude-fable-5-2",
+      "right": "gemini-4-carbon"
+    },
+    "/compare/claude-fable-5-2-vs-gemini-4-neon/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "05c2d6fd086075",
+      "left": "claude-fable-5-2",
+      "right": "gemini-4-neon"
+    },
+    "/compare/claude-fable-5-2-vs-gpt-6-2-astra/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "020367f0fb18e9",
+      "left": "claude-fable-5-2",
+      "right": "gpt-6-2-astra"
     },
     "/compare/claude-fable-5-vs-gemini-4-argon/": {
       "published": "2026-10-24",
@@ -426,6 +454,20 @@
       "left": "claude-opus-5-5",
       "right": "gemini-4-argon"
     },
+    "/compare/claude-opus-5-5-vs-gemini-4-carbon/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "1b45b96866426a",
+      "left": "claude-opus-5-5",
+      "right": "gemini-4-carbon"
+    },
+    "/compare/claude-opus-5-5-vs-gemini-4-neon/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "1dba91a2bdfdc0",
+      "left": "claude-opus-5-5",
+      "right": "gemini-4-neon"
+    },
     "/compare/claude-opus-5-5-vs-gpt-5-5/": {
       "published": "2026-09-29",
       "lastmod": "2026-10-29",
@@ -446,6 +488,13 @@
       "fingerprint": "1fced75530ade4",
       "left": "claude-opus-5-5",
       "right": "gpt-6-1-sol"
+    },
+    "/compare/claude-opus-5-5-vs-gpt-6-2-astra/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "1efa67d6012812",
+      "left": "claude-opus-5-5",
+      "right": "gpt-6-2-astra"
     },
     "/compare/claude-opus-5-5-vs-meta-muse-wonder-1-0/": {
       "published": "2026-10-24",
@@ -573,6 +622,13 @@
       "left": "claude-sonnet-5-5",
       "right": "gemini-4-argon"
     },
+    "/compare/claude-sonnet-5-5-vs-gemini-4-hydrogen/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "012bf104cea53d",
+      "left": "claude-sonnet-5-5",
+      "right": "gemini-4-hydrogen"
+    },
     "/compare/claude-sonnet-5-5-vs-gpt-5-4/": {
       "published": "2026-09-29",
       "lastmod": "2026-10-29",
@@ -593,6 +649,13 @@
       "fingerprint": "05c982fc24d883",
       "left": "claude-sonnet-5-5",
       "right": "gpt-6-1-sol"
+    },
+    "/compare/claude-sonnet-5-5-vs-gpt-6-2-sol/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "09142d6b1aea93",
+      "left": "claude-sonnet-5-5",
+      "right": "gpt-6-2-sol"
     },
     "/compare/claude-sonnet-5-5-vs-gpt-6-sol/": {
       "published": "2026-10-24",
@@ -1182,6 +1245,55 @@
       "left": "gemini-4-argon",
       "right": "meta-muse-wonder-1-0"
     },
+    "/compare/gemini-4-carbon-vs-gpt-6-2-astra/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "0a63edd10ac19a",
+      "left": "gemini-4-carbon",
+      "right": "gpt-6-2-astra"
+    },
+    "/compare/gemini-4-carbon-vs-gpt-6-2-sol/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "0de98fcb17167b",
+      "left": "gemini-4-carbon",
+      "right": "gpt-6-2-sol"
+    },
+    "/compare/gemini-4-hydrogen-vs-gpt-6-1-sol/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "064ba46e95acb8",
+      "left": "gemini-4-hydrogen",
+      "right": "gpt-6-1-sol"
+    },
+    "/compare/gemini-4-hydrogen-vs-gpt-6-2-sol/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "1c1711df11c50b",
+      "left": "gemini-4-hydrogen",
+      "right": "gpt-6-2-sol"
+    },
+    "/compare/gemini-4-hydrogen-vs-meta-muse-wonder-1-0/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "14c613bc709a2f",
+      "left": "gemini-4-hydrogen",
+      "right": "meta-muse-wonder-1-0"
+    },
+    "/compare/gemini-4-neon-vs-gpt-6-2-astra/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "068fcc3286ef96",
+      "left": "gemini-4-neon",
+      "right": "gpt-6-2-astra"
+    },
+    "/compare/gemini-4-neon-vs-gpt-6-2-sol/": {
+      "published": "2026-11-25",
+      "lastmod": "2026-11-25",
+      "fingerprint": "030d8e737b1fb4",
+      "left": "gemini-4-neon",
+      "right": "gpt-6-2-sol"
+    },
     "/compare/gpt-5-1-vs-xai-grok-4-3/": {
       "published": "2026-08-02",
       "lastmod": "2026-08-06",
@@ -1611,8 +1723,8 @@
     },
     "/models/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-24",
-      "fingerprint": "090470db196ca1"
+      "lastmod": "2026-11-25",
+      "fingerprint": "0058273b48b958"
     },
     "/models/amazon-nova-2-lite-v1-0/": {
       "published": "2026-08-02",
@@ -1651,8 +1763,8 @@
     },
     "/models/claude-fable-5-2/": {
       "published": "2026-11-09",
-      "lastmod": "2026-11-09",
-      "fingerprint": "04c638735b7080"
+      "lastmod": "2026-11-25",
+      "fingerprint": "1844740f893ce6"
     },
     "/models/claude-fable-5/": {
       "published": "2026-08-02",
@@ -2276,8 +2388,8 @@
     },
     "/providers/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-24",
-      "fingerprint": "1dd934c55a2ed1"
+      "lastmod": "2026-11-25",
+      "fingerprint": "0c58524cf6e77f"
     },
     "/providers/alibaba/": {
       "published": "2026-08-02",
@@ -2291,8 +2403,8 @@
     },
     "/providers/anthropic/": {
       "published": "2026-08-02",
-      "lastmod": "2026-11-09",
-      "fingerprint": "0ae30e079a0f58"
+      "lastmod": "2026-11-25",
+      "fingerprint": "070f9492a9f934"
     },
     "/providers/cohere/": {
       "published": "2026-08-02",

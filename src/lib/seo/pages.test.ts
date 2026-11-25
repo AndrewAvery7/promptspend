@@ -214,6 +214,20 @@ describe('buildPages', () => {
     expect(set.comparisons[0]!.verdict).toMatch(/Neither is cheaper everywhere/);
   });
 
+  it('calls identical rates a tie rather than a split', () => {
+    const set = buildPages(
+      catalog([
+        model('twin-a', { providerId: 'openai', pricing: { input: 8, output: 40 } }),
+        model('twin-b', { providerId: 'anthropic', pricing: { input: 8, output: 40 } }),
+      ]),
+      { asOf: ASOF },
+    );
+
+    expect(set.comparisons[0]!.verdict).toBe(
+      'twin-a and twin-b cost the same on all three workloads: their list rates match, so the choice comes down to the differences below.',
+    );
+  });
+
   it('drops a provider with no pageable models instead of publishing an empty table', () => {
     const set = buildPages(catalog([model('gpt-5', { providerId: 'openai' })]), { asOf: ASOF });
     expect(set.providers.map((page) => page.id)).toEqual(['openai']);
@@ -357,6 +371,61 @@ describe('published comparisons', () => {
     expect(set.comparisons).toHaveLength(3);
     expect(set.comparisons.every((page) => !page.slug.includes('grok'))).toBe(true);
     expect(set.droppedComparisons).toBe(3);
+  });
+
+  describe('new flagships', () => {
+    const withGrok = (grok: Partial<Model>, day: string): PricingCatalog => {
+      const raw = catalogOn([...TRIO, model('grok-5', { providerId: 'xai', ...grok })], day);
+      raw.providers = [...raw.providers, { id: 'xai', name: 'xAI', country: 'US' }];
+      return raw;
+    };
+
+    it('gives a newly published flagship its head-to-heads despite a ceiling of zero', () => {
+      const ledger = record(catalogOn(TRIO, '2026-08-02'));
+      const set = buildPages(withGrok({ capabilityIndex: 95 }, '2026-08-20'), {
+        asOf: new Date('2026-08-20'),
+        ledger,
+        maxComparisons: 0,
+      });
+      expect(set.newFlagships).toEqual(['grok-5']);
+      expect(set.comparisons.filter((page) => page.slug.includes('grok')).map((page) => page.slug)).toEqual([
+        'claude-opus-5-vs-grok-5',
+        'gemini-3-pro-vs-grok-5',
+        'gpt-5-vs-grok-5',
+      ]);
+      expect(set.droppedComparisons).toBe(0);
+    });
+
+    it('counts a model as new for the window after its page first appeared, and not after', () => {
+      const ledger = record(withGrok({ capabilityIndex: 70 }, '2026-08-02'));
+      const scored = (day: string) =>
+        buildPages(withGrok({ capabilityIndex: 95 }, day), {
+          asOf: new Date(day),
+          ledger,
+          maxComparisons: 0,
+        });
+      expect(scored('2026-08-31').newFlagships).toEqual(['grok-5']);
+      expect(scored('2026-09-02').newFlagships).toEqual([]);
+    });
+
+    it('leaves a new model below the flagship bar under the ceiling', () => {
+      const ledger = record(catalogOn(TRIO, '2026-08-02'));
+      const set = buildPages(withGrok({ capabilityIndex: 89 }, '2026-08-20'), {
+        asOf: new Date('2026-08-20'),
+        ledger,
+        maxComparisons: 0,
+      });
+      expect(set.newFlagships).toEqual([]);
+      expect(set.comparisons.every((page) => !page.slug.includes('grok'))).toBe(true);
+    });
+
+    it('treats nothing as new without a ledger', () => {
+      const set = buildPages(withGrok({ capabilityIndex: 95 }, '2026-08-20'), {
+        asOf: new Date('2026-08-20'),
+        maxComparisons: 0,
+      });
+      expect(set.newFlagships).toEqual([]);
+    });
   });
 
   it('retires a pair whose model has lost its page, pointing at the side that survives', () => {
