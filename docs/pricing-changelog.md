@@ -1661,3 +1661,16 @@ value that moves in the same run as its source URL is a correction.
 
 - **Metadata** `minimax-minimax-m2` — status: current → deprecated
 - **Metadata** `minimax-minimax-m2.1` — status: current → deprecated
+
+## 2026-11-25
+
+- **Metadata** `claude-fable-5-2` — capabilityIndex: — → 98
+- **Metadata** `gemini-gemini-4-carbon` — capabilityIndex: — → 95
+- **Metadata** `gemini-gemini-4-hydrogen` — capabilityIndex: — → 93
+- **Metadata** `gemini-gemini-4-neon` — capabilityIndex: — → 96
+- **Metadata** `gpt-6.2-astra` — capabilityIndex: — → 96
+- **Metadata** `gpt-6.2-sol` — capabilityIndex: — → 94
+
+## 2026-11-25
+
+- **Metadata** `claude-fable-5-2` — displayName: Claude Fable 5 2 → Claude Fable 5.2

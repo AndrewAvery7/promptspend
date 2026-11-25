@@ -213,6 +213,9 @@ export interface PageSet {
   /** Pairs the comparison rule considered and dropped, and why. Reported by
    *  the build so a shrinking page count is never silent. */
   droppedComparisons: number;
+  /** Models treated as a new flagship this build (ids), whose head-to-heads
+   *  bypass the comparison ceiling. See `NEW_FLAGSHIP_WINDOW_DAYS`. */
+  newFlagships: string[];
 }
 
 export interface BuildOptions {
@@ -239,6 +242,26 @@ export interface BuildOptions {
  * site pass it; tests keep the library default. Lift it deliberately.
  */
 export const COMPARISON_GROWTH_FROZEN = 0;
+
+/**
+ * The one exception to the freeze above (Andrew, 2026-11-25): a new flagship
+ * gets its head-to-heads on the day it is scored. Search Console showed the
+ * only page-1 positions the site holds are matchups of brand-new models, asked
+ * about before the large sites have written them up, so waiting out the freeze
+ * would hand that window away.
+ *
+ * A model is a new flagship when its model page first appeared in the ledger
+ * within `NEW_FLAGSHIP_WINDOW_DAYS` of the build (or appears in this build),
+ * and it carries a capability score of at least `NEW_FLAGSHIP_MIN_CAPABILITY`.
+ * It is then paired with its `NEW_FLAGSHIP_PEERS` nearest cross-provider peers
+ * by the same rule every comparison uses, and those pairs bypass the ceiling.
+ * Once published they are in the ledger and stay, like every other pair; once
+ * the window closes the model adds no more. Needs the ledger: without it
+ * nothing is "new", so tests built from a catalog alone are unaffected.
+ */
+export const NEW_FLAGSHIP_WINDOW_DAYS = 30;
+export const NEW_FLAGSHIP_MIN_CAPABILITY = 90;
+const NEW_FLAGSHIP_PEERS = 4;
 
 const MODELS_ROOT = '/models/';
 const PROVIDERS_ROOT = '/providers/';
@@ -379,11 +402,14 @@ function buildComparisons(
   asOf: Date,
   maxComparisons: number,
   ledger: PageLedger | undefined,
-): { pages: ComparisonPage[]; retired: RetiredComparisonPage[]; dropped: number } {
+): { pages: ComparisonPage[]; retired: RetiredComparisonPage[]; dropped: number; launches: string[] } {
   const scored = ranked.filter((m) => typeof m.capabilityIndex === 'number');
   const wanted = new Map<string, { left: Model; right: Model }>();
+  const launchPairs = new Set<string>();
+  const launches = newFlagships(scored, slugById, ledger, asOf);
 
   for (const model of scored) {
+    const launch = launches.has(model.id);
     const peers = scored
       .filter((other) => other.id !== model.id && other.providerId !== model.providerId)
       .filter((other) => {
@@ -397,11 +423,12 @@ function buildComparisons(
         return byCapability || blendedRate(a) - blendedRate(b) || a.id.localeCompare(b.id);
       });
 
-    for (const peer of peers.slice(0, PEERS_PER_MODEL)) {
+    for (const peer of peers.slice(0, launch ? NEW_FLAGSHIP_PEERS : PEERS_PER_MODEL)) {
       const leftSlug = slugById.get(model.id);
       const rightSlug = slugById.get(peer.id);
       if (!leftSlug || !rightSlug) continue;
       const key = comparisonSlug(leftSlug, rightSlug);
+      if (launch) launchPairs.add(key);
       if (wanted.has(key)) continue;
       // Order the page the way the slug is ordered, so the first column and the
       // first half of the URL always name the same model.
@@ -425,11 +452,15 @@ function buildComparisons(
 
   // The cap is on new pairs only. A published pair never counts against it,
   // because dropping one to make room is exactly the churn this is preventing.
-  const fresh = [...wanted.keys()].filter((key) => !kept.has(key)).sort((a, b) => a.localeCompare(b));
+  // A new flagship's own pairs bypass it: see `NEW_FLAGSHIP_WINDOW_DAYS`.
+  const freshAll = [...wanted.keys()].filter((key) => !kept.has(key)).sort((a, b) => a.localeCompare(b));
+  const launched = freshAll.filter((key) => launchPairs.has(key));
+  const fresh = freshAll.filter((key) => !launchPairs.has(key));
   const dropped = Math.max(0, fresh.length - maxComparisons);
   const chosen = new Map<string, { left: Model; right: Model; kept: boolean }>();
   for (const [slug, pair] of kept) chosen.set(slug, { ...pair, kept: !wanted.has(slug) });
-  for (const slug of fresh.slice(0, maxComparisons)) chosen.set(slug, { ...wanted.get(slug)!, kept: false });
+  for (const slug of [...launched, ...fresh.slice(0, maxComparisons)])
+    chosen.set(slug, { ...wanted.get(slug)!, kept: false });
 
   const pages = [...chosen.keys()]
     .sort((a, b) => a.localeCompare(b))
@@ -438,7 +469,31 @@ function buildComparisons(
       return comparisonPage(slug, pair.left, pair.right, pair.kept, slugById, printById, catalog, asOf);
     });
 
-  return { pages, retired, dropped };
+  return { pages, retired, dropped, launches: [...launches].sort() };
+}
+
+/**
+ * Models that count as a new flagship this build: scored at or above the bar,
+ * and with a model page first published within the window (or not yet in the
+ * ledger, meaning this build publishes it). Empty without a ledger.
+ */
+function newFlagships(
+  scored: Model[],
+  slugById: Map<string, string>,
+  ledger: PageLedger | undefined,
+  asOf: Date,
+): Set<string> {
+  const launches = new Set<string>();
+  if (!ledger) return launches;
+  const cutoff = isoDate(new Date(asOf.getTime() - NEW_FLAGSHIP_WINDOW_DAYS * 86_400_000));
+  for (const model of scored) {
+    if ((model.capabilityIndex ?? 0) < NEW_FLAGSHIP_MIN_CAPABILITY) continue;
+    const slug = slugById.get(model.id);
+    if (!slug) continue;
+    const published = ledger[`${MODELS_ROOT}${slug}/`]?.published;
+    if (published === undefined || published >= cutoff) launches.add(model.id);
+  }
+  return launches;
 }
 
 /**
@@ -715,6 +770,7 @@ export function buildPages(raw: PricingCatalog, options: BuildOptions): PageSet 
     pages: comparisons,
     retired: retiredComparisons,
     dropped,
+    launches,
   } = buildComparisons(ranked, pageable, slugById, printById, catalog, asOf, maxComparisons, ledger);
   const comparisonBySlug = new Map(comparisons.map((page) => [page.slug, page]));
   const comparisonsByModel = new Map<string, RelatedLink[]>();
@@ -939,6 +995,7 @@ export function buildPages(raw: PricingCatalog, options: BuildOptions): PageSet 
     comparisonsIndex,
     retiredComparisons,
     droppedComparisons: dropped,
+    newFlagships: launches,
   };
 }
 
