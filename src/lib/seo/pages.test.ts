@@ -214,6 +214,20 @@ describe('buildPages', () => {
     expect(set.comparisons[0]!.verdict).toMatch(/Neither is cheaper everywhere/);
   });
 
+  it('calls identical rates a tie rather than a split', () => {
+    const set = buildPages(
+      catalog([
+        model('twin-a', { providerId: 'openai', pricing: { input: 8, output: 40 } }),
+        model('twin-b', { providerId: 'anthropic', pricing: { input: 8, output: 40 } }),
+      ]),
+      { asOf: ASOF },
+    );
+
+    expect(set.comparisons[0]!.verdict).toBe(
+      'twin-a and twin-b cost the same on all three workloads: their list rates match, so the choice comes down to the differences below.',
+    );
+  });
+
   it('drops a provider with no pageable models instead of publishing an empty table', () => {
     const set = buildPages(catalog([model('gpt-5', { providerId: 'openai' })]), { asOf: ASOF });
     expect(set.providers.map((page) => page.id)).toEqual(['openai']);

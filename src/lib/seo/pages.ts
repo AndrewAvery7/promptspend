@@ -602,12 +602,22 @@ function comparisonPage(
 
   const leftWins = rows.filter((row) => row.cheaper === 'left').length;
   const rightWins = rows.filter((row) => row.cheaper === 'right').length;
+  // A tie is not a split. Two flagships launched at the same list price (Claude
+  // Fable 5.2 and GPT-6.2 Astra, 2026-11) used to read "which one wins depends
+  // on how much you read versus write", which was simply untrue.
+  const count = ['none', 'one', 'two', 'three'];
+  const oneSided = (name: string, wins: number) =>
+    wins === rows.length
+      ? `${name} is cheaper on all three workloads.`
+      : `${name} is cheaper on ${count[wins] ?? wins} of the three workloads and costs the same on the rest.`;
   const verdict =
-    leftWins === rows.length
-      ? `${left.displayName} is cheaper on all three workloads.`
-      : rightWins === rows.length
-        ? `${right.displayName} is cheaper on all three workloads.`
-        : `Neither is cheaper everywhere — which one wins depends on how much you read versus write.`;
+    leftWins === 0 && rightWins === 0
+      ? `${left.displayName} and ${right.displayName} cost the same on all three workloads: their list rates match, so the choice comes down to the differences below.`
+      : rightWins === 0
+        ? oneSided(left.displayName, leftWins)
+        : leftWins === 0
+          ? oneSided(right.displayName, rightWins)
+          : `Neither is cheaper everywhere — which one wins depends on how much you read versus write.`;
 
   const leftProvider = catalog.providerName(left);
   const rightProvider = catalog.providerName(right);
