@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-25T17:57:29.700Z",
+  "checkedAt": "2026-11-26T17:42:45.610Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -62,7 +62,7 @@
     {
       "url": "https://ai.google.dev/gemini-api/docs/pricing",
       "ok": true,
-      "note": "118372 chars via markdown, read by deepseek/deepseek-v4-flash",
+      "note": "118365 chars via markdown, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "gemini-gemini-3.1-pro-preview",
         "gemini-gemini-3.6-flash",
@@ -99,7 +99,7 @@
     {
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "ok": false,
-      "note": "page is 618464 characters — too large to be a pricing page",
+      "note": "page is 621442 characters — too large to be a pricing page",
       "modelIds": [
         "dashscope-qwen3.7-max",
         "dashscope-qwen3.8-omni-flash"
@@ -201,7 +201,7 @@
     {
       "url": "https://docs.mistral.ai/inference/pricing",
       "ok": true,
-      "note": "13393 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "14376 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "mistral-codestral-2508"
       ]
@@ -217,7 +217,7 @@
     {
       "url": "https://cohere.com/pricing",
       "ok": true,
-      "note": "21697 chars via firecrawl, read by deepseek/deepseek-v4-flash",
+      "note": "21576 chars via firecrawl, read by deepseek/deepseek-v4-flash",
       "modelIds": [
         "command-r-plus-08-2024"
       ]
@@ -552,37 +552,37 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no pricing row for kimi-k2.6 is present on the page; the K2 Series pricing table is empty)"
+      "detail": "not priced on the page (no pricing table rows are present in the page content)"
     },
     {
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no pricing row for kimi-k3 is present on the page; the K3 Series pricing table is empty)"
+      "detail": "not priced on the page (no pricing table rows are present in the page content)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no pricing row for kimi-k3.1-pro is present on the page; the K3 Series pricing table is empty)"
+      "detail": "not priced on the page (no pricing table rows are present in the page content)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no pricing row for kimi-k2.7-code is present on the page; the K2 Series pricing table is empty)"
+      "detail": "not priced on the page (no pricing table rows are present in the page content)"
     },
     {
       "id": "dashscope-qwen3.7-max",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 618464 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 621442 characters — too large to be a pricing page"
     },
     {
       "id": "dashscope-qwen3.8-omni-flash",
       "url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
       "status": "unconfirmed",
-      "detail": "page could not be read: page is 618464 characters — too large to be a pricing page"
+      "detail": "page could not be read: page is 621442 characters — too large to be a pricing page"
     },
     {
       "id": "zai-glm-5.1",
@@ -684,7 +684,7 @@
       "id": "xai-grok-build-0.1",
       "url": "https://docs.x.ai/developers/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no grok-build-0.1 row on the page; Grok Build is mentioned only in connection with Grok 4.7 Fast, which is not available on the public xAI API)"
+      "detail": "not priced on the page (no grok-build-0.1 model is priced on the page; Grok Build is mentioned only as a channel for Grok 4.7 Fast, which is not available on the public API)"
     },
     {
       "id": "xai-grok-4-1-fast",
