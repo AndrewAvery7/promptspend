@@ -72,6 +72,10 @@ import {
   unsubscribedPage,
 } from './pages';
 import { mobileTurnstilePage } from './turnstile-page';
+import { runSyncWatch } from './sync-watch';
+
+/** Must match the digest entry in wrangler.jsonc `triggers.crons` exactly. */
+const DIGEST_CRON = '0 14 * * MON';
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -89,7 +93,21 @@ export default {
     }
   },
 
-  async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    // Two timers share this handler (wrangler.jsonc). Anything that is not the
+    // weekly digest is the morning sync watch.
+    if (event.cron !== DIGEST_CRON) {
+      ctx.waitUntil(
+        background(
+          'sync watch',
+          (async () => {
+            const result = await runSyncWatch(env, new Date(event.scheduledTime));
+            console.log(`sync watch: ${JSON.stringify(result)}`);
+          })(),
+        ),
+      );
+      return;
+    }
     ctx.waitUntil(
       background(
         'weekly digest',
@@ -175,6 +193,8 @@ async function handleHealth(request: Request, env: Env): Promise<Response> {
     tokenSecret: Boolean(env.TOKEN_SECRET),
     notifySecret: Boolean(env.NOTIFY_SECRET),
     turnstile: Boolean(env.TURNSTILE_SECRET_KEY),
+    // False means the morning sync is back to GitHub's late schedule alone.
+    syncWatch: Boolean(env.GITHUB_DISPATCH_TOKEN),
   };
 
   if (env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY) {
