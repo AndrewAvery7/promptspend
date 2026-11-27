@@ -180,19 +180,21 @@ export const PRODUCTHUNT_BADGE_DARK = `${import.meta.env.BASE_URL}producthunt-ba
  * A frozen local copy of `peerpush.com/p/promptspend/badge.png`, the owner's
  * choice on 2026-11-27 over relaying the live one: their embed hot-links it,
  * which `img-src 'self'` would block and which would hand PeerPush every
- * visitor's IP. The PNG is their artwork, unedited: 460x130, a white card
- * with its own border reading "Awarded - Trending Now - PeerPush", so one
- * file serves both themes, drawn 32px tall like the other cards.
+ * visitor's IP. Their PNG (460x130, small pale type) was unreadable at the
+ * footer's 30px height, so `peerpush-badge.svg` redraws it on 2026-11-27 at
+ * the Product Hunt card's 204x54: their fire logo cut from that PNG, their
+ * purple, and "PeerPush Award - Trending Now" in larger, darker type. It is
+ * a white card with its own border, so one file serves both themes.
  *
  * Their badge changes with the listing's state and this copy does not follow
- * it. If PromptSpend stops trending, replace `public/peerpush-badge.png` with
- * the current file from that URL so the footer does not claim a status it no
+ * it. If PromptSpend stops trending, edit `public/peerpush-badge.svg` to
+ * match the current badge at that URL so the footer does not claim a status it no
  * longer has. PeerPush verifies the listing by finding a link back on the
  * home page, which React draws only after the page loads, so the link is
  * also in `index.html`.
  */
 export const PEERPUSH_URL = 'https://peerpush.com/p/promptspend';
-export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.png`;
+export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.svg`;
 
 /**
  * The mcpservers.org listing of the MCP server, and its badge, after the

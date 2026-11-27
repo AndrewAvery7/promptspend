@@ -641,7 +641,7 @@ ${input.appBand === false ? '' : appBand(ctx)}        <div class="footer__cols">
             </picture>
           </a>
           <a href="https://peerpush.com/p/promptspend" target="_blank" rel="noopener noreferrer">
-            <img src="${escapeHtml(href(ctx, '/peerpush-badge.png'))}" alt="PromptSpend on PeerPush" width="142" height="40" />
+            <img src="${escapeHtml(href(ctx, '/peerpush-badge.svg'))}" alt="PromptSpend on PeerPush" width="151" height="40" />
           </a>
           <a href="https://mcpservers.org/servers/andrewavery7/promptspend" target="_blank" rel="noopener noreferrer">
             <img class="footer__badge-strip" src="${escapeHtml(href(ctx, '/mcpservers-badge.svg'))}" alt="PromptSpend listed on mcpservers.org" width="228" height="28" />

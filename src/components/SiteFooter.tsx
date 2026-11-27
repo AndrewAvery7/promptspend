@@ -234,7 +234,7 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
             />
           </a>
           <a href={PEERPUSH_URL} target="_blank" rel="noopener noreferrer">
-            <img src={PEERPUSH_BADGE} alt="PromptSpend on PeerPush" width={142} height={40} />
+            <img src={PEERPUSH_BADGE} alt="PromptSpend on PeerPush" width={151} height={40} />
           </a>
           <a href={MCPSERVERS_URL} target="_blank" rel="noopener noreferrer">
             <img
