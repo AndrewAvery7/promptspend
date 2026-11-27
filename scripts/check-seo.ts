@@ -269,6 +269,26 @@ async function main(): Promise<void> {
     }
   }
 
+  // PeerPush verifies a listing by finding any followed link back to it on the
+  // home page; the badge in that link is our self-hosted copy.
+  const peerpush = /<a href="https:\/\/peerpush\.com\/p\/promptspend"([^>]*)>([\s\S]*?)<\/a>/.exec(html);
+  if (!peerpush) problems.push('no PeerPush link in the static HTML');
+  else {
+    const rel = /\brel="([^"]*)"/.exec(peerpush[1]!)?.[1] ?? '';
+    if (/\b(nofollow|sponsored|ugc)\b/.test(rel)) {
+      problems.push(
+        `the PeerPush link is rel="${rel}"; a listing link must not be nofollow, sponsored or ugc`,
+      );
+    }
+    if (!peerpush[2]!.includes(`src="${basePath}peerpush-badge.png"`)) {
+      problems.push(
+        `the PeerPush link in the static HTML has no self-hosted ${basePath}peerpush-badge.png image`,
+      );
+    } else if (!existsSync(resolve(DIST, 'peerpush-badge.png'))) {
+      problems.push('the static PeerPush badge points at peerpush-badge.png, which is not in the build');
+    }
+  }
+
   // What a visitor or crawler with no JavaScript is given. The calculator draws
   // everything itself, so the raw HTML used to say 36 words and link nowhere.
   const noscript = /<noscript>([\s\S]*?)<\/noscript>/.exec(html)?.[1] ?? '';

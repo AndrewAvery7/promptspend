@@ -41,7 +41,7 @@ test('the CHECK popover opens fully on screen, at any width', async ({ page }) =
   });
 });
 
-test('the LaunchNest and Fazier badges are in the HTML, and on screen exactly once', async ({
+test('the LaunchNest, Fazier and PeerPush badges are in the HTML, and on screen exactly once', async ({
   page,
   request,
 }) => {
@@ -50,6 +50,7 @@ test('the LaunchNest and Fazier badges are in the HTML, and on screen exactly on
   const html = await (await request.get('/')).text();
   expect(html).toContain('href="https://launchnest.io/p/promptspend"');
   expect(html).toContain('href="https://fazier.com/launches/promptspend"');
+  expect(html).toContain('href="https://peerpush.com/p/promptspend"');
 
   // React replaces those copies on mount and the footer draws its own: one, not two.
   await page.goto('/');
@@ -63,6 +64,9 @@ test('the LaunchNest and Fazier badges are in the HTML, and on screen exactly on
   const fazier = page.locator('a[href="https://fazier.com/launches/promptspend"]');
   await expect(fazier).toHaveCount(1);
   await expect(fazier.locator('img')).toHaveAttribute('src', /\/fazier-badge-(light|dark)\.svg$/);
+  const peerpush = page.locator('a[href="https://peerpush.com/p/promptspend"]');
+  await expect(peerpush).toHaveCount(1);
+  await expect(peerpush.locator('img')).toHaveAttribute('src', /\/peerpush-badge\.png$/);
 });
 
 test('Clear all empties the selection and leaves the workload alone', async ({ page }) => {

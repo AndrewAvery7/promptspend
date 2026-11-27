@@ -145,7 +145,7 @@
   </head>
   <body>
     <div id="root">
-      <!-- The LaunchNest and Fazier listing badges, in the HTML itself. Their
+      <!-- The LaunchNest, Fazier and PeerPush listing badges, in the HTML itself. Their
            verifiers read this page without running JavaScript (Fazier's, we
            assume, as LaunchNest's does), so a link drawn only by the React
            footer is invisible to them. React replaces everything inside #root
@@ -155,7 +155,8 @@
            a listing is refused if its link carries any of them. LaunchNest's
            image must come from launchnest.io itself (their verifier refuses a
            local copy); the CSP admits that origin for images only. Fazier's is
-           a self-hosted copy, which img-src 'self' already covers. -->
+           a self-hosted copy, which img-src 'self' already covers, and so is
+           PeerPush's (PEERPUSH_*), whose verifier accepts any link back. -->
       <footer class="footer">
         <div class="footer__inner">
           <div class="footer__badge">
@@ -179,6 +180,9 @@
                 <source srcset="/fazier-badge-dark.svg" media="(prefers-color-scheme: dark)" />
                 <img src="/fazier-badge-light.svg" alt="PromptSpend on Fazier" width="94" height="40" />
               </picture>
+            </a>
+            <a href="https://peerpush.com/p/promptspend" target="_blank" rel="noopener noreferrer">
+              <img src="/peerpush-badge.png" alt="PromptSpend on PeerPush" width="142" height="40" />
             </a>
           </div>
         </div>
