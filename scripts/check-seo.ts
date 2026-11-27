@@ -280,12 +280,12 @@ async function main(): Promise<void> {
         `the PeerPush link is rel="${rel}"; a listing link must not be nofollow, sponsored or ugc`,
       );
     }
-    if (!peerpush[2]!.includes(`src="${basePath}peerpush-badge.png"`)) {
+    if (!peerpush[2]!.includes(`src="${basePath}peerpush-badge.svg"`)) {
       problems.push(
-        `the PeerPush link in the static HTML has no self-hosted ${basePath}peerpush-badge.png image`,
+        `the PeerPush link in the static HTML has no self-hosted ${basePath}peerpush-badge.svg image`,
       );
-    } else if (!existsSync(resolve(DIST, 'peerpush-badge.png'))) {
-      problems.push('the static PeerPush badge points at peerpush-badge.png, which is not in the build');
+    } else if (!existsSync(resolve(DIST, 'peerpush-badge.svg'))) {
+      problems.push('the static PeerPush badge points at peerpush-badge.svg, which is not in the build');
     }
   }
 

@@ -66,7 +66,7 @@ test('the LaunchNest, Fazier and PeerPush badges are in the HTML, and on screen 
   await expect(fazier.locator('img')).toHaveAttribute('src', /\/fazier-badge-(light|dark)\.svg$/);
   const peerpush = page.locator('a[href="https://peerpush.com/p/promptspend"]');
   await expect(peerpush).toHaveCount(1);
-  await expect(peerpush.locator('img')).toHaveAttribute('src', /\/peerpush-badge\.png$/);
+  await expect(peerpush.locator('img')).toHaveAttribute('src', /\/peerpush-badge\.svg$/);
 });
 
 test('Clear all empties the selection and leaves the workload alone', async ({ page }) => {
