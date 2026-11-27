@@ -22,6 +22,10 @@ export interface Env {
   VAPID_SUBJECT: string;
   TURNSTILE_SITE_KEY: string;
   TURNSTILE_HOSTNAMES: string;
+  /** `owner/name` of the repository whose price sync the sync watch starts. */
+  GITHUB_REPO: string;
+  /** The live catalog the sync watch measures the age of. */
+  CATALOG_URL: string;
 
   // ---- secrets (wrangler secret put) ----
   VAPID_PUBLIC_KEY?: string;
@@ -33,6 +37,12 @@ export interface Env {
   /** Cloudflare API token with Email Sending: Edit. */
   EMAIL_API_TOKEN?: string;
   TURNSTILE_SECRET_KEY?: string;
+  /**
+   * Fine-grained GitHub token, this repository only, Actions and Issues
+   * read/write. Lets the sync watch start the morning sync and file the age
+   * warning. Optional: without it the sync watch logs and does nothing.
+   */
+  GITHUB_DISPATCH_TOKEN?: string;
 }
 
 /**

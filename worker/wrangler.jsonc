@@ -46,6 +46,10 @@
     // `TURNSTILE_SECRET_KEY` being set is what turns enforcement on.
     "TURNSTILE_SITE_KEY": "0x4AAAAAAEElIZdoZcZpxAjz",
     "TURNSTILE_HOSTNAMES": "api.promptspend.dev,promptspend.com,www.promptspend.com,andrewavery7.github.io",
+    // The sync watch (src/sync-watch.ts): which repository's price sync it
+    // starts, and which live catalog it measures.
+    "GITHUB_REPO": "AndrewAvery7/promptspend",
+    "CATALOG_URL": "https://promptspend.com/data/pricing.json",
   },
 
   "d1_databases": [
@@ -66,5 +70,11 @@
   // in Europe — the compromise that puts it in a working day for most readers.
   // Cloudflare numbers weekdays 1 = Sunday to 7 = Saturday (not 1 = Monday as on
   // classic cron), so the day is written as MON to keep it unambiguous.
-  "triggers": { "crons": ["0 14 * * MON"] },
+  //
+  // The sync watch, 07:17, 09:17, 13:17 and 19:17 UTC daily. GitHub starts the
+  // price sync's own 07:17 schedule hours late (16:48 to 22:21 UTC through
+  // November 2026); a Cloudflare timer fires on the minute, so this one starts
+  // the sync and the later firings retry it and warn if the catalog is old.
+  // src/index.ts tells the two apart by the digest's exact string.
+  "triggers": { "crons": ["0 14 * * MON", "17 7,9,13,19 * * *"] },
 }

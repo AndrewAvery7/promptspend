@@ -30,6 +30,9 @@ on:
     # day's publish well before the evening. The Healthchecks check
     # `promptspend-sync-pricing` must carry this same schedule, with a grace
     # wide enough for that lateness (14 hours): see docs/ARCHITECTURE.md.
+    # Since 2026-11-27 the alerts Worker dispatches this at 07:17 on the
+    # minute; this schedule is the backup and stands down (the gate job) once
+    # today's run has succeeded.
     - cron: '17 7 * * *'
   workflow_dispatch:
 
@@ -46,7 +49,47 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Since 2026-11-27 the morning sync is normally started by the alerts
+  # Worker's timer (worker/src/sync-watch.ts), which fires on the minute and
+  # dispatches this workflow at 07:17 UTC. GitHub's own schedule above still
+  # arrives, hours late, as a second attempt. When it does, it stands down if
+  # today's sync has already succeeded, so the site is not rebuilt and the
+  # vendor pages are not read twice a day. A manual or Worker dispatch always
+  # runs: someone asked for it.
+  gate:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - name: Stand down if today's sync already succeeded
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" != "schedule" ]; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          today=$(date -u +%Y-%m-%d)
+          done_today=$(gh run list --workflow sync-pricing.yml --created ">=$today" --status success \
+            --limit 5 --json databaseId --jq 'length')
+          if [ "$done_today" -gt 0 ]; then
+            echo "Today's sync already succeeded; this late scheduled run stands down."
+            echo "### Stood down" >> "$GITHUB_STEP_SUMMARY"
+            echo "Today's ($today) sync had already succeeded, so this scheduled run did nothing." >> "$GITHUB_STEP_SUMMARY"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
   sync:
+    needs: gate
+    if: needs.gate.outputs.skip != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

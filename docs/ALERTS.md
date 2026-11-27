@@ -247,11 +247,11 @@ count stops being zero, and not before.
 cd worker && npm test
 ```
 
-102 tests run inside workerd against a real D1, so the query layer
+115 tests run inside workerd against a real D1, so the query layer
 is exercised against genuine SQLite and the migrations are proved to apply. The
 full subscribe → confirm → change preferences → unsubscribe lifecycle is
 covered, as are signature rejection, replay rejection, CORS, and the SSRF
-allowlist.
+allowlist, and the morning sync watch (src/sync-watch.test.ts).
 
 Not covered by automated tests: delivery to a real push service, and delivery of
 a real email. Both cross a network boundary to a third party. `POST

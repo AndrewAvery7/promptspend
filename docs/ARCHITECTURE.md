@@ -158,6 +158,26 @@ margin. A longer grace means a stopped schedule is reported later; that is the t
 | `promptspend-sync-pricing` | `sync-pricing.yml` | `17 7 * * *`   | 14 hours |
 | `promptspend-freshness`    | `freshness.yml`    | `47 11 * * *`  | 14 hours |
 
+**The Worker starts the sync on time; GitHub's schedule is the backup.** Moving the minute did not cure
+the lateness (the 07:17 sync still started at 17:41 on 2026-11-26), so since 2026-11-27 the alerts Worker
+(`worker/src/sync-watch.ts`) has a Cloudflare timer at 07:17, 09:17, 13:17 and 19:17 UTC. Cloudflare fires on
+the minute, and a `workflow_dispatch` starts within seconds. Each firing:
+
+- starts `sync-pricing.yml` unless a run created today has succeeded or is still running (a failed run is
+  retried by the next firing);
+- from 09:17 on, reads the live `pricing.json` and opens one **Catalog age warning** issue when `generatedAt`
+  is 20 hours old or more, commenting on it at later firings and closing it once the catalog is fresh.
+
+When GitHub's own late scheduled run arrives, its `gate` job stands down if today's sync already succeeded.
+The Worker needs the secret `GITHUB_DISPATCH_TOKEN` (a fine-grained token for this repository only, with
+Actions and Issues read/write); without it every firing logs a warning and does nothing, and
+`api.promptspend.dev/health` reports `syncWatch: false`. The 20-hour warning is separate from the two-day
+freshness alert below and from the apps' 24-hour cache limit.
+
+The Healthchecks schedules and graces in the table were set by hand and have not been re-read since; with
+the Worker starting the sync near 07:17, `promptspend-sync-pricing` should ping by about 07:30 UTC on a
+normal day.
+
 The two-day budget is measured on the build, and it is deliberately not 24 hours. The apps' 24-hour cache
 limit is measured from when a device last downloaded the catalog, not from `generatedAt`, so a build that
 is 27 hours old because a run started late breaks no promise. Late starts make gaps of more than 24 hours
