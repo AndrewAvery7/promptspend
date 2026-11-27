@@ -172,6 +172,29 @@ export const PRODUCTHUNT_BADGE_LIGHT = `${import.meta.env.BASE_URL}producthunt-b
 export const PRODUCTHUNT_BADGE_DARK = `${import.meta.env.BASE_URL}producthunt-badge-dark.svg`;
 
 /**
+ * The PeerPush listing, and its badge, after the Product Hunt one and before
+ * the mcpservers.org strip. Back since 2026-11-27, when PeerPush wrote that
+ * PromptSpend was trending there; the first copy (2026-10-04 to 2026-11-02)
+ * was removed because the listing had not gone live yet.
+ *
+ * A frozen local copy of `peerpush.com/p/promptspend/badge.png`, the owner's
+ * choice on 2026-11-27 over relaying the live one: their embed hot-links it,
+ * which `img-src 'self'` would block and which would hand PeerPush every
+ * visitor's IP. The PNG is their artwork, unedited: 460x130, a white card
+ * with its own border reading "Awarded - Trending Now - PeerPush", so one
+ * file serves both themes, drawn 32px tall like the other cards.
+ *
+ * Their badge changes with the listing's state and this copy does not follow
+ * it. If PromptSpend stops trending, replace `public/peerpush-badge.png` with
+ * the current file from that URL so the footer does not claim a status it no
+ * longer has. PeerPush verifies the listing by finding a link back on the
+ * home page, which React draws only after the page loads, so the link is
+ * also in `index.html`.
+ */
+export const PEERPUSH_URL = 'https://peerpush.com/p/promptspend';
+export const PEERPUSH_BADGE = `${import.meta.env.BASE_URL}peerpush-badge.png`;
+
+/**
  * The mcpservers.org listing of the MCP server, and its badge, after the
  * Product Hunt one.
  *

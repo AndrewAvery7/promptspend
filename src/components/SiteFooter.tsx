@@ -22,6 +22,8 @@ import {
   MODELS_INDEX_URL,
   PRIVACY_URL,
   OPEN_VSX_URL,
+  PEERPUSH_BADGE,
+  PEERPUSH_URL,
   PEERLIST_BADGE_DARK,
   PEERLIST_BADGE_LIGHT,
   PEERLIST_URL,
@@ -230,6 +232,9 @@ export function SiteFooter({ catalog, theme }: { catalog: Catalog | null; theme:
               width={151}
               height={40}
             />
+          </a>
+          <a href={PEERPUSH_URL} target="_blank" rel="noopener noreferrer">
+            <img src={PEERPUSH_BADGE} alt="PromptSpend on PeerPush" width={142} height={40} />
           </a>
           <a href={MCPSERVERS_URL} target="_blank" rel="noopener noreferrer">
             <img

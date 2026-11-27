@@ -9,6 +9,9 @@ on their own schedule and are not releases.
 
 ### Changed
 
+- **The footer shows PromptSpend's PeerPush badge again** (2026-11-27), after Product Hunt's and before
+  mcpservers.org's, on every page. PeerPush lists PromptSpend as trending; the badge is a saved copy served
+  from this site, so visitors never contact PeerPush and the privacy promises are unchanged.
 - **The footer's Sell With Boost and Fazier badges now link to PromptSpend's own pages there** (2026-11-07),
   not to those sites' home pages.
 - **The footer shows the MCP server's live status on mcptry, without visitors contacting mcptry.** The
