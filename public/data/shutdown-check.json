@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-26T17:44:49.417Z",
+  "checkedAt": "2026-11-27T17:29:04.650Z",
   "sources": [
     {
       "url": "https://developers.openai.com/api/docs/deprecations.md",
@@ -27,7 +27,7 @@
     {
       "url": "https://docs.mistral.ai/models/",
       "ok": true,
-      "notices": 28
+      "notices": 50
     }
   ],
   "items": [
@@ -53,7 +53,7 @@
       "id": "mistral-mistral-large-3",
       "providerId": "mistral",
       "vendorName": "Mistral Large 3 (25.12)",
-      "date": "2027-05-03",
+      "date": "2027-04-30",
       "shutDown": false,
       "source": "Mistral's models page",
       "url": "https://docs.mistral.ai/models/"
@@ -62,7 +62,7 @@
       "id": "mistral-mistral-medium-3-5",
       "providerId": "mistral",
       "vendorName": "Mistral Medium 3.5 (26.04)",
-      "date": "2027-05-03",
+      "date": "2027-04-30",
       "shutDown": false,
       "source": "Mistral's models page",
       "url": "https://docs.mistral.ai/models/"
