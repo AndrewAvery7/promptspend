@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-27T17:26:58.001Z",
+  "checkedAt": "2026-11-28T07:18:32.994Z",
   "extractionModel": "deepseek/deepseek-v4-flash",
   "pages": [
     {
@@ -552,25 +552,25 @@
       "id": "moonshot-kimi-k2.6",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 series pricing table is empty on the page; no price is printed for kimi-k2.6)"
+      "detail": "not priced on the page (no pricing table rows are present in the page content; K2 series table is empty)"
     },
     {
       "id": "moonshot-kimi-k3",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 series pricing table is empty on the page; no price is printed for kimi-k3)"
+      "detail": "not priced on the page (no pricing table rows are present in the page content; K3 series table is empty)"
     },
     {
       "id": "moonshot-kimi-k3.1-pro",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K3 series pricing table is empty on the page; no price is printed for kimi-k3.1-pro)"
+      "detail": "not priced on the page (no pricing table rows are present in the page content; K3 series table is empty)"
     },
     {
       "id": "moonshot-kimi-k2.7-code",
       "url": "https://platform.kimi.ai/docs/pricing/chat",
       "status": "unconfirmed",
-      "detail": "not priced on the page (the K2 series pricing table is empty on the page; no price is printed for kimi-k2.7-code)"
+      "detail": "not priced on the page (no pricing table rows are present in the page content; K2 series table is empty)"
     },
     {
       "id": "dashscope-qwen3.7-max",
@@ -684,7 +684,7 @@
       "id": "xai-grok-build-0.1",
       "url": "https://docs.x.ai/developers/pricing",
       "status": "unconfirmed",
-      "detail": "not priced on the page (no grok-build-0.1 model is priced on the page; Grok Build is only mentioned as a channel for Grok 4.7 Fast)"
+      "detail": "not priced on the page (no model named grok-build-0.1 is priced on the page; Grok Build is mentioned only as a place where Grok 4.7 Fast is available)"
     },
     {
       "id": "xai-grok-4-1-fast",
